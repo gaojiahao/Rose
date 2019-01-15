@@ -73,96 +73,58 @@
           </div>
           <group class="mg_auto">
             <div v-for="(eItem,eIndex) in config.editPart" :key="eIndex">
-              <div v-if="!eItem.readOnly">
-                <x-input class="vux-1px-b" :title="eItem.text" type="number"  v-model.number='modifyMatter[eItem.fieldCode]' text-align="right"
-                        placeholder="请输入" v-if="eItem.editorType === 'r2Numberfield' || eItem.editorType === 'r2Percentfield' || eItem.editorType === 'r2Permilfield'"
+              <template v-if="!eItem.readOnly">
+                <!-- 数字输入框 -->
+                <x-input class="vux-1px-b" type="number" v-model.number='modifyMatter[eItem.fieldCode]' text-align="right"
+                        placeholder="请输入" v-if="(eItem.editorType === 'r2Numberfield' || eItem.editorType === 'r2Percentfield' || eItem.editorType === 'r2Permilfield') && eItem.fieldCode !=='tdQty'"
                         @on-blur="checkAmt(modifyMatter, eItem.fieldCode, modifyMatter[eItem.fieldCode])" 
                         @on-focus="getFocus($event)" >
-                  <template slot="label" v-if="!eItem.allowBlank">
-                    <span class='required'>{{eItem.text}}</span> 
+                  <template slot="label">
+                    <span :class="{required : !eItem.allowBlank}">{{eItem.text}}</span>
                   </template>
                 </x-input>
-                <datetime class="vux-1px-b" :title="eItem.text" :start-date="modifyMatter[eItem.fieldCode]" :end-date="modifyMatter[eItem.fieldCode]"
+                <!--文字输入框-->
+                <x-input v-model='modifyMatter[eItem.fieldCode]' text-align="right" placeholder="请输入"
+                          v-if="eItem.editorType === 'r2Textfield'">
+                  <template slot="label">
+                    <span :class="{required : !eItem.allowBlank}">{{eItem.text}}</span>
+                  </template>
+                </x-input>
+                <!--处理销售订单订单数量会根据客户，物料，物料上线和下线，自动带出单价，税率-->
+                <x-input class="vux-1px-b"  type="number"  v-model.number='modifyMatter[eItem.fieldCode]' text-align="right"
+                        placeholder="请输入" v-if="eItem.fieldCode ==='tdQty'"
+                        @on-blur="checkAmt(modifyMatter, eItem.fieldCode, modifyMatter[eItem.fieldCode])" 
+                        @on-focus="getFocus($event)" >
+                  <template slot="label">
+                    <span :class="{required : !eItem.allowBlank}">{{eItem.text}}</span>
+                    <span class="iconfont icon-tishi" v-show="modifyMatter.qtyDownline" @click="getTips(modifyMatter)"></span>
+                  </template>
+                </x-input>
+                <!--日期-->
+                <datetime class="vux-1px-b" :start-date="modifyMatter[eItem.fieldCode]" :end-date="modifyMatter[eItem.fieldCode]"
                           v-model="modifyMatter[eItem.fieldCode]" placeholder="请选择" v-if="eItem.editorType === 'r2Datefield'">
-                  <template slot="title" v-if="!eItem.allowBlank">
-                    <span class='required'>{{eItem.text}}</span>
+                  <template slot="title">
+                    <span :class="{required : !eItem.allowBlank}">{{eItem.text}}</span>
                   </template>
                 </datetime>
+                <!-- 下拉框 -->
                 <popup-picker :data='eItem.remoteData' v-model="modifyMatter[eItem.fieldCode]" :popup-style="pickerStyle" 
                               placeholder="请选择" v-if="eItem.editorType === 'r2Combo'">
-                  <template slot="title" v-if="!eItem.allowBlank">
-                    <span class='required'>{{eItem.text}}
+                  <template slot="title">
+                    <span :class="{required : !eItem.allowBlank}">{{eItem.text}}
                     </span>
                   </template>
                 </popup-picker>
-                <x-input :title="eItem.text" v-model='modifyMatter[eItem.fieldCode]' text-align="right" placeholder="请输入"
-                          v-if="eItem.editorType === 'r2Textfield'">
-                  <template slot="label" v-if="!eItem.allowBlank">
-                    <span>{{eItem.text}}</span>
-                  </template>
-                </x-input>
-              </div>
-              <cell class="vux-1px-b" disabled :title="eItem.text" :value="modifyMatter[eItem.fieldCode] || modifyMatter[eItem.showFieldCode]" v-else></cell>
-            </div>
-            
+              </template>
+              <!--字段不可编辑-->
+              <template v-else>
+                <!--字段为数字时，显示千分符-->
+                <cell class="vux-1px-b" disabled :title="eItem.text" :value="modifyMatter[eItem.fieldCode] || modifyMatter[eItem.showFieldCode] | checkNumber"
+                      v-if="eItem.editorType === 'r2Numberfield'"></cell>
+                <cell class="vux-1px-b" disabled :title="eItem.text" :value="modifyMatter[eItem.fieldCode] || modifyMatter[eItem.showFieldCode]" v-else></cell>
+              </template> 
+            </div> 
           </group>
-          <!-- 基本信息插槽 -->
-          <!-- <slot name="modify" :modifyMatter="modifyMatter">
-
-            <group class='mg_auto'>
-              <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
-                placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
-                <template slot="label">
-                  <slot name="qtyName">
-                    <span class='required'>数量</span>
-                  </slot>
-                </template>
-              </x-input>
-              <cell disabled title="包装数量" :value="modifyMatter.assistQty"></cell>
-            </group>
-
-            <group class="mg_auto">
-              <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
-              @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-                <template slot="label">
-                  <span class='required'>含税单价
-                  </span>
-                </template>
-              </x-input>
-              <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
-                @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-                <template slot="label">
-                  <span class='required'>税率
-                  </span>
-                </template>
-              </x-input>
-              <cell disabled title="不含税单价" :value="`￥${numberComma(modifyMatter.noTaxPrice)}`"></cell>
-            </group>
-          </slot> -->
-          <!-- 日期插槽 -->
-          <!-- <group class="mg_auto">
-            <slot name="date" :modifyMatter="modifyMatter"></slot>
-          </group> -->
-          <!-- 价格合计部分 -->
-          <!-- <group class="mg_auto" v-if="isShowAmount">
-            <cell disabled title="税金" :value="`￥${numberComma(modifyMatter.taxAmount)}`"></cell> 
-            <cell disabled :value="`￥${numberComma(modifyMatter.noTaxAmount)}`">
-              <template slot="title">
-                <slot name="noTaxAmountTitle">
-                  <span>不含税金额</span>
-                </slot>
-              </template>
-            </cell> -->
-            <!-- 该插槽用于替换价税小计的title-->    
-            <!-- <cell disabled :value="`￥${numberComma(modifyMatter.tdAmount)}`">
-              <template slot="title">
-                <slot name="tdAmountTitle">
-                  <span>价税小计</span>
-                </slot>
-              </template>
-            </cell>
-          </group> -->
-        
         </div>
       </r-scroll>
       <div class='confirm_btn' :class="{btn_hide : btnIsHide}" @click="confirm">
@@ -183,6 +145,12 @@ export default {
   name: 'MatterPop',
   filters: { 
     numberComma,
+    checkNumber(val){
+      if(val){
+        return numberComma(val, 3)
+      }
+      return val
+    }
   },
   props: {
     modifyMatter:{    // 进行修改的单个物料信息
@@ -310,9 +278,15 @@ export default {
       }
       return url
     },
+    getTips(item){
+      this.$vux.alert.show({
+        title: '',
+        content: `数量上限：${item.qtyOnline}<br/>数量下限：${item.qtyDownline}`
+      })
+    },
     // TODO 检查金额，取正数、保留两位小数
     checkAmt(item, key, val){
-      let {price, tdQty, taxRate, qtyBal, qtyStockBal,qtyStock, qtyBalance} = item;
+      let {price, tdQty, taxRate, qtyBal, qtyStockBal,qtyStock, qtyBalance, qtyDownline, qtyOnline} = item;
       item[key] = Math.abs(toFixed(val));
       // 数量
       if (tdQty && this.isCheckStock) {
@@ -331,6 +305,18 @@ export default {
         }
         else if(qtyBalance && tdQty > qtyBalance){
           item.tdQty = qtyBalance;
+        }
+        else if(qtyOnline && qtyDownline){
+          if(tdQty > qtyOnline){
+            item.tdQty = qtyOnline
+          }
+          else if(tdQty < qtyDownline){
+            item.tdQty = qtyDownline
+          }
+          item.price = item.otherField.price;
+          item.taxRate = item.otherField.taxRate;
+          item.dealerInventoryName = item.otherField.dealerInventoryName;
+          item.dealerInventoryCode = item.otherField.dealerInventoryCode;
         }
       }
       //税率
@@ -378,7 +364,10 @@ export default {
       overflow: visible;
       .weui-cell{
         font-size: 0.14rem;
-
+        .weui-cell__hd{
+          display: flex;
+          align-items: center;
+        }
         &:before{
           left:0;
           border-color:#e8e8e8;
@@ -416,6 +405,9 @@ export default {
       padding: 0.06rem 0;
       text-align: center;
       font-size:0.17rem;
+    }
+    .icon-tishi{
+      margin: .02rem 0 0 .02rem;
     }
   }
   //确认按钮

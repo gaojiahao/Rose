@@ -121,7 +121,7 @@
   import {Popup, TransferDom, Group, Cell, numberComma, Datetime, XInput, XTextarea, dateFormat} from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc} from 'service/commonService'
+  import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc, getPriceFromSalesContractAndPrice} from 'service/commonService'
   // mixins 引入
   import common from 'components/mixins/applyCommon'
   // 组件引入
@@ -180,15 +180,33 @@
     methods: {
       // 选中的客户
       selDealer(val) {
-        this.dealerInfo = JSON.parse(val)[0];
-        this.dealerInfo.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
-        this.dealerInfo.daysOfAccount= this.dealerInfo.pamentDays;
-        this.dealerInfo.drDealerLogisticsTerms = this.dealerInfo.dealerLogisticsTerms;
-        if(this.matterParams.data && this.matterParams.data.dealerCode != null){
-          this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
-          this.matterList = [];
-          this.orderList = {};
-        } 
+        if(JSON.parse(val)[0].dealerCode !== this.dealerInfo.dealerCode){
+          this.dealerInfo = JSON.parse(val)[0];
+          this.dealerInfo.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
+          this.dealerInfo.daysOfAccount= this.dealerInfo.pamentDays;
+          this.dealerInfo.drDealerLogisticsTerms = this.dealerInfo.dealerLogisticsTerms;
+          if(this.matterParams.data && this.matterParams.data.dealerCode != null){
+            this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
+            this.matterList = [];
+            this.orderList = {};
+          }
+          // 重新选择客户时，需要重新请求物料是否有上下线
+          if(Object.values(this.orderList).length){
+            for(let key in this.orderList){
+              for(let item of this.orderList[key]){
+                this.getQtyRange(item)
+                delete item.qtyDownline
+                delete item.qtyDownline
+                delete item.otherField
+                item.price = '';
+                item.tdQty = '';
+                item.taxRate = 0.16;
+                item.dealerInventoryName = '';
+                item.dealerInventoryCode = '';               
+              }
+            }
+          }  
+        }  
       },
       selContact(val) {
         this.contactInfo = {...val};
@@ -215,6 +233,12 @@
       },
       // 选择物料，显示物料pop
       getMatter() {
+        if(!this.dealerInfo.dealerCode){
+          this.$vux.alert.show({
+            content: '请选择客户'
+          })
+          return
+        }
         this.showMaterielPop = !this.showMaterielPop;
       },
       checkAmt(item) {
@@ -226,12 +250,27 @@
           item.tdAmountCopy1 = Math.abs(toFixed(tdAmountCopy1));
         }
       },
+      // 请求数量上线,下线
+      getQtyRange(item){
+        getPriceFromSalesContractAndPrice({
+          matCodes: item.inventoryCode,
+          dealerCode: this.dealerInfo.dealerCode
+        }).then(({data = []}) => {
+          if(data.length){
+            item.qtyDownline = data[0].qtyDownline;
+            item.qtyOnline = data[0].qtyOnline;
+            item.otherField = data[0]
+          }
+        })
+      },
       // TODO 选中物料项
       selMatter(val) {
         let sels = JSON.parse(val);
-        console.log('sels:', sels);
         let orderList = {};
         sels.forEach(item => {
+          if(this.dealerInfo.dealerCode){
+            this.getQtyRange(item);
+          }
           let key = `${item.transCode}_${item.inventoryCode}`;
           let {
             tdQty = item.qtyBal,
@@ -240,14 +279,11 @@
             promDeliTime = '',
           } = this.numMap[key] || {};
           item.tdQty = tdQty || '';
-          item.price = price || ''
+          item.price = price || '';
+          item.taxRate = taxRate;
           item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
           item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
           item.assMeasureDescription =  item.assMeasureDescription || item.invSubUnitComment || null; // 辅助计量说明
-          // item.assistQty = toFixed(accDiv(item.tdQty, item.invSubUnitMulti));
-          // item.noTaxPrice = toFixed(accDiv(item.price, accAdd(1, taxRate)));
-          item.price = price;
-          item.taxRate = taxRate;
           item.promDeliTime = promDeliTime;
           item.dateActivation = dateFormat(item.dateActivation, 'YYYY-MM-DD');
           item.executionDate = dateFormat(item.executionDate, 'YYYY-MM-DD');
@@ -598,7 +634,7 @@
             dealerMobilePhone: formData.dealerDebitContactInformation,//电话
           };
           // 物料列表请求参数
-          if(this.matterParams.data.dealerCode) {
+          if(this.matterParams.data && this.matterParams.data.dealerCode) {
             this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
           }
           this.$loading.hide();
@@ -633,7 +669,7 @@
           }
         }
         // 物料列表请求参数
-        if(this.matterParams.data.dealerCode){
+        if(this.matterParams.data && this.matterParams.data.dealerCode){
           this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
         }
         sessionStorage.removeItem(DRAFT_KEY);

@@ -298,6 +298,16 @@ export let transferTask = (data = {}) => {
     }
   })
 };
+// 获取数量上线和下线
+export let getPriceFromSalesContractAndPrice = (data = {}) =>{
+  return $flyio.ajax({
+    url: '/H_roleplay-si/formAPI/getPriceFromSalesContractAndPrice',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+}
 // 获取提交页面表单配置
 export let getFormConfig = (viewId = '') => {
   return $flyio.ajax({
