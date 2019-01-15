@@ -28,13 +28,13 @@
           </div>
           <i class="icon-more"></i>
         </div>
-        <div class="matter_info_item matter_price_top" v-if="hasData('noTaxAmount') || hasData('tdQty')">
-          <span class="matter_no_tax" v-if="hasData('noTaxAmount')">￥{{item.noTaxAmount | toFixed | numberComma}}</span>
-          <span class="matter_qty" v-if="item.tdQty">x{{item.tdQty | toFixed}}</span>
+        <div class="matter_info_item matter_price_top" v-if="hasData('noTaxPrice') || hasData('assistQty')">
+          <span class="matter_no_tax" v-if="hasData('noTaxPrice')">￥{{item.noTaxPrice | toFixed | numberComma}}</span>
+          <span class="matter_qty" v-if="item.assistQty">x{{item.assistQty | toFixed}}</span>
         </div>
         <div class="matter_info_item" :class="{spillover: `${item.tdAmount}`.length > 6}"
              v-if="hasData('taxAmount') || item.tdAmount">
-          <span class="matter_tax" v-if="hasData('taxAmount')">（含税费￥{{item.taxAmount | toFixed | numberComma}}）</span>
+          <span class="matter_tax" v-if="hasData('taxAmount')">（税金￥{{item.taxAmount | toFixed | numberComma}}）</span>
           <span class="matter_total_wrapper" v-if="item.tdAmount">
             合计：<span class="matter_total"><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma}}</span>
           </span>
