@@ -194,3 +194,8 @@
   background: url('~assets/iconfont/mobile.png');
   background-size: cover;
 }
+
+.icon-phone{
+  background: url('~assets/iconfont/phone.png');
+  background-size: cover;
+}
