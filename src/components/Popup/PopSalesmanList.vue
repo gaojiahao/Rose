@@ -12,7 +12,7 @@
           <r-scroll class="salesman-list" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !dealerList.length" @on-pulling-up="onPullingUp" ref="bScroll">
             <div class="mater-list-item" v-for="(item, index) in dealerList" :key='index'
-                 @click.stop="selThis(item,index)">
+                 @click.stop="selThis(item, index)">
               <div class="mater-list-item-content">
                 <!-- 名称 -->
                 <div class="name">{{item.dealerName}}</div>

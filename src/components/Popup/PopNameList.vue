@@ -40,7 +40,7 @@
           <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !dealerList.length" @on-pulling-up="onPullingUp" ref="bScroll">
             <div class="each_mater box_sd" v-for="(item, index) in dealerList" :key='index'
-                 @click.stop="selThis(item,index)">
+                 @click.stop="selThis(item, index)">
               <div class="mater_main ">
                 <div class="mater_info">
                   <!-- 项目名称 -->

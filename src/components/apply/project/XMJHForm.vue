@@ -10,7 +10,7 @@
         <pop-name-list @sel-item="selProject" :default-value="project"></pop-name-list>
 
         <!-- 任务计划列表 -->
-        <div class="materiel_list project_plan" :class="{'vux-1px-t': index > 0}" v-for="(item,index) in projectPlan" :key="index">
+        <div class="materiel_list project_plan" :class="{'vux-1px-t': index > 0}" v-for="(item, index) in projectPlan" :key="index">
           <div class="title">任务计划{{index+1}}</div>
           <group class="SJ_group" @group-title-margin-top="0">
             <x-input title="任务名称" v-model="item.taskName" text-align='right' placeholder='请填写'>

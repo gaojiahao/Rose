@@ -39,7 +39,7 @@
             <div class="title vux-1px-b">
               更新日志历史记录
             </div>
-            <div class="latest_change vux-1px-b" v-for="(item,index) in changeLogList" :key="index">
+            <div class="latest_change vux-1px-b" v-for="(item, index) in changeLogList" :key="index">
               <div class="change_time">
                 <span class="version">v{{item.VERSION}}</span>
                 <span>{{item.CRT_TIME | handerTime}}</span>

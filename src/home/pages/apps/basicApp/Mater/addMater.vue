@@ -47,60 +47,7 @@
         </template>
       </div>
       <!-- 重复项 -->
-      <div class="duplicate-wrapper" v-for="(item, index) in matterDuplicateConfig" :key="`${item.name}+${index}`">
-        <div class="title" v-if="matterDuplicateData[item.name] && !matterDuplicateData[item.name].length">
-          <div class="each_property">
-            <label>{{item.title}}</label>
-            <span class="add" @click="addMoreUnit(item)">新增</span>
-          </div>
-        </div>
-        <!-- <div class="duplicate-item-no-select" v-if="!matterDuplicateData[item.name].length">
-          <span class="title">{{item.title}}</span>
-          <span class="add" @click="addMoreUnit(item)">新增</span>
-        </div> -->
-        <template v-else-if="matterDuplicateData[item.name] &&matterDuplicateData[item.name].length">
-          <div class="duplicate-item" :class="{'has_border' : sIndex > 0}" v-for="(sItem, sIndex) in matterDuplicateData[item.name]" :key="sIndex">
-            <div v-for="(dItem,dIndex) in item.items" :key="dIndex" :class="{'vux-1px-b': dIndex < item.items.length-1}">
-              <!-- 可编辑的字段 -->
-              <template v-if="!dItem.readOnly">
-                <!-- 下拉框 -->
-                <r-picker :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
-                        v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank"
-                        v-if="dItem.editorType === 'r2Combo'"></r-picker>
-                <!-- 输入框（数字） -->
-                <div class='each_property ' v-if="dItem.editorType === 'r2Numberfield'">
-                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
-                  <input type='number' v-model.number="sItem[dItem.fieldCode]" placeholder="请输入" class='property_val' />
-                </div>
-                <!-- 输入框（文字） -->
-                <div class='each_property' v-if="dItem.editorType === 'r2Textfield'">
-                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
-                  <input type='text' v-model="sItem[dItem.fieldCode]" placeholder="请输入" class='property_val' />
-                </div>
-                <!-- 日期 -->
-                <div class='each_property' v-if="dItem.editorType === 'r2Datefield'" @click="getDate(sItem,dItem)">
-                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
-                  <span class='property_val'>{{sItem[dItem.fieldCode] || "请选择"}}</span>
-                </div>
-              </template>
-              <!--不可编辑的字段 -->
-              <template  v-else>
-                <div class='each_property readOnly'>
-                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
-                  <span class='property_val'>{{sItem[dItem.fieldCode]}}</span>
-                </div>
-              </template>
-            </div>
-
-          </div>
-        </template>
-        <div class="add_more" v-show="matterDuplicateData[item.name].length">
-          您还需要添加新的{{item.title}}?请点击
-          <span class='add' @click="addMoreUnit(item)">新增</span>
-          <em v-show="matterDuplicateData[item.name].length > 1">或</em>
-          <span class='delete' @click="deleteMoreUnit(item)" v-show="matterDuplicateData[item.name].length > 1">删除</span>
-        </div> 
-      </div>
+      <duplicate-component :config="matterDuplicateConfig" :defaultValue="matterDuplicateData" v-model="matterDuplicateData"></duplicate-component>
     </r-scroll>
     <div class='btn vux-1px-t'>
       <div class="cfm_btn" @click="save">{{this.transCode? '保存':'提交'}}</div>
@@ -108,13 +55,13 @@
   </div>
 </template>
 <script>
-  import {TransferDom, Popup, Group, XInput, PopupPicker, Cell, Datetime } from 'vux';
   import RPicker from 'components/basicPicker';
   import UploadImage from 'components/UploadImage'
   import RScroll from 'components/RScroll'
   import PopTechnicsList from 'components/popup/matter/PopTechnicsList'
   import PopProcedureList from 'components/popup/matter/PopProcedureList'
   import PopDealerList from 'components/Popup/PopDealerList'
+  import duplicateComponent from '../../../components/duplication'
   import common from 'mixins/common'
   import {save, update,findData,} from 'service/materService';
   import {getBaseInfoDataBase, getDictByType, getDictByValue, getFormConfig, requestData, getFormViews} from 'service/commonService';
@@ -355,6 +302,7 @@
           }
         }
       },
+      // 监听辅助计量，重新计算包装规格
       MoreUnit: {
         handler(val){
           if(val && val.length){
@@ -370,14 +318,10 @@
         deep: true
       }
     },
-    directives: {
-      TransferDom
-    },
     mixins: [common],
     components: {
-      Popup, Group, RPicker, UploadImage, XInput, PopupPicker,
-      RScroll, Cell, PopTechnicsList, PopProcedureList, PopDealerList,
-      Datetime 
+      RPicker, UploadImage, RScroll,  PopTechnicsList, PopProcedureList, PopDealerList,
+      duplicateComponent
     },
     methods: {
       // TODO 上传图片成功触发
@@ -575,31 +519,6 @@
       // TODO 获取默认图片
       getDefaultImg() {
         this.MatPic = require('assets/wl_default03.png');
-      },
-      // 选择日期
-      getDate(sItem, dItem){
-        this.$vux.datetime.show({
-          value: '', // 其他参数同 props
-          confirmText: '确认',
-          cancelText: '取消',
-          onConfirm: (val)=> {
-            sItem[dItem.fieldCode] = val;
-          },
-        })
-      },
-      // TODO 新增重复项
-      addMoreUnit(item) {
-        let obj = {};
-        item.items.forEach(item => {
-          if(!item.hidden){
-            obj[item.fieldCode] = ''
-          }
-        })
-        this.matterDuplicateData[item.name].push(obj);
-      },
-      // TODO 删除重复项
-      deleteMoreUnit(item) {
-        this.matterDuplicateData[item.name].pop()
       },
       // TODO 校验数据
       validateData(arr, validateMap) {

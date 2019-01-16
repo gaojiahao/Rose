@@ -6,7 +6,7 @@
     </div>
     <div class="no_data" v-if="!commentList.length">暂无评论</div>
     <div class="comment_list" v-else>
-      <div class="each_comment" v-for="(item,index) in commentList" :key="index" v-if="index<5" @click="goCommentList">
+      <div class="each_comment" v-for="(item, index) in commentList" :key="index" v-if="index<5" @click="goCommentList">
         <!--用户头像-->
         <div class="user_photo">
           <img :src="item.photo" @error="getUserDefault(item)"/>

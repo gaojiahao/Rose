@@ -113,7 +113,7 @@ export default {
       this.selItems = [];
     },
     //显示物料修改的pop
-    modifyMatter(item,index){
+    modifyMatter(item, index){
       this.matter = JSON.parse(JSON.stringify(item));
       this.showMatterPop = true;
       this.modifyIndex = index;
@@ -445,7 +445,7 @@ export default {
           editPart: []
         };
         let eidtMatterPop = [];
-        matterConfig.forEach((item,index) => {
+        matterConfig.forEach((item, index) => {
           if(item.dataSource && item.dataSource.type === 'remoteData') {
             // 物料或者订单请求
             if(item.editorType === 'r2Selector') {
@@ -512,7 +512,7 @@ export default {
             let matterPopField = JSON.parse(JSON.stringify(item.proertyContext.dataSourceCols));
             // 循环删除要隐藏的字段
             hiddenField.forEach(hItem => {
-              matterPopField.forEach((item,index) => {
+              matterPopField.forEach((item, index) => {
                 if(item.k === 'transCode'){
                   this.matterPopOrderTitle = item.v;
                 }
@@ -552,7 +552,7 @@ export default {
         })
         // console.log(eidtMatterPop);
         // 将配置拆分为属性和可编辑的部分
-        eidtMatterPop.length && eidtMatterPop.forEach((item,index) => {
+        eidtMatterPop.length && eidtMatterPop.forEach((item, index) => {
           //物料信息里面有数量
           if(item.fieldCode === 'tdQty' || item.fieldCode === 'qualityQty' || item.editorType === 'r2Combo'){
             eidtMatterPopConfig.property = eidtMatterPop.slice(0, index);

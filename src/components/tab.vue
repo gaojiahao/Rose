@@ -11,8 +11,8 @@
     <!--展开状态 -->
     <div class='all_tab_item' ref='tabItem' v-show='tabShow'>
       <div class='tab_wrapper'>
-        <div class='tab_item_name' v-for='(item,index) in tabVal' :class='{active : index===activeTabIndex}'
-             :key='index' @click="switchTab(item,index)">
+        <div class='tab_item_name' v-for='(item, index) in tabVal' :class='{active : index===activeTabIndex}'
+             :key='index' @click="switchTab(item, index)">
           {{item.view_name}}
         </div>
       </div>
@@ -44,7 +44,7 @@
         this.choicedTab = item.view_name;
         this.activeTabIndex = index;
         this.tabShow = false;
-        this.$emit('tab-click', item,index)
+        this.$emit('tab-click', item, index)
       }
     },
     watch: {

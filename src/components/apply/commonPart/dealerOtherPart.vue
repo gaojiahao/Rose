@@ -1,6 +1,6 @@
 <template>
   <div class="dealer-other-part" v-if="config.length">
-    <div v-for="(item,index) in config" :key="index">
+    <div v-for="(item, index) in config" :key="index">
       <!-- 结算方式, 物流条款 -->
       <pop-single-select :title="item.fieldLabel" :data="item.remoteData" :value="dealer[item.fieldCode]" v-model="dealer[item.fieldCode]"
                         :isRequired="!item.allowBlank" v-if="!item.hiddenInRun && item.xtype === 'r2Combo' "></pop-single-select>

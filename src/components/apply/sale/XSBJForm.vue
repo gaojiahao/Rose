@@ -40,19 +40,9 @@
               <div class="each_mater"
                    :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1 }"
                    v-for="(item, index) in matterList" :key='index'>
-                <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass"
+                <matter-item :item="item" @on-modify="modifyMatter(item, index)" :show-delete="matterModifyClass"
                              @click.native="delClick(index,item)">
                   <template slot="info" slot-scope="{item}">
-                    <!-- 物料属性和单位 -->
-                    <div class="mater_more">
-                      <span class="processing">属性: {{item.processing}}</span>
-                      <span class='unit'>单位: {{item.measureUnit}}</span>
-                      <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
-                      <span v-show="item.taxRate">税率: {{item.taxRate}}</span>
-                    </div>
-                    <div class="mater_more">
-                      <span class='unit'>辅助计量说明: {{item.assMeasureDescription}}</span>
-                    </div>
                     <!-- 物料数量和价格 -->
                     <div class='mater_other' v-if="item.price && item.tdQty">
                       <div class='mater_price'>
@@ -63,7 +53,7 @@
                     </div>
                   </template>
                   <template slot="editPart" slot-scope="{item}">
-                    <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)"
+                    <div class="edit-part vux-1px-l" @click="modifyMatter(item, index)"
                          v-show="(item.price && item.tdQty) &&!matterModifyClass">
                       <span class='iconfont icon-bianji1'></span>
                     </div>
@@ -89,32 +79,6 @@
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
-          <template slot="qtyBal" slot-scope="{modifyMatter}">
-            <div>
-              <span>标准价格: {{modifyMatter.standardPrice}}</span>
-              <span>特批底价: {{modifyMatter.specialReservePrice}}</span>
-            </div>
-            <div>
-              <span>最大需求数量: {{modifyMatter.qtyOnline}}</span>
-              <span>最小需求数量: {{modifyMatter.qtyDownline}}</span>
-            </div>
-          </template>
-          <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input type="number" v-model.number='modifyMatter.tdQty' text-align="right"
-                     @on-blur="checkQty(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <span class='required' slot="label">需求数量</span>
-            </x-input>
-            <cell title="包装数量" :value="modifyMatter.assistQty"></cell>
-            <x-input type="number" v-model.number='modifyMatter.price' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <span class='required' slot="label">本次报价</span>
-            </x-input>
-            <x-input type="number" v-model.number='modifyMatter.taxRate' text-align="right"
-                     @on-blur="checkRate(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <span class='required' slot="label">税率</span>
-            </x-input>
-            <cell title="不含税单价" :value="modifyMatter.noTaxPrice"></cell>
-          </template>
         </pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">

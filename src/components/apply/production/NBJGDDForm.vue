@@ -30,7 +30,7 @@
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                  <matter-item :item="item" @on-modify="modifyMatter(item,index, key)" :show-delete="matterModifyClass"
+                  <matter-item :item="item" @on-modify="modifyMatter(item, index, key)" :show-delete="matterModifyClass"
                                @click.native="delClick(index,item, key)" :class="{'vux-1px-b' : index < oItem.length-1 }">
                     <template slot-scope="{item}" slot="info">
                       <div class='mater_more'>
@@ -44,13 +44,13 @@
                         <div class="matter-remain">
                           本次下单: {{item.tdQty}}
                         </div>
-                        <span class='check_bom' @click="checkBom(item,index,key)">查看原料</span>
+                        <span class='check_bom' @click="checkBom(item, index,key)">查看原料</span>
                       </div>
                     </template>
                     <template slot="edit" slot-scope="{item}">
                       <div class='mater_other' v-if="!item.tdQty && !matterModifyClass">
                         <div class="edit-tips" @click="modifyMatter(item, index, key)" >点击进行填写</div>
-                        <span class='check_bom' @click="checkBom(item,index,key)">查看原料</span>
+                        <span class='check_bom' @click="checkBom(item, index,key)">查看原料</span>
                       </div>
                     </template>
                   </matter-item>
@@ -201,7 +201,7 @@
     },
     methods: {
       // 查看原料
-      checkBom (item,index,key) {
+      checkBom (item, index,key) {
         this.bom = item;
         this.modifyIndex = index;
         this.modifyKey = key;
@@ -350,7 +350,7 @@
             // 删除bom
             this.selItems.forEach(item=>{
               item.boms.forEach(BItem=>{
-                this.UniqueBom.forEach((AItem,index)=>{
+                this.UniqueBom.forEach((Aitem, index)=>{
                   if (BItem.inventoryCode === AItem.inventoryCode) {
                     let tdQty = accSub(AItem.tdQty,BItem.tdQty)
                     AItem.tdQty = toFixed(tdQty);
