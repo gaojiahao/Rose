@@ -2,9 +2,9 @@
   <div class="dealer-other-part" v-if="config.length">
     <div v-for="(item, index) in config" :key="index">
       <!-- 结算方式, 物流条款 -->
-      <pop-single-select :title="item.fieldLabel" :data="item.remoteData" :value="dealer[item.fieldCode]" v-model="dealer[item.fieldCode]"
+      <pop-single-select :class="{'vux-1px-t': index > 1 }":title="item.fieldLabel" :data="item.remoteData" :value="dealer[item.fieldCode]" v-model="dealer[item.fieldCode]"
                         :isRequired="!item.allowBlank" v-if="!item.hiddenInRun && item.xtype === 'r2Combo' "></pop-single-select>
-      <div class="mg_auto" v-if="!item.hiddenInRun">
+      <div class="mg_auto" :class="{'vux-1px-t': index > 0}"  v-if="!item.hiddenInRun">
         <!-- 字段不能修改 -->
         <div class="cell-item" v-if="item.readOnly && item.fieldCode !== 'projectType_project'">
           <div class="title">{{item.fieldLabel}}</div>
@@ -14,26 +14,47 @@
         </div>
         <div v-else-if="!item.readOnly">
           <!-- 输入框（数字）-->
-          <x-input class="cell-item" type="number" text-align='right' placeholder='请填写'
+          <div class="cell-item" v-if="item.xtype === 'r2Permilfield' || item.xtype === 'r2Numberfield'">
+            <div class="title">{{item.fieldLabel}}</div>
+            <div class="mode">
+              <input type='number' placeholder="请输入" v-model.number="dealer[item.fieldCode]" @on-blur="checkAmt(dealer)"/>
+            </div>
+          </div>
+           <!-- 输入框（文字）-->
+           <div class="cell-item" v-if="item.xtype === 'r2Textfield'">
+            <div class="title">{{item.fieldLabel}}</div>
+            <div class="mode">
+              <input type='text' placeholder="请输入" v-model="dealer[item.fieldCode]" @on-blur="checkAmt(dealer)"/>
+            </div>
+          </div>
+          <!-- 日期 -->
+          <div class="cell-item" v-if="item.xtype === 'r2Datefield'" @click="getDate(dealer, item)">
+            <div class="title">{{item.fieldLabel}}</div>
+            <div class="mode">
+              <span class="mode_content">{{dealer[item.fieldCode] || "请选择"}}</span>
+            </div>
+          </div>
+          <!-- 输入框（数字）-->
+          <!-- <x-input class="cell-item" type="number" text-align='right' placeholder='请填写'
                 v-model.number='dealer[item.fieldCode]' @on-blur="checkAmt(dealer)" v-if="item.xtype === 'r2Permilfield' || item.xtype === 'r2Numberfield'">
             <template slot="label">
               <span  class="title" :class="{required: !item.allowBlank}">{{item.fieldLabel}}</span>
             </template>  
-          </x-input>
+          </x-input> -->
            <!-- 输入框（文字）-->
-          <x-input class="cell-item" text-align='right' placeholder='请填写'
+          <!-- <x-input class="cell-item" text-align='right' placeholder='请填写'
                   v-model.number='dealer[item.fieldCode]' v-if="item.xtype === 'r2Textfield'">
             <template slot="label">
               <span  class="title" :class="{required: !item.allowBlank}">{{item.fieldLabel}}</span>
             </template>  
-          </x-input>
+          </x-input> -->
            <!-- 日期 -->
-          <datetime class="cell-item" :title="item.fieldLabel" v-model="dealer[item.fieldCode]" placeholder="请选择" 
+          <!-- <datetime class="cell-item" :title="item.fieldLabel" v-model="dealer[item.fieldCode]" placeholder="请选择" 
                     v-if="item.xtype === 'r2Datefield'">
             <template slot="title">
               <span  class="title" :class="{required: !item.allowBlank}">{{item.fieldLabel}}</span>
             </template>  
-          </datetime>
+          </datetime> -->
         </div>
         
       </div>
@@ -111,50 +132,57 @@ export default {
         item.tdAmountCopy1 = Math.abs(toFixed(tdAmountCopy1));
       }
     },
+    // 选择日期
+    getDate(sItem, dItem){
+      this.$vux.datetime.show({
+        value: '', // 其他参数同 props
+        confirmText: '确认',
+        cancelText: '取消',
+        onConfirm: (val)=> {
+          sItem[dItem.fieldCode] = val;
+        },
+      })
+    },
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.mg_auto {
-  width: 95%;
-  margin: 0 auto ;
+.dealer-other-part{
   background: #fff;
+  padding: 0 .15rem;
+  font-size: .14rem;
+  color: #333;
+  .vux-1px-t:before{
+    border-color: #e8e8e8;
+    left: 0;
+  }
 }
 .cell-item {
-  background: #fff;
-  box-sizing: border-box;
-  padding: .02rem .1rem;
+  padding: .18rem 0;
   display: flex;
-  font-size: .14rem;
-  align-items: center;
   justify-content: space-between;
-  height: .36rem;
-  line-height: .32rem;
-  /deep/ .weui-cell__hd{
-    color: #757575;
-  }
-  &:before {
-    display: none;
+  input{
+    width: 100%;
+    font-size: .14rem;
+    outline: none;
+    border: none;
+    text-align: right;
   }
   .title {
-    color: #757575;
+    color: #696969;
+    max-width: .8rem;
+    margin-right: .1rem;
     &.required {
-      color: #5077aa;
+      color: #3296FA;
     }
   }
   .mode {
-    color: #111;
-    font-weight: 500;
     display: flex;
     align-items: center;
-    .mode_content {
-      margin-right: .06rem;
-    }
-    .icon-shenglve {
-      font-size: .2rem;
-      color: #707070;
-    }
+    flex: 1;
+    justify-content: flex-end;
+    
   }
 }
 

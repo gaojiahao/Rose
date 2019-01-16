@@ -4,7 +4,7 @@
       <div class="title" :class="{required : isRequired}">{{title}}</div>
       <div class="mode">
         <span class="mode-content">{{selected || '请选择'}}</span>
-        <span class="iconfont icon-shenglve"></span>
+        <span class="icon-right"></span>
         </div>
     </div>   
     <!-- 结算popup -->
@@ -89,39 +89,46 @@
 <style scoped lang="scss">
   // 结算方式
   .pop-single-container {
-    width: 95%;
-    margin: 0 auto;
-    position: relative;
+    padding: .18rem 0;
     background: #fff;
-    box-sizing: border-box;
-    padding: .02rem .1rem;
+    font-size: .14rem;
+    color: #333;
     .pop_info{
       display: flex;
       font-size: .14rem;
       align-items: center;
       justify-content: space-between;
       .title {
-        color: #757575;
+        color: #696969;
         &.required{
-          color: #5077aa;
+          color: #3296FA;
           font-weight: bold;
         }
       }
-    }
-    .icon-shenglve,
-    .icon-gengduo {
-      font-size: .2rem;
-      color: #707070;
-    }
-    .mode {
-      color: #111;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      .mode-content {
-        margin-right: .06rem;
+      .mode{
+        display: flex;
+        align-items: center;
+        .icon-right{
+          width: .08rem;
+          height: .14rem;
+          margin-left: .1rem;
+        }
       }
     }
+    // .icon-shenglve,
+    // .icon-gengduo {
+    //   font-size: .2rem;
+    //   color: #707070;
+    // }
+    // .mode {
+    //   color: #111;
+    //   font-weight: 500;
+    //   display: flex;
+    //   align-items: center;
+    //   .mode-content {
+    //     margin-right: .06rem;
+    //   }
+    // }
   }
 
   /* 弹出框 */

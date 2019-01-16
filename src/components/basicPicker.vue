@@ -53,37 +53,12 @@
         type: Boolean,
         default: true
       },
-      // 界面模式，1为默认，2为水平展示,3为项目任务使用
-      mode: {
-        type: String,
-        default: '1'
-      },
-      // 是否展示箭头
-      showArrow: {
-        type: Boolean,
-        default: false,
-      },
       // 是否禁用
       disabled: {
         type: Boolean,
         default: false
       },
-      // 占位文字，有使用的mode: 3
-      placeholder: {
-        type: String,
-        default: '请选择'
-      },
-      //是否有下边框
-      hasBorder: {
-        type: Boolean,
-        default: true
-      },
-      // 是否有上边框
-      hasBorderTop: {
-        type: Boolean,
-        default: false
-
-      },
+      
     },
     data() {
       return {

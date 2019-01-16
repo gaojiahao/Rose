@@ -4,8 +4,9 @@
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
+        <div class="mg_auto">
+          <r-picker  title="流程状态" :data="currentStage" v-model="formData.biProcessStatus"></r-picker>
+        </div>
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo" :dealer-params="dealerParams"
                          :defaultContact="contactInfo"></pop-dealer-list>
@@ -131,7 +132,7 @@
   import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
   import PopMatter from 'components/apply/commonPart/MatterPop'
-  import RPicker from 'components/RPicker'
+  import RPicker from 'components/basicPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
   import {accAdd, accMul, accDiv, accSub} from '@/home/pages/maps/decimalsAdd'
@@ -685,6 +686,11 @@
   .vux-1px-b:after,
   .vux-1px-t:before {
     border-color: #e8e8e8;
+  }
+  .mg_auto{
+    background: #fff;
+    padding: 0 .15rem;
+    margin-bottom: .1rem;
   }
   //有效期
   .no_top {

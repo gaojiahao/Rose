@@ -1,22 +1,17 @@
 <template>
   <div class="baseinfo_wrapper">
     <div class="baseinfo_content">
-      <div class="each_info" @click="showPop = true">
+      <div class="each_info vux-1px-b" @click="showPop = true">
         <div class="title">经办人</div>
         <div class="mode">
           <span class="mode_content">{{selItems.nickname}}</span>
-          <x-icon class="r_arrow" type="ios-arrow-forward" size="18"></x-icon>
+          <span class="icon-right"></span>
+          <!-- <x-icon class="r_arrow" type="ios-arrow-forward" size="18"></x-icon> -->
         </div>
       </div>
-      <popup-picker title="经办组织" :data="groupList" :columns="1" v-model="group" @on-change="changeGroup"
-                    ref="groupPicker">
-        <template slot="title">
-          <span class="title" :class="{required : isRequired}">经办组织
-          </span>
-        </template>
-      </popup-picker>
-      <popup-picker title="经办职位" :data="roleList" :columns="1" v-model="role" @on-change="changeRole"
-                    ref="rolePicker"></popup-picker>
+      <r-picker class="vux-1px-b" title="经办组织" :data="groupList" :value="group" 
+                v-model="group" :required="isRequired" @on-change="changeGroup"></r-picker>
+      <r-picker  title="经办职位" :data="roleList" :value="role" v-model="role" @on-change="changeRole"></r-picker>
     </div>
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
@@ -50,12 +45,13 @@
 
 <script>
   // vux 引入
-  import {Icon, Popup, TransferDom, LoadMore, PopupPicker} from 'vux'
+  import {Popup, TransferDom, LoadMore} from 'vux'
   // 请求 引入
   import {listUsers, getGroupByUserId, getRoleByUserId} from 'service/commonService'
   // 组件 引入
   import RScroll from 'components/RScroll'
   import DSearch from 'components/search'
+  import RPicker from 'components/basicPicker'
 
   export default {
     name: 'BaseInfo',
@@ -89,7 +85,7 @@
     },
     directives: {TransferDom},
     components: {
-      Icon, Popup, RScroll, DSearch, LoadMore, PopupPicker
+     Popup, RScroll, DSearch, LoadMore, RPicker
     },
     data() {
       return {
@@ -105,8 +101,8 @@
         isSetInitial: false, // 用于判断经办组织和经办部门是否设置初始值
         selItems: {}, // 哪些被选中了
         currentUser: {},
-        role: [], // 选中的职位
-        group: [], // 选中的组织
+        role: '', // 选中的职位
+        group: '', // 选中的组织
         listData: [], // 经办人列表
         roleList: [], // 职位列表
         groupList: [], // 组织列表
@@ -153,9 +149,9 @@
       },
       // 选择 组织
       changeGroup(val) {
-        this.selItems.handlerUnitName = val[0];
+        this.selItems.handlerUnitName = val;
         this.groupList.forEach(item => {
-          if (item.name === val[0]) {
+          if (item.name === val) {
             this.selItems.handlerUnit = item.userGroupId;
             return false;
           }
@@ -172,9 +168,9 @@
       },
       // 选择 职位
       changeRole(val) {
-        this.selItems.handlerRoleName = val[0];
+        this.selItems.handlerRoleName = val;
         this.roleList.forEach(item => {
-          if (item.name === val[0]) {
+          if (item.name === val) {
             this.selItems.handlerRole = item.userGroupId;
             return false;
           }
@@ -238,11 +234,13 @@
           ? {
             ...this.defaultValue,
             userId: this.defaultValue.handler,
-            nickname: this.defaultValue.handlerName
+            nickname: this.defaultValue.handlerName,
+            group: this.defaultValue.handlerUnitName,
+            role: this.defaultValue.handlerRoleName
           }
           : {};
-        this.group = [this.selItems.handlerUnitName];
-        this.role = [this.selItems.handlerRoleName];
+        this.group = this.selItems.handlerUnitName;
+        this.role = this.selItems.handlerRoleName;
         this.defaultORG();  // 默认 经办组织
         this.defaultUserRole(); // 默认 经办职位
       },
@@ -271,7 +269,7 @@
       // 当经办人更换时，重新请求 经办组织
       getNewHandleORG() {
         return getGroupByUserId(this.selItems.userId).then(({tableContent = []}) => {
-          this.group = [];
+          this.group = '';
           this.groupList = [];
           tableContent.forEach(item => {
             this.groupList.push({
@@ -281,7 +279,7 @@
             })
           });
           if (tableContent.length && this.isSetInitial) {
-            this.group = [tableContent[0].userGroupName];
+            this.group = tableContent[0].userGroupName;
             this.selItems.handlerUnit = tableContent[0].userGroupId;
           }
           ;
@@ -290,7 +288,7 @@
       // 当经办人更换时，重新请求 经办职位
       getNewUserRole() {
         return getRoleByUserId(this.selItems.userId).then(({tableContent = []}) => {
-          this.role = [];
+          this.role = '';
           this.roleList = [];
           tableContent.forEach(item => {
             this.roleList.push({
@@ -300,7 +298,7 @@
             })
           });
           if (tableContent.length && this.isSetInitial) {
-            this.role = [tableContent[0].userGroupName];
+            this.role = tableContent[0].userGroupName;
             this.selItems.handlerRole = tableContent[0].userGroupId;
           }
           ;
@@ -316,93 +314,35 @@
 
 <style scoped lang="scss">
   @import '~@/scss/color';
-
   .baseinfo_wrapper {
-    width: 95%;
-    margin: .1rem auto;
+    margin-bottom: .1rem;
+    padding: 0 .15rem;
     background: #fff;
-    box-sizing: border-box;
-    padding: .06rem .1rem;
+    color: #333;
+    font-size: .14rem;
     .baseinfo_content {
       .each_info {
+        padding: .18rem 0;
         display: flex;
-        font-size: .14rem;
         align-items: center;
         justify-content: space-between;
-        padding: .05rem 0;
         .title {
-          font-weight: bold;
-          color: #5077aa;
+          color: #696969;
         }
         .mode {
-          font-weight: 500;
           display: flex;
           align-items: center;
-          position: relative;
-          .mode_content {
-            color: #111;
-            margin-right: 13px;
-          }
-          .iconfont {
-            font-weight: bold;
-            font-size: .14rem;
-          }
-          .r_arrow {
-            right: -5px;
-            fill: #C8C8CD;
-            position: absolute;
-            top: .02rem;
+          .icon-right{
+            width: .08rem;
+            height: .14rem;
+            margin-left: .1rem;
           }
         }
       }
-      /deep/ .weui-cell {
-        display: flex;
-        padding: .05rem 0;
-        position: relative;
-        align-items: center;
-        .title {
-          font-size: .14rem;
-          color: #757575;
-          &.required {
-            font-weight: bold;
-            color: #5077aa;
-          }
-        }
-        &.before {
-          border: none;
-        }
-        .weui-label {
-          color: #757575;
-          font-size: .14rem;
-        }
-        .vux-cell-value {
-          color: #111;
-          font-size: .14rem;
-        }
-        .weui-cell__ft {
-          padding-right: 13px;
-          position: relative;
-          &:after {
-            content: " ";
-            display: inline-block;
-            height: 6px;
-            width: 6px;
-            border-width: 2px 2px 0 0;
-            border-color: #C8C8CD;
-            border-style: solid;
-            -webkit-transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
-            -ms-transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
-            transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
-            position: absolute;
-            top: 50%;
-            margin-top: -4px;
-            right: 2px;
-          }
-        }
-      }
-      .vux-cell-box:not(:first-child):before {
-        border: none;
-      }
+    }
+    .vux-1px-b:after{
+      border-color: #e8e8e8;
+      left: 0;
     }
   }
 
@@ -441,6 +381,7 @@
           border-radius: .04rem;
           color: #333;
           box-sizing: border-box;
+          border-radius: .04rem;
           box-shadow: 0 2px 10px 0 rgba(228, 228, 232, 0.5);
           &.selected {
             border: 1px solid $main_color;
@@ -465,9 +406,10 @@
               line-height: .16rem;
               font-size: .16rem;
               font-weight: 600;
+              margin-top: .04rem;
             }
             .user_code {
-              margin-top: .12rem;
+              margin-top: .06rem;
               line-height: .12rem;
               color: #999;
               font-size: .12rem;
