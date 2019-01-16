@@ -252,7 +252,7 @@
       },
       // 请求数量上线,下线
       getQtyRange(item){
-        getPriceFromSalesContractAndPrice({
+        return getPriceFromSalesContractAndPrice({
           matCodes: item.inventoryCode,
           dealerCode: this.dealerInfo.dealerCode
         }).then(({data = []}) => {
@@ -456,8 +456,8 @@
                 assMeasureUnit: item.assMeasureUnit || null, // 辅助计量
                 assMeasureDescription: item.assMeasureDescription || null,
                 assMeasureScale: item.assMeasureScale || null, // 与单位倍数
-                dealerInventoryName: item.clientInventoryName,
-                dealerInventoryCode: item.clientInventoryCode,
+                dealerInventoryName: item.dealerInventoryName,
+                dealerInventoryCode: item.dealerInventoryCode,
                 thenTotalQtyBal: item.qty,
                 thenLockQty: item.stockQty,
                 thenQtyBal: item.qtyBal,
@@ -562,6 +562,21 @@
           let orderList = {};
           let {formData} = data;
           let {order = {}} = formData;
+          let dealer = formData.inPut.dataSet[0]
+          // 客户信息展示
+          this.dealerInfo = {
+            ...dealer,
+            dealerCode: dealer.dealerDebit,
+            dealerLabelName: dealer.drDealerLabel,
+            dealerName: dealer.dealerName_dealerDebit,
+            province: dealer.province_dealerDebit,
+            city: dealer.city_dealerDebit,
+            county: dealer.county_dealerDebit,
+            address: dealer.address_dealerDebit,
+            drDealerPaymentTerm: formData.order.drDealerPaymentTerm, // 结算方式
+            drDealerLogisticsTerms: formData.drDealerLogisticsTerms, //物流条件
+            daysOfAccount: formData.order.daysOfAccount,
+          };
           // let [dealerInfo = {}] = order.dataSet;
           order.dataSet.map(item => {
             item = {
@@ -580,6 +595,7 @@
               transCode: item.transMatchedCode,
               invSubUnitMulti: item.assMeasureScale,
             };
+            this.getQtyRange(item)
             this.matterList.push(item);
             if(item.transCode){
               if (!orderList[item.transCode]) {
@@ -613,21 +629,6 @@
             creator: formData.creator,
             modifer: formData.modifer,
           }
-          let dealer = formData.inPut.dataSet[0]
-          // 客户信息展示
-          this.dealerInfo = {
-            ...dealer,
-            dealerCode: dealer.dealerDebit,
-            dealerLabelName: dealer.drDealerLabel,
-            dealerName: dealer.dealerName_dealerDebit,
-            province: dealer.province_dealerDebit,
-            city: dealer.city_dealerDebit,
-            county: dealer.county_dealerDebit,
-            address: dealer.address_dealerDebit,
-            drDealerPaymentTerm: formData.order.drDealerPaymentTerm, // 结算方式
-            drDealerLogisticsTerms: formData.drDealerLogisticsTerms, //物流条件
-            daysOfAccount: formData.order.daysOfAccount,
-          };
           // 订单信息
           this.contactInfo = {
             dealerName: formData.dealerDebitContactPersonName, //联系人
