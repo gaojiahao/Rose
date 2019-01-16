@@ -7,65 +7,25 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 物料列表 -->
-        <div class="materiel_list">
-          <!-- 没有选择物料 -->
-          <template v-if="!matterList.length">
-            <div @click="showMaterielPop = !showMaterielPop">
-              <div class="title">物料列表</div>
-              <div class="required">请选择物料</div>
-              <i class="iconfont icon-youjiantou r_arrow"></i>
-            </div>
-          </template>
-          <!-- 已经选择了物料 -->
-          <template v-else>
-            <div class="title" @click="showDelete">
-              <div>物料列表</div>
-              <div class='edit' v-if='!matterModifyClass'>编辑</div>
-              <div class='finished' v-else>完成</div>
-            </div>
-            <div class="mater_list">
-              <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1 }"
-                  v-for="(item, index) in matterList" :key='index'>
-                <matter-item :item="item" @on-modify="modifyMatter(item, index)" :show-delete="matterModifyClass"
-                              @click.native="delClick(index,item)" :config="matterEditConfig.property">
-                  <template slot="info" slot-scope="{item}">
-                    <div class='mater_other'>
-                      <div>
-                        <span v-if="item.price" class="price">
-                          标准价格: <span class="mater_price"><span class="symbol">￥</span>{{item.price}}</span>
-                        </span>
-                        <span v-if="item.specialReservePrice" class="price">
-                          特批底价: <span class="mater_price"><span class="symbol">￥</span>{{item.specialReservePrice}}</span>
-                        </span>
-                      </div>
-                    </div>
-                  </template>
-                  <template slot="edit" slot-scope="{item}">
-                    <div class='mater_other' @click="modifyMatter(item, index)" v-if="!item.price && !matterModifyClass">
-                      <div class="edit-tips">
-                        <span class="tips-word">点击进行填写</span>
-                      </div>
-                    </div>
-                  </template>
-                </matter-item>
-                <div class='delete_icon' @click="delClick(index,item)" v-if='matterModifyClass'>
-                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
-                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
-                </div>
+        <apply-mater-list :actions="actions" :btnInfo="btnInfo" :show-materiel-pop="showMaterielPop" 
+                          :matter-pop-config="matterPopConfig" :matter-params="matterParams"
+                          :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" 
+                          :matter-list="matterList" :show-delete="showDelete" :show-selIcon="showSelIcon" :matter-modify-class="matterModifyClass" 
+                          :addMatter="addMatter" :sel-matter="selMatter" :modify-matter="modifyMatter" :del-click="delClick">
+          <template slot="info" slot-scope="{item}">
+            <div class='mater_other'>
+              <div>
+                <span v-if="item.price" class="price">
+                  标准价格: <span class="mater_price"><span class="symbol">￥</span>{{item.price}}</span>
+                </span>
+                <span v-if="item.specialReservePrice" class="price">
+                  特批底价: <span class="mater_price"><span class="symbol">￥</span>{{item.specialReservePrice}}</span>
+                </span>
               </div>
             </div>
           </template>
-          <!-- 新增更多 按钮 -->
-          <div class="handle_part vx-1px-t" v-if="matterList.length && !matterModifyClass">
-            <span class="add_more stop" v-if="this.actions.includes('stop')"
-                  @click="stopOrder">终止提交</span>
-            <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
-            <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
-          </div>
-          <!-- 物料popup -->
-          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :config="matterPopConfig" 
-                           :matter-params="matterParams" :default-value="matterList" ref="matter"></pop-matter-list>
-        </div>
+
+        </apply-mater-list>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
@@ -96,25 +56,25 @@
 
 <script>
 // vux组件引入
-import { Icon, Group, Picker, XInput, XTextarea, dateFormat, PopupPicker } from 'vux'
+import { Icon, XTextarea, dateFormat } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { submitAndCalc, saveAndStartWf, getDictByType, saveAndCommitTask } from 'service/commonService'
+import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
 // mixins 引入
 import ApplyCommon from 'pageMixins/applyCommon'
 // 组件引入
 import RPicker from 'components/RPicker'
-import PopMatterList from 'components/Popup/PopMatterListTest'
 import PopMatter from 'components/apply/commonPart/MatterPop'
-import UploadFile from 'components/upload/UploadFile'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
-import { toFixed } from '@/plugins/calc'
+import ApplyMaterList from 'components/apply/commonPart/materialsList'
+
+// import { toFixed } from '@/plugins/calc'
 const DRAFT_KEY = 'CPJG_DATA';
 export default {
+  mixins: [ApplyCommon],
   data() {
     return {
       transCode: '',
-      currentType: '',
       formData: {
         biId: '',
         biComment: '',
@@ -123,35 +83,12 @@ export default {
       priceMap: {},
       matterList: [], // 物料列表
       showMaterielPop: false, // 是否显示物料的popup
-      validateMap: [
-        {
-          key: 'drDealerLabel',
-          message: '请选择客户类型'
-        },
-        {
-          key: 'qtyDownline',
-          message: '请填写数量下线'
-        },
-        {
-          key: 'qtyOnline',
-          message: '请填写数量上线'
-        },
-        {
-          key: 'price',
-          message: '请填写标准价格'
-        },
-        {
-          key: 'specialReservePrice',
-          message: '请填写特批底价'
-        }
-      ],
     }
   },
   components: {
-    Icon, Group, Picker, XInput, RPicker, XTextarea, PopupPicker,
-    PopMatterList, PopMatter, UploadFile, PopBaseinfo
+    Icon, RPicker, XTextarea, 
+    PopMatter, PopBaseinfo, ApplyMaterList
   },
-  mixins: [ApplyCommon],
   methods: {
     // 滑动删除
     delClick (index, sItem) {
@@ -195,17 +132,18 @@ export default {
     },
     // TODO 点击增加更多物料
     addMatter () {
-      this.matterList.forEach(item => {
-        // 存储已输入的价格
-        this.priceMap[item.inventoryCode] = {
-          price: item.price,  // 标准价格
-          qtyOnline: item.qtyOnline,  // 数量上线
-          qtyDownline: item.qtyDownline,  // 数量下线
-          drDealerLabel: item.drDealerLabel,  // 客户类型
-          specialReservePrice: item.specialReservePrice,
-        };
-      });
-      this.showMaterielPop = !this.showMaterielPop
+      // this.matterList.forEach(item => {
+      //   // 存储已输入的价格
+      //   this.priceMap[item.inventoryCode] = {
+      //     price: item.price,  // 标准价格
+      //     qtyOnline: item.qtyOnline,  // 数量上线
+      //     qtyDownline: item.qtyDownline,  // 数量下线
+      //     drDealerLabel: item.drDealerLabel,  // 客户类型
+      //     specialReservePrice: item.specialReservePrice,
+      //   };
+      // });
+      this.showPop = !this.showPop;
+      // this.showMaterielPop = !this.showMaterielPop
     },
     // TODO 选中物料项
     selMatter (val) {
@@ -215,8 +153,8 @@ export default {
         item.price = defaultValue.price || '';
         item.qtyOnline = defaultValue.qtyOnline || '';
         item.qtyDownline = defaultValue.qtyDownline || '';
-        item.specialReservePrice = defaultValue.specialReservePrice || '';
         item.drDealerLabel = defaultValue.drDealerLabel || [];
+        item.specialReservePrice = defaultValue.specialReservePrice || '';
       });
       this.priceMap = {};
       this.matterList = [...sels];
@@ -238,20 +176,22 @@ export default {
       }
       if (!warn) {
         this.matterList.every(item => {
-          this.validateMap.every(vItem => {
-            if ((Array.isArray(item[vItem.key]) && !item[vItem.key].length) || !item[vItem.key]) {
-              warn = vItem.message;
+          this.matterEditConfig.editPart.every(vItem => {
+            if(!vItem.hiddenInRun && !vItem.allowBlank) {
+              if ((Array.isArray(item[vItem.fieldCode]) && !item[vItem.fieldCode].length) || !item[vItem.fieldCode]) {
+                warn = `${vItem.text}不能为空`;
+              }
+              return !warn
             }
-            return !warn
           });
           let mItem = {
+            comment: '',
+            price: item.price,
+            qtyOnline: item.qtyOnline,
+            qtyDownline: item.qtyDownline,
             transObjCode: item.inventoryCode,
             drDealerLabel: item.drDealerLabel[0],
-            qtyDownline: item.qtyDownline,
-            qtyOnline: item.qtyOnline,
-            price: item.price,
-            specialReservePrice: item.specialReservePrice,
-            comment: ''
+            specialReservePrice: item.specialReservePrice
           };
           if (this.transCode) {
             mItem.tdId = item.tdId || '';
@@ -273,17 +213,15 @@ export default {
           this.$HandleLoad.show();
           let operation = saveAndStartWf;
           let formData = {
-            creator: this.formData.handler,
             ...this.formData,
+            order: { dataSet },
+            creator: this.formData.handler,
             modifer: this.formData.handler,
             handlerEntity: this.entity.dealerName,
-            order: {
-              dataSet
-            }
           };
           let submitData = {
-            listId: this.listId,
             biComment: '',
+            listId: this.listId,
             formData: JSON.stringify(formData),
             wfPara: JSON.stringify({
               [this.processCode]: {
@@ -300,8 +238,8 @@ export default {
               businessKey: this.transCode,
               createdBy: formData.creator,
               transCode: this.transCode,
-              result: 3,
               taskId: this.taskId,
+              result: 3,
               comment: ''
             });
           }

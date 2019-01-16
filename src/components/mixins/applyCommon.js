@@ -1,7 +1,7 @@
 import {commitTask, getBaseInfoData, getProcess, getProcessStatus, getFormConfig, requestData, getFormViews} from 'service/commonService'
 import {getListId, isMyflow, getSaleQuotePrice,} from 'service/detailService'
 import {getAppDetail} from 'service/appSettingService'
-import {numberComma,} from 'vux'
+import {numberComma} from 'vux'
 import Bscroll from 'better-scroll'
 import {accAdd, accMul, accSub, accDiv} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
@@ -9,7 +9,7 @@ import platfrom from '@/plugins/platform/index'
 import MatterItem from 'components/apply/commonPart/MatterItem'
 import UploadFile from 'components/upload/UploadFile'
 /* 引入微信相关 */
-import {register} from 'plugins/wx'
+import { register } from 'plugins/wx'
 import { shareContent } from 'plugins/wx/api'
 
 export default {
@@ -56,7 +56,7 @@ export default {
     }
   },
   components: {
-    MatterItem,UploadFile
+    UploadFile, MatterItem
   },
   computed: {
     // 税金

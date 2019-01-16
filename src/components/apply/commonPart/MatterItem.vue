@@ -33,16 +33,7 @@
           
         </span>
       </div>
-      <slot name="info" :item="item">
-        <!-- 物料属性和单位 -->
-        <!-- <div class='mater_more'>
-          <span class='unit'>属性: {{item.processing}}</span>
-          <span class='unit'>单位: {{item.measureUnit}}</span>
-          <span class='unit'>辅助计量: {{item.invSubUnitName}}</span>
-          <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate | percent}}</span>
-          <span class='unit'>辅助计量说明: {{item.invSubUnitComment}}</span>
-        </div> -->
-      </slot>
+      <slot name="info" :item="item"></slot>
       <slot name="edit" :item="item">
         <div class='mater_other' @click="modifyMatter" v-if="hideEdit && !showDelete">
           <div class="edit-tips">点击进行填写</div>

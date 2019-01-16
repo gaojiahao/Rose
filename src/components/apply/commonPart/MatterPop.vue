@@ -102,7 +102,7 @@
         <div class='confirm'>确认</div>
       </div>
     </popup>
-    <x-dialog class="dialog-view" v-if="modifyMatter.qtyOnline" v-model="showDialog" hide-on-blur>
+    <x-dialog class="dialog-view" v-if="modifyMatter.otherField" v-model="showDialog" hide-on-blur>
       <div class="tip-top">
         <p class="header_content">温馨提示</p>
         <p class="header_btn_tips">订单折合包装比：{{modifyMatter.assMeasureScale}}</p>
