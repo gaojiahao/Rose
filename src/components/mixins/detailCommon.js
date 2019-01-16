@@ -341,7 +341,7 @@ export default {
     },
     // TODO 请求配置
     getFormConfig() {
-      return getFormConfig(this.formViewUniqueId).then(({config = []}) => {
+      return getFormConfig(this.formViewUniqueId).then(({config = [], dataSource = '[]'}) => {
         // console.log(config)
         let dealerConfig = [], matterConfig = [], otherConfig = [];
         let dealerFilter = [
@@ -369,6 +369,13 @@ export default {
           'specification_outPutMatCode',
         ];
         let orderInfo = this.orderInfo;
+        let [matterData = {}] = JSON.parse(dataSource);
+        let matterSource = matterData.dataSource && JSON.parse(matterData.dataSource.source) || {};
+        let matterCols = matterSource.cols || []; // 数据源列
+        let dataIndexMap = {}; // 映射表
+        let hasDataIndexMap = false; // 是否存在映射表
+        let hideOrderTitle = false; // 是否隐藏订单号
+
         // 从请求回来的配置中拆分往来，物料，其他段落的配置
         config.forEach(item => {
           if (!item.isMultiple) {
@@ -381,9 +388,11 @@ export default {
           } else {
             if (item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
               matterConfig = item.items;
+              dataIndexMap = item.dataIndexMap || {};
+              hasDataIndexMap = !!Object.keys(dataIndexMap).length;
             }
           }
-        })
+        });
         this.judgeDealerConfig && this.judgeDealerConfig(dealerConfig);
         // 处理往来配置里面的接口请求
         dealerConfig = dealerConfig.reduce((arr, item) => {
@@ -396,28 +405,41 @@ export default {
         /*console.log('---------------dealerConfig------------------')
         console.log(dealerConfig)
         console.log('---------------dealerConfig end------------------')*/
+
         this.dealerConfig = dealerConfig;
 
         /*console.log('---------------matterConfig------------------')
         console.log(matterConfig)
         console.log('---------------matterConfig end------------------')*/
-        matterConfig = matterConfig.reduce((arr, item) => {
+
+        matterConfig = matterConfig.reduce((arr, item, index) => {
+          let key = dataIndexMap[item.fieldCode];
+          let matchedCol = matterCols.find(col => col.k === key);
+          // 判断是否存在映射关系，若有映射关系，则判断是否有该字段且判断字段是否隐藏，没有映射关系则直接展示
+          let needShow = key ? (matchedCol ? !matchedCol.h : false) : true;
           if (item.fieldCode === 'transMatchedCode') {
             this.orderTitle = item.text;
+            hideOrderTitle = hasDataIndexMap && !(key && matchedCol && !matchedCol.h);
           }
-          if (!item.hidden && !matterFilter.includes(item.fieldCode)) {
+          if (!item.hidden && !matterFilter.includes(item.fieldCode) && needShow) {
             arr.push(item);
           }
           return arr
         }, []);
+        let listData = [];
         if (Object.values(this.orderList).length) {
-          let orderList = Object.values(this.orderList).reduce((arr, item) => {
+          listData = Object.values(this.orderList).reduce((arr, item) => {
             return [...arr, ...item]
           }, []);
-          this.setMatterConfig(orderList, matterConfig);
+          if (hideOrderTitle) {
+            this.orderList = {
+              undefined: listData,
+            }
+          }
         } else if (this.matterList.length) {
-          this.setMatterConfig(this.matterList, matterConfig);
+          listData = this.matterList;
         }
+        this.setMatterConfig(listData, matterConfig);
         // this.matterConfig = matterConfig;
         // 处理其他信息的配置
         /*let other = [];
