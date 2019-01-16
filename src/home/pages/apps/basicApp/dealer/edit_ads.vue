@@ -59,7 +59,8 @@
         </template>
       </div>
       <!-- 重复项 -->
-      <div class="duplicate-wrapper" v-for="(item, index) in dealerDuplicateConfig" :key="`${item.name}+${index}`">
+      <duplicate-component :config="dealerDuplicateConfig" :defaultValue="dealerDuplicateData" v-model="dealerDuplicateData"></duplicate-component>
+      <!-- <div class="duplicate-wrapper" v-for="(item, index) in dealerDuplicateConfig" :key="`${item.name}+${index}`">
         <div class="title" v-if="dealerDuplicateData[item.name] && !dealerDuplicateData[item.name].length">
           <div class="each_property">
             <label>{{item.title}}</label>
@@ -69,25 +70,25 @@
         <template v-else-if="dealerDuplicateData[item.name] && dealerDuplicateData[item.name].length">
           <div class="duplicate-item" :class="{'has_border' : sIndex > 0}" v-for="(sItem, sIndex) in dealerDuplicateData[item.name]" :key="sIndex">
             <div v-for="(dItem,dIndex) in item.items"  :key="dIndex"  :class="{'vux-1px-b': dIndex < item.items.length-1}">
-              <template v-if="!dItem.readOnly">
+              <template v-if="!dItem.readOnly"> -->
                 <!-- 下拉框 -->
-                <r-picker :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
+                <!-- <r-picker :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
                         v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank" 
                         @on-change="onChange($event, index, dItem, sItem)"
                         v-if="dItem.editorType === 'r2Combo'">
-                </r-picker>
+                </r-picker> -->
                 <!-- 输入框（数字） -->
-                <div class='each_property ' v-if="dItem.editorType === 'r2Numberfield'">
+                <!-- <div class='each_property ' v-if="dItem.editorType === 'r2Numberfield'">
                   <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
                   <input type='number' v-model.number="sItem[dItem.fieldCode]" placeholder="请输入" class='property_val' />
-                </div>
+                </div> -->
                 <!-- 输入框（文字） -->
-                <div class='each_property' v-if="dItem.editorType === 'r2Textfield'">
+                <!-- <div class='each_property' v-if="dItem.editorType === 'r2Textfield'">
                   <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
                   <input type='text' v-model="sItem[dItem.fieldCode]" placeholder="请输入" class='property_val' />
-                </div>
+                </div> -->
                 <!-- 日期 -->
-                <div class='each_property' v-if="dItem.editorType === 'r2Datefield'" @click="getDate(sItem,dItem)">
+                <!-- <div class='each_property' v-if="dItem.editorType === 'r2Datefield'" @click="getDate(sItem,dItem)">
                   <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
                   <span class='property_val'>{{sItem[dItem.fieldCode] || "请选择"}}</span>
                 </div>
@@ -109,7 +110,7 @@
           <span class='delete' @click="deleteMoreUnit(item)" v-show="dealerDuplicateData[item.name].length > 1">删除</span>
         </div> 
        
-      </div>
+      </div> -->
     </r-scroll>
     <!--往来类型的列表-->
     <div v-transfer-dom>
@@ -147,6 +148,7 @@ import RPicker from 'components/basicPicker';
 import common from 'mixins/common.js'
 import RScroll from 'components/RScroll'
 import UploadImage from 'components/UploadImage'
+import duplicateComponent from '../../../components/duplication'
 
 export default {
   data() {
@@ -254,7 +256,8 @@ export default {
     RScroll,
     UploadImage,
     XInput,
-    Datetime
+    Datetime,
+    duplicateComponent
   },
   methods: {
     // TODO 上传图片成功触发
