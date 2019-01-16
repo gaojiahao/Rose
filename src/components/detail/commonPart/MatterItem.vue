@@ -28,8 +28,8 @@
           </div>
           <i class="icon-more"></i>
         </div>
-        <div class="matter_info_item matter_price_top" v-if="hasData('noTaxPrice') || hasData('assistQty')">
-          <span class="matter_no_tax" v-if="hasData('noTaxPrice')">￥{{item.noTaxPrice | toFixed | numberComma}}</span>
+        <div class="matter_info_item matter_price_top" v-if="hasData('price') || hasData('assistQty')">
+          <span class="matter_no_tax" v-if="hasData('price')">￥{{item.price | toFixed | numberComma}}</span>
           <span class="matter_qty" v-if="item.assistQty">x{{item.assistQty | toFixed}}</span>
         </div>
         <div class="matter_info_item" :class="{spillover: `${item.tdAmount}`.length > 6}"
