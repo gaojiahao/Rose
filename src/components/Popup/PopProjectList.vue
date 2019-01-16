@@ -9,7 +9,7 @@
                   :no-data="!hasNext && !projectList.length" @on-pulling-up="onPullingUp"
                    ref="bScroll">
           <div class="each_mater box_sd" v-for="(item, index) in projectList" :key='index'
-               @click.stop="selThis(item,index)">
+               @click.stop="selThis(item, index)">
             <div class="mater_main ">
               <!-- 物料名称 -->
               <div class="project_name">

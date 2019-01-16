@@ -21,7 +21,7 @@
         </div>
       </div>
       <div class="dealer_other">
-        <div class="each_property" :class="{'vux-1px-b': index < dealerConfig.length-1 }" v-for="(item,index) in dealerConfig" :key="index">
+        <div class="each_property" :class="{'vux-1px-b': index < dealerConfig.length-1 }" v-for="(item, index) in dealerConfig" :key="index">
           <label>{{item.fieldLabel}}:</label>
           <div class='property_val'>{{dealer[item.fieldCode] || "无"}}</div>
         </div>

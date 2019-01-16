@@ -184,3 +184,18 @@
   background: url('~assets/iconfont/icon_edit.png');
   background-size: cover;
 }
+
+.icon-pic-add{
+  background: url('~assets/iconfont/icon_pic_add.png');
+  background-size: cover;
+}
+
+.icon-mobile{
+  background: url('~assets/iconfont/mobile.png');
+  background-size: cover;
+}
+
+.icon-phone{
+  background: url('~assets/iconfont/phone.png');
+  background-size: cover;
+}

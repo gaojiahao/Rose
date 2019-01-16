@@ -32,8 +32,8 @@
               <div class="each_mater"
                    :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1}"
                    v-for="(item, index) in matterList" :key='index'>
-                <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass"
-                             @click.native="delClick(item,index)" :config="matterEditConfig.property">
+                <matter-item :item="item" @on-modify="modifyMatter(item, index)" :show-delete="matterModifyClass"
+                             @click.native="delClick(item, index)" :config="matterEditConfig.property">
                   <template slot="info" slot-scope="{item}">
                     <!-- 物料数量和价格 -->
                     <div class='mater_other' v-if="item.price && item.tdQty">
@@ -47,13 +47,13 @@
                     </div>
                   </template>
                   <template slot="editPart" slot-scope="{item}">
-                    <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)"
+                    <div class="edit-part vux-1px-l" @click="modifyMatter(item, index)"
                          v-show="(item.price && item.tdQty) &&!matterModifyClass">
                       <span class='iconfont icon-bianji1'></span>
                     </div>
                   </template>
                 </matter-item>
-                <div class='delete_icon' @click="delClick(item,index)" v-if='matterModifyClass'>
+                <div class='delete_icon' @click="delClick(item, index)" v-if='matterModifyClass'>
                   <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                   <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
                 </div>

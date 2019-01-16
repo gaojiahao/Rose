@@ -25,7 +25,7 @@
       <popup v-model="pickerStatus" position="bottom" height="50%" class="trade_pop_part"  @on-show="onShow">
         <div class="trade_pop">
           <r-scroll class='scope_list' :options="scrollOptions" ref="bScroll">
-            <div v-for='(item,index) in scopeList' :key='index' class='scope_type vux-1px-b' @click="selectType(item)">
+            <div v-for='(item, index) in scopeList' :key='index' class='scope_type vux-1px-b' @click="selectType(item)">
               <div class='scope_name'>{{item.name}}</div>
               <div class='checked' v-show='showSelIcon(item)'>
                 <x-icon type="ios-checkmark-empty" size="25"></x-icon>

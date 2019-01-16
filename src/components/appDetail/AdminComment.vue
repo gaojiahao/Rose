@@ -7,7 +7,7 @@
     <div class="no_data" v-if="!adminCommentList.length">暂无评论</div>
     <div class="admin-comment-container swiper-container" :class="{'no_swiper' : !adminCommentList.length}">
       <div class="swiper-wrapper">
-        <div class="swiper-slide" v-for="(item,index) in adminCommentList" :key="index" v-if="index < 5" >
+        <div class="swiper-slide" v-for="(item, index) in adminCommentList" :key="index" v-if="index < 5" >
           <div class="each_comment" @click="goPop(index)">
             <div class="user_photo">
               <img :src="item.photo" @error="getUserDefault(item)"/>
@@ -46,7 +46,7 @@
             <div class="title vux-1px-b">
               管理员自评
             </div>
-            <div class="each_comment vux-1px-b" :class="{visited: index === seletedIndex}" v-for="(item,index) in adminCommentList" :key="index" ref='eachComment'>
+            <div class="each_comment vux-1px-b" :class="{visited: index === seletedIndex}" v-for="(item, index) in adminCommentList" :key="index" ref='eachComment'>
               <div class="user_photo">
                 <img :src="item.photo" @error="getUserDefault(item)"/>
               </div>

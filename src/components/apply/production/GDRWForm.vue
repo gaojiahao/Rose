@@ -37,7 +37,7 @@
                 <span class="info-item">派工总数: {{item.productDemandQty}}</span>
                 <span class="info-item">工序可派工: {{item.thenQtyBal}}</span>
               </div>
-              <x-input text-align='right' placeholder='请填写' type='number' @on-blur="checkAmt(item,index)"
+              <x-input text-align='right' placeholder='请填写' type='number' @on-blur="checkAmt(item, index)"
                        @on-focus="getFocus($event)" v-model.number='item.tdQty'>
                 <template slot="label">
                   <span class="required">派工数量</span>
@@ -53,7 +53,7 @@
                   <span class='required'>组长</span>
                 </template>
               </cell>
-              <x-input title="工人数量" text-align='right' placeholder='请填写' type='number' @on-blur="checkAmt(item,index)"
+              <x-input title="工人数量" text-align='right' placeholder='请填写' type='number' @on-blur="checkAmt(item, index)"
                        @on-focus="getFocus($event)" v-model.number='item.numberWorkers'>
               </x-input>
               <cell v-model="item.facilityName_facilityObjCode" title="设施" isLink @click.native="showFacility(index)">
@@ -161,7 +161,7 @@ export default {
     // 选择工序
     selWork (val) {
       this.workInfo = JSON.parse(val);
-      this.workInfo.forEach((item,index) => {
+      this.workInfo.forEach((item, index) => {
         // 数量赋初始值
         item.tdQty = item.thenQtyBal;
       })

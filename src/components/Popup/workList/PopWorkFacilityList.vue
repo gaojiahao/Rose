@@ -11,7 +11,7 @@
         <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
           <div class="pop-mater-list-item box_sd" v-for="(item, index) in listData" :key='index'
-                @click.stop="selThis(item,index)">
+                @click.stop="selThis(item, index)">
             <div class="pop-list-main ">
               <div class="pop-list-info">
                 <!--联系人电话 -->

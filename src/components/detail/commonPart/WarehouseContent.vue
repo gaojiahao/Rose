@@ -4,7 +4,7 @@
       <div class="warehouse_title vux-1px-l">仓库信息</div>
       <div class="warehouse_switch" v-if="warehouseList.length > 1">
         <div class="warehouse_switch_item" :class="{active: activeIndex === index}"
-             v-for="(item, index) in warehouseList" @click="warehouseChange(item,index)">
+             v-for="(item, index) in warehouseList" @click="warehouseChange(item, index)">
           {{item.warehouseAction}}
         </div>
       </div>

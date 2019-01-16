@@ -11,7 +11,7 @@
       <r-scroll class="list_wrapper":options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class='each_duty' v-for='(item,index) in listData' :key='index' @click="getFlow(item)">
+        <div class='each_duty' v-for='(item, index) in listData' :key='index' @click="getFlow(item)">
           <!-- 存货顶部信息栏 -->
           <div class="duty_top vux-1px-b">
               <div class="warehouse_info">

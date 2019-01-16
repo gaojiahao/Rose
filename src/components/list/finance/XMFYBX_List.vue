@@ -20,7 +20,7 @@
             </div>
             <!-- 主要信息 -->
             <div class="content_part">{{item.projectName_project}}</div>
-            <div v-for="(sItem,index) in item.detailItem">
+            <div v-for="(sitem, index) in item.detailItem">
               <div class="content_part">{{sItem.costName_expCode}}</div>
               <div class="other_info_part">
                 <p class="info_with_comment">费用类型: {{sItem.costType_expCode || '暂无'}}</p>

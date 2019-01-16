@@ -41,7 +41,7 @@
           <div class="mater_list" ref="dealer">
             <div class="mater_list_wrapper">
               <div class="each_mater box_sd" v-for="(item, index) in dealerList" :key="index"
-                   @click.stop="selDealer(item,index)">
+                   @click.stop="selDealer(item, index)">
                 <div class="mater_main ">
                   <div class="mater_info">
                     <!--联系人电话 -->
