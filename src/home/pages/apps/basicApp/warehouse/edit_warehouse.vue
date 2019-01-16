@@ -43,55 +43,8 @@
         </template>
       </div>
       <!-- 重复项 -->
-      <div class="duplicate-wrapper"  v-for="(item, index) in warehouseDuplicateConfig" :key="`${item.name}+${index}`">
-        <div class="title" v-if="warehouseDuplicateData[item.name] && !warehouseDuplicateData[item.name].length">
-          <div class="each_property">
-            <label>{{item.title}}</label>
-            <span class="add" @click="addMoreUnit(item)">新增</span>
-          </div>
-        </div>
-        <template v-else-if="warehouseDuplicateData[item.name] && warehouseDuplicateData[item.name].length">
-           <div class="duplicate-item" :class="{'has_border' : sIndex > 0}" v-for="(sItem, sIndex) in warehouseDuplicateData[item.name]" :key="sIndex">
-            <div v-for="(dItem,dIndex) in item.items"  :key="dIndex" :class="{'vux-1px-b': dIndex < item.items.length-1}">
-              <template v-if="!dItem.readOnly">
-                <!-- 下拉框 -->
-                <r-picker :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
-                          v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank"
-                        v-if="dItem.editorType === 'r2Combo' || dItem.editorType === 'r2Selector'">
-                </r-picker>
-                <!-- 输入框（数字） -->
-                <div class='each_property' v-if="dItem.editorType === 'r2Numberfield'">
-                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
-                  <input type='number' v-model.number="sItem[dItem.fieldCode]" placeholder="请填写" class='property_val' />
-                </div>
-                <!-- 输入框（文字） -->
-                <div class='each_property' v-if="dItem.editorType === 'r2Textfield'">
-                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
-                  <input type='text' v-model="sItem[dItem.fieldCode]" placeholder="请填写" class='property_val' />
-                </div>
-                <!-- 日期 -->
-                <div class='each_property vux-1px-t' v-if="dItem.editorType === 'r2Datefield'" @click="getDate(sItem,dItem)">
-                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
-                  <span class='property_val'>{{sItem[dItem.fieldCode] || "请选择"}}</span>
-                </div>
-              </template>
-              <template v-else>
-                <div class='each_property readOnly'>
-                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
-                  <span class='property_val'>{{sItem[dItem.fieldCode]}}</span>
-                </div>
-              </template>
-            </div>
-
-          </div>
-        </template>
-        <div class="add_more" v-show="warehouseDuplicateData[item.name] && warehouseDuplicateData[item.name].length">
-          您还需要添加新的{{item.title}}?请点击
-          <span class='add' @click="addMoreUnit(item)">新增</span>
-          <em v-show="warehouseDuplicateData[item.name] && warehouseDuplicateData[item.name].length > 1">或</em>
-          <span class='delete' @click="deleteMoreUnit(item)" v-show="warehouseDuplicateData[item.name] && warehouseDuplicateData[item.name].length > 1">删除</span>
-        </div> 
-      </div>
+      <duplicate-component :config="warehouseDuplicateConfig" :defaultValue="warehouseDuplicateData" 
+                          v-model="warehouseDuplicateData"></duplicate-component>
     </r-scroll>
     <!--员工，组织，客户等的pop-->
     <!-- <pop-warelabe-list :show="showPop" :data="typeSubMap[typeSub].list" v-model="showPop"
@@ -112,6 +65,7 @@
   import common from 'mixins/common.js'
   import UploadImage from 'components/UploadImage'
   import PopWarelabeList from 'components/Popup/PopWarelabelList'
+  import duplicateComponent from '../../../components/duplication'
   export default {
     data() {
       return {
@@ -182,7 +136,7 @@
     mixins: [common],
     components: {
       Picker, Popup, Group, RPicker, XAddress, Icon,
-      UploadImage, PopWarelabeList, RScroll, Cell, Datetime
+      UploadImage, PopWarelabeList, RScroll, Cell, Datetime, duplicateComponent
     },
     watch: {
       warehouseType(val){
@@ -298,29 +252,6 @@
           };
           this.warehouse.warehouseCity = this.AccountAddress[1];
         }
-      },
-      // 选择日期
-      getDate(sItem, dItem){
-        this.$vux.datetime.show({
-          value: '', // 其他参数同 props
-          confirmText: '确认',
-          cancelText: '取消',
-          onConfirm: (val)=> {
-            sItem[dItem.fieldCode] = val;
-          },
-        })
-      },
-      // TODO 新增重复项
-      addMoreUnit(item) {
-        let obj = {};
-        item.items.forEach(item => {
-            obj[item.fieldCode] = ''
-        })
-        this.warehouseDuplicateData[item.name].push(obj);
-      },
-      // TODO 删除重复项
-      deleteMoreUnit(item) {
-        this.warehouseDuplicateData[item.name].pop()
       },
       //提交
       submit() {

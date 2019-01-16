@@ -60,57 +60,6 @@
       </div>
       <!-- 重复项 -->
       <duplicate-component :config="dealerDuplicateConfig" :defaultValue="dealerDuplicateData" v-model="dealerDuplicateData"></duplicate-component>
-      <!-- <div class="duplicate-wrapper" v-for="(item, index) in dealerDuplicateConfig" :key="`${item.name}+${index}`">
-        <div class="title" v-if="dealerDuplicateData[item.name] && !dealerDuplicateData[item.name].length">
-          <div class="each_property">
-            <label>{{item.title}}</label>
-            <span class="add" @click="addMoreUnit(item)">新增</span>
-          </div>
-        </div>
-        <template v-else-if="dealerDuplicateData[item.name] && dealerDuplicateData[item.name].length">
-          <div class="duplicate-item" :class="{'has_border' : sIndex > 0}" v-for="(sItem, sIndex) in dealerDuplicateData[item.name]" :key="sIndex">
-            <div v-for="(dItem,dIndex) in item.items"  :key="dIndex"  :class="{'vux-1px-b': dIndex < item.items.length-1}">
-              <template v-if="!dItem.readOnly"> -->
-                <!-- 下拉框 -->
-                <!-- <r-picker :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
-                        v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank" 
-                        @on-change="onChange($event, index, dItem, sItem)"
-                        v-if="dItem.editorType === 'r2Combo'">
-                </r-picker> -->
-                <!-- 输入框（数字） -->
-                <!-- <div class='each_property ' v-if="dItem.editorType === 'r2Numberfield'">
-                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
-                  <input type='number' v-model.number="sItem[dItem.fieldCode]" placeholder="请输入" class='property_val' />
-                </div> -->
-                <!-- 输入框（文字） -->
-                <!-- <div class='each_property' v-if="dItem.editorType === 'r2Textfield'">
-                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
-                  <input type='text' v-model="sItem[dItem.fieldCode]" placeholder="请输入" class='property_val' />
-                </div> -->
-                <!-- 日期 -->
-                <!-- <div class='each_property' v-if="dItem.editorType === 'r2Datefield'" @click="getDate(sItem,dItem)">
-                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
-                  <span class='property_val'>{{sItem[dItem.fieldCode] || "请选择"}}</span>
-                </div>
-              </template>
-              <template v-else>
-                <div class='each_property readOnly'>
-                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
-                  <span class='property_val'>{{sItem[dItem.fieldCode]}}</span>
-                </div>
-              </template>
-              
-            </div>
-          </div>
-        </template>
-        <div class="add_more" v-show="dealerDuplicateData[item.name].length">
-          您还需要添加新的{{item.title}}?请点击
-          <span class='add' @click="addMoreUnit(item)">新增</span>
-          <em v-show="dealerDuplicateData[item.name].length > 1">或</em>
-          <span class='delete' @click="deleteMoreUnit(item)" v-show="dealerDuplicateData[item.name].length > 1">删除</span>
-        </div> 
-       
-      </div> -->
     </r-scroll>
     <!--往来类型的列表-->
     <div v-transfer-dom>
@@ -227,16 +176,16 @@ export default {
       let dealerLabelName = this.dealer.dealerLabelName;
       this.dealerDuplicateConfig.forEach(item => {
         if(item.name === 'deliveryAddresses'){
-          item.isHidden = false;
+          item.hiddenInRun = false;
           if(!dealerLabelName || (!dealerLabelName.includes('客户') && !dealerLabelName.includes('供应商') && !dealerLabelName.includes('加工商') 
             && !dealerLabelName.includes('渠道商') && !dealerLabelName.includes('服务商'))) {
-            item.isHidden = true
+            item.hiddenInRun = true
           }
         }
         if(item.name === 'dealerCertificateRel'){
-          item.isHidden = false;
+          item.hiddenInRun = false;
           if(!dealerLabelName || (!dealerLabelName.includes('生产商') && !dealerLabelName.includes('经销供应商'))) {
-            item.isHidden = true
+            item.hiddenInRun = true
           }
         } 
       })
@@ -333,17 +282,6 @@ export default {
           return
         }
         this.dealer.dealerLabelName += item.name
-      })
-    },
-    // 选择日期
-    getDate(sItem, dItem){
-      this.$vux.datetime.show({
-        value: '', // 其他参数同 props
-        confirmText: '确认',
-        cancelText: '取消',
-        onConfirm: (val)=> {
-          sItem[dItem.fieldCode] = val;
-        },
       })
     },
     // 校验字段
@@ -460,77 +398,6 @@ export default {
           return
         };
         this.dealer.city = this.AccountAddress[1];
-      }
-    },
-    // 选择省市区
-    onChange(val, index, dItem, sItem){
-      // 选择省，更新市，区数据
-      if(dItem.fieldCode === 'deliveryProvince'){
-        let cParentId = '', dParentId = '';
-        for(let item of this.dealerDuplicateConfig[index].items) {
-          if(item.fieldCode === 'deliveryProvince'){
-            for(let rItem of item.remoteData){
-              if(rItem.name === val){
-                cParentId = rItem.id;
-                break
-              }
-            }
-          }
-          if(item.fieldCode === 'deliveryCity') {
-            item.requestParams.data.parentId = cParentId;
-            requestData(item.requestParams).then(data => {
-              if(data.tableContent){
-                if(data.tableContent.length){
-                  data.tableContent.forEach(dItem => {
-                    dItem.originValue = dItem.value;
-                    dItem.value = dItem.name
-                  })
-                  sItem.deliveryCity = data.tableContent[0].name;
-                  dParentId = data.tableContent[0].originValue
-                }
-                else{
-                  sItem.deliveryCity = ''
-                }
-                item.remoteData = data.tableContent  
-              }
-            })
-            break
-          }
-        }
-      }
-      else if(dItem.fieldCode === 'deliveryCity'){
-        let dParentId = '';
-        for(let item of this.dealerDuplicateConfig[index].items) {
-          if(item.fieldCode === 'deliveryCity'){
-            for(let rItem of item.remoteData){
-              if(rItem.name === val){
-                dParentId = rItem.originValue;
-                break
-              }
-            }
-          }
-          if(item.fieldCode === 'deliveryCounty') {
-            item.requestParams.data.parentId = dParentId;
-            requestData(item.requestParams).then(data => {
-              if(data.tableContent){
-                if(data.tableContent.length){
-                  data.tableContent.forEach(dItem => {
-                    dItem.originValue = dItem.value;
-                    dItem.value = dItem.name
-                  })
-                  sItem.deliveryCounty = data.tableContent[0].name;
-                }
-                else{
-                  sItem.deliveryCounty = ''
-                }
-                item.remoteData = data.tableContent  
-              }
-            })
-            break
-          }
-          
-        }
-
       }
     },
     //提交
@@ -680,20 +547,6 @@ export default {
         this.submit();
       }
     },
-    // TODO 新增重复项
-    addMoreUnit(item) {
-      let obj = {};
-      item.items.forEach(item => {
-        if(!item.hidden){
-          obj[item.fieldCode] = ''
-        }
-      })
-      this.dealerDuplicateData[item.name].push(obj);
-    },
-    // TODO 删除重复项
-    deleteMoreUnit(item) {
-      this.dealerDuplicateData[item.name].pop()
-    },
     // 处理配置中的接口请求
     handlerParams(sItem) {
       let url = sItem.dataSource.data.url;
@@ -774,6 +627,7 @@ export default {
         })
         // 处理重复项配置
         dealerDuplicateConfig.forEach(item => {
+          item.hiddenInRun = false;
           // 给每个重复项添加标题
           switch(item.name){
             case 'deliveryAddresses':
