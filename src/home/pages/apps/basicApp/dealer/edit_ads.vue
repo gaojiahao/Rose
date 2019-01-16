@@ -116,7 +116,7 @@
       <popup v-model="pickerStatus" position="bottom" height="50%" class="trade_pop_part"  @on-show="onShow">
         <div class="trade_pop">
           <r-scroll class='dealer_list' :options="scrollOptions" ref="bScroll">
-            <div v-for='(item,index) in AccountRelType' :key='index' class='dealer_type vux-1px-b' @click="selectType(item)">
+            <div v-for='(item, index) in AccountRelType' :key='index' class='dealer_type vux-1px-b' @click="selectType(item)">
               <div class='dealer_name'>{{item.name}}</div>
               <div class='checked' v-show='showSelIcon(item)'>
                 <x-icon type="ios-checkmark-empty" size="30"></x-icon>

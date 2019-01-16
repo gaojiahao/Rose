@@ -14,7 +14,7 @@
         </div>
       </div>
       <div class="inventory_other has_margin">
-        <div class="each_property" :class="{'vux-1px-b': index < matterConfig.length-1 }" v-for="(item,index) in matterConfig" :key="index">
+        <div class="each_property" :class="{'vux-1px-b': index < matterConfig.length-1 }" v-for="(item, index) in matterConfig" :key="index">
           <label>{{item.fieldLabel}}:</label>
           <div class='property_val'>{{inventory[item.fieldCode] || "无"}}</div>
         </div>

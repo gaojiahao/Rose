@@ -36,8 +36,8 @@
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                  <matter-item :item="item" @on-modify="modifyMatter(item,index,key)" :show-delete="matterModifyClass"
-                             @click.native="delClick(item,index)" :config="matterEditConfig.property">
+                  <matter-item :item="item" @on-modify="modifyMatter(item, index,key)" :show-delete="matterModifyClass"
+                             @click.native="delClick(item, index)" :config="matterEditConfig.property">
                     <template slot="info" slot-scope="{item}">
                       <!-- 物料数量和价格 -->
                       <div class='mater_other' v-if="item.price && item.tdQty">

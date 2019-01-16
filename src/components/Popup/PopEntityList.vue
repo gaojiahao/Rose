@@ -21,7 +21,7 @@
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp"
                     ref="bScroll">
             <div class="each_mater box_sd" v-for="(item, index) in listData" :key='index'
-                 @click.stop="selThis(item,index)">
+                 @click.stop="selThis(item, index)">
               <div class="mater_main ">
                 <!-- 名称 -->
                 <div class="dealer_name">

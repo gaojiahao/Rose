@@ -16,7 +16,7 @@
           <span class="iconfont icon-mingxi1"></span>
           <span>工单信息</span>
         </div>
-        <div class="main_content" :class="{'has_border' : index > 0}" v-for="(item,index) in workInfo" :key="index">
+        <div class="main_content" :class="{'has_border' : index > 0}" v-for="(item, index) in workInfo" :key="index">
           <form-cell cellTitle='工序名称' :cellContent="item.procedureName_proPointCode"></form-cell>
           <form-cell cellTitle='工序编码' :cellContent="item.proPointCode"></form-cell>
            <form-cell cellTitle='物料名称' :cellContent="item.inventoryName_transObjCode || '无'"></form-cell>

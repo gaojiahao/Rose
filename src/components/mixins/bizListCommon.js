@@ -262,7 +262,7 @@ export default {
             property: key,
             operator: 'in'
           }
-          this.otherFilter[key].value.forEach((item,index) => {
+          this.otherFilter[key].value.forEach((item, index) => {
             let key = `value${index+1}`;
             obj[key] = item;
           })
@@ -296,25 +296,21 @@ export default {
           item.crtTime = dateFormat(item.crtTime, 'YYYY-MM-DD HH:mm:ss');
           item.modTime = dateFormat(item.modTime, 'YYYY-MM-DD HH:mm:ss');
           item.itemCount = item.detailItem.length;
-          // // 列表当中每个订单最多展现5个物料
+          // 列表当中每个订单最多展现3个物料
           item.detailItem = item.detailItem.slice(0, 3);
+          console.log('detailItem:', item.detailItem);
           item.detailItem.forEach(mItem => {
-            // mItem.tdAmount = 0;
-            // 重新计算tdAmount
+            // 计算totalQty
             if(mItem.assistQty != null){
-              // mItem.tdAmount = toFixed(accMul(mItem.price, mItem.assistQty));
               item.totalQty = toFixed(accAdd(item.totalQty, mItem.assistQty));
             }
             else if(mItem.assistQty == null && mItem.tdQty != null) {
-              // 没有税率
-              // mItem.tdAmount = toFixed(accMul(mItem.price, mItem.tdQty));
-              // // 有税率
-              // if(mItem.taxAmount){
-              //   mItem.tdAmount = toFixed(accAdd(accMul(mItem.price, mItem.tdQty), mItem.taxAmount));
-              // }
               item.totalQty = toFixed(accAdd(item.totalQty, mItem.tdQty));
             }
-            item.count = toFixed(accAdd(item.count, mItem.tdAmount));
+            // 有的应用不涉及金额合计 则不用计算
+            if(mItem.tdAmount) {
+              item.count = toFixed(accAdd(item.count, mItem.tdAmount));
+            }
             // 有物料的增加统一渲染字段
             if(mItem.inventoryName_transObjCode || mItem.inventoryName_outPutMatCode){
               mItem.inventoryName = mItem.inventoryName_transObjCode || mItem.inventoryName_outPutMatCode ;
@@ -341,7 +337,7 @@ export default {
             }
           })
         });
-        this.listData = this.page === 1 ? instanceList : this.listData.concat(instanceList);
+        this.listData = this.page === 1 ? instanceList : [...instanceList, ...this.listData];
         if (!noReset) {
           this.$nextTick(() => {
             this.resetScroll();

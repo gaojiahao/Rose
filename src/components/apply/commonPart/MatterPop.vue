@@ -30,45 +30,16 @@
                 </div>
               </div>
               <div class="mater_more">
-                <span v-for="(item,index) in config.property">
+                <span v-for="(item, index) in config.property" :key="index">
                   {{item.text}}: 
                   <span v-if="item.showFieldCode">
                     {{modifyMatter[item.showFieldCode] != null && modifyMatter[item.showFieldCode] !== ""  ?  modifyMatter[item.showFieldCode] : "无"}}
                   </span>
                   <span v-else>
                    {{modifyMatter[item.fieldCode] != null && modifyMatter[item.fieldCode] !== ""  ?  modifyMatter[item.fieldCode] : "无"}}
-                  </span>
-                  
+                  </span> 
                 </span>
               </div>
-              <!-- 设施 -->
-              <!-- <template v-if="modifyMatter.facilityName">
-                <div class="mater_more">
-                  <span class="processing">类型: {{modifyMatter.facilityType}}</span>
-                  <span>大类: {{modifyMatter.facilityBigType || "无"}}</span>
-                  <span>子类: {{modifyMatter.facilitySubclass || "无"}}</span>
-                  <span class='unit'>单位: {{modifyMatter.facilityUnit}}</span>
-                </div>
-                <div class="mater_more">
-                  <slot name="qtyBal" :modifyMatter="modifyMatter"></slot>
-                </div>
-              </template>
-              <template v-else>
-                <div class="mater_more">
-                  <slot name="qtyBal" :modifyMatter="modifyMatter">
-                      <div>
-                        <span class="processing">属性: {{modifyMatter.processing || "无"}}</span>
-                        <span class='unit'>单位: {{modifyMatter.measureUnit}}</span>
-                        <span class='mater_color'>颜色: {{modifyMatter.inventoryColor || "无"}}</span>
-                      </div>
-                      <div>
-                        <span>大类: {{modifyMatter.inventoryTypen || "无"}}</span>
-                        <span>子类: {{modifyMatter.inventorySubclass || "无"}}</span>
-                        <span v-show="modifyMatter.qtyBal">余额: {{modifyMatter.qtyBal}}</span>
-                      </div>
-                  </slot>
-                </div>
-              </template> -->
             </div>
           </div>
           <group class="mg_auto">
@@ -97,7 +68,7 @@
                         @on-focus="getFocus($event)" >
                   <template slot="label">
                     <span :class="{required : !eItem.allowBlank}">{{eItem.text}}</span>
-                    <span class="iconfont icon-tishi" v-show="modifyMatter.qtyDownline" @click="getTips(modifyMatter)"></span>
+                    <span class="iconfont icon-tishi" v-show="modifyMatter.qtyDownline" @click="showDialog = !showDialog"></span>
                   </template>
                 </x-input>
                 <!--日期-->
@@ -131,12 +102,34 @@
         <div class='confirm'>确认</div>
       </div>
     </popup>
+    <x-dialog class="dialog-view" v-if="modifyMatter.qtyOnline" v-model="showDialog" hide-on-blur>
+      <div class="tip-top">
+        <p class="header_content">温馨提示</p>
+        <p class="header_btn_tips">订单折合包装比：{{modifyMatter.assMeasureScale}}</p>
+      </div>
+      <div class="tip-main">
+        <div class="each_info_part">
+          <span class="package_num">订单数量上限：{{modifyMatter.qtyOnline * modifyMatter.assMeasureScale}}</span>
+          <span class="order_num">[折合包装数量: {{modifyMatter.qtyOnline}}]</span>
+        </div>
+        <div class="each_info_part">
+          <span class="package_num">订单数量下限：{{modifyMatter.qtyDownline * modifyMatter.assMeasureScale}}</span>
+          <span class="order_num">[折合包装数量: {{modifyMatter.qtyDownline}}]</span>
+        </div>
+        <div class="other_info_part">
+          <p class="other_tips">tips: 当您输入的订单数量在上述区间内，系统将会自动匹配<span class="inside_tips">销售协议{{modifyMatter.otherField.transCode}}</span>当中的价格，并自动计算其他属性。</p>
+        </div>
+        <div class="btn_part" @click="showDialog = !showDialog">我已阅读</div>
+      </div>
+    </x-dialog>
   </div>
 </template>
 
 <script>
 // vux组件引入
-import { Cell, Group, Popup, XInput, Datetime, PopupPicker, numberComma, dateFormat} from 'vux'
+import {  Cell, Group, Popup, XDialog,
+          XInput, Datetime, PopupPicker, 
+          numberComma, dateFormat} from 'vux'
 //组件引入
 import RScroll from 'components/RScroll'
 import { toFixed } from '@/plugins/calc'
@@ -198,7 +191,8 @@ export default {
     }
   },
   components: {
-    Cell, Group, Popup, XInput, Datetime, RScroll, PopupPicker
+    Cell, Group, Popup, XDialog,
+    XInput, Datetime, RScroll, PopupPicker
   },
   watch: {
     showPop: {
@@ -219,6 +213,7 @@ export default {
   data(){
     return{
       show: false,
+      showDialog: false,
       scrollOptions: { // 滚动配置
         click: true,
       },
@@ -277,12 +272,6 @@ export default {
         item.inventoryPic = url;
       }
       return url
-    },
-    getTips(item){
-      this.$vux.alert.show({
-        title: '',
-        content: `数量上限：${item.qtyOnline}<br/>数量下限：${item.qtyDownline}`
-      })
     },
     // TODO 检查金额，取正数、保留两位小数
     checkAmt(item, key, val){
@@ -552,6 +541,53 @@ export default {
       }
     }
 
+  }
+  .dialog-view {
+    .tip-top {
+      padding: .1rem 0;
+      line-height: .2rem;
+      .header_cotent {
+        font-size: .18rem;
+        font-weight: bold;
+      }
+      .header_btn_tips {
+        color: #757575;
+        font-size: .12rem;
+      }
+    }
+    .tip-main {
+      .each_info_part {
+        .package_num {
+          color: #454545;
+          font-size: .14rem;
+        }
+        .order_num {
+          color: #757575;
+          font-size: .1rem;
+        }
+      }
+      .other_info_part {
+        width: 100%;
+        color: #696969;
+        padding: 0 .1rem;
+        font-size: .12rem;
+        text-align: initial;
+        margin: .2rem 0 .1rem;
+        box-sizing: border-box;
+        .other_tips {
+          .inside_tips {
+            color: #757575;
+            text-decoration: underline;
+          }
+        }
+      }
+      .btn_part {
+        color: #FFF;
+        padding: .1rem 0;
+        font-weight: bold;
+        background: #3f72af;
+      }
+    }
   }
 </style>
 

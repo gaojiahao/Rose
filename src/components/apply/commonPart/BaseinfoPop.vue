@@ -26,7 +26,7 @@
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
             <div class="pop-mater-list-item" :class="{selected: showSelIcon(item)}"
-                 v-for="(item, index) in listData" :key='index' @click.stop="selThis(item,index)">
+                 v-for="(item, index) in listData" :key='index' @click.stop="selThis(item, index)">
               <div class="pop-list-main ">
                 <!-- 头像 -->
                 <div class="user-photo">

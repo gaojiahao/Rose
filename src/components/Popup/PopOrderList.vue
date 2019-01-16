@@ -8,7 +8,7 @@
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
           <div class="each_mater box_sd" v-for="(item, index) in listData" :key='index'
-               @click.stop="selThis(item,index)">
+               @click.stop="selThis(item, index)">
             <div class="order-code">
               <slot name='titleName'>
                 <span class="order-title">订单号</span>
