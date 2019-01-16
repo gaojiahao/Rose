@@ -1,11 +1,12 @@
 <template>
-  <div class="upload-image-container vux-1px-l">
+  <div class="upload-image-container">
     <input type="file" name="file" id="upload-image" @change="uploadFile" accept="image/*" style="display:none;"/>
     <label class="label" for="upload-image"></label>
     <!-- 没有选中图片 -->
     <div class="upload" v-if="!imgSrc">
-      <span class="iconfont icon-icon"></span>
-      <span class="add_text">增加图片</span>
+      <span class="icon-pic-add"></span>
+      <!-- <span class="iconfont icon-icon"></span>
+      <span class="add_text">增加图片</span> -->
     </div>
     <!-- 选中图片 -->
     <img :src="imgSrc" class="upload" @load="imgLoad" @error="getDefaultImg()" v-else/>
@@ -253,11 +254,11 @@
 <style scoped lang="scss">
   .upload-image-container {
     position: relative;
-    // z-index: 1;
+    z-index: 1;
     // width: 100rem;
     // height: 1.2rem;
-    width:100%;
-    height: 100%;
+    width: .6rem;
+    height: .6rem;
     > .label {
       display: block;
       width: 100%;
@@ -272,13 +273,18 @@
       display: flex;
       background: #fff;
       position: absolute;
-      align-items: center;
-      align-content: center;
-      flex-direction: column;
-      justify-content: center;
-      .iconfont {
-        font-size: 0.24rem;
+      
+      .icon-pic-add{
+        width: 100%;
+        height: 100%;
       }
+      // align-items: center;
+      // align-content: center;
+      // flex-direction: column;
+      // justify-content: center;
+      // .iconfont {
+      //   font-size: 0.24rem;
+      // }
     }
     .loading {
       position: absolute;

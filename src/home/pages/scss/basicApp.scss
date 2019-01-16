@@ -1,0 +1,130 @@
+/* 修改vue-1px-样式 */
+.vux-1px-l:before,
+.vux-1px-t:before,
+.vux-1px-b:after {
+  border-color: #e8e8e8;
+}
+.content {
+  height: calc(100% - .86rem);
+  box-sizing: border-box;
+  font-size: .14rem;
+  color: #333333;
+  overflow: hidden;
+  input {
+    border: none;
+    outline: none;
+  }
+  .mater_baseinfo {
+    .mater_pic{
+      padding: .08rem .15rem;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .title{
+        color: #676769;
+      }
+
+    }
+  }
+  .each-info{
+    background-color: #fff;
+    padding: 0 .15rem;
+  }
+  .each_property {
+    padding: .18rem 0;
+    display: flex;
+    justify-content: space-between;
+    line-height: .14rem;
+    label{
+      color: #696969;
+    }
+    .add{
+      color: #3296FA;
+    }
+    .required {
+      color: #3296FA;
+      font-weight: bold;
+    }
+    //校验错误提示按钮
+    // .warn {
+    //   position: absolute;
+    //   right: 0.08rem;
+    //   top: 0.27rem;
+    // }
+    // .weui-icon-warn {
+    //   font-size: 0.18rem;
+    // }
+    .property_val {
+      text-align: right;
+    }
+    .readonly {
+      color: #999;
+    }
+    .picker {
+      display: flex;
+      align-items: center;
+      .icon-right{
+        width: .08rem;
+        height: .14rem;
+        margin-left: .1rem;
+      }
+    }
+  }
+}
+/* 重复项 */
+.duplicate-wrapper{
+  margin: .1rem 0;
+  .title{
+    padding: 0 .15rem;
+    background: #fff;
+  }
+  .duplicate-item {
+    background: #fff;
+    padding: 0 .15rem;
+    &.has_border {
+      margin-top: .1rem;
+    }
+  }
+}
+/* 重复项新增和删除按钮*/
+.add_more {
+  width: 100%;
+  text-align: center;
+  font-size: 0.12rem;
+  padding-top: 0.1rem;
+  color: #757575;
+  span {
+    margin: 0 5px;
+    color: #3296FA;
+  }
+  .delete {
+    color: red;
+  }
+  em {
+    font-style: normal;
+  }
+}
+/* 提交 */ 
+.btn {
+  left: 0;
+  bottom: 0;
+  background: #fff;
+  width: 100%;
+  box-sizing: border-box;
+  padding: .21rem 5%;
+  position: absolute;
+  .cfm_btn {
+    width:100%;
+    color: #fff;
+    height: .44rem;
+    line-height: .44rem;
+    font-size: .16rem;
+    text-align: center;
+    background: #3296FA;
+    border-radius: .04rem;
+  }
+  .disabled{
+    background:#c7c7c7;
+  }
+}

@@ -1,114 +1,105 @@
 <template>
-  <div class='childPage'>
+  <div class='childPage matter-page'>
     <r-scroll :options="scrollOptions" class='content'>
-      <div>
-        <div class='mater_baseinfo vux-1px-b'>
-          <group class="mater_property" gutter="0">
-            <x-input text-align='right' placeholder='请填写' :readonly="codeReadOnly"
-                     :class='{readonly : codeReadOnly}' v-model.trim='inventory.inventoryCode'>
-              <span class="required" slot="label">物料编码</span>
-            </x-input>
-            <x-input text-align='right' placeholder='请填写' v-model.trim='inventory.inventoryName'>
-              <span class='required' slot="label">物料名称</span>
-            </x-input>
-          </group>
+      <div class='mater_baseinfo'>
+        <div class="mater_pic">
+          <span class="title">物料照片</span>
           <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
         </div>
-        <div v-for="(item, index) in matterConfig" :key="index" class="each-info">
-          <!-- 下拉框 -->
-          <template v-if="(item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.fieldCode !== 'technicsCode' && item.fieldCode !== 'inventoryStatus'">
-            <r-picker :title="item.fieldLabel" :data="item.remoteData" :value="inventory[item.fieldCode]" 
-                      v-model="inventory[item.fieldCode]" :required="!item.allowBlank" mode="4"></r-picker>
-          </template>
-          <!-- 输入框（数字） -->
-          <template v-else-if="item.xtype === 'r2Numberfield'">
-            <x-input type="number" text-align='right' placeholder='请填写'
-                   v-model.number='inventory[item.fieldCode]' class="vux-1px-b">
-              <template slot="label">
-                <span :class="{required : !item.allowBlank}">{{item.fieldLabel}}</span>
-              </template> 
-            </x-input>
-          </template>
-          <!-- 输入框（文字） -->
-          <template v-else-if="item.xtype === 'r2Textfield'">
-            <x-input :title="item.fieldLabel" text-align='right' placeholder='请填写'
-                   v-model='inventory[item.fieldCode]' class="vux-1px-b">
-              <template slot="label">
-                <span :class="{required : !item.allowBlank}">{{item.fieldLabel}}</span>
-              </template> 
-            </x-input>
-          </template>
-          <!-- 日期 -->
-          <template v-else-if="item.xtype === 'r2Datefield'">
-            <datetime placeholder="请填写" v-model="inventory[item.fieldCode]">
-              <template slot="title">
-                <span :class="{required : !item.allowBlank}">{{item.fieldLabel}}</span>
-              </template>
-            </datetime>
-          </template>
-          <!-- pop组件 -->
-          <template v-else-if="item.xtype === 'r2Selector'">
-            <pop-procedure-list @sel-item="selProcedure" :default-value="inventory" class="vux-1px-b"></pop-procedure-list>
-          </template>
-          <template v-else-if="item.fieldCode === 'technicsCode'">
-            <pop-technics-list class="vux-1px-b" @sel-item="selTechnics" :default-value="inventory"></pop-technics-list>
-          </template>
-          <template v-else-if="item.fieldCode === 'inventoryStatus'">
-            <r-picker :title="item.fieldLabel" :data="item.remoteData" :value="inventoryStatus" 
-                      v-model="inventoryStatus" :required="!item.allowBlank" mode="4"></r-picker>
-          </template>
-        </div>
-        <!-- 重复项 -->
-        <div v-for="(item, index) in matterDuplicateConfig" :key="`${item.name}+${index}`">
-          <div class="duplicate-item-no-select" v-if="!matterDuplicateData[item.name].length">
-            <span class="title">{{item.title}}</span>
+      </div>
+      <div v-for="(item, index) in matterConfig" :key="index" class="each-info">
+        <!-- 下拉框 -->
+        <template v-if="(item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.fieldCode !== 'technicsCode' && item.fieldCode !== 'inventoryStatus'">
+          <r-picker class="vux-1px-t" :title="item.fieldLabel" :data="item.remoteData" :value="inventory[item.fieldCode]" 
+                    v-model="inventory[item.fieldCode]" :required="!item.allowBlank" ></r-picker>
+        </template>
+        <!-- 输入框（数字） -->
+        <template v-else-if="item.xtype === 'r2Numberfield'">
+          <div class='each_property vux-1px-t'>
+            <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+            <input type='number' class='property_val' placeholder="请输入" v-model.numer="inventory[item.fieldCode]" @focus="getFocus($event)"/>
+          </div>
+        </template>
+        <!-- 输入框（文字） -->
+        <template v-else-if="item.xtype === 'r2Textfield'">
+          <div class='each_property vux-1px-t'>
+            <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+            <input type='text' class='property_val' placeholder="请输入" v-model="inventory[item.fieldCode]" @focus="getFocus($event)"/>
+          </div>
+        </template>
+        <!-- 日期 -->
+        <template v-else-if="item.xtype === 'r2Datefield'">
+          <div class='each_property' @click="getDate(inventory,item)">
+            <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+            <span class='property_val'>{{inventory[item.fieldCode] || "请选择"}}</span>
+          </div>
+        </template>
+        <!-- pop组件 -->
+        <template v-else-if="item.xtype === 'r2Selector'">
+          <pop-procedure-list @sel-item="selProcedure" :default-value="inventory" class="vux-1px-t"></pop-procedure-list>
+        </template>
+        <template v-else-if="item.fieldCode === 'technicsCode'">
+          <pop-technics-list class="vux-1px-t" @sel-item="selTechnics" :default-value="inventory"></pop-technics-list>
+        </template>
+        <template v-else-if="item.fieldCode === 'inventoryStatus'">
+          <r-picker class="vux-1px-t" :title="item.fieldLabel" :data="item.remoteData" :value="inventoryStatus" 
+                    v-model="inventoryStatus" :required="!item.allowBlank" ></r-picker>
+        </template>
+      </div>
+      <!-- 重复项 -->
+      <div class="duplicate-wrapper" v-for="(item, index) in matterDuplicateConfig" :key="`${item.name}+${index}`">
+        <div class="title" v-if="matterDuplicateData[item.name] && !matterDuplicateData[item.name].length">
+          <div class="each_property">
+            <label>{{item.title}}</label>
             <span class="add" @click="addMoreUnit(item)">新增</span>
           </div>
-          <group class="duplicate-item" :title="item.title" v-else>
-            <div v-for="(sItem, sIndex) in matterDuplicateData[item.name]" :key="sIndex" :class="{'has_border': sIndex < matterDuplicateData[item.name].length-1}">
-              <div v-for="(dItem,dIndex) in item.items"  :key="dIndex">
-                <!-- 可编辑的字段 -->
-                <template v-if="!dItem.readOnly">
-                  <!-- 下拉框 -->
-                  <r-picker class="vux-1px-t" :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
-                          mode="4" :has-border="false" v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank"
-                          v-if="dItem.editorType === 'r2Combo'"></r-picker>
-                  <!-- 输入框（数字） -->
-                  <x-input type="number" text-align='right' placeholder='请填写' v-model.number='sItem[dItem.fieldCode]'
-                          @on-blur="checkAmt(sItem)" v-if="dItem.editorType === 'r2Numberfield'">
-                    <template slot="label">
-                      <span :class="{required : !dItem.allowBlank}">{{dItem.text}}</span>
-                    </template> 
-                  </x-input>
-                  <!-- 输入框（文字） -->
-                  <x-input :title="dItem.text" text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]' 
-                          v-if="dItem.editorType === 'r2Textfield'">
-                    <template slot="label">
-                      <span :class="{required : !dItem.allowBlank}">{{dItem.text}}</span>
-                    </template>
-                  </x-input>
-                  <!-- 日期 -->
-                  <datetime placeholder="请填写" v-model="sItem[dItem.fieldCode]" v-if="dItem.editorType === 'r2Datefield'">
-                    <template slot="title">
-                      <span :class="{required : !dItem.allowBlank}">{{dItem.text}}</span>
-                    </template>
-                  </datetime>
-                </template>
-                <!--不可编辑的字段 -->
-                <template  v-else>
-                  <cell class="vux-1px-t" :title="dItem.text" :value="sItem[dItem.fieldCode]" disabled></cell>
-                </template>
-              </div>
-
-            </div>
-          </group>
-          <div class="add_more" v-show="matterDuplicateData[item.name].length">
-            您还需要添加新的{{item.title}}?请点击
-            <span class='add' @click="addMoreUnit(item)">新增</span>
-            <em v-show="matterDuplicateData[item.name].length > 1">或</em>
-            <span class='delete' @click="deleteMoreUnit(item)" v-show="matterDuplicateData[item.name].length > 1">删除</span>
-          </div> 
         </div>
+        <!-- <div class="duplicate-item-no-select" v-if="!matterDuplicateData[item.name].length">
+          <span class="title">{{item.title}}</span>
+          <span class="add" @click="addMoreUnit(item)">新增</span>
+        </div> -->
+        <template v-else-if="matterDuplicateData[item.name] &&matterDuplicateData[item.name].length">
+          <div class="duplicate-item" :class="{'has_border' : sIndex > 0}" v-for="(sItem, sIndex) in matterDuplicateData[item.name]" :key="sIndex">
+            <div v-for="(dItem,dIndex) in item.items" :key="dIndex" :class="{'vux-1px-b': dIndex < item.items.length-1}">
+              <!-- 可编辑的字段 -->
+              <template v-if="!dItem.readOnly">
+                <!-- 下拉框 -->
+                <r-picker :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
+                        v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank"
+                        v-if="dItem.editorType === 'r2Combo'"></r-picker>
+                <!-- 输入框（数字） -->
+                <div class='each_property ' v-if="dItem.editorType === 'r2Numberfield'">
+                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                  <input type='number' v-model.number="sItem[dItem.fieldCode]" placeholder="请输入" class='property_val' />
+                </div>
+                <!-- 输入框（文字） -->
+                <div class='each_property' v-if="dItem.editorType === 'r2Textfield'">
+                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                  <input type='text' v-model="sItem[dItem.fieldCode]" placeholder="请输入" class='property_val' />
+                </div>
+                <!-- 日期 -->
+                <div class='each_property' v-if="dItem.editorType === 'r2Datefield'" @click="getDate(sItem,dItem)">
+                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                  <span class='property_val'>{{sItem[dItem.fieldCode] || "请选择"}}</span>
+                </div>
+              </template>
+              <!--不可编辑的字段 -->
+              <template  v-else>
+                <div class='each_property readOnly'>
+                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                  <span class='property_val'>{{sItem[dItem.fieldCode]}}</span>
+                </div>
+              </template>
+            </div>
+
+          </div>
+        </template>
+        <div class="add_more" v-show="matterDuplicateData[item.name].length">
+          您还需要添加新的{{item.title}}?请点击
+          <span class='add' @click="addMoreUnit(item)">新增</span>
+          <em v-show="matterDuplicateData[item.name].length > 1">或</em>
+          <span class='delete' @click="deleteMoreUnit(item)" v-show="matterDuplicateData[item.name].length > 1">删除</span>
+        </div> 
       </div>
     </r-scroll>
     <div class='btn vux-1px-t'>
@@ -118,7 +109,7 @@
 </template>
 <script>
   import {TransferDom, Popup, Group, XInput, PopupPicker, Cell, Datetime } from 'vux';
-  import RPicker from 'components/RPicker';
+  import RPicker from 'components/basicPicker';
   import UploadImage from 'components/UploadImage'
   import RScroll from 'components/RScroll'
   import PopTechnicsList from 'components/popup/matter/PopTechnicsList'
@@ -585,6 +576,17 @@
       getDefaultImg() {
         this.MatPic = require('assets/wl_default03.png');
       },
+      // 选择日期
+      getDate(sItem, dItem){
+        this.$vux.datetime.show({
+          value: '', // 其他参数同 props
+          confirmText: '确认',
+          cancelText: '取消',
+          onConfirm: (val)=> {
+            sItem[dItem.fieldCode] = val;
+          },
+        })
+      },
       // TODO 新增重复项
       addMoreUnit(item) {
         let obj = {};
@@ -698,7 +700,7 @@
                 this.$set(item, 'remoteData', item.dataSource.data)
               }
               // 在渲染的配置中添加字段
-              if(item.fieldCode !== 'inventoryCode' && item.fieldCode !== 'inventoryName' && item.fieldCode !== 'inventoryPic'){
+              if(item.fieldCode !== 'inventoryPic'){
                 this.matterConfig.push(item);
               }
             }
@@ -776,163 +778,164 @@
   }
 </script>
 <style lang="scss" scoped>
-  .pages {
-    background: #fff;
-    z-index: 10;
+@import '../../../scss/basicApp.scss';
+  .matter-page {
+    background: #f6f6f6;
+    // z-index: 10;
   }
 
-  .vux-1px-b:after,
-  .vux-1px-l:before,
-  .vux-1px-t:before, {
-    border-color: #e8e8e8;
-  }
-  .vux-1px-b:after {
-    left: .1rem;
-  }
-  .vux-1px-l:before {
-    left: 0;
-  }
+  // .vux-1px-b:after,
+  // .vux-1px-l:before,
+  // .vux-1px-t:before, {
+  //   border-color: #e8e8e8;
+  // }
+  // .vux-1px-b:after {
+  //   left: .1rem;
+  // }
+  // .vux-1px-l:before {
+  //   left: 0;
+  // }
 
-  .content {
-    height: 90%;
-    background-color: #f8f8f8;
-    overflow: hidden;
-    position: relative;
-    /deep/ .weui-cell{
-      padding: 0.1rem;
-    }
-    /deep/ .weui-cells {
-      font-size: .16rem;
-      margin-top: .1rem;
-      &:before {
-        border-top: none;
-      }
-      &:after {
-        border-bottom: none;
-      }
-      .weui-cell {
-        padding: 0.1rem;
-        &:before {
-          // left: 0;
-          border-color: #e8e8e8;
-          left: 0.1rem;
-        }
-      }
-    }
-    input {
-      border: none;
-      outline: none;
-    }
-    .mater_baseinfo {
-      display: flex;
-      align-items: flex-end;
-      .mater_property {
-        flex: 1;
-      }
-    }
-    .each-info{
-      background: #fff;
-    }
-    /* 上传图片容器 */
-    .upload-image-container {
-      width: 1rem;
-      // height: 100%;
-      height: 0.86rem;
-    }
-    .readonly {
-      color: #999;
-    }
-    .required {
-      color: #5077aa;
-      font-weight: bold;
-    }
-    .each_property {
-      padding: 0.05rem 0.08rem;
-      label {
-        color: #6d6d6d;
-        font-size: 0.12rem;
-        display: block;
-        line-height: 0.2rem;
-      }
-      .required {
-        color: #5077aa;
-        font-weight: bold;
-      }
-      .property_val {
-        display: block;
-        width: 100%;
-        font-size: 0.16rem;
-        line-height: 0.24rem;
-      }
-      .readonly {
-        color: #999;
-      }
-    }
-    /* 重复项 */
-    .duplicate-item {
-      margin-top: 0.1rem;
-      background-color: #fff;
-      overflow: hidden;
-      .has_border {
-        border-bottom: .03rem solid #e8e8e8;
-      }
-      /deep/ .weui-cells__title {
-        /*padding-left: 0;*/
-        font-size: .12rem;
-      }
-      // /deep/ .weui-cell__hd {
-      //   font-size: .16rem;
-      // }
-      // /deep/ .weui-cells {
-      //   &:before, &:after {
-      //     display: none;
-      //   }
-      // }
-      /deep/ .weui-cell {
-        &:before {
-          display: block;
-        }
-      }
-    }
-    .duplicate-item-no-select {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: .1rem;
-      padding: .1rem .2rem .1rem .1rem;
-      background-color: #fff;
-      font-size: .16rem;
-      .add {
-        padding: .01rem .06rem;
-        border-radius: .12rem;
-        background: #5077aa;
-        color: #fff;
-        font-size: .12rem;
-      }
-    }
-    .add_more {
-      width: 100%;
-      text-align: center;
-      font-size: 0.12rem;
-      padding: 0.1rem 0;
-      color: #757575;
-      span {
-        margin: 0 5px;
-        color: #fff;
-        padding: .01rem .06rem;
-        border-radius: .12rem;
-      }
-      .add {
-        background: #5077aa;
-      }
-      .delete {
-        background: red;
-      }
-      em {
-        font-style: normal;
-      }
-    }
-  }
+  // .content {
+  //   height: 90%;
+  //   background-color: #f8f8f8;
+  //   overflow: hidden;
+  //   position: relative;
+  //   /deep/ .weui-cell{
+  //     padding: 0.1rem;
+  //   }
+  //   /deep/ .weui-cells {
+  //     font-size: .16rem;
+  //     margin-top: .1rem;
+  //     &:before {
+  //       border-top: none;
+  //     }
+  //     &:after {
+  //       border-bottom: none;
+  //     }
+  //     .weui-cell {
+  //       padding: 0.1rem;
+  //       &:before {
+  //         // left: 0;
+  //         border-color: #e8e8e8;
+  //         left: 0.1rem;
+  //       }
+  //     }
+  //   }
+  //   input {
+  //     border: none;
+  //     outline: none;
+  //   }
+  //   .mater_baseinfo {
+  //     display: flex;
+  //     align-items: flex-end;
+  //     .mater_property {
+  //       flex: 1;
+  //     }
+  //   }
+  //   .each-info{
+  //     background: #fff;
+  //   }
+  //   /* 上传图片容器 */
+  //   .upload-image-container {
+  //     width: 1rem;
+  //     // height: 100%;
+  //     height: 0.86rem;
+  //   }
+  //   .readonly {
+  //     color: #999;
+  //   }
+  //   .required {
+  //     color: #5077aa;
+  //     font-weight: bold;
+  //   }
+  //   .each_property {
+  //     padding: 0.05rem 0.08rem;
+  //     label {
+  //       color: #6d6d6d;
+  //       font-size: 0.12rem;
+  //       display: block;
+  //       line-height: 0.2rem;
+  //     }
+  //     .required {
+  //       color: #5077aa;
+  //       font-weight: bold;
+  //     }
+  //     .property_val {
+  //       display: block;
+  //       width: 100%;
+  //       font-size: 0.16rem;
+  //       line-height: 0.24rem;
+  //     }
+  //     .readonly {
+  //       color: #999;
+  //     }
+  //   }
+  //   /* 重复项 */
+  //   .duplicate-item {
+  //     margin-top: 0.1rem;
+  //     background-color: #fff;
+  //     overflow: hidden;
+  //     .has_border {
+  //       border-bottom: .03rem solid #e8e8e8;
+  //     }
+  //     /deep/ .weui-cells__title {
+  //       /*padding-left: 0;*/
+  //       font-size: .12rem;
+  //     }
+  //     // /deep/ .weui-cell__hd {
+  //     //   font-size: .16rem;
+  //     // }
+  //     // /deep/ .weui-cells {
+  //     //   &:before, &:after {
+  //     //     display: none;
+  //     //   }
+  //     // }
+  //     /deep/ .weui-cell {
+  //       &:before {
+  //         display: block;
+  //       }
+  //     }
+  //   }
+  //   .duplicate-item-no-select {
+  //     display: flex;
+  //     justify-content: space-between;
+  //     align-items: center;
+  //     margin-top: .1rem;
+  //     padding: .1rem .2rem .1rem .1rem;
+  //     background-color: #fff;
+  //     font-size: .16rem;
+  //     .add {
+  //       padding: .01rem .06rem;
+  //       border-radius: .12rem;
+  //       background: #5077aa;
+  //       color: #fff;
+  //       font-size: .12rem;
+  //     }
+  //   }
+  //   .add_more {
+  //     width: 100%;
+  //     text-align: center;
+  //     font-size: 0.12rem;
+  //     padding: 0.1rem 0;
+  //     color: #757575;
+  //     span {
+  //       margin: 0 5px;
+  //       color: #fff;
+  //       padding: .01rem .06rem;
+  //       border-radius: .12rem;
+  //     }
+  //     .add {
+  //       background: #5077aa;
+  //     }
+  //     .delete {
+  //       background: red;
+  //     }
+  //     em {
+  //       font-style: normal;
+  //     }
+  //   }
+  // }
 
   //确认框
   .popup_header {
@@ -952,29 +955,7 @@
     }
   }
 
-  // 确定
-  .btn {
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 10%;
-    position: fixed;
-    background: #fff;
-    .cfm_btn {
-      top: 50%;
-      left: 50%;
-      width: 2.8rem;
-      color: #fff;
-      height: .44rem;
-      line-height: .44rem;
-      position: absolute;
-      text-align: center;
-      background: #5077aa;
-      border-radius: .4rem;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 2px 5px #5077aa;
-    }
-  }
+  
 
 </style>
 

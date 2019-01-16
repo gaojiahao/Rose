@@ -1,8 +1,15 @@
 <template>
   <div class="techics-list-container" @click="showPop = !showPop">
-    <div class="title" :class="{required : required}">工序名称</div>
+    <div class="picker">
+      <label :class='{ required : required}'>工序名称</label>
+      <div class='content'>
+        <span class='mater_nature'>{{selItems.procedureName || "请选择"}}</span>
+        <span class="icon-right"></span>
+      </div>
+    </div>
+    <!-- <div class="title" :class="{required : required}">工序名称</div>
     <div class="mode">{{selItems.procedureName || placeholder}}</div>
-    <x-icon class="r_arrow" type="ios-arrow-right" size="16"></x-icon>
+    <x-icon class="r_arrow" type="ios-arrow-right" size="16"></x-icon> -->
 
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="popup-technics-list-container" @on-show="onShow" @on-hide="onHide">
@@ -166,23 +173,28 @@
 <style scoped lang="scss">
   .techics-list-container {
     position: relative;
-    display: flex;
-    justify-content: space-between;
-    padding: .1rem .2rem .1rem .1rem;
-    width: 100%;
-    box-sizing: border-box;
-    .title {
-      font-size: .16rem;
-    }
-    .mode {
-      color: #999;
-    }
-    .r_arrow {
-      top: 50%;
-      right: 7px;
-      position: absolute;
-      transform: translate(0, -50%);
-      fill : #999;
+    padding: .18rem 0;
+    .picker{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      label {
+        color: #696969;
+        &.required{
+          color: #3296FA;
+          font-weight: bold;
+        }
+      }
+      .content {
+        display: flex;
+        align-items: center;
+        .icon-right{
+          width: .08rem;
+          height: .14rem;
+          margin-left: .1rem;
+        }
+        
+      }
     }
   }
   // 弹出层

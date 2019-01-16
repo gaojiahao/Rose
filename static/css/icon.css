@@ -184,3 +184,8 @@
   background: url('~assets/iconfont/icon_edit.png');
   background-size: cover;
 }
+
+.icon-pic-add{
+  background: url('~assets/iconfont/icon_pic_add.png');
+  background-size: cover;
+}

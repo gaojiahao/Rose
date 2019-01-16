@@ -1,111 +1,114 @@
 <template>
-  <div class='childPage'>
+  <div class='childPage dealer-page'>
     <r-scroll :options="scrollOptions" class="content" ref="bScroll">
-      <div>
-        <div class='mater_baseinfo vux-1px-b'>
-          <div class='mater_property'>
-            <div class='each_property vux-1px-b '>
-              <label class='required'>往来编码:</label>
-              <input type='text' v-model="dealer.dealerCode" class='property_val' :class='{readonly : transCode!==""}' :readonly ='transCode!==""'/>
-            </div>
-            <div class='each_property required'>
-              <label class='required'>往来名称:</label>
-              <input type='text' v-model="dealer.dealerName" class='property_val'/>
-            </div>
-          </div>
+      <div class='mater_baseinfo'>
+        <div class="mater_pic">
+          <span class="title">往来照片</span>
           <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
         </div>
-        <div v-for="(item, index) in dealerConfig" :key="index">
-          <template v-if="item.fieldCode !== 'dealerLabelName' && item.fieldCode !== 'province' && item.fieldCode !== 'dealerStatus'" >
-            <div class='each_property vux-1px-b' v-if="item.xtype === 'r2Textfield'">
-              <label>{{item.fieldLabel}}</label>
-              <input type='text' v-model="dealer[item.fieldCode]" class='property_val' @blur="check(item)"/>
+      </div>
+      <div class="each-info" v-for="(item, index) in dealerConfig" :key="index">
+        <template v-if="item.fieldCode !== 'dealerLabelName' && item.fieldCode !== 'province' && item.fieldCode !== 'dealerStatus'" >
+          <!-- 输入框（文字字） -->
+          <div class='each_property vux-1px-t' v-if="item.xtype === 'r2Textfield'">
+            <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+            <div class='property_val' >
+              <input type='text' placeholder="请输入" v-model="dealer[item.fieldCode]"  @blur="check(item)" @focus="getFocus($event)"/>
               <icon type="warn" class='warn' v-if='item.warn'></icon>
-            </div>
-            <div class='each_property vux-1px-b' v-if="item.xtype === 'r2Numberfield'">
-              <label>{{item.fieldLabel}}</label>
-              <input type='number' v-model="dealer[item.fieldCode]" class='property_val' @blur="check(item)"/>
-              <icon type="warn" class='warn' v-if='item.warn'></icon>
-            </div>
-            <r-picker :title="`${item.fieldLabel}:`" :data="item.remoteData" :value="dealer[item.fieldCode]" 
-                  v-model="dealer[item.fieldCode]" :required="!item.allowBlank" v-if="item.xtype === 'r2Combo'"></r-picker>
-          </template>
-          <!--往来状态 -->
-          <template v-else-if="item.fieldCode === 'dealerStatus'">
-            <r-picker :title="`${item.fieldLabel}:`" :data="item.remoteData" :value="dealerStatus" 
-                  v-model="dealerStatus" :required="!item.allowBlank"></r-picker>
-          </template>
-          <!-- 省市区 -->
-          <template v-else-if="item.fieldCode === 'province'">
-            <div class='each_property vux-1px-b' @click="showAddress = true">
-              <label>省市区:</label>
-              <div class='picker'>
-                  <span class='mater_nature'>{{dealer.province}}{{dealer.city}}{{dealer.county}}</span>
-                  <span class='iconfont icon-gengduo'></span>
-              </div>
-              <x-address title="省市区:"  :list="addressData" @on-hide='getAddress()' @on-shadow-change='changeAddress' :value="cAccountAddress"
-                        :show.sync="showAddress" v-show="false"></x-address>
-            </div>
-          </template>
-          <!-- 往来类型 -->
-          <template v-else>
-            <div class='each_property vux-1px-b' @click="DealerPop">
-              <label class="required">{{item.fieldLabel}}</label>
-              <div class='picker'>
-                  <span class='mater_nature'>{{dealer[item.fieldCode]}}</span>
-                  <span class='iconfont icon-gengduo'></span>
-              </div>
-            </div>
-          </template>
-        </div>
-        <!-- 重复项 -->
-        <div v-for="(item, index) in dealerDuplicateConfig" :key="`${item.name}+${index}`">
-          <template v-if="!item.isHidden">
-            <div class="duplicate-item-no-select" v-if="!dealerDuplicateData[item.name].length">
-              <span class="title">{{item.title}}</span>
-              <span class="add" @click="addMoreUnit(item)">新增</span>
-            </div>
-            <group class="duplicate-item" :title="item.title" v-else>
-              <div v-for="(sItem, sIndex) in dealerDuplicateData[item.name]" :key="sIndex" :class="{'has_border': sIndex < dealerDuplicateData[item.name].length-1}">
-                <div v-for="(dItem,dIndex) in item.items"  :key="dIndex" >
-                  <!-- 下拉框 -->
-                  <r-picker class="vux-1px-t" :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
-                          mode="4" :has-border="false" v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank" 
-                          @on-change="onChange($event, index, dItem, sItem)"
-                          v-if="dItem.editorType === 'r2Combo'">
-                  
-                  </r-picker>
-                  <!-- 输入框（数字） -->
-                  <x-input type="number" text-align='right' placeholder='请填写' v-model.numer='sItem[dItem.fieldCode]'
-                          v-if="dItem.editorType === 'r2Numberfield'">
-                    <template slot="label">
-                      <span :class="{'required' : !dItem.allowBlank}">{{dItem.text}}</span>
-                    </template>
-                  </x-input>
-                  <!-- 输入框（文字） -->
-                  <x-input text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]' 
-                          v-if="dItem.editorType === 'r2Textfield'">
-                    <template slot="label">
-                      <span :class="{'required' : !dItem.allowBlank}">{{dItem.text}}</span>
-                    </template>
-                  </x-input>
-                  <!-- 日期 -->
-                  <datetime  v-model='sItem[dItem.fieldCode]' v-if="dItem.editorType === 'r2Datefield'">
-                    <template slot="title">
-                      <span :class="{'required' : !dItem.allowBlank}">{{dItem.text}}</span>
-                    </template>
-                  </datetime>
-                </div>
-              </div>
-            </group>
-            <div class="add_more" v-show="dealerDuplicateData[item.name].length">
-              您还需要添加新的{{item.title}}?请点击
-              <span class='add' @click="addMoreUnit(item)">新增</span>
-              <em v-show="dealerDuplicateData[item.name].length > 1">或</em>
-              <span class='delete' @click="deleteMoreUnit(item)" v-show="dealerDuplicateData[item.name].length > 1">删除</span>
             </div> 
-          </template>
+          </div>
+          <!-- 输入框（数字） -->
+          <div class='each_property vux-1px-t' v-if="item.xtype === 'r2Numberfield'">
+            <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+            <div class='property_val' >
+              <input type='number' placeholder="请输入" v-model="dealer[item.fieldCode]" @blur="check(item)" @focus="getFocus($event)"/>
+              <icon type="warn" class='warn' v-if='item.warn'></icon>
+            </div>
+          </div>
+          <!-- 下拉框 -->
+          <r-picker class="vux-1px-t" :title="item.fieldLabel" :data="item.remoteData" :value="dealer[item.fieldCode]" 
+                v-model="dealer[item.fieldCode]" :required="!item.allowBlank" v-if="item.xtype === 'r2Combo'"></r-picker>
+        </template>
+        <!--往来状态 -->
+        <template v-else-if="item.fieldCode === 'dealerStatus'">
+          <r-picker class="vux-1px-t" :title="item.fieldLabel" :data="item.remoteData" :value="dealerStatus" 
+                v-model="dealerStatus" :required="!item.allowBlank"></r-picker>
+        </template>
+        <!-- 省市区 -->
+        <template v-else-if="item.fieldCode === 'province'">
+          <div class='each_property vux-1px-t' @click="showAddress = true">
+            <label>省市区:</label>
+            <div class='picker'>
+              <span class='mater_nature' v-if="dealer.province === '' && dealer.city === '' && dealer.county === ''">请选择</span>
+              <span class='mater_nature'v-else>{{dealer.province}}{{dealer.city}}{{dealer.county}}</span>
+              <span class='icon-right'></span>
+            </div>
+            <x-address title="省市区"  :list="addressData" @on-hide='getAddress()' @on-shadow-change='changeAddress' :value="cAccountAddress"
+                      :show.sync="showAddress" v-show="false"></x-address>
+          </div>
+        </template>
+        <!-- 往来类型 -->
+        <template v-else>
+          <div class='each_property vux-1px-t' @click="DealerPop">
+            <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+            <div class='picker'>
+                <span class='mater_nature'>{{dealer[item.fieldCode] || "请选择"}}</span>
+                <span class='icon-right'></span>
+            </div>
+          </div>
+        </template>
+      </div>
+      <!-- 重复项 -->
+      <div class="duplicate-wrapper" v-for="(item, index) in dealerDuplicateConfig" :key="`${item.name}+${index}`">
+        <div class="title" v-if="dealerDuplicateData[item.name] && !dealerDuplicateData[item.name].length">
+          <div class="each_property">
+            <label>{{item.title}}</label>
+            <span class="add" @click="addMoreUnit(item)">新增</span>
+          </div>
         </div>
+        <template v-else-if="dealerDuplicateData[item.name] && dealerDuplicateData[item.name].length">
+          <div class="duplicate-item" :class="{'has_border' : sIndex > 0}" v-for="(sItem, sIndex) in dealerDuplicateData[item.name]" :key="sIndex">
+            <div v-for="(dItem,dIndex) in item.items"  :key="dIndex"  :class="{'vux-1px-b': dIndex < item.items.length-1}">
+              <template v-if="!dItem.readOnly">
+                <!-- 下拉框 -->
+                <r-picker :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
+                        v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank" 
+                        @on-change="onChange($event, index, dItem, sItem)"
+                        v-if="dItem.editorType === 'r2Combo'">
+                </r-picker>
+                <!-- 输入框（数字） -->
+                <div class='each_property ' v-if="dItem.editorType === 'r2Numberfield'">
+                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                  <input type='number' v-model.number="sItem[dItem.fieldCode]" placeholder="请输入" class='property_val' />
+                </div>
+                <!-- 输入框（文字） -->
+                <div class='each_property' v-if="dItem.editorType === 'r2Textfield'">
+                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                  <input type='text' v-model="sItem[dItem.fieldCode]" placeholder="请输入" class='property_val' />
+                </div>
+                <!-- 日期 -->
+                <div class='each_property' v-if="dItem.editorType === 'r2Datefield'" @click="getDate(sItem,dItem)">
+                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                  <span class='property_val'>{{sItem[dItem.fieldCode] || "请选择"}}</span>
+                </div>
+              </template>
+              <template v-else>
+                <div class='each_property readOnly'>
+                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                  <span class='property_val'>{{sItem[dItem.fieldCode]}}</span>
+                </div>
+              </template>
+              
+            </div>
+          </div>
+        </template>
+        <div class="add_more" v-show="dealerDuplicateData[item.name].length">
+          您还需要添加新的{{item.title}}?请点击
+          <span class='add' @click="addMoreUnit(item)">新增</span>
+          <em v-show="dealerDuplicateData[item.name].length > 1">或</em>
+          <span class='delete' @click="deleteMoreUnit(item)" v-show="dealerDuplicateData[item.name].length > 1">删除</span>
+        </div> 
+       
       </div>
     </r-scroll>
     <!--往来类型的列表-->
@@ -129,7 +132,7 @@
       </popup>
     </div>
     <!--提交按钮-->
-    <div class='vux-1px-t btn '>
+    <div class='btn vux-1px-t'>
       <div class="cfm_btn" @click="save" :class='{disabled : disabledSubmit}'>
         {{this.transCode ? '保存':'提交'}}
       </div>
@@ -140,7 +143,7 @@
 import { TransferDom, Picker, Popup, Group,XAddress, ChinaAddressV4Data, Icon, XInput, Datetime } from 'vux';
 import { getBaseInfoDataBase,getDictByType, getFormConfig, requestData, getFormViews } from 'service/commonService.js';
 import dealerService from 'service/dealerService.js'
-import RPicker from 'components/RPicker';
+import RPicker from 'components/basicPicker';
 import common from 'mixins/common.js'
 import RScroll from 'components/RScroll'
 import UploadImage from 'components/UploadImage'
@@ -327,6 +330,17 @@ export default {
           return
         }
         this.dealer.dealerLabelName += item.name
+      })
+    },
+    // 选择日期
+    getDate(sItem, dItem){
+      this.$vux.datetime.show({
+        value: '', // 其他参数同 props
+        confirmText: '确认',
+        cancelText: '取消',
+        onConfirm: (val)=> {
+          sItem[dItem.fieldCode] = val;
+        },
       })
     },
     // 校验字段
@@ -750,8 +764,7 @@ export default {
               }
             }
             // 在渲染的配置中添加字段
-            if(item.fieldCode !== 'dealerCode' && item.fieldCode !== 'dealerName' && item.fieldCode !== 'dealerPic'
-              && item.fieldCode !== 'city' && item.fieldCode !== 'county'){
+            if(item.fieldCode !== 'dealerPic' && item.fieldCode !== 'city' && item.fieldCode !== 'county'){
               this.dealerConfig.push(item);
             }
           }
@@ -846,204 +859,22 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-  .vux-1px-l:before,
-  .vux-1px-b:after {
-    border-color: #e8e8e8;
+  @import '../../../scss/basicApp.scss';
+  .dealer-page{
+    background: #f6f6f6;
   }
-  .vux-x-icon {
-    fill: #5077aa;
-    vertical-align: middle;
-  }
-  .r-picker{
-    background: #fff;
-  }
-  .required{
-    color:#5077aa;
-    font-weight: bold;
-  }
-  .content {
-    height: 90%;
-    // overflow-y: auto;
-    // overflow-x: hidden;
-    overflow: hidden;
-    background: #f8f8f8;
-    // -webkit-overflow-scrolling: auto;
-    input {
-      border: none;
-      outline: none;
-    }
-    .mater_baseinfo {
+  .each_property{
+    .property_val{
       display: flex;
-      align-items: flex-end;
-      .mater_property {
-        flex: 1;
+      input{
+        text-align: right;
       }
-    }
-
-    .each_property {
-      min-height: .5rem;
-      padding: 0.05rem 0.08rem;
-      position: relative;
-      background: #fff;
-      label {
-        color: #6d6d6d;
-        font-size: 0.12rem;
-        display: block;
-        height:0.2rem;
-        line-height: 0.2rem;
-      }
-      .required{
-        color:#5077aa;
-        font-weight: bold;
-      }
-      //校验错误提示按钮
       .warn{
-        position: absolute;
-        right: 0.08rem;
-        top: 0.27rem;
+        margin-left: .02rem;
       }
-      .weui-icon-warn{
-        font-size:0.18rem;
+      .weui-icon-warn {
+        font-size: 0.14rem;
       }
-      .property_val {
-        display: block;
-        font-size: 0.16rem;
-        line-height: 0.24rem;
-        width:100%;
-      }
-      //只读
-      .readonly{
-        color:#999;
-      }
-      .picker {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        .mater_nature {
-          font-size: 0.16rem;
-          line-height: 0.2rem;
-        }
-        .iconfont {
-          font-size: 0.24rem;
-        }
-      }
-      .vux-cell-box{
-        position: absolute;
-        left:0;
-        top:0;
-        padding: 0.05rem 0.08rem;
-        width:100%;
-        box-sizing: border-box;
-        color: #6d6d6d;
-        font-size: 0.12rem;
-        label{
-          height:0.58rem;
-        }
-        .vux-cell-primary{
-          display: none;
-        }
-        &:not(:first-child):before{
-          border:none;
-        }
-
-      }
-    }
-    .upload-image-container {
-      width: 1.2rem;
-      height: 1.2rem;
-    }
-  }
-  /* 重复项 */
-    .duplicate-item {
-      margin-top: 0.1rem;
-      background-color: #fff;
-      overflow: hidden;
-      .has_border {
-        border-bottom: .03rem solid #e8e8e8;
-      }
-      /deep/ .weui-cells__title {
-        /*padding-left: 0;*/
-        font-size: .12rem;
-      }
-      // /deep/ .weui-cell__hd {
-      //   font-size: .16rem;
-      // }
-      // /deep/ .weui-cells {
-      //   &:before, &:after {
-      //     display: none;
-      //   }
-      // }
-      /deep/ .weui-cell {
-        padding: .1rem;
-        &:before {
-          display: block;
-          left: .1rem;
-        }
-      }
-    }
-    .duplicate-item-no-select {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: .1rem;
-      padding: .1rem .2rem .1rem .1rem;
-      background-color: #fff;
-      font-size: .16rem;
-      .add {
-        padding: .01rem .06rem;
-        border-radius: .12rem;
-        background: #5077aa;
-        color: #fff;
-        font-size: .12rem;
-      }
-    }
-    .add_more {
-      width: 100%;
-      text-align: center;
-      font-size: 0.12rem;
-      padding: 0.1rem 0;
-      color: #757575;
-      span {
-        margin: 0 5px;
-        color: #fff;
-        padding: .01rem .06rem;
-        border-radius: .12rem;
-      }
-      .add {
-        background: #5077aa;
-      }
-      .delete {
-        background: red;
-      }
-      em {
-        font-style: normal;
-      }
-    }
-  // 提交
-  .btn {
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 10%;
-    position: fixed;
-    background: #fff;
-    .cfm_btn {
-      top: 50%;
-      left: 50%;
-      width: 2.8rem;
-      color: #fff;
-      height: .44rem;
-      line-height: .44rem;
-      position: absolute;
-      text-align: center;
-      background: #5077aa;
-      border-radius: .4rem;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 2px 5px #5077aa;
-    }
-    .disabled{
-      background:#c7c7c7;
-      box-shadow: 0 2px 5px #c7c7c7;
     }
   }
   //往来类型弹出层

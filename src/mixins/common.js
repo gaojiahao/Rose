@@ -22,6 +22,10 @@ export default {
       }
       return dateFormat(d, fmt)
     },
+    //输入框获取焦点时内容选中
+    getFocus(e){
+      event.currentTarget.select();
+    }
   },
   mounted() {
     //解决android键盘收起input没有失去焦点，底部按钮遮挡输入框

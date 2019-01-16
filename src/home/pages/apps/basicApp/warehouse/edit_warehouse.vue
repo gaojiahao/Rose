@@ -1,106 +1,90 @@
 <template>
-  <div class='pages'>
+  <div class='pages warehouse-page'>
     <r-scroll class='content' :options="scrollOptions">
-      <div class='mater_baseinfo vux-1px-b'>
-        <div class='mater_property'>
-          <div class='each_property vux-1px-b'>
-            <label class='required'>仓库编码:</label>
-            <input type='text' v-model="warehouse.warehouseCode" class='property_val'
-                  :class='{readonly :transCode!==""}' :readonly='transCode!==""'/>
-          </div>
-          <div class='each_property required' :class="transCode != ''?'edit_bor_btm':''">
-            <label class='required'>仓库名称:</label>
-            <input type='text' v-model="warehouse.warehouseName" class='property_val'/>
-          </div>
+      <div class='mater_baseinfo'>
+        <div class="mater_pic">
+          <span class="title">仓库照片</span>
+          <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
         </div>
-        <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
       </div>
       <div v-for="(item, index) in warehouseConfig" :key="index" class="each-info">
         <template  v-if="!item.hiddenInRun">
+          <!-- 文本框 -->
+          <div class='each_property vux-1px-t' v-if="item.xtype === 'r2Textfield'">
+            <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+            <input type='text' v-model="warehouse[item.fieldCode]" placeholder="请填写" class='property_val' />
+          </div>
           <!-- 下拉框 -->
-          <div v-if="item.fieldCode !== 'warehouseProvince' && item.fieldCode !== 'warehouseStatus'" >
-            <r-picker :title="`${item.fieldLabel}:`" :data="item.remoteData" :value="warehouse[item.fieldCode]"
-                      v-model="warehouse[item.fieldCode]" :required='!item.allowBlank' 
-                      v-if="item.xtype === 'r2Combo'">
+          <div v-if="item.xtype === 'r2Combo' && item.fieldCode !== 'warehouseProvince' && item.fieldCode !== 'warehouseStatus'" >
+            <r-picker class="vux-1px-t" :title="item.fieldLabel" :data="item.remoteData" :value="warehouse[item.fieldCode]"
+                      v-model="warehouse[item.fieldCode]" :required='!item.allowBlank' >
             </r-picker>
-            <!-- 文本框 -->
-            <div class='each_property vux-1px-b' v-if="item.xtype === 'r2Textfield'">
-              <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}:</label>
-              <input type='text' v-model="warehouse[item.fieldCode]" class='property_val'/>
-            </div>
           </div>
           <!-- 仓库状态 -->
           <template v-else-if="item.fieldCode === 'warehouseStatus'">
-             <r-picker :title="`${item.fieldLabel}:`" :data="item.remoteData" :value="warehouseStatus"
-                  v-model="warehouseStatus" :required='!item.allowBlank' 
-                  v-if="item.xtype === 'r2Combo'">
+             <r-picker class="vux-1px-t" :title="item.fieldLabel" :data="item.remoteData" :value="warehouseStatus"
+                  v-model="warehouseStatus" :required='!item.allowBlank'>
             </r-picker>
           </template>
           <!-- 省市区 -->
           <template v-else-if="item.fieldCode === 'warehouseProvince'">
-            <div class='each_property vux-1px-b' @click="showAddress = true">
-              <label>省市区:</label>
+            <div class='each_property vux-1px-t' @click="showAddress = true">
+              <label>省市区</label>
               <div class='picker'>
-                  <span class='mater_nature'>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}</span>
-                  <span class='iconfont icon-gengduo'></span>
+                <span class='mater_nature' v-if="warehouse.warehouseProvince === '' && warehouse.warehouseCity === '' 
+                      && warehouse.warehouseDistrict === ''">请选择</span>
+                <span class='mater_nature'v-else>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}</span>
+                <span class='icon-right'></span>
               </div>
-              <x-address title="省市区:"  :list="addressData" @on-hide='getAddress($event)' @on-shadow-change='changeAddress' :value="AccountAddress"
+              <x-address title="省市区"  :list="addressData" @on-hide='getAddress($event)' @on-shadow-change='changeAddress' :value="AccountAddress"
                         :show.sync="showAddress" v-show="false"></x-address>
             </div>
           </template>
         </template>
-        <!-- <template v-else>
-          <div class='each_property vux-1px-b' @click="showPop = true" v-show="typeSub !== 'noMatched'">
-            <label>{{item.fieldLabel}}</label>
-            <div class='picker'>
-                <span class='mater_nature'>{{warehouse[item.fieldCode]}}</span>
-                <span class='iconfont icon-gengduo'></span>
-            </div>
-          </div>
-        </template> -->
       </div>
       <!-- 重复项 -->
-      <div v-for="(item, index) in warehouseDuplicateConfig" :key="`${item.name}+${index}`">
-        <div class="duplicate-item-no-select" v-if="warehouseDuplicateData[item.name] && !warehouseDuplicateData[item.name].length">
-          <span class="title">{{item.title}}</span>
-          <span class="add" @click="addMoreUnit(item)">新增</span>
+      <div class="duplicate-wrapper"  v-for="(item, index) in warehouseDuplicateConfig" :key="`${item.name}+${index}`">
+        <div class="title" v-if="warehouseDuplicateData[item.name] && !warehouseDuplicateData[item.name].length">
+          <div class="each_property">
+            <label>{{item.title}}</label>
+            <span class="add" @click="addMoreUnit(item)">新增</span>
+          </div>
         </div>
-        <group class="duplicate-item" :title="item.title" v-else-if="warehouseDuplicateData[item.name] && warehouseDuplicateData[item.name].length">
-          <div v-for="(sItem, sIndex) in warehouseDuplicateData[item.name]" :key="sIndex" :class="{'has_border': sIndex < warehouseDuplicateData[item.name].length-1}">
-            <div v-for="(dItem,dIndex) in item.items"  :key="dIndex" v-if="">
-              <template v-if="sItem[dItem.fieldCode] != null && !dItem.readOnly">
+        <template v-else-if="warehouseDuplicateData[item.name] && warehouseDuplicateData[item.name].length">
+           <div class="duplicate-item" :class="{'has_border' : sIndex > 0}" v-for="(sItem, sIndex) in warehouseDuplicateData[item.name]" :key="sIndex">
+            <div v-for="(dItem,dIndex) in item.items"  :key="dIndex" :class="{'vux-1px-b': dIndex < item.items.length-1}">
+              <template v-if="!dItem.readOnly">
                 <!-- 下拉框 -->
-                <r-picker class="duplicate-picker vux-1px-t" :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
-                        mode="4" :has-border="false" v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank"
+                <r-picker :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
+                          v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank"
                         v-if="dItem.editorType === 'r2Combo' || dItem.editorType === 'r2Selector'">
                 </r-picker>
                 <!-- 输入框（数字） -->
-                <x-input :title="dItem.text" type="number" text-align='right' placeholder='请填写' v-model.number='sItem[dItem.fieldCode]'
-                        @on-blur="checkAmt(sItem)" v-if="dItem.editorType === 'r2Numberfield'">
-                  <template slot="label">
-                    <span :class="{required : !dItem.allowBlank}">{{dItem.text}}</span>
-                  </template> 
-                </x-input>
+                <div class='each_property' v-if="dItem.editorType === 'r2Numberfield'">
+                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                  <input type='number' v-model.number="sItem[dItem.fieldCode]" placeholder="请填写" class='property_val' />
+                </div>
                 <!-- 输入框（文字） -->
-                <x-input :title="dItem.text" text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]' 
-                        v-if="dItem.editorType === 'r2Textfield'">
-                  <template slot="label">
-                      <span :class="{required : !dItem.allowBlank}">{{dItem.text}}</span>
-                    </template>
-                </x-input>
-                <datetime placeholder="请填写" v-model="sItem[dItem.fieldCode]" v-if="dItem.editorType === 'r2Datefield'">
-                  <template slot="title">
-                    <span :class="{required : !dItem.allowBlank}">{{dItem.text}}</span>
-                  </template>
-                </datetime>
+                <div class='each_property' v-if="dItem.editorType === 'r2Textfield'">
+                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                  <input type='text' v-model="sItem[dItem.fieldCode]" placeholder="请填写" class='property_val' />
+                </div>
+                <!-- 日期 -->
+                <div class='each_property vux-1px-t' v-if="dItem.editorType === 'r2Datefield'" @click="getDate(sItem,dItem)">
+                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                  <span class='property_val'>{{sItem[dItem.fieldCode] || "请选择"}}</span>
+                </div>
               </template>
-              <template v-else-if="sItem[dItem.fieldCode] != null && dItem.readOnly">
-                <cell class="vux-1px-t" :title="dItem.text" :value="sItem[dItem.fieldCode]" disabled></cell>
+              <template v-else>
+                <div class='each_property readOnly'>
+                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                  <span class='property_val'>{{sItem[dItem.fieldCode]}}</span>
+                </div>
               </template>
             </div>
 
           </div>
-        </group>
+        </template>
         <div class="add_more" v-show="warehouseDuplicateData[item.name] && warehouseDuplicateData[item.name].length">
           您还需要添加新的{{item.title}}?请点击
           <span class='add' @click="addMoreUnit(item)">新增</span>
@@ -113,7 +97,7 @@
     <!-- <pop-warelabe-list :show="showPop" :data="typeSubMap[typeSub].list" v-model="showPop"
                         :defaultValue="typeSubMap[typeSub].value" @sel-group="selGroup" @list-search="getTypeSubList">
     </pop-warelabe-list> -->
-    <div class='vux-1px-t btn '>
+    <div class='btn '>
       <div class="cfm_btn" @click="save">{{this.transCode ? '保存' : '提交'}}</div>
     </div>
   </div>
@@ -123,7 +107,7 @@
   import {getBaseInfoDataBase, getFormConfig, requestData, getFormViews} from 'service/commonService.js';
   import {save, update, getwarehouseInfo, getDepartMentWage} from 'service/warehouseService.js'
   import {getDictByType, getObjDealerByLabelName} from 'service/commonService.js'
-  import RPicker from 'components/RPicker';
+  import RPicker from 'components/basicPicker';
   import RScroll from 'components/RScroll'
   import common from 'mixins/common.js'
   import UploadImage from 'components/UploadImage'
@@ -314,6 +298,17 @@
           };
           this.warehouse.warehouseCity = this.AccountAddress[1];
         }
+      },
+      // 选择日期
+      getDate(sItem, dItem){
+        this.$vux.datetime.show({
+          value: '', // 其他参数同 props
+          confirmText: '确认',
+          cancelText: '取消',
+          onConfirm: (val)=> {
+            sItem[dItem.fieldCode] = val;
+          },
+        })
       },
       // TODO 新增重复项
       addMoreUnit(item) {
@@ -519,7 +514,7 @@
                 }
               }
               // 在渲染的配置中添加字段
-              if(item.fieldCode !== 'warehouseCode' && item.fieldCode !== 'warehouseName' && item.fieldCode !== 'warehousePic'
+              if(item.fieldCode !== 'warehousePic'
                 && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'){
                 this.warehouseConfig.push(item);
               }
@@ -537,13 +532,13 @@
                 item.title = '库位';
                 break;
             }
-            let arr = []
+            let arr = [];
             item.items.forEach((sItem, sIndex) => {
               if(!sItem.hidden){
                 if((sItem.editorType === 'r2Combo' || sItem.editorType === 'r2Selector') && sItem.dataSource && sItem.dataSource.type === 'remoteData') {
                   this.handlerParams(sItem)
                 }
-                arr.push(sItem)
+                arr.push(sItem);
               }
             })
             item.items = arr;
@@ -601,127 +596,9 @@
   }
 </script>
 <style lang="scss" scoped>
-  .vux-1px-l:before,
-  .vux-1px-b:after,
-  .vux-1px-t:before  {
-    border-color: #e8e8e8;
-    left: 0;
-  }
-
-  .content {
-    height: 90%;
-    background-color: #f8f8f8;
-    overflow: hidden;
-    position: relative;
-    /deep/ .weui-cells {
-      font-size: .12rem;
-      margin-top: .1rem;
-      &:before {
-        border-top: none;
-      }
-      &:after {
-        border-bottom: none;
-      }
-      .weui-cell {
-        padding: 0.1rem;
-        &:before {
-          // left: 0;
-          border-color: #e8e8e8;
-          left: 0.1rem;
-        }
-      }
-    }
-    // .vux-1px-b:after {
-    //   transform: scaleY(1);
-    // }
-    input {
-      border: none;
-      outline: none;
-    }
-    .mater_baseinfo {
-      display: flex;
-      align-items: flex-end;
-      .mater_property {
-        flex: 1;
-      }
-    }
-    .each-info{
-      background-color: #fff;
-    }
-    .each_property {
-      min-height: .5rem;
-      padding: 0.05rem 0.08rem;
-      position: relative;
-       background-color: #fff;
-      label {
-        color: #6d6d6d;
-        font-size: 0.12rem;
-        display: block;
-        height: 0.2rem;
-        line-height: 0.2rem;
-      }
-      .required {
-        color: #5077aa;
-        font-weight: bold;
-      }
-      //校验错误提示按钮
-      .warn {
-        position: absolute;
-        right: 0.08rem;
-        top: 0.27rem;
-      }
-      .weui-icon-warn {
-        font-size: 0.18rem;
-      }
-      .property_val {
-        display: block;
-        font-size: 0.16rem;
-        line-height: 0.24rem;
-        width: 100%;
-      }
-      .readonly {
-        color: #999;
-      }
-      .picker {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        .mater_nature {
-          font-size: 0.16rem;
-          line-height: 0.2rem;
-        }
-        .iconfont {
-          font-size: 0.24rem;
-        }
-        .title{
-          font-size: .12rem;
-        }
-      }
-      .vux-cell-box {
-        position: absolute;
-        left: 0;
-        top: 0;
-        padding: 0.05rem 0.08rem;
-        width: 100%;
-        box-sizing: border-box;
-        color: #6d6d6d;
-        font-size: 0.12rem;
-        label {
-          height: 0.58rem;
-        }
-        .vux-cell-primary {
-          display: none;
-        }
-        &:not(:first-child):before {
-          border: none;
-        }
-
-      }
-    }
-    .upload-image-container {
-      width: 1.2rem;
-      height: 1.2rem;
-    }
+@import '../../../scss/basicApp.scss';
+  .warehouse-page{
+    background-color: #F6F6F6;
   }
   //确认框
   .popup_header {
@@ -740,98 +617,7 @@
 
     }
   }
-   /* 重复项 */
-    .duplicate-item {
-      margin-top: .1rem;
-      background-color: #fff;
-      overflow: hidden;
-      .has_border {
-        border-bottom: .03rem solid #e8e8e8;
-      }
-      /deep/ .weui-cells__title {
-        /*padding-left: 0;*/
-        font-size: .12rem;
-      }
-      /deep/ .weui-cells {
-        font-size: .16rem;
-      }
-      /deep/ .weui-cell:first-child:before {
-        display: block;
-      }
-    }
-    .duplicate-item-no-select {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: .1rem;
-      padding: .1rem .2rem .1rem .1rem;
-      background-color: #fff;
-      font-size: .16rem;
-      .add {
-        padding: .01rem .06rem;
-        border-radius: .12rem;
-        background: #5077aa;
-        color: #fff;
-        font-size: .12rem;
-      }
-    }
-    .add_more {
-      width: 100%;
-      text-align: center;
-      font-size: 0.12rem;
-      padding: 0.1rem 0;
-      color: #757575;
-      span {
-        margin: 0 5px;
-        color: #fff;
-        padding: .01rem .06rem;
-        border-radius: .12rem;
-      }
-      .add {
-        background: #5077aa;
-      }
-      .delete {
-        background: red;
-      }
-      em {
-        font-style: normal;
-      }
-    }
-  // 确定
-  .btn {
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 10%;
-    position: absolute;
-    background: #fff;
-    .cfm_btn {
-      top: 50%;
-      left: 50%;
-      width: 2.8rem;
-      color: #fff;
-      height: .44rem;
-      line-height: .44rem;
-      position: absolute;
-      text-align: center;
-      background: #5077aa;
-      border-radius: .4rem;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 2px 5px #5077aa;
-    }
-  }
 
-  .edit_bor_btm:after {
-    content: " ";
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 1px;
-    border-top: 1px solid #C7C7C7;
-    transform-origin: 0 100%;
-    transform: scaleY(0.5);
-  }
 </style>
 
 
