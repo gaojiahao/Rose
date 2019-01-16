@@ -39,32 +39,24 @@
           <d-search @search="searchList" @turn-off="onHide" :isFill="true"></d-search>
           <!-- 往来列表 -->
           <div class="mater_list" ref="dealer">
-            <div class="mater_list_wrapper">
-              <div class="each_mater box_sd" v-for="(item, index) in dealerList" :key="index"
-                   @click.stop="selDealer(item,index)">
-                <div class="mater_main ">
-                  <div class="mater_info">
-                    <!--联系人电话 -->
-                    <div class="withColor">
-                      <div class="ForInline " style="display:inline-block">
-                        <span class='dealer'>{{item.dealerName}}</span>
-                      </div>
+            <div class="dealer-list-wrapper">
+              <div class="each_dealer" :class="{selected: showSelIcon(item)}" v-for="(item, index) in dealerList"
+                   :key="index" @click.stop="selDealer(item,index)">
+                <img class="dealer_img" :src="require('assets/default/company2.png')" alt="dealer_img">
+                <div class="dealer_main">
+                  <div class="dealer_name">{{item.dealerName}}</div>
+                  <div class="dealer_address">{{item.dealerAddress}}</div>
+                  <div class="dealer_detail">
+                    <div class="dealer_phone_wrapper">
+                      <i class="icon icon-mobile"></i>
+                      <span :class="{mobile: item.dealerMobilePhone}">{{item.dealerMobilePhone || '暂无'}}</span>
                     </div>
-                    <div class="withColor" v-if="item.dealerMobilePhone || item.dealerPhone">
-                      <div class="ForInline name" style="display:inline-block">
-                        <span style="marginRight:.04rem;"
-                              v-if="item.dealerMobilePhone">{{item.dealerMobilePhone}}</span>
-                        <span v-if="item.dealerPhone">{{item.dealerPhone}}</span>
-                      </div>
-                    </div>
-                    <!-- 地址 -->
-                    <div class="withoutColor">
-                      <span>{{item.province}}{{item.city}}{{item.county}}{{item.address}}</span>
+                    <div class="dealer_phone_wrapper">
+                      <i class="icon icon-phone"></i>
+                      <span class="phone">{{item.dealerPhone || '暂无'}}</span>
                     </div>
                   </div>
                 </div>
-                <!-- icon -->
-                <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
               </div>
               <load-more tip="加载中" v-show="hasNext" slot="loadmore"></load-more>
               <!-- 当没有数据的时候 显示提醒文字 -->
@@ -254,6 +246,10 @@
         }).then(({dataCount = 0, tableContent = []}) => {
           let DEALERLIST_SELITEMS = JSON.parse(sessionStorage.getItem('DEALERLIST_SELITEMS')) || '';
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+          tableContent.forEach(item => {
+            let {province = '', city = '', county = '', address = ''} = item;
+            item.dealerAddress = !province && !city && !county && !address ? '暂无联系地址' : `${province}${city}${county}${address}`;
+          });
           this.dealerList = this.page === 1 ? tableContent : [...this.dealerList, ...tableContent];
           //获取缓存
           if (DEALERLIST_SELITEMS) {
@@ -307,16 +303,16 @@
       add() {
         let pickVal = this.dealerTitle;
         this.$router.push({
-          path: '/adress/edit_ads', 
-          query: { 
-            add: 1, 
-            pickVal: pickVal 
+          path: '/adress/edit_ads',
+          query: {
+            add: 1,
+            pickVal: pickVal
           }
         })
       },
       itemClick() {
         this.showDealerPop = true;
-      }
+      },
     },
     created() {
       this.initScroll();
@@ -439,6 +435,7 @@
       }
     }
   }
+
   // 弹出层
   .trade_pop_part {
     background: #fff;
@@ -457,12 +454,11 @@
         width: 100%;
         overflow: hidden;
         box-sizing: border-box;
-        padding: 0 .04rem 0 0;
         height: calc(100% - .45rem);
-        .mater_list_wrapper {
+        .dealer-list-wrapper {
           position: relative;
           width: 100%;
-          padding: .04rem .04rem 0 .3rem;
+          padding: .05rem .15rem 0;
           overflow: hidden;
           box-sizing: border-box;
           // 当没有数据时
@@ -494,56 +490,59 @@
           }
         }
         // 每个往来
-        .each_mater {
+        .each_dealer {
           display: flex;
-          padding: 0.08rem;
+          padding: .15rem;
           position: relative;
-          margin-bottom: .2rem;
+          margin-bottom: .1rem;
+          border-radius: .04rem;
+          color: #333;
           box-sizing: border-box;
-          // 阴影
-          &.box_sd {
-            box-sizing: border-box;
-            box-shadow: 0 0 8px #e8e8e8;
+          box-shadow: 0 2px 10px 0 rgba(228, 228, 232, 0.5);
+          &.selected {
+            border: 1px solid $main_color;
           }
-          // 往来主体
-          .mater_main {
-            flex: 1;
-            padding-left: .1rem;
-            box-sizing: border-box;
-            display: inline-block;
-            // 往来信息
-            .mater_info {
-              color: #757575;
-              font-size: .14rem;
-              // 有颜色包裹的
-              .withColor {
-                .name {
-                  color: #5077aa;
-                  font-size: .14rem;
-                  font-weight: bold;
-                }
-                .dealer {
-                  color: #111;
-                  font-weight: bold;
-                }
+          .dealer_img {
+            width: .4rem;
+            height: .4rem;
+          }
+          .dealer_main {
+            margin-left: .12rem;
+            .dealer_name {
+              line-height: .18rem;
+              font-size: .16rem;
+              font-weight: bold;
+            }
+            .dealer_address {
+              margin-top: .08rem;
+              line-height: .16rem;
+              color: #999;
+              font-size: .12rem;
+            }
+            .dealer_detail {
+              display: flex;
+              margin-top: .16rem;
+            }
+            .dealer_phone_wrapper {
+              display: flex;
+              align-items: center;
+              line-height: .12rem;
+              color: #696969;
+              font-size: .12rem;
+              & + .dealer_phone_wrapper {
+                margin-left: .16rem;
               }
             }
+            .icon {
+              display: inline-block;
+              margin-right: .08rem;
+              width: .16rem;
+              height: .16rem;
+            }
+            .mobile {
+              color: $main_color;
+            }
           }
-          // 选择icon
-          .selIcon,
-          .isSelIcon {
-            top: 50%;
-            left: -.3rem;
-            position: absolute;
-            transform: translate(0, -50%);
-          }
-          .isSelIcon {
-            fill: #5077aa;
-          }
-        }
-        .each-people {
-          @extend .each_mater;
-          margin: .2rem 0;
         }
       }
     }
