@@ -19,8 +19,11 @@
           <template v-if="!Object.keys(orderList).length">
             <div @click="getMatter" class='no-matter'>
               <div class="title">{{orderListTitle}}列表</div>
-              <div class="required">请选择{{orderListTitle}}</div>
-              <span class="iconfont icon-youjiantou r_arrow"></span>
+              <div class="picker">
+                请选择<span class="icon-right"></span>
+              </div>
+              <!-- <div class="required">请选择{{orderListTitle}}</div>
+              <span class="iconfont icon-youjiantou r_arrow"></span> -->
             </div>
           </template>
           <!-- 已经选择了物料 -->

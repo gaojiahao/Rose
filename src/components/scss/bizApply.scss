@@ -239,6 +239,10 @@
     line-height: .14rem;
     display: flex;
     justify-content: space-between;
+    font-size: .14rem;
+    .title{
+      color: #696969;
+    }
     .picker {
       display: flex;
       align-items: center;
@@ -650,13 +654,10 @@
   border-top: 1px solid #e8e8e8;
 }
 .comment {
-  width: 95%;
-  margin: 0 auto;
   background: #fff;
   // margin-top: .1rem;
-  padding: .06rem .1rem;
+  padding: .18rem .15rem;
   box-sizing: border-box;
-
   .weui-cell{
     padding: 0;
   }

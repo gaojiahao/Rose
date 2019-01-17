@@ -15,7 +15,8 @@
       </div>
       <div class="upload-file-item" v-if="!noUpload" @click="chooseImage">
         <div class="icon_container">
-          <span class="iconfont icon-fujian"></span>
+          <span class="icon-upload-add"></span>
+          <span>添加附件</span>
         </div>
       </div>
     </div>
@@ -191,12 +192,13 @@
 
 <style scoped lang="scss">
   .upload-file-container {
-    width: 95%;
-    margin: .1rem auto;
+    margin: .1rem 0;
     background: #fff;
     position: relative;
-    padding: .06rem .1rem;
+    padding: .18rem .15rem;
     box-sizing: border-box;
+    font-size: .14rem;
+    color: #333;
     &.no-upload {
       margin: 0;
       padding: .24rem .15rem .15rem;
@@ -206,8 +208,6 @@
       }
       .title {
         line-height: .14rem;
-        color: #333;
-        font-size: .14rem;
       }
       .upload-file-list {
         padding: 0;
@@ -218,22 +218,17 @@
         height: .78rem;
       }
     }
-    .title {
-      color: #757575;
-      font-size: .12rem;
-    }
     .upload-file-list {
       display: flex;
       flex-wrap: wrap;
-      padding: 0.05rem 0;
+      // padding: 0.05rem 0;
     }
     .upload-file-item {
-      width: .6rem;
-      height: .6rem;
+      width: .78rem;
+      height: .78rem;
       position: relative;
-      margin-bottom: .3rem;
+      margin: .15rem .1rem 0 0;
       display: inline-block;
-      margin: 0 .3rem .3rem 0;
       .img {
         width: 100%;
         height: 100%;
@@ -254,7 +249,7 @@
       display: none;
     }
     .icon_container {
-      background: #fff;
+      background: #F7F7F7;
       width: 100%;
       height: 100%;
       position: absolute;
@@ -265,12 +260,16 @@
       flex-direction: column;
       justify-content: center;
       align-content: center;
-      border-radius: 0.05rem;
-      border: 1px solid #ccc;
-      .icon-fujian {
-        color: #c5c5c5;
-        font-size: .18rem;
-        line-height: .18rem;
+      border-radius: 0.04rem;
+      span {
+        line-height: .12rem;
+        color: #999;
+        font-size: .12rem;
+      }
+      .icon-upload-add {
+        margin-bottom: .15rem;
+        width: .16rem;
+        height: .16rem;
       }
     }
     // .icon-fujian {

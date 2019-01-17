@@ -214,3 +214,8 @@
   background: url('~assets/iconfont/selected.png');
   background-size: cover;
 }
+
+.icon-upload-add{
+  background: url('~assets/iconfont/icon_upload_add.png');
+  background-size: cover;
+}
