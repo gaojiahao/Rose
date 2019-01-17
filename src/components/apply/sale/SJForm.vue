@@ -4,11 +4,9 @@
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 选择客户-->
-        <pop-dealer-list :defaultValue="dealerInfo" :defaultContact="contactInfo" @sel-dealer="selDealer" @sel-contact="selContact" >
-        </pop-dealer-list>
+        <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo" :dealer-params="dealerParams"
+                         :defaultContact="contactInfo"></pop-dealer-list>
         <!-- 商机明细 -->
         <div class="materiel_list">
           <div class="mater_list">

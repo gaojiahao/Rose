@@ -4,79 +4,16 @@
       <div class="fill_wrapper">
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
         <pop-dealer-list :defaultValue="dealerInfo" :default-contact="contactInfo" :dealer-params="dealerParams"
                          @sel-dealer="selDealer" @sel-contact="selContact"></pop-dealer-list>
         <!-- 物料列表 -->
-        <div class="materiel_list">
-          <!-- 没有选择物料 -->
-          <template v-if="!Object.keys(orderList).length">
-            <div @click="getMatter" class='no-matter'>
-              <div class="title">{{orderListTitle}}列表</div>
-              <div class="required">请选择{{orderListTitle}}</div>
-              <span class="iconfont icon-youjiantou r_arrow"></span>
-            </div>
-          </template>
-          <!-- 已经选择了物料 -->
-          <template v-else>
-            <div class="title" @click="showDelete">
-              <div>{{orderListTitle}}列表</div>
-              <div class='edit' v-if='!matterModifyClass'>编辑</div>
-              <div class='finished' v-else>完成</div>
-            </div>
-            <div class="mater_list">
-              <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}"
-                   v-for="(oItem, key, index) in orderList" :key="key">
-                <div class="order_code" v-if='oItem.length'>
-                  <span class="order_title">{{orderListTitle}}</span>
-                  <span class="order_num">{{key}}</span>
-                </div>
-                <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                  <matter-item :item="item" @on-modify="modifyMatter(item, index, key)" :show-delete="matterModifyClass"
-                               @click.native="delClick(index, item, key)" :config="matterEditConfig.property">
-                    <template slot-scope="{item}" slot="info">
-                      <!-- 物料数量和价格 -->
-                      <div class='mater_other' v-if="item.price && item.tdQty">
-                        <div class='mater_price'>
-                          <span class="symbol">￥</span>{{item.price}}
-                        </div>
-                        <div>
-                          <r-number :num="item.tdQty" :max="item.qtyBal"
-                                    :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
-                        </div>
-                      </div>
-                    </template>
-                    <template slot="editPart" slot-scope="{item}">
-                      <div class="edit-part vux-1px-l" @click="modifyMatter(item, index, key)"
-                           v-show="(item.price && item.tdQty) &&!matterModifyClass">
-                        <span class='iconfont icon-bianji1'></span>
-                      </div>
-                    </template>
-                  </matter-item>
-                  <div class='delete_icon' @click="delClick(index, item, key)" v-if='matterModifyClass'>
-                    <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
-                    <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </template>
-
-          <!-- 新增更多 按钮 -->
-          <div class="handle_part" v-if="matterList.length && !matterModifyClass">
-            <span class="add_more stop" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'
-                  @click="stopOrder">终止提交</span>
-            <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
-            <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
-          </div>
-          <!-- 物料popup -->
-          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" :config="matterPopConfig" 
-                           :matter-params="matterParams" :orderTitle="matterPopOrderTitle"
-                           @sel-matter="selMatter" :filter-list="filterList" :default-value="matterList" ref="matter">
-          </pop-matter-list>
-        </div>
+        <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :filter-list="filterList"
+          :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="matterList" 
+          :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
+          :addMatter="addMatter" :sel-matter="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
+          :modify-matter="modifyMatter" :show-delete="showDelete" :show-sel-icon="showSelIcon" :del-click="delClick">
+        </apply-matter-part>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :show-date-time="true" :config="matterEditConfig">
@@ -91,9 +28,8 @@
     <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
       <span class="count_num"
             :class="{nine_up : tdAmount.length  > 8 ,
-          ten_up : tdAmount.length  > 9,
-          ele_up : tdAmount.length  > 10}"
-      >
+                    ten_up : tdAmount.length  > 9,
+                    ele_up : tdAmount.length  > 10}">
         <span class="total_price">
           <span class="symbol">￥</span>{{tdAmount | numberComma(3)}}
         </span>
@@ -127,7 +63,7 @@
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
   import RNumber from 'components/RNumber'
-  import PopDealerList from 'components/Popup/PopDealerListTest'
+  import PopDealerList from 'components/Popup/PopDealerList'
   import PopInvoiceList from 'components/Popup/invoice/PopInvoiceList'
   import PopMatterList from 'components/Popup/PopMatterListTest'
   import RPicker from 'components/RPicker'
@@ -136,11 +72,12 @@
   // 方法引入
   import {accAdd, accMul, accDiv, accSub} from '@/home/pages/maps/decimalsAdd'
   import { toFixed } from '@/plugins/calc'
-
+  import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
   const DRAFT_KEY = 'KPSQ_DATA';
   export default {
     mixins: [ApplyCommon],
     components: {
+      ApplyMatterPart,
       Cell, Group, XInput, PopMatterList, PopMatter, RNumber,
       Datetime, XTextarea, PopDealerList, PopupPicker, PopInvoiceList, RPicker, PopBaseinfo
     },
@@ -334,13 +271,9 @@
           warn = '请选择客户信息';
         }
         else if (!Object.keys(this.orderList).length) {
-          this.$vux.alert.show({
-            content: '请选择物料'
-          })
+          warn = `请选择${this.orderListTitle}信息`;
         }
-        else {
-           let warn = '',
-            dataSet = [];
+        if(!warn) {
           for (let items of Object.values(this.orderList)) {
             for (let item of items) {
               if (!item.tdQty) {
@@ -376,68 +309,69 @@
               dataSet.push(obj);
             }
           }
-          if (warn) {
-            this.$vux.alert.show({
-              content: warn
-            })
-            return
-          }
-          this.$vux.confirm.show({
-            content: '确认提交?',
-            // 确定回调
-            onConfirm: () => {
-              this.$HandleLoad.show();
-              let operation = saveAndStartWf;
-              let wfPara = {
-                [this.processCode]: {businessKey: this.businessKey, createdBy: JSON.stringify(this.formData.handler)}
-              }
-              if (this.isResubmit) {
-                wfPara = {
-                  businessKey: this.transCode,
-                  createdBy: this.formData.handler,
-                  transCode: this.transCode,
-                  result: 3,
-                  taskId: this.taskId,
-                  comment: ""
-                }
-              }
-              let submitData = {
-                listId: this.listId,
-                biComment: '',
-                formData: JSON.stringify({
-                  ...this.formData,
-                  handlerEntity: this.entity.dealerName,
-                  creator: this.formData.handler,
-                  modifer: this.formData.handler,
-                  order: {
-                    crDealerLabel: '客户',
-                    dealerCodeCredit: this.dealerInfo.dealerCode,
-                    dataSet: dataSet,
-                  },
-                  dealerCreditContactPersonName: this.contactInfo.dealerName || null,
-                  dealerCreditContactInformation: this.contactInfo.dealerMobilePhone || '',
-                }),
-                wfPara: JSON.stringify(wfPara)
-              };
-              // 重新提交
-              if (this.isResubmit) {
-                submitData.biReferenceId = this.biReferenceId;
-                operation = saveAndCommitTask
-              }
-              // 无工作流
-              if (!this.processCode.length) {
-                operation = submitAndCalc;
-                delete submitData.wfPara;
-                delete submitData.biReferenceId;
-              }
-              if (this.biReferenceId) {
-                submitData.biReferenceId = this.biReferenceId
-              }
-              this.saveData(operation, submitData);
-            }
-          });
         }
-
+        if (warn) {
+          this.$vux.alert.show({
+            content: warn
+          })
+          return
+        }
+        this.$vux.confirm.show({
+          content: '确认提交?',
+          onConfirm: () => {
+            this.$HandleLoad.show();
+            let operation = saveAndStartWf;
+            let wfPara = {
+              [this.processCode]: {
+                businessKey: this.businessKey, 
+                createdBy: JSON.stringify(this.formData.handler)
+              }
+            }
+            if (this.isResubmit) {
+              wfPara = {
+                businessKey: this.transCode,
+                createdBy: this.formData.handler,
+                transCode: this.transCode,
+                result: 3,
+                taskId: this.taskId,
+                comment: ""
+              }
+            }
+            let submitData = {
+              listId: this.listId,
+              biComment: '',
+              formData: JSON.stringify({
+                ...this.formData,
+                handlerEntity: this.entity.dealerName,
+                creator: this.formData.handler,
+                modifer: this.formData.handler,
+                order: {
+                  crDealerLabel: '客户',
+                  dealerCodeCredit: this.dealerInfo.dealerCode,
+                  dataSet: dataSet,
+                },
+                dealerCreditContactPersonName: this.contactInfo.dealerName || null,
+                dealerCreditContactInformation: this.contactInfo.dealerMobilePhone || '',
+              }),
+              wfPara: JSON.stringify(wfPara)
+            };
+            // 重新提交
+            if (this.isResubmit) {
+              submitData.biReferenceId = this.biReferenceId;
+              operation = saveAndCommitTask
+            }
+            // 无工作流
+            if (!this.processCode.length) {
+              operation = submitAndCalc;
+              delete submitData.wfPara;
+              delete submitData.biReferenceId;
+            }
+            if (this.biReferenceId) {
+              submitData.biReferenceId = this.biReferenceId
+            }
+            this.saveData(operation, submitData);
+          }
+        });
       },
       // 获取订单信息用于重新提交
       getFormData() {

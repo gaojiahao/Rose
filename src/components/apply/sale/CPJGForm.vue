@@ -1,17 +1,15 @@
 <template>
-  <div class="pages xsbj-apply-container">
+  <div class="pages">
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 物料列表 -->
-        <apply-mater-list :actions="actions" :btnInfo="btnInfo" :show-materiel-pop="showMaterielPop" 
-                          :matter-pop-config="matterPopConfig" :matter-params="matterParams"
-                          :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" 
-                          :matter-list="matterList" :show-delete="showDelete" :show-selIcon="showSelIcon" :matter-modify-class="matterModifyClass" 
-                          :addMatter="addMatter" :sel-matter="selMatter" :modify-matter="modifyMatter" :del-click="delClick">
+        <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop"
+          :actions="actions" :btnInfo="btnInfo" :matter-list="matterList" :default-value="matterList" 
+          :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
+          :addMatter="addMatter" :sel-matter="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
+          :modify-matter="modifyMatter" :show-delete="showDelete" :show-sel-icon="showSelIcon" :del-click="delClick">
           <template slot="info" slot-scope="{item}">
             <div class='mater_other'>
               <div>
@@ -24,8 +22,7 @@
               </div>
             </div>
           </template>
-
-        </apply-mater-list>
+        </apply-matter-part>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
@@ -66,7 +63,7 @@ import ApplyCommon from 'pageMixins/applyCommon'
 import RPicker from 'components/RPicker'
 import PopMatter from 'components/apply/commonPart/MatterPop'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
-import ApplyMaterList from 'components/apply/commonPart/materialsList'
+import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 
 // import { toFixed } from '@/plugins/calc'
 const DRAFT_KEY = 'CPJG_DATA';
@@ -74,6 +71,7 @@ export default {
   mixins: [ApplyCommon],
   data() {
     return {
+      showPop: false,
       transCode: '',
       formData: {
         biId: '',
@@ -87,7 +85,7 @@ export default {
   },
   components: {
     Icon, RPicker, XTextarea, 
-    PopMatter, PopBaseinfo, ApplyMaterList
+    PopMatter, PopBaseinfo, ApplyMatterPart
   },
   methods: {
     // 滑动删除
@@ -132,18 +130,18 @@ export default {
     },
     // TODO 点击增加更多物料
     addMatter () {
-      // this.matterList.forEach(item => {
-      //   // 存储已输入的价格
-      //   this.priceMap[item.inventoryCode] = {
-      //     price: item.price,  // 标准价格
-      //     qtyOnline: item.qtyOnline,  // 数量上线
-      //     qtyDownline: item.qtyDownline,  // 数量下线
-      //     drDealerLabel: item.drDealerLabel,  // 客户类型
-      //     specialReservePrice: item.specialReservePrice,
-      //   };
-      // });
-      this.showPop = !this.showPop;
-      // this.showMaterielPop = !this.showMaterielPop
+      this.matterList.forEach(item => {
+        // 存储已输入的价格
+        this.priceMap[item.inventoryCode] = {
+          price: item.price,  // 标准价格
+          qtyOnline: item.qtyOnline,  // 数量上线
+          qtyDownline: item.qtyDownline,  // 数量下线
+          drDealerLabel: item.drDealerLabel,  // 客户类型
+          specialReservePrice: item.specialReservePrice,
+        };
+      });
+      // this.showPop = !this.showPop;
+      this.showMaterielPop = !this.showMaterielPop
     },
     // TODO 选中物料项
     selMatter (val) {
@@ -335,123 +333,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import './../../scss/bizApply';
-  .vux-popup-picker{
-    z-index: 700;
-  }
-  .xsbj-apply-container {
-    background: #f8f8f8;
-    /deep/ .weui-cells {
-      font-size: .14rem;
-      margin-top: unset;
-      &:before {
-        border-top: none;
-      }
-    }
-    /deep/ .picker {
-      padding-left: .07rem;
-      font-size: .14rem;
-    }
-  }
-  .mater_other {
-    font-size: .12rem;
-    color: #111;
-    font-weight: bold;
-    flex-wrap: wrap;
-    .price {
-      margin-right: .04rem;
-      .mater_price {
-        color: #ea5455;
-      }
-    }
-  }
-  //有效期
-  .no_top {
-    margin-top: 0;
-    margin-bottom: 0.1rem;
-    color:#111;
-  }
-  .valid_until {
-    background: #fff;
-    box-sizing: border-box;
-    padding: .02rem .1rem;
-    display: flex;
-    font-size: .14rem;
-    align-items: center;
-    justify-content: space-between;
-    .title {
-      color:#757575;
-    }
-    .mode {
-      color: #111;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      .mode_content {
-        margin-right: .06rem;
-      }
-      .icon-shenglve {
-        font-size: .2rem;
-        color: #707070;
-      }
-    }
-  }
-  //价格类型
-  .price_type {
-    padding: 0.1rem 0.15rem;
-    font-size: 0.14rem;
-    position: relative;
-    overflow: visible;
-    .current_type {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      .matter_val {
-        color:#999;
-      }
-    }
-
-  }
-  /* 列表容器 */
-    .r-dropdown-list {
-      position: absolute;
-      right: 0;
-      top: 100%;
-      z-index: 999;
-      width: 1rem;
-      border-bottom-left-radius: .08rem;
-      border-bottom-right-radius: .08rem;
-      background-color: #fff;
-      box-shadow: 0 2px 10px #e8e8e8;
-      box-sizing: border-box;
-    }
-    /* 列表项 */
-    .r-dropdown-item {
-      position: relative;
-      line-height: .4rem;
-      font-size: .16rem;
-      text-align: right;
-      span {
-        display: inline-block;
-        width: 100%;
-        box-sizing: border-box;
-        padding: 0 .1rem;
-      }
-      .active {
-        background: #e8e8e8;
-      }
-      .weui_icon_success-no-circle {
-        position: absolute;
-        top: 50%;
-        right: 0;
-        transform: translateY(-50%);
-      }
-    }
-    /* 倒三角 */
-    .vux-x-icon-ios-arrow-down {
-      transition: transform 200ms linear;
-      &.arrow-up {
-        transform: rotate(-180deg);
-      }
-    }
+@import './../../scss/bizApply';
 </style>

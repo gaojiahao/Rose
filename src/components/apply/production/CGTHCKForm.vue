@@ -121,7 +121,7 @@ import { saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask, getDict
 // mixins 引入
 import applyCommon from 'components/mixins/applyCommon'
 // 组件引入
-import PopDealerList from 'components/Popup/PopDealerListTest'
+import PopDealerList from 'components/Popup/PopDealerList'
 import PopMatterList from 'components/Popup/PopMatterListTest'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopSingleSelect from 'components/Popup/PopSingleSelect'

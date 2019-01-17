@@ -182,7 +182,7 @@
   // 组件引入
   import RAction from 'components/RAction'
   import RNumber from 'components/RNumber'
-  import PopDealerList from 'components/Popup/PopDealerListTest'
+  import PopDealerList from 'components/Popup/PopDealerList'
   import PopOrderList from 'components/Popup/PopOrderList'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
   import PopWarehouseList from 'components/Popup/PopWarehouseList'
