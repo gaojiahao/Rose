@@ -6,7 +6,7 @@
         <span class="icon-dealer"></span>
         <span class="dealer_name">{{item.dealerName}}</span>
       </div>
-      <div class="order_status"><span :class="item.statusClass">{{item.biStatus}}</span></div> 
+      <div class="order_status"><span :class="item.statusClass">{{item.biStatus}}</span></div>
     </div>
     <!-- 订单编码默认状态 -->
     <div class="duty-top" v-if="!istransCodeBottom">
@@ -15,7 +15,7 @@
           <label>交易号：</label>
           <span>{{item.transCode}}</span>
         </div>
-        <div class="order_status" v-if="!item.dealerName"><span :class="item.statusClass">{{item.biStatus}}</span></div> 
+        <div class="order_status" v-if="!item.dealerName"><span :class="item.statusClass">{{item.biStatus}}</span></div>
         <div class="order_biProStatus" v-else>{{item.processStatus || "暂无流程"}}</div>
       </div>
     </div>
@@ -36,7 +36,7 @@
             v-for="(mItem, mIndex) in item.detailItem" :key="mIndex" v-if='mIndex<3'>
           <div class="matter_img">
             <img :src="mItem.inventoryPic" @error="getDefaultImg(mItem)">
-          </div>  
+          </div>
           <div class="matter_main" :class="{'vux-1px-b': mIndex < item.detailItem.length - 1 }">
             <div class="main_top">
               <div class="matter_name">{{mItem.inventoryName}}</div>
@@ -56,8 +56,8 @@
                     <span class="symbol">x</span>{{ mItem.tdQty | toFixed}}
                   </p>
                 </div>
-                
-              </div>  
+
+              </div>
               <div class="matter_price_part" v-if="!noPrice">
                 <span class="symbol">￥</span>{{mItem.price | toFixed}}
               </div>
@@ -110,7 +110,7 @@
         </p>
       </div>
     <!-- 提示 -->
-    <div class="tips-part" v-show="item.itemCount > 3">      
+    <div class="tips-part" v-show="item.itemCount > 3">
       <span>查看全部 {{item.itemCount}} 条信息</span>
     </div>
 
@@ -212,7 +212,7 @@ label {
   color: #999;
 }
 .mater-list-item {
-  color: #333;  
+  color: #333;
   overflow: hidden;
   font-size: .12rem;
   background: #fff;
@@ -258,7 +258,7 @@ label {
     // 订单编码
     .duty_code {
       display: flex;
-      align-items: center; 
+      align-items: center;
       justify-content: space-between;
     }
   }
@@ -351,7 +351,7 @@ label {
           }
           .matter_price_part {
             font-size: .14rem;
-            margin-top: .08rem;           
+            margin-top: .08rem;
           }
           .matter_num_part {
             color: #999;
@@ -398,7 +398,10 @@ label {
     line-height: .14rem;
     padding: .15rem .15rem 0;
     .order_handler {
-      margin-right: .12rem;
+      display: flex;
+      & + .order_handler {
+        margin-left: .12rem;
+      }
     }
   }
   .transcode-part {
