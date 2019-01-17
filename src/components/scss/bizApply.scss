@@ -229,22 +229,41 @@
 }
 // 物料列表
 .materiel_list {
-  width: 95%;
   position: relative;
-  margin: .1rem auto 0;
+  padding: 0 .15rem;
+  margin-bottom: .1rem;
   background: #FFF;
   box-sizing: border-box;
-  padding: .06rem .08rem;
-  .title {
+  .no-matter {
+    padding: .18rem 0;
+    line-height: .14rem;
     display: flex;
-    color: #757575;
-    font-size: .14rem;
     justify-content: space-between;
+    .picker {
+      display: flex;
+      align-items: center;
+      .title{
+        color: #3296FA;
+      }
+      .icon-right {
+        width: .08rem;
+        height: .14rem;
+        margin-left: .1rem;
+      }
+    }
+
+
   }
-  .tips {
-    color: #111;
-    font-weight: 500;
-  }
+  // .title {
+  //   display: flex;
+  //   color: #757575;
+  //   font-size: .14rem;
+  //   justify-content: space-between;
+  // }
+  // .tips {
+  //   color: #111;
+  //   font-weight: 500;
+  // }
   // 右箭头
   .r_arrow {
     top: 50%;
@@ -617,7 +636,7 @@
     flex: 1.5;
     color: #fff;
     text-align: center;
-    background: #5077aa;
+    background: #3296FA;
     &.stop {
       background: #ea5455;
     }

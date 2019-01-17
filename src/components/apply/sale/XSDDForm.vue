@@ -3,10 +3,12 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
-                      :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <div class="mg_auto">
-          <r-picker  title="流程状态" :data="currentStage" v-model="formData.biProcessStatus"></r-picker>
-        </div>
+                      :handle-org-list="handleORG" :user-role-list="userRoleList"
+                      :status-data="currentStage" v-model="formData.biProcessStatus">
+        </pop-baseinfo>
+        <!-- <div class="process_status">
+          <r-picker title="流程状态" :data="currentStage" v-model="formData.biProcessStatus"></r-picker>
+        </div> -->
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo" :dealer-params="dealerParams"
                          :defaultContact="contactInfo"></pop-dealer-list>
@@ -687,7 +689,7 @@
   .vux-1px-t:before {
     border-color: #e8e8e8;
   }
-  .mg_auto{
+  .process_status{
     background: #fff;
     padding: 0 .15rem;
     margin-bottom: .1rem;

@@ -80,7 +80,7 @@ export default {
       default() {
         return {}
       }
-    }
+    },
   },
   computed: {
     config(){
@@ -89,7 +89,7 @@ export default {
   },
   data(){
     return{
-      dealer: {} 
+      dealer: {},
     }
   },
   components: {
@@ -153,13 +153,15 @@ export default {
   padding: 0 .15rem;
   font-size: .14rem;
   color: #333;
+  margin-bottom: .1rem;
   .vux-1px-t:before{
     border-color: #e8e8e8;
     left: 0;
   }
 }
 .cell-item {
-  padding: .18rem 0;
+  height: .5rem;
+  line-height: .5rem;
   display: flex;
   justify-content: space-between;
   input{

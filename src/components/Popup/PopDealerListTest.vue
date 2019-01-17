@@ -1,34 +1,28 @@
 <template>
-  <div class="pop_dealer_list" :class="{'dealer-list-2': mode === '2'}">
+  <div class="pop_dealer_list">
     <div class='dealer-info' @click="showDealerPop = !showDealerPop">
-      <template v-if="mode === '2'">
-        <div class="title" :class="{required : required}">{{dealerLabel}}名称</div>
-        <div class="mode">{{dealerInfo.dealerName || placeholder}}</div>
-        <span class="iconfont icon-youjiantou r-arrow"></span>
-      </template>
-      <template v-else>
-        <div class='user-content' v-if="dealerInfo.dealerCode">
-          <div class="user-info">
-            <div class="user-name">
-              <span class="user-tips" v-if="dealerInfo.dealerLabelName">{{dealerInfo.dealerLabelName}}</span>
-              <span>{{dealerInfo.dealerName}}</span>
-            </div>
-            <!-- <span class="user-tel" v-if="dealerInfo.dealerMobilePhone">{{dealerInfo.dealerMobilePhone}}</span> -->
+      <div class='user-content' v-if="dealerInfo.dealerCode">
+        <div class="user-info">
+          <div class="user-name">
+            <span>{{dealerInfo.dealerName}}</span>
           </div>
           <div class="cp-info">
-            <span class="iconfont icon-icon-test"></span>
+            <span class="icon-dealer-address"></span>
             <span class="cp-ads" v-if="noAddress">暂无联系地址</span>
             <span class="cp-ads" v-else>
-            {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}
-          </span>
+              {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}
+            </span>
           </div>
         </div>
-        <div class='user-content' v-else>
-          <div class="title">{{dealerTitle}}列表</div>
-          <div class="required">请选择{{dealerTitle}}</div>
-        </div>
-        <span class="iconfont icon-youjiantou r-arrow"></span>
-      </template>
+        <span class='icon-right'></span>  
+      </div>
+      <div class='no-content' v-else>
+        <span class="title">{{dealerTitle}}列表</span>
+        <div class="picker">
+          <span>请选择</span>
+          <span class="icon-right"></span>
+        </div> 
+      </div>
     </div>
     <pop-contact-list :dealer-info="dealerInfo" :default-value="contactInfo"
                       @sel-contact="selContact" v-if="!noContact"></pop-contact-list>
@@ -337,13 +331,11 @@
   }
 
   .pop_dealer_list {
-    width: 95%;
-    position: relative;
-    margin: .1rem auto;
     background: #fff;
-    padding: .06rem .1rem;
+    padding: 0 .15rem;
     margin-bottom: 0.1rem;
-    box-sizing: border-box;
+    font-size: .14rem;
+    color: #333;
     &.dealer-list-2 {
       margin: 0;
       padding: 0;
@@ -389,51 +381,69 @@
       transform: translate(0, -50%);
     }
     .dealer-info {
-      width: 100%;
+      padding: .18rem 0;
       position: relative;
+      .no-content{
+        display: flex;
+        justify-content: space-between;
+        line-height: .14rem;
+        .title{
+          color: #696969
+        }
+        .picker{
+          display: flex;
+          align-items: center;
+          .icon-right{
+            width: .08rem;
+            height: .14rem;
+            margin-left: .1rem;
+          }
+        }
+        
+      }
       .user-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         .user-info {
           font-size: 0;
           color: #111;
           font-weight: 500;
-          .user-tips {
-            color: #FFF;
-            font-size: .1rem;
-            padding: 0 .06rem;
-            border-radius: .3rem;
-            background: #5077aa;
-            vertical-align: middle;
-          }
+          // 客户名称
           .user-name {
             max-width: 95%;
             overflow: hidden;
-            font-size: .16rem;
+            font-size: .14rem;
+            line-height: .14rem;
             white-space: nowrap;
             display: inline-block;
             vertical-align: middle;
             text-overflow: ellipsis;
           }
-          .user-tel {
-            font-size: .16rem;
-            font-weight: bold;
-            display: inline-block;
-            font-family: Helvetica;
-            vertical-align: middle;
-            margin-bottom: -.02rem;
+          // 地址
+          .cp-info {
+            color: #111;
+            display: flex;
+            align-items: center;
+            margin-top: .06rem;
+            .icon-dealer-address {
+              width: .12rem;
+              height: .14rem;
+              margin-right: .07rem;
+            }
+            .cp-ads {
+              font-size: .12rem;
+              color: #999;
+            }
           }
+        }
+        .icon-right{
+          width: .08rem;
+          height: .14rem;
         }
       }
     }
-    .cp-info {
-      color: #111;
-      .icon-icon-test {
-        font-size: .1rem;
-      }
-      .cp-ads {
-        font-size: .14rem;
-        color: #757575;
-      }
-    }
+    
   }
 
   // 弹出层

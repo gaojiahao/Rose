@@ -3,9 +3,10 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
-                      :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
+                      :handle-org-list="handleORG" :user-role-list="userRoleList"
+                      :status-data="currentStage" v-model="formData.biProcessStatus"></pop-baseinfo>
+        <!-- <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker> -->
         <!-- 用户地址和基本信息-->
         <pop-dealer-list :defaultValue="dealerInfo" :default-contact="contactInfo" @sel-dealer="selDealer" :dealer-params="dealerParams"
                          @sel-contact="selContact"></pop-dealer-list>
@@ -17,10 +18,13 @@
         <div class="materiel_list">
           <!-- 没有选择物料 -->
           <template v-if="!Object.keys(orderList).length">
-            <div @click="showOrderPop = !showOrderPop">
+            <div class="no-matter" @click="showOrderPop = !showOrderPop">
               <div class="title">{{orderListTitle}}列表</div>
-              <div class="required">请选择{{orderListTitle}}</div>
-              <i class="iconfont icon-youjiantou r_arrow"></i>
+              <div class="picker">
+                请选择<span class="icon-right"></span>
+              </div>
+              <!-- <div class="required">请选择{{orderListTitle}}</div>
+              <i class="iconfont icon-youjiantou r_arrow"></i> -->
             </div>
           </template>
           <!-- 已经选择了物料 -->
@@ -786,7 +790,9 @@
 
 <style lang='scss' scoped>
   @import './../../scss/bizApply';
+  .materiel_list{
 
+  }
   .cell-item {
     margin: 0 auto;
     padding: .05rem .1rem;

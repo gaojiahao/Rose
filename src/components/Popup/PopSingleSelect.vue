@@ -93,42 +93,28 @@
     background: #fff;
     font-size: .14rem;
     color: #333;
-    .pop_info{
+    .pop_info {
       display: flex;
-      font-size: .14rem;
+      line-height: .14rem;
       align-items: center;
       justify-content: space-between;
       .title {
         color: #696969;
-        &.required{
+        &.required {
           color: #3296FA;
           font-weight: bold;
         }
       }
-      .mode{
+      .mode {
         display: flex;
         align-items: center;
-        .icon-right{
+        .icon-right {
           width: .08rem;
           height: .14rem;
           margin-left: .1rem;
         }
       }
     }
-    // .icon-shenglve,
-    // .icon-gengduo {
-    //   font-size: .2rem;
-    //   color: #707070;
-    // }
-    // .mode {
-    //   color: #111;
-    //   font-weight: 500;
-    //   display: flex;
-    //   align-items: center;
-    //   .mode-content {
-    //     margin-right: .06rem;
-    //   }
-    // }
   }
 
   /* 弹出框 */

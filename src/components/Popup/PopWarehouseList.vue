@@ -1,25 +1,30 @@
 <template>
   <div class="pop-warehouse-container" @click="warehouseClick">
     <!-- 仓库信息 -->
-    <div v-if="selItems.warehouseName">
-      <div class="title">{{title}}</div>
-      <div class="user_info">
-        <span class="user_name">{{selItems.warehouseName}}</span>
-        <span class="user_tel">{{selItems.warehouseType}}</span>
+    <div class="warehouse-info">
+      <div v-if="selItems.warehouseName">
+        <div class="user_info">
+          <span class="user_name">{{selItems.warehouseName}}</span>
+          <span class="user_tel">{{selItems.warehouseType}}</span>
+        </div>
+        <div class="cp_info" v-if="!noAddress">
+          <span class="icon-dealer-address"></span>
+          <span class="cp_ads">
+            {{selItems.warehouseProvince}}{{selItems.warehouseCity}}{{selItems.warehouseDistrict}}{{selItems.warehouseAddress}}
+          </span>
+        </div>
       </div>
-      <div class="cp_info" v-if="!noAddress">
-        <i class="iconfont icon-icon-test"></i>
-        <span class="cp_ads">
-          {{selItems.warehouseProvince}}{{selItems.warehouseCity}}{{selItems.warehouseDistrict}}{{selItems.warehouseAddress}}
-        </span>
+      <div v-else>
+        <div class="no-warehouse">
+          <div class="title" :class='{required : isRequired}'>{{title}}</div>
+          <div class="picker">
+            <span class="mode">请选择</span>
+          </div>  
+        </div>
+        
       </div>
     </div>
-    <div v-else>
-      <div class="title">{{title}}</div>
-      <div class="mode" :class='{required : isRequired}'>请选择仓库</div>
-    </div>
-    <i class="iconfont icon-youjiantou r-arrow" v-show="!disabled"></i>
-
+    <span class="icon-right"></span>
     <!-- 仓库popup -->
     <div v-transfer-dom v-if="!disabled">
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
@@ -28,32 +33,29 @@
           <!-- 仓库列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
-            <div class="pop-mater-list-item box_sd" v-for="(item, index) in listData" :key='index'
+            <div class="pop-mater-list-item box_sd" :class="{'seleted' : showSelIcon(item)}" v-for="(item, index) in listData" :key='index'
                  @click.stop="selThis(item, index)">
-              <div class="pop-list-main ">
+              <div class="pop-list-main">
+                <img class="warehouse_img" :src="require('assets/default/warehouse.png')" alt="warehouse_img">
                 <div class="pop-list-info">
                   <!--联系人电话 -->
                   <div class="withColor">
-                    <div class="ForInline name" style="display:inline-block">
-                      <span>{{item.warehouseName}}</span>
-                    </div>
-                    <div class="ForInline name" style="display:inline-block">
-                      <span></span>
-                    </div>
+                    <span class="name">{{item.warehouseName}}</span>
+                    <span class="type">{{item.warehouseType}}</span>
                   </div>
-                  <div class="withColor">
+                  <!-- <div class="withColor">
                     <div class="ForInline " style="display:inline-block">
                       <span class='creator'>{{item.warehouseType}}</span>
                     </div>
-                  </div>
+                  </div> -->
                   <!-- 地址 -->
-                  <div class="withoutColor">
+                  <div class="warehouse-address">
                     <span>{{item.warehouseProvince}}{{item.warehouseCity}}{{item.warehouseDistrict}}{{item.warehouseAddress}}</span>
                   </div>
                 </div>
               </div>
               <!-- icon -->
-              <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
+              <!-- <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon> -->
             </div>
             <!-- 加载中、没有更多的提示 -->
             <load-more :show-loading="hasNext" :tip="tip" v-show="!showAddWarehouse && (hasNext || !listData.length)"
@@ -340,15 +342,18 @@
 <style scoped lang="scss">
 @import '~@/scss/color.scss';
   .pop-warehouse-container {
-    position: relative;
-    margin: .1rem auto;
-    padding: .06rem .1rem;
-    width: 95%;
+    padding:  0 .15rem;
     box-sizing: border-box;
     background: #fff;
+    margin-bottom: .1rem;
+    position: relative;
+    font-size: .14rem;
+    color: #333;;
+    .warehouse-info {
+      padding: .18rem 0;
+    }
     .title {
-      color: #757575;
-      font-size: .12rem;
+      color: #696969;
     }
     .mode {
       font-weight: 500;
@@ -357,43 +362,47 @@
       }
     }
     /* 右箭头 */
-    .r-arrow {
+    .icon-right {
       top: 50%;
-      right: 1%;
-      font-weight: bold;
+      right: .15rem;
+      width: .08rem;
+      height: .14rem;
       position: absolute;
       transform: translate(0, -50%);
     }
     // 用户信息
     .user_info {
-      color: #111;
-      font-size: 0;
-      font-weight: 500;
+      line-height: .14rem;
       // 用户姓名
       .user_name {
-        margin-right: .08rem;
-        font-size: .16rem;
-      }
-      // 用户电话
-      .user_tel {
-        font-family: sans-serif, -apple-system-font;
-        font-size: .16rem;
+        color: #3296FA
       }
     }
-    // 仓库信息
+    // 地址
     .cp_info {
-      .icon-icon-test {
-        font-size: .1rem;
+      color: #111;
+      display: flex;
+      align-items: center;
+      margin-top: .06rem;
+      .icon-dealer-address {
+        width: .12rem;
+        height: .14rem;
+        margin-right: .07rem;
       }
       .cp_ads {
-        color: #757575;
-        font-size: .14rem;
+        font-size: .12rem;
+        color: #999;
       }
     }
-  }
-  .required {
-    color: $required;
-    font-weight: bold;
+    .no-warehouse {
+      display: flex;
+      justify-content: space-between;
+      width: calc( 100% - .18rem);
+      align-items: center;
+      .required {
+        color: #3296FA;
+      }
+    }
   }
   // 弹出层
   .trade_pop_part {
@@ -420,15 +429,18 @@
         box-sizing: border-box;
         height: calc(100% - .46rem);
         /deep/ .scroll-wrapper {
-          padding: .04rem .04rem 0 .3rem;
+          padding: 0 .15rem;
         }
         // 列表项
         .pop-mater-list-item {
           position: relative;
-          display: flex;
-          padding: 0.08rem;
+          padding: .15rem;
           margin-bottom: .2rem;
           box-sizing: border-box;
+          border-radius: .04rem;
+          &.seleted {
+            border: 1px solid #3296FA;
+          }
           // 阴影
           &.box_sd {
             box-sizing: border-box;
@@ -436,39 +448,36 @@
           }
           // 列表主体
           .pop-list-main {
-            flex: 1;
-            padding-left: .1rem;
-            box-sizing: border-box;
-            display: inline-block;
+            display: flex;
+            .warehouse_img {
+              width: .4rem;
+              height: .4rem;
+              border-radius: 50%;
+            }
+            
             // 物料信息
             .pop-list-info {
-              color: #757575;
               font-size: .14rem;
+              margin-left: .12rem;
               // 有颜色包裹的
               .withColor {
-                margin-top: .04rem;
                 .name {
-                  color: #5077aa;
-                  font-size: .14rem;
+                  line-height: .18rem;
+                  font-size: .16rem;
                   font-weight: bold;
                 }
-                .creator {
-                  color: #111;
-                  font-weight: bold;
+                .type {
+                  font-size: .12rem;
+                  color: #999;
                 }
               }
+              .warehouse-address {
+                font-size: .12rem;
+                line-height: .12rem;
+                margin-top: .06rem;
+                color: #999;
+              }
             }
-          }
-          // 选择icon
-          .selIcon,
-          .isSelIcon {
-            top: 50%;
-            left: -.3rem;
-            position: absolute;
-            transform: translate(0, -50%);
-          }
-          .isSelIcon {
-            fill: #5077aa;
           }
         }
       }

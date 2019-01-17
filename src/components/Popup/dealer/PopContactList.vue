@@ -1,19 +1,17 @@
 <template>
   <div class="pop-contact-list" v-show="contactInfo.dealerName || contactList.length">
     <div class="contact-content vux-1px-t" @click="showPop = !showPop">
-      <div class="selected-mode" v-if="contactInfo.dealerName">
-        <div>
-          <span class="contact-tips">联系人</span>
-          <span>{{contactInfo.dealerName}}</span>
-          <span>{{contactInfo.dealerMobilePhone}}</span>
-        </div>
-        <span class="iconfont icon-Face-ID"></span>
-      </div>
-      <div class="default-mode" v-else>
-        <div class="mode-title">
+      <div class="contact-info" >
+        <template v-if="contactInfo.dealerName">
+          <div>
+            <span class="dealer-name">{{contactInfo.dealerName}}</span>
+            <span>{{contactInfo.dealerMobilePhone}}</span>
+          </div>
+        </template>
+        <template v-else>
           <span>请选择联系人</span>
-          <span class="iconfont icon-FaceID"></span>
-        </div>
+        </template>
+        <span class="icon-right"></span>
       </div>
     </div>
     <!-- 联系人 Popup -->
@@ -192,31 +190,23 @@
   .pop-contact-list {
     background: #fff;
     box-sizing: border-box;
+    font-size: .14rem;
+    color: #333;
     .contact-content {
-      margin-top: .06rem;
-      padding-top: .06rem;
-      .default-mode {
-        .mode-title {
-          display: flex;
-          color: #757575;
-          font-size: .14rem;
-          align-items: center;
-          justify-content: space-between;
-        }
-      }
-      .selected-mode {
+     padding: .18rem 0;
+      .contact-info{
+        line-height: .14rem;
         display: flex;
-        font-size: .16rem;
-        align-items: center;
         justify-content: space-between;
-        .contact-tips {
-          color: #FFF;
-          font-size: .1rem;
-          padding: 0 .06rem;
-          border-radius: .3rem;
-          background: #5077aa;
-          vertical-align: middle;
-        }
+        align-items: center;
+      }
+      .dealer-name{
+        color: #3296FA;
+        margin-right: .02rem;
+      }
+      .icon-right{
+        width: .08rem;
+        height: .14rem;
       }
     }
   }

@@ -11,7 +11,8 @@
       </div>
       <r-picker class="vux-1px-b" title="经办组织" :data="groupList" :value="group" 
                 v-model="group" :required="isRequired" @on-change="changeGroup"></r-picker>
-      <r-picker  title="经办职位" :data="roleList" :value="role" v-model="role" @on-change="changeRole"></r-picker>
+      <r-picker class="vux-1px-b" title="经办职位" :data="roleList" :value="role" v-model="role" @on-change="changeRole"></r-picker>
+      <r-picker title="流程状态" :data="statusData" v-model="biProcessStatus"></r-picker>
     </div>
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
@@ -81,6 +82,12 @@
       isRequired: {
         type: Boolean,
         default: true
+      },
+      statusData:{
+        type: Array,
+        default() {
+          return []
+        }
       }
     },
     directives: {TransferDom},
@@ -106,12 +113,18 @@
         listData: [], // 经办人列表
         roleList: [], // 职位列表
         groupList: [], // 组织列表
+        biProcessStatus: '', //当前流程
       }
     },
     watch: {
       defaultValue(val) {
         this.setDefaultValue();
       },
+      // 监听流程变化，传值到父组件
+      biProcessStatus(val) {
+        this.$emit('input', val)
+      }
+      
     },
     methods: {
       // 弹窗展示时调用
@@ -322,7 +335,8 @@
     font-size: .14rem;
     .baseinfo_content {
       .each_info {
-        padding: .18rem 0;
+        height: .5rem;
+        line-height: .5rem;
         display: flex;
         align-items: center;
         justify-content: space-between;

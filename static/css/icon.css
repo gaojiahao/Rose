@@ -199,3 +199,8 @@
   background: url('~assets/iconfont/phone.png');
   background-size: cover;
 }
+
+.icon-dealer-address{
+  background: url('~assets/iconfont/icon_address.png');
+  background-size: cover;
+}
