@@ -204,3 +204,13 @@
   background: url('~assets/iconfont/icon_address.png');
   background-size: cover;
 }
+
+.icon-no-select{
+  background: url('~assets/iconfont/no_select.png');
+  background-size: cover;
+}
+
+.icon-selected{
+  background: url('~assets/iconfont/selected.png');
+  background-size: cover;
+}

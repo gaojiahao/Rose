@@ -1,23 +1,23 @@
 <template>
   <!-- 物料popup -->
   <div v-transfer-dom>
-    <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
-      <div class="trade_pop">
-        <!-- @turn-off="onHide" -->
-        <m-search :filterList="filterList" @search='searchList'  :isFill='true'></m-search>
+    <popup v-model="showPop" height="80%" class="popup-matter-container" @on-show="onShow" @on-hide="onHide">
+      <div class="popup-top">
+        <i class="icon-close" @click="onHide"></i>
+      </div>
+      <div class="matter-list-container">
+        <m-search :filterList="filterList" @search='searchList'></m-search>
         <!-- 物料列表 -->
-        <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
+        <r-scroll class="matter-list-wrapper" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !matterList.length" @on-pulling-up="onPullingUp" ref="bScroll">
-          <div class="each_mater box_sd" v-for="(item, index) in matterList" :key='index'
-               @click.stop="selThis(item, index)">
+          <div class="each-matter" :class="{'vux-1px-b': index !== matterList.length - 1}"
+               v-for="(item, index) in matterList" :key='index' @click.stop="selThis(item, index)">
             <div class="order-code" v-if="item.transCode && !item.transCode.includes(',')">
-              <!-- <slot name='titleName'>
-                <span class="order-title">单号</span>
-              </slot> -->
-              <span class="order-title">{{orderTitle}}</span>
-              <span class="order-num">{{item.transCode}}</span>
+              <span class="order_title">{{orderTitle}}：</span>
+              <span class="order_num">{{item.transCode}}</span>
             </div>
             <div class="order-matter">
+              <i class="icon" :class="[showSelIcon(item) ? 'icon-selected' : 'icon-no-select']"></i>
               <div class="mater_img">
                 <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
               </div>
@@ -27,44 +27,30 @@
                   {{item.inventoryName || item.facilityName}}
                 </div>
                 <!-- 物料基本信息 -->
-                <div class="mater_info">
-                  <!-- 物料编码、规格 -->
-                  <div class="withColor">
-                    <!-- 物料编码 -->
-                    <div class="ForInline" style="display:inline-block">
-                      <div class="mater_code">
-                        <span class="title">编码</span>
-                        <span class="num">{{item.inventoryCode || item.facilityCode}}</span>
-                      </div>
-                    </div>
-                    <!-- 物料规格 -->
-                    <div class="ForInline" style="display:inline-block">
-                      <div class="mater_spec">
-                        <span class="title">规格</span>
-                        <span class="num">{{item.specification || item.facilitySpecification || '无'}}</span>
-                      </div>
-                    </div>
+                <div class="matter_info">
+                  <div class="matter_info_item">
+                    <span class="matter_info_title">编码：</span>
+                    <span class="matter_info_value">{{item.inventoryCode || item.facilityCode}}</span>
                   </div>
-                  <!-- 物料分类、材质 -->
-                  <div class="withoutColor">
-                    <div class="mater_classify">
-                      <span class="type" v-for="(fItem,fIndex) in config" :key="fIndex">
-                        {{fItem.v}}: {{item[fItem.k] != null && item[fItem.k] !== "" ? item[fItem.k] : "无" }}
-                      </span>
-                    </div>
+                  <div class="matter_info_item">
+                    <span class="matter_info_title">规格：</span>
+                    <span class="matter_info_value">{{item.specification || item.facilitySpecification || '无'}}</span>
+                  </div>
+                </div>
+                <div class="matter_info">
+                  <div class="matter_info_item" v-for="(fItem,fIndex) in config" :key="fIndex">
+                    <span class="matter_info_title">{{fItem.v}}：</span>
+                    <span class="matter_info_value">{{item[fItem.k] != null && item[fItem.k] !== "" ? item[fItem.k] : "无" }}</span>
                   </div>
                 </div>
               </div>
             </div>
-            <!-- icon -->
-            <x-icon class="selIcon" type="ios-circle-outline" size="20"></x-icon>
-            <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
           </div>
         </r-scroll>
       </div>
       <!-- 底部栏 -->
       <div class="count_mode vux-1px-t">
-        <span class="count_num"> {{tmpItems.length ? `已选 ${tmpItems.length} 个` : '请选择'}} </span>
+        <span class="count_num"> {{tmpItems.length ? `已选${tmpItems.length}件` : '请选择'}} </span>
         <span class="count_btn" @click="cfmMater">确定</span>
       </div>
     </popup>
@@ -194,21 +180,21 @@
       findIndex(arr, sItem) {
         return arr.findIndex(item => {
           let isSameTransCode = true,
-              isSameOrderCode = true;
-          if(item.orderCode) {
+            isSameOrderCode = true;
+          if (item.orderCode) {
             isSameOrderCode = item.orderCode === sItem.orderCode;
-            if(item.inventoryCode){
+            if (item.inventoryCode) {
               return isSameOrderCode && item.inventoryCode === sItem.inventoryCode
             }
-            else if(item.facilityCode){
+            else if (item.facilityCode) {
               return isSameOrderCode && item.facilityCode === sItem.facilityCode
             }
           }
           isSameTransCode = item.transCode === sItem.transCode;
-          if(item.inventoryCode){
+          if (item.inventoryCode) {
             return isSameTransCode && item.inventoryCode === sItem.inventoryCode
           }
-          else if(item.facilityCode){
+          else if (item.facilityCode) {
             return isSameTransCode && item.facilityCode === sItem.facilityCode
           }
         });
@@ -220,7 +206,7 @@
       // TODO 选择物料
       selThis(sItem, sIndex) {
         // 校验库存
-        if (this.isShowStock && sItem.qtyStockBal=== 0) {
+        if (this.isShowStock && sItem.qtyStockBal === 0) {
           this.$vux.alert.show({
             content: '当前订单库存为0，请选择其他订单'
           });
@@ -335,280 +321,148 @@
 </script>
 
 <style scoped lang="scss">
-  // 弹出层
-  .trade_pop_part {
-    background: #fff;
-    .trade_pop {
-      
-      height: calc(100% - .44rem);
-      // 顶部
-      .title {
-        height: 100%;
-        font-size: .2rem;
-        position: relative;
-        padding: .08rem 0;
-        // 搜索
-        .search_part {
-          width: 100%;
-          display: flex;
-          height: .3rem;
-          line-height: .3rem;
-          position: relative;
-          // 搜索输入框
-          .srh_inp {
-            flex: 5;
-            outline: none;
-            border: none;
-            color: #2D2D2D;
-            font-size: .16rem;
-            padding: 0 .3rem 0 .4rem;
-            background: #F3F1F2;
-            border-top-left-radius: .3rem;
-            border-bottom-left-radius: .3rem;
-          }
-          // 取消 按钮
-          .pop_cancel {
-            flex: 1;
-            color: #fff;
-            font-size: .14rem;
-            text-align: center;
-            background: #fc3c3c;
-            border-top-right-radius: .3rem;
-            border-bottom-right-radius: .3rem;
-          }
-          // 搜索icon
-          .serach_icon {
-            top: 50%;
-            left: 10px;
-            fill: #2D2D2D;
-            position: absolute;
-            transform: translate(0, -50%);
-          }
-          // 清除icon
-          .clear_icon {
-            top: 50%;
-            right: 14%;
-            width: .3rem;
-            height: .3rem;
-            z-index: 100;
-            display: block;
-            font-size: .12rem;
-            line-height: .3rem;
-            text-align: center;
-            position: absolute;
-            transform: translate(0, -50%);
-          }
-        }
-        // 关闭icon
-        .close_icon {
-          top: 50%;
-          right: -2%;
-          position: absolute;
-          transform: translate(0, -50%);
-        }
-      }
-      .each_mode {
-        margin-right: .1rem;
-        display: inline-block;
-        padding: .04rem .2rem;
-      }
-      .vux-1px:before {
-        border-radius: 40px;
-      }
-      // 物料列表
-      .mater_list {
-        width: 100%;
-        overflow: hidden;
-        box-sizing: border-box;
-        height: calc(100% - .38rem);
-        /* 使用深度作用选择器进行样式覆盖 */
-        /deep/ .scroll-wrapper {
-          padding: .04rem .04rem 0 .3rem;
-        }
-        // 每个物料
-        .each_mater {
-          position: relative;
-          // display: flex;
-          padding: 0.08rem;
-          margin-bottom: .2rem;
-          box-sizing: border-box;
-          // 阴影
-          &.box_sd {
-            box-sizing: border-box;
-            box-shadow: 0 0 8px #e8e8e8;
-          }
-          .order-code {
-            display: flex;
-            color: #fff;
-            font-size: .12rem;
-            span {
-              display: inline-block;
-              padding: 0 .04rem;
-            }
-            .order-title {
-              background: #455d7a;
-            }
-            .order-num {
-              background: #c93d1b;
-              border-top-right-radius: .08rem;
-            }
-          }
-          .order-matter {
-            display: flex;
-            margin-top: .1rem;
-          }
-          // 物料图片
-          .mater_img {
-            display: inline-block;
-            width: .75rem;
-            height: .75rem;
-            img {
-              width: 100%;
-              max-height: 100%;
-              border-radius: .04rem;
-            }
-          }
-          // 物料主体
-          .mater_main {
-            flex: 1;
-            padding-left: .1rem;
-            box-sizing: border-box;
-            display: inline-block;
-            // 物料名称
-            .mater_name {
-              color: #111;
-              overflow: hidden;
-              font-size: .12rem;
-              font-weight: bold;
-              max-height: .46rem;
-              display: -webkit-box;
-              -webkit-line-clamp: 2;
-              text-overflow: ellipsis;
-              -webkit-box-orient: vertical;
-              // 每个物料的索引
-              .whiNum {
-                color: #fff;
-                font-size: .1rem;
-                padding: 0 .04rem;
-                display: inline-block;
-                background: #ea5455;
-                border-radius: .04rem;
-                vertical-align: middle;
-                margin: -.02rem .04rem 0 0;
-              }
-            }
-            // 物料信息
-            .mater_info {
-              color: #757575;
-              font-size: .12rem;
-              word-break: break-all;
-              // 有颜色包裹的
-              .withColor {
-                margin-top: .04rem;
-                // 物料编码
-                .mater_code {
-                  display: flex;
-                  .title,
-                  .num {
-                    font-size: .1rem;
-                    display: inline-block;
-                    padding: .01rem .04rem;
-                  }
-                  .title {
-                    color: #fff;
-                    background: #3f72af;
-                    border-top-left-radius: .04rem;
-                    border-bottom-left-radius: .04rem;
-                  }
-                  .num {
-                    color: #111;
-                    max-width: .85rem;
-                    overflow: hidden;
-                    white-space: nowrap;
-                    background: #dbe2ef;
-                    box-sizing: border-box;
-                    text-overflow: ellipsis;
-                    border-top-right-radius: .04rem;
-                    border-bottom-right-radius: .04rem;
-                  }
-                }
-                // 规格
-                .mater_spec {
-                  @extend .mater_code;
-                  margin-left: .1rem;
-                  .title {
-                    color: #fff;
-                    background: #537791;
-                  }
-                  .num {
-                    color: #fff;
-                    max-width: .6rem;
-                    background: #ff7f50;
-                  }
-                }
-              }
-              // 没颜色包裹的
-              .withoutColor {
-                // 物料分类
-                .mater_classify {
-                  font-size: .1rem;
-                  margin-top: .02rem;
-                  .type,
-                  .father {
-                    margin-right: .04rem;
-                  }
-                }
-                // 物料颜色 材质
-                .mater_material {
-                  font-size: .1rem;
-                  .unit,
-                  .color {
-                    margin-right: .06rem;
-                  }
-                }
-              }
-            }
-          }
-          // 下划线
-          .vux-1px-b:after {
-            border-bottom: 1px solid #e8e8e8;
-          }
-          // 选择icon
-          .selIcon,
-          .isSelIcon {
-            top: 50%;
-            left: -.3rem;
-            position: absolute;
-            transform: translate(0, -50%);
-          }
-          .isSelIcon {
-            fill: #5077aa;
-          }
-        }
-      }
+  @import '~@/scss/color';
 
+  // 弹出层
+  .popup-matter-container {
+    background: #fff;
+    .popup-top {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-bottom: -.08rem;
+      padding: 0 .15rem;
+      height: .4rem;
+      background-color: #fff;
+      .icon-close {
+        display: inline-block;
+        width: .14rem;
+        height: .14rem;
+      }
     }
+    .matter-list-container {
+      height: calc(100% - .9rem);
+    }
+    // 物料列表
+    .matter-list-wrapper {
+      width: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
+      height: calc(100% - .5rem);
+      /* 使用深度作用选择器进行样式覆盖 */
+      /deep/ .scroll-wrapper {
+        padding: 0 .15rem;
+      }
+      // 每个物料
+      .each-matter {
+        position: relative;
+        padding-bottom: .2rem;
+        color: #333;
+        box-sizing: border-box;
+        &:after {
+          border-color: #e8e8e8;
+        }
+        .order-code {
+          display: flex;
+          margin-top: .18rem;
+          line-height: .14rem;
+          color: #fff;
+          font-size: .12rem;
+          .order_title {
+            color: #999;
+          }
+          .order_num {
+            color: #696969;
+          }
+        }
+        .order-matter {
+          position: relative;
+          display: flex;
+          margin-top: .16rem;
+          padding-left: .35rem;
+        }
+        .icon {
+          position: absolute;
+          top: .35rem;
+          left: 0;
+          z-index: 1;
+          display: inline-block;
+          width: .2rem;
+          height: .2rem;
+        }
+        // 物料图片
+        .mater_img {
+          display: inline-block;
+          width: .9rem;
+          height: .9rem;
+          img {
+            width: 100%;
+            max-height: 100%;
+          }
+        }
+        // 物料主体
+        .mater_main {
+          flex: 1;
+          padding-left: .12rem;
+          box-sizing: border-box;
+          display: inline-block;
+          // 物料名称
+          .mater_name {
+            line-height: .2rem;
+            max-height: .46rem;
+            overflow: hidden;
+            font-size: .12rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            text-overflow: ellipsis;
+            -webkit-box-orient: vertical;
+          }
+          // 物料信息
+          .matter_info {
+            /*word-break: break-all;*/
+            display: flex;
+            flex-wrap: wrap;
+            line-height: .12rem;
+            font-size: .12rem;
+          }
+          .matter_info_item {
+            margin: .08rem .08rem 0 0;
+          }
+          .matter_info_title {
+            color: #999;
+          }
+          .matter_info_value {
+            flex: 1;
+          }
+        }
+      }
+    }
+
     // 底部栏
     .count_mode {
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      display: flex;
-      height: .44rem;
       position: fixed;
-      line-height: .44rem;
+      bottom: 0;
+      left: 0;
+      display: flex;
+      width: 100%;
+      height: .5rem;
+      line-height: .5rem;
       background: #fff;
+      &:before {
+        border-color: #d9d9d9;
+      }
       .count_num {
         flex: 2.5;
-        color: #5077aa;
-        font-size: .24rem;
-        padding-left: .1rem;
+        padding-left: .15rem;
+        color: #333;
+        font-size: .12rem;
       }
       .count_btn {
-        flex: 1.5;
+        flex: 2;
+        background-color: $main_color;
         color: #fff;
         text-align: center;
-        background: #5077aa;
+        font-size: .16rem;
       }
     }
   }
