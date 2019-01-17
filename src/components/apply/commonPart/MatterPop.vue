@@ -366,7 +366,7 @@
   //物料信息
   .matter-info {
     display: flex;
-    padding: 0 .15rem .15rem;
+    padding: .15rem;
     background-color: #fff;
     // 物料图片
     .matter_img {
@@ -509,7 +509,7 @@
         color: #FFF;
         padding: .1rem 0;
         font-weight: bold;
-        background: #3f72af;
+        background: #3296FA;
       }
     }
   }

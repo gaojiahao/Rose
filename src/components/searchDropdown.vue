@@ -106,7 +106,7 @@
       // 选中的icon
       .icon-check {
         width: .14rem;
-        height: .1rem;
+        height: .14rem;
       }
       // 选中状态
       &.selected {
