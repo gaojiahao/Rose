@@ -15,46 +15,25 @@
         <div v-else-if="!item.readOnly">
           <!-- 输入框（数字）-->
           <div class="cell-item" v-if="item.xtype === 'r2Permilfield' || item.xtype === 'r2Numberfield'">
-            <div class="title">{{item.fieldLabel}}</div>
+            <div class="title" :class="{required: !item.allowBlank}">{{item.fieldLabel}}</div>
             <div class="mode">
               <input type='number' placeholder="请输入" v-model.number="dealer[item.fieldCode]" @on-blur="checkAmt(dealer)"/>
             </div>
           </div>
            <!-- 输入框（文字）-->
            <div class="cell-item" v-if="item.xtype === 'r2Textfield'">
-            <div class="title">{{item.fieldLabel}}</div>
+            <div class="title" :class="{required: !item.allowBlank}">{{item.fieldLabel}}</div>
             <div class="mode">
               <input type='text' placeholder="请输入" v-model="dealer[item.fieldCode]" @on-blur="checkAmt(dealer)"/>
             </div>
           </div>
           <!-- 日期 -->
-          <div class="cell-item" v-if="item.xtype === 'r2Datefield'" @click="getDate(dealer, item)">
-            <div class="title">{{item.fieldLabel}}</div>
+          <div class="cell-item" v-if="item.xtype === 'r2Datefield'" @click="getDate(item)">
+            <div class="title" :class="{required: !item.allowBlank}">{{item.fieldLabel}}</div>
             <div class="mode">
               <span class="mode_content">{{dealer[item.fieldCode] || "请选择"}}</span>
             </div>
           </div>
-          <!-- 输入框（数字）-->
-          <!-- <x-input class="cell-item" type="number" text-align='right' placeholder='请填写'
-                v-model.number='dealer[item.fieldCode]' @on-blur="checkAmt(dealer)" v-if="item.xtype === 'r2Permilfield' || item.xtype === 'r2Numberfield'">
-            <template slot="label">
-              <span  class="title" :class="{required: !item.allowBlank}">{{item.fieldLabel}}</span>
-            </template>  
-          </x-input> -->
-           <!-- 输入框（文字）-->
-          <!-- <x-input class="cell-item" text-align='right' placeholder='请填写'
-                  v-model.number='dealer[item.fieldCode]' v-if="item.xtype === 'r2Textfield'">
-            <template slot="label">
-              <span  class="title" :class="{required: !item.allowBlank}">{{item.fieldLabel}}</span>
-            </template>  
-          </x-input> -->
-           <!-- 日期 -->
-          <!-- <datetime class="cell-item" :title="item.fieldLabel" v-model="dealer[item.fieldCode]" placeholder="请选择" 
-                    v-if="item.xtype === 'r2Datefield'">
-            <template slot="title">
-              <span  class="title" :class="{required: !item.allowBlank}">{{item.fieldLabel}}</span>
-            </template>  
-          </datetime> -->
         </div>
         
       </div>
@@ -133,13 +112,13 @@ export default {
       }
     },
     // 选择日期
-    getDate(sItem, dItem){
+    getDate(dItem){
       this.$vux.datetime.show({
         value: '', // 其他参数同 props
         confirmText: '确认',
         cancelText: '取消',
         onConfirm: (val)=> {
-          sItem[dItem.fieldCode] = val;
+          this.$set(this.dealer, dItem.fieldCode, val)
         },
       })
     },
@@ -177,6 +156,7 @@ export default {
     margin-right: .1rem;
     &.required {
       color: #3296FA;
+      font-weight: bold;
     }
   }
   .mode {

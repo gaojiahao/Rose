@@ -362,24 +362,14 @@
         fill: #999;
       }
     }
-    .title {
-      color: #757575;
-      font-size: .12rem;
-      &.required {
-        color: $required;
-        font-weight: bold;
-      }
-    }
-    .mode {
-      font-weight: 500;
-    }
-    .r-arrow {
-      top: 50%;
-      right: -3px;
-      font-weight: bold;
-      position: absolute;
-      transform: translate(0, -50%);
-    }
+    // .title {
+    //   color: #757575;
+    //   font-size: .12rem;
+    //   &.required {
+    //     color: $required;
+    //     font-weight: bold;
+    //   }
+    // }
     .dealer-info {
       padding: .18rem 0;
       position: relative;
@@ -388,7 +378,8 @@
         justify-content: space-between;
         line-height: .14rem;
         .title{
-          color: #696969
+          color: #3296FA;
+          font-weight: bold;
         }
         .picker{
           display: flex;
@@ -409,6 +400,7 @@
           font-size: 0;
           color: #111;
           font-weight: 500;
+          flex: 1;
           // 客户名称
           .user-name {
             max-width: 95%;
@@ -424,14 +416,15 @@
           .cp-info {
             color: #111;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             margin-top: .06rem;
             .icon-dealer-address {
+              margin: .03rem .07rem 0 0;
               width: .12rem;
               height: .14rem;
-              margin-right: .07rem;
             }
             .cp-ads {
+              flex: 1;
               font-size: .12rem;
               color: #999;
             }
@@ -440,6 +433,7 @@
         .icon-right{
           width: .08rem;
           height: .14rem;
+          margin-left: .1rem;
         }
       }
     }
