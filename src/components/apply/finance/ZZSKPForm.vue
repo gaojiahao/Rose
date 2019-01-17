@@ -134,7 +134,7 @@
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
-  import PopDealerList from 'components/Popup/PopDealerListTest'
+  import PopDealerList from 'components/Popup/PopDealerList'
   import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import RNumber from 'components/RNumber'

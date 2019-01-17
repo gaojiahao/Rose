@@ -25,9 +25,6 @@
 </template>
 
 <script>
-// 映射表 引入
-import Apps from '@/home/pages/maps/businessApp'
-import AppsFile from '@/home/pages/maps/businessFile'
 // 插件 引入
 import Bscroll from 'better-scroll'
 // 请求 引入
@@ -47,43 +44,6 @@ export default {
       concernCount : 0, //关注人数
     }
   },
-  // watch:{
-  //   $route:{
-  //     handler(to, from){
-  //       let { code } = to.params;
-  //       let { name } = this.$route.query;
-  //       let { fromRalted } = from.query;
-  //       let {file} = from.query;
-  //       let fromCode = from.params.code || '';
-  //       try {
-  //         // 从相关实例进入另一个详情
-  //         if (to.name === 'DETAIL') {
-  //           this.currentComponent = require(`components/detail/${file}/${Apps[code]}Form.vue`).default;
-  //           // 如果进入的应用与当前应用相同，需要调用该方法请求数据
-  //           if (fromCode === code) {
-  //             this.$nextTick(() => {
-  //               this.$refs.detailComponent.loadPage();
-  //             })
-  //           }
-  //         }
-  //       } catch (e) {
-  //         this.$vux.alert.show({
-  //           content: '抱歉，无法支持该应用的查看',
-  //           onHide: () => {
-  //             this.$router.go(-1);
-  //           }
-  //         });
-  //       }
-  //       this.$nextTick(() => {
-  //         this.detailScroll = new Bscroll(this.$refs.detail, {
-  //           click: true,
-  //         })
-  //       });
-  //       document.title = `${name}详情`;
-  //     }
-  //   }
-
-  // },
   methods: {
     modifyRoute(val) {
       this.submitSuccess = val;
@@ -94,10 +54,6 @@ export default {
         this.detailScroll.refresh();
       })
     },
-    // TODO 底部评论返回按钮事件
-    /*back() {
-      this.$router.go(-1);
-    },*/
     // TODO 跳转到评论页面
     goDiscuss() {
       this.$router.push({
@@ -137,7 +93,7 @@ export default {
     },
     // TODO 初始化页面
     initPage(){
-      let { childId, transCode } = this.$route.query,
+      let { transCode } = this.$route.query,
           { folder, fileName } = this.$route.params;
       this.hasComment = !!transCode;
       this.transCode = transCode;
@@ -165,15 +121,6 @@ export default {
       })
     },
   },
-  beforeRouteEnter(to, from, next) {
-    let { name = '' } = to.query;
-    if (name.includes('表')){
-      to.meta.title = name;
-      next();
-    }
-    to.meta.title = `${name}详情`;
-    next();
-  },
   created() {
     this.initPage();
   },
@@ -184,6 +131,15 @@ export default {
       this.$route.meta.reload = false;
     }
   },
+  beforeRouteEnter(to, from, next) {
+    let { name = '' } = to.query;
+    if (name.includes('表')){
+      to.meta.title = name;
+      next();
+    }
+    to.meta.title = `${name}详情`;
+    next();
+  },  
   beforeRouteLeave(to, from, next) {
     let { path } = to;
     let isGoList = to.name === 'LIST' || to.name === 'MSGHOME';

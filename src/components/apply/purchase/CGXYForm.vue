@@ -177,7 +177,7 @@
   import common from 'components/mixins/applyCommon'
   // 组件引入
   import PopMatterList from 'components/Popup/PopMatterListTest'
-  import PopDealerList from 'components/Popup/PopDealerListTest'
+  import PopDealerList from 'components/Popup/PopDealerList'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
   import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
   import PopMatter from 'components/apply/commonPart/MatterPop'

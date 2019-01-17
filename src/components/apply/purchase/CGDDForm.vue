@@ -115,7 +115,7 @@ import { getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, subm
 import common from 'components/mixins/applyCommon'
 // 组件引入
 import PopMatterList from 'components/Popup/PopMatterListTest'
-import PopDealerList from 'components/Popup/PopDealerListTest'
+import PopDealerList from 'components/Popup/PopDealerList'
 import PopSingleSelect from 'components/Popup/PopSingleSelect'
 import PopMatter from 'components/apply/commonPart/MatterPop'
 import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'

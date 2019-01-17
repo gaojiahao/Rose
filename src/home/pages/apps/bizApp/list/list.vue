@@ -9,9 +9,6 @@
 </template>
 
 <script>
-// 引入映射表
-import Apps from '@/home/pages/maps/businessApp'
-import AppsFile from '@/home/pages/maps/businessFile'
 export default {
   data(){
     return {
@@ -20,26 +17,54 @@ export default {
       isrefresh : false,
     }
   },
+  methods: {
+    initPage() {
+      /*
+      * folder => 应用类型文件夹
+      * fileName => 应用名称.vue 
+      */    
+      this.$loading.show();
+      let { folder, fileName } = this.$route.params;
+      this.folder = folder;
+      try {
+        this.currentComponent = require(`components/list/${folder}/${fileName}_List.vue`).default;
+      }
+      catch(e) {
+        console.log(e);
+        this.$vux.alert.show({
+          content: '抱歉，无法支持该应用的查看',
+          onHide: () => {
+            this.$router.go(-1);
+          }
+        });
+      }
+    }
+  },
   created(){
-    /*
-    * folder => 应用类型文件夹
-    * fileName => 应用名称.vue 
-    */    
-    this.$loading.show();
-    let { folder, fileName } = this.$route.params;
-    this.folder = folder;
-    try {
-      this.currentComponent = require(`components/list/${folder}/${fileName}_List.vue`).default;
-    }
-    catch(e) {
-      console.log(e);
-      this.$vux.alert.show({
-        content: '抱歉，无法支持该应用的查看',
-        onHide: () => {
-          this.$router.go(-1);
+    this.initPage();
+  },
+  activated() {
+    let listPage = this.$refs.list,
+        reload = this.$route.meta.reload;
+    // 是否需要刷新列表
+    if (reload) {
+      let { folder, fileName } = this.$route.params;
+      if (folder) {
+        // 在提交页面提交成功时进入该判断
+        if (this.folder === folder && this.currentComponent) {
+          listPage.reloadData();
         }
-      });
+        // 初始化页面
+        this.initPage();
+      }
+      this.$route.meta.reload = false;
     }
+    this.$nextTick(() => {
+      if(listPage) {
+        listPage.changeVisitedStatus();
+        listPage.$refs.bScroll && listPage.$refs.bScroll.refresh();
+      }
+    })  
   },
   beforeRouteEnter (to, from, next) {
     let { name, transCode } = to.query;
@@ -48,38 +73,14 @@ export default {
       to.meta.title = name;
       next();
     }
-    if(transCode) {
+    else if(transCode) {
       to.meta.title = '加载中...';
     }
     else {
       to.meta.title = name + '列表';
     }
     next();
-  },
-  activated() {
-    let reload = this.$route.meta.reload;
-    setTimeout(() => {
-      this.$refs.list.changeVisitedStatus && this.$refs.list.changeVisitedStatus();
-    });
-    this.$nextTick(() => {
-      if (this.$refs.list && this.$refs.list.$refs.bScroll) {
-        this.$refs.list.$refs.bScroll.refresh();
-      }
-    })  
-    if (reload) {
-      let { folder, fileName } = this.$route.params;
-      this.$loading.show();
-      if (folder) {
-        // 在提交页面提交成功时进入该判断
-        if (this.folder === folder && this.currentComponent) {
-          this.$refs.list.reloadData();
-        }
-        this.folder = folder;
-        this.currentComponent = require(`components/list/${folder}/${fileName}_List.vue`).default;
-      }
-      this.$route.meta.reload = false;
-    }
-  },
+  },  
   beforeRouteLeave (to, from, next) {
     let { path } = to;
     if(path === '/home'){
