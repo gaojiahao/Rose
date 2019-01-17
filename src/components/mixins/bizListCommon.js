@@ -286,6 +286,11 @@ export default {
         filter: JSON.stringify(filter),
         sort: JSON.stringify(this.sort),
       }).then(({total = 0, instanceList = []}) => {
+        let [first = {}] = instanceList;
+        let [firstDetail = {}] = first.detailItem || [];
+        let picKeys = ['inventoryPic', 'inventoryPic_transObjCode', 'inventoryPic_outPutMatCode', 'facilityPic_facilityObjCode'];
+        // 图片的key
+        let picKey = Object.keys(firstDetail).find(item => picKeys.includes(item));
         this.hasNext = total > (this.page - 1) * this.limit + instanceList.length;
         instanceList.forEach(item => {
           this.setStatus(item);
@@ -298,40 +303,40 @@ export default {
           item.itemCount = item.detailItem.length;
           // 列表当中每个订单最多展现3个物料
           item.detailItem = item.detailItem.slice(0, 3);
-          console.log('detailItem:', item.detailItem);
+          // console.log('detailItem:', item.detailItem);
           item.detailItem.forEach(mItem => {
             // 计算totalQty
-            if(mItem.assistQty != null){
+            if (mItem.assistQty != null) {
               item.totalQty = toFixed(accAdd(item.totalQty, mItem.assistQty));
             }
-            else if(mItem.assistQty == null && mItem.tdQty != null) {
+            else if (mItem.assistQty == null && mItem.tdQty != null) {
               item.totalQty = toFixed(accAdd(item.totalQty, mItem.tdQty));
             }
             // 有的应用不涉及金额合计 则不用计算
-            if(mItem.tdAmount) {
+            if (mItem.tdAmount) {
               item.count = toFixed(accAdd(item.count, mItem.tdAmount));
             }
             // 有物料的增加统一渲染字段
-            if(mItem.inventoryName_transObjCode || mItem.inventoryName_outPutMatCode){
-              mItem.inventoryName = mItem.inventoryName_transObjCode || mItem.inventoryName_outPutMatCode ;
+            if (mItem.inventoryName_transObjCode || mItem.inventoryName_outPutMatCode) {
+              mItem.inventoryName = mItem.inventoryName_transObjCode || mItem.inventoryName_outPutMatCode;
               mItem.inventoryCode = mItem.inventoryCode_transObjCode || mItem.inventoryCode_outPutMatCode;
               mItem.specification = mItem.specification_transObjCode || mItem.measureUnit_outPutMatCode;
               mItem.measureUnit = mItem.measureUnit_transObjCode || mItem.specification_outPutMatCode;
-              mItem.inventoryPic = mItem.inventoryPic_transObjCode
+              mItem.inventoryPic = mItem[picKey]
                 // 请求图片
-                ? `/H_roleplay-si/ds/download?url=${mItem.inventoryPic_transObjCode}&width=400&height=400`
+                ? `/H_roleplay-si/ds/download?url=${mItem[picKey]}&width=400&height=400`
                 // 默认图片
                 : this.getDefaultImg();
             }
             // 设备
-            if(mItem.facilityCode_facilityObjCode){
+            if (mItem.facilityCode_facilityObjCode) {
               mItem.inventoryName = mItem.facilityName_facilityObjCode;
               mItem.inventoryCode = mItem.facilityCode_facilityObjCode;
               mItem.specification = mItem.facilitySpecification_facilityObjCode;
               mItem.measureUnit = mItem.facilityUnit_facilityObjCode;
-              mItem.inventoryPic = mItem.inventoryPic_transObjCode
+              mItem.inventoryPic = mItem[picKey]
                 // 请求图片
-                ? `/H_roleplay-si/ds/download?url=${mItem.inventoryPic_transObjCode}&width=400&height=400`
+                ? `/H_roleplay-si/ds/download?url=${mItem[picKey]}&width=400&height=400`
                 // 默认图片
                 : this.getDefaultImg();
             }
