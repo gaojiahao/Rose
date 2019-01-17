@@ -350,7 +350,7 @@
     font-size: .14rem;
     color: #333;;
     .warehouse-info {
-      padding: .18rem 0;
+      padding: .18rem .25rem .18rem 0;
     }
     .title {
       color: #696969;
@@ -382,14 +382,14 @@
     .cp_info {
       color: #111;
       display: flex;
-      align-items: center;
       margin-top: .06rem;
       .icon-dealer-address {
         width: .12rem;
         height: .14rem;
-        margin-right: .07rem;
+        margin: .03rem .07rem 0 0;
       }
       .cp_ads {
+        flex: 1;
         font-size: .12rem;
         color: #999;
       }
