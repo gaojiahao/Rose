@@ -185,6 +185,7 @@
       z-index: 100;
       font-size: .14rem;
       position: absolute;
+      overflow: hidden;
       .layer {
         opacity: .5;
         height: 100%;
