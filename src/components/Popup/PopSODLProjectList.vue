@@ -1,15 +1,11 @@
 <template>
   <div class="pop-sodl-project-list" @click="itemClick">
-    <div class="title">项目名称</div>
     <div class="project-info" v-if='selItems.projectName'>
       <span class="project-name">{{selItems.projectName}}</span>
       <span class="project-type">{{selItems.projectType}}</span>
     </div>
-    <div v-else>
-      <div class="mode">请选择项目名称</div>
-    </div>
-    <i class="iconfont icon-youjiantou r-arrow"></i>
-
+    <div class="title" v-else>项目名称 <span>请选择</span></div>
+    <i class="icon-right r-arrow"></i>
     <!-- 项目弹窗 -->
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
@@ -167,37 +163,26 @@
 <style scoped lang="scss">
   .pop-sodl-project-list {
     position: relative;
-    margin: .1rem auto;
-    padding: .06rem .1rem;
-    width: 95%;
+    margin-bottom: .1rem;
+    padding: .18rem .15rem;
     box-sizing: border-box;
     background: #fff;
+    color: #333;
+    font-size: .14rem;
+    line-height: .14rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     .title {
-      color: #757575;
-
-      font-size: .12rem;
+      flex: 1;
+      color: #696969;
+      display: flex;
+      justify-content: space-between;
     }
-    .mode {
-      color: #111;
-      font-weight: 500;
-    }
-    /* 右箭头 */
-    .r-arrow {
-      top: 50%;
-      right: 1%;
-      font-weight: bold;
-      position: absolute;
-      transform: translate(0, -50%);
-    }
-    .project-info {
-      font-size: 0;
-      .project-name {
-        margin-right: .08rem;
-        font-size: .16rem;
-      }
-      .project-type {
-        font-size: .16rem;
-      }
+    .icon-right{
+      width: .08rem;
+      height: .14rem;
+      margin-left: .1rem;
     }
   }
 
@@ -205,7 +190,6 @@
   .trade_pop_part {
     background: #fff;
     .trade_pop {
-      
       height: 100%;
       // 顶部
       .title {
