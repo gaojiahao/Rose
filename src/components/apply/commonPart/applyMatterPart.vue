@@ -6,7 +6,7 @@
           <div class="title">{{orderListTitle}}列表</div>
           <div class="seleted_icon">
             请选择<span class="icon-right"></span>
-          </div>  
+          </div>
         </div>
       </template>
       <!-- 已经选择了物料 -->
@@ -34,7 +34,7 @@
                           <span class="symbol">￥</span>{{item.price}}
                         </div>
                         <div>
-                          <r-number :num="item.tdQty" :max="item.qtyBal" 
+                          <r-number :num="item.tdQty" :max="item.qtyBal"
                                     :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
                         </div>
                       </div>
@@ -90,7 +90,7 @@
         </div>
       </div>
       <!-- 物料popup -->
-      <pop-matter-list  :show="showPop" v-model="showPop" @shut-down-outsidePop="closePop" @sel-matter="selMatter" :config="matterPopConfig" 
+      <pop-matter-list  :show="showPop" v-model="showPop" @shut-down-outsidePop="closePop" @sel-matter="selMatter" :config="matterPopConfig"
                         :filter-list="filterList" :matter-params="matterParams" :default-value="defaultValue" ref="matter"></pop-matter-list>
     </div>
 </template>
@@ -164,7 +164,7 @@ export default {
       type: Function,
       required: true
     },
-    // 调用matter-pop组件 
+    // 调用matter-pop组件
     modifyMatter: {
       type: Function,
       required: true
@@ -210,16 +210,6 @@ export default {
     RNumber, MatterItem, PopMatterList
   },
   computed: {
-    // 计算数据长度
-    DataLength() {
-      let data = this.matterList;
-      if(Object.prototype.toString.call(data) === '[object Object]') {
-        return Object.keys(data).length;
-      }
-      else {
-        return data.length;
-      }
-    },
     // 判断是否为对象
     listIsObj() {
       let data = this.matterList;
@@ -229,7 +219,20 @@ export default {
   watch: {
     showMaterielPop(val) {
       this.showPop = val;
-    }
+    },
+    matterList: {
+      // 计算数据长度
+      handler(data) {
+        if(Object.prototype.toString.call(data) === '[object Object]') {
+          this.DataLength = Object.keys(data).length;
+        }
+        else {
+          this.DataLength = data.length;
+        }
+      },
+      deep: true,
+      immediate: true
+    },
   },
   methods: {
     closePop() {
@@ -238,7 +241,8 @@ export default {
   },
   data() {
     return {
-      showPop: this.showMaterielPop
+      showPop: this.showMaterielPop,
+      DataLength: 0,
     }
   }
 }
@@ -285,7 +289,7 @@ export default {
     .edit {
       color: #333;
     }
-    
+
   }
   // 物料列表
   .mater_list {
