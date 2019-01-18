@@ -388,8 +388,57 @@ export default {
         }
       })
       // 根据uniqueId 请求表单配置
-      await getFormConfig(this.viewId).then(({config = []}) => {
+      await getFormConfig(this.viewId).then((data) => {
+        let config = data.config;
+        let dataIndexMap = {}, matterCols = [];
+        // 处理将数据源配置在data中的情况
+        if(data.dataSource){
+          let dataSource = JSON.parse(JSON.parse(data.dataSource)[0].dataSource.source);
+          matterCols = dataSource.cols;
+          // 请求数据，组合要渲染的matterList配置
+          let url = dataSource.url,
+              params = dataSource.params,
+              keys = Object.keys(params),
+              requestParams = {
+                url
+              };
+          if(keys.length){
+            let matterParams = {};
+            keys.forEach(item => {
+              // 处理销售出库默认选中成品仓
+              if(item === 'whCode' && this.warehouse.warehouseCode) {
+                matterParams[item] = this.warehouse.warehouseCode;
+                return 
+              }
+              if(item === 'dealerCode' && this.dealerInfo.dealerCode){
+                matterParams[item] = this.dealerInfo.dealerCode;
+                return 
+              }
+              matterParams[item] = params[item].type === 'text' ? params[item].value : '';
+            })
+            requestParams.data = matterParams;
+          }
+          this.matterParams = requestParams;
+          // 处理物料的配置
+          let arr = []
+          dataSource.cols.forEach(cItem => {
+            // 确定要物料段落显示的title
+            if(cItem.k === 'inventoryCode' && !cItem.h && !this.orderListTitle){
+              this.orderListTitle = '物料'
+            }
+            else if(cItem.k === 'transCode' && !cItem.h && !this.orderListTitle){
+              this.orderListTitle = "订单"
+            }
+            
+            // 配置中的字段要去除掉物料名称，交易号
+            if(!cItem.h && cItem.k !== 'inventoryName' && cItem.k !== 'transCode'){
+              arr.push(cItem)
+            }
+          })
+          this.matterPopConfig = arr;
+        }
         console.log(config)
+        console.log(matterCols)
         let dealerConfig = [], matterConfig = [], otherConfig = [];
         // 从请求回来的配置中拆分往来，物料，其他段落的配置
         config.forEach(item => {
@@ -404,8 +453,11 @@ export default {
           else{
             if(item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
               matterConfig = item.items;
-            }
-          }  
+              if(item.dataIndexMap){
+                dataIndexMap = item.dataIndexMap;
+              }
+            } 
+          }
         })
         // 处理往来配置里面的接口请求
         let blankDealerConfig = [],
@@ -445,7 +497,14 @@ export default {
           editPart: []
         };
         let eidtMatterPop = [];
+        
+        // console.log(matterConfig)
+        console.log(matterCols)
         matterConfig.forEach((item, index) => {
+          let key = dataIndexMap[item.fieldCode];
+          let matchedCol = matterCols.find(col => col.k === key);
+          item.hidden = key ? (matchedCol ? matchedCol.h : true) : item.hidden;
+          console.log(item.fieldCode, key, item.hidden)
           if(item.dataSource && item.dataSource.type === 'remoteData') {
             // 物料或者订单请求
             if(item.editorType === 'r2Selector') {
@@ -508,7 +567,7 @@ export default {
           // matterPop需要隐藏的物料的字段
           if(item.editorType === 'r2Selector'){
             let hiddenField = JSON.parse(JSON.stringify(item.dataSource.data.hFields));
-            hiddenField.unshift('transCode','inventoryName', 'inventoryCode', 'specification','invName','matCode','facilityName', 'facilityCode', 'facilitySpecification')
+            hiddenField.unshift('transCode','inventoryName', 'invName','facilityName',)
             let matterPopField = JSON.parse(JSON.stringify(item.proertyContext.dataSourceCols));
             // 循环删除要隐藏的字段
             hiddenField.forEach(hItem => {
@@ -527,6 +586,7 @@ export default {
           }
           // 组合物料编辑的matterPop的配置
           if(!item.hidden){
+            // 没有映射表时，根据物料poplist中数据来去对应的字段的值
             if(item.dataSource && item.dataSource.type === 'formData'){
               if(typeof(item.dataSource.data.valueField) === 'string') {
                 let arr = item.dataSource.data.valueField.replace(/\[|]/g, '').split(/\"/);
@@ -541,10 +601,12 @@ export default {
               }
               item.showFieldCode = item.dataSource.data.valueField[1];
             }
-            if(item.valueField !== "transCode" && item.valueField !== 'inventoryName' && item.valueField !== 'facilityName' 
-                && item.text !== '物料名称' && item.text !== '物料编码' && item.text !== '规格' && item.text !== '产品规格'
-                && item.showFieldCode !== 'facilityName' && item.showFieldCode !== 'facilityCode' 
-                && item.showFieldCode !== 'facilitySpecification'){
+            // 当存在映射表时，根据映射表来取对应的值
+            if(Object.keys(dataIndexMap).length){
+              item.showFieldCode = dataIndexMap[item.fieldCode];
+            }
+            if(item.valueField !== 'transCode'  && item.fieldCode !== 'transMatchedCode' && item.valueField !== 'inventoryName' && item.valueField !== 'facilityName' 
+                && item.text !== '物料名称' && item.showFieldCode !== 'facilityName'){
               eidtMatterPop.push(item);
             }
             
