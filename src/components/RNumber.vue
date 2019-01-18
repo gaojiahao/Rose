@@ -1,9 +1,9 @@
 <template>
   <div class="r-number-container">
-    <span class="r-number-handle" @click.stop="subNum" :class="{disabled : min && currentNum <= min}">-</span>
+    <span class="r-number-handle iconfont icon-iconfontmove" @click.stop="subNum" :class="{disabled : min && currentNum <= min}"></span>
     <input class="num" type="number" :value="currentNum" @blur="getNum"/>
-    <span class="r-number-handle plus" @click.stop="plusNum"
-          :class="{disabled: max && currentNum >= max}">+</span>
+    <span class="r-number-handle iconfont icon-jia" @click.stop="plusNum"
+          :class="{disabled: max && currentNum >= max}"></span>
   </div>
 </template>
 
@@ -88,30 +88,38 @@
 <style scoped lang="scss">
   .r-number-container {
     display: flex;
+    border-radius: .02rem;
+    border: 1px solid #999;
+    color: #333;
     input {
       border: none;
       outline: none;
     }
     .r-number-handle {
       display: inline-block;
-      width: .2rem;
-      height: .2rem;
+      width: .24rem;
+      height: .24rem;
       text-align: center;
-      line-height: .2rem;
+      line-height: .24rem;
       font-size: .18rem;
+      .icon-iconfontmove{
+        font-size: .14rem;
+      }
     }
     .disabled {
       color: #eee;
     }
     .num {
       width: .6rem;
-      height: .2rem;
+      height: .24rem;
       padding: 0 .04rem;
       font-size: .12rem;
       text-align: center;
-      line-height: .2rem;
-      background: #e8e8e8;
+      line-height: .24rem;
+      // background: #e8e8e8;
       border-radius: 0 !important;
+      border-left: 1px solid #999;
+      border-right: 1px solid #999;
     }
   }
 </style>

@@ -219,3 +219,8 @@
   background: url('~assets/iconfont/icon_upload_add.png');
   background-size: cover;
 }
+
+.icon-matter-bianji{
+  background: url('~assets/iconfont/icon_bianji.png');
+  background-size: cover;
+}

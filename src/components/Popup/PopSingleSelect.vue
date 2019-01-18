@@ -135,7 +135,7 @@
         // 关闭icon
         .close_icon {
           top: -.2rem;
-          right: .15rem;
+          right: 0;
           position: absolute;
         }
       }

@@ -32,6 +32,7 @@
             <div class="title" :class="{required: !item.allowBlank}">{{item.fieldLabel}}</div>
             <div class="mode">
               <span class="mode_content">{{dealer[item.fieldCode] || "请选择"}}</span>
+              <span class="icon-right"></span>
             </div>
           </div>
         </div>
@@ -164,6 +165,11 @@ export default {
     align-items: center;
     flex: 1;
     justify-content: flex-end;
+    .icon-right{
+      width: .08rem;
+      height: .14rem; 
+      margin-left: .1rem;
+    }
     
   }
 }

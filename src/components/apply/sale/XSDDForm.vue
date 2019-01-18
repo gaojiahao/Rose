@@ -296,7 +296,7 @@ export default {
                   let delArr = this.orderList[OItem.transCode];
                   let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
                   if (delIndex >= 0) {
-                    this.$refs.matter.delSelItem(delArr[delIndex]);
+                    // this.$refs.matter.delSelItem(delArr[delIndex]);
                     delArr.splice(delIndex, 1);
                   }
                   if (!delArr.length) {
@@ -309,7 +309,7 @@ export default {
                   let delArr = this.orderList['noCode'];
                   let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
                   if (delIndex >= 0) {
-                    this.$refs.matter.delSelItem(delArr[delIndex]);
+                    // this.$refs.matter.delSelItem(delArr[delIndex]);
                     delArr.splice(delIndex, 1);
                   }
                   if (!delArr.length) {
@@ -622,19 +622,6 @@ export default {
 
 <style lang='scss' scoped>
   @import './../../scss/bizApply';
-
-  .comment {
-    width: 95%;
-    margin: 0 auto;
-    background: #fff;
-    // margin-top: .1rem;
-    padding: .06rem .1rem;
-    box-sizing: border-box;
-    .weui-cell {
-      padding: 0;
-    }
-  }
-
   .no_margin {
     margin-top: 0;
   }

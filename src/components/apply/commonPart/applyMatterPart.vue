@@ -2,18 +2,19 @@
     <div class="materiel_list">
       <!-- 没有选择物料 -->
       <template v-if="!DataLength">
-        <div @click="showPop = !showPop">
+        <div class="no_matter" @click="showPop = !showPop">
           <div class="title">{{orderListTitle}}列表</div>
-          <div class="required">请选择{{orderListTitle}}</div>
-          <i class="iconfont icon-youjiantou r_arrow"></i>
+          <div class="seleted_icon">
+            请选择<span class="icon-right"></span>
+          </div>  
         </div>
       </template>
       <!-- 已经选择了物料 -->
       <template v-else>
-        <div class="title" @click="showDelete">
-          <div>{{orderListTitle}}列表</div>
+        <div class="has_matter" @click="showDelete">
+          <div class="title">{{orderListTitle}}列表</div>
           <div class='edit' v-if='!matterModifyClass'>编辑</div>
-          <div class='finished' v-else>完成</div>
+          <div class='edit' v-else>完成</div>
         </div>
         <div class="mater_list">
           <!-- 当传入的matterList是对象时 -->
@@ -21,11 +22,10 @@
             <div class="each_mater" :class="{'vux-1px-b' : index < DataLength - 1}"
                   v-for="(oItem, key, index) in matterList" :key="key">
               <div class="order_code" v-if='oItem.length && key !==  "noCode"'>
-                <span class="order_title">{{orderListTitle}}</span>
-                <span class="order_num">{{key}}</span>
+                {{orderListTitle}}：{{key}}
               </div>
               <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                <matter-item :item="item" @on-modify="modifyMatter(item, index, key)" :show-delete="matterModifyClass"
+                <matter-item :class="{'vux-1px-t': index>0}" :item="item" @on-modify="modifyMatter(item, index, key)" :show-delete="matterModifyClass"
                               @click.native="delClick(index, item, key)" :config="matterEditConfig.property">
                   <template slot="info" slot-scope="{item}">
                     <slot name="info" :item="item">
@@ -40,12 +40,12 @@
                       </div>
                     </slot>
                   </template>
-                  <template slot="editPart" slot-scope="{item}">
+                  <!-- <template slot="editPart" slot-scope="{item}">
                     <div class="edit-part vux-1px-l" @click="modifyMatter(item, index, key)"
                           v-show="(item.price && item.tdQty) &&!matterModifyClass">
                       <span class='iconfont icon-bianji1'></span>
                     </div>
-                  </template>
+                  </template> -->
                 </matter-item>
                 <div class='delete_icon' @click="delClick(index, item, key)" v-if='matterModifyClass'>
                   <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
@@ -63,13 +63,13 @@
                 <template slot="info" slot-scope="{item}">
                   <slot name="info" :item="item"></slot>
                 </template>
-                <template slot="edit" slot-scope="{item}">
+                <!-- <template slot="edit" slot-scope="{item}">
                   <div class='mater_other' @click="modifyMatter(item, index)" v-if="!item.price && !matterModifyClass">
                     <div class="edit-tips">
                       <span class="tips-word">点击进行填写</span>
                     </div>
                   </div>
-                </template>
+                </template> -->
               </matter-item>
               <div class='delete_icon' @click="delClick(index, item)" v-if='matterModifyClass'>
                 <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
@@ -84,7 +84,10 @@
         <span class="add_more stop" v-if="this.actions.includes('stop')"
               @click="stopOrder">终止提交</span>
         <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
-        <span class="add_more" v-if="DataLength" @click="addMatter">新增更多物料</span>
+        <div class="add_more" v-if="DataLength" @click="addMatter">
+          <span class="icon-add"></span>
+          <span class="add_text">新增更多物料</span>
+        </div>
       </div>
       <!-- 物料popup -->
       <pop-matter-list  :show="showPop" v-model="showPop" @shut-down-outsidePop="closePop" @sel-matter="selMatter" :config="matterPopConfig" 
@@ -242,5 +245,161 @@ export default {
 </script>
 
 <style scoped lang='scss'>
-@import './../../scss/bizApply'
+@import './../../scss/bizApply';
+.materiel_list {
+  position: relative;
+  padding: 0 .15rem;
+  margin-bottom: .1rem;
+  font-size: .14rem;
+  background: #FFF;
+  box-sizing: border-box;
+  // 没有物料title样式
+  .no_matter {
+    padding: .18rem 0;
+    line-height: .14rem;
+    display: flex;
+    justify-content: space-between;
+    font-size: .14rem;
+    .title{
+      color: #3296FA;
+    }
+    .seleted_icon {
+      display: flex;
+      align-items: center;
+      .icon-right {
+        width: .08rem;
+        height: .14rem;
+        margin-left: .1rem;
+      }
+    }
+  }
+  // 有物料的title的样式
+  .has_matter {
+    padding-top: .28rem;
+    display: flex;
+    justify-content: space-between;
+    line-height: .14rem;
+    .title {
+      color: #696969;
+    }
+    .edit {
+      color: #333;
+    }
+    
+  }
+  // 物料列表
+  .mater_list {
+    box-sizing: border-box;
+    .vux-1px-b:after {
+      border-bottom: 1px solid #e8e8e8;
+    }
+    // 每个物料
+    .each_mater {
+      position: relative;
+      box-sizing: border-box;
+      // 计划号
+      .order_code {
+        padding-top: .16rem;
+        color: #999;
+        font-size: .12rem;
+        line-height: .12rem;
+      }
+    }
+    .mater_delete{
+      position: relative;
+      padding-left: 0.3rem;
+    }
+    .delete_icon{
+      height: 20px;
+      position: absolute;
+      top:50%;
+      left: 0;
+      transform: translateY(-50%);
+      fill: #999;
+      .checked{
+        fill: #FA7138;
+      }
+    }
+  }
+  //可编辑提示
+  .mater_other {
+    display: flex;
+    margin-top: .1rem;
+    align-items: center;
+    position: relative;
+    justify-content: space-between;
+    //内容可编辑提示
+    .edit-tips{
+      font-size: 0.12rem;
+      color: #454545;
+      font-weight: bold;
+      .icon-tianxie {
+        font-size: .14rem;
+      }
+      .tips-word {
+        font-size: .12rem;
+      }
+    }
+    .mater_price {
+      color: #FA7138;
+      font-weight: bold;
+      font-size: .16rem;
+      line-height: .2rem;
+      display: inline-block;
+    }
+    .matter-remain {
+      color: #111;
+      font-size: .14rem;
+      font-weight: bold;
+      .symbol {
+        color: #757575;
+      }
+      .icon--{
+        font-size: 0.14rem;
+      }
+    }
+  }
+  // 新增更多
+  .handle_part {
+    width: 100%;
+    text-align: center;
+    position: relative;
+    display: flex;
+    .symbol {
+      left: 50%;
+      bottom: 25%;
+      color: #757575;
+      font-size: .12rem;
+      position: absolute;
+      transform: translate(-50%, 0);
+    }
+    .stop {
+      margin-right: .24rem;
+      background: #ea5455;
+      box-shadow: 0 2px 5px #ea5455;
+    }
+  }
+  .add_more {
+    padding: .06rem .08rem;
+    text-align: center;
+    color: #3296FA;
+    font-weight: bold;
+    margin: 0 auto .2rem;
+    border-radius: .15rem;
+    border: 1px solid #3296FA;
+    display: flex;
+    align-items: center;
+    .icon-add {
+      width: .14rem;
+      height: .14rem;
+      box-sizing: border-box;
+      margin: .015rem .05rem 0 0;
+    }
+    .add_text {
+      font-size: .12rem;
+      line-height: .12rem;
+    }
+  }
+}
+
 </style>

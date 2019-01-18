@@ -3,27 +3,15 @@
     <div class="mater_img">
       <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
     </div>
-    <div class="mater_main" :class="[{'show-delete': showDelete}, {'no-edit': hideEdit}]">
+    <div class="mater_main">
       <!-- 物料名称 -->
       <div class="mater_name">
         {{item.inventoryName || item.facilityName}}
+        <span class="icon-matter-bianji" @click="modifyMatter" v-if="!showDelete"></span>
       </div>
-      <!-- 物料基本信息 -->
-      <div class="matter-info">
-        <!-- 物料编码 -->
-        <div class="matter-info-item">
-          <span class="title">编码</span>
-          <span class="num">{{item.inventoryCode || item.facilityCode || item.outPutMatCode}}</span>
-        </div>
-        <!-- 物料规格 -->
-        <div class="matter-info-item matter-spec">
-          <span class="title">规格</span>
-          <span class="num">{{item.specification || item.facilitySpecification || item.specification_outPutMatCode || '无'}}</span>
-        </div>
-      </div>
-      <div class="matter-more">
-        <span class="unit" v-for="(cItem,cIndex) in config" :key="cIndex">
-          {{cItem.text}}: 
+      <div class="matter_more">
+        <div class="each_info" v-for="(cItem,cIndex) in config" :key="cIndex">
+          <span class="title">{{cItem.text}}:</span>
           <span v-if="cItem.showFieldCode">
             {{item[cItem.showFieldCode] != null &&  item[cItem.showFieldCode] !== "" ? item[cItem.showFieldCode] : "无"}}
           </span>
@@ -31,20 +19,20 @@
             {{item[cItem.fieldCode] != null &&  item[cItem.fieldCode] !== "" ? item[cItem.fieldCode] : "无"}}
           </span>
           
-        </span>
+        </div>
       </div>
       <slot name="info" :item="item"></slot>
-      <slot name="edit" :item="item">
+      <!-- <slot name="edit" :item="item">
         <div class='mater_other' @click="modifyMatter" v-if="hideEdit && !showDelete">
           <div class="edit-tips">点击进行填写</div>
         </div>
-      </slot>
+      </slot> -->
       <!-- 编辑图标 -->
-      <slot name="editPart" :item="item">
+      <!-- <slot name="editPart" :item="item">
         <div class="edit-part vux-1px-l" @click="modifyMatter" v-show="showEdit && !showDelete">
           <span class='iconfont icon-bianji1'></span>
         </div>
-      </slot>
+      </slot> -->
     </div>
   </div>
 </template>
@@ -119,10 +107,12 @@ export default {
 
 <style scoped lang="scss">
   .matter-item {
+    padding: .16rem 0;
     position: relative;
     display: flex;
-    padding: .08rem 0;
     box-sizing: border-box;
+    color: #333;
+    font-size: .14rem;
     // 物料图片
     .mater_img {
       width: .75rem;
@@ -138,26 +128,24 @@ export default {
     .mater_main {
       display: inline-block;
       margin-left: .1rem;
-      padding-right: .38rem;
-      width: calc(100% - .75rem);
+      flex: 1;
       box-sizing: border-box;
-      &.no-edit {
-        padding-right: 0;
-        .num {
-          max-width: .9rem;
-        }
-      }
-      &.show-delete {
-        padding-right: 0;
-      }
     }
     // 物料名称
     .mater_name {
-      color: #111;
-      font-size: .14rem;
+      padding-right: .28rem;
+      line-height: .22rem;
       font-weight: bold;
       word-break: break-all;
       margin-bottom: .02rem;
+      position: relative;
+      .icon-matter-bianji {
+        width: .28rem;
+        height: .28rem;
+        position: absolute;
+        right: 0;
+        top: .03rem;
+      }
     }
     // 物料信息
     .matter-info {
@@ -204,53 +192,15 @@ export default {
       }
     }
     //物料单价，属性，颜色
-    .matter-more {
-      margin-top: .02rem;
-      color: #757575;
-      font-size: 0.1rem;
-      > span {
-        display: inline-block;
-        margin-right: 0.04rem;
-        .mater_color {
-          margin-right: 0;
-        }
-      }
-    }
-    //可编辑提示
-    .mater_other {
-      display: flex;
-      margin-top: .03rem;
-      align-items: center;
-      position: relative;
-      justify-content: space-between;
-      //内容可编辑提示
-      .edit-tips{
-        font-size: 0.12rem;
-        color: #454545;
-        font-weight: bold;
-        .icon-tianxie {
-          font-size: .14rem;
-        }
-        .tips-word {
-          font-size: .12rem;
-        }
-      }
-      .mater_price {
-        color: #ea5455;
-        font-weight: bold;
-        font-size: .16rem;
+    .matter_more {
+      font-size: .12rem;
+      .each_info {
         line-height: .2rem;
         display: inline-block;
-      }
-      .matter-remain {
-        color: #111;
-        font-size: .14rem;
-        font-weight: bold;
-        .symbol {
-          color: #757575;
-        }
-        .icon--{
-          font-size: 0.14rem;
+        color: #333;
+        margin-right: .08rem;
+        .title {
+          color: #999;
         }
       }
     }
