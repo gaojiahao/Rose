@@ -343,6 +343,9 @@
     }
     .matter-list-container {
       height: calc(100% - .9rem);
+      /deep/ .search_filter {
+        top: .89rem;
+      }
     }
     // 物料列表
     .matter-list-wrapper {
