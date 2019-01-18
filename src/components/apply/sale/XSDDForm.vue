@@ -11,76 +11,12 @@
                          :defaultContact="contactInfo"></pop-dealer-list>
         <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
         <!-- 物料列表 -->
-        <div class="materiel_list">
-          <!-- 没有选择物料 -->
-          <template v-if="!Object.keys(orderList).length">
-            <div @click="getMatter" class='no-matter'>
-              <div class="title">{{orderListTitle}}列表</div>
-              <div class="picker">
-                请选择<span class="icon-right"></span>
-              </div>
-              <!-- <div class="required">请选择{{orderListTitle}}</div>
-              <span class="iconfont icon-youjiantou r_arrow"></span> -->
-            </div>
-          </template>
-          <!-- 已经选择了物料 -->
-          <template v-else>
-            <div class="title" @click="showDelete">
-              <div>{{orderListTitle}}列表</div>
-              <div class='edit' v-if='!matterModifyClass'>编辑</div>
-              <div class='finished' v-else>完成</div>
-            </div>
-            <div class="mater_list">
-              <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}"
-                   v-for="(oItem, key, index) in orderList" :key="key">
-                <div class="order_code" v-if='oItem.length && key !==  "noCode"'>
-                  <span class="order_title">{{orderListTitle}}</span>
-                  <span class="order_num">{{key}}</span>
-                </div>
-                <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                  <matter-item :item="item" @on-modify="modifyMatter(item, index, key)" :show-delete="matterModifyClass"
-                               @click.native="delClick(index, item, key)" :config="matterEditConfig.property">
-                    <template slot-scope="{item}" slot="info">
-                      <!-- 物料数量和价格 -->
-                      <div class='mater_other' v-if="item.price && item.tdQty">
-                        <div class='mater_price'>
-                          <span class="symbol">￥</span>{{item.price}}
-                        </div>
-                        <div>
-                          <r-number :num="item.tdQty" :max="item.qtyBal"
-                                    :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
-                        </div>
-                      </div>
-                    </template>
-                    <template slot="editPart" slot-scope="{item}">
-                      <div class="edit-part vux-1px-l" @click="modifyMatter(item, index, key)"
-                           v-show="(item.price && item.tdQty) &&!matterModifyClass">
-                        <span class='iconfont icon-bianji1'></span>
-                      </div>
-                    </template>
-                  </matter-item>
-                  <div class='delete_icon' @click="delClick(index, item, key)" v-if='matterModifyClass'>
-                    <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
-                    <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </template>
-
-          <!-- 新增更多 按钮 -->
-          <div class="handle_part" v-if="matterList.length && !matterModifyClass">
-            <span class="add_more stop" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'
-                  @click="stopOrder">终止提交</span>
-            <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
-            <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
-          </div>
-          <!-- 物料popup -->
-          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" :config="matterPopConfig"
-                           :matter-params="matterParams" @sel-matter="selMatter" :filter-list="filterList" :order-title="matterPopOrderTitle"
-                           :default-value="matterList" ref="matter">
-          </pop-matter-list>
-        </div>
+        <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :filter-list="filterList"
+          :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="matterList" 
+          :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
+          :addMatter="addMatter" :sel-matter="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
+          :modify-matter="modifyMatter" :show-delete="showDelete" :show-sel-icon="showSelIcon" :del-click="delClick">
+        </apply-matter-part>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
@@ -687,57 +623,6 @@ export default {
 <style lang='scss' scoped>
   @import './../../scss/bizApply';
 
-  .vux-1px-b:after,
-  .vux-1px-t:before {
-    border-color: #e8e8e8;
-  }
-  .process_status{
-    background: #fff;
-    padding: 0 .15rem;
-    margin-bottom: .1rem;
-  }
-  //有效期
-  .no_top {
-    margin-top: 0;
-    // margin-bottom: 0.1rem;
-    background: #fff;
-  }
-  .cell-item {
-    background: #fff;
-    box-sizing: border-box;
-    padding: .02rem .1rem;
-    display: flex;
-    font-size: .14rem;
-    align-items: center;
-    justify-content: space-between;
-    height: .36rem;
-    line-height: .32rem;
-    /deep/ .weui-cell__hd{
-      color: #757575;
-    }
-    &:before {
-      display: none;
-    }
-    .title {
-      color: #757575;
-      &.required {
-        color: #5077aa;
-      }
-    }
-    .mode {
-      color: #111;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      .mode_content {
-        margin-right: .06rem;
-      }
-      .icon-shenglve {
-        font-size: .2rem;
-        color: #707070;
-      }
-    }
-  }
   .comment {
     width: 95%;
     margin: 0 auto;
@@ -745,7 +630,6 @@ export default {
     // margin-top: .1rem;
     padding: .06rem .1rem;
     box-sizing: border-box;
-
     .weui-cell {
       padding: 0;
     }
@@ -754,13 +638,5 @@ export default {
   .no_margin {
     margin-top: 0;
   }
-
-  .materiel_list
-  .mater_list
-  .each_mater_wrapper
-  .has_padding {
-    padding-right: .38rem;
-  }
-
 
 </style>
