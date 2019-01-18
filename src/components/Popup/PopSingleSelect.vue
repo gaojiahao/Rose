@@ -121,34 +121,44 @@
   .trade_pop_part {
     background: #fff;
     .trade_pop {
-      
+      overflow: hidden;
+      padding: 0 .15rem;
+      position: relative;
       // 顶部
       .title {
-        font-size: .2rem;
+        font-size: .16rem;
         position: relative;
         padding: 0.08rem 0 .14rem;
+        text-align: center;
+        margin-top: .3rem;
+        color: #17181D;
         // 关闭icon
         .close_icon {
-          top: 45%;
-          right: -2%;
+          top: -.2rem;
+          right: .15rem;
           position: absolute;
-          transform: translate(0, -50%);
         }
       }
       .each_mode {
+        font-size: .14rem;
+        line-height: .14rem;
+        border-radius: .22rem;
+        background: #F7F7F7;
+        color: #696969;
         margin: 0 .1rem .1rem 0;
         display: inline-block;
-        padding: .04rem .2rem;
-        border: 1px solid #C7C7C7;
+        padding: .08rem .25rem;
+        border: 1px solid #F7F7F7;
         border-radius: 40px;
       }
       .choiced {
-        background: #5077aa;
-        color: #fff;
+        border: 1px solid #30A7FF;
+        background: #fff;
+        color: #30A7FF;
       }
-      .vux-1px:before {
-        border-radius: 40px;
-      }
+      // .vux-1px:before {
+      //   border-radius: 40px;
+      // }
     }
     // 确定
     .cfm_btn {
