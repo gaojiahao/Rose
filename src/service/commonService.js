@@ -325,6 +325,17 @@ export let getFormViews = (listId = '') => {
   })
 
 }
+// 获取表单要提交的字段
+export let getModelConfigByListId = (listId = '') => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getModelConfigByListId',
+    data: {
+      listId,
+    }
+  })
+
+}
+
 export let requestData = ({url = '', data = {}}) => {
   return $flyio.ajax({
     url,
