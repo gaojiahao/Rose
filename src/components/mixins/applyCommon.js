@@ -52,7 +52,9 @@ export default {
       matterParams: {}, // 请求物料的接口，参数
       matterPopOrderTitle: '', // 物料列表pop订单title,
       dealerParams: {}, // 请求往来数据的接口和参数
-      otherConfig: []
+      otherConfig: [],
+      dataIndexMap: {}, // 物料字段的映射表
+      submitMatterField: [], // 物料要提交的字段
     }
   },
   components: {
@@ -390,7 +392,7 @@ export default {
       // 根据uniqueId 请求表单配置
       await getFormConfig(this.viewId).then((data) => {
         let config = data.config;
-        let dataIndexMap = {}, matterCols = [];
+        let matterCols = [];
         // 处理将数据源配置在data中的情况
         if(data.dataSource){
           let dataSource = JSON.parse(JSON.parse(data.dataSource)[0].dataSource.source);
@@ -438,7 +440,6 @@ export default {
           this.matterPopConfig = arr;
         }
         console.log(config)
-        console.log(matterCols)
         let dealerConfig = [], matterConfig = [], otherConfig = [];
         // 从请求回来的配置中拆分往来，物料，其他段落的配置
         config.forEach(item => {
@@ -454,7 +455,7 @@ export default {
             if(item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
               matterConfig = item.items;
               if(item.dataIndexMap){
-                dataIndexMap = item.dataIndexMap;
+                this.dataIndexMap = item.dataIndexMap;
               }
             } 
           }
@@ -497,14 +498,16 @@ export default {
           editPart: []
         };
         let eidtMatterPop = [];
-        
-        // console.log(matterConfig)
-        console.log(matterCols)
         matterConfig.forEach((item, index) => {
-          let key = dataIndexMap[item.fieldCode];
+          // 组合要提交的物料字段
+          if(item.submitValue){
+            this.submitMatterField.push(item)
+          }
+          let key = this.dataIndexMap[item.fieldCode];
           let matchedCol = matterCols.find(col => col.k === key);
-          item.hidden = key ? (matchedCol ? matchedCol.h : true) : item.hidden;
-          console.log(item.fieldCode, key, item.hidden)
+          // 若存在映射表则根据映射表的字段确定显示或隐藏
+          item.hidden = key ? (matchedCol ? item.hidden : true) : item.hidden;
+          // console.log(item.fieldCode, key, item.hidden)
           if(item.dataSource && item.dataSource.type === 'remoteData') {
             // 物料或者订单请求
             if(item.editorType === 'r2Selector') {
@@ -567,7 +570,7 @@ export default {
           // matterPop需要隐藏的物料的字段
           if(item.editorType === 'r2Selector'){
             let hiddenField = JSON.parse(JSON.stringify(item.dataSource.data.hFields));
-            hiddenField.unshift('transCode','inventoryName', 'invName','facilityName',)
+            hiddenField.unshift('transCode','inventoryName', 'inventoryCode', 'specification','invName','matCode','facilityName', 'facilityCode', 'facilitySpecification')
             let matterPopField = JSON.parse(JSON.stringify(item.proertyContext.dataSourceCols));
             // 循环删除要隐藏的字段
             hiddenField.forEach(hItem => {
@@ -602,13 +605,16 @@ export default {
               item.showFieldCode = item.dataSource.data.valueField[1];
             }
             // 当存在映射表时，根据映射表来取对应的值
-            if(Object.keys(dataIndexMap).length){
-              item.showFieldCode = dataIndexMap[item.fieldCode];
+            if(Object.keys(this.dataIndexMap).length){
+              item.showFieldCode = this.dataIndexMap[item.fieldCode];
             }
-            if(item.valueField !== 'transCode'  && item.fieldCode !== 'transMatchedCode' && item.valueField !== 'inventoryName' && item.valueField !== 'facilityName' 
-                && item.text !== '物料名称' && item.showFieldCode !== 'facilityName'){
+            if(item.valueField !== "transCode" && item.valueField !== 'inventoryName' && item.valueField !== 'facilityName' 
+                && item.text !== '物料名称' && item.text !== '物料编码' && item.text !== '规格' && item.text !== '产品规格'
+                && item.showFieldCode !== 'transCode' && item.showFieldCode !== 'facilityName' && item.showFieldCode !== 'facilityCode' 
+                && item.showFieldCode !== 'facilitySpecification'){
               eidtMatterPop.push(item);
             }
+
             
           }
         })
