@@ -17,7 +17,7 @@
         <span class='icon-right'></span>  
       </div>
       <div class='no-content' v-else>
-        <span class="title">{{dealerTitle}}列表</span>
+        <span class="title required">{{dealerTitle}}列表</span>
         <div class="picker">
           <span>请选择</span>
           <span class="icon-right"></span>
@@ -374,6 +374,9 @@
         line-height: .14rem;
         .title{
           color: #696969;
+        }
+        .required {
+          color: #3296FA;
         }
         .picker{
           display: flex;

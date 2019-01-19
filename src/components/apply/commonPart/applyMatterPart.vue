@@ -266,6 +266,7 @@ export default {
     font-size: .14rem;
     .title{
       color: #3296FA;
+      font-weight: bold;
     }
     .seleted_icon {
       display: flex;

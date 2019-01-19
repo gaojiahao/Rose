@@ -306,7 +306,7 @@ export default {
         confirmText: '确定',
         clearText: "重新选择",
         value: tmpTime.endDate,
-        startDate: tmpTime.startDate ? this.toDay : '',
+        startDate: tmpTime.startDate ? tmpTime.startDate : '',
         onClear: (val) => {
           time.endDate = tmpTime.endDate = '';
         },

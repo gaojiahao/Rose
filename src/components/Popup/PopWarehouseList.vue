@@ -21,7 +21,6 @@
             <span class="mode">请选择</span>
           </div>  
         </div>
-        
       </div>
     </div>
     <span class="icon-right"></span>
@@ -43,11 +42,6 @@
                     <span class="name">{{item.warehouseName}}</span>
                     <span class="type">{{item.warehouseType}}</span>
                   </div>
-                  <!-- <div class="withColor">
-                    <div class="ForInline " style="display:inline-block">
-                      <span class='creator'>{{item.warehouseType}}</span>
-                    </div>
-                  </div> -->
                   <!-- 地址 -->
                   <div class="warehouse-address">
                     <span>{{item.warehouseProvince}}{{item.warehouseCity}}{{item.warehouseDistrict}}{{item.warehouseAddress}}</span>
@@ -55,7 +49,6 @@
                 </div>
               </div>
               <!-- icon -->
-              <!-- <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon> -->
             </div>
             <!-- 加载中、没有更多的提示 -->
             <load-more :show-loading="hasNext" :tip="tip" v-show="!showAddWarehouse && (hasNext || !listData.length)"
@@ -401,6 +394,7 @@
       align-items: center;
       .required {
         color: #3296FA;
+        font-weight: bold;
       }
     }
   }

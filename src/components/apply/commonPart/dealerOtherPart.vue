@@ -2,11 +2,11 @@
   <div class="dealer-other-part" v-if="config.length">
     <div v-for="(item, index) in config" :key="index">
       <!-- 结算方式, 物流条款 -->
-      <pop-single-select :class="{'vux-1px-t': index > 1 }":title="item.fieldLabel" :data="item.remoteData" :value="dealer[item.fieldCode]" v-model="dealer[item.fieldCode]"
+      <pop-single-select :class="{'vux-1px-t': index > 1 }" :title="item.fieldLabel" :data="item.remoteData" :value="dealer[item.fieldCode]" v-model="dealer[item.fieldCode]"
                         :isRequired="!item.allowBlank" v-if="!item.hiddenInRun && item.xtype === 'r2Combo' "></pop-single-select>
-      <div class="mg_auto" :class="{'vux-1px-t': index > 0}"  v-if="!item.hiddenInRun">
+      <template v-if="!item.hiddenInRun">
         <!-- 字段不能修改 -->
-        <div class="cell-item" v-if="item.readOnly && item.fieldCode !== 'projectType_project'">
+        <div class="cell-item" :class="{'vux-1px-t': index > 0}" v-if="item.readOnly && item.fieldCode !== 'projectType_project'">
           <div class="title">{{item.fieldLabel}}</div>
           <div class="mode">
             <span class="mode_content">{{dealer[item.fieldCode] || "无"}}</span>
@@ -14,21 +14,21 @@
         </div>
         <div v-else-if="!item.readOnly">
           <!-- 输入框（数字）-->
-          <div class="cell-item" v-if="item.xtype === 'r2Permilfield' || item.xtype === 'r2Numberfield'">
+          <div class="cell-item" :class="{'vux-1px-t': index > 0}" v-if="item.xtype === 'r2Permilfield' || item.xtype === 'r2Numberfield'">
             <div class="title" :class="{required: !item.allowBlank}">{{item.fieldLabel}}</div>
             <div class="mode">
               <input type='number' placeholder="请输入" v-model.number="dealer[item.fieldCode]" @on-blur="checkAmt(dealer)"/>
             </div>
           </div>
            <!-- 输入框（文字）-->
-           <div class="cell-item" v-if="item.xtype === 'r2Textfield'">
+           <div class="cell-item" :class="{'vux-1px-t': index > 0}"  v-if="item.xtype === 'r2Textfield'">
             <div class="title" :class="{required: !item.allowBlank}">{{item.fieldLabel}}</div>
             <div class="mode">
               <input type='text' placeholder="请输入" v-model="dealer[item.fieldCode]" @on-blur="checkAmt(dealer)"/>
             </div>
           </div>
           <!-- 日期 -->
-          <div class="cell-item" v-if="item.xtype === 'r2Datefield'" @click="getDate(item)">
+          <div class="cell-item" :class="{'vux-1px-t': index > 0}"  v-if="item.xtype === 'r2Datefield'" @click="getDate(item)">
             <div class="title" :class="{required: !item.allowBlank}">{{item.fieldLabel}}</div>
             <div class="mode">
               <span class="mode_content">{{dealer[item.fieldCode] || "请选择"}}</span>
@@ -36,16 +36,15 @@
             </div>
           </div>
         </div>
-        
-      </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script>
-import { Datetime, XInput} from 'vux'
+import { Datetime, XInput } from 'vux'
+import { toFixed } from '@/plugins/calc'
 import PopSingleSelect from 'components/Popup/PopSingleSelect'
-import {toFixed} from '@/plugins/calc'
 export default {
   name: 'dealerOtherPart',
   props: {
