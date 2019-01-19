@@ -493,11 +493,11 @@ export default {
         })
         this.dealerConfig = blankDealerConfig;
         // 处理物料配置
-        let eidtMatterPopConfig = {
+        let editMatterPopConfig = {
           property: [],
           editPart: []
         };
-        let eidtMatterPop = [];
+        let editMatterPop = [];
         matterConfig.forEach((item, index) => {
           // 组合要提交的物料字段
           if(item.submitValue){
@@ -549,7 +549,7 @@ export default {
               let url = item.dataSource.data.url,
                   params = item.dataSource.data.params,
                   keys = Object.keys(params),
-                  requestParams = {url}
+                  requestParams = {url};
               if(keys.length){
                 let data = {};
                 keys.forEach(key => {
@@ -612,23 +612,23 @@ export default {
                 && item.text !== '物料名称' && item.text !== '物料编码' && item.text !== '规格' && item.text !== '产品规格'
                 && item.showFieldCode !== 'transCode' && item.showFieldCode !== 'facilityName' && item.showFieldCode !== 'facilityCode' 
                 && item.showFieldCode !== 'facilitySpecification'){
-              eidtMatterPop.push(item);
+                editMatterPop.push(item);
             }
 
             
           }
         })
-        // console.log(eidtMatterPop);
-        // 将配置拆分为属性和可编辑的部分
-        eidtMatterPop.length && eidtMatterPop.forEach((item, index) => {
-          //物料信息里面有数量
-          if(item.fieldCode === 'tdQty' || item.fieldCode === 'qualityQty' || item.editorType === 'r2Combo'){
-            eidtMatterPopConfig.property = eidtMatterPop.slice(0, index);
-            eidtMatterPopConfig.editPart = eidtMatterPop.slice(index)
+        // 判断是否只读 如果不是只读就统一塞进编辑页面
+        if(editMatterPop.length) {
+          for(let [index, item] of Object.entries(editMatterPop)) {
+            if(!item.readOnly) {
+              editMatterPopConfig.property = editMatterPop.slice(0, index);
+              editMatterPopConfig.editPart = editMatterPop.slice(index);
+              break;
+            }
           }
-          
-        })
-        this.matterEditConfig = eidtMatterPopConfig;
+        } 
+        this.matterEditConfig = editMatterPopConfig;
         // 处理其他信息的配置
         let other = [];
         otherConfig.forEach(item => {

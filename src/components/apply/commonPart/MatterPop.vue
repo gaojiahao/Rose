@@ -61,10 +61,11 @@
                        text-align="right"
                        placeholder="请输入" v-if="eItem.fieldCode ==='tdQty'"
                        @on-blur="checkAmt(modifyMatter, eItem.fieldCode, modifyMatter[eItem.fieldCode])"
-                       @on-focus="getFocus($event)">
+                       @on-focus="getFocus($event)"
+                       @on-click-clear-icon="cleanAmt(modifyMatter)">
                 <template slot="label">
                   <span :class="{required: !eItem.allowBlank}">{{eItem.text}}</span>
-                  <span class="iconfont icon-tishi" v-show="modifyMatter.qtyDownline"
+                  <span class="iconfont icon-tishi" v-show="modifyMatter.otherField"
                         @click="showDialog = !showDialog"></span>
                 </template>
               </x-input>
@@ -78,7 +79,7 @@
                 </template>
               </datetime>
               <!-- 下拉框 -->
-              <popup-picker :data='eItem.remoteData' v-model="modifyMatter[eItem.fieldCode]"
+              <popup-picker class="vux-1px-b" :data='eItem.remoteData' v-model="modifyMatter[eItem.fieldCode]"
                             :popup-style="pickerStyle"
                             placeholder="请选择" v-if="eItem.editorType === 'r2Combo'">
                 <template slot="title">
@@ -116,8 +117,12 @@
           <span class="package_num">订单数量下限：{{modifyMatter.qtyDownline * modifyMatter.assMeasureScale}}</span>
           <span class="order_num">[折合包装数量: {{modifyMatter.qtyDownline}}]</span>
         </div>
-        <div class="other_info_part">
+        <div class="other_info_part" v-if="modifyMatter.otherField.transCode">
           <p class="other_tips">tips: 当您输入的订单数量在上述区间内，系统将会自动匹配<span class="inside_tips">销售协议{{modifyMatter.otherField.transCode}}</span>当中的价格，并自动计算其他属性。
+          </p>
+        </div>
+        <div class="other_info_part" v-else>
+          <p class="other_tips">tips: 当您输入的数量在上述区间内，系统将会自动显示其他信息，并自动计算。
           </p>
         </div>
         <div class="btn_part" @click="showDialog = !showDialog">我已阅读</div>
@@ -277,13 +282,20 @@
         }
         return url
       },
+      // 根据传进来的对象 定义参数的值
+      defineObjVal(currentData, newObj, newVal) {
+        for(let key in newObj) {
+          this.$set(currentData, key, newVal[key]);
+        }
+      },
       // TODO 检查金额，取正数、保留两位小数
       checkAmt(item, key, val) {
-        let {price, tdQty, taxRate, qtyBal, qtyStockBal, qtyStock, qtyBalance, qtyDownline, qtyOnline, assistQty} = item;
+        let { price, tdQty, taxRate, 
+              qtyBal, qtyStock, qtyBalance, 
+              assistQty, qtyStockBal, qtyOnline, qtyDownline} = item;
         item[key] = Math.abs(toFixed(val));
         // 数量
         if (key === 'tdQty' && tdQty && this.isCheckStock) {
-          // item.tdQty = Math.abs(toFixed(tdQty));
           // qtyStockBal为销售出库的库存，数量不允许大于余额
           if (!qtyStockBal && !qtyStock && qtyBal && tdQty > qtyBal) {
             item.tdQty = qtyBal;
@@ -293,24 +305,24 @@
           }
           //qtyStock为物料领料，数量不允许大于库存
           else if (qtyStock && tdQty > qtyStock) {
-            console.log(qtyStock);
             item.tdQty = qtyStock;
           }
           else if (qtyBalance && tdQty > qtyBalance) {
             item.tdQty = qtyBalance;
           }
           else if (qtyOnline && qtyDownline) {
+            /*
+             * assistQty => 辅助计量 数量
+             * qtyDownline => 数量下限
+             * qtyOnline => 数量上限
+             * 
+             * 只有当符合下列条件时 数据才会相应的动态赋值
+             * */ 
             if (assistQty >= qtyDownline && assistQty <= qtyOnline) {
-              item.price = item.otherField.price;
-              item.taxRate = item.otherField.taxRate;
-              item.dealerInventoryName = item.otherField.dealerInventoryName;
-              item.dealerInventoryCode = item.otherField.dealerInventoryCode;
+              this.defineObjVal(item, item.otherField, item.otherField)
             }
             else {
-              item.price = '';
-              item.taxRate = 0.16;
-              item.dealerInventoryName = '';
-              item.dealerInventoryCode = '';
+              this.defineObjVal(item, item.otherField, '')
             }
           }
         }
@@ -318,6 +330,9 @@
         if (taxRate) {
           item.taxRate = Math.abs(toFixed(taxRate));
         }
+      },
+      cleanAmt(item) {
+        this.defineObjVal(item, item.otherField, '')
       },
       //输入框获取焦点时内容选中
       getFocus(e) {
@@ -418,6 +433,11 @@
     /deep/ .weui-cells {
       margin-top: 0;
       overflow: visible;
+      .vux-cell-box {
+        &:after {
+          border-color: #e8e8e8;
+        }
+      }
       .weui-cell {
         padding: .15rem;
         line-height: .2rem;
@@ -428,9 +448,6 @@
         .weui-cell__hd {
           display: flex;
           align-items: center;
-          color: #696969;
-        }
-        .vux-label {
           color: #696969;
         }
       }
