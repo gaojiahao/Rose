@@ -15,19 +15,22 @@
         <!-- 仓库-->
         <pop-warehouse-list isRequired :default-value="warehouse" @sel-item="selWarehouse"></pop-warehouse-list>
         <!-- 物料列表 -->
-        <div class="materiel_list">
-          <!-- 没有选择物料 -->
+        <apply-matter-part v-model="showOrderPop" :show-materiel-pop="showOrderPop"
+          :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="matterList" 
+          :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
+          :addMatter="addOrder" :sel-matter="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
+          :modify-matter="modifyMatter" :show-delete="showDelete" :show-sel-icon="showSelIcon" :del-click="delClick">
+        </apply-matter-part>
+        <!-- <div class="materiel_list">
+          
           <template v-if="!Object.keys(orderList).length">
             <div class="no-matter" @click="showOrderPop = !showOrderPop">
               <div class="title">{{orderListTitle}}列表</div>
               <div class="picker">
                 请选择<span class="icon-right"></span>
               </div>
-              <!-- <div class="required">请选择{{orderListTitle}}</div>
-              <i class="iconfont icon-youjiantou r_arrow"></i> -->
             </div>
           </template>
-          <!-- 已经选择了物料 -->
           <template v-else>
             <div class="title" @click="showDelete">
               <div>{{orderListTitle}}列表</div>
@@ -45,7 +48,7 @@
                   <matter-item :item="item" @on-modify="modifyMatter(item, index, key)" :show-delete="matterModifyClass"
                                @click.native="delClick(index, item, key)" :config="matterEditConfig.property">
                     <template slot-scope="{item}" slot="info">
-                      <!-- 物料数量和价格 -->
+                     
                       <div class='mater_other' v-if="item.price && item.tdQty">
                         <div class='mater_price'>
                           <span class="symbol">￥</span>{{item.price}}
@@ -71,62 +74,23 @@
               </div>
             </div>
           </template>
-          <!-- 新增更多 按钮 -->
+         
           <div class="handle_part" v-if="Object.keys(orderList).length && !matterModifyClass">
             <span class="add_more stop" v-if="this.actions.includes('stop')"
                   @click="stopOrder">终止提交</span>
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
             <span class="add_more" @click="addOrder">新增更多物料</span>
           </div>
-          <!-- 物料popup -->
-          <pop-matter-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selOrder" 
+
+          <pop-matter-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selMatter" 
                            :default-value="matterList" :config="matterPopConfig" :matter-params="matterParams"
                            :orderTitle="matterPopOrderTitle" ref="matter">
           </pop-matter-list>
-          <!-- <pop-order-list :show="showOrderPop" :params="orderParams" v-model="showOrderPop" @sel-matter="selOrder"
-                          :default-value="orderList" ref="order">
-            <template slot="basicInfo" slot-scope="{item}">
-              <div class="mater_classify">
-                <div>
-                  <span class="type">属性: {{item.processing}}</span>
-                  <span class="type">大类: {{item.inventoryType}}</span>
-                  <span class="type">子类: {{item.inventorySubclass || '无'}}</span>
-                </div>
-                <div>
-                  <span class="type">单位: {{item.measureUnit}}</span>
-                  <span class="type">颜色: {{item.inventoryColor || '无'}}</span>
-                  <span class="type">材质: {{item.material || '无'}}</span>
-                </div>
-                <div>
-                  <span class="type">主计倍数: {{item.invSubUnitMulti}}</span>
-                  <span class="type">辅助计量: {{item.invSubUnitName}}</span>
-                  <span class="type">辅助计量说明: {{item.invSubUnitComment}}</span>
-                </div>
-              </div>
-            </template>
-            <template slot="materInfo" slot-scope="{item}">
-              <div class="mater_material">
-                <div>
-                  <span class="unit">保质期天数: {{item.keepingDays}}</span>
-                  <span class="unit">临保天数: {{item.nearKeepingDays}}</span>
-                  <span class="unit">安全库存: {{item.safeStock}}</span>
-                </div>
-                <div>
-                  <span class="unit">待交付数量: {{item.qtyBal}}</span>
-                  <span class="unit">订单数量: {{item.qty}}</span>
-                  <span class="unit">已出库数量: {{item.stockQty}}</span>
-                </div>
-                <div>
-                  <span class="unit">预交货日期: {{item.promDeliTime}}</span>
-                </div>
-              </div>
-              <div class="mater_num">
-                <span>可用库存: {{item.qtyStockBal}}</span>
-                <span>单价: ￥{{item.quotedPrice | numberComma}}</span>
-              </div>
-            </template>
-          </pop-order-list> -->
-        </div>
+        </div> -->
+        <!--物料编辑pop-->
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' 
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
+        </pop-matter>
         <!-- 项目 -->
         <pop-sodl-projectList :value="project" v-model="project"></pop-sodl-projectList>
         <!--备注-->
@@ -134,10 +98,6 @@
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
-        <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' 
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
-        </pop-matter>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -193,6 +153,7 @@
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
+  import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
   // 公共方法
   import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
@@ -208,7 +169,7 @@
       PopOrderList, PopDealerList,
       PopSingleSelect, PopWarehouseList,
       PopSodlProjectList, PopEntityList, PopMatter,
-      Datetime, RPicker, PopBaseinfo, PopMatterList, DealerOtherPart
+      Datetime, RPicker, PopBaseinfo, PopMatterList, DealerOtherPart, ApplyMatterPart
     },
     data() {
       return {
@@ -320,7 +281,7 @@
         this.showMaterielPop = !this.showMaterielPop;
       },
       // TODO 选中物料项
-      selOrder(val) {
+      selMatter(val) {
         let sels = JSON.parse(val);
         let orderList = {};
         sels.forEach(item => {
@@ -333,10 +294,19 @@
           item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
           item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
           item.assMeasureDescription =  item.assMeasureDescription || item.invSubUnitComment || null; // 辅助计量说明
-          if (!orderList[item.transCode]) {
-            orderList[item.transCode] = [];
+          if(item.transCode){
+            if (!orderList[item.transCode]) {
+              orderList[item.transCode] = [];
+            }
+            orderList[item.transCode].push(item);
           }
-          orderList[item.transCode].push(item);
+          else {
+            if(!orderList['noCode']) {
+              orderList['noCode'] = []
+            }
+            orderList['noCode'].push(item);
+
+          }
         });
         this.numMap = {};
         this.matterList = sels;
@@ -353,7 +323,13 @@
       // 滑动删除
       delClick(index, sItem, key) {
         let arr = this.selItems;
-        let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
+        let delIndex = null;
+        if(sItem.transCode){
+          delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
+        }
+        else{
+          delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
+        }
         //若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
@@ -363,7 +339,13 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode) !== -1;
+        if(sItem.transCode){
+          return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode) !== -1;
+        }
+        else{
+          return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
+        }
+        
       },
       // 全选
       checkAll() {
@@ -383,30 +365,44 @@
             let keys = Object.keys(this.orderList);
             keys.forEach(item => {
               newArr = newArr.concat(this.orderList[item]);
-            })
+            });
             this.selItems.forEach(SItem => {
               newArr.forEach(OItem => {
-                if (OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode) {
-                  let delArr = this.orderList[OItem.transCode];
-                  let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
-                  if (delIndex >= 0) {
-                    this.$refs.order.delSelItem(delArr[delIndex]);
-                    delArr.splice(delIndex, 1);
+                if(SItem.transCode){
+                  if (OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode) {
+                    let delArr = this.orderList[OItem.transCode];
+                    let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
+                    if (delIndex >= 0) {
+                      // this.$refs.matter.delSelItem(delArr[delIndex]);
+                      delArr.splice(delIndex, 1);
+                    }
+                    if (!delArr.length) {
+                      delete this.orderList[OItem.transCode];
+                    }
                   }
-                  if (!delArr.length) {
-                    delete this.orderList[OItem.transCode];
+                }
+                else{
+                  if (OItem.inventoryCode === SItem.inventoryCode) {
+                    let delArr = this.orderList['noCode'];
+                    let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
+                    if (delIndex >= 0) {
+                      // this.$refs.matter.delSelItem(delArr[delIndex]);
+                      delArr.splice(delIndex, 1);
+                    }
+                    if (!delArr.length) {
+                      delete this.orderList['noCode'];
+                    }
                   }
 
                 }
-
-              })
+              });
               this.matterList.forEach((item, index) => {
                 if (item.inventoryCode === SItem.inventoryCode) {
                   this.matterList.splice(index, 1);
                   index--;
                 }
               })
-            })
+            });
             this.selItems = [];
             this.matterModifyClass = false;
           }

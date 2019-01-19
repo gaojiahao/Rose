@@ -19,13 +19,13 @@
         <div class="mater_list">
           <!-- 当传入的matterList是对象时 -->
           <template v-if="listIsObj">
-            <div class="each_mater" :class="{'vux-1px-b' : index < DataLength - 1}"
+            <div class="each_mater" :class="{'vux-1px-t' : index > 0}"
                   v-for="(oItem, key, index) in matterList" :key="key">
               <div class="order_code" v-if='oItem.length && key !==  "noCode"'>
                 {{orderListTitle}}：{{key}}
               </div>
               <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                <matter-item :class="{'vux-1px-t': index>0}" :item="item" @on-modify="modifyMatter(item, index, key)" :show-delete="matterModifyClass"
+                <matter-item :item="item" @on-modify="modifyMatter(item, index, key)" :show-delete="matterModifyClass"
                               @click.native="delClick(index, item, key)" :config="matterEditConfig.property">
                   <template slot="info" slot-scope="{item}">
                     <slot name="info" :item="item">
@@ -80,7 +80,7 @@
         </div>
       </template>
       <!-- 新增更多 按钮 -->
-      <div class="handle_part vx-1px-t" v-if="DataLength && !matterModifyClass">
+      <div class="handle_part" v-if="DataLength && !matterModifyClass">
         <span class="add_more stop" v-if="this.actions.includes('stop')"
               @click="stopOrder">终止提交</span>
         <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
