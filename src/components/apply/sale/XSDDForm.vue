@@ -196,12 +196,20 @@ export default {
       return getPriceFromSalesContractAndPrice({
         matCodes: item.inventoryCode,
         dealerCode: this.dealerInfo.dealerCode
-      }).then(({data = []}) => {
-        if(data.length){
-          item.qtyDownline = data[0].qtyDownline;
-          item.qtyOnline = data[0].qtyOnline;
-          item.otherField = data[0]
+      }).then(({ data = [] }) => {
+        let [priceTag = {}] = data;
+        let defaultKey = ['qtyOnline', 'qtyDownline'];
+        // 动态添加字段
+        for(let key in priceTag) {
+          if(defaultKey.includes(key)) {
+            item[key] = priceTag[key];
+            delete priceTag[key];
+          }
+          else {
+            this.$set(item, key, '');
+          }
         }
+        item.otherField = {...priceTag};
       })
     },
     // TODO 选中物料项
@@ -287,7 +295,7 @@ export default {
           let newArr = [];
           let keys = Object.keys(this.orderList);
           keys.forEach(item => {
-            newArr = newArr.concat(this.orderList[item]);
+            newArr = [...newArr, ...this.orderList[item]];
           });
           this.selItems.forEach(SItem => {
             newArr.forEach(OItem => {
@@ -296,7 +304,6 @@ export default {
                   let delArr = this.orderList[OItem.transCode];
                   let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
                   if (delIndex >= 0) {
-                    // this.$refs.matter.delSelItem(delArr[delIndex]);
                     delArr.splice(delIndex, 1);
                   }
                   if (!delArr.length) {
@@ -309,14 +316,12 @@ export default {
                   let delArr = this.orderList['noCode'];
                   let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
                   if (delIndex >= 0) {
-                    // this.$refs.matter.delSelItem(delArr[delIndex]);
                     delArr.splice(delIndex, 1);
                   }
                   if (!delArr.length) {
                     delete this.orderList['noCode'];
                   }
                 }
-
               }
             });
             this.matterList.forEach((item, index) => {
