@@ -1,12 +1,12 @@
 
 @font-face {
   font-family: 'iconfont';  /* project id 667058 */
-  src: url('//at.alicdn.com/t/font_667058_szonnpgsdqn.eot');
-  src: url('//at.alicdn.com/t/font_667058_szonnpgsdqn.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_667058_szonnpgsdqn.woff2') format('woff2'),
-  url('//at.alicdn.com/t/font_667058_szonnpgsdqn.woff') format('woff'),
-  url('//at.alicdn.com/t/font_667058_szonnpgsdqn.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_667058_szonnpgsdqn.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_667058_miero8isvhk.eot');
+  src: url('//at.alicdn.com/t/font_667058_miero8isvhk.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_667058_miero8isvhk.woff2') format('woff2'),
+  url('//at.alicdn.com/t/font_667058_miero8isvhk.woff') format('woff'),
+  url('//at.alicdn.com/t/font_667058_miero8isvhk.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_667058_miero8isvhk.svg#iconfont') format('svg');
 }
 
 .iconfont {
@@ -202,4 +202,8 @@
 .icon-shang:before { content: "\e9a5"; }
 
 .icon-tishi:before { content: "\e620"; }
+
+.icon-jia:before { content: "\e632"; }
+
+.icon-iconfontmove:before { content: "\e628"; }
 

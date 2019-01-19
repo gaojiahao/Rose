@@ -199,3 +199,28 @@
   background: url('~assets/iconfont/phone.png');
   background-size: cover;
 }
+
+.icon-dealer-address{
+  background: url('~assets/iconfont/icon_address.png');
+  background-size: cover;
+}
+
+.icon-no-select{
+  background: url('~assets/iconfont/no_select.png');
+  background-size: cover;
+}
+
+.icon-selected{
+  background: url('~assets/iconfont/selected.png');
+  background-size: cover;
+}
+
+.icon-upload-add{
+  background: url('~assets/iconfont/icon_upload_add.png');
+  background-size: cover;
+}
+
+.icon-matter-bianji{
+  background: url('~assets/iconfont/icon_bianji.png');
+  background-size: cover;
+}

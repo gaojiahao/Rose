@@ -14,7 +14,7 @@
           <span class="matter_item_title">编码:</span>
           <span class="matter_item_value">{{item.inventoryCode || item.facilityCode || item.outPutMatCode}}</span>
         </div>
-        <div class="matter_detail">
+        <div class="matter_detail" v-if="item.tdProcessing">
           <span class="matter_item_title">属性:</span>
           <span class="matter_item_value">{{item.tdProcessing}}</span>
         </div>
@@ -36,17 +36,6 @@
         </div>
       </div>
       <slot name="info" :item="item"></slot>
-      <!-- <slot name="edit" :item="item">
-        <div class='mater_other' @click="modifyMatter" v-if="hideEdit && !showDelete">
-          <div class="edit-tips">点击进行填写</div>
-        </div>
-      </slot> -->
-      <!-- 编辑图标 -->
-      <!-- <slot name="editPart" :item="item">
-        <div class="edit-part vux-1px-l" @click="modifyMatter" v-show="showEdit && !showDelete">
-          <span class='iconfont icon-bianji1'></span>
-        </div>
-      </slot> -->
     </div>
   </div>
 </template>
