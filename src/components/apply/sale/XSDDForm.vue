@@ -15,7 +15,7 @@
           :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="matterList" 
           :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
           :addMatter="addMatter" :sel-matter="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
-          :modify-matter="modifyMatter" :show-delete="showDelete" :show-sel-icon="showSelIcon" :del-click="delClick">
+          :stop-order="stopOrder" :modify-matter="modifyMatter" :show-delete="showDelete" :show-sel-icon="showSelIcon" :del-click="delClick">
         </apply-matter-part>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
@@ -206,10 +206,8 @@ export default {
               item[key] = priceTag[key];
               delete priceTag[key];
             }
-            else {
-              if(item[key] == null){
-                this.$set(item, key, '');
-              } 
+            else if(!item.hasOwnProperty(key)){
+              this.$set(item, key, priceTag[key]);
             }
           }
           item.otherField = {...priceTag};

@@ -65,7 +65,7 @@
                        @on-click-clear-icon="cleanAmt(modifyMatter)">
                 <template slot="label">
                   <span :class="{required: !eItem.allowBlank}">{{eItem.text}}</span>
-                  <span class="iconfont icon-tishi" v-show="modifyMatter.otherField"
+                  <span class="iconfont icon-tishi" v-show="modifyMatter.otherField && Object.keys(modifyMatter.otherField).length"
                         @click="showDialog = !showDialog"></span>
                 </template>
               </x-input>

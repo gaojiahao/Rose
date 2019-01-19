@@ -40,12 +40,6 @@
                       </div>
                     </slot>
                   </template>
-                  <!-- <template slot="editPart" slot-scope="{item}">
-                    <div class="edit-part vux-1px-l" @click="modifyMatter(item, index, key)"
-                          v-show="(item.price && item.tdQty) &&!matterModifyClass">
-                      <span class='iconfont icon-bianji1'></span>
-                    </div>
-                  </template> -->
                 </matter-item>
                 <div class='delete_icon' @click="delClick(index, item, key)" v-if='matterModifyClass'>
                   <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
@@ -63,13 +57,6 @@
                 <template slot="info" slot-scope="{item}">
                   <slot name="info" :item="item"></slot>
                 </template>
-                <!-- <template slot="edit" slot-scope="{item}">
-                  <div class='mater_other' @click="modifyMatter(item, index)" v-if="!item.price && !matterModifyClass">
-                    <div class="edit-tips">
-                      <span class="tips-word">点击进行填写</span>
-                    </div>
-                  </div>
-                </template> -->
               </matter-item>
               <div class='delete_icon' @click="delClick(index, item)" v-if='matterModifyClass'>
                 <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
@@ -153,6 +140,9 @@ export default {
     addMatter: {
       type: Function,
       required: true
+    },
+    stopOrder: {
+      type: Function
     },
     // 选择物料
     selMatter: {

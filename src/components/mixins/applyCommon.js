@@ -15,78 +15,73 @@ import { shareContent } from 'plugins/wx/api'
 export default {
   data() {
     return {
+      tdAmount: 0,                                // 价税小计
+      taxAmount: 0,                               // 税金
+      taxRate: 0.16,                              // 税率
+      clientHeight : document.documentElement.clientHeight,
+      viewId: '',
+      listId: '',
       taskId: '',
       comment: '',                                // 审批意见
       uniqueId: '',
       biComment: '',                              // 备注
       transCode: '',
+      businessKey: '',                            // 应用前缀,
+      relationKey: '',
       processCode: '',                            // 流程编码，用于新建的工作流
       biReferenceId: '',
+      orderListTitle: '',                         // 物料列表订单的title
       formViewUniqueId: '',
+      matterPopOrderTitle: '',                    // 物料列表pop订单title,
       matter:{},                                  // 选中要编辑的物料
       entity: {},                                 // 公司主体 ID
       btnInfo: {},                                // 操作按钮信息
+      dataIndexMap: {},                           // 物料字段的映射表
+      dealerParams: {},                           // 请求往来数据的接口和参数
+      matterParams: {},                           // 请求物料的接口，参数
+      handlerDefault: {},                         // 经办人默认信息
+      matterEditConfig: {},                       // 物料编辑的pop
       actions: [],
       selItems: [],                               // 选中的要删除的物料
       handleORG: [],                              // 经办组织
+      attachment : [],
+      otherConfig: [],
+      dealerConfig: [],      
       userRoleList: [],                           // 经办职位
       currentStage: [],                           // 流程状态
+      matterPopConfig: [],                        // 物料列表pop配置
+      submitMatterField: [],                      // 物料要提交的字段
       modifyIndex:null,                           // 选中编辑物料的pop
       fillBscroll: null,
       btnIsHide : false,
       isResubmit: false,
       showMatterPop :false,                       // 编辑物料的pop
       matterModifyClass : false,
-      clientHeight : document.documentElement.clientHeight,
-      attachment : [],
-      relationKey: '',
-      handlerDefault: {}, // 经办人默认信息
-      listId: '',
-      taxRate: 0.16, // 税率
-      businessKey: '', // 应用前缀,
-      viewId: '',
-      dealerConfig: [],
-      matterPopConfig: [], // 物料列表pop配置
-      orderListTitle: '', // 物料列表订单的title
-      matterEditConfig: {}, // 物料编辑的pop
-      matterParams: {}, // 请求物料的接口，参数
-      matterPopOrderTitle: '', // 物料列表pop订单title,
-      dealerParams: {}, // 请求往来数据的接口和参数
-      otherConfig: [],
-      dataIndexMap: {}, // 物料字段的映射表
-      submitMatterField: [], // 物料要提交的字段
     }
   },
   components: {
     UploadFile, MatterItem
   },
-  computed: {
-    // 税金
-    taxAmount() {
-      let total = 0;
-      this.matterList.forEach(item => {
-        this.calcMatter(item);
-        total = accAdd(total, item.taxAmount);
-      });
-      return toFixed(total);
-    },
-    // 税金小计
-    tdAmount() {
-      let total = 0;
-      this.matterList.forEach(item => {
-        this.calcMatter(item);
-        total = accAdd(total, item.tdAmount);
-      });
-      return toFixed(total);
-    },
-  },
   watch:{
     //修改的物料
-    matter:{
+    matter: {
       handler(val){
         this.calcMatter(val);
       },
       deep:true
+    },
+    matterList: {
+      handler(val) {
+        let tdAmount = 0, taxAmount = 0;
+        for (let item of val) {
+          this.calcMatter(item);
+          tdAmount = toFixed(accAdd(tdAmount, item.tdAmount));
+          taxAmount = toFixed(accAdd(taxAmount, item.taxAmount));
+        }
+        this.tdAmount = tdAmount;
+        this.taxAmount = taxAmount;
+      },
+      deep: true
     }
   },
   filters: {
