@@ -9,6 +9,20 @@
         {{item.inventoryName || item.facilityName}}
         <span class="icon-matter-bianji" @click="modifyMatter" v-if="!showDelete"></span>
       </div>
+      <div class="matter_info_item">
+         <div class="matter_detail">
+          <span class="matter_item_title">编码:</span>
+          <span class="matter_item_value">{{item.inventoryCode || item.facilityCode || item.outPutMatCode}}</span>
+        </div>
+        <div class="matter_detail">
+          <span class="matter_item_title">属性:</span>
+          <span class="matter_item_value">{{item.tdProcessing}}</span>
+        </div>
+        <div class="matter_detail">
+          <span class="matter_item_title">规格:</span>
+          <span class="matter_item_value">{{item.specification || item.facilitySpecification || item.specification_outPutMatCode || '无'}}</span>
+        </div>
+      </div>
       <div class="matter_more">
         <div class="each_info" v-for="(cItem,cIndex) in config" :key="cIndex">
           <span class="title">{{cItem.text}}:</span>
@@ -146,6 +160,17 @@ export default {
         right: 0;
         top: .03rem;
       }
+    }
+    .matter_info_item {
+      line-height: .20rem;
+      font-size: .12rem; 
+      .matter_detail{
+        display: inline-block;
+        margin-right: .08rem;
+      }
+    }
+    .matter_item_title {
+      color: #999;
     }
     // 物料信息
     .matter-info {
