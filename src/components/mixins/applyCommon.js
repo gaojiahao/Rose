@@ -1,4 +1,4 @@
-import {commitTask, getBaseInfoData, getProcess, getProcessStatus, getFormConfig, requestData, getFormViews} from 'service/commonService'
+import {commitTask, getBaseInfoData, getProcess, getProcessStatus, getFormConfig, requestData, getFormViews, getModelConfigByListId} from 'service/commonService'
 import {getListId, isMyflow, getSaleQuotePrice,} from 'service/detailService'
 import {getAppDetail} from 'service/appSettingService'
 import {numberComma} from 'vux'
@@ -41,6 +41,7 @@ export default {
       matterParams: {},                           // 请求物料的接口，参数
       handlerDefault: {},                         // 经办人默认信息
       matterEditConfig: {},                       // 物料编辑的pop
+      submitMatterField: {},                      // 物料要提交的字段
       actions: [],
       selItems: [],                               // 选中的要删除的物料
       handleORG: [],                              // 经办组织
@@ -50,8 +51,7 @@ export default {
       userRoleList: [],                           // 经办职位
       currentStage: [],                           // 流程状态
       matterPopConfig: [],                        // 物料列表pop配置
-      submitMatterField: [],                      // 物料要提交的字段
-      modifyIndex:null,                           // 选中编辑物料的pop
+      modifyIndex: null,                           // 选中编辑物料的pop
       fillBscroll: null,
       btnIsHide : false,
       isResubmit: false,
@@ -371,6 +371,46 @@ export default {
       item.taxAmount = toFixed(accMul(item.noTaxAmount, taxRate));
       item.tdAmount = toFixed(accAdd(item.noTaxAmount, item.taxAmount));
     },
+    // TODO 获取表单要提交的字段
+    getModelConfigByListId(){
+      getModelConfigByListId(this.listId).then(({tableContent = []}) => {
+        let allSubmitFields = JSON.parse(tableContent[0].MODEL_CONFIG) ;
+        let {groupCfg} = allSubmitFields;
+        let submitMatterField = {};
+        console.log(groupCfg)
+        for(let key in groupCfg){
+          let containerKey = groupCfg[key].fieldContainer;
+          // console.log(submitMatterField)
+          if(submitMatterField[containerKey]){
+            if(groupCfg[key].submitValue){
+              // 重复项字段
+              if(groupCfg[key].isList){
+                submitMatterField[containerKey].dataSet.push({
+                  ...groupCfg[key],
+                  fieldCode: key
+                })
+              }
+              // 单一项字段
+              else{
+                console.log('单一项', key)
+                submitMatterField[containerKey].singleFied.push({
+                  ...groupCfg[key],
+                  fieldCode: key
+                })
+              }
+              
+            }
+          }
+          else{
+            console.log('第一次进入')
+            this.$set(submitMatterField, containerKey, {singleFied: [], dataSet: []})
+          }
+        }
+        console.log(submitMatterField)
+        this.submitMatterField = submitMatterField;
+      })
+      
+    },
     // 获取表单配置基本信息
     async getFormViewInfo() {
       // 请求 表单uniqueId 
@@ -494,10 +534,6 @@ export default {
         };
         let editMatterPop = [];
         matterConfig.forEach((item, index) => {
-          // 组合要提交的物料字段
-          if(item.submitValue){
-            this.submitMatterField.push(item)
-          }
           let key = this.dataIndexMap[item.fieldCode];
           let matchedCol = matterCols.find(col => col.k === key);
           // 若存在映射表则根据映射表的字段确定显示或隐藏
@@ -584,6 +620,10 @@ export default {
           }
           // 组合物料编辑的matterPop的配置
           if(!item.hidden){
+            // 组合要提交的物料字段
+            // if(item.submitValue){
+            //   this.submitMatterField.push(item)
+            // }
             // 没有映射表时，根据物料poplist中数据来去对应的字段的值
             if(item.dataSource && item.dataSource.type === 'formData'){
               if(typeof(item.dataSource.data.valueField) === 'string') {
@@ -677,6 +717,7 @@ export default {
     // 请求页面的数据
     (async () => {
       await this.getFormViewInfo();
+      this.getModelConfigByListId()
       this.getProcess();
       if(!transCode){
         this.getBaseInfoData();
