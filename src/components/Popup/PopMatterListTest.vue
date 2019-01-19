@@ -191,13 +191,24 @@
               return isSameOrderCode && item.facilityCode === sItem.facilityCode
             }
           }
-          isSameTransCode = item.transCode === sItem.transCode;
-          if (item.inventoryCode) {
-            return isSameTransCode && item.inventoryCode === sItem.inventoryCode
+          else if(item.transCode){
+            isSameTransCode = item.transCode === sItem.transCode;
+            if (item.inventoryCode) {
+              return isSameTransCode && item.inventoryCode === sItem.inventoryCode
+            }
+            else if (item.facilityCode) {
+              return isSameTransCode && item.facilityCode === sItem.facilityCode
+            }
           }
-          else if (item.facilityCode) {
-            return isSameTransCode && item.facilityCode === sItem.facilityCode
+          else{
+            if (item.inventoryCode) {
+              return item.inventoryCode === sItem.inventoryCode
+            }
+            else if (item.facilityCode) {
+              return item.facilityCode === sItem.facilityCode
+            }
           }
+          
         });
       },
       // TODO 判断是否展示选中图标

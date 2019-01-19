@@ -197,19 +197,23 @@ export default {
         matCodes: item.inventoryCode,
         dealerCode: this.dealerInfo.dealerCode
       }).then(({ data = [] }) => {
-        let [priceTag = {}] = data;
-        let defaultKey = ['qtyOnline', 'qtyDownline'];
-        // 动态添加字段
-        for(let key in priceTag) {
-          if(defaultKey.includes(key)) {
-            item[key] = priceTag[key];
-            delete priceTag[key];
+        if(data.length){
+          let [priceTag = {}] = data;
+          let defaultKey = ['qtyOnline', 'qtyDownline'];
+          // 动态添加字段
+          for(let key in priceTag) {
+            if(defaultKey.includes(key)) {
+              item[key] = priceTag[key];
+              delete priceTag[key];
+            }
+            else {
+              if(item[key] == null){
+                this.$set(item, key, '');
+              } 
+            }
           }
-          else {
-            this.$set(item, key, '');
-          }
-        }
-        item.otherField = {...priceTag};
+          item.otherField = {...priceTag};
+        } 
       })
     },
     // TODO 选中物料项
@@ -266,7 +270,14 @@ export default {
     // 滑动删除
     delClick(index, sItem, key) {
       let arr = this.selItems;
-      let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
+      let delIndex = null;
+      if(sItem.transCode){
+        delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
+      }
+      else{
+        delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
+      }
+      
       //若存在重复的 则清除
       if (delIndex !== -1) {
         arr.splice(delIndex, 1);
@@ -276,7 +287,13 @@ export default {
     },
     // TODO 判断是否展示选中图标
     showSelIcon(sItem) {
-      return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode) !== -1;
+      if(sItem.transCode){
+        return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode) !== -1;
+      }
+      else{
+        return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
+      }
+      
     },
     // 全选
     checkAll() {
@@ -556,6 +573,7 @@ export default {
             orderList.noCode.push(item);
           }
         });
+        console.log(orderList);
         this.handlerDefault = {
           handler: formData.handler,
           handlerName: formData.handlerName,
