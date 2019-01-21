@@ -79,13 +79,16 @@
                 </template>
               </datetime>
               <!-- 下拉框 -->
-              <popup-picker class="vux-1px-b" :data='eItem.remoteData' v-model="modifyMatter[eItem.fieldCode]"
+              <r-picker class="picker vux-1px-b":title="eItem.text" :data="eItem.remoteData" v-model="modifyMatter[eItem.fieldCode]"
+                        :required="eItem.allowBlank" placeholder="请选择" v-if="eItem.editorType === 'r2Combo'">
+              </r-picker>
+              <!-- <popup-picker class="vux-1px-b" :data='eItem.remoteData' v-model="modifyMatter[eItem.fieldCode]"
                             :popup-style="pickerStyle"
                             placeholder="请选择" v-if="eItem.editorType === 'r2Combo'">
                 <template slot="title">
                     <span :class="{required: !eItem.allowBlank}">{{eItem.text}}</span>
                 </template>
-              </popup-picker>
+              </popup-picker> -->
             </template>
             <!--字段不可编辑-->
             <template v-else>
@@ -140,6 +143,7 @@
   } from 'vux'
   //组件引入
   import RScroll from 'components/RScroll'
+  import RPicker from 'components/basicPicker'
   import {toFixed} from '@/plugins/calc'
   import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 
@@ -201,7 +205,7 @@
     },
     components: {
       Cell, Group, Popup, XDialog,
-      XInput, Datetime, RScroll, PopupPicker
+      XInput, Datetime, RScroll, PopupPicker, RPicker
     },
     watch: {
       showPop: {
@@ -344,12 +348,13 @@
 
 <style lang="scss" scoped>
   @import '~@/scss/color';
-
+  .vux-1px-b:after{
+    border-color: #e8e8e8;
+    left: 0;
+  }
   .vux-popup-dialog {
     background: #f6f6f6;
-
   }
-
   .required {
     color: $main_color;
   }
@@ -430,6 +435,9 @@
   .matter-edit-part {
     margin-top: .1rem;
     color: #333;
+    .picker {
+      padding: .18rem .15rem;
+    }
     /deep/ .weui-cells {
       margin-top: 0;
       overflow: visible;

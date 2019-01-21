@@ -41,7 +41,7 @@ export default {
       matterParams: {},                           // 请求物料的接口，参数
       handlerDefault: {},                         // 经办人默认信息
       matterEditConfig: {},                       // 物料编辑的pop
-      submitMatterField: {},                      // 物料要提交的字段
+      submitMatterField: [],                      // 物料要提交的字段
       actions: [],
       selItems: [],                               // 选中的要删除的物料
       handleORG: [],                              // 经办组织
@@ -534,6 +534,10 @@ export default {
         };
         let editMatterPop = [];
         matterConfig.forEach((item, index) => {
+          // 组合要提交的物料字段
+          if(item.submitValue){
+            this.submitMatterField.push(item)
+          }
           let key = this.dataIndexMap[item.fieldCode];
           let matchedCol = matterCols.find(col => col.k === key);
           // 若存在映射表则根据映射表的字段确定显示或隐藏
@@ -620,10 +624,6 @@ export default {
           }
           // 组合物料编辑的matterPop的配置
           if(!item.hidden){
-            // 组合要提交的物料字段
-            // if(item.submitValue){
-            //   this.submitMatterField.push(item)
-            // }
             // 没有映射表时，根据物料poplist中数据来去对应的字段的值
             if(item.dataSource && item.dataSource.type === 'formData'){
               if(typeof(item.dataSource.data.valueField) === 'string') {
@@ -717,7 +717,7 @@ export default {
     // 请求页面的数据
     (async () => {
       await this.getFormViewInfo();
-      this.getModelConfigByListId()
+      // this.getModelConfigByListId()
       this.getProcess();
       if(!transCode){
         this.getBaseInfoData();

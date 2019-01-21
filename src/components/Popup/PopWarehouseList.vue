@@ -1,29 +1,34 @@
 <template>
-  <div class="pop-warehouse-container" @click="warehouseClick">
+  <div class="pop-warehouse-container" >
     <!-- 仓库信息 -->
-    <div class="warehouse-info">
-      <div v-if="selItems.warehouseName">
-        <div class="user_info">
-          <span class="user_name">{{selItems.warehouseName}}</span>
-          <span class="user_tel">{{selItems.warehouseType}}</span>
+    <div class="warehouse-part" @click="warehouseClick">
+      <div class="warehouse-info">
+        <div v-if="selItems.warehouseName">
+          <div class="user_info">
+            <span class="user_name">{{selItems.warehouseName}}</span>
+            <span class="user_tel">{{selItems.warehouseType}}</span>
+          </div>
+          <div class="cp_info" v-if="!noAddress">
+            <span class="icon-dealer-address"></span>
+            <span class="cp_ads">
+              {{selItems.warehouseProvince}}{{selItems.warehouseCity}}{{selItems.warehouseDistrict}}{{selItems.warehouseAddress}}
+            </span>
+          </div>
         </div>
-        <div class="cp_info" v-if="!noAddress">
-          <span class="icon-dealer-address"></span>
-          <span class="cp_ads">
-            {{selItems.warehouseProvince}}{{selItems.warehouseCity}}{{selItems.warehouseDistrict}}{{selItems.warehouseAddress}}
-          </span>
+        <div v-else>
+          <div class="no-warehouse">
+            <div class="title" :class='{required : isRequired}'>{{title}}</div>
+            <div class="picker">
+              <span class="mode">请选择</span>
+            </div>  
+          </div>
         </div>
       </div>
-      <div v-else>
-        <div class="no-warehouse">
-          <div class="title" :class='{required : isRequired}'>{{title}}</div>
-          <div class="picker">
-            <span class="mode">请选择</span>
-          </div>  
-        </div>
-      </div>
+      <span class="icon-right"></span>
     </div>
-    <span class="icon-right"></span>
+    <pop-warehouse-store-list :store-params="warehouseStoreParams" v-if="isShowStore && selItems.warehouseCode"
+          :defaultValue="warehouseStore"  @sel-store="selStore">
+    </pop-warehouse-store-list>
     <!-- 仓库popup -->
     <div v-transfer-dom v-if="!disabled">
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
@@ -79,6 +84,7 @@
   import {getWarehouse, getWareHouseType} from 'service/listService'
   import RScroll from 'components/RScroll'
   import DSearch from 'components/search'
+  import PopWarehouseStoreList from 'components/Popup/PopWarehouseStoreList'
 
   export default {
     name: "PopWarehouseList",
@@ -90,6 +96,13 @@
       },
       // 默认值
       defaultValue: {
+        type: Object,
+        default() {
+          return {}
+        }
+      },
+      // 默认库位信息
+      defaultStore: {
         type: Object,
         default() {
           return {}
@@ -122,11 +135,16 @@
         default() {
           return {}
         }
+      },
+      // 是否展示库位
+      isShowStore: {
+        type: Boolean,
+        default: false,
       }
     },
     directives: {TransferDom},
     components: {
-      Icon, Popup, RScroll, DSearch, LoadMore,
+      Icon, Popup, RScroll, DSearch, LoadMore, PopWarehouseStoreList
     },
     data() {
       return {
@@ -142,6 +160,7 @@
           pullUpLoad: true,
         },
         showAddWarehouse: false, // 展示新增仓库按钮
+        warehouseStore: {} , // 库位信息
       }
     },
     computed: {
@@ -155,12 +174,23 @@
       noAddress() {
         let {warehouseProvince = '', warehouseCity = '', warehouseDistrict = '', warehouseAddress = ''} = this.selItems;
         return !warehouseProvince && !warehouseCity && !warehouseDistrict && !warehouseAddress
+      },
+      warehouseStoreParams() {
+        return {
+          warehouseCode: this.selItems.warehouseCode || ''
+        }
       }
     },
     watch: {
       defaultValue(val) {
         this.setDefaultValue();
-      }
+      },
+      defaultStore: {
+        handler() {
+          this.warehouseStore = Object.freeze({...this.defaultStore});
+        },
+        immediate: true
+      },
     },
     methods: {
       // TODO 弹窗展示时调用
@@ -190,6 +220,7 @@
       selThis(sItem, sIndex) {
         this.showPop = false;
         this.selItems = sItem;
+        this.warehouseStore = {}
         this.$emit('sel-item', JSON.stringify(this.selItems));
       },
       // TODO 获取默认图片
@@ -199,6 +230,11 @@
           item.inventoryPic = url;
         }
         return url
+      },
+      // 选择的库位
+      selStore(val){
+        this.warehouseStore = val;
+        this.$emit('get-store', val);
       },
       // TODO 获取仓库列表
       getWarehouse() {
@@ -339,9 +375,11 @@
     box-sizing: border-box;
     background: #fff;
     margin-bottom: .1rem;
-    position: relative;
     font-size: .14rem;
-    color: #333;;
+    color: #333;
+    .warehouse-part{
+      position: relative;
+    }
     .warehouse-info {
       padding: .18rem .25rem .18rem 0;
     }
