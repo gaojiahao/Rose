@@ -26,7 +26,7 @@
               </div>
               <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
                 <matter-item :item="item" @on-modify="getMatterModifyFn(item, index, key)" :show-delete="matterModifyClass"
-                              @click.native="delClickFn(index, item, key)" :config="matterEditConfig.property">
+                              @click.native="delClickFn(item, index, key)" :config="matterEditConfig.property">
                   <template slot="info" slot-scope="{item}">
                     <slot name="info" :item="item">
                       <div class='mater_other' v-if="item.price && item.tdQty">
@@ -34,14 +34,13 @@
                           <span class="symbol">￥</span>{{item.price}}
                         </div>
                         <div>
-                          <r-number :num="item.tdQty" :max="item.qtyBal"
-                                    :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
+                          <r-number :num="item.tdQty" :max="item.qtyBal" v-model="item.tdQty"></r-number>
                         </div>
                       </div>
                     </slot>
                   </template>
                 </matter-item>
-                <div class='delete_icon' @click="delClickFn(index, item, key)" v-if='matterModifyClass'>
+                <div class='delete_icon' @click="delClickFn(item, index, key)" v-if='matterModifyClass'>
                   <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIconFn(item)"></x-icon>
                   <x-icon type="ios-circle-outline" size="20" v-show="!showSelIconFn(item)"></x-icon>
                 </div>
@@ -53,12 +52,12 @@
             <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < DataLength - 1 }"
                 v-for="(item, index) in matterList" :key='index'>
               <matter-item :item="item" @on-modify="getMatterModifyFn(item, index)" :show-delete="matterModifyClass"
-                            @click.native="delClickFn(index,item)" :config="matterEditConfig.property">
+                            @click.native="delClickFn(item, index)" :config="matterEditConfig.property">
                 <template slot="info" slot-scope="{item}">
                   <slot name="info" :item="item"></slot>
                 </template>
               </matter-item>
-              <div class='delete_icon' @click="delClickFn(index, item)" v-if='matterModifyClass'>
+              <div class='delete_icon' @click="delClickFn(item, index)" v-if='matterModifyClass'>
                 <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIconFn(item)"></x-icon>
                 <x-icon type="ios-circle-outline" size="20" v-show="!showSelIconFn(item)"></x-icon>
               </div>
@@ -79,7 +78,7 @@
                         :filter-list="filterList" :matter-params="matterParams" :default-value="defaultValue" ref="matter"></pop-matter-list>
       <!-- 物料编辑 -->
       <pop-matter :chosen-matter='chosenMatter' :show-pop="showModifyPop" @sel-confirm='selConfirmFn' @show-down-modify="closeModify"
-                  v-model='showModifyPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
+                  v-model='showModifyPop' :btn-is-hide="btnIsHide" :config="matterEditConfig" :check-amt="checkAmtFn">
       </pop-matter>
     </div>
 </template>
@@ -93,7 +92,7 @@ import MatterItem from 'components/apply/commonPart/MatterItem'
 export default {
   name: 'apply-matter-part',
   props: {
-    checkAmt: {
+    checkAmtFn: {
       type: Function
     },
     actions: {
