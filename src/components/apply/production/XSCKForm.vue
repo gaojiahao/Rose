@@ -11,7 +11,9 @@
         <!-- 结算方式 -->
         <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
         <!-- 仓库-->
-        <pop-warehouse-list isRequired :default-value="warehouse" @sel-item="selWarehouse"></pop-warehouse-list>
+        <pop-warehouse-list isRequired :default-value="warehouse" @sel-item="selWarehouse" :default-store="warehouseStoreInfo"
+                            @get-store="getStore" :isShowStore="true">
+        </pop-warehouse-list>
         <!-- 物料列表 -->
         <apply-matter-part v-model="showOrderPop" :show-materiel-pop="showOrderPop"
           :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="matterList" 
@@ -91,6 +93,8 @@
         orderList: {}, // 订单列表
         showOrderPop: false, // 是否显示物料的popup
         dealerInfo: {}, // 客户客户信息
+        contactInfo: {}, // 联系人信息
+        warehouseStoreInfo: {}, // 库位信息
         formData: {
           drDealerLogisticsTerms: '', // 物流条件
           biComment: '', // 备注
@@ -115,7 +119,6 @@
         showMatterPop: false,
         modifyIndex: null,
         modifyKey: null,
-        contactInfo: {},
         checkFieldList: [
           {
             key: 'tdQty',
@@ -165,6 +168,16 @@
           this.orderList = {};
         }
       },
+      // 选择的库位
+      getStore(val){
+        console.log(val)
+        this.warehouseStoreInfo = {...val};
+        if(this.matterParams.data && this.matterParams.data.storehouseCode != null) {
+          this.matterParams.data.storehouseCode = this.warehouseStoreInfo.warehouseCode;
+          this.matterList = [];
+          this.orderList = {};
+        }
+      },
       // TODO 显示物料修改的pop
       getMatterModify(item, index, key) {
         this.matter = JSON.parse(JSON.stringify(item));
@@ -199,7 +212,6 @@
       selMatter(val) {
         let sels = JSON.parse(val);
         let orderList = {};
-        console.log(sels)
         sels.forEach(item => {
           for(let key in this.dataIndexMap){
             // 格式化日期
@@ -207,7 +219,7 @@
               item[key] = dateFormat(item[this.dataIndexMap[key]], 'YYYY-MM-DD') || "";
             }
             else{
-              item[key] = item[key] || item[this.dataIndexMap[key]] || "";
+              item[key] = item[key] || item[this.dataIndexMap[key]];
             }
             
           }
@@ -313,10 +325,19 @@
                 }
               });
               this.matterList.forEach((item, index) => {
-                if (item.inventoryCode === SItem.inventoryCode) {
-                  this.matterList.splice(index, 1);
-                  index--;
+                if(item.transCode){
+                  if(item.transCode === SItem.transCode && item.inventoryCode === SItem.inventoryCode){
+                    this.matterList.splice(index, 1);
+                    index--;
+                  }
                 }
+                else{
+                  if (item.inventoryCode === SItem.inventoryCode) {
+                    this.matterList.splice(index, 1);
+                    index--;
+                  }
+                }
+                
               })
             });
             this.selItems = [];
@@ -346,8 +367,14 @@
           },
           {
             key: 'warehouse',
+            childKey: 'warehouseCode',
             message: '仓库'
           },
+          {
+            key: 'warehouseStoreInfo',
+            childKey: 'warehouseCode',
+            message: '库位'
+          }
         ];
         if (!warn) {
           validateMap.every(item => {
@@ -370,12 +397,11 @@
           for (let item of items) {
             let oItem = {};
             for(let sItem of this.submitMatterField){
-              if(!sItem.allowBlank && !item[sItem.fieldCode]){
+              if(!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode]){
                 warn = `${sItem.text}不为空`
                 break;
               }
-              oItem[sItem.fieldCode] = item[sItem.fieldCode] || ''
-
+              oItem[sItem.fieldCode] = item[sItem.fieldCode] != null ? item[sItem.fieldCode] : null
             }
             // if (!item.tdQty) {
             //   warn = '请填写数量'
@@ -455,8 +481,9 @@
                 daysOfAccount: this.dealerInfo.pamentDays,
                 accountExpirationDate: this.dealerInfo.accountExpirationDate,
                 containerCodeOut: this.warehouse.warehouseCode, // 仓库编码
-                project: this.project.projectName, // 项目
+                project: this.project.projectName || null, // 项目
                 departmentName: this.formData.handlerUnitName, // 人员所属部门
+                storehouseOutCode: this.warehouseStoreInfo.warehouseCode, // 库位编码
                 dataSet
               }
             };
