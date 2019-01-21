@@ -104,23 +104,27 @@ export default {
         ...val
       }
     },
-    //展开可删除状态
+    // 展开可删除状态
     showDelete(){
       this.matterModifyClass = ! this.matterModifyClass;
       this.selItems = [];
     },
-    //显示物料修改的pop
-    modifyMatter(item, index){
+    // 显示物料修改的pop
+    getMatterModify(item, index){
       this.matter = JSON.parse(JSON.stringify(item));
       this.showMatterPop = true;
       this.modifyIndex = index;
     },
-    //更新修改后的物料信息
+    // 强制关闭 物料修改器
+    shutDownModify(val) {
+      this.showMatterPop = val;
+    },
+    // 更新修改后的物料信息
     selConfirm(val){
       let modMatter = JSON.parse(val);
       this.$set(this.matterList,this.modifyIndex,modMatter);
     },
-    //获取listId
+    // 获取listId
     getListId(transCode) {
       return new Promise(resolve => {
         getListId(transCode).then(data => {
@@ -129,7 +133,7 @@ export default {
         })
       })
     },
-    //获取uniqueid
+    // 获取uniqueid
     getUniqueId(transCode) {
       return new Promise(resolve => {
         isMyflow({transCode}).then(({dataCount, tableContent = []}) => {
@@ -151,7 +155,7 @@ export default {
         })
       })
     },
-    //提交订单
+    // 提交订单
     saveData(request, submitData) {
       request(submitData).then(data => {
         this.$HandleLoad.hide()
@@ -172,7 +176,7 @@ export default {
         this.$HandleLoad.hide();
       })
     },
-    //终止订单
+    // 终止订单
     stopOrder() {
       this.$vux.confirm.prompt('', {
         title: '审批意见',
@@ -307,7 +311,7 @@ export default {
         item.taxRate = Math.abs(toFixed(taxRate));
       }
     },
-    //输入框获取焦点，内容选中
+    // 输入框获取焦点，内容选中
     getFocus(e){
       event.currentTarget.select();
     },

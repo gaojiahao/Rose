@@ -448,7 +448,7 @@ export default {
             item[key] = data[key]
             delete data[key];
           }
-          else {
+          else if(!item.hasOwnProperty(key)){
             this.$set(item, key, '');
           }
         }
@@ -469,10 +469,11 @@ export default {
     // 校验单价
     checkAmt(item) {
       let {standardPrice = 0, specialReservePrice = 0, price} = item;
+      console.log('price:', price)
       if (price < specialReservePrice) {
         price = specialReservePrice;
       }
-      if (price > standardPrice) {
+      else if (price > standardPrice) {
         price = standardPrice;
       }
       item.price = Math.abs(toFixed(price));

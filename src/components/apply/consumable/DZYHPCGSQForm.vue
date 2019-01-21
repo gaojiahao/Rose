@@ -27,7 +27,7 @@
               <div class="each_mater"
                    :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1 }"
                    v-for="(item, index) in matterList" :key='index'>
-                <matter-item :item="item" @on-modify="modifyMatter(item, index)" :show-delete="matterModifyClass"
+                <matter-item :item="item" @on-modify="getMatterModify(item, index)" :show-delete="matterModifyClass"
                              @click.native="delClick(index,item)" :config="matterEditConfig.property">
                   <template slot="info" slot-scope="{item}">
                     <!-- 物料数量和价格 -->
@@ -41,14 +41,14 @@
                     </div>
                   </template>
                   <template slot="edit" slot-scope="{item}">
-                    <div class='mater_other' @click="modifyMatter(item, index)" v-if="!item.tdQty && !matterModifyClass">
+                    <div class='mater_other' @click="getMatterModify(item, index)" v-if="!item.tdQty && !matterModifyClass">
                       <div class="edit-tips">
                         <span class="tips-word">点击进行填写</span>
                       </div>
                     </div>
                   </template>
                   <template slot="editPart" slot-scope="{item}">
-                    <div class="edit-part vux-1px-l" @click="modifyMatter(item, index)"
+                    <div class="edit-part vux-1px-l" @click="getMatterModify(item, index)"
                          v-show="item.tdQty && !matterModifyClass">
                       <span class='iconfont icon-bianji1'></span>
                     </div>
@@ -193,7 +193,7 @@
     },
     methods: {
       // TODO 显示物料修改的pop
-      modifyMatter(item, index, key) {
+      getMatterModify(item, index, key) {
         this.consumables = JSON.parse(JSON.stringify(item));
         this.showMatterPop = true;
         this.modifyIndex = index;

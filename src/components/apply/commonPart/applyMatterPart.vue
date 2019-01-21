@@ -11,7 +11,7 @@
       </template>
       <!-- 已经选择了物料 -->
       <template v-else>
-        <div class="has_matter" @click="showDelete">
+        <div class="has_matter" @click="showDeleteFn">
           <div class="title">{{orderListTitle}}列表</div>
           <div class='edit' v-if='!matterModifyClass'>编辑</div>
           <div class='edit' v-else>完成</div>
@@ -25,8 +25,8 @@
                 {{orderListTitle}}：{{key}}
               </div>
               <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                <matter-item :item="item" @on-modify="modifyMatter(item, index, key)" :show-delete="matterModifyClass"
-                              @click.native="delClick(index, item, key)" :config="matterEditConfig.property">
+                <matter-item :item="item" @on-modify="getMatterModifyFn(item, index, key)" :show-delete="matterModifyClass"
+                              @click.native="delClickFn(index, item, key)" :config="matterEditConfig.property">
                   <template slot="info" slot-scope="{item}">
                     <slot name="info" :item="item">
                       <div class='mater_other' v-if="item.price && item.tdQty">
@@ -41,9 +41,9 @@
                     </slot>
                   </template>
                 </matter-item>
-                <div class='delete_icon' @click="delClick(index, item, key)" v-if='matterModifyClass'>
-                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
-                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
+                <div class='delete_icon' @click="delClickFn(index, item, key)" v-if='matterModifyClass'>
+                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIconFn(item)"></x-icon>
+                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIconFn(item)"></x-icon>
                 </div>
               </div>
             </div>
@@ -52,15 +52,15 @@
           <template v-else>
             <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < DataLength - 1 }"
                 v-for="(item, index) in matterList" :key='index'>
-              <matter-item :item="item" @on-modify="modifyMatter(item, index)" :show-delete="matterModifyClass"
-                            @click.native="delClick(index,item)" :config="matterEditConfig.property">
+              <matter-item :item="item" @on-modify="getMatterModifyFn(item, index)" :show-delete="matterModifyClass"
+                            @click.native="delClickFn(index,item)" :config="matterEditConfig.property">
                 <template slot="info" slot-scope="{item}">
                   <slot name="info" :item="item"></slot>
                 </template>
               </matter-item>
-              <div class='delete_icon' @click="delClick(index, item)" v-if='matterModifyClass'>
-                <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
-                <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
+              <div class='delete_icon' @click="delClickFn(index, item)" v-if='matterModifyClass'>
+                <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIconFn(item)"></x-icon>
+                <x-icon type="ios-circle-outline" size="20" v-show="!showSelIconFn(item)"></x-icon>
               </div>
             </div>
           </template>
@@ -69,22 +69,27 @@
       <!-- 新增更多 按钮 -->
       <div class="handle_part" v-if="DataLength && !matterModifyClass">
         <span class="add_more stop" v-if="this.actions.includes('stop')"
-              @click="stopOrder">终止提交</span>
+              @click="stopOrderFn">终止提交</span>
         <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
-        <div class="add_more" v-if="DataLength" @click="addMatter">
+        <div class="add_more" v-if="DataLength" @click="addMatterFn">
           <span class="icon-add"></span>
           <span class="add_text">新增更多物料</span>
         </div>
       </div>
       <!-- 物料popup -->
-      <pop-matter-list  :show="showPop" v-model="showPop" @shut-down-outsidePop="closePop" @sel-matter="selMatter" :config="matterPopConfig"
+      <pop-matter-list  :show="showPop" v-model="showPop" @shut-down-outsidePop="closePop" @sel-matter="selMatterFn" :config="matterPopConfig"
                         :filter-list="filterList" :matter-params="matterParams" :default-value="defaultValue" ref="matter"></pop-matter-list>
+      <!-- 物料编辑 -->
+      <pop-matter :chosen-matter='chosenMatter' :show-pop="showModifyPop" @sel-confirm='selConfirmFn' @show-down-modify="closeModify"
+                  v-model='showModifyPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
+      </pop-matter>
     </div>
 </template>
 
 <script>
 // 组件引入
 import RNumber from 'components/RNumber'
+import PopMatter from 'components/apply/commonPart/MatterPop'
 import PopMatterList from 'components/Popup/PopMatterListTest'
 import MatterItem from 'components/apply/commonPart/MatterItem'
 export default {
@@ -129,6 +134,17 @@ export default {
         return {}
       }
     },
+    // 被选中 进行编辑修改的物料
+    chosenMatter: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    selConfirmFn: {
+      type: Function,
+      required: true
+    },
     // 筛选条件
     filterList: {
       type: Array,
@@ -137,35 +153,35 @@ export default {
       }
     },
     // 新增物料
-    addMatter: {
+    addMatterFn: {
       type: Function,
       required: true
     },
-    stopOrder: {
+    stopOrderFn: {
       type: Function
     },
     // 选择物料
-    selMatter: {
+    selMatterFn: {
       type: Function,
       required: true
     },
     // 编辑时显示图标
-    showSelIcon: {
+    showSelIconFn: {
       type: Function,
       required: true
     },
     // 调用matter-pop组件
-    modifyMatter: {
+    getMatterModifyFn: {
       type: Function,
       required: true
     },
     // 删除选中物料
-    delClick: {
+    delClickFn: {
       type: Function,
       required: true
     },
     // 显示删除
-    showDelete: {
+    showDeleteFn: {
       type: Function,
       required: true
     },
@@ -185,8 +201,13 @@ export default {
       type: String,
       default: ''
     },
-    // 是否显示物料选择器
+    // 是否显示物料<选择器>
     showMaterielPop: {
+      type: Boolean,
+      default: false
+    },
+    // 是否显示物料<编辑器>
+    showMatterPop: {
       type: Boolean,
       default: false
     },
@@ -194,10 +215,15 @@ export default {
     matterModifyClass: {
       type: Boolean,
       default: false
+    },
+    btnIsHide: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
-    RNumber, MatterItem, PopMatterList
+    RNumber, PopMatter, 
+    MatterItem, PopMatterList
   },
   computed: {
     // 判断是否为对象
@@ -210,6 +236,9 @@ export default {
     showMaterielPop(val) {
       this.showPop = val;
     },
+    showMatterPop(val) {
+      this.showModifyPop = val;
+    },
     matterList: {
       // 计算数据长度
       handler(data) {
@@ -220,18 +249,21 @@ export default {
           this.DataLength = data.length;
         }
       },
-      deep: true,
-      immediate: true
+      deep: true
     },
   },
   methods: {
     closePop() {
       this.$emit('input', false);
+    },
+    closeModify() {
+      this.$emit('show-down-modify-pop', false);
     }
   },
   data() {
     return {
-      showPop: this.showMaterielPop,
+      showPop: false,              // 物料选择器
+      showModifyPop: false,          // 物料信息编辑器
       DataLength: 0,
     }
   }
@@ -239,7 +271,7 @@ export default {
 </script>
 
 <style scoped lang='scss'>
-@import './../../scss/bizApply';
+// @import './../../scss/bizApply';
 .materiel_list {
   position: relative;
   padding: 0 .15rem;
@@ -316,7 +348,6 @@ export default {
       }
     }
   }
-  //可编辑提示
   .mater_other {
     display: flex;
     margin-top: .1rem;
@@ -368,7 +399,7 @@ export default {
       position: absolute;
       transform: translate(-50%, 0);
     }
-    .stop {
+    .native {
       margin-right: .24rem;
       background: #ea5455;
       box-shadow: 0 2px 5px #ea5455;

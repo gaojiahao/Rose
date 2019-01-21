@@ -27,7 +27,7 @@
               <div class="each_mater"
                    :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1}"
                    v-for="(item, index) in matterList" :key='index'>
-                <matter-item :item="item" @on-modify="modifyMatter(item, index)" :show-delete="matterModifyClass"
+                <matter-item :item="item" @on-modify="getMatterModify(item, index)" :show-delete="matterModifyClass"
                              @click.native="delClick(index,item)" :config="matterEditConfig.property">
                   <template slot="info" slot-scope="{item}">
                     <div class='mater_num'>
@@ -40,7 +40,7 @@
                     </div>
                   </template>
                   <template slot="edit" slot-scope="{item}">
-                    <div class='mater_other' @click="modifyMatter(item, index)" v-if="!item.tdQty && !matterModifyClass">
+                    <div class='mater_other' @click="getMatterModify(item, index)" v-if="!item.tdQty && !matterModifyClass">
                       <div class="edit-tips">点击进行填写</div>
                     </div>
                   </template>

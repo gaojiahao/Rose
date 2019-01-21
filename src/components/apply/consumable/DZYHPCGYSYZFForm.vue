@@ -36,7 +36,7 @@
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                  <matter-item :item="item" @on-modify="modifyMatter(item, index,key)" :show-delete="matterModifyClass"
+                  <matter-item :item="item" @on-modify="getMatterModify(item, index,key)" :show-delete="matterModifyClass"
                                @click.native="delClick(index,item)" :config="matterEditConfig.property">
                     <template slot="info" slot-scope="{item}">
                       <!-- 物料数量和价格 -->
@@ -51,14 +51,14 @@
                       </div>
                     </template>
                     <!--<template slot="edit" slot-scope="{item}">
-                      <div class='mater_other' @click="modifyMatter(item, index)" v-if="!item.tdQty && !matterModifyClass">
+                      <div class='mater_other' @click="getMatterModify(item, index)" v-if="!item.tdQty && !matterModifyClass">
                         <div class="edit-tips">
                           <span class="tips-word">点击进行填写</span>
                         </div>
                       </div>
                     </template>-->
                     <template slot="editPart" slot-scope="{item}">
-                      <div class="edit-part vux-1px-l" @click="modifyMatter(item, index,key)"
+                      <div class="edit-part vux-1px-l" @click="getMatterModify(item, index,key)"
                            v-show="(item.price && (item.tdQty || item.tdQty === 0)) &&!matterModifyClass">
                         <span class='iconfont icon-bianji1'></span>
                       </div>
@@ -292,7 +292,7 @@
         this.contactInfo = {...val};
       },
       // TODO 显示物料修改的pop
-      modifyMatter(item, index, key) {
+      getMatterModify(item, index, key) {
         this.consumables = JSON.parse(JSON.stringify(item));
         this.showMatterPop = true;
         this.modifyIndex = index;

@@ -31,7 +31,7 @@
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                  <matter-item :item="item" @on-modify="modifyMatter(item, index, key)" :show-delete="matterModifyClass"
+                  <matter-item :item="item" @on-modify="getMatterModify(item, index, key)" :show-delete="matterModifyClass"
                                @click.native="delClick(index,item, key)" :config="matterEditConfig.property">
                     <template slot-scope="{item}" slot="info">
                       <div class="mater_other" v-show="item.tdQty">
@@ -41,7 +41,7 @@
                       </div>
                     </template>
                     <template slot="edit" slot-scope="{item}">
-                      <div class="mater_other" @click="modifyMatter(item, index, key)" v-show="!item.tdQty && !matterModifyClass">
+                      <div class="mater_other" @click="getMatterModify(item, index, key)" v-show="!item.tdQty && !matterModifyClass">
                         <span class="edit-tips">
                           点击进行填写
                         </span>
@@ -173,7 +173,7 @@
     },
     methods: {
       // TODO 显示物料修改的pop
-      modifyMatter(item, index, key) {
+      getMatterModify(item, index, key) {
         this.matter = JSON.parse(JSON.stringify(item));
         this.showMatterPop = true;
         this.modifyIndex = index;

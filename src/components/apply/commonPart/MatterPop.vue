@@ -6,30 +6,30 @@
       </div>
       <r-scroll class="matter-list-container" :options="scrollOptions" ref="bScroll">
         <div class='matter-info'>
-          <img :src="modifyMatter.inventoryPic" alt="matter_img" @error="getDefaultImg(item)" class='matter_img'/>
+          <img :src="chosenMatter.inventoryPic" alt="matter_img" @error="getDefaultImg(item)" class='matter_img'/>
           <div class='mater_main'>
             <div class="mater_name">
-              {{modifyMatter.inventoryName || modifyMatter.facilityName || modifyMatter.inventoryName_outPutMatCode}}
+              {{chosenMatter.inventoryName || chosenMatter.facilityName || chosenMatter.inventoryName_outPutMatCode}}
             </div>
             <!-- 物料基本信息 -->
             <div class="matter_info">
               <div class="matter_info_item">
                 <span class="matter_info_title">编码：</span>
-                <span class="matter_info_value">{{modifyMatter.inventoryCode || modifyMatter.facilityCode || modifyMatter.outPutMatCode}}</span>
+                <span class="matter_info_value">{{chosenMatter.inventoryCode || chosenMatter.facilityCode || chosenMatter.outPutMatCode}}</span>
               </div>
               <div class="matter_info_item">
                 <span class="matter_info_title">规格：</span>
-                <span class="matter_info_value">{{modifyMatter.specification || modifyMatter.facilitySpecification || modifyMatter.specification_outPutMatCode ||'无'}}</span>
+                <span class="matter_info_value">{{chosenMatter.specification || chosenMatter.facilitySpecification || chosenMatter.specification_outPutMatCode ||'无'}}</span>
               </div>
             </div>
             <div class="matter_info">
               <div class="matter_info_item" v-for="(item, index) in config.property" :key="index">
                 <span class="matter_info_title">{{item.text}}：</span>
                 <span class="matter_info_value" v-if="item.showFieldCode">
-                  {{modifyMatter[item.showFieldCode] != null && modifyMatter[item.showFieldCode] !== ""  ?  modifyMatter[item.showFieldCode] : "无"}}
+                  {{chosenMatter[item.showFieldCode] != null && chosenMatter[item.showFieldCode] !== ""  ?  chosenMatter[item.showFieldCode] : "无"}}
                 </span>
                 <span class="matter_info_value" v-else>
-                  {{modifyMatter[item.fieldCode] != null && modifyMatter[item.fieldCode] !== ""  ?  modifyMatter[item.fieldCode] : "无"}}
+                  {{chosenMatter[item.fieldCode] != null && chosenMatter[item.fieldCode] !== ""  ?  chosenMatter[item.fieldCode] : "无"}}
                 </span>
               </div>
             </div>
@@ -39,47 +39,47 @@
           <div v-for="(eItem,eIndex) in config.editPart" :key="eIndex">
             <template v-if="!eItem.readOnly">
               <!-- 数字输入框 -->
-              <x-input class="vux-1px-b" type="number" v-model.number='modifyMatter[eItem.fieldCode]'
+              <x-input class="vux-1px-b" type="number" v-model.number='chosenMatter[eItem.fieldCode]'
                        text-align="right"
                        placeholder="请输入"
                        v-if="(eItem.editorType === 'r2Numberfield' || eItem.editorType === 'r2Percentfield' || eItem.editorType === 'r2Permilfield') && eItem.fieldCode !=='tdQty'"
-                       @on-blur="checkAmt(modifyMatter, eItem.fieldCode, modifyMatter[eItem.fieldCode])"
+                       @on-blur="checkAmt(chosenMatter, eItem.fieldCode, chosenMatter[eItem.fieldCode])"
                        @on-focus="getFocus($event)">
                 <template slot="label">
                   <span :class="{required: !eItem.allowBlank}">{{eItem.text}}</span>
                 </template>
               </x-input>
               <!--文字输入框-->
-              <x-input v-model='modifyMatter[eItem.fieldCode]' text-align="right" placeholder="请输入"
+              <x-input v-model='chosenMatter[eItem.fieldCode]' text-align="right" placeholder="请输入"
                        v-if="eItem.editorType === 'r2Textfield'">
                 <template slot="label">
                   <span :class="{required: !eItem.allowBlank}">{{eItem.text}}</span>
                 </template>
               </x-input>
               <!--处理销售订单订单数量会根据客户，物料，物料上线和下线，自动带出单价，税率-->
-              <x-input class="vux-1px-b" type="number" v-model.number='modifyMatter[eItem.fieldCode]'
+              <x-input class="vux-1px-b" type="number" v-model.number='chosenMatter[eItem.fieldCode]'
                        text-align="right"
                        placeholder="请输入" v-if="eItem.fieldCode ==='tdQty'"
-                       @on-blur="checkAmt(modifyMatter, eItem.fieldCode, modifyMatter[eItem.fieldCode])"
+                       @on-blur="checkAmt(chosenMatter, eItem.fieldCode, chosenMatter[eItem.fieldCode])"
                        @on-focus="getFocus($event)"
-                       @on-click-clear-icon="cleanAmt(modifyMatter)">
+                       @on-click-clear-icon="cleanAmt(chosenMatter)">
                 <template slot="label">
                   <span :class="{required: !eItem.allowBlank}">{{eItem.text}}</span>
-                  <span class="iconfont icon-tishi" v-show="modifyMatter.otherField && Object.keys(modifyMatter.otherField).length"
+                  <span class="iconfont icon-tishi" v-show="chosenMatter.otherField && Object.keys(chosenMatter.otherField).length"
                         @click="showDialog = !showDialog"></span>
                 </template>
               </x-input>
               <!--日期-->
-              <datetime class="vux-1px-b" :start-date="modifyMatter[eItem.fieldCode]"
-                        :end-date="modifyMatter[eItem.fieldCode]"
-                        v-model="modifyMatter[eItem.fieldCode]" placeholder="请选择"
+              <datetime class="vux-1px-b" :start-date="chosenMatter[eItem.fieldCode]"
+                        :end-date="chosenMatter[eItem.fieldCode]"
+                        v-model="chosenMatter[eItem.fieldCode]" placeholder="请选择"
                         v-if="eItem.editorType === 'r2Datefield'">
                 <template slot="title">
                   <span :class="{required: !eItem.allowBlank}">{{eItem.text}}</span>
                 </template>
               </datetime>
               <!-- 下拉框 -->
-              <popup-picker class="vux-1px-b" :data='eItem.remoteData' v-model="modifyMatter[eItem.fieldCode]"
+              <popup-picker class="vux-1px-b" :data='eItem.remoteData' v-model="chosenMatter[eItem.fieldCode]"
                             :popup-style="pickerStyle"
                             placeholder="请选择" v-if="eItem.editorType === 'r2Combo'">
                 <template slot="title">
@@ -91,10 +91,10 @@
             <template v-else>
               <!--字段为数字时，显示千分符-->
               <cell class="vux-1px-b" disabled :title="eItem.text"
-                    :value="modifyMatter[eItem.fieldCode] || modifyMatter[eItem.showFieldCode] | checkNumber"
+                    :value="chosenMatter[eItem.fieldCode] || chosenMatter[eItem.showFieldCode] | checkNumber"
                     v-if="eItem.editorType === 'r2Numberfield'"></cell>
               <cell class="vux-1px-b" disabled :title="eItem.text"
-                    :value="modifyMatter[eItem.fieldCode] || modifyMatter[eItem.showFieldCode]" v-else></cell>
+                    :value="chosenMatter[eItem.fieldCode] || chosenMatter[eItem.showFieldCode]" v-else></cell>
             </template>
           </div>
         </group>
@@ -103,22 +103,22 @@
         <div class='confirm'>确认</div>
       </div>
     </popup>
-    <x-dialog class="dialog-view" v-if="modifyMatter.otherField" v-model="showDialog" hide-on-blur>
+    <x-dialog class="dialog-view" v-if="chosenMatter.otherField" v-model="showDialog" hide-on-blur>
       <div class="tip-top">
         <p class="header_content">温馨提示</p>
-        <p class="header_btn_tips">订单折合包装比：{{modifyMatter.assMeasureScale}}</p>
+        <p class="header_btn_tips">订单折合包装比：{{chosenMatter.assMeasureScale}}</p>
       </div>
       <div class="tip-main">
         <div class="each_info_part">
-          <span class="package_num">订单数量上限：{{modifyMatter.qtyOnline * modifyMatter.assMeasureScale}}</span>
-          <span class="order_num">[折合包装数量: {{modifyMatter.qtyOnline}}]</span>
+          <span class="package_num">订单数量上限：{{chosenMatter.qtyOnline * chosenMatter.assMeasureScale}}</span>
+          <span class="order_num">[折合包装数量: {{chosenMatter.qtyOnline}}]</span>
         </div>
         <div class="each_info_part">
-          <span class="package_num">订单数量下限：{{modifyMatter.qtyDownline * modifyMatter.assMeasureScale}}</span>
-          <span class="order_num">[折合包装数量: {{modifyMatter.qtyDownline}}]</span>
+          <span class="package_num">订单数量下限：{{chosenMatter.qtyDownline * chosenMatter.assMeasureScale}}</span>
+          <span class="order_num">[折合包装数量: {{chosenMatter.qtyDownline}}]</span>
         </div>
-        <div class="other_info_part" v-if="modifyMatter.otherField.transCode">
-          <p class="other_tips">tips: 当您输入的订单数量在上述区间内，系统将会自动匹配<span class="inside_tips">销售协议{{modifyMatter.otherField.transCode}}</span>当中的价格，并自动计算其他属性。
+        <div class="other_info_part" v-if="chosenMatter.otherField.transCode">
+          <p class="other_tips">tips: 当您输入的订单数量在上述区间内，系统将会自动匹配<span class="inside_tips">销售协议{{chosenMatter.otherField.transCode}}</span>当中的价格，并自动计算其他属性。
           </p>
         </div>
         <div class="other_info_part" v-else>
@@ -155,7 +155,7 @@
       }
     },
     props: {
-      modifyMatter: {    // 进行修改的单个物料信息
+      chosenMatter: {    // 进行修改的单个物料信息
         type: Object,
         default() {
           return {}
@@ -210,7 +210,7 @@
         }
       },
       // 监听用于根据（生产日期+保质期天数）计算有效期
-      modifyMatter: {
+      chosenMatter: {
         handler(val) {
           let productionDate = new Date(val.productionDate).getTime(),
             day = 24 * 3600 * 1000;
@@ -249,16 +249,18 @@
       },
       // TODO 弹窗隐藏时调用
       onHide() {
-        this.$emit('input', false);
         this.showPrice = false;
-        this.currentType = '渠道价'
+        this.currentType = '渠道价';
+        this.$emit('input', false);
+        // 触发父级事件，强制关闭PopMatter
+        this.$emit('show-down-modify', false);
       },
       //确认修改
       confirm() {
         let warn = '';
         this.config.editPart.every(item => {
           if (!item.allowBlank) {
-            if ((Array.isArray(this.modifyMatter[item.fieldCode]) && !this.modifyMatter[item.fieldCode].length) || !this.modifyMatter[item.fieldCode]) {
+            if ((Array.isArray(this.chosenMatter[item.fieldCode]) && !this.chosenMatter[item.fieldCode].length) || !this.chosenMatter[item.fieldCode]) {
               warn = item.text + '不能为空';
               return false
             }
@@ -271,7 +273,7 @@
           });
           return
         }
-        this.$emit('sel-confirm', JSON.stringify(this.modifyMatter))
+        this.$emit('sel-confirm', JSON.stringify(this.chosenMatter))
         this.show = false;
       },
       //选择默认图片
