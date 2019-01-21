@@ -139,10 +139,11 @@ export default {
     }
     to.meta.title = `${name}详情`;
     next();
-  },  
+  },
   beforeRouteLeave(to, from, next) {
     let { path } = to;
-    let isGoList = to.name === 'LIST' || to.name === 'MSGHOME';
+    let goLists = ['LIST', 'MSGHOME', 'FILLFORM'];
+    let isGoList = goLists.indexOf(to.name);
     this.$HandleLoad.hide();
     if (isGoList) {
       this.currentComponent = null;
