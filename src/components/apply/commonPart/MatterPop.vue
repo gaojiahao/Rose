@@ -50,7 +50,7 @@
                 </template>
               </x-input>
               <!--文字输入框-->
-              <x-input v-model='chosenMatter[eItem.fieldCode]' text-align="right" placeholder="请输入"
+              <x-input class="vux-1px-b" v-model='chosenMatter[eItem.fieldCode]' text-align="right" placeholder="请输入"
                        v-if="eItem.editorType === 'r2Textfield'">
                 <template slot="label">
                   <span :class="{required: !eItem.allowBlank}">{{eItem.text}}</span>
@@ -70,9 +70,15 @@
                 </template>
               </x-input>
               <!--日期-->
-              <datetime class="vux-1px-b" :start-date="chosenMatter[eItem.fieldCode]"
+              <!-- <datetime class="vux-1px-b" :start-date="chosenMatter[eItem.fieldCode]"
                         :end-date="chosenMatter[eItem.fieldCode]"
                         v-model="chosenMatter[eItem.fieldCode]" placeholder="请选择"
+                        v-if="eItem.editorType === 'r2Datefield'">
+                <template slot="title">
+                  <span :class="{required: !eItem.allowBlank}">{{eItem.text}}</span>
+                </template>
+              </datetime> -->
+              <datetime class="vux-1px-b" v-model="chosenMatter[eItem.fieldCode]" placeholder="请选择"
                         v-if="eItem.editorType === 'r2Datefield'">
                 <template slot="title">
                   <span :class="{required: !eItem.allowBlank}">{{eItem.text}}</span>
@@ -209,9 +215,11 @@
       // 监听用于根据（生产日期+保质期天数）计算有效期
       chosenMatter: {
         handler(val) {
-          let productionDate = new Date(val.productionDate).getTime(),
+          if(val.productionDate && val.keepingDays){
+            let productionDate = new Date(val.productionDate).getTime(),
             day = 24 * 3600 * 1000;
-          val.validUntil = productionDate ? dateFormat(productionDate + accMul(val.keepingDays, day), 'YYYY-MM-DD') : '';
+           val.validUntil = productionDate ? dateFormat(productionDate + accMul(val.keepingDays, day), 'YYYY-MM-DD') : '';
+          } 
         },
         deep: true
       }
