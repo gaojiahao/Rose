@@ -94,6 +94,11 @@
       }
       &.ele_up {
         font-size: .12rem;
+        // .total_price {
+        //   .symbol {
+        //     font-size: .1rem;
+        //   }
+        // }
         .taxAmount {
           font-size: .1rem;
         }
@@ -121,6 +126,7 @@
         top: 50%;
         position: absolute;
         transform: translateY(-50%);
+        fill: #999;
       }
       .checked {
         fill: #ea5455;
@@ -131,7 +137,7 @@
       flex: 1.5;
       color: #fff;
       text-align: center;
-      background: #5077aa;
+      background: #3296FA;
       &.stop {
         background: #ea5455;
       }

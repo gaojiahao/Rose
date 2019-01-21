@@ -1,31 +1,35 @@
 <template>
-  <!-- 物料popup -->
-  <div v-transfer-dom>
-    <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
-      <div class="trade_pop">
-        <m-search @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
-        <!-- 费用列表 -->
-        <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
-                  :no-data="!hasNext && !projectList.length" @on-pulling-up="onPullingUp"
-                   ref="bScroll">
-          <div class="each_mater box_sd" v-for="(item, index) in projectList" :key='index'
-               @click.stop="selThis(item, index)">
-            <div class="mater_main ">
-              <!-- 物料名称 -->
-              <div class="project_name">
-                {{item.PROJECT_NAME}}
+  <div class="pop-sodl-project-list" @click="itemClick">
+    <div class="project-info" v-if='selItems.PROJECT_NAME'>
+      <span class="project-name">{{selItems.PROJECT_NAME}}</span>
+      <span class="project-type">{{selItems.PROJECT_TYPE}}</span>
+    </div>
+    <div class="title" v-else>项目名称 <span>请选择</span></div>
+    <i class="icon-right r-arrow"></i>
+    <!-- 物料popup -->
+    <div v-transfer-dom>
+      <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
+        <div class="trade_pop">
+          <m-search @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
+          <!-- 费用列表 -->
+          <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
+                    :no-data="!hasNext && !projectList.length" @on-pulling-up="onPullingUp"
+                    ref="bScroll">
+            <div class="each_mater box_sd" v-for="(item, index) in projectList" :key='index'
+                 @click.stop="selThis(item, index)">
+              <div class="mater_main ">
+                <!-- 物料名称 -->
+                <div class="project_name">{{item.PROJECT_NAME}}</div>
+                <!-- 物料基本信息 -->
+                <div class="project_type">{{item.PROJECT_TYPE}}</div>
               </div>
-              <!-- 物料基本信息 -->
-              <div class="project_type">
-                {{item.PROJECT_TYPE}}
-              </div>
+              <!-- icon -->
+              <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
             </div>
-            <!-- icon -->
-            <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
-          </div>
-        </r-scroll>
-      </div>
-    </popup>
+          </r-scroll>
+        </div>
+      </popup>
+    </div>
   </div>
 </template>
 
@@ -142,6 +146,9 @@
         this.page++;
         this.getProjectLsit();
       },
+      itemClick() {
+        this.showPop = true;
+      },
     },
     created() {
       this.selItems = {...this.defaultValue};
@@ -151,78 +158,36 @@
 </script>
 
 <style scoped lang="scss">
+  .pop-sodl-project-list {
+    position: relative;
+    margin-bottom: .1rem;
+    padding: .18rem .15rem;
+    box-sizing: border-box;
+    background: #fff;
+    color: #333;
+    font-size: .14rem;
+    line-height: .14rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .title {
+      flex: 1;
+      color: #696969;
+      display: flex;
+      justify-content: space-between;
+    }
+    .icon-right{
+      width: .08rem;
+      height: .14rem;
+      margin-left: .1rem;
+    }
+  }
+
   // 弹出层
   .trade_pop_part {
     background: #fff;
     .trade_pop {
-      
       height: 100%;
-      // 顶部
-      .title {
-        height: 100%;
-        font-size: .2rem;
-        position: relative;
-        padding-top: 0.08rem;
-        // 搜索
-        .search_part {
-          width: 100%;
-          display: flex;
-          height: .3rem;
-          line-height: .3rem;
-          position: relative;
-          // 搜索输入框
-          .srh_inp {
-            flex: 5;
-            outline: none;
-            border: none;
-            color: #2D2D2D;
-            font-size: .16rem;
-            padding: 0 .3rem 0 .4rem;
-            background: #F3F1F2;
-            border-top-left-radius: .3rem;
-            border-bottom-left-radius: .3rem;
-          }
-          // 取消 按钮
-          .pop_cancel {
-            flex: 1;
-            color: #fff;
-            font-size: .14rem;
-            text-align: center;
-            background: #fc3c3c;
-            border-top-right-radius: .3rem;
-            border-bottom-right-radius: .3rem;
-          }
-          // 搜索icon
-          .serach_icon {
-            top: 50%;
-            left: 10px;
-            fill: #2D2D2D;
-            position: absolute;
-            transform: translate(0, -50%);
-          }
-          // 清除icon
-          .clear_icon {
-            top: 50%;
-            right: 14%;
-            width: .3rem;
-            height: .3rem;
-            z-index: 100;
-            display: block;
-            font-size: .12rem;
-            line-height: .3rem;
-            text-align: center;
-            position: absolute;
-            transform: translate(0, -50%);
-          }
-        }
-        // 关闭icon
-        .close_icon {
-          top: 50%;
-          right: -2%;
-          position: absolute;
-          transform: translate(0, -50%);
-        }
-      }
       .each_mode {
         margin-right: .1rem;
         display: inline-block;
@@ -236,7 +201,7 @@
         width: 100%;
         overflow: hidden;
         box-sizing: border-box;
-        height: calc(100% - .38rem);
+        height: calc(100% - .5rem);
         /* 使用深度作用选择器进行样式覆盖 */
         /deep/ .scroll-wrapper {
           padding: .14rem .04rem 0 .3rem;
@@ -283,7 +248,6 @@
             }
             // 物料信息
             .project_type {
-              color: #111;
               font-weight: bold;
               color: #757575;
               font-size: .14rem;
@@ -307,29 +271,6 @@
         }
       }
 
-    }
-    // 底部栏
-    .count_mode {
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      display: flex;
-      height: .44rem;
-      position: fixed;
-      line-height: .44rem;
-      background: #fff;
-      .count_num {
-        flex: 2.5;
-        color: #5077aa;
-        font-size: .24rem;
-        padding-left: .1rem;
-      }
-      .count_btn {
-        flex: 1.5;
-        color: #fff;
-        text-align: center;
-        background: #5077aa;
-      }
     }
   }
 </style>

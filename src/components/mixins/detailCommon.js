@@ -341,7 +341,7 @@ export default {
     },
     // TODO 请求配置
     getFormConfig() {
-      return getFormConfig(this.formViewUniqueId).then(({config = [], dataSource = '[]'}) => {
+      return getFormConfig(this.formViewUniqueId).then(({config = [], dataSource = '[]', reconfig = {}}) => {
         // console.log(config)
         let dealerConfig = [], matterConfig = [], otherConfig = [];
         let dealerFilter = [
@@ -378,6 +378,13 @@ export default {
 
         // 从请求回来的配置中拆分往来，物料，其他段落的配置
         config.forEach(item => {
+          if (item.formViewPartId) {
+            let reconfigData = reconfig[`_${item.formViewPartId}`] || {};
+            item.items = item.items && item.items.map(cItem => {
+              let matched = reconfigData[cItem.fieldCode] || {};
+              return {...cItem, ...matched,}
+            });
+          }
           if (!item.isMultiple) {
             if (item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt' || item.name === 'gys') {
               dealerConfig = dealerConfig.concat(item.items)

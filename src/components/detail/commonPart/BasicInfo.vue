@@ -90,10 +90,12 @@
     },
     computed: {
       projectInfo() {
-        let {outPut = {}} = this.orderInfo;
+        let {outPut = {}, inPut = {}} = this.orderInfo;
+        let project = outPut.project || inPut.project || '';
+        let projectType = outPut.projectType_project || inPut.projectType_project || '';
         return {
-          projectName: outPut.project || '',
-          projectType: outPut.projectType_project || '',
+          projectName: project,
+          projectType,
         }
       }
     },

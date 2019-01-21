@@ -35,20 +35,7 @@
           </group>
         </div>
         <!--项目信息-->
-        <div class="or_ads mg_auto" @click="showProjectPop = !showProjectPop">
-          <div class="title">项目名称</div>
-          <div v-if='project.PROJECT_NAME'>
-            <div class="cp_info">
-              <p class="cp_name">{{project.PROJECT_NAME}}</p>
-            </div>
-          </div>
-          <div v-else>
-            <div class="mode required">请选择项目名称</div>
-          </div>
-          <i class="iconfont icon-youjiantou r_arrow"></i>
-        </div>
-        <pop-project-list :show="showProjectPop" v-model="showProjectPop" :defaultValue="project"
-                          @sel-project="selProject"></pop-project-list>
+        <pop-project-list :defaultValue="project" @sel-project="selProject"></pop-project-list>
 
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
@@ -109,7 +96,6 @@
         dealerInfo: {},
         workInfo: {}, // 工序信息
         defaultManager: {},
-        showProjectPop: false,
         project: {},
         defaultProject: [],
       }
