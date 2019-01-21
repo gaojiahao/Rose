@@ -152,6 +152,52 @@
       }
     },
     props: {
+      // 此处为校验方法 建议每个应用单独定义一份
+      checkAmt: {
+        type: Function,
+        default(item, key, val) {
+          let { price, tdQty, taxRate, 
+                qtyBal, qtyStock, qtyBalance, 
+                assistQty, qtyStockBal, qtyOnline, qtyDownline} = item;
+          item[key] = Math.abs(toFixed(val));
+          // 数量
+          if (key === 'tdQty' && tdQty && this.isCheckStock) {
+            // qtyStockBal为销售出库的库存，数量不允许大于余额
+            if (!qtyStockBal && !qtyStock && qtyBal && tdQty > qtyBal) {
+              item.tdQty = qtyBal;
+            }
+            else if (qtyStockBal && tdQty > qtyStockBal) { // 数量不允许大于库存
+              item.tdQty = qtyStockBal;
+            }
+            //qtyStock为物料领料，数量不允许大于库存
+            else if (qtyStock && tdQty > qtyStock) {
+              item.tdQty = qtyStock;
+            }
+            else if (qtyBalance && tdQty > qtyBalance) {
+              item.tdQty = qtyBalance;
+            }
+            else if (qtyOnline && qtyDownline) {
+              /*
+              * assistQty => 辅助计量 数量
+              * qtyDownline => 数量下限
+              * qtyOnline => 数量上限
+              * 
+              * 只有当符合下列条件时 数据才会相应的动态赋值
+              * */ 
+              if (assistQty >= qtyDownline && assistQty <= qtyOnline) {
+                this.defineObjVal(item, item.otherField, item.otherField)
+              }
+              else {
+                this.defineObjVal(item, item.otherField, '')
+              }
+            }
+          }
+          //税率
+          if (taxRate) {
+            item.taxRate = Math.abs(toFixed(taxRate));
+          }
+        }
+      },
       chosenMatter: {    // 进行修改的单个物料信息
         type: Object,
         default() {
@@ -285,49 +331,6 @@
       defineObjVal(currentData, newObj, newVal) {
         for(let key in newObj) {
           this.$set(currentData, key, newVal[key]);
-        }
-      },
-      // TODO 检查金额，取正数、保留两位小数
-      checkAmt(item, key, val) {
-        let { price, tdQty, taxRate, 
-              qtyBal, qtyStock, qtyBalance, 
-              assistQty, qtyStockBal, qtyOnline, qtyDownline} = item;
-        item[key] = Math.abs(toFixed(val));
-        // 数量
-        if (key === 'tdQty' && tdQty && this.isCheckStock) {
-          // qtyStockBal为销售出库的库存，数量不允许大于余额
-          if (!qtyStockBal && !qtyStock && qtyBal && tdQty > qtyBal) {
-            item.tdQty = qtyBal;
-          }
-          else if (qtyStockBal && tdQty > qtyStockBal) { // 数量不允许大于库存
-            item.tdQty = qtyStockBal;
-          }
-          //qtyStock为物料领料，数量不允许大于库存
-          else if (qtyStock && tdQty > qtyStock) {
-            item.tdQty = qtyStock;
-          }
-          else if (qtyBalance && tdQty > qtyBalance) {
-            item.tdQty = qtyBalance;
-          }
-          else if (qtyOnline && qtyDownline) {
-            /*
-             * assistQty => 辅助计量 数量
-             * qtyDownline => 数量下限
-             * qtyOnline => 数量上限
-             * 
-             * 只有当符合下列条件时 数据才会相应的动态赋值
-             * */ 
-            if (assistQty >= qtyDownline && assistQty <= qtyOnline) {
-              this.defineObjVal(item, item.otherField, item.otherField)
-            }
-            else {
-              this.defineObjVal(item, item.otherField, '')
-            }
-          }
-        }
-        //税率
-        if (taxRate) {
-          item.taxRate = Math.abs(toFixed(taxRate));
         }
       },
       cleanAmt(item) {

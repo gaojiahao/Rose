@@ -20,12 +20,8 @@
           :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
           :add-matter-fn="getMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
           :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
-          :chosen-matter="matter" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
+          :chosen-matter="matter" :check-amt-fn="checkAmt" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
         </apply-matter-part>
-        <!--物料编辑pop-->
-        <!-- <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' 
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
-        </pop-matter> -->
         <!-- 项目 -->
         <pop-sodl-projectList :value="project" v-model="project"></pop-sodl-projectList>
         <!--备注-->
@@ -41,7 +37,6 @@
         <span style="fontSize:.14rem">￥</span>{{tdAmount | numberComma}}
         <span class="taxAmount">[含税: ￥{{taxAmount | numberComma}}]</span>
       </span>
-      <!-- <span class="count_btn stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</span> -->
       <span class="count_btn" @click="submitOrder">提交</span>
     </div>
     <!-- 底部删除确认栏 -->
@@ -270,7 +265,7 @@
         return url
       },
       // 滑动删除
-      delClick(index, sItem, key) {
+      delClick(sItem, index, key) {
         let arr = this.selItems;
         let delIndex = null;
         if(sItem.transCode){
@@ -364,10 +359,6 @@
           }
         })
 
-      },
-      // TODO 新增更多订单
-      addOrder() {
-        this.showOrderPop = !this.showOrderPop;
       },
       // TODO 提价订单
       submitOrder() {
@@ -736,6 +727,13 @@
           this.$loading.hide();
         })
       },
+      // 提交字段校验
+      checkAmt(item, key, val) {
+        console.log('item:', item);
+        let { thenQtyStock } = item;
+        item[key] = Math.abs(toFixed(val));
+
+      }
     },
     created() {
       let data = sessionStorage.getItem(DRAFT_KEY);

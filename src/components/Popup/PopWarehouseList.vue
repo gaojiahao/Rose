@@ -8,12 +8,12 @@
             <span class="user_name">{{selItems.warehouseName}}</span>
             <span class="user_tel">{{selItems.warehouseType}}</span>
           </div>
-          <div class="cp_info" v-if="!noAddress">
+          <!-- <div class="cp_info" v-if="!noAddress">
             <span class="icon-dealer-address"></span>
             <span class="cp_ads">
               {{selItems.warehouseProvince}}{{selItems.warehouseCity}}{{selItems.warehouseDistrict}}{{selItems.warehouseAddress}}
             </span>
-          </div>
+          </div> -->
         </div>
         <div v-else>
           <div class="no-warehouse">

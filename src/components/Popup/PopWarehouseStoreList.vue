@@ -7,12 +7,13 @@
           <span class="user_name">{{selItems.warehouseName}}</span>
           <span class="user_tel">{{selItems.warehouseType}}</span>
         </div>
-        <!-- <div class="cp_info" v-if="!noAddress">
+        <div class="cp_info" v-if="!noAddress">
           <span class="icon-dealer-address"></span>
           <span class="cp_ads">
-            {{selItems.warehouseProvince}}{{selItems.warehouseCity}}{{selItems.warehouseDistrict}}{{selItems.warehouseAddress}}
+            <!-- {{selItems.warehouseProvince}}{{selItems.warehouseCity}}{{selItems.warehouseDistrict}}{{selItems.warehouseAddress}} -->
+            {{selItems.warehouseAddress}}
           </span>
-        </div> -->
+        </div>
       </div>
       <div v-else>
         <div class="no-warehouse">
@@ -224,13 +225,13 @@
     border-color: #e8e8e8;
   }
   .pop-warehouse-container {
+    color: #333;
+    font-size: .14rem;
     padding: .18rem 0;
-    box-sizing: border-box;
     background: #fff;
     position: relative;
-    font-size: .14rem;
     line-height: .14rem;
-    color: #333;;
+    box-sizing: border-box;
     .title {
       color: #696969;
     }
@@ -262,11 +263,12 @@
     .cp_info {
       color: #111;
       display: flex;
-      margin-top: .06rem;
+      margin-top: .1rem;
+      align-items: center;
       .icon-dealer-address {
         width: .12rem;
         height: .14rem;
-        margin: .03rem .07rem 0 0;
+        margin-right: .06rem;
       }
       .cp_ads {
         flex: 1;
@@ -276,9 +278,9 @@
     }
     .no-warehouse {
       display: flex;
-      justify-content: space-between;
-      width: calc( 100% - .18rem);
       align-items: center;
+      width: calc( 100% - .18rem);
+      justify-content: space-between;
       .required {
         color: #3296FA;
         font-weight: bold;
@@ -289,7 +291,6 @@
   .trade_pop_part {
     background: #fff;
     .trade_pop {
-      
       height: 100%;
       overflow: hidden;
       // 顶部
@@ -314,11 +315,11 @@
         }
         // 列表项
         .pop-mater-list-item {
-          position: relative;
+          margin: .2rem 0;
           padding: .15rem;
-          margin-bottom: .2rem;
-          box-sizing: border-box;
+          position: relative;
           border-radius: .04rem;
+          box-sizing: border-box;
           &.seleted {
             border: 1px solid #3296FA;
           }
@@ -335,7 +336,6 @@
               height: .4rem;
               border-radius: 50%;
             }
-            
             // 物料信息
             .pop-list-info {
               font-size: .14rem;
@@ -384,7 +384,6 @@
           list-style: square;
           margin-top: .1rem;
         }
-
         font-size: .14rem;
         .addNew {
           color: #fff;

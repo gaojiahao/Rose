@@ -261,7 +261,7 @@
         return url
       },
       // 滑动删除
-      delClick(index, sItem, key) {
+      delClick(sItem, index, key) {
         let arr = this.selItems;
         let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
         //若存在重复的 则清除

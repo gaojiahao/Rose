@@ -16,7 +16,7 @@
           :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
           :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
           :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
-          :chosen-matter="matter" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
+          :chosen-matter="matter" :check-amt-fn="checkAmt" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
         </apply-matter-part>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
@@ -164,15 +164,6 @@ export default {
       }
       this.showMaterielPop = !this.showMaterielPop;
     },
-    checkAmt(item) {
-      let {tdQty, tdAmountCopy1} = item;
-      if(tdQty) {
-        item.tdQty = Math.abs(toFixed(tdQty));
-      }
-      if(tdAmountCopy1) {
-        item.tdAmountCopy1 = Math.abs(toFixed(tdAmountCopy1));
-      }
-    },
     // 请求数量上线,下线
     getQtyRange(item){
       return getPriceFromSalesContractAndPrice({
@@ -246,7 +237,7 @@ export default {
       return url
     },
     // 滑动删除
-    delClick(index, sItem, key) {
+    delClick(sItem, index, key) {
       let arr = this.selItems;
       let delIndex = null;
       if(sItem.transCode){

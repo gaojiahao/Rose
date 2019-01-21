@@ -10,7 +10,7 @@
             <span class="icon-dealer-address"></span>
             <span class="cp-ads" v-if="noAddress">暂无联系地址</span>
             <span class="cp-ads" v-else>
-              {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}
+              {{dealerInfo.address}}
             </span>
           </div>
         </div>
@@ -242,7 +242,7 @@
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           tableContent.forEach(item => {
             let {province = '', city = '', county = '', address = ''} = item;
-            item.dealerAddress = !province && !city && !county && !address ? '暂无联系地址' : `${province}${city}${county}${address}`;
+            item.dealerAddress = !province && !city && !county && !address ? '暂无联系地址' : `${address}`;
           });
           this.dealerList = this.page === 1 ? tableContent : [...this.dealerList, ...tableContent];
           //获取缓存
