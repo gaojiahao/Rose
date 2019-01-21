@@ -15,16 +15,17 @@
                             @get-store="getStore" :isShowStore="true">
         </pop-warehouse-list>
         <!-- 物料列表 -->
-        <apply-matter-part v-model="showOrderPop" :show-materiel-pop="showOrderPop"
+        <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :show-matter-pop="showMatterPop" :filter-list="filterList"
           :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="matterList" 
           :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
-          :addMatter="addOrder" :sel-matter="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
-          :modify-matter="modifyMatter" :show-delete="showDelete" :show-sel-icon="showSelIcon" :del-click="delClick">
+          :add-matter-fn="getMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
+          :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
+          :chosen-matter="matter" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
         </apply-matter-part>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' 
+        <!-- <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' 
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
-        </pop-matter>
+        </pop-matter> -->
         <!-- 项目 -->
         <pop-sodl-projectList :value="project" v-model="project"></pop-sodl-projectList>
         <!--备注-->
@@ -61,7 +62,7 @@
   import { XTextarea, dateFormat } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import { commitTask, saveAndStartWf, getBaseInfoData, saveAndCommitTask, getDictByType, submitAndCalc } from 'service/commonService'
+  import { commitTask, saveAndStartWf, getBaseInfoData, saveAndCommitTask, getDictByType, submitAndCalc, requestData } from 'service/commonService'
   // mixins 引入
   import applyCommon from 'components/mixins/applyCommon'
   // 组件引入
@@ -132,7 +133,7 @@
             key: 'taxRate',
             message: '请填写税率'
           },
-        ]
+        ],
       }
     },
     methods: {
@@ -149,7 +150,6 @@
           drDealerPaymentTerm: sel.paymentTerm,
           drDealerLogisticsTerms: sel.dealerLogisticsTerms,
         };
-        this.dealerInfo.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
         if(this.matterParams.data && this.matterParams.data.dealerCode != null) {
           this.matterParams.data.dealerCode = this.dealerInfo.dealerCode
           this.matterList = [];
@@ -213,6 +213,25 @@
         let sels = JSON.parse(val);
         let orderList = {};
         sels.forEach(item => {
+          // 请求物料辅助计量的数据
+          for(let cItem of this.matterEditConfig.editPart){
+            if(cItem.fieldCode === 'assMeasureUnit'){
+              let requestParams = {
+                url: cItem.dataSource.data.url,
+                data: {
+                  inventoryCode:  item.inventoryCode
+                }
+              }
+              requestData(requestParams).then(({tableContent = []}) => {
+                tableContent.forEach(mItem => {
+                  mItem.name =  mItem.invSubUnitName;
+                  mItem.value =  mItem.invSubUnitName;
+                })
+                cItem.remoteData = tableContent
+              })
+              break
+            }
+          }
           for(let key in this.dataIndexMap){
             // 格式化日期
             if(key === 'promDeliTime'){
@@ -571,8 +590,11 @@
             county: outPut.county_dealerDebit, // 地区
             address: outPut.address_dealerDebit, // 详细地址
             paymentTerm: outPut.drDealerPaymentTerm,
+            drDealerPaymentTerm: outPut.drDealerPaymentTerm,
             dealerLogisticsTerms: formData.drDealerLogisticsTerms,
+            drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
             pamentDays: outPut.daysOfAccount,
+            daysOfAccount: outPut.daysOfAccount,
             accountExpirationDate: outPut.accountExpirationDate,
           };
           this.contactInfo = {
@@ -590,11 +612,23 @@
             warehouseAddress: outPut.warehouseAddress_containerCodeOut,
             containerOutWarehouseManager: formData.containerOutWarehouseManager, // 仓库管理员
           };
-          // 订单请求参数
-          this.orderParams = {
-            dealerCode: this.dealerInfo.dealerCode,
-            whCode: this.warehouse.warehouseCode,
+           this.warehouseStoreInfo = {
+            warehouseCode: outPut.storehouseOutCode,
+            warehouseName: outPut.warehouseName_storehouseOutCode,
+            warehouseType: outPut.warehouseType_storehouseOutCode,
+            warehouseProvince: outPut.warehouseProvince_storehouseOutCode,
+            warehouseCity: outPut.warehouseCity_storehouseOutCode,
+            warehouseDistrict: outPut.warehouseDistrict_storehouseOutCode,
+            warehouseAddress: outPut.warehouseAddress_storehouseOutCode,
           };
+          if(this.matterParams.data){
+            if(this.matterParams.data.dealerCode != null) {
+              this.matterParams.data.dealerCode = this.dealerInfo.dealerCode
+            }
+            if(this.matterParams.data.storehouseCode != null){
+              this.matterParams.data.storehouseCode = this.warehouseStoreInfo.warehouseCode;
+            }
+          }
           this.handlerDefault = {
             handler: formData.handler,
             handlerName: formData.handlerName,
@@ -636,6 +670,8 @@
             contactInfo: this.contactInfo,
             formData: this.formData,
             project: this.project,
+            warehouseStoreInfo: this.warehouseStoreInfo,
+            matterParams: this.matterParams
           }
         };
       },
@@ -715,12 +751,9 @@
         this.dealerInfo = draft.dealerInfo;
         this.contactInfo = draft.contactInfo;
         this.formData = draft.formData;
+        this.warehouseStoreInfo = draft.warehouseStoreInfo
         this.project = draft.project;
-        // 订单请求参数
-        this.orderParams = {
-          dealerCode: this.dealerInfo.dealerCode,
-          whCode: this.warehouse.warehouseCode,
-        };
+        this.matterParams = draft.matterParams;
         sessionStorage.removeItem(DRAFT_KEY);
       }
     }

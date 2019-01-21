@@ -76,10 +76,13 @@ export default {
   },
   watch: {
     // 监听父组件的传值，赋值给子组件的dealer
-    dealerInfo(val) {
-      this.dealer = {
-        ...this.dealerInfo
-      }
+    dealerInfo: {
+      handler(val){
+        this.dealer = {
+          ...this.dealerInfo
+        }
+      },
+      immediate: true
     },
     // 监听子组件的dealer,当修改了dealer中的值时，通知父组件修改
     dealer: {

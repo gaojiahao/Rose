@@ -250,7 +250,8 @@ export default {
           this.DataLength = data.length;
         }
       },
-      deep: true
+      deep: true,
+      immediate: true
     },
   },
   methods: {

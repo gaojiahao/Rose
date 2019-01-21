@@ -86,6 +86,17 @@ export let getWarehouse = (data = {}) => {
     }
   })
 };
+// TODO获取销售的出库的库位
+export let getObjWarehouseRel = (data = {}) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getObjWarehouseRel',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
+
 export let getWareHouseType = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getWareHouseType',

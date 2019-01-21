@@ -395,7 +395,7 @@
     /* 右箭头 */
     .icon-right {
       top: 50%;
-      right: .15rem;
+      right: 0;
       width: .08rem;
       height: .14rem;
       position: absolute;

@@ -4,15 +4,19 @@
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo" :dealer-params="dealerParams"
                          :defaultContact="contact"></pop-dealer-list>
-        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
+        <!-- <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part> -->
         <!-- 物料列表 -->
-        <div class="materiel_list">
-          <!-- 没有选择物料 -->
+        <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" 
+          :actions="actions" :btnInfo="btnInfo" :matter-list="matterList" :default-value="matterList" 
+          :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
+          :addMatter="addMatter" :sel-matter="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
+          :stop-order="stopOrder" :modify-matter="modifyMatter" :show-delete="showDelete" :show-sel-icon="showSelIcon" :del-click="delClick">
+        </apply-matter-part>
+        <!-- <div class="materiel_list">
+         
           <template v-if="!matterList.length">
             <div @click="showMaterielPop = !showMaterielPop" class='no-matter'>
               <div class="title">物料列表</div>
@@ -20,7 +24,7 @@
               <span class="iconfont icon-youjiantou r_arrow"></span>
             </div>
           </template>
-          <!-- 已经选择了物料 -->
+          
           <template v-else>
             <div class="title" @click="showDelete">
               <div>物料列表</div>
@@ -34,7 +38,7 @@
                 <matter-item :item="item" @on-modify="getMatterModify(item, index)" :show-delete="matterModifyClass"
                              @click.native="delClick(item, index)" :config="matterEditConfig.property">
                   <template slot="info" slot-scope="{item}">
-                    <!-- 物料数量和价格 -->
+                    
                     <div class='mater_other' v-if="item.price && item.tdQty">
                       <div class='mater_price'>
                         <span class="symbol">￥</span>{{item.price}}
@@ -59,18 +63,19 @@
             </div>
           </template>
 
-          <!-- 新增更多 按钮 -->
+         
           <div class="handle_part" v-if="matterList.length && !matterModifyClass">
             <span class="add_more stop" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'
                   @click="stopOrder">终止提交</span>
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
             <span class="add_more" v-if="matterList.length" @click="showMaterielPop = !showMaterielPop">新增更多物料</span>
           </div>
-          <!-- 物料popup -->
+          
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :config="matterPopConfig" 
                            :matter-params="matterParams" :default-value="matterList" 
                            ref="matter"></pop-matter-list>
-        </div>
+        </div> -->
+         
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
@@ -125,6 +130,7 @@ import PopMatter from 'components/apply/commonPart/MatterPop'
 import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
 import RPicker from 'components/RPicker'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
+import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 // 方法引入
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
@@ -162,7 +168,7 @@ export default {
   components: {
     XInput, XTextarea, Group, Cell, Popup,
     PopMatter, RNumber, PopMatterList, PopDealerList,
-    PopSingleSelect, Datetime, RPicker, PopBaseinfo, DealerOtherPart
+    PopSingleSelect, Datetime, RPicker, PopBaseinfo, DealerOtherPart, ApplyMatterPart
   },
   mixins: [common],
   filters: {
@@ -226,6 +232,9 @@ export default {
         item.inventoryPic = url;
       }
       return url
+    },
+    addMatter(){
+      showMaterielPop = !showMaterielPop
     },
     // 滑动删除
     delClick(sItem, index) {
@@ -540,78 +549,10 @@ export default {
 
 <style lang='scss' scoped>
   @import './../../scss/bizApply';
-
   .vux-1px-b:after,
   .vux-1px-t:before {
     border-color: #e8e8e8;
   }
 
-  .comment {
-    width: 95%;
-    margin: 0 auto;
-    background: #fff;
-    // margin-top: .1rem;
-    padding: .06rem .1rem;
-    box-sizing: border-box;
-
-    .weui-cell {
-      padding: 0;
-    }
-  }
-
-  .no_margin {
-    margin-top: 0;
-  }
-
-  .materiel_list
-  .mater_list
-  .each_mater_wrapper
-  .has_padding {
-    padding-right: .38rem;
-  }
-
-  //有效期
-  .no_top {
-    margin-top: 0;
-    // margin-bottom: 0.1rem;
-    background: #fff;
-  }
-
-  .cell-item {
-    background: #fff;
-    box-sizing: border-box;
-    padding: .02rem .1rem;
-    display: flex;
-    font-size: .14rem;
-    align-items: center;
-    justify-content: space-between;
-    height: .36rem;
-    line-height: .32rem;
-    /deep/ .weui-cell__hd {
-      color: #757575;
-    }
-    &:before {
-      display: none;
-    }
-    .title {
-      color: #757575;
-      &.required {
-        color: #5077aa;
-      }
-    }
-    .mode {
-      color: #111;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      .mode_content {
-        margin-right: .06rem;
-      }
-      .icon-shenglve {
-        font-size: .2rem;
-        color: #707070;
-      }
-    }
-  }
 
 </style>

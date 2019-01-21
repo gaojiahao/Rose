@@ -45,6 +45,8 @@ export default {
       actions: [],
       selItems: [],                               // 选中的要删除的物料
       handleORG: [],                              // 经办组织
+      filterList: [],                             // 筛选字段清单
+
       attachment : [],
       otherConfig: [],
       dealerConfig: [],      
@@ -56,6 +58,7 @@ export default {
       btnIsHide : false,
       isResubmit: false,
       showMatterPop :false,                       // 编辑物料的pop
+      showMaterielPop: false,
       matterModifyClass : false,
     }
   },
@@ -667,11 +670,18 @@ export default {
         // 判断是否只读 如果不是只读就统一塞进编辑页面
         if(editMatterPop.length) {
           for(let [index, item] of Object.entries(editMatterPop)) {
-            if(!item.readOnly) {
+            //物料信息里面有数量
+            if(item.fieldCode === 'tdQty' || item.fieldCode === 'qualityQty' || item.fieldCode === "qtyDownline"){
               editMatterPopConfig.property = editMatterPop.slice(0, index);
-              editMatterPopConfig.editPart = editMatterPop.slice(index);
+              editMatterPopConfig.editPart = editMatterPop.slice(index)
               break;
             }
+
+            // if(!item.readOnly) {
+            //   editMatterPopConfig.property = editMatterPop.slice(0, index);
+            //   editMatterPopConfig.editPart = editMatterPop.slice(index);
+            //   break;
+            // }
           }
         } 
         this.matterEditConfig = editMatterPopConfig;
