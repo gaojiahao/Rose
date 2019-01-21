@@ -1,8 +1,8 @@
 <template>
-    <div class="materiel_list">
+    <div class="materiel-list">
       <!-- 没有选择物料 -->
       <template v-if="!DataLength">
-        <div class="no_matter" @click="showPop = !showPop">
+        <div class="no-matter" @click="showPop = !showPop">
           <div class="title">{{orderListTitle}}列表</div>
           <div class="seleted_icon">
             请选择<span class="icon-right"></span>
@@ -11,12 +11,12 @@
       </template>
       <!-- 已经选择了物料 -->
       <template v-else>
-        <div class="has_matter" @click="showDeleteFn">
+        <div class="has-matter" @click="showDeleteFn">
           <div class="title">{{orderListTitle}}列表</div>
           <div class='edit' v-if='!matterModifyClass'>编辑</div>
           <div class='edit' v-else>完成</div>
         </div>
-        <div class="mater_list">
+        <div class="mater-list">
           <!-- 当传入的matterList是对象时 -->
           <template v-if="listIsObj">
             <div class="each_mater" :class="{'vux-1px-t' : index > 0}"
@@ -67,14 +67,12 @@
         </div>
       </template>
       <!-- 新增更多 按钮 -->
-      <div class="handle_part" v-if="DataLength && !matterModifyClass">
-        <span class="add_more stop" v-if="this.actions.includes('stop')"
-              @click="stopOrderFn">终止提交</span>
-        <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
+      <div :class="[isSubmitAgain ? 'resubmit-part' : 'sumbit-part']" v-if="DataLength && !matterModifyClass">
         <div class="add_more" v-if="DataLength" @click="addMatterFn">
           <span class="icon-add"></span>
           <span class="add_text">新增更多物料</span>
         </div>
+        <span class="add_more stop" v-if="this.actions.includes('stop')" @click="stopOrderFn">终止提交</span>
       </div>
       <!-- 物料popup -->
       <pop-matter-list  :show="showPop" v-model="showPop" @shut-down-outsidePop="closePop" @sel-matter="selMatterFn" :config="matterPopConfig"
@@ -230,6 +228,9 @@ export default {
     listIsObj() {
       let data = this.matterList;
       return Object.prototype.toString.call(data) === '[object Object]';
+    },
+    isSubmitAgain() {
+      return this.btnInfo.isMyTask === 1 && this.btnInfo.actions.includes("stop")
     }
   },
   watch: {
@@ -263,30 +264,29 @@ export default {
   },
   data() {
     return {
+      DataLength: 0,
       showPop: false,              // 物料选择器
       showModifyPop: false,          // 物料信息编辑器
-      DataLength: 0,
     }
   }
 }
 </script>
 
 <style scoped lang='scss'>
-// @import './../../scss/bizApply';
-.materiel_list {
-  position: relative;
+.materiel-list {
   padding: 0 .15rem;
-  margin-bottom: .1rem;
   font-size: .14rem;
+  position: relative;
   background: #FFF;
+  margin-bottom: .1rem;
   box-sizing: border-box;
   // 没有物料title样式
-  .no_matter {
-    padding: .18rem 0;
-    line-height: .14rem;
+  .no-matter {
     display: flex;
-    justify-content: space-between;
+    padding: .18rem 0;
     font-size: .14rem;
+    line-height: .14rem;
+    justify-content: space-between;
     .title{
       color: #3296FA;
       font-weight: bold;
@@ -302,11 +302,11 @@ export default {
     }
   }
   // 有物料的title的样式
-  .has_matter {
-    padding-top: .28rem;
+  .has-matter {
     display: flex;
-    justify-content: space-between;
+    padding-top: .28rem;
     line-height: .14rem;
+    justify-content: space-between;
     .title {
       color: #696969;
     }
@@ -316,7 +316,7 @@ export default {
 
   }
   // 物料列表
-  .mater_list {
+  .mater-list {
     box-sizing: border-box;
     .vux-1px-b:after {
       border-bottom: 1px solid #e8e8e8;
@@ -338,12 +338,12 @@ export default {
       padding-left: 0.3rem;
     }
     .delete_icon{
-      height: 20px;
-      position: absolute;
-      top:50%;
       left: 0;
-      transform: translateY(-50%);
+      top: 50%;
+      height: 20px;
       fill: #999;
+      position: absolute;
+      transform: translateY(-50%);
       .checked{
         fill: #FA7138;
       }
@@ -387,11 +387,32 @@ export default {
     }
   }
   // 新增更多
-  .handle_part {
+  .sumbit-part {
     width: 100%;
+    display: flex;
     text-align: center;
     position: relative;
-    display: flex;
+    .add_more {
+      display: flex;
+      color: #3296FA;
+      font-weight: bold;
+      text-align: center;
+      align-items: center;
+      margin: 0 auto .2rem;
+      border-radius: .15rem;
+      padding: .06rem .08rem;
+      border: 1px solid #3296FA;
+      .icon-add {
+        width: .14rem;
+        height: .14rem;
+        box-sizing: border-box;
+        margin: .015rem .05rem 0 0;
+      }
+      .add_text {
+        font-size: .12rem;
+        line-height: .12rem;
+      }
+    }
     .symbol {
       left: 50%;
       bottom: 25%;
@@ -405,26 +426,30 @@ export default {
       background: #ea5455;
       box-shadow: 0 2px 5px #ea5455;
     }
+
   }
-  .add_more {
-    padding: .06rem .08rem;
-    text-align: center;
-    color: #3296FA;
-    font-weight: bold;
-    margin: 0 auto .2rem;
-    border-radius: .15rem;
-    border: 1px solid #3296FA;
+  .resubmit-part {
+    width: 100%;
     display: flex;
-    align-items: center;
-    .icon-add {
-      width: .14rem;
-      height: .14rem;
-      box-sizing: border-box;
-      margin: .015rem .05rem 0 0;
-    }
-    .add_text {
-      font-size: .12rem;
-      line-height: .12rem;
+    padding: .1rem 0;
+    font-size: .12rem;
+    text-align: center;
+    position: relative;
+    justify-content: flex-end;
+    .add_more {
+      color: #FFF;
+      font-weight: bold;
+      text-align: center;
+      background: #3296FA;
+      border-radius: .04rem;
+      padding: .08rem .04rem;
+      &.stop {
+        color: #a1a1a1;
+        background: #dfdfdf;
+      }
+      & + .add_more {
+        margin-left: .1rem;
+      }
     }
   }
 }

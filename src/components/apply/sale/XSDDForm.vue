@@ -53,27 +53,21 @@
 
 <script>
 // vux组件引入
-import {Popup, TransferDom, Group, Cell, numberComma, Datetime, XInput, XTextarea, dateFormat} from 'vux'
+import { dateFormat, numberComma, XTextarea } from 'vux'
 // 请求 引入
-import {getSOList} from 'service/detailService'
-import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc, getPriceFromSalesContractAndPrice} from 'service/commonService'
+import { getSOList } from 'service/detailService'
+import { saveAndStartWf, saveAndCommitTask, submitAndCalc, getPriceFromSalesContractAndPrice} from 'service/commonService'
 // mixins 引入
 import common from 'components/mixins/applyCommon'
 // 组件引入
-import RNumber from 'components/RNumber'
-import PopMatterList from 'components/Popup/PopMatterListTest'
 import PopDealerList from 'components/Popup/PopDealerList'
 import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
-import PopSingleSelect from 'components/Popup/PopSingleSelect'
-import PopMatter from 'components/apply/commonPart/MatterPop'
-import RPicker from 'components/basicPicker'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 // 方法引入
-import {accAdd, accMul, accDiv, accSub} from '@/home/pages/maps/decimalsAdd'
+import { accMul, accSub  } from '@/home/pages/maps/decimalsAdd'
 import { toFixed } from '@/plugins/calc'
 const DRAFT_KEY = 'XSDD_DATA';
-
 export default {
   data() {
     return {
@@ -91,29 +85,21 @@ export default {
       ],        
       showMatterPop: false,
       showMaterielPop: false, // 是否显示物料的popup
-      transMode: [], // 结算方式 数组
-      matterList: [], // 物料列表
       numMap: {}, // 用于记录订单物料的数量和价格
       formData: {},
-      dealerInfo: {},
       orderList: {},
+      dealerInfo: {},
       modifyKey: null,
       contactInfo: {},
+      matterList: [], // 物料列表
     }
   },
-  directives: {
-    TransferDom
-  },
   components: {
-    ApplyMatterPart,
-    XInput, XTextarea, Group, Cell, Popup,
-    PopMatter, RNumber, PopMatterList, PopDealerList,
-    PopSingleSelect, Datetime, RPicker, PopBaseinfo, DealerOtherPart
+    XTextarea,
+    PopBaseinfo, PopDealerList, DealerOtherPart, ApplyMatterPart
   },
   mixins: [common],
-  filters: {
-    numberComma,
-  },
+  filters: { numberComma },
   methods: {
     // 选中的客户
     selDealer(val) {
