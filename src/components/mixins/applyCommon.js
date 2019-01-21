@@ -45,6 +45,8 @@ export default {
       actions: [],
       selItems: [],                               // 选中的要删除的物料
       handleORG: [],                              // 经办组织
+      filterList: [],                             // 筛选字段清单
+
       attachment : [],
       otherConfig: [],
       dealerConfig: [],      
@@ -56,6 +58,7 @@ export default {
       btnIsHide : false,
       isResubmit: false,
       showMatterPop :false,                       // 编辑物料的pop
+      showMaterielPop: false,
       matterModifyClass : false,
     }
   },
