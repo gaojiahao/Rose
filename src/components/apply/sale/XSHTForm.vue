@@ -9,11 +9,29 @@
                          :defaultContact="contact"></pop-dealer-list>
         <!-- <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part> -->
         <!-- 物料列表 -->
-        <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" 
+        <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :show-matter-pop="showMatterPop" 
           :actions="actions" :btnInfo="btnInfo" :matter-list="matterList" :default-value="matterList" 
           :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
-          :addMatter="addMatter" :sel-matter="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
-          :stop-order="stopOrder" :modify-matter="modifyMatter" :show-delete="showDelete" :show-sel-icon="showSelIcon" :del-click="delClick">
+          :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
+          :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
+          :chosen-matter="matter" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
+          <template slot="info" slot-scope="{item}">
+            <div class="matter_info_item">
+              <div class="matter_detail" v-if="item.qtyDownline">
+                <span class="matter_item_title">数量下线:</span>
+                <span class="matter_item_value">{{item.qtyDownline}}</span>
+              </div>
+              <div class="matter_detail" v-if="item.qtyOnline">
+                <span class="matter_item_title">数量上线:</span>
+                <span class="matter_item_value">{{item.qtyOnline}}</span>
+              </div>
+            </div>      
+            <div class='mater_other' v-if="item.price">
+              <div class='mater_price'>
+                <span class="symbol">￥</span>{{item.price}}
+              </div>
+            </div>
+          </template>
         </apply-matter-part>
         <!-- <div class="materiel_list">
          
@@ -77,9 +95,9 @@
         </div> -->
          
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <!-- <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
-        </pop-matter>
+        </pop-matter> -->
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
@@ -88,8 +106,11 @@
       </div>
     </div>
     <!-- 底部提交确认栏 -->
+    <!-- <div class='btn-no-amt vux-1px-t' :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
+      <div class="btn-item" @click="submitOrder">提交</div>
+    </div> -->
     <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
-      <span class="count_num"
+      <!-- <span class="count_num"
             :class="{nine_up : tdAmount.length  > 8 ,
           ten_up : tdAmount.length  > 9,
           ele_up : tdAmount.length  > 10}">
@@ -97,7 +118,7 @@
           <span class="symbol">￥</span>{{tdAmount | numberComma(3)}}
         </span>
         <span class="taxAmount">[含税: ￥{{taxAmount | numberComma(3)}}]</span>
-      </span>
+      </span> -->
       <span class="count_btn" @click="submitOrder">提交</span>
     </div>
     <!-- 底部删除确认栏 -->
@@ -199,26 +220,17 @@ export default {
     selContact(val) {
       this.contact = {...val};
     },
-    // TODO 展示时间选择器
-    dateSelect(key = '') {
-      this.$vux.datetime.show({
-        confirmText: '确定',
-        cancelText: '取消',
-        value: this.dealerInfo[key],
-        onConfirm: (value) => {
-          this.dealerInfo[key] = value;
-        }
-      })
-    },
     // TODO 选中物料项
     selMatter(val) {
       let sels = JSON.parse(val); 
       sels.map(item => {
-        item.tdQty = item.tdQty || '';
+        this.submitMatterField.forEach(sItem => {
+          if(sItem.fieldCode !== 'price' && sItem.showFieldCode){
+            item[sItem.fieldCode] = item[sItem.fieldCode] || item[sItem.showFieldCode] 
+          }
+        })
         item.price = item.price || '';
         item.taxRate = item.taxRate || 0.16;
-        item.dateActivation = item.dateActivation || '';
-        item.executionDate = item.executionDate || '';
         item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
         item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
         item.assMeasureDescription =  item.assMeasureDescription || item.invSubUnitComment || null; // 辅助计量说明
@@ -234,7 +246,7 @@ export default {
       return url
     },
     addMatter(){
-      showMaterielPop = !showMaterielPop
+      this.showMaterielPop = !this.showMaterielPop
     },
     // 滑动删除
     delClick(sItem, index) {
@@ -300,11 +312,11 @@ export default {
           childKey: 'dealerName',
           message: '请选择客户'
         }, 
-        {
-          key: 'dealerInfo',
-          childKey: 'validUntil',
-          message: '请选择合同到期日'
-        },
+        // {
+        //   key: 'dealerInfo',
+        //   childKey: 'validUntil',
+        //   message: '请选择合同到期日'
+        // },
         // {
         //   key: 'dealerInfo',
         //   childKey: 'tdAmountCopy1',
@@ -335,35 +347,43 @@ export default {
           return true;
         })
         this.matterList.every(item => {
-          this.validateMap.every( val => {
-            if(!item[val.key]) {
-              warn = val.message;
-              return false;
+          let oItem = {};
+          for(let sItem of this.submitMatterField){
+            if(!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode]){
+              warn = `${sItem.text}不为空`
+              break;
             }
-            return true;
-          })
-          let obj = {
-            tdId: item.tdId || '',
-            inventoryName_transObjCode: item.inventoryName, // 物料名称
-            transObjCode: item.inventoryCode, // 物料编码
-            tdProcessing: item.processing, // 加工属性
-            assMeasureUnit: item.assMeasureUnit,
-            assMeasureDescription: item.assMeasureDescription,
-            assMeasureScale: item.assMeasureScale,
-            tdQty: item.tdQty, // 数量
-            assistQty: item.assistQty,
-            price: item.price, // 单价
-            tdAmount: item.tdAmount,
-            taxRate: item.taxRate, // 税金
-            noTaxPrice: item.noTaxPrice,
-            taxAmount: item.taxAmount, // 税金
-            noTaxAmount: item.noTaxAmount,
-            dateActivation: item.dateActivation,  // 交付开始日
-            executionDate: item.executionDate,  // 交付截止日
-            comment: item.comment || '', // 说明
-          };
-          dataSet.push(obj);
-          return true
+            oItem[sItem.fieldCode] = item[sItem.fieldCode] != null ? item[sItem.fieldCode] : null
+          }
+          // this.validateMap.every( val => {
+          //   if(!item[val.key]) {
+          //     warn = val.message;
+          //     return false;
+          //   }
+          //   return true;
+          // })
+          // let obj = {
+          //   tdId: item.tdId || '',
+          //   inventoryName_transObjCode: item.inventoryName, // 物料名称
+          //   transObjCode: item.inventoryCode, // 物料编码
+          //   tdProcessing: item.processing, // 加工属性
+          //   assMeasureUnit: item.assMeasureUnit,
+          //   assMeasureDescription: item.assMeasureDescription,
+          //   assMeasureScale: item.assMeasureScale,
+          //   tdQty: item.tdQty, // 数量
+          //   assistQty: item.assistQty,
+          //   price: item.price, // 单价
+          //   tdAmount: item.tdAmount,
+          //   taxRate: item.taxRate, // 税金
+          //   noTaxPrice: item.noTaxPrice,
+          //   taxAmount: item.taxAmount, // 税金
+          //   noTaxAmount: item.noTaxAmount,
+          //   dateActivation: item.dateActivation,  // 交付开始日
+          //   executionDate: item.executionDate,  // 交付截止日
+          //   comment: item.comment || '', // 说明
+          // };
+          dataSet.push(oItem);
+          
         });
       }
       if (warn) {
@@ -394,8 +414,6 @@ export default {
           let common = {
             dealerDebit: this.dealerInfo.dealerCode,
             drDealerLabel: this.dealerInfo.dealerLabelName,
-            drDealerPaymentTerm: this.dealerInfo.paymentTerm,
-            daysOfAccount: this.dealerInfo.pamentDays,
           };
           let submitData = {
             listId: this.listId,
@@ -410,16 +428,6 @@ export default {
                 ...common,
                 dataSet
               },
-              inPut: {
-                ...common,
-                validUntil: this.dealerInfo.validUntil, // 合同到期日
-                dataSet: [{
-                  thenTotalAmntBal: this.thenTotalAmntBal, // 合同总金额 
-                  tdAmountCopy1: this.dealerInfo.tdAmountCopy1, // 预收款
-                  advancePaymentDueDate: this.dealerInfo.advancePaymentDueDate, // 预收到期日
-                }]
-              },
-              promDeliTime: '', // 预期交货日
             }),
             wfPara: JSON.stringify(wfPara)
           }
@@ -493,12 +501,12 @@ export default {
           city: formData.order.city_dealerDebit,
           county: formData.order.county_dealerDebit,
           address: formData.order.address_dealerDebit,
-          paymentTerm: formData.order.drDealerPaymentTerm,
-          dealerLogisticsTerms: formData.drDealerLogisticsTerms,
-          pamentDays: formData.inPut.daysOfAccount,
-          validUntil: formData.inPut.validUntil,
-          tdAmountCopy1: formData.inPut.dataSet[0].tdAmountCopy1,
-          advancePaymentDueDate: formData.inPut.dataSet[0].advancePaymentDueDate,
+          // paymentTerm: formData.order.drDealerPaymentTerm,
+          // dealerLogisticsTerms: formData.drDealerLogisticsTerms,
+          // pamentDays: formData.inPut.daysOfAccount,
+          // validUntil: formData.inPut.validUntil,
+          // tdAmountCopy1: formData.inPut.dataSet[0].tdAmountCopy1,
+          // advancePaymentDueDate: formData.inPut.dataSet[0].advancePaymentDueDate,
         };
         // 订单信息
         this.contact = {
