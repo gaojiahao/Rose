@@ -50,7 +50,7 @@
               <div class="each_mater"
                    :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1}"
                    v-for="(item, index) in matterList" :key='index'>
-                <matter-item :item="item" @on-modify="modifyMatter(item, index)" :show-delete="matterModifyClass"
+                <matter-item :item="item" @on-modify="getMatterModify(item, index)" :show-delete="matterModifyClass"
                              @click.native="delClick(item, index)" :config="matterEditConfig.property">
                   <template slot="info" slot-scope="{item}">
                     <!-- 物料属性和单位 -->
@@ -75,13 +75,13 @@
                   </template>
                   <template slot="editPart" slot-scope="{item}">
                     <div class="edit-part vux-1px-l"
-                         @click="modifyMatter(item, index)"
+                         @click="getMatterModify(item, index)"
                          v-show="item.price && !matterModifyClass">
                       <span class='iconfont icon-bianji1'></span>
                     </div>
                   </template>
                   <template slot="edit" slot-scope="{item}">
-                    <div class='mater_other' @click="modifyMatter(item, index)" v-if="!item.price && !matterModifyClass">
+                    <div class='mater_other' @click="getMatterModify(item, index)" v-if="!item.price && !matterModifyClass">
                       <div class="edit-tips">
                         <span class="tips-word">点击进行填写</span>
                       </div>

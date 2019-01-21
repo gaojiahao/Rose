@@ -252,11 +252,6 @@
     }
     &.ele_up {
       font-size: .12rem;
-      // .total_price {
-      //   .symbol {
-      //     font-size: .1rem;
-      //   }
-      // }
       .taxAmount {
         font-size: .1rem;
       }
@@ -365,3 +360,41 @@
 .btn_hide{
   display: none;
 }
+.mater_other {
+  display: flex;
+  margin-top: .1rem;
+  align-items: center;
+  position: relative;
+  justify-content: space-between;
+  //内容可编辑提示
+  .edit-tips{
+    font-size: 0.12rem;
+    color: #454545;
+    font-weight: bold;
+    .icon-tianxie {
+      font-size: .14rem;
+    }
+    .tips-word {
+      font-size: .12rem;
+    }
+  }
+  .mater_price {
+    color: #FA7138;
+    font-weight: bold;
+    font-size: .16rem;
+    line-height: .2rem;
+    display: inline-block;
+  }
+  .matter-remain {
+    color: #111;
+    font-size: .14rem;
+    font-weight: bold;
+    .symbol {
+      color: #757575;
+    }
+    .icon--{
+      font-size: 0.14rem;
+    }
+  }
+}
+

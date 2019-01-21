@@ -179,7 +179,7 @@
         }
       },
       // TODO 显示物料修改的pop
-      modifyMatter(item, index, key) {
+      getMatterModify(item, index, key) {
         this.matter = JSON.parse(JSON.stringify(item));
         this.showMatterPop = true;
         this.modifyIndex = index;

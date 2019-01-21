@@ -11,16 +11,13 @@
                          :defaultContact="contactInfo"></pop-dealer-list>
         <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
         <!-- 物料列表 -->
-        <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :filter-list="filterList"
+        <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :show-matter-pop="showMatterPop" :filter-list="filterList"
           :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="matterList" 
           :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
-          :addMatter="addMatter" :sel-matter="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
-          :stop-order="stopOrder" :modify-matter="modifyMatter" :show-delete="showDelete" :show-sel-icon="showSelIcon" :del-click="delClick">
+          :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
+          :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
+          :chosen-matter="matter" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
         </apply-matter-part>
-        <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
-        </pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
@@ -31,10 +28,9 @@
     <!-- 底部提交确认栏 -->
     <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
       <span class="count_num"
-            :class="{nine_up : tdAmount.length  > 8 ,
-          ten_up : tdAmount.length  > 9,
-          ele_up : tdAmount.length  > 10}"
-      >
+            :class="{nine_up : tdAmount.length  > 8, 
+                     ten_up : tdAmount.length  > 9, 
+                     ele_up : tdAmount.length  > 10}">
         <span class="total_price">
           <span class="symbol">￥</span>{{tdAmount | numberComma(3)}}
         </span>
@@ -153,7 +149,7 @@ export default {
       this.contactInfo = {...val};
     },
     // TODO 显示物料修改的pop
-    modifyMatter(item, index, key) {
+    getMatterModify(item, index, key) {
       this.matter = JSON.parse(JSON.stringify(item));
       this.showMatterPop = true;
       this.modifyIndex = index;
@@ -197,7 +193,6 @@ export default {
         matCodes: item.inventoryCode,
         dealerCode: this.dealerInfo.dealerCode
       }).then(({ data = [] }) => {
-        if(data.length){
           let [priceTag = {}] = data;
           let defaultKey = ['qtyOnline', 'qtyDownline'];
           // 动态添加字段
@@ -211,7 +206,6 @@ export default {
             }
           }
           item.otherField = {...priceTag};
-        } 
       })
     },
     // TODO 选中物料项
@@ -571,7 +565,6 @@ export default {
             orderList.noCode.push(item);
           }
         });
-        console.log(orderList);
         this.handlerDefault = {
           handler: formData.handler,
           handlerName: formData.handlerName,

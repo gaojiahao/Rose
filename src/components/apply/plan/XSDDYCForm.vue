@@ -32,7 +32,7 @@
               <div class="each_mater"
                    :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1}"
                    v-for="(item, index) in matterList" :key='index'>
-                <matter-item :item="item" @on-modify="modifyMatter(item, index)" :show-delete="matterModifyClass"
+                <matter-item :item="item" @on-modify="getMatterModify(item, index)" :show-delete="matterModifyClass"
                              @click.native="delClick(item, index)" :config="matterEditConfig.property">
                   <template slot="info" slot-scope="{item}">
                     <!-- 物料数量和价格 -->
@@ -47,7 +47,7 @@
                     </div>
                   </template>
                   <template slot="editPart" slot-scope="{item}">
-                    <div class="edit-part vux-1px-l" @click="modifyMatter(item, index)"
+                    <div class="edit-part vux-1px-l" @click="getMatterModify(item, index)"
                          v-show="(item.price && item.tdQty) &&!matterModifyClass">
                       <span class='iconfont icon-bianji1'></span>
                     </div>
