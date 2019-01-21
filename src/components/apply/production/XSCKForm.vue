@@ -61,7 +61,7 @@
   import { XTextarea, dateFormat } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import { commitTask, saveAndStartWf, getBaseInfoData, saveAndCommitTask, getDictByType, submitAndCalc } from 'service/commonService'
+  import { commitTask, saveAndStartWf, getBaseInfoData, saveAndCommitTask, getDictByType, submitAndCalc, requestData } from 'service/commonService'
   // mixins 引入
   import applyCommon from 'components/mixins/applyCommon'
   // 组件引入
@@ -213,6 +213,25 @@
         let sels = JSON.parse(val);
         let orderList = {};
         sels.forEach(item => {
+          // 请求物料辅助计量的数据
+          for(let cItem of this.matterEditConfig.editPart){
+            if(cItem.fieldCode === 'assMeasureUnit'){
+              let requestParams = {
+                url: cItem.dataSource.data.url,
+                data: {
+                  inventoryCode:  item.inventoryCode
+                }
+              }
+              requestData(requestParams).then(({tableContent = []}) => {
+                tableContent.forEach(mItem => {
+                  mItem.name =  mItem.invSubUnitName;
+                  mItem.value =  mItem.invSubUnitName;
+                })
+                cItem.remoteData = tableContent
+              })
+              break
+            }
+          }
           for(let key in this.dataIndexMap){
             // 格式化日期
             if(key === 'promDeliTime'){

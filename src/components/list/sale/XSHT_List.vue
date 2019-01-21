@@ -13,7 +13,7 @@
                 ref="bScroll">
         <apply-chart v-if='chartShow'></apply-chart>
         <div class='list' v-else>
-          <mater-list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)" ></mater-list-item>
+          <mater-list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)" noQty noCount></mater-list-item>
         </div>
 
       </r-scroll>
@@ -35,7 +35,7 @@
           {name: '已生效', status: '已生效'},
           {name: '进行中', status: '进行中'}
         ],
-        listViewID : 2545,
+        listViewID : 2584,
         chartShow : false,
         hasNext: true,
         scrollOptions: {
