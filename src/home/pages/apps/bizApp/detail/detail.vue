@@ -143,7 +143,7 @@ export default {
   beforeRouteLeave(to, from, next) {
     let { path } = to;
     let goLists = ['LIST', 'MSGHOME', 'FILLFORM'];
-    let isGoList = goLists.indexOf(to.name);
+    let isGoList = goLists.includes(to.name);
     this.$HandleLoad.hide();
     if (isGoList) {
       this.currentComponent = null;
