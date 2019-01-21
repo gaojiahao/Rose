@@ -178,38 +178,44 @@ export default {
     },
     // 终止订单
     stopOrder() {
-      this.$vux.confirm.prompt('', {
-        title: '审批意见',
-        onConfirm: (value) => {
-          this.$HandleLoad.show();
-          if (value) {
-            this.comment = value;
-          }
-          let submitData = {
-            taskId: this.taskId,
-            taskData: JSON.stringify({
-              result: -1,
-              transCode: this.transCode,
-              comment: this.comment
-            })
-          }
-          commitTask(submitData).then(data => {
-            this.$HandleLoad.hide();
-            let {success = false, message = '提交失败'} = data;
-            if (success) {
-              message = '终止成功';
-              this.$emit('change', true);
-            }
-            this.$vux.alert.show({
-              content: message,
-              onHide: () => {
-                if (success) {
-                  this.judgePage();
-                }
+      this.$vux.confirm.show({
+        title: '温馨提示',
+        content: '终止提交意味着此单将会失效，确认吗？',
+        onConfirm: () => {
+          this.$vux.confirm.prompt('', {
+            title: '审批意见',
+            onConfirm: (value) => {
+              this.$HandleLoad.show();
+              if (value) {
+                this.comment = value;
               }
-            });
-          }).catch(e => {
-            this.$HandleLoad.hide();
+              let submitData = {
+                taskId: this.taskId,
+                taskData: JSON.stringify({
+                  result: -1,
+                  transCode: this.transCode,
+                  comment: this.comment
+                })
+              }
+              commitTask(submitData).then(data => {
+                this.$HandleLoad.hide();
+                let {success = false, message = '提交失败'} = data;
+                if (success) {
+                  message = '终止成功';
+                  this.$emit('change', true);
+                }
+                this.$vux.alert.show({
+                  content: message,
+                  onHide: () => {
+                    if (success) {
+                      this.judgePage();
+                    }
+                  }
+                });
+              }).catch(e => {
+                this.$HandleLoad.hide();
+              })
+            }
           })
         }
       })
@@ -336,7 +342,8 @@ export default {
       // 在企业微信的提醒中打开重新提交页面history为1，此时终止成功则跳转详情页
       if (window.history.length !== 1) {
         this.$router.go(-1);
-      } else {
+      } 
+      else {
         let {name} = this.$route.query;
         let {folder, fileName} = this.$route.params;
         this.$router.replace({
