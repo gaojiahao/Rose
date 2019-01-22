@@ -5,15 +5,10 @@
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"
                       :status-data="currentStage" v-model="formData.biProcessStatus"></pop-baseinfo>
-        <!-- <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker> -->
         <!-- 用户地址和基本信息-->
         <pop-dealer-list :defaultValue="dealerInfo" :default-contact="contactInfo" @sel-dealer="selDealer"
                          :dealer-params="dealerParams" @sel-contact="selContact"></pop-dealer-list>
-        <!-- 结算方式 -->
-        <!--<dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>-->
-        <!-- 仓库-->
-        <!--<pop-warehouse-list isRequired :default-value="warehouse" @sel-item="selWarehouse"></pop-warehouse-list>-->
+        <!-- 仓库、库位-->
         <pop-warehouse-list isRequired :default-value="warehouse" @sel-item="selWarehouse"
                             :default-store="warehouseStoreInfo"
                             @get-store="getStore" is-show-store></pop-warehouse-list>
@@ -34,7 +29,6 @@
         </apply-matter-part>
         <!-- 项目 -->
         <pop-project-list :defaultValue="project" @sel-project="selProject"></pop-project-list>
-
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>

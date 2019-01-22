@@ -25,29 +25,10 @@
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       </div>
     </div>
-    <!-- 底部提交确认栏 -->
-    <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
-      <span class="count_num"
-            :class="{nine_up : tdAmount.length  > 8, 
-                     ten_up : tdAmount.length  > 9, 
-                     ele_up : tdAmount.length  > 10}">
-        <span class="total_price">
-          <span class="symbol">￥</span>{{tdAmount | numberComma(3)}}
-        </span>
-        <span class="taxAmount">[含税: ￥{{taxAmount | numberComma(3)}}]</span>
-      </span>
-      <span class="count_btn" @click="submitOrder">提交</span>
-    </div>
-    <!-- 底部删除确认栏 -->
-    <div class="count_mode vux-1px-t delete_mode" :class="{btn_hide : btnIsHide}" v-else>
-      <div class='count_num all_checked' @click="checkAll">
-        <x-icon type="ios-circle-outline" size="20" class='outline'
-                v-show="selItems.length !== matterList.length"></x-icon>
-        <x-icon type="ios-checkmark" size="20" class="checked" v-show="selItems.length === matterList.length"></x-icon>
-        全选
-      </div>
-      <div class='delete_btn' @click="deleteCheckd">删除</div>
-    </div>
+    <!-- 底部按钮 -->
+    <op-button :is-modify="matterModifyClass" :hide="btnIsHide" :td-amount="tdAmount" :tax-amount="taxAmount"
+               :all-check="selItems.length === matterList.length" @on-submit="submitOrder" @on-check-all="checkAll"
+               @on-delete="deleteCheckd"></op-button>
   </div>
 </template>
 
@@ -61,8 +42,9 @@ import { saveAndStartWf, saveAndCommitTask, submitAndCalc, getPriceFromSalesCont
 import common from 'components/mixins/applyCommon'
 // 组件引入
 import PopDealerList from 'components/Popup/PopDealerList'
-import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
+import OpButton from 'components/apply/commonPart/OpButton'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
+import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
 import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 // 方法引入
 import { accMul, accSub  } from '@/home/pages/maps/decimalsAdd'
@@ -78,9 +60,6 @@ export default {
         }, {
           name: '物料编码',
           value: 'inventoryCode',
-        }, {
-          name: '合同号',
-          value: 'transCode',
         }
       ],        
       showMatterPop: false,
@@ -95,7 +74,7 @@ export default {
     }
   },
   components: {
-    XTextarea,
+    XTextarea, OpButton,
     PopBaseinfo, PopDealerList, DealerOtherPart, ApplyMatterPart
   },
   mixins: [common],

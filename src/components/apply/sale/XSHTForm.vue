@@ -40,29 +40,9 @@
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       </div>
     </div>
-    <!-- 底部提交确认栏 -->
-    <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
-      <!-- <span class="count_num"
-            :class="{nine_up : tdAmount.length  > 8 ,
-          ten_up : tdAmount.length  > 9,
-          ele_up : tdAmount.length  > 10}">
-        <span class="total_price">
-          <span class="symbol">￥</span>{{tdAmount | numberComma(3)}}
-        </span>
-        <span class="taxAmount">[含税: ￥{{taxAmount | numberComma(3)}}]</span>
-      </span> -->
-      <span class="count_btn" @click="submitOrder">提交</span>
-    </div>
-    <!-- 底部删除确认栏 -->
-    <div class="count_mode vux-1px-t delete_mode" :class="{btn_hide : btnIsHide}" v-else>
-      <div class='count_num all_checked' @click="checkAll">
-        <x-icon type="ios-circle-outline" size="20" class='outline'
-                v-show="selItems.length !== matterList.length"></x-icon>
-        <x-icon type="ios-checkmark" size="20" class="checked" v-show="selItems.length === matterList.length"></x-icon>
-        全选
-      </div>
-      <div class='delete_btn' @click="deleteCheckd">删除</div>
-    </div>
+    <op-button :is-modify="matterModifyClass" :hide="btnIsHide" :td-amount="tdAmount" :tax-amount="taxAmount"
+               :all-check="selItems.length === matterList.length" @on-submit="submitOrder" @on-check-all="checkAll"
+               @on-delete="deleteCheckd"></op-button>
   </div>
 </template>
 
@@ -84,6 +64,7 @@ import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
 import RPicker from 'components/RPicker'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
+import OpButton from 'components/apply/commonPart/OpButton'
 // 方法引入
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
@@ -119,7 +100,7 @@ export default {
     },
   },
   components: {
-    XInput, XTextarea, Group, Cell, Popup,
+    XInput, XTextarea, Group, Cell, Popup, OpButton,
     PopMatter, RNumber, PopMatterList, PopDealerList,
     PopSingleSelect, Datetime, RPicker, PopBaseinfo, DealerOtherPart, ApplyMatterPart
   },
