@@ -19,16 +19,18 @@
                             @get-store="getStore" is-show-store></pop-warehouse-list>
         <!-- 物料列表 -->
         <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop"
-                           :show-matter-pop="showMatterPop" :filter-list="filterList"
-                           :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="matterList"
+                           :show-matter-pop="showMatterPop" :filter-list="filterList" :actions="actions"
+                           :btnInfo="btnInfo" :matter-list="orderList" :default-value="matterList"
                            :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig"
-                           :order-list-title="orderListTitle" :matter-params="matterParams"
-                           :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems"
-                           :matter-modify-class="matterModifyClass"
+                           :order-list-title="orderListTitle" :matter-params="matterParams" :add-matter-fn="addMatter"
+                           :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
                            :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify"
                            :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
-                           :chosen-matter="matter" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide"
-                           @show-down-modify-pop="shutDownModify">
+                           :chosen-matter="matter" :check-amt-fn="checkAmt" :sel-confirm-fn="selConfirm"
+                           :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
+          <template slot="rNumber" slot-scope="{item}">
+            <r-number :num="item.tdQty" :max="Number(item.thenQtyBal)" v-model="item.tdQty"></r-number>
+          </template>
         </apply-matter-part>
         <!-- 项目 -->
         <pop-project-list :defaultValue="project" @sel-project="selProject"></pop-project-list>
@@ -229,6 +231,7 @@
         let orderList = {};
         sels.forEach(item => {
           let key = `${item.transCode}_${item.inventoryCode}`;
+          let orderListKey = item.transCode ? item.transCode : 'noCode';
           let {
             tdQty = '',
             price = item.salesOutPrice,
@@ -243,10 +246,10 @@
           item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
           item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
           item.assMeasureDescription = item.assMeasureDescription || item.invSubUnitComment || null; // 辅助计量说明
-          if (!orderList[item.transCode]) {
-            orderList[item.transCode] = [];
+          if (!orderList[orderListKey]) {
+            orderList[orderListKey] = [];
           }
-          orderList[item.transCode].push(item);
+          orderList[orderListKey].push(item);
         });
         this.numMap = {};
         this.matterList = sels;
@@ -367,41 +370,18 @@
         if (!warn && !Object.keys(this.orderList).length) {
           warn = '请选择物料'
         }
+        let submitMatterField = this.submitMatterField;
         // 组装dataSet
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
-            if (!item.tdQty && item.tdQty !== 0) {
-              warn = '请填写退货数量';
-              break
-            }
-            if (!item.price && item.price !== 0) {
-              warn = '请填写出库单价';
-              break
-            }
-            if (!item.taxRate && item.taxRate !== 0) {
-              warn = '请填写税率';
-              break
-            }
-            let oItem = {
-              transMatchedCode: item.transCode, // 明细被核销交易号
-              transObjCode: item.inventoryCode, // 输出物料
-              assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
-              assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null, // 与单位倍数
-              assMeasureDescription: item.assMeasureDescription !== undefined ? item.assMeasureDescription : null,
-              tdProcessing: item.processing, // 加工属性
-              thenQtyBal: item.thenQtyBal, // 可退货数量
-              tdQty: item.tdQty, // 退货数量
-              assistQty: item.assistQty || 0, // 辅计数量（明细）
-              price: item.price, // 明细单价
-              tdAmount: item.tdAmount,
-              taxRate: item.taxRate, // 税率
-              noTaxPrice: item.noTaxPrice,
-              taxAmount: item.taxAmount, // 税金
-              noTaxAmount: item.noTaxAmount,
-              comment: item.comment || '', // 说明
-            };
-            if (this.transCode) {
-              oItem.tdId = item.tdId || '';
+            let oItem = {};
+            for (let sItem of submitMatterField) {
+              let val = item[sItem.fieldCode] || item[sItem.displayField] || item[sItem.showFieldCode];
+              if (!sItem.hidden && !sItem.allowBlank && !val) {
+                warn = `${sItem.text}不为空`;
+                break;
+              }
+              oItem[sItem.fieldCode] = val !== null ? val !== undefined ? val : '' : null;
             }
             dataSet.push(oItem);
           }
@@ -495,13 +475,19 @@
           // 获取合计
           let {inPut = {}} = formData;
           let {dataSet = []} = inPut;
+          let submitMatterField = this.submitMatterField;
           for (let item of dataSet) {
-            item.transCode = item.transMatchedCode;
+            for (let sItem of submitMatterField) {
+              let key = sItem.displayField || sItem.showFieldCode || sItem.fieldCode;
+              item[key] = item[sItem.fieldCode];
+            }
+            // item.transCode = item.transMatchedCode;
             item.inventoryPic = item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg();
-            item.inventoryName = item.inventoryName_transObjCode;
-            item.inventoryCode = item.inventoryCode_transObjCode;
+            // item.inventoryName = item.inventoryName_transObjCode;
+            // item.inventoryCode = item.inventoryCode_transObjCode;
+            // item.processing = item.tdProcessing;
             item.specification = item.specification_transObjCode;
-            item.processing = item.tdProcessing;
+            item.measureUnit = item.measureUnit_transObjCode;
             if (!orderList[item.transCode]) {
               orderList[item.transCode] = [];
             }
@@ -641,6 +627,22 @@
       // TODO 选中项目
       selProject(item) {
         this.project = {...item};
+      },
+      // TODO 数字校验
+      checkAmt(item) {
+        let {thenQtyBal, tdQty, price, taxRate} = item;
+        if (price) {
+          item.price = Math.abs(toFixed(price));
+        }
+        if (taxRate) {
+          item.taxRate = Math.abs(toFixed(taxRate));
+        }
+        tdQty = Math.abs(toFixed(tdQty));
+        // 退货数量大于可退货数量
+        if (thenQtyBal < tdQty) {
+          tdQty = thenQtyBal;
+        }
+        item.tdQty = tdQty;
       },
     },
     created() {

@@ -33,9 +33,9 @@
                         <div class='mater_price'>
                           <span class="symbol">￥</span>{{item.price}}
                         </div>
-                        <div>
+                        <slot name="rNumber" :item="item">
                           <r-number :num="item.tdQty" :max="item.qtyBal" v-model="item.tdQty"></r-number>
-                        </div>
+                        </slot>
                       </div>
                     </slot>
                   </template>
@@ -219,7 +219,7 @@ export default {
     }
   },
   components: {
-    RNumber, PopMatter, 
+    RNumber, PopMatter,
     MatterItem, PopMatterList
   },
   computed: {
@@ -267,7 +267,7 @@ export default {
       showPop: false,              // 物料选择器
       showModifyPop: false,          // 物料信息编辑器
     }
-  }
+  },
 }
 </script>
 
