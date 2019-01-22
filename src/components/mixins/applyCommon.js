@@ -49,7 +49,7 @@ export default {
 
       attachment : [],
       otherConfig: [],
-      dealerConfig: [],      
+      dealerConfig: [],
       userRoleList: [],                           // 经办职位
       currentStage: [],                           // 流程状态
       matterPopConfig: [],                        // 物料列表pop配置
@@ -345,7 +345,7 @@ export default {
       // 在企业微信的提醒中打开重新提交页面history为1，此时终止成功则跳转详情页
       if (window.history.length !== 1) {
         this.$router.go(-1);
-      } 
+      }
       else {
         let {name} = this.$route.query;
         let {folder, fileName} = this.$route.params;
@@ -412,7 +412,7 @@ export default {
                   fieldCode: key
                 })
               }
-              
+
             }
           }
           else{
@@ -423,11 +423,11 @@ export default {
         console.log(submitMatterField)
         this.submitMatterField = submitMatterField;
       })
-      
+
     },
     // 获取表单配置基本信息
     async getFormViewInfo() {
-      // 请求 表单uniqueId 
+      // 请求 表单uniqueId
       await getFormViews(this.listId).then(data => {
         for(let item of data){
           if(this.transCode && item.viewType === 'revise'){
@@ -440,7 +440,7 @@ export default {
       })
       // 根据uniqueId 请求表单配置
       await getFormConfig(this.viewId).then((data) => {
-        let config = data.config;
+        let {config, reconfig = {}} = data;
         let matterCols = [];
         // 处理将数据源配置在data中的情况
         if(data.dataSource){
@@ -459,11 +459,11 @@ export default {
               // 处理销售出库默认选中成品仓
               if(item === 'whCode' && this.warehouse.warehouseCode) {
                 matterParams[item] = this.warehouse.warehouseCode;
-                return 
+                return
               }
               if(item === 'dealerCode' && this.dealerInfo.dealerCode){
                 matterParams[item] = this.dealerInfo.dealerCode;
-                return 
+                return
               }
               matterParams[item] = params[item].type === 'text' ? params[item].value : '';
             })
@@ -480,7 +480,7 @@ export default {
             else if(cItem.k === 'transCode' && !cItem.h && !this.orderListTitle){
               this.orderListTitle = "订单"
             }
-            
+
             // 配置中的字段要去除掉物料名称，交易号
             if(!cItem.h && cItem.k !== 'inventoryName' && cItem.k !== 'transCode'){
               arr.push(cItem)
@@ -492,6 +492,14 @@ export default {
         let dealerConfig = [], matterConfig = [], otherConfig = [];
         // 从请求回来的配置中拆分往来，物料，其他段落的配置
         config.forEach(item => {
+          // 覆盖配置
+          if (item.formViewPartId) {
+            let reconfigData = reconfig[`_${item.formViewPartId}`] || {};
+            item.items = item.items && item.items.map(cItem => {
+              let matched = reconfigData[cItem.fieldCode] || {};
+              return {...cItem, ...matched,}
+            });
+          }
           if(!item.isMultiple) {
             if(item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt' || item.name === 'gys') {
               dealerConfig = [...dealerConfig, ...item.items]
@@ -506,7 +514,7 @@ export default {
               if(item.dataIndexMap){
                 this.dataIndexMap = item.dataIndexMap;
               }
-            } 
+            }
           }
         })
         // 处理往来配置里面的接口请求
@@ -538,7 +546,7 @@ export default {
           if(item.hiddenInRun && item.r2Bind && item.r2Bind.hidden) {
             blankDealerConfig.push(item);
           }
-          
+
         })
         this.dealerConfig = blankDealerConfig;
         // 处理物料配置
@@ -581,11 +589,11 @@ export default {
                   // 处理销售出库默认选中成品仓
                   if(item === 'whCode' && this.warehouse.warehouseCode) {
                     matterParams[item] = this.warehouse.warehouseCode;
-                    return 
+                    return
                   }
                   if(item === 'dealerCode' && this.dealerInfo.dealerCode){
                     matterParams[item] = this.dealerInfo.dealerCode;
-                    return 
+                    return
                   }
                   matterParams[item] = params[item].type === 'text' ? params[item].value : '';
                 })
@@ -649,7 +657,7 @@ export default {
                   }
                 })
                 item.dataSource.data.valueField = valueField;
-                
+
               }
               item.showFieldCode = item.dataSource.data.valueField[1];
             }
@@ -657,14 +665,14 @@ export default {
             if(Object.keys(this.dataIndexMap).length){
               item.showFieldCode = this.dataIndexMap[item.fieldCode];
             }
-            if(item.valueField !== "transCode" && item.valueField !== 'inventoryName' && item.valueField !== 'facilityName' 
+            if(item.valueField !== "transCode" && item.valueField !== 'inventoryName' && item.valueField !== 'facilityName'
                 && item.text !== '物料名称' && item.text !== '物料编码' && item.text !== '规格' && item.text !== '产品规格'
-                && item.showFieldCode !== 'transCode' && item.showFieldCode !== 'facilityName' && item.showFieldCode !== 'facilityCode' 
+                && item.showFieldCode !== 'transCode' && item.showFieldCode !== 'facilityName' && item.showFieldCode !== 'facilityCode'
                 && item.showFieldCode !== 'facilitySpecification'){
                 editMatterPop.push(item);
             }
 
-            
+
           }
         })
         // 判断是否只读 如果不是只读就统一塞进编辑页面
@@ -683,7 +691,7 @@ export default {
             //   break;
             // }
           }
-        } 
+        }
         this.matterEditConfig = editMatterPopConfig;
         // 处理其他信息的配置
         let other = [];
@@ -697,7 +705,7 @@ export default {
                     item.value = item.name;
                   })
                   this.$set(item, 'remoteData', data.tableContent)
-                }  
+                }
               })
             }
             else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
