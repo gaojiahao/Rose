@@ -494,7 +494,7 @@ export default {
         config.forEach(item => {
           if(!item.isMultiple) {
             if(item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt' || item.name === 'gys') {
-              dealerConfig = dealerConfig.concat(item.items)
+              dealerConfig = [...dealerConfig, ...item.items]
             }
             if(item.name === 'ck'){
               otherConfig = item.items;
