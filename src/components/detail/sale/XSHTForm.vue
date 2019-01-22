@@ -81,13 +81,11 @@
             return;
           }
           let {formData = {}} = data;
-          let {order, inPut} = formData;
+          let {order} = formData;
           // 获取合计
           let {dataSet} = order;
-          let {dataSet: inPutDataSet} = inPut;
-          let [contract] = inPutDataSet;
           for (let val of dataSet) {
-            this.count = accAdd(this.count, val.tdAmount);
+            // this.count = accAdd(this.count, val.tdAmount);
             val.inventoryPic = val.inventoryPic_transObjCode
               ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
@@ -97,7 +95,6 @@
           this.orderInfo = {
             ...formData,
             ...order,
-            ...contract,
           };
           this.contactInfo = {
             creatorName: order.dealerDebitContactPersonName, // 客户名

@@ -68,7 +68,9 @@ export default {
     noTaxAmount() {
       let total = 0;
       this.orderInfo.order.dataSet.forEach(item => {
-        total = accAdd(total, item.noTaxAmount);
+        if(item.noTaxAmount != null){
+          total = accAdd(total, item.noTaxAmount);
+        }
       });
       return total;
     },
@@ -76,7 +78,9 @@ export default {
     taxAmount() {
       let total = 0;
       this.orderInfo.order.dataSet.forEach(item => {
-        total = accAdd(total, item.taxAmount);
+        if(item.taxAmount != null){
+          total = accAdd(total, item.taxAmount);
+        }  
       });
       return total;
     },
