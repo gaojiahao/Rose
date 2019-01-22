@@ -9,7 +9,7 @@
                          :defaultContact="contact"></pop-dealer-list>
         <!-- <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part> -->
         <!-- 物料列表 -->
-        <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :show-matter-pop="showMatterPop" 
+        <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :show-matter-pop="showMatterPop" :filter-list="filterList"
           :actions="actions" :btnInfo="btnInfo" :matter-list="matterList" :default-value="matterList" 
           :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
           :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
@@ -104,6 +104,15 @@ export default {
         validUntil: '',
         advancePaymentDueDate: '',
       },
+      filterList: [
+        {
+          name: '物料名称',
+          value: 'inventoryName',
+        }, {
+          name: '物料编码',
+          value: 'inventoryCode',
+        }
+      ], 
     }
   },
   computed: {
