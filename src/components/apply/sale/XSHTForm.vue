@@ -33,71 +33,6 @@
             </div>
           </template>
         </apply-matter-part>
-        <!-- <div class="materiel_list">
-         
-          <template v-if="!matterList.length">
-            <div @click="showMaterielPop = !showMaterielPop" class='no-matter'>
-              <div class="title">物料列表</div>
-              <div class="required">请选择物料</div>
-              <span class="iconfont icon-youjiantou r_arrow"></span>
-            </div>
-          </template>
-          
-          <template v-else>
-            <div class="title" @click="showDelete">
-              <div>物料列表</div>
-              <div class='edit' v-if='!matterModifyClass'>编辑</div>
-              <div class='finished' v-else>完成</div>
-            </div>
-            <div class="mater_list">
-              <div class="each_mater"
-                   :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1}"
-                   v-for="(item, index) in matterList" :key='index'>
-                <matter-item :item="item" @on-modify="getMatterModify(item, index)" :show-delete="matterModifyClass"
-                             @click.native="delClick(item, index)" :config="matterEditConfig.property">
-                  <template slot="info" slot-scope="{item}">
-                    
-                    <div class='mater_other' v-if="item.price && item.tdQty">
-                      <div class='mater_price'>
-                        <span class="symbol">￥</span>{{item.price}}
-                      </div>
-                      <div>
-                        <r-number :num="item.tdQty" :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
-                      </div>
-                    </div>
-                  </template>
-                  <template slot="editPart" slot-scope="{item}">
-                    <div class="edit-part vux-1px-l" @click="getMatterModify(item, index)"
-                         v-show="(item.price && item.tdQty) &&!matterModifyClass">
-                      <span class='iconfont icon-bianji1'></span>
-                    </div>
-                  </template>
-                </matter-item>
-                <div class='delete_icon' @click="delClick(item, index)" v-if='matterModifyClass'>
-                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
-                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
-                </div>
-              </div>
-            </div>
-          </template>
-
-         
-          <div class="handle_part" v-if="matterList.length && !matterModifyClass">
-            <span class="add_more stop" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'
-                  @click="stopOrder">终止提交</span>
-            <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
-            <span class="add_more" v-if="matterList.length" @click="showMaterielPop = !showMaterielPop">新增更多物料</span>
-          </div>
-          
-          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :config="matterPopConfig" 
-                           :matter-params="matterParams" :default-value="matterList" 
-                           ref="matter"></pop-matter-list>
-        </div> -->
-         
-        <!--物料编辑pop-->
-        <!-- <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
-        </pop-matter> -->
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
@@ -106,9 +41,6 @@
       </div>
     </div>
     <!-- 底部提交确认栏 -->
-    <!-- <div class='btn-no-amt vux-1px-t' :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
-      <div class="btn-item" @click="submitOrder">提交</div>
-    </div> -->
     <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
       <!-- <span class="count_num"
             :class="{nine_up : tdAmount.length  > 8 ,
@@ -209,13 +141,7 @@ export default {
       if(this.matterParams.data && this.matterParams.data.drDealerCode){
         this.matterParams.data.drDealerCode = this.dealerInfo.dealerCode;
         this.matterList = [];
-
       }
-      // this.matterParams = {
-      //   ...this.matterParams,
-      //   drDealerCode: this.dealerInfo.dealerCode,
-      // };
-      // this.matterList = [];
     },
     selContact(val) {
       this.contact = {...val};
@@ -311,22 +237,7 @@ export default {
           key: 'dealerInfo',
           childKey: 'dealerName',
           message: '请选择客户'
-        }, 
-        // {
-        //   key: 'dealerInfo',
-        //   childKey: 'validUntil',
-        //   message: '请选择合同到期日'
-        // },
-        // {
-        //   key: 'dealerInfo',
-        //   childKey: 'tdAmountCopy1',
-        //   message: '请填写预收款'
-        // },
-        // {
-        //   key: 'dealerInfo',
-        //   childKey: 'advancePaymentDueDate',
-        //   message: '请选择预收到期日'
-        // },     
+        },      
         {
           key: 'matterList',
           childKey: 'length',
@@ -346,7 +257,7 @@ export default {
           }  
           return true;
         })
-        this.matterList.every(item => {
+        this.matterList.forEach(item => {
           let oItem = {};
           for(let sItem of this.submitMatterField){
             if(!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode]){
@@ -355,33 +266,6 @@ export default {
             }
             oItem[sItem.fieldCode] = item[sItem.fieldCode] != null ? item[sItem.fieldCode] : null
           }
-          // this.validateMap.every( val => {
-          //   if(!item[val.key]) {
-          //     warn = val.message;
-          //     return false;
-          //   }
-          //   return true;
-          // })
-          // let obj = {
-          //   tdId: item.tdId || '',
-          //   inventoryName_transObjCode: item.inventoryName, // 物料名称
-          //   transObjCode: item.inventoryCode, // 物料编码
-          //   tdProcessing: item.processing, // 加工属性
-          //   assMeasureUnit: item.assMeasureUnit,
-          //   assMeasureDescription: item.assMeasureDescription,
-          //   assMeasureScale: item.assMeasureScale,
-          //   tdQty: item.tdQty, // 数量
-          //   assistQty: item.assistQty,
-          //   price: item.price, // 单价
-          //   tdAmount: item.tdAmount,
-          //   taxRate: item.taxRate, // 税金
-          //   noTaxPrice: item.noTaxPrice,
-          //   taxAmount: item.taxAmount, // 税金
-          //   noTaxAmount: item.noTaxAmount,
-          //   dateActivation: item.dateActivation,  // 交付开始日
-          //   executionDate: item.executionDate,  // 交付截止日
-          //   comment: item.comment || '', // 说明
-          // };
           dataSet.push(oItem);
           
         });
@@ -434,7 +318,6 @@ export default {
           if (this.isResubmit) { // 重新提交
             operation = saveAndCommitTask;
             submitData.biReferenceId = this.biReferenceId;
-            console.log('submitData.biReferenceId:', submitData.biReferenceId);
           }
           if (!this.processCode.length) { // 无工作流
             operation = submitAndCalc;
@@ -472,7 +355,7 @@ export default {
           this.matterList.push(item);
         })
         this.handlerDefault = {
-          handler: formData.handler,
+          handler: formData.handler || formData.creator,
           handlerName: formData.handlerName,
           handlerUnit: formData.handlerUnit,
           handlerUnitName: formData.handlerUnitName,
@@ -501,12 +384,6 @@ export default {
           city: formData.order.city_dealerDebit,
           county: formData.order.county_dealerDebit,
           address: formData.order.address_dealerDebit,
-          // paymentTerm: formData.order.drDealerPaymentTerm,
-          // dealerLogisticsTerms: formData.drDealerLogisticsTerms,
-          // pamentDays: formData.inPut.daysOfAccount,
-          // validUntil: formData.inPut.validUntil,
-          // tdAmountCopy1: formData.inPut.dataSet[0].tdAmountCopy1,
-          // advancePaymentDueDate: formData.inPut.dataSet[0].advancePaymentDueDate,
         };
         // 订单信息
         this.contact = {
@@ -514,10 +391,13 @@ export default {
           dealerMobilePhone: formData.dealerDebitContactInformation,//电话
         };
         // 物料列表请求参数
-        this.matterParams = {
-          ...this.matterParams,
-          drDealerCode: this.dealerInfo.dealerCode,
-        };
+        if(this.matterParams.data && this.matterParams.data.dealerCode != null){
+          this.matterParams = {
+            ...this.matterParams,
+            drDealerCode: this.dealerInfo.dealerCode,
+          };
+        }
+       
         this.$loading.hide();
       })
     },
@@ -532,6 +412,7 @@ export default {
           dealerInfo: this.dealerInfo,
           formData: this.formData,
           contact: this.contact,
+          matterParams: this.matterParams
         }
       };
     },
@@ -544,11 +425,7 @@ export default {
       this.dealerInfo = draft.dealerInfo;
       this.formData = draft.formData;
       this.contact = draft.contact;
-      // 物料列表请求参数
-      this.matterParams = {
-        ...this.matterParams,
-        drDealerCode: this.dealerInfo.dealerCode,
-      };
+      this.matterParams = draft.matterParams;
       sessionStorage.removeItem(DRAFT_KEY);
     }
   }

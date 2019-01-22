@@ -21,30 +21,23 @@
           <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !contactList.length" @on-pulling-up="onPullingUp" ref="bScroll">
             <div class="each-people box_sd" v-for="(item, index) in contactList" :key="index"
-                 @click.stop="selContact(item, index)">
+                 @click.stop="selContact(item, index)" :class="{selected: showSelIcon(item)}">
               <div class="mater_main ">
                 <div class="mater_info">
-                  <!--联系人电话 -->
-                  <div class="withColor">
-                    <div class="ForInline " style="display:inline-block">
-                      <span class='dealer'>{{item.dealerName}}</span>
-                    </div>
+                  <div class="user_photo">
+                    <img src="~assets/ava01.png" alt="mater_img" >
                   </div>
-                  <div class="withColor" v-if="item.dealerMobilePhone || item.dealerPhone">
-                    <div class="ForInline name" style="display:inline-block">
-                        <span style="marginRight:.04rem;"
-                              v-if="item.dealerMobilePhone">{{item.dealerMobilePhone}}</span>
+                  <div class="pop-list-info">
+                    <!-- 名字 -->
+                    <div class="user_name">{{item.dealerName}}</div>
+                    <!-- 用户id -->
+                    <div class="user_code">
+                      <span v-if="item.dealerMobilePhone">{{item.dealerMobilePhone}}</span>
                       <span v-if="item.dealerPhone">{{item.dealerPhone}}</span>
                     </div>
                   </div>
-                  <!-- 地址 -->
-                  <div class="withoutColor">
-                    <span>{{item.province}}{{item.city}}{{item.county}}{{item.address}}</span>
-                  </div>
                 </div>
               </div>
-              <!-- icon -->
-              <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
             </div>
           </r-scroll>
         </div>
@@ -128,6 +121,11 @@
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.contactInfo.dealerName === sItem.dealerName;
+      },
+      // 获取 默认图片
+      getDefaultImg(item) {
+        let url = require('assets/ava01.png')
+        return url;
       },
       // 选择联系人
       selContact(item, index) {
@@ -215,7 +213,7 @@
   .trade_pop_part {
     background: #fff;
     /deep/ .scroll-wrapper {
-      padding: .04rem .04rem 0 .3rem;
+      padding: .05rem .15rem 0;
       width: 100%;
       box-sizing: border-box;
     }
@@ -235,58 +233,50 @@
         overflow: hidden;
         box-sizing: border-box;
         height: 100%;
-        padding: 0 .04rem 0 0;
         // 每个往来
-        .each_mater {
-          display: flex;
-          padding: 0.08rem;
-          position: relative;
-          margin-bottom: .2rem;
-          box-sizing: border-box;
+        .each-people {
+          margin: .2rem 0;
+          padding: .15rem;
           // 阴影
           &.box_sd {
             box-sizing: border-box;
             box-shadow: 0 0 8px #e8e8e8;
           }
+          &.selected {
+            border: 1px solid $main_color;
+          }
           // 往来主体
           .mater_main {
-            flex: 1;
-            padding-left: .1rem;
             box-sizing: border-box;
-            display: inline-block;
             // 往来信息
             .mater_info {
-              color: #757575;
               font-size: .14rem;
-              // 有颜色包裹的
-              .withColor {
-                .name {
-                  color: #5077aa;
-                  font-size: .14rem;
-                  font-weight: bold;
-                }
-                .dealer {
-                  color: #111;
-                  font-weight: bold;
+              display: flex;
+              .user_photo {
+                width: .4rem;
+                height: .4rem;
+                margin-right: .12rem;
+                img {
+                  border-radius: 50%;
+                  width: 100%;
+                  height: 100%;
                 }
               }
+              .user_name {
+                line-height: .16rem;
+                font-size: .16rem;
+                font-weight: 600;
+                margin-top: .04rem;
+              }
+              .user_code {
+                margin-top: .06rem;
+                line-height: .12rem;
+                color: #999;
+                font-size: .12rem;
+              }
+
             }
           }
-          // 选择icon
-          .selIcon,
-          .isSelIcon {
-            top: 50%;
-            left: -.3rem;
-            position: absolute;
-            transform: translate(0, -50%);
-          }
-          .isSelIcon {
-            fill: #5077aa;
-          }
-        }
-        .each-people {
-          @extend .each_mater;
-          margin: .2rem 0;
         }
       }
     }

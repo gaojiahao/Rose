@@ -413,46 +413,6 @@
               }
               oItem[sItem.fieldCode] = item[sItem.fieldCode] != null ? item[sItem.fieldCode] : null
             }
-            // if (!item.tdQty) {
-            //   warn = '请填写数量'
-            //   break
-            // }
-            // if (!item.price) {
-            //   warn = '请填写单价'
-            //   break
-            // }
-
-            // let taxRate = item.taxRate || this.taxRate;
-            // let taxAmount = accMul(item.price, item.tdQty, taxRate);
-            // let oItem = {
-            //   transMatchedCode: item.transCode, // 明细被核销交易号
-            //   orderCode: item.transCode, // 销售订单号（明细）
-            //   outPutMatCode: item.inventoryCode, // 输出物料
-            //   orderProCode: item.inventoryCode, // 销售订单产品编码（明细）
-            //   tdProcessing: item.processing, // 加工属性
-            //   assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
-            //   assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null, // 与单位倍数
-            //   assMeasureDescription: item.assMeasureDescription || '',
-            //   dealerInventoryName: item.clientInventoryName,
-            //   dealerInventoryCode: item.clientInventoryCode,
-            //   thenTotalQtyBal: item.qty, // 订单总数
-            //   thenLockQty: item.stockQty, // 已出库数量
-            //   thenQtyBal: item.qtyBal, // 待交付数量
-            //   thenQtyStock: item.qtyStockBal, // 当时可用库存
-            //   tdQty: item.tdQty, // 明细发生数
-            //   assistQty: item.assistQty || 0, // 辅计数量（明细）
-            //   price: item.price, // 明细单价
-            //   tdAmount: item.tdAmount,
-            //   taxRate: taxRate, // 税率
-            //   noTaxPrice: item.noTaxPrice,
-            //   taxAmount: item.taxAmount, // 税金
-            //   // tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 明细发生金额
-            //   promDeliTime: item.promDeliTime || '', // 承诺交付时间
-            //   comment: item.comment || '', // 说明
-            // };
-            // if (this.transCode) {
-            //   oItem.tdId = item.tdId || '';
-            // }
             dataSet.push(oItem);
           }
         }
