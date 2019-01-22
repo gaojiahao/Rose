@@ -1,14 +1,12 @@
 <template>
   <!-- 底部提交确认栏 -->
   <div class="count_mode vux-1px-t" :class="{btn_hide : hide}" v-if="!isModify">
-      <span class="count_num"
-            :class="{nine_up : tdAmount.length  > 8 ,
-          ten_up : tdAmount.length  > 9,
-          ele_up : tdAmount.length  > 10}">
+      <span v-if="tdAmount" class="count_num"
+            :class="{nine_up : tdAmount.length  > 8, ten_up : tdAmount.length  > 9, ele_up : tdAmount.length  > 10}">
         <span class="total_price">
           <span class="symbol">￥</span>{{tdAmount | numberComma}}
         </span>
-        <span class="taxAmount">[含税: ￥{{taxAmount | numberComma}}]</span>
+        <span class="taxAmount" v-if="taxAmount">[含税: ￥{{taxAmount | numberComma}}]</span>
       </span>
     <span class="count_btn" @click="submit">提交</span>
   </div>
