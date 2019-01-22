@@ -97,6 +97,36 @@ export default {
       },
     }
   },
+  watch:{
+    orderListTitle(val) {
+      if(val.includes('订单')){
+        this.filterList = [
+          {
+            name: '物料名称',
+            value: 'inventoryName',
+          }, {
+            name: '物料编码',
+            value: 'inventoryCode',
+          },
+          {
+            name: '订单编码',
+            value: 'transCode',
+          }
+        ]
+      }
+      else{
+         this.filterList = [
+          {
+            name: '物料名称',
+            value: 'inventoryName',
+          }, {
+            name: '物料编码',
+            value: 'inventoryCode',
+          }
+        ]
+      }
+    }
+  },
   methods: {
     // TODO 选中的客户
     selDealer(val) {
