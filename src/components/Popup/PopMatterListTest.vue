@@ -24,7 +24,7 @@
               <div class="mater_main ">
                 <!-- 物料名称 -->
                 <div class="mater_name">
-                  {{item.inventoryName || item.facilityName}}
+                  {{item.inventoryName || item.invName || item.facilityName}}
                 </div>
                 <!-- 物料基本信息 -->
                 <div class="matter_info">

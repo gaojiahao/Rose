@@ -12,7 +12,7 @@
       <r-picker class="vux-1px-b" title="经办组织" :data="groupList" :value="group" 
                 v-model="group" :required="isRequired" @on-change="changeGroup"></r-picker>
       <r-picker class="vux-1px-b" title="经办职位" :data="roleList" :value="role" v-model="role" @on-change="changeRole"></r-picker>
-      <r-picker title="流程状态" :data="statusData" v-model="biProcessStatus"></r-picker>
+      <r-picker title="流程状态" :data="statusData" v-model="biProcessStatus" v-if="showStatus"></r-picker>
     </div>
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
@@ -83,11 +83,17 @@
         type: Boolean,
         default: true
       },
+      // 当前路程状态的数据
       statusData:{
         type: Array,
         default() {
           return []
         }
+      },
+      // 是否展示流程状态
+      showStatus: {
+        type: Boolean,
+        default: true
       }
     },
     directives: {TransferDom},

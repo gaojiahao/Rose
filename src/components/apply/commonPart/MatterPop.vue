@@ -9,7 +9,7 @@
           <img :src="chosenMatter.inventoryPic" alt="matter_img" @error="getDefaultImg(item)" class='matter_img'/>
           <div class='mater_main'>
             <div class="mater_name">
-              {{chosenMatter.inventoryName || chosenMatter.facilityName || chosenMatter.inventoryName_outPutMatCode}}
+              {{chosenMatter.inventoryName || chosenMatter.invName || chosenMatter.facilityName || chosenMatter.inventoryName_outPutMatCode}}
             </div>
             <!-- 物料基本信息 -->
             <div class="matter_info">

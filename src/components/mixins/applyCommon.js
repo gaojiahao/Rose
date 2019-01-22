@@ -482,7 +482,8 @@ export default {
             }
             
             // 配置中的字段要去除掉物料名称，交易号
-            if(!cItem.h && cItem.k !== 'inventoryName' && cItem.k !== 'transCode'){
+            if(!cItem.h && cItem.k !== 'inventoryName' && cItem.k !== 'transCode' && cItem.k !== 'inventoryCode' && cItem.k !== 'invName' 
+             && cItem.k !== 'matCode' && cItem.k !== 'specification'){
               arr.push(cItem)
             }
           })
