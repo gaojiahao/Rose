@@ -30,7 +30,7 @@
     <div v-transfer-dom>
       <popup v-model="showDealerPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
-          <d-search @search="searchList" @turn-off="onHide" :isFill="true"></d-search>
+          <d-search @search="searchList" @turn-off="onHide"></d-search>
           <!-- 往来列表 -->
           <div class="mater_list" ref="dealer">
             <div class="dealer-list-wrapper">
