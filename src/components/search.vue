@@ -189,8 +189,7 @@
       .layer {
         opacity: .5;
         height: 100%;
-        background: #ccc;
-        // height: calc(100% - 1.46rem);
+        background: #000;
       }
     }
   }

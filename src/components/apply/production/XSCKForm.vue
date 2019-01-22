@@ -56,79 +56,58 @@
   // vux组件引入
   import { XTextarea, dateFormat } from 'vux'
   // 请求 引入
-  import {getSOList} from 'service/detailService'
-  import { commitTask, saveAndStartWf, getBaseInfoData, saveAndCommitTask, getDictByType, submitAndCalc, requestData } from 'service/commonService'
+  import { getSOList } from 'service/detailService'
+  import { commitTask, saveAndStartWf, saveAndCommitTask, submitAndCalc, requestData } from 'service/commonService'
   // mixins 引入
   import applyCommon from 'components/mixins/applyCommon'
   // 组件引入
-  import RAction from 'components/RAction'
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopWarehouseList from 'components/Popup/PopWarehouseList'
-  import PopSodlProjectList from 'components/Popup/PopSODLProjectList'
-  import PopMatterList from 'components/Popup/PopMatterListTest'
-  import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
-  import PopEntityList from 'components/Popup/PopEntityList'
-  import PopMatter from 'components/apply/commonPart/MatterPop'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
+  import PopSodlProjectList from 'components/Popup/PopSODLProjectList'
+  import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
   import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
   // 公共方法
-  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
-  import {toFixed} from '@/plugins/calc'
+  import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
+  import { toFixed } from '@/plugins/calc'
 
   const DRAFT_KEY = 'XSCK_DATA';
   export default {
     name: 'ApplyXSCKForm',
     mixins: [applyCommon],
     components: {
-      XTextarea, RAction, PopDealerList, PopWarehouseList,
-      PopSodlProjectList, PopEntityList, PopMatter,
-      PopBaseinfo, PopMatterList, DealerOtherPart, ApplyMatterPart
+      XTextarea, PopBaseinfo, PopDealerList, PopWarehouseList,
+      ApplyMatterPart, PopSodlProjectList, DealerOtherPart
     },
     data() {
       return {
-        orderList: {}, // 订单列表
-        showOrderPop: false, // 是否显示物料的popup
-        dealerInfo: {}, // 客户客户信息
-        contactInfo: {}, // 联系人信息
-        warehouseStoreInfo: {}, // 库位信息
+        taxRate: 0.16, // 税率
+        formViewUniqueId: '346ede09-ac6a-489a-9242-f385932a4443', // 修改时的UniqueId
+        modifyKey: null,
+        modifyIndex: null,
+        showMatterPop: false,
+        submitSuccess: false,       // 是否提交成功
+        warehouse: {  // 选中仓库属性
+          warehouseType: '一般部门仓',
+          warehouseName: '成品仓',
+          warehouseCode: 'FG0001',
+        }, 
+        taskId: '',
+        transCode: '',
+        biReferenceId: '',
+        actions: [],
+        matterList: [], // 物料列表，用于计算金额、请求单价
+        numMap: {},                 // 用于记录订单物料的数量和价格
+        matter: {},
+        project: {},                // 项目
+        orderList: {},              // 订单列表
+        dealerInfo: {},             // 客户客户信息
+        contactInfo: {},            // 联系人信息
+        warehouseStoreInfo: {},     // 库位信息
         formData: {
           drDealerLogisticsTerms: '', // 物流条件
           biComment: '', // 备注
         },
-        submitSuccess: false, // 是否提交成功
-        warehouse: {
-          warehouseType: '一般部门仓',
-          warehouseName: '成品仓',
-          warehouseCode: 'FG0001',
-        }, // 选中仓库属性
-        taxRate: 0.16, // 税率
-        numMap: {}, // 用于记录订单物料的数量和价格
-        transCode: '',
-        formViewUniqueId: '346ede09-ac6a-489a-9242-f385932a4443', // 修改时的UniqueId
-        biReferenceId: '',
-        actions: [],
-        taskId: '',
-        matterList: [], // 物料列表，用于计算金额、请求单价
-        project: {}, // 项目
-        tmpItems: {},//选中的订单
-        matter: {},
-        showMatterPop: false,
-        modifyIndex: null,
-        modifyKey: null,
-        checkFieldList: [
-          {
-            key: 'tdQty',
-            message: '请填写本次出库数量'
-          },
-          {
-            key: 'price',
-            message: '请填写单价'
-          },
-          {
-            key: 'taxRate',
-            message: '请填写税率'
-          },
-        ],
       }
     },
     methods: {
@@ -692,7 +671,7 @@
         console.log('item:', item);
         let { thenQtyStock } = item;
         item[key] = Math.abs(toFixed(val));
-
+        
       }
     },
     created() {
@@ -720,46 +699,43 @@
 
 <style lang='scss' scoped>
   @import './../../scss/bizApply';
-  .materiel_list{
-
-  }
-  .cell-item {
-    margin: 0 auto;
-    padding: .05rem .1rem;
-    width: 95%;
-    background-color: #fff;
-    box-sizing: border-box;
-    &:before {
-      display: none;
-    }
-    /deep/ .vux-label {
-      color: #757575;
-      font-size: .14rem;
-    }
-  }
+  // .cell-item {
+  //   margin: 0 auto;
+  //   padding: .05rem .1rem;
+  //   width: 95%;
+  //   background-color: #fff;
+  //   box-sizing: border-box;
+  //   &:before {
+  //     display: none;
+  //   }
+  //   /deep/ .vux-label {
+  //     color: #757575;
+  //     font-size: .14rem;
+  //   }
+  // }
 
   // 所属订单
-  .order_code {
-    display: flex;
-    color: #fff;
-    font-size: .12rem;
-    > span {
-      display: inline-block;
-      padding: 0 .04rem;
-    }
-    .order_title {
-      background: #455d7a;
-    }
-    .order_num {
-      background: #c93d1b;
-    }
-  }
+  // .order_code {
+  //   display: flex;
+  //   color: #fff;
+  //   font-size: .12rem;
+  //   > span {
+  //     display: inline-block;
+  //     padding: 0 .04rem;
+  //   }
+  //   .order_title {
+  //     background: #455d7a;
+  //   }
+  //   .order_num {
+  //     background: #c93d1b;
+  //   }
+  // }
 
-  .materiel_list .mater_list .each_mater_wrapper {
-    flex-direction: column;
-  }
+  // .materiel_list .mater_list .each_mater_wrapper {
+  //   flex-direction: column;
+  // }
 
-  .materiel_list .mater_list .each_mater_wrapper .mater_main {
-    padding-right: .38rem;
-  }
+  // .materiel_list .mater_list .each_mater_wrapper .mater_main {
+  //   padding-right: .38rem;
+  // }
 </style>
