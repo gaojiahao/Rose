@@ -98,7 +98,7 @@
       setWarehouseInfo(data) {
         for(let key in data) {
           if(key.includes('warehouse') || key.includes('storehouse')) {
-            this.$set(this.warehouse, key, data[key])
+            this.warehouse[key] = data[key];
           }
         }
       }
