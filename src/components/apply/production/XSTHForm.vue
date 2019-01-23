@@ -174,20 +174,10 @@
       // TODO 选中仓库
       selWarehouse(val) {
         this.warehouse = JSON.parse(val);
-        /*if (this.matterParams.data && this.matterParams.data.whCode != null) {
-          this.matterParams.data.whCode = this.warehouse.warehouseCode;
-          this.matterList = [];
-          this.orderList = {};
-        }*/
       },
       // TODO 选择的库位
       getStore(val) {
         this.warehouseStoreInfo = {...val};
-        /*if (this.matterParams.data && this.matterParams.data.storehouseCode != null) {
-          this.matterParams.data.storehouseCode = this.warehouseStoreInfo.warehouseCode;
-          this.matterList = [];
-          this.orderList = {};
-        }*/
       },
       // TODO 显示物料修改的pop
       getMatterModify(item, index, key) {
@@ -375,7 +365,11 @@
                 warn = `${sItem.text}不为空`;
                 break;
               }
-              oItem[sItem.fieldCode] = val !== null ? val !== undefined ? val : '' : null;
+              oItem[sItem.fieldCode] = val !== null 
+                                        ? val !== undefined 
+                                            ? val 
+                                            : '' 
+                                        : null;
             }
             dataSet.push(oItem);
           }
@@ -667,48 +661,4 @@
 
 <style lang='scss' scoped>
   @import './../../scss/bizApply';
-
-  /* .materiel_list {
-
-   }
-
-   .cell-item {
-     margin: 0 auto;
-     padding: .05rem .1rem;
-     width: 95%;
-     background-color: #fff;
-     box-sizing: border-box;
-     &:before {
-       display: none;
-     }
-     /deep/ .vux-label {
-       color: #757575;
-       font-size: .14rem;
-     }
-   }
-
-   // 所属订单
-   .order_code {
-     display: flex;
-     color: #fff;
-     font-size: .12rem;
-     > span {
-       display: inline-block;
-       padding: 0 .04rem;
-     }
-     .order_title {
-       background: #455d7a;
-     }
-     .order_num {
-       background: #c93d1b;
-     }
-   }
-
-   .materiel_list .mater_list .each_mater_wrapper {
-     flex-direction: column;
-   }
-
-   .materiel_list .mater_list .each_mater_wrapper .mater_main {
-     padding-right: .38rem;
-   }*/
 </style>
