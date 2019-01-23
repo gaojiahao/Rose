@@ -3,139 +3,28 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
-                      :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
+                      :handle-org-list="handleORG" :user-role-list="userRoleList"
+                      :status-data="currentStage" v-model="formData.biProcessStatus" :showStatus="false"></pop-baseinfo>
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo"  :dealer-params="dealerParams"
                          dealerTitle="供应商" :default-contact="contactInfo" @sel-contact="selContact"></pop-dealer-list>
         <!-- 结算方式 -->
-        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
-        <!-- <pop-single-select title="结算方式" :data="transMode" :value="dealerInfo.paymentTerm"
-                           v-model="dealerInfo.paymentTerm"></pop-single-select>
-        <div class="other_info">
-          <div class="title">账期天数</div>
-          <div class="mode">{{dealerInfo.pamentDays}}</div>
-        </div> -->
-        <!-- 物流条款 -->
-        <!-- <pop-single-select title="物流条款" :data="logisticsTerm" :value="dealerInfo.dealerLogisticsTerms"
-                           v-model="dealerInfo.dealerLogisticsTerms"></pop-single-select>
-        <div class="other_info">
-          <div class="title required">协议总金额</div>
-          <div class="mode">￥{{tdAmount | numberComma}}</div>
-        </div>
-        <r-date title="协议开始日" :value="inPut.executionDate" v-model="inPut.executionDate" required></r-date>
-        <r-date title="协议到期日" :value="inPut.validUntil" v-model="inPut.validUntil" required></r-date>
-        <x-input class="tdAmount" type="number" title="预付款" :value="inPut.tdAmountCopy1" text-align="right"
-                 placeholder="请填写预付款" v-model="inPut.tdAmountCopy1"></x-input>
-        <r-date title="预付到期日" :value="inPut.prepaymentDueDate" v-model="inPut.prepaymentDueDate"></r-date> -->
+        <!-- <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part> -->
         <!-- 物料列表 -->
-        <div class="materiel_list">
-          <!-- 没有选择物料 -->
-          <template v-if="!matterList.length">
-            <div @click="showMaterielPop = !showMaterielPop">
-              <div class="title">{{orderListTitle}}列表</div>
-              <div class="required">请选择{{orderListTitle}}</div>
-              <i class="iconfont icon-youjiantou r_arrow"></i>
-            </div>
-          </template>
-          <!-- 已经选择了物料 -->
-          <template v-else>
-            <div class="title" @click="showDelete">
-              <div>{{orderListTitle}}列表</div>
-              <div class='edit' v-if='!matterModifyClass'>编辑</div>
-              <div class='finished' v-else>完成</div>
-            </div>
-            <div class="mater_list">
-              <div class="each_mater"
-                   :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1}"
-                   v-for="(item, index) in matterList" :key='index'>
-                <matter-item :item="item" @on-modify="getMatterModify(item, index)" :show-delete="matterModifyClass"
-                             @click.native="delClick(item, index)" :config="matterEditConfig.property">
-                  <template slot="info" slot-scope="{item}">
-                    <!-- 物料属性和单位 -->
-                    <!-- <div class='matter-more'>
-                      <span class='unit'>属性: {{item.processing}}</span>
-                      <span class='unit'>单位: {{item.measureUnit}}</span>
-                      <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
-                      <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate}}</span>
-                    </div>
-                    <div class="mater_more">
-                      <span class='unit'>辅助计量说明: {{item.assMeasureDescription || '无'}}</span>
-                    </div> -->
-                    <!-- 物料数量和价格 -->
-                    <div class='mater_other' v-if="item.price">
-                      <div class='mater_price'>
-                        <span class="symbol">￥</span>{{item.price}}
-                      </div>
-                      <!-- <div>
-                        <r-number :num="item.tdQty" :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
-                      </div> -->
-                    </div>
-                  </template>
-                  <template slot="editPart" slot-scope="{item}">
-                    <div class="edit-part vux-1px-l"
-                         @click="getMatterModify(item, index)"
-                         v-show="item.price && !matterModifyClass">
-                      <span class='iconfont icon-bianji1'></span>
-                    </div>
-                  </template>
-                  <template slot="edit" slot-scope="{item}">
-                    <div class='mater_other' @click="getMatterModify(item, index)" v-if="!item.price && !matterModifyClass">
-                      <div class="edit-tips">
-                        <span class="tips-word">点击进行填写</span>
-                      </div>
-                    </div>
-                  </template>
-                </matter-item>
-                <div class='delete_icon' @click="delClick(item, index)" v-if='matterModifyClass'>
-                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
-                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
-                </div>
+        <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :show-matter-pop="showMatterPop" :filter-list="filterList"
+          :actions="actions" :btnInfo="btnInfo" :matter-list="matterList" :default-value="matterList" 
+          :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
+          :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
+          :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
+          :chosen-matter="matter" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
+          <template slot="info" slot-scope="{item}">
+            <div class='mater_other' v-if="item.price">
+              <div class='mater_price'>
+                <span class="symbol">￥</span>{{item.price}}
               </div>
             </div>
           </template>
-          <!-- 新增更多 按钮 -->
-          <div class="handle_part" v-if="matterList.length && !matterModifyClass">
-            <span class="add_more stop" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'
-                  @click="stopOrder">终止提交</span>
-            <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
-            <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
-          </div>
-          <!-- 物料popup -->
-          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                           :default-value="matterList" :matter-params="matterParams"  :config="matterPopConfig" 
-                           ref="matter">
-            <!-- <template slot="storage" slot-scope="{item}">
-              <div>
-                <span>保质期天数: {{item.keepingDays || 0}}</span>
-                <span>临保天数: {{item.nearKeepingDays || 0}}</span>
-                <span>安全库存: {{item.safeStock || 0}}</span>
-              </div>
-              <div>
-                <span>主计倍数: {{item.invSubUnitMulti || 0}}</span>
-                <span>辅助计量: {{item.invSubUnitName || "无"}}</span>
-                <span>辅助计量说明: {{item.invSubUnitComment || "无"}}</span>
-              </div>
-            </template> -->
-          </pop-matter-list>
-
-        </div>
-        <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-check-stock="false" :config="matterEditConfig">
-          <!-- <template slot="modify" slot-scope="{modifyMatter}">
-            <group class="mg_auto">
-              <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
-                       @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-                <template slot="label">
-                  <span class='required'>包装含税单价
-                  </span>
-                </template>
-              </x-input>
-            </group>
-          </template> -->
-        </pop-matter>
+        </apply-matter-part>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
@@ -144,47 +33,26 @@
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class='btn-no-amt vux-1px-t' :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
-      <div class="btn-item" @click="submitOrder">提交</div>
-    </div>
-    <!-- <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
-      <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{tdAmount |numberComma(3)}}
-        <span class="taxAmount">[含税: ￥{{taxAmount |numberComma(3)}}]</span>
-      </span>
-      <span class="count_btn" @click="submitOrder">提交</span>
-    </div> -->
-    <!-- 底部删除确认栏 -->
-    <div class="count_mode vux-1px-t delete_mode" :class="{btn_hide : btnIsHide}" v-else>
-      <div class='count_num all_checked' @click="checkAll">
-        <x-icon type="ios-circle-outline" size="20" class='outline'
-                v-show="selItems.length !== matterList.length"></x-icon>
-        <x-icon type="ios-checkmark" size="20" class="checked" v-show="selItems.length === matterList.length"></x-icon>
-        全选
-      </div>
-      <div class='delete_btn' @click="deleteCheckd">删除</div>
-    </div>
+    <op-button :is-modify="matterModifyClass" :hide="btnIsHide" :td-amount="tdAmount" :tax-amount="taxAmount"
+              :all-check="selItems.length === matterList.length" @on-submit="submitOrder" @on-check-all="checkAll"
+              @on-delete="deleteCheckd"></op-button>
   </div>
 </template>
 
 <script>
   // vux插件引入
-  import {XTextarea, dateFormat, Datetime, XInput, Group} from 'vux'
+  import {XTextarea, dateFormat} from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
   import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc} from 'service/commonService'
   // mixins 引入
   import common from 'components/mixins/applyCommon'
   // 组件引入
-  import PopMatterList from 'components/Popup/PopMatterListTest'
   import PopDealerList from 'components/Popup/PopDealerList'
-  import PopSingleSelect from 'components/Popup/PopSingleSelect'
   import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
-  import PopMatter from 'components/apply/commonPart/MatterPop'
-  import RNumber from 'components/RNumber'
-  import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
-  import RDate from 'components/RDate'
+  import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
+  import OpButton from 'components/apply/commonPart/OpButton'
   // 方法引入
   import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 
@@ -192,58 +60,37 @@
 
   export default {
     components: {
-      XTextarea, RNumber, Datetime, Group,
-      PopMatterList, PopDealerList, PopSingleSelect, PopMatter, RPicker, PopBaseinfo,
-      RDate, XInput, DealerOtherPart
+      XTextarea, 
+      PopDealerList, PopBaseinfo, DealerOtherPart, ApplyMatterPart, OpButton
+      
     },
     data() {
       return {
-        taxRate: 0.16, // 税率
         numMap: {},
-        order: {
-          // executionDate: '', // 执行日期
-          // validUntil: '', //截止日期
-        },
-        inPut: {
-          tdAmountCopy1: '',
-          executionDate: '', // 执行日期
-          validUntil: '', // 截止日期
-          thenTotalAmntBal: '',
-          prepaymentDueDate: ''
-        },
         formData: { // 表单提交内容
           creator: '',
           modifer: '',
           biId: '',
           biComment: '',
+          biProcessStatus: ''
         },
-        logisticsTerm: [], // 物流条款 数组
         dealerInfo: {},
-        transMode: [], // 结算方式
         matterList: [], // 物料列表
-        showTransPop: false, // 是否显示结算方式的popup
         showMaterielPop: false, // 是否显示物料的popup
-        showDealerPop: false, // 是否显示供应商的popup
         contactInfo: {},
-        matterParams: {
-          processing: '原料',
-        },
-        checkFieldList: [
+        filterList: [
           {
-            key: 'price',
-            message: '请填写包装含税单价'
-          },
-        ]
+            name: '物料名称',
+            value: 'inventoryName',
+          }, {
+            name: '物料编码',
+            value: 'inventoryCode',
+          }
+        ], 
       }
     },
     mixins: [common],
     methods: {
-      // 获取结算方式
-      getPaymentTerm() {
-        return getDictByType('paymentTerm').then(({tableContent}) => {
-          this.transMode = tableContent;
-        })
-      },
       // 选中的供应商
       selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
@@ -256,20 +103,11 @@
       selMatter(val) {
         let sels = JSON.parse(val);
         sels.map(item => {
-          let defaultTime = item.processingStartDate ? dateFormat(item.processingStartDate, 'YYYY-MM-DD') : '';
-          // let {tdQty = '', price = '', taxRate = 0.16, processingStartDate = defaultTime} = this.numMap[item.inventoryCode] || {};
-          // item.tdQty = tdQty;
-          // item.price = price;
-          // item.taxRate = taxRate;
-          item.tdQty = item.tdQty || '';
           item.price = item.price || '';
           item.taxRate = item.taxRate || 0.16;
-          item.processingStartDate = item.processingStartDate || defaultTime;
-          item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
-          item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
-          item.assMeasureDescription =  item.assMeasureDescription || item.invSubUnitComment || null; // 辅助计量说明
+          item.validUntil = item.validUntil || ''; // 有效日期
+          item.expiryDate = item.expiryDate || ''; // 失效日期
         })
-        this.numMap = {};
         this.matterList = sels;
       },
       // 选择默认图片
@@ -331,50 +169,21 @@
         let dataSet = [];
         if (!this.dealerInfo.dealerCode) {
           warn = '请选择供应商信息';
-        } else if (this.matterList.length === 0) {
-          warn = '请选择物料';
-        }
-        else if(!this.inPut.executionDate){
-          warn = '请选择协议开始日'
-        }
-        else if(!this.inPut.validUntil){
-          warn = '请选择协议到期日'
-        }
+        } 
         if (!warn) {
           // 校验
-          this.matterList.every(item => {
-            if (!item.price) {
-              warn = '单价不能为空';
-              return false
+          this.matterList.forEach(item => {
+            let oItem = {};
+            for(let sItem of this.submitMatterField){
+              if(!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode] && !item[sItem.showFieldCode]) {
+                warn = `${sItem.text}不为空`
+                break;
+              }
+              oItem[sItem.fieldCode] = item[sItem.fieldCode] || item[sItem.showFieldCode] || null;
             }
-            // if (!item.tdQty) {
-            //   warn = '数量不能为空';
-            //   return false
-            // }
-            let taxRate = item.taxRate;
-            let taxAmount = accMul(item.price, item.tdQty, taxRate);
-            // 设置提交参数
-            dataSet.push({
-              tdId: item.tdId || '',
-              inventoryName_transObjCode: item.inventoryName, // 物料名称
-              transObjCode: item.inventoryCode, // 物料编码
-              executionDate: this.inPut.executionDate,
-              validUntil: this.inPut.validUntil,
-              tdProcessing: item.processing,// 加工属性
-              assMeasureUnit: item.assMeasureUnit,
-              assMeasureDescription: item.assMeasureDescription,
-              assMeasureScale: item.assMeasureScale,
-              tdQty: item.tdQty, // 数量
-              assistQty: item.assistQty,
-              price: item.price, // 单价
-              tdAmount: item.tdAmount,
-              taxRate: taxRate, // 税金
-              noTaxPrice: item.noTaxPrice,
-              taxAmount: item.taxAmount, // 税金
-              comment: item.comment || '' // 说明
-            });
-            return true
-          })
+            dataSet.push(oItem);
+            
+          });
         }
         if (warn) {
           this.$vux.alert.show({
@@ -410,16 +219,6 @@
                 handlerEntity: this.entity.dealerName,
                 dealerDebitContactPersonName: this.contactInfo.dealerName || null,
                 dealerDebitContactInformation: this.contactInfo.dealerMobilePhone || '',
-                drDealerLogisticsTerms: dealerInfo.dealerLogisticsTerms,
-                inPut: {
-                  dealerDebit: dealerInfo.dealerCode,
-                  drDealerLabel: dealerInfo.dealerLabelName,
-                  daysOfAccount: dealerInfo.pamentDays,
-                  dataSet: [{
-                    ...this.inPut,
-                    thenTotalAmntBal: this.tdAmount,
-                  }]
-                },
                 order: {
                   dealerDebit: this.dealerInfo.dealerCode,
                   drDealerLabel: this.dealerInfo.dealerLabelName || '',  // 往来关系标签
@@ -471,7 +270,7 @@
             this.matterList.push(item);
           })
           this.handlerDefault = {
-            handler: formData.handler,
+            handler: formData.handler || formData.creator,
             handlerName: formData.handlerName,
             handlerUnit: formData.handlerUnit,
             handlerUnitName: formData.handlerUnitName,
@@ -499,19 +298,11 @@
             county: formData.order.county_dealerDebit,
             address: formData.order.address_dealerDebit,
             dealerLogisticsTerms: formData.drDealerLogisticsTerms,
-            pamentDays: formData.inPut.daysOfAccount,
             paymentTerm: formData.order.drDealerPaymentTerm || '', // 结算方式
           }
           this.contactInfo = {
             dealerName: formData.dealerDebitContactPersonName,
             dealerMobilePhone: formData.dealerDebitContactInformation,
-          }
-          this.inPut = {
-            tdAmountCopy1: formData.inPut.dataSet[0].tdAmountCopy1,
-            executionDate: formData.inPut.dataSet[0].executionDate, // 执行日期
-            validUntil: formData.inPut.dataSet[0].validUntil, // 截止日期
-            thenTotalAmntBal: formData.inPut.dataSet[0].thenTotalAmntBal,
-            prepaymentDueDate: formData.inPut.dataSet[0].prepaymentDueDate
           }
           this.$loading.hide();
         })
@@ -527,18 +318,19 @@
             dealerInfo: this.dealerInfo,
             formData: this.formData,
             contactInfo: this.contactInfo,
-            inPut: this.inPut
           }
         };
       },
-      // TODO 获取关联数据
-      getRelationData() {
-      },
-      // 获取 物流条款
-      getLogisticsTerms() {
-        return getDictByType('dealerLogisticsTerms').then(({tableContent}) => {
-          this.logisticsTerm = tableContent;
-        })
+      // 将物料配置拆分成属性和可编辑部分
+      splitConfig(editMatterPop, editMatterPopConfig){
+        for(let [index, item] of Object.entries(editMatterPop)) {
+          if(!item.readOnly) {
+            editMatterPopConfig.property = editMatterPop.slice(0, index);
+            editMatterPopConfig.editPart = editMatterPop.slice(index);
+            break;
+          }
+        }
+
       },
     },
     created() {
@@ -549,7 +341,6 @@
         this.dealerInfo = draft.dealerInfo;
         this.formData = draft.formData;
         this.contactInfo = draft.contactInfo;
-        this.inPut = draft.inPut;
         sessionStorage.removeItem(DRAFT_KEY);
       }
 

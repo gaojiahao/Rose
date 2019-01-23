@@ -385,6 +385,24 @@ export default {
       item.taxAmount = toFixed(accMul(item.noTaxAmount, taxRate));
       item.tdAmount = toFixed(accAdd(item.noTaxAmount, item.taxAmount));
     },
+    // 将物料配置拆分成属性和可编辑部分
+    splitConfig(editMatterPop, editMatterPopConfig){
+      for(let [index, item] of Object.entries(editMatterPop)) {
+        //物料信息里面有数量
+        if(item.fieldCode === 'tdQty' || item.fieldCode === 'qualityQty' || item.fieldCode === "qtyDownline"){
+          editMatterPopConfig.property = editMatterPop.slice(0, index);
+          editMatterPopConfig.editPart = editMatterPop.slice(index)
+          break;
+        }
+
+        // if(!item.readOnly) {
+        //   editMatterPopConfig.property = editMatterPop.slice(0, index);
+        //   editMatterPopConfig.editPart = editMatterPop.slice(index);
+        //   break;
+        // }
+      }
+
+    },
     // 获取表单配置基本信息
     async getFormViewInfo() {
       // 请求 表单uniqueId
@@ -642,20 +660,7 @@ export default {
         })
         // 判断是否只读 如果不是只读就统一塞进编辑页面
         if(editMatterPop.length) {
-          for(let [index, item] of Object.entries(editMatterPop)) {
-            //物料信息里面有数量
-            if(item.fieldCode === 'tdQty' || item.fieldCode === 'qualityQty' || item.fieldCode === "qtyDownline"){
-              editMatterPopConfig.property = editMatterPop.slice(0, index);
-              editMatterPopConfig.editPart = editMatterPop.slice(index)
-              break;
-            }
-
-            // if(!item.readOnly) {
-            //   editMatterPopConfig.property = editMatterPop.slice(0, index);
-            //   editMatterPopConfig.editPart = editMatterPop.slice(index);
-            //   break;
-            // }
-          }
+          this.splitConfig(editMatterPop, editMatterPopConfig);
         }
         this.matterEditConfig = editMatterPopConfig;
         // 处理其他信息的配置
