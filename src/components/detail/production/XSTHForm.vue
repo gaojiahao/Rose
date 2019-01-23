@@ -9,7 +9,7 @@
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 用户地址和基本信息-->
       <contact-part :contact-info="contactInfo" :configs="dealerConfig"></contact-part>
-      <warehouse-content :warehouse-out="warehouse"></warehouse-content>
+      <warehouse-content :warehouse-config="warehouseConfig"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
@@ -48,13 +48,14 @@
   export default {
     data() {
       return {
-        count: 0,          // 金额合计
-        orderInfo: {},      // 表单内容
+        count: 0,           // 金额合计
         formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
-        orderList: {}, // 物料列表
+        orderInfo: {},      // 表单内容
+        orderList: {},      // 物料列表
         warehouse: {},
-        contactInfo: {}, // 客户信息
-        basicInfo: {},//存放基本信息
+        basicInfo: {},      // 存放基本信息
+        contactInfo: {},    // 客户信息
+        warehouseConfig: []
       }
     },
     computed: {
@@ -131,15 +132,12 @@
             county: inPut.county_dealerDebit, // 地区
             address: inPut.address_dealerCodeCredit, // 详细地址
           };
-          this.warehouse = {
-            warehouseCode: inPut.containerCodeOut,
-            warehouseName: inPut.warehouseName_containerCode,
-            warehouseType: inPut.warehouseType_containerCode,
-            warehouseProvince: inPut.warehouseProvince_containerCode,
-            warehouseCity: inPut.warehouseCity_containerCode,
-            warehouseDistrict: inPut.warehouseDistrict_containerCode,
-            warehouseAddress: inPut.warehouseAddress_containerCode,
-          };
+          // 动态获取 仓库字段信息
+          for(let key in inPut) {
+            if(key.includes('warehouse') || key.includes('storehouse')) {
+              this.$set(this.warehouse, key, inPut[key])
+            }
+          }
           this.orderInfo = {
             ...formData,
             ...inPut,

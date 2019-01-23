@@ -25,7 +25,7 @@
       </div>
     </div>
     <div class="contact-other vux-1px-t" v-if="configs.length">
-      <div class="contact_other_wrapper" v-for="item in configs">
+      <div class="contact_other_wrapper" v-for="(item, index) in configs" :key="index">
         <div class="contact_other_item">
           <span class="contact_other_title">{{item.fieldLabel}}：</span>
           <span class="contact_other_value">{{item.fieldValue || '暂无'}}</span>

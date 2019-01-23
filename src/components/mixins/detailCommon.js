@@ -11,8 +11,6 @@ import MatterList from 'components/detail/commonPart/MatterList'
 import PopMatterDetail from 'components/Popup/matter/PopMatterDetail'
 import PriceTotal from 'components/detail/commonPart/PriceTotal'
 import OtherPart from 'components/detail/commonPart/OtherPart'
-// 映射表 引入
-import Apps from '@/home/pages/maps/businessApp'
 //公共方法引入
 import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
 import {toFixed} from '@/plugins/calc'
@@ -26,23 +24,7 @@ export default {
   },
   data() {
     return {
-      transCode: '',
-      comment: '',//审批意见
-      taskId: '',
-      listId: '',
-      userId: '',
-      userName: '',
-      cancelStatus: false,
-      cancelStatus1: false,
-      isMyTask: false,
-      formViewUniqueId: '',
-      fullWL: [], // 完整工作流
-      workFlowInfo: {},
-      actions: [],
-      isMine: false, // 是否为我创建
-      noOperation: true, // 是否审批过
-      HasValRealted: false,//相关实例是否有值为0
-      orderInfo: {}, // 表单内容
+      orderTitle: '所属订单', // 物料交易号名称
       uploadStyle: { //附件容器样式
         width: '100%',
         padding: '0.06rem 0.08rem'
@@ -52,15 +34,31 @@ export default {
         fontWeight: 'bold',
         color: '#111'
       },
-      attachment: [],
+      taskId: '',
+      listId: '',
+      userId: '',
+      comment: '',//审批意见
+      userName: '',
+      transCode: '',
       orderList: '',
-      action: {}, // 表单允许的操作
-      currentWL: {}, // 当前工作流
-      dealerConfig: [],
-      matterDetail: {}, // 选中物料的详细信息
+      formViewUniqueId: '',
+      isMine: false, // 是否为我创建
+      isMyTask: false,
+      noOperation: true, // 是否审批过
+      cancelStatus: false,
+      HasValRealted: false, //相关实例是否有值为0
+      cancelStatus1: false,
       showMatterDetail: false, // 是否展示物料详情弹窗
+      action: {}, // 表单允许的操作
+      orderInfo: {}, // 表单内容
+      currentWL: {}, // 当前工作流
+      matterDetail: {}, // 选中物料的详细信息
+      workFlowInfo: {},
+      fullWL: [], // 完整工作流
+      actions: [],
+      attachment: [],
       matterList: [],
-      orderTitle: '所属订单', // 物料交易号名称
+      dealerConfig: [],
     }
   },
   computed: {
@@ -230,9 +228,6 @@ export default {
           let {folder, fileName} = this.$route.params;
           if (fileName) {
             this.HasValRealted = true;
-            // if (item.itemCount > 0) {
-            //   this.HasValRealted = true;
-            // }
           }
         })
       })
@@ -249,7 +244,6 @@ export default {
     // TODO 是否已经关注该订单
     isSubscribeByRelationKey() {
       isSubscribeByRelationKey(this.transCode).then(data => {
-        // this.isConcern = data;
         this.$emit('is-subscribe', data)
       })
     },
@@ -347,7 +341,7 @@ export default {
     getFormConfig() {
       return getFormConfig(this.formViewUniqueId).then(({config = [], dataSource = '[]', reconfig = {}}) => {
         // console.log(config)
-        let dealerConfig = [], matterConfig = [], otherConfig = [];
+        let ckConfig = [], rkConfig = [], dealerConfig = [], matterConfig = [];
         let dealerFilter = [
           'dealerName_dealerDebit',
           'drDealerLabel',
@@ -391,10 +385,19 @@ export default {
           }
           if (!item.isMultiple) {
             if (item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt' || item.name === 'gys') {
-              dealerConfig = dealerConfig.concat(item.items)
+              dealerConfig = [...dealerConfig, ...item.items]
             }
+            // 出库信息
             if (item.name === 'ck') {
-              otherConfig = item.items;
+              // 处理 出库的仓库配置信息
+              ckConfig = item.items;
+              this.setWarehouseConfg(ckConfig, '出库');
+            }
+            // 入库信息
+            if(item.name === 'rk') {
+              // 处理 入库的仓库配置信息
+              rkConfig = item.items;
+              this.setWarehouseConfg(rkConfig, '入库');
             }
           } else {
             if (item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
@@ -413,16 +416,8 @@ export default {
           }
           return arr;
         }, []);
-        /*console.log('---------------dealerConfig------------------')
-        console.log(dealerConfig)
-        console.log('---------------dealerConfig end------------------')*/
-
         this.dealerConfig = dealerConfig;
-
-        /*console.log('---------------matterConfig------------------')
-        console.log(matterConfig)
-        console.log('---------------matterConfig end------------------')*/
-
+        // 物料相关配置
         matterConfig = matterConfig.reduce((arr, item, index) => {
           let key = dataIndexMap[item.fieldCode];
           let matchedCol = matterCols.find(col => col.k === key);
@@ -451,21 +446,19 @@ export default {
           listData = this.matterList;
         }
         this.setMatterConfig(listData, matterConfig);
-        // this.matterConfig = matterConfig;
-        // 处理其他信息的配置
-        /*let other = [];
-        otherConfig.forEach(item => {
-          if(!item.hiddenInRun){
-            if(item.xtype === 'r2MultiSelector' && item.dataSource && item.dataSource.type === 'remoteData'){
-              requestData(this.handlerParams(item)).then(data => {
-                this.$set(item, 'remoteData', data.tableContent)
-              })
-            }
-            other.push(item)
-          }
-        })
-        this.otherConfig = other;*/
       })
+    },
+    // 设置 仓库信息 动态渲染部分
+    setWarehouseConfg(config = [], type = '') {
+      let wareConfig = this.warehouseConfig;
+      let info = { warehouseAction: type, config: [] };
+      for(let item of config) {
+        if(!item.hiddenInRun) {
+          item.fieldValue = this.warehouse[item.fieldCode]
+          info.config.push(item);
+        }
+      }
+      wareConfig.push(info);
     },
     // TODO 设置物料的动态渲染部分
     setMatterConfig(arr, matterConfig) {

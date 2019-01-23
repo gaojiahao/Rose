@@ -9,7 +9,7 @@
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 用户地址和基本信息-->
       <contact-part :contact-info="contactInfo" :configs="dealerConfig"></contact-part>
-      <warehouse-content :warehouse-out="warehouse"></warehouse-content>
+      <warehouse-content :warehouse-config="warehouseConfig"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
@@ -48,13 +48,14 @@
   export default {
     data() {
       return {
-        count: 0,          // 金额合计
-        orderInfo: {},      // 表单内容
+        count: 0,           // 金额合计
         formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
-        orderList: {}, // 物料列表
-        warehouse: {},
-        contactInfo: {}, // 客户信息
-        basicInfo: {},//存放基本信息
+        orderInfo: {},      // 表单内容
+        orderList: {},      // 物料列表
+        warehouse: {},      // 仓库相关信息
+        basicInfo: {},      // 存放基本信息
+        contactInfo: {},    // 客户信息
+        warehouseConfig: [], // 仓库相关配置 
       }
     },
     computed: {
@@ -134,15 +135,12 @@
             county: outPut.county_dealerDebit, // 地区
             address: outPut.address_dealerDebit, // 详细地址
           };
-          this.warehouse = {
-            warehouseCode: outPut.containerCodeOut,
-            warehouseName: outPut.warehouseName_containerCodeOut,
-            warehouseType: outPut.warehouseType_containerCodeOut,
-            warehouseProvince: outPut.warehouseProvince_containerCodeOut,
-            warehouseCity: outPut.warehouseCity_containerCodeOut,
-            warehouseDistrict: outPut.warehouseDistrict_containerCodeOut,
-            warehouseAddress: outPut.warehouseAddress_containerCodeOut,
-          };
+          // 动态获取 仓库字段信息
+          for(let key in outPut) {
+            if(key.includes('warehouse') || key.includes('storehouse')) {
+              this.$set(this.warehouse, key, outPut[key])
+            }
+          }
           this.orderInfo = {
             ...formData,
             ...outPut,
