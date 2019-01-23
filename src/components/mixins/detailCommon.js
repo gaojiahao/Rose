@@ -14,6 +14,7 @@ import OtherPart from 'components/detail/commonPart/OtherPart'
 //公共方法引入
 import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
 import {toFixed} from '@/plugins/calc'
+import platfrom from '@/plugins/platform/index'
 /* 引入微信相关 */
 import {register} from 'plugins/wx'
 import {shareContent} from 'plugins/wx/api'
@@ -59,6 +60,8 @@ export default {
       attachment: [],
       matterList: [],
       dealerConfig: [],
+      btnIsHide: false,
+      submitMatterField: [], // 审批时要提交的物料字段
     }
   },
   computed: {
@@ -78,7 +81,7 @@ export default {
       this.orderInfo.order.dataSet.forEach(item => {
         if(item.taxAmount != null){
           total = accAdd(total, item.taxAmount);
-        }  
+        }
       });
       return total;
     },
@@ -373,6 +376,8 @@ export default {
         let dataIndexMap = {}; // 映射表
         let hasDataIndexMap = false; // 是否存在映射表
         let hideOrderTitle = false; // 是否隐藏订单号
+        let listData = []; // 一维物料数组
+        let submitMatterField = []; // 提交的物料参数
 
         // 从请求回来的配置中拆分往来，物料，其他段落的配置
         config.forEach(item => {
@@ -423,6 +428,10 @@ export default {
           let matchedCol = matterCols.find(col => col.k === key);
           // 判断是否存在映射关系，若有映射关系，则判断是否有该字段且判断字段是否隐藏，没有映射关系则直接展示
           let needShow = key ? (matchedCol ? !matchedCol.h : false) : true;
+          // 组合要提交的物料字段
+          if(item.submitValue){
+            submitMatterField.push(item)
+          }
           if (item.fieldCode === 'transMatchedCode') {
             this.orderTitle = item.text;
             hideOrderTitle = hasDataIndexMap && !(key && matchedCol && !matchedCol.h);
@@ -432,7 +441,7 @@ export default {
           }
           return arr
         }, []);
-        let listData = [];
+        this.submitMatterField = submitMatterField;
         if (Object.values(this.orderList).length) {
           listData = Object.values(this.orderList).reduce((arr, item) => {
             return [...arr, ...item]
@@ -490,5 +499,21 @@ export default {
   created() {
     register()
     this.loadPage();
+  },
+  mounted() {
+    //解决android键盘收起input没有失去焦点，底部按钮遮挡输入框
+    if (platfrom.isAndroid) {
+      window.onresize = () => {
+        if (this.clientHeight > document.documentElement.clientHeight) {
+          //底部按钮隐藏
+          this.btnIsHide = true;
+        } else {
+          this.btnIsHide = false;
+          if (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA") {
+            document.activeElement.blur();
+          }
+        }
+      }
+    }
   }
 }

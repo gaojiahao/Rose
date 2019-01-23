@@ -1,6 +1,6 @@
 <template>
   <div v-transfer-dom>
-    <popup class="popup-matter-container" height="80%" v-model="showPop">
+    <popup class="popup-matter-container" :class="{'has-edit': hasEditPart}" height="80%" v-model="showPop">
       <div class="popup-top">
         <i class="icon-close" @click="hidePop"></i>
       </div>
@@ -30,8 +30,22 @@
             </div>
           </div>
         </div>
+        <div class="matter-edit-part">
+          <template v-for="(eItem, eIndex) in editParts">
+            <x-input class="vux-1px-b" type="number" v-model.number='item[eItem.fieldCode]'
+                     text-align="right"
+                     placeholder="请输入"
+                     v-if="(eItem.editorType === 'r2Numberfield' || eItem.editorType === 'r2Percentfield' || eItem.editorType === 'r2Permilfield')"
+                     @on-blur="checkAmt(item, eItem.fieldCode, item[eItem.fieldCode])"
+                     @on-focus="getFocus($event)">
+              <template slot="label">
+                <span :class="{required: !eItem.allowBlank}">{{eItem.text}}</span>
+              </template>
+            </x-input>
+          </template>
+        </div>
         <div class="matter-other">
-          <div class="matter_other_item" v-for="other in item.others">
+          <div class="matter_other_item" v-for="other in readOnlyParts">
             <span class="matter_other_title">{{other.text}}</span>
             <span>{{other.value}}</span>
           </div>
@@ -48,13 +62,17 @@
           <div class="matter_comment_value">{{item.matterComment.value}}</div>
         </div>
       </r-scroll>
+      <div class='confirm_btn' :class="{btn_hide : btnIsHide}" @click="confirm" v-if="hasEditPart">
+        <div class='confirm'>确认</div>
+      </div>
     </popup>
   </div>
 </template>
 
 <script>
-  import {numberComma, Popup} from 'vux'
+  import {XInput, numberComma, Popup} from 'vux'
   import RScroll from 'components/RScroll'
+  import {toFixed} from '@/plugins/calc'
 
   export default {
     name: "PopMatterDetail",
@@ -68,22 +86,38 @@
         default() {
           return {}
         }
+      },
+      btnIsHide: {
+        type: Boolean,
+        default: false
+      },
+      checkAmt: {
+        type: Function,
+        default(item, key, val) {
+          item[key] = Math.abs(toFixed(val));
+        }
       }
     },
     components: {
-      Popup, RScroll,
+      Popup, RScroll, XInput,
     },
     data() {
       return {
         showPop: false,
+        editParts: [],
+        readOnlyParts: [],
       }
     },
-    computed:{
+    computed: {
       // 是否含时间块
-      hasDate(){
+      hasDate() {
         let {dates = []} = this.item;
         return dates && dates.length
-      }
+      },
+      // 是否有可编辑部分
+      hasEditPart() {
+        return !!this.editParts.length
+      },
     },
     watch: {
       show: {
@@ -97,6 +131,19 @@
           this.$emit('input', val);
         },
         immediate: true
+      },
+      item: {
+        handler(val) {
+          let {others = []} = val;
+          let editParts = [];
+          let readOnlyParts = [];
+          others.forEach(item => {
+            item.readOnly ? readOnlyParts.push(item) : editParts.push(item);
+          });
+          this.editParts = editParts;
+          this.readOnlyParts = readOnlyParts;
+        },
+        immediate: true,
       }
     },
     methods: {
@@ -112,16 +159,50 @@
       hidePop() {
         this.showPop = false;
       },
+      // TODO 确定修改
+      confirm() {
+        let warn = '';
+        let matter = this.item;
+        this.editParts.every(eItem => {
+          let val = matter[eItem.fieldCode];
+          if (!eItem.allowBlank) {
+            // if ((Array.isArray(val) && !val.length) || !val) {
+            if (!val && val !== 0) {
+              warn = eItem.text + '不能为空';
+              return false
+            }
+          }
+          return true
+        });
+        if (warn) {
+          this.$vux.alert.show({
+            content: warn
+          });
+          return
+        }
+        this.$emit('sel-confirm', JSON.stringify(this.chosenMatter))
+      },
+      //输入框获取焦点时内容选中
+      getFocus(e) {
+        event.currentTarget.select();
+      }
     },
   }
 </script>
 
 <style scoped lang="scss">
+  @import '~@/scss/color';
+
   .popup-matter-container {
     width: 100%;
     background-color: #fff;
     color: #333;
     box-sizing: border-box;
+    &.has-edit {
+      .scroll-container {
+        height: calc(100% - 1.22rem);
+      }
+    }
     .vux-1px-t:before {
       border-color: #e8e8e8;
     }
@@ -240,5 +321,53 @@
       }
     }
 
+    /* 编辑部分 */
+    .matter-edit-part {
+      color: #333;
+      .required {
+        color: $main_color;
+      }
+      .vux-cell-box {
+        &:after {
+          border-color: #e8e8e8;
+        }
+      }
+      .weui-cell {
+        padding: .15rem;
+        line-height: .2rem;
+        font-size: .14rem;
+        &:after {
+          border-color: #e8e8e8;
+        }
+        .weui-cell__hd {
+          display: flex;
+          align-items: center;
+          color: #696969;
+        }
+      }
+    }
+
+    //确认按钮
+    .confirm_btn {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      box-sizing: border-box;
+      background: #fff;
+      padding: 0.08rem .2rem;
+      &.btn_hide {
+        display: none;
+      }
+      .confirm {
+        width: 100%;
+        height: 0.44rem;
+        line-height: 0.44rem;
+        border-radius: .04rem;
+        background-color: $main_color;
+        color: #fff;
+        text-align: center;
+      }
+    }
   }
 </style>

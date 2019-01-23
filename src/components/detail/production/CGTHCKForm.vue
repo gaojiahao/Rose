@@ -9,7 +9,7 @@
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 用户地址和基本信息-->
       <contact-part :contact-info="dealerInfo" :configs="dealerConfig"></contact-part>
-      <warehouse-content :warehouse-out="warehouse"></warehouse-content>
+      <warehouse-content :warehouse-config="warehouseConfig"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
@@ -53,6 +53,7 @@ export default {
       warehouse: {},
       dealerInfo: {}, // 客户信息
       basicInfo :{},//存放基本信息
+      warehouseConfig: [], // 仓库相关配置
     }
   },
   computed:{
@@ -132,15 +133,12 @@ export default {
           county: outPut.county_dealerDebit, // 地区
           address: outPut.address_dealerDebit, // 详细地址
         };
-        this.warehouse = {
-          warehouseCode: outPut.containerCodeOut,
-          warehouseName: outPut.warehouseName_containerCodeOut,
-          warehouseType: outPut.warehouseType_containerCodeOut,
-          warehouseProvince: outPut.warehouseProvince_containerCodeOut,
-          warehouseCity: outPut.warehouseCity_containerCodeOut,
-          warehouseDistrict: outPut.warehouseDistrict_containerCodeOut,
-          warehouseAddress: outPut.warehouseAddress_containerCodeOut,
-        };
+        // 动态获取 仓库字段信息
+        for(let key in outPut) {
+          if(key.includes('warehouse') || key.includes('storehouse')) {
+            this.warehouse[key] = outPut[key];
+          }
+        }
         this.orderInfo = {
           ...formData,
           ...outPut,
