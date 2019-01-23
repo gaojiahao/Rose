@@ -385,46 +385,6 @@ export default {
       item.taxAmount = toFixed(accMul(item.noTaxAmount, taxRate));
       item.tdAmount = toFixed(accAdd(item.noTaxAmount, item.taxAmount));
     },
-    // TODO 获取表单要提交的字段
-    getModelConfigByListId(){
-      getModelConfigByListId(this.listId).then(({tableContent = []}) => {
-        let allSubmitFields = JSON.parse(tableContent[0].MODEL_CONFIG) ;
-        let {groupCfg} = allSubmitFields;
-        let submitMatterField = {};
-        console.log(groupCfg)
-        for(let key in groupCfg){
-          let containerKey = groupCfg[key].fieldContainer;
-          // console.log(submitMatterField)
-          if(submitMatterField[containerKey]){
-            if(groupCfg[key].submitValue){
-              // 重复项字段
-              if(groupCfg[key].isList){
-                submitMatterField[containerKey].dataSet.push({
-                  ...groupCfg[key],
-                  fieldCode: key
-                })
-              }
-              // 单一项字段
-              else{
-                console.log('单一项', key)
-                submitMatterField[containerKey].singleFied.push({
-                  ...groupCfg[key],
-                  fieldCode: key
-                })
-              }
-
-            }
-          }
-          else{
-            console.log('第一次进入')
-            this.$set(submitMatterField, containerKey, {singleFied: [], dataSet: []})
-          }
-        }
-        console.log(submitMatterField)
-        this.submitMatterField = submitMatterField;
-      })
-
-    },
     // 获取表单配置基本信息
     async getFormViewInfo() {
       // 请求 表单uniqueId
@@ -477,8 +437,12 @@ export default {
             if(cItem.k === 'inventoryCode' && !cItem.h && !this.orderListTitle){
               this.orderListTitle = '物料'
             }
-            else if(cItem.k === 'transCode' && !cItem.h && !this.orderListTitle){
-              this.orderListTitle = "订单"
+            else if(cItem.k === 'transCode' && !cItem.h){
+              if(cItem.v.includes('编码')){
+                this.orderListTitle = cItem.v.slice(0, cItem.v.indexOf('编码'))
+                return 
+              }
+              this.orderListTitle = cItem.v
             }
 
             // 配置中的字段要去除掉物料名称，交易号

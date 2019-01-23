@@ -308,6 +308,15 @@ export let getPriceFromSalesContractAndPrice = (data = {}) =>{
     }
   })
 }
+// 获取物料的物料的单价和税率（目前用于原料采购订单）
+export let getPriceFromProcurementContract = (data = {}) =>{
+  return $flyio.ajax({
+    type: 'POST',
+    contentType: 'application/json',
+    url: '/H_roleplay-si/formAPI/getPriceFromProcurementContract',
+    data: JSON.stringify(data)
+  })
+}
 // 获取提交页面表单配置
 export let getFormConfig = (viewId = '') => {
   return $flyio.ajax({
@@ -353,7 +362,6 @@ export let getListViewById = (uniqueId) => {
     }
   })
 }
-
 export default {
   getList,
   upload,

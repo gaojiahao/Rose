@@ -90,6 +90,7 @@ let Rxports = {
   
   // 标准请求 （支持GET、POST）
   ajax(opts = {}) {
+    
     return new Promise((resolve, reject) => {
       let params = {
         method: opts.type || opts.method || 'GET',
@@ -102,6 +103,9 @@ let Rxports = {
       }
       if (params.method.toUpperCase() === 'POST') {
         params.data = qs.stringify(opts.data || opts.body) || {}
+        if(opts.contentType === 'application/json'){
+          params.data = opts.data
+        }
       } else {
         if (typeof opts.data === 'object') {
           let query = [];

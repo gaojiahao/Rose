@@ -559,7 +559,7 @@ export default {
           warehouseAddress: outPut.warehouseAddress_containerCodeOut,
           containerOutWarehouseManager: formData.containerOutWarehouseManager, // 仓库管理员
         };
-          this.warehouseStoreInfo = {
+        this.warehouseStoreInfo = {
           warehouseCode: outPut.storehouseOutCode,
           warehouseName: outPut.warehouseName_storehouseOutCode,
           warehouseType: outPut.warehouseType_storehouseOutCode,
@@ -621,67 +621,6 @@ export default {
           matterParams: this.matterParams
         }
       };
-    },
-    // TODO 获取关联数据
-    getRelationData() {
-      let {uniqueId} = this.$route.query;
-      return getSOList({
-        formViewUniqueId: uniqueId,
-        transCode: this.relationKey
-      }).then(data => {
-        let {success = true, formData = {}, attachment = []} = data;
-        // http200时提示报错信息
-        if (!success) {
-          this.$vux.alert.show({
-            content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
-          });
-          return;
-        }
-        // this.attachment = attachment;
-        // 获取合计
-        let {order} = formData;
-        // let {dataSet = []} = order;
-        // dataSet = dataSet.map(item => {
-        //   return {
-        //     ...item,
-        //     inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
-        //     inventoryName: item.inventoryName_transObjCode,
-        //     inventoryCode: item.inventoryCode_transObjCode,
-        //     specification: item.specification_transObjCode,
-        //     processing: item.tdProcessing || '商品',
-        //     measureUnit: item.measureUnit_transObjCode,
-        //     transCode: this.relationKey,
-        //     qtyBal: item.tdQty,
-        //     tdQty: '',
-        //     qtyStockBal: 0,
-
-        //   };
-        // });
-
-        //供应商信息展示
-        this.dealerInfo = {
-          creatorName: formData.dealerDebitContactPersonName,
-          dealerMobilePhone: formData.dealerDebitContactInformation,
-          dealerCode: formData.order.dealerDebit,
-          dealerSubclass: formData.order.drAccountSub,
-          dealerName: formData.order.dealerName_dealerDebit,
-          province: formData.order.province_dealerDebit,
-          city: formData.order.city_dealerDebit,
-          county: formData.order.county_dealerDebit,
-          address: formData.order.address_dealerDebit,
-          paymentTerm: formData.order.drDealerPaymentTerm,
-        }
-        // 物料请求参数
-        this.orderParams = {
-          dealerCode: this.dealerInfo.dealerCode
-        };
-
-        // this.matterList = dataSet;
-        // this.orderList = {
-        //   [this.relationKey]: dataSet,
-        // };
-        this.$loading.hide();
-      })
     },
     // 提交字段校验
     checkAmt(item, key, val) {
