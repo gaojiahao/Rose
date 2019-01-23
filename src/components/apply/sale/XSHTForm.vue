@@ -14,7 +14,7 @@
           :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
           :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
           :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
-          :chosen-matter="matter" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
+          :chosen-matter="matter" :check-amt-fn="checkAmt" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
           <template slot="info" slot-scope="{item}">
             <div class="matter_info_item">
               <div class="matter_detail" v-if="item.qtyDownline">
@@ -204,14 +204,9 @@ export default {
         }
       })
     },
-    checkAmt(item) {
-      let {tdQty, tdAmountCopy1} = item;
-      if (tdQty) {
-        item.tdQty = Math.abs(toFixed(tdQty));
-      }
-      if (tdAmountCopy1) {
-        item.tdAmountCopy1 = Math.abs(toFixed(tdAmountCopy1));
-      }
+    checkAmt(item, key, val) {
+      item[key] = Math.abs(toFixed(val)); 
+      
     },
     // 提价订单
     submitOrder() {

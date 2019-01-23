@@ -16,7 +16,7 @@
           :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
           :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
           :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
-          :chosen-matter="matter" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
+          :chosen-matter="matter" :check-amt-fn="checkAmt" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
           <template slot="info" slot-scope="{item}">
             <div class='mater_other' v-if="item.price">
               <div class='mater_price'>
@@ -158,6 +158,10 @@
           }
         })
 
+      },
+      // 校验数字
+      checkAmt(item, key, val) {
+        item[key] = Math.abs(toFixed(val)); 
       },
       // TODO 新增更多物料
       addMatter() {
