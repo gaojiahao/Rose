@@ -82,11 +82,12 @@ export default {
   methods: {
     // 选中的客户
     selDealer(val) {
-      if(JSON.parse(val)[0].dealerCode !== this.dealerInfo.dealerCode){
-        this.dealerInfo = JSON.parse(val)[0];
-        this.dealerInfo.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
-        this.dealerInfo.daysOfAccount= this.dealerInfo.pamentDays;
-        this.dealerInfo.drDealerLogisticsTerms = this.dealerInfo.dealerLogisticsTerms;
+      let [chosenDealer = {}] = JSON.parse(val);
+      if(chosenDealer.dealerCode !== this.dealerInfo.dealerCode){
+        chosenDealer.drDealerPaymentTerm = chosenDealer.paymentTerm;
+        chosenDealer.daysOfAccount= chosenDealer.pamentDays;
+        chosenDealer.drDealerLogisticsTerms = chosenDealer.dealerLogisticsTerms;
+        this.dealerInfo = chosenDealer;
         if(this.matterParams.data && this.matterParams.data.dealerCode != null){
           this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
           this.matterList = [];
@@ -325,7 +326,7 @@ export default {
     // 提价订单
     submitOrder() {
       let warn = '', dataSet = [];
-      for(let item of this.dealerConfig){
+      for (let item of this.dealerConfig) {
         if(!item.hiddenInRun && !item.allowBlank){
           if(item.fieldCode === 'dealerName_dealerDebit' && !this.dealerInfo.dealerName){
             warn = '请选择客户';
@@ -338,58 +339,27 @@ export default {
           
         }
       }
-      if (!warn && !Object.keys(this.orderList).length) {
+      if(!warn && !Object.keys(this.orderList).length) {
         warn =  '请选择物料'
       }
-      if(!warn){
+      if(!warn) {
+        // 动态组装 dataSet
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
-            if (!item.tdQty) {
-              warn = '请填写数量';
-              break
+            let oItem = {};
+            for(let sItem of this.submitMatterField){
+              let val = item[sItem.fieldCode] || item[sItem.displayField] || item[sItem.showFieldCode];
+              if(!sItem.hidden && !sItem.allowBlank && !val){
+                warn = `${sItem.text}不为空`
+                break;
+              }
+              oItem[sItem.fieldCode] = val !== null ? val : null;
             }
-            if (!item.price) {
-              warn = '请填写单价';
-              break
-            }
-            if (!item.promDeliTime) {
-              warn = '请选择预期交货日';
-              break
-            }
-            let taxRate = item.taxRate || this.taxRate;
-            let taxAmount = toFixed(accMul(item.assistQty, taxRate, item.noTaxPrice));
-            let obj = {
-              tdId: item.tdId || '',
-              transMatchedCode: item.transCode,
-              inventoryName_transObjCode: item.inventoryName, // 物料名称
-              transObjCode: item.inventoryCode, // 物料编码
-              tdProcessing: item.processing, // 加工属性
-              assMeasureUnit: item.assMeasureUnit || null, // 辅助计量
-              assMeasureDescription: item.assMeasureDescription || null,
-              assMeasureScale: item.assMeasureScale || null, // 与单位倍数
-              dealerInventoryName: item.dealerInventoryName,
-              dealerInventoryCode: item.dealerInventoryCode,
-              thenTotalQtyBal: item.qty,
-              thenLockQty: item.stockQty,
-              thenQtyBal: item.qtyBal,
-              tdQty: item.tdQty, // 数量
-              assistQty: item.assistQty || 0, // 辅计数量
-              price: item.price, // 单价
-              tdAmount: toFixed(accMul(item.price, item.assistQty)), // 价税小计
-              taxRate: taxRate, // 税金
-              noTaxPrice: item.noTaxPrice,
-              taxAmount: taxAmount, // 税金
-              noTaxAmount: accSub(item.tdAmount, item.taxAmount),
-              dateActivation: item.dateActivation, // 交付开始日
-              promDeliTime: item.promDeliTime || null, // 预期交货日
-              executionDate: item.executionDate, // 交付截止日
-              comment: item.comment || '', // 说明
-            }
-            dataSet.push(obj);
+            dataSet.push(oItem);
           }
         }
       }
-      if (warn) {
+      else {
         this.$vux.alert.show({
           content: warn
         })
@@ -426,7 +396,7 @@ export default {
               order: {
                 dealerDebit: this.dealerInfo.dealerCode,
                 drDealerLabel: this.dealerInfo.dealerLabelName,
-                drDealerPaymentTerm: this.dealerInfo.paymentTerm,
+                drDealerPaymentTerm: this.dealerInfo.drDealerPaymentTerm,
                 daysOfAccount: this.dealerInfo.pamentDays,
                 dataSet
               },
