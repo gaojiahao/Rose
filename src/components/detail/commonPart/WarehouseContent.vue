@@ -2,24 +2,21 @@
   <div class="warehouse-container">
     <header class="warehouse-header">
       <div class="warehouse_title vux-1px-l">仓库信息</div>
-      <div class="warehouse_switch" v-if="warehouseList.length > 1">
+      <div class="warehouse_switch" v-if="warehouseConfig.length > 1">
         <div class="warehouse_switch_item" :class="{active: activeIndex === index}"
-             v-for="(item, index) in warehouseList" @click="warehouseChange(item, index)">
+             v-for="(item, index) in warehouseConfig" :key="index" @click="warehouseChange(item, index)">
           {{item.warehouseAction}}
         </div>
       </div>
     </header>
-    <div class="warehouse-main" v-for="(item, index) in warehouseList" v-show="activeIndex === index">
-      <img class="warehouse_img" :src="item.warehousePic" alt="">
-      <div class="warehouse_info">
-        <div class="warehouse_name">{{item.warehouseName}}</div>
-        <div class="warehouse_info_item">
-          <span class="warehouse_item_title">仓库类型:</span>
-          <span class="warehouse_item_value">{{item.warehouseType}}</span>
-        </div>
-        <div class="warehouse_info_item">
-          <span class="warehouse_item_title">仓库地址:</span>
-          <span class="warehouse_item_value">{{item.address}}</span>
+    <div class="warehouse-main">
+      <div v-for="(item, index) in PicList" :key="index" v-show="activeIndex === index">
+        <img class="warehouse_img" :src="item.warehousePic">
+      </div>
+      <div class="warehouse_info" v-if="warehouseConfig[activeIndex]">
+        <div class="warehouse_info_item" v-for="(item, index) in warehouseConfig[activeIndex].config" :key="index">
+          <span class="warehouse_item_title">{{item.fieldLabel}}:</span>
+          <span class="warehouse_item_value">{{item.fieldValue || '无'}}</span>
         </div>
       </div>
     </div>
@@ -30,53 +27,21 @@
   export default {
     name: "WarehouseContent",
     props: {
-      // 入库
-      warehouse: {
-        type: Object,
-        default() {
-          return {}
-        }
-      },
-      // 出库
-      warehouseOut: {
-        type: Object,
-        default() {
-          return {}
-        }
+      warehouseConfig: {
+        type: Array,
+        required: true
       }
     },
     data() {
       return {
         activeIndex: 0,
+        PicList: [
+          { warehousePic: require('assets/iconfont/warehouse_out.png') },
+          { warehousePic: require('assets/iconfont/warehouse_in.png') }
+        ]
       }
     },
-    computed: {
-      noAddress() {
-        let {warehouseProvince = '', warehouseCity = '', warehouseDistrict = '', warehouseAddress = ''} = this.warehouse;
-        return !warehouseProvince && !warehouseCity && !warehouseDistrict && !warehouseAddress;
-      },
-      warehouseList() {
-        let tmp = [];
-        let warehouseIn = JSON.parse(JSON.stringify(this.warehouse));
-        let warehouseOut = JSON.parse(JSON.stringify(this.warehouseOut));
-        Object.values(warehouseIn).length ? tmp.push(warehouseIn) : '';
-        Object.values(warehouseOut).length ? tmp.push(warehouseOut) : '';
-        warehouseIn.type = 'in';
-        warehouseOut.type = 'out';
-        tmp.forEach(item => {
-          let {warehouseProvince = '', warehouseCity = '', warehouseDistrict = '', warehouseAddress = ''} = item;
-          item.warehousePic = require(`assets/iconfont/warehouse_${item.type}.png`);
-          item.address = !warehouseProvince && !warehouseCity && !warehouseDistrict && !warehouseAddress
-            ? '暂无'
-            : `${warehouseProvince}${warehouseCity}${warehouseDistrict}${warehouseAddress}`
-        });
-        return tmp
-      },
-    },
     methods: {
-      handleData(item){
-
-      },
       warehouseChange(item, index) {
         this.activeIndex = index;
       }
@@ -144,7 +109,7 @@
       }
       .warehouse_info_item {
         display: flex;
-        margin-top: .1rem;
+        align-items: baseline;
         & + .warehouse_info_item {
           margin-top: .06rem;
         }

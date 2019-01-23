@@ -8,11 +8,10 @@
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 仓库信息 -->
-      <warehouse-content :warehouse="warehouseIn" :warehouse-out="warehouseOut"></warehouse-content>
+      <warehouse-content :warehouse-config="warehouseConfig"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName"
-                  :is-my-task="isMyTask"
-                  :no-status="orderInfo.biStatus"></work-flow>
+                  :is-my-task="isMyTask" :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
       <matter-list :matter-list="matterList" @on-show-more="onShowMore"></matter-list>
       <!-- 备注 -->
@@ -41,10 +40,9 @@
     data() {
       return {
         orderInfo: {},
-        warehouseIn: {}, // 入库仓库详情
-        warehouseOut: {}, // 出库仓库详情
+        warehouse: {}, // 仓库信息
+        warehouseConfig: [],
         formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
-        warehouses: [], // 仓库信息
       }
     },
     mixins: [detailCommon],
@@ -87,40 +85,23 @@
               ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
           }
-          // 入库
-          this.warehouseIn = {
-            type: 'in',
-            warehouseCode: inPut.containerCode,
-            warehouseName: `${inPut.warehouseName_containerCode}`,
-            warehouseAction: '入库',
-            warehouseIcon: 'icon-ruku',
-            warehouseType: inPut.warehouseType_containerCode,
-            warehouseProvince: inPut.warehouseProvince_containerCode,
-            warehouseCity: inPut.warehouseCity_containerCode,
-            warehouseDistrict: inPut.warehouseDistrict_containerCode,
-            warehouseAddress: inPut.warehouseAddress_containerCode,
-          };
-          // 出库
-          this.warehouseOut = {
-            type: 'out',
-            warehouseCode: inPut.containerCodeOut,
-            warehouseName: `${inPut.warehouseName_containerCodeOut}`,
-            warehouseAction: '出库',
-            warehouseIcon: 'icon-chuku',
-            warehouseType: inPut.warehouseType_containerCodeOut,
-            warehouseProvince: inPut.warehouseProvince_containerCodeOut,
-            warehouseCity: inPut.warehouseCity_containerCodeOut,
-            warehouseDistrict: inPut.warehouseDistrict_containerCodeOut,
-            warehouseAddress: inPut.warehouseAddress_containerCodeOut,
-          };
+          // 动态获取 仓库信息
+          this.setWarehouseInfo(formData);
+          this.setWarehouseInfo(inPut);
           this.attachment = attachment;
           this.matterList = inPut.dataSet;
           this.orderInfo = formData;
           this.workFlowInfoHandler();
         })
       },
-    },
-    created() {
+      // 动态获取 仓库信息
+      setWarehouseInfo(data) {
+        for(let key in data) {
+          if(key.includes('warehouse') || key.includes('storehouse')) {
+            this.$set(this.warehouse, key, data[key])
+          }
+        }
+      }
     }
   }
 </script>
