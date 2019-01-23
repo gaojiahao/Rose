@@ -135,7 +135,7 @@
           // 动态获取 仓库字段信息
           for(let key in inPut) {
             if(key.includes('warehouse') || key.includes('storehouse')) {
-              this.$set(this.warehouse, key, inPut[key])
+              this.warehouse[key] = inPut[key];
             }
           }
           this.orderInfo = {
