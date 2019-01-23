@@ -81,14 +81,10 @@
           }
           let {attachment = [], formData = {}} = data;
           this.attachment = attachment;
-          let {order, inPut} = formData;
+          let {order} = formData;
           // 获取合计
           let {dataSet} = order;
-          let {dataSet: iDataSet = []} = inPut;
-          let [first = {}] = iDataSet;
           for (let val of dataSet) {
-            val.noTaxAmount = accSub(val.tdAmount, val.taxAmount);
-            this.count = accAdd(this.count, val.tdAmount);
             val.inventoryPic = val.inventoryPic_transObjCode
               ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
@@ -110,8 +106,6 @@
           this.orderInfo = {
             ...formData,
             ...order,
-            ...first,
-            ...inPut,
           };
           this.workFlowInfoHandler();
         })

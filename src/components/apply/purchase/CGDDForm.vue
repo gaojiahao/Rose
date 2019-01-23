@@ -35,7 +35,7 @@
 
 <script>
 // vux插件引入
-import { XTextarea, dateFormat, Datetime, XInput, Cell } from 'vux'
+import { XTextarea, dateFormat,} from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 import { getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc, getPriceFromProcurementContract } from 'service/commonService'

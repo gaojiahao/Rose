@@ -11,7 +11,7 @@
       <r-scroll class="list_wrapper " :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <mater-list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)"></mater-list-item>
+        <mater-list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)" noQty noCount></mater-list-item>
       </r-scroll>
     </div>
     <add-btn :action="action" :goEdit="goEdit"></add-btn>  
@@ -29,7 +29,7 @@
           {name: '已生效', status: '已生效'},
           {name: '进行中', status: '进行中'}
         ],
-        listViewID: 2570,
+        listViewID: 2586,
 
       }
     },
