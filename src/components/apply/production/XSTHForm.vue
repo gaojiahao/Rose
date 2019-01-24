@@ -178,6 +178,11 @@
       // TODO 选择的库位
       getStore(val) {
         this.warehouseStoreInfo = {...val};
+        if(this.matterParams.data && this.matterParams.data.storehouseCode != null) {
+          this.matterParams.data.storehouseCode = this.warehouseStoreInfo.warehouseCode;
+          this.matterList = [];
+          this.orderList = {};
+        }
       },
       // TODO 显示物料修改的pop
       getMatterModify(item, index, key) {
@@ -565,6 +570,7 @@
             dealerInfo: this.dealerInfo,
             contactInfo: this.contactInfo,
             formData: this.formData,
+            warehouseStoreInfo: this.warehouseStoreInfo,
             project: this.project,
           }
         };
@@ -647,12 +653,8 @@
         this.dealerInfo = draft.dealerInfo;
         this.contactInfo = draft.contactInfo;
         this.formData = draft.formData;
+        this.warehouseStoreInfo = draft.warehouseStoreInfo;
         this.project = draft.project;
-        // 订单请求参数
-        this.orderParams = {
-          dealerCode: this.dealerInfo.dealerCode,
-          whCode: this.warehouse.warehouseCode,
-        };
         sessionStorage.removeItem(DRAFT_KEY);
       }
     }

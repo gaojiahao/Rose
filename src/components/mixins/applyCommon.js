@@ -558,7 +558,12 @@ export default {
                 this.orderListTitle = '设施'
               }
               else{
-                this.orderListTitle = item.text;
+                if(item.text.includes('编码')){
+                  this.orderListTitle = item.text.slice(0, item.text.indexOf('编码'));
+                  return 
+                  
+                }              
+                this.orderListTitle = item.text;               
               }
               let url = item.dataSource.data.url;
               let params = item.dataSource.data.params;
