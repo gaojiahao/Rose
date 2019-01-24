@@ -5,7 +5,7 @@
       <div v-if="selItems.warehouseName">
         <div class="user_info">
           <span class="user_name">{{selItems.warehouseName}}</span>
-          <span class="user_tel">{{selItems.warehouseType}}</span>
+          <span class="user_tel">{{selItems.warehouseCode}}</span>
         </div>
         <div class="cp_info" v-if="!noAddress">
           <span class="icon-dealer-address"></span>

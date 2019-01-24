@@ -320,8 +320,8 @@ export default {
             if (mItem.inventoryName_transObjCode || mItem.inventoryName_outPutMatCode) {
               mItem.inventoryName = mItem.inventoryName_transObjCode || mItem.inventoryName_outPutMatCode;
               mItem.inventoryCode = mItem.inventoryCode_transObjCode || mItem.inventoryCode_outPutMatCode;
-              mItem.specification = mItem.specification_transObjCode || mItem.measureUnit_outPutMatCode;
-              mItem.measureUnit = mItem.measureUnit_transObjCode || mItem.specification_outPutMatCode;
+              mItem.specification = mItem.specification_transObjCode || mItem.specification_outPutMatCod;
+              mItem.measureUnit = mItem.measureUnit_transObjCode || mItem.measureUnit_outPutMatCode;
               mItem.inventoryPic = mItem[picKey]
                 // 请求图片
                 ? `/H_roleplay-si/ds/download?url=${mItem[picKey]}&width=400&height=400`

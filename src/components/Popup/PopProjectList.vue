@@ -9,13 +9,16 @@
     <!-- 物料popup -->
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
+        <div class="popup-top">
+          <i class="icon-close" @click="onHide"></i>
+        </div>
         <div class="trade_pop">
-          <m-search @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
+          <m-search @search='searchList' ></m-search>
           <!-- 费用列表 -->
           <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !projectList.length" @on-pulling-up="onPullingUp"
                     ref="bScroll">
-            <div class="each_mater box_sd" v-for="(item, index) in projectList" :key='index'
+            <div class="each_mater box_sd" :class="{seleted : showSelIcon(item)}" v-for="(item, index) in projectList" :key='index'
                  @click.stop="selThis(item, index)">
               <div class="mater_main ">
                 <!-- 物料名称 -->
@@ -24,7 +27,7 @@
                 <div class="project_type">{{item.PROJECT_TYPE}}</div>
               </div>
               <!-- icon -->
-              <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
+              <!-- <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon> -->
             </div>
           </r-scroll>
         </div>
@@ -35,16 +38,12 @@
 
 <script>
   import {Icon, Popup, LoadMore} from 'vux'
- import {getProjectList} from 'service/projectService.js'
+  import {getProjectList} from 'service/projectService.js'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
   export default {
     name: "PopProjectList",
     props: {
-      show: {
-        type: Boolean,
-        default: false
-      },
       // 默认值
       defaultValue: {
         type: Object,
@@ -72,11 +71,6 @@
       }
     },
     watch: {
-      show: {
-        handler(val) {
-          this.showPop = val;
-        }
-      },
       defaultValue(){
         this.selItems = {...this.defaultValue};
       }
@@ -92,7 +86,7 @@
       },
       // TODO 弹窗隐藏时调用
       onHide() {
-        this.$emit('input', false);
+        this.showPop = false;
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
@@ -157,7 +151,7 @@
   }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="scss" >
   .pop-sodl-project-list {
     position: relative;
     margin-bottom: .1rem;
@@ -186,6 +180,20 @@
   // 弹出层
   .trade_pop_part {
     background: #fff;
+    .popup-top {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-bottom: -.08rem;
+      padding: 0 .15rem;
+      height: .4rem;
+      background-color: #fff;
+      .icon-close {
+        display: inline-block;
+        width: .14rem;
+        height: .14rem;
+      }
+    }
     .trade_pop {
       height: 100%;
       .each_mode {
@@ -204,29 +212,23 @@
         height: calc(100% - .5rem);
         /* 使用深度作用选择器进行样式覆盖 */
         /deep/ .scroll-wrapper {
-          padding: .14rem .04rem 0 .3rem;
+          padding: .14rem .15rem 0 ;
         }
         // 每个物料
         .each_mater {
           position: relative;
           display: flex;
-          padding: 0.08rem;
-          margin-bottom: .2rem;
+          padding: .1rem;
+          border-radius: .04rem;
+          margin-bottom: .1rem;
           box-sizing: border-box;
           // 阴影
           &.box_sd {
             box-sizing: border-box;
             box-shadow: 0 0 8px #e8e8e8;
           }
-          // 物料图片
-          .mater_img {
-            display: inline-block;
-            width: .75rem;
-            height: .75rem;
-            img {
-              width: 100%;
-              max-height: 100%;
-            }
+          &.seleted{
+           border: 1px solid #3296FA;
           }
           // 物料主体
           .mater_main {
@@ -237,8 +239,8 @@
             // 物料名称
             .project_name {
               overflow: hidden;
-              color: #5077aa;
-              font-size: .14rem;
+              color: #333;
+              font-size: .16rem;
               font-weight: bold;
               max-height: .46rem;
               display: -webkit-box;
@@ -248,9 +250,10 @@
             }
             // 物料信息
             .project_type {
-              font-weight: bold;
-              color: #757575;
-              font-size: .14rem;
+              color: #999;
+              font-size: .12rem;
+              line-height: .16rem;
+              margin-top: .08rem;
             }
           }
           // 下划线
