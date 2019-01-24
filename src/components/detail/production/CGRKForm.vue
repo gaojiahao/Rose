@@ -62,7 +62,7 @@
     },
     computed: {
       // TODO 将orderList转为数组
-      mergeMatterList(){
+      mergeMatterList() {
         let arr = [];
         let count = 0;
         for (let items of Object.values(this.orderList)) {
@@ -187,7 +187,7 @@
       // TODO 数字校验
       checkAmt(item, key, val) {
         val = Math.abs(toFixed(val));
-        let {qualityQty} = item;
+        let {qualityQty, samplesQty} = item;
         switch (key) {
           case 'samplesQty':
             if (val > qualityQty) {
@@ -202,7 +202,14 @@
             this.calcMatter(item);
             return;
           case 'taxRate':
+            item[key] = val;
+            this.calcMatter(item);
+            return;
           case 'checkLossQty':
+            // 检损数要小于取样数
+            if (val > samplesQty) {
+              val = samplesQty;
+            }
             item[key] = val;
             this.calcMatter(item);
             return;
