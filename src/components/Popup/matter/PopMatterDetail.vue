@@ -1,6 +1,7 @@
 <template>
   <div v-transfer-dom>
-    <popup class="popup-matter-container" :class="{'has-edit': hasEditPart}" height="80%" v-model="showPop">
+    <popup class="popup-matter-container" :class="{'has-edit': hasEditPart, 'is-focus': btnIsHide}" height="80%"
+           v-model="showPop">
       <div class="popup-top">
         <i class="icon-close" @click="hidePop"></i>
       </div>
@@ -62,7 +63,7 @@
           <div class="matter_comment_value">{{item.matterComment.value}}</div>
         </div>
       </r-scroll>
-      <div class='confirm_btn' :class="{btn_hide : btnIsHide}" @click="confirm" v-if="hasEditPart">
+      <div class='confirm_btn' @click="confirm" v-if="hasEditPart">
         <div class='confirm'>确认</div>
       </div>
     </popup>
@@ -144,6 +145,7 @@
           this.readOnlyParts = readOnlyParts;
         },
         immediate: true,
+        deep: true
       }
     },
     methods: {
@@ -172,6 +174,7 @@
               return false
             }
           }
+          matter[eItem.fieldCode] = val;
           return true
         });
         if (warn) {
@@ -180,7 +183,8 @@
           });
           return
         }
-        this.$emit('sel-confirm', JSON.stringify(this.chosenMatter))
+        this.$emit('on-confirm', matter);
+        this.showPop = false;
       },
       //输入框获取焦点时内容选中
       getFocus(e) {
@@ -201,6 +205,14 @@
     &.has-edit {
       .scroll-container {
         height: calc(100% - 1.22rem);
+      }
+    }
+    &.is-focus {
+      .scroll-container {
+        height: calc(100% - 0.62rem);
+      }
+      .confirm_btn {
+        display: none;
       }
     }
     .vux-1px-t:before {
@@ -356,9 +368,6 @@
       box-sizing: border-box;
       background: #fff;
       padding: 0.08rem .2rem;
-      &.btn_hide {
-        display: none;
-      }
       .confirm {
         width: 100%;
         height: 0.44rem;

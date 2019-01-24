@@ -20,9 +20,10 @@
                   :attachment="attachment"></other-part>
       <!-- 物料详情 -->
       <pop-matter-detail :show="showMatterDetail" :item="matterDetail" :btn-is-hide="btnIsHide"
-                         :check-amt="checkAmt" v-model="showMatterDetail"></pop-matter-detail>
+                         :check-amt="checkAmt" @on-confirm="onDetailConfirm"
+                         v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
-      <r-action :code="transCode" :task-id="taskId" :actions="actions"
+      <r-action :code="transCode" :task-id="taskId" :actions="actions" :agree-handler="agreeHandler"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
@@ -43,26 +44,40 @@
   import MatterList from 'components/detail/commonPart/MatterList'
   import MatterItem from 'components/detail/commonPart/MatterItem'
   //公共方法引入
-  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd.js'
+  import {accAdd, accMul, accDiv, accSub} from '@/home/pages/maps/decimalsAdd.js'
   import {toFixed} from '@/plugins/calc'
 
   export default {
     data() {
       return {
-        count: 0,           // 金额合计
+        count: 0, // 税价小计
         comment: '',        // 审批备注
         orderInfo: {},      // 表单内容
         warehouse: {},      // 入库仓库
         formViewUniqueId: 'e76a8c6f-05cc-45ee-ba93-299fe6751856',
         orderList: {}, // 物料列表
         warehouseConfig: [], // 仓库相关配置
+        defaultFormData: {},
       }
     },
     computed: {
+      // TODO 将orderList转为数组
+      mergeMatterList(){
+        let arr = [];
+        let count = 0;
+        for (let items of Object.values(this.orderList)) {
+          for (let item of items) {
+            count = accAdd(count, item.tdAmount);
+            arr.push(item);
+          }
+        }
+        this.count = count;
+        return arr;
+      },
       // 合计金额
       noTaxAmount() {
         let total = 0;
-        this.orderInfo.inPut.dataSet.forEach(item => {
+        this.mergeMatterList.forEach(item => {
           total = accAdd(total, item.noTaxAmount);
         });
         return total;
@@ -70,10 +85,28 @@
       // 税金
       taxAmount() {
         let total = 0;
-        this.orderInfo.inPut.dataSet.forEach(item => {
+        this.mergeMatterList.forEach(item => {
           total = accAdd(total, item.taxAmount);
         });
         return total;
+      },
+      // 税价小计
+      /*count(){
+        let total = 0;
+        this.mergeMatterList.forEach(item => {
+          total = accAdd(total, item.tdAmount);
+        });
+        return total;
+      },*/
+      // 是否为IQC
+      isIQC() {
+        let {viewId = ''} = this.currentWL;
+        return this.isMyTask && viewId === 'b7301952-5fcd-46ec-b627-274cc262e9fc';
+      },
+      // 是否为仓库统计员
+      isWarehouseStatistician() {
+        let {viewId = ''} = this.currentWL;
+        return this.isMyTask && viewId === 'cb960bb4-df2f-4d94-94bc-1f684568bb6d';
       },
     },
     mixins: [detailCommon],
@@ -111,7 +144,6 @@
           // 获取合计
           let {dataSet} = formData.inPut;
           for (let item of dataSet) {
-            this.count = accAdd(this.count, item.tdAmount);
             item.inventoryPic = item.inventoryPic_outPutMatCode
               ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400`
               : this.getDefaultImg();
@@ -132,6 +164,9 @@
             city: inPut.city_dealerCodeCredit, // 城市
             county: inPut.county_dealerCodeCredit, // 地区
             address: inPut.address_dealerCodeCredit, // 详细地址
+            daysOfAccount: inPut.daysOfAccount,
+            crDealerPaymentTerm: inPut.crDealerPaymentTerm,
+            accountExpirationDate: inPut.accountExpirationDate,
           };
           // 动态获取 仓库字段信息
           for (let key in inPut) {
@@ -139,6 +174,9 @@
               this.warehouse[key] = inPut[key];
             }
           }
+          this.defaultFormData = {
+            ...formData,
+          };
           this.orderInfo = {
             ...formData,
             ...inPut,
@@ -147,9 +185,86 @@
         })
       },
       // TODO 数字校验
-      checkAmt() {
+      checkAmt(item, key, val) {
+        val = Math.abs(toFixed(val));
+        let {qualityQty} = item;
+        switch (key) {
+          case 'samplesQty':
+            if (val > qualityQty) {
+              val = qualityQty;
+            }
+            break;
+          case 'tdQty':
+            if (val > qualityQty) {
+              val = qualityQty;
+            }
+            item[key] = val;
+            this.calcMatter(item);
+            return;
+          case 'taxRate':
+          case 'checkLossQty':
+            item[key] = val;
+            this.calcMatter(item);
+            return;
+        }
+        item[key] = val;
       },
-    }
+      // TODO 计算物料相关值
+      calcMatter(item) {
+        let {price = 0, noTaxPrice = 0, qualityQty = 0, tdQty = 0, checkLossQty = 0, taxRate = 0} = item;
+        let assistQty = toFixed(accDiv(tdQty, item.assMeasureScale));
+        let tdAmount = toFixed(accMul(price, assistQty));
+        let taxAmount = toFixed(accMul(assistQty, taxRate, noTaxPrice));
+
+        item.assistQty = toFixed(accDiv(tdQty, item.assMeasureScale)); // [tdQty]/[assMeasureScale]
+        item.lockQty = toFixed(accSub(tdQty, checkLossQty)); // [tdQty]-[checkLossQty]
+        item.differenceNum = toFixed(accSub(qualityQty, tdQty)); // [qualityQty]-[tdQty]
+        item.tdAmount = tdAmount;
+        item.taxAmount = taxAmount;
+        item.noTaxAmount = toFixed(accSub(tdAmount, taxAmount));
+
+        this.setMatterConfig([item]);
+        this.matterDetail = item;
+      },
+      // TODO 确认修改
+      onDetailConfirm(item) {
+        this.$set(this.orderList[this.matterDetailKey], this.matterDetailIndex, item);
+      },
+      // TODO 同意的处理
+      agreeHandler() {
+        // IQC可以修改物料参数
+        if (this.isIQC) {
+          let dealerInfo = this.dealerInfo;
+          let warehouse = this.warehouse;
+          let dataSet = [];
+          let submitMatterField = this.submitMatterField;
+          let formData = {
+            ...this.defaultFormData,
+          };
+          for (let items of Object.values(this.orderList)) {
+            for (let item of items) {
+              let oItem = {};
+              for (let sItem of submitMatterField) {
+                oItem[sItem.fieldCode] = item[sItem.fieldCode];
+              }
+              dataSet.push(oItem);
+            }
+          }
+          formData.inPut = {
+            dealerCodeCredit: dealerInfo.dealerCode,
+            crDealerLabel: dealerInfo.dealerLabelName,
+            crDealerPaymentTerm: dealerInfo.crDealerPaymentTerm,
+            daysOfAccount: dealerInfo.daysOfAccount,
+            accountExpirationDate: dealerInfo.accountExpirationDate,
+            containerCode: warehouse.warehouseCode_containerCode,
+            storehouseInCode: warehouse.storehouseInCode,
+            dataSet,
+          };
+          this.saveData(formData);
+        }
+        return !this.isWarehouseStatistician
+      },
+    },
   }
 </script>
 
