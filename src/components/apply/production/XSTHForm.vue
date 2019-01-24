@@ -370,10 +370,10 @@
                 warn = `${sItem.text}不为空`;
                 break;
               }
-              oItem[sItem.fieldCode] = val !== null 
-                                        ? val !== undefined 
-                                            ? val 
-                                            : '' 
+              oItem[sItem.fieldCode] = val !== null
+                                        ? val !== undefined
+                                            ? val
+                                            : ''
                                         : null;
             }
             dataSet.push(oItem);
@@ -474,6 +474,7 @@
               let key = sItem.displayField || sItem.showFieldCode || sItem.fieldCode;
               item[key] = item[sItem.fieldCode];
             }
+            let orderListKey = item.transCode ? item.transCode : 'noCode';
             // item.transCode = item.transMatchedCode;
             item.inventoryPic = item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg();
             // item.inventoryName = item.inventoryName_transObjCode;
@@ -481,10 +482,10 @@
             // item.processing = item.tdProcessing;
             item.specification = item.specification_transObjCode;
             item.measureUnit = item.measureUnit_transObjCode;
-            if (!orderList[item.transCode]) {
-              orderList[item.transCode] = [];
+            if (!orderList[orderListKey]) {
+              orderList[orderListKey] = [];
             }
-            orderList[item.transCode].push(item);
+            orderList[orderListKey].push(item);
           }
           this.matterList = dataSet;
           // 客户信息
@@ -567,6 +568,7 @@
           [DRAFT_KEY]: {
             orderList: this.orderList,
             warehouse: this.warehouse,
+            warehouseStoreInfo: this.warehouseStoreInfo,
             dealerInfo: this.dealerInfo,
             contactInfo: this.contactInfo,
             formData: this.formData,
@@ -650,6 +652,7 @@
           }
         }
         this.warehouse = draft.warehouse;
+        this.warehouseStoreInfo = draft.warehouseStoreInfo;
         this.dealerInfo = draft.dealerInfo;
         this.contactInfo = draft.contactInfo;
         this.formData = draft.formData;
