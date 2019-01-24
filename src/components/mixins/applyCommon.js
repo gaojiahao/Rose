@@ -288,16 +288,14 @@ export default {
       })
     },
     // TODO 检查金额，取正数、保留两位小数
-    checkAmt(item){
-      let { price, tdQty, qtyBal, qtyStockBal, thenQtyBal, qtyStock, taxRate} = item;
-      // 金额
-      if (price) {
-        item.price = Math.abs(toFixed(price));
-      }
+    checkAmt(item, key, val){
+      console.log('item:', item);
+      let { price, tdQty, taxRate, qtyBal, qtyStock, qtyBalance, 
+        assistQty, qtyStockBal, qtyOnline, qtyDownline} = item;
+      item[key] = Math.abs(toFixed(val));
       // 数量
-      if (tdQty) {
-        item.tdQty = Math.abs(toFixed(tdQty));
-        // qtyStockBal为销售出库的库存，数量不允许大于余额qtyBalqtyStock
+      if (key === 'tdQty' && tdQty) {
+        // qtyStockBal为销售出库的库存，数量不允许大于余额
         if (!qtyStockBal && !qtyStock && qtyBal && tdQty > qtyBal) {
           item.tdQty = qtyBal;
         }
@@ -305,19 +303,36 @@ export default {
           item.tdQty = qtyStockBal;
         }
         //qtyStock为物料领料，数量不允许大于库存
-        else if(qtyStock && tdQty > qtyStock) {
+        else if (qtyStock && tdQty > qtyStock) {
           item.tdQty = qtyStock;
         }
-        else if(qtyBal && tdQty > qtyBal) {
-          item.tdQty = qtyBal;
+        else if (qtyBalance && tdQty > qtyBalance) {
+          item.tdQty = qtyBalance;
         }
-        else if(thenQtyBal && tdQty > thenQtyBal) {
-          item.tdQty = thenQtyBal;
+        else if (qtyOnline && qtyDownline) {
+          /*
+          * assistQty => 辅助计量 数量
+          * qtyDownline => 数量下限
+          * qtyOnline => 数量上限
+          * 
+          * 只有当符合下列条件时 数据才会相应的动态赋值
+          * */ 
+          if (assistQty >= qtyDownline && assistQty <= qtyOnline) {
+            this.defineObjVal(item, item.otherField, item.otherField)
+          }
+          else {
+            this.defineObjVal(item, item.otherField, '')
+          }
         }
       }
       //税率
       if (taxRate) {
         item.taxRate = Math.abs(toFixed(taxRate));
+      }
+    },
+    defineObjVal(currentData, newObj, newVal) {
+      for(let key in newObj) {
+        this.$set(currentData, key, newVal[key]);
       }
     },
     // 输入框获取焦点，内容选中
