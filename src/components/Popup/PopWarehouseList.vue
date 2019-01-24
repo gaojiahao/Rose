@@ -3,28 +3,23 @@
     <!-- 仓库信息 -->
     <div class="warehouse-part" @click="warehouseClick">
       <div class="warehouse-info">
-        <div v-if="selItems.warehouseName">
+        <template v-if="selItems.warehouseName">
           <div class="user_info">
             <span class="user_name">{{selItems.warehouseName}}</span>
             <span class="user_tel">{{selItems.warehouseType}}</span>
           </div>
-          <!-- <div class="cp_info" v-if="!noAddress">
-            <span class="icon-dealer-address"></span>
-            <span class="cp_ads">
-              {{selItems.warehouseProvince}}{{selItems.warehouseCity}}{{selItems.warehouseDistrict}}{{selItems.warehouseAddress}}
-            </span>
-          </div> -->
-        </div>
-        <div v-else>
+          <span class='icon-right'></span>  
+        </template>
+        <template v-else>
           <div class="no-warehouse">
             <div class="title" :class='{required : isRequired}'>{{title}}</div>
             <div class="picker">
               <span class="mode">请选择</span>
+              <span class="icon-right"></span>
             </div>  
           </div>
-        </div>
+        </template>
       </div>
-      <span class="icon-right"></span>
     </div>
     <pop-warehouse-store-list :store-params="warehouseStoreParams" v-if="isShowStore && selItems.warehouseCode"
           :defaultValue="warehouseStore"  @sel-store="selStore">
@@ -257,28 +252,6 @@
           filter: JSON.stringify(filter),
           ...this.params,
         }).then(this.dataHandler)
-        // .then(({dataCount = 0, tableContent = []}) => {
-        //   this.showAddWarehouse = this.srhInpTx && tableContent.length === 0;
-        //   this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-        //   tableContent.forEach(item => {
-        //     item.warehouseCity = item.warehouseCity || item.wareHouseCity;
-        //   });
-        //   this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
-        //   //获取缓存
-        //   if (sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')) {
-        //     let EDIT_WAREHOUSE_TRANSCODE = JSON.parse(sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')).transCode;
-        //     for (let i = 0; i < this.listData.length; i++) {
-        //       if (this.listData[i].transCode == EDIT_WAREHOUSE_TRANSCODE) {
-        //         this.selItems = this.listData[i];
-        //         this.$emit('sel-item', JSON.stringify(this.listData[i]));
-        //         sessionStorage.removeItem('EDIT_WAREHOUSE_TRANSCODE')
-        //       }
-        //     }
-        //   }
-        //   this.$nextTick(() => {
-        //     this.$refs.bScroll.finishPullUp();
-        //   })
-        // });
       },
       getWareHouseType(){
         let filter = this.filterParams;
@@ -363,7 +336,6 @@
         return
       }
       this[this.getListMethod]();
-      // this.getWarehouse();
     }
   }
 </script>
@@ -381,7 +353,9 @@
       position: relative;
     }
     .warehouse-info {
-      padding: .18rem .25rem .18rem 0;
+      display: flex;
+      padding: .18rem 0;
+      justify-content: space-between;
     }
     .title {
       color: #696969;
@@ -392,15 +366,16 @@
         font-weight: bold;
       }
     }
-    /* 右箭头 */
+    .picker {
+      display: flex;
+      align-items: center;
+    }
+    // 右箭头
     .icon-right {
-      top: 50%;
-      right: 0;
       width: .08rem;
       height: .14rem;
-      position: absolute;
-      transform: translate(0, -50%);
-    }
+      margin-left: .1rem;
+    }    
     // 用户信息
     .user_info {
       line-height: .14rem;
@@ -427,9 +402,9 @@
     }
     .no-warehouse {
       display: flex;
-      justify-content: space-between;
-      width: calc( 100% - .18rem);
+      line-height: .14rem;
       align-items: center;
+      justify-content: space-between;
       .required {
         color: #3296FA;
         font-weight: bold;
