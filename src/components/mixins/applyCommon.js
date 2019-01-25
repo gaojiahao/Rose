@@ -524,8 +524,13 @@ export default {
                 this.$set(item, 'remoteData', data.tableContent)
               })
             }
+            // 处理 静态数据
             else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
-              this.$set(item, 'remoteData', item.dataSource.data)
+              let arr = [];
+              for(let val of item.dataSource.data) {
+                arr.push({ name: val })
+              }
+              this.$set(item, 'remoteData', arr)
             }
             // 过滤往来编码，关系便签，地址，联系人，电话
             if(!dealerFilter.includes(item.fieldCode)){
