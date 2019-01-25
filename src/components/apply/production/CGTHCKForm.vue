@@ -462,6 +462,7 @@
             }
             item.inventoryPic = item.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400` : this.getDefaultImg();
             // item.processing = item.tdProcessing;
+            item.inventoryName = item.inventoryName_outPutMatCode;
             item.specification = item.specification_outPutMatCode;
             item.measureUnit = item.measureUnit_outPutMatCode;
             delete item.orderCode; // 去除orderCode，否则物料列表组件会选不上
