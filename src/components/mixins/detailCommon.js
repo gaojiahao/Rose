@@ -477,11 +477,13 @@ export default {
     // TODO 设置物料的动态渲染部分
     setMatterConfig(arr) {
       let numTypeList = ['r2Numberfield', 'r2Percentfield', 'r2Permilfield'];
+      let matterConfig = this.matterConfig;
       arr.forEach(matter => {
         let others = [];
         let dates = [];
         let matterComment = {};
-        this.matterConfig.forEach(item => {
+        matterConfig.forEach(item => {
+          item = {...item};
           item.value = numTypeList.includes(item.editorType) ? numberComma(matter[item.fieldCode]) || '0' : matter[item.fieldCode] || '无';
           if (item.editorType === 'r2Datefield') {
             dates.push(item);
