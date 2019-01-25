@@ -41,8 +41,8 @@
                   </template>
                 </matter-item>
                 <div class='delete_icon' @click="delClickFn(item, index, key)" v-if='matterModifyClass'>
-                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIconFn(item)"></x-icon>
-                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIconFn(item)"></x-icon>
+                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIconFn(item, index)"></x-icon>
+                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIconFn(item, index)"></x-icon>
                 </div>
               </div>
             </div>
@@ -58,8 +58,8 @@
                 </template>
               </matter-item>
               <div class='delete_icon' @click="delClickFn(item, index)" v-if='matterModifyClass'>
-                <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIconFn(item)"></x-icon>
-                <x-icon type="ios-circle-outline" size="20" v-show="!showSelIconFn(item)"></x-icon>
+                <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIconFn(item, index)"></x-icon>
+                <x-icon type="ios-circle-outline" size="20" v-show="!showSelIconFn(item, index)"></x-icon>
               </div>
             </div>
           </template>
