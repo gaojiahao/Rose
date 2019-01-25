@@ -46,7 +46,6 @@ export default {
       selItems: [],                               // 选中的要删除的物料
       handleORG: [],                              // 经办组织
       filterList: [],                             // 筛选字段清单
-
       attachment : [],
       otherConfig: [],
       dealerConfig: [],
@@ -409,14 +408,7 @@ export default {
           editMatterPopConfig.editPart = editMatterPop.slice(index)
           break;
         }
-
-        // if(!item.readOnly) {
-        //   editMatterPopConfig.property = editMatterPop.slice(0, index);
-        //   editMatterPopConfig.editPart = editMatterPop.slice(index);
-        //   break;
-        // }
       }
-
     },
     // 获取表单配置基本信息
     async getFormViewInfo() {
@@ -479,8 +471,7 @@ export default {
             }
 
             // 配置中的字段要去除掉物料名称，交易号
-            if(!cItem.h && cItem.k !== 'inventoryName' && cItem.k !== 'transCode' && cItem.k !== 'inventoryCode' && cItem.k !== 'invName' 
-             && cItem.k !== 'matCode' && cItem.k !== 'specification'){
+            if(!cItem.h && cItem.k !== 'inventoryName' && cItem.k !== 'transCode' && cItem.k !== 'invName'){
               arr.push(cItem)
             }
           })
@@ -669,13 +660,10 @@ export default {
               item.showFieldCode = this.dataIndexMap[item.fieldCode];
             }
             if(item.valueField !== "transCode" && item.valueField !== 'inventoryName' && item.valueField !== 'facilityName'
-                && item.text !== '物料名称' && item.text !== '物料编码' && item.text !== '规格' && item.text !== '产品规格'
-                && item.showFieldCode !== 'transCode' && item.showFieldCode !== 'facilityName' && item.showFieldCode !== 'facilityCode'
+                && !item.fieldCode.includes('inventoryName') && item.showFieldCode !== 'transCode' && item.showFieldCode !== 'facilityName' && item.showFieldCode !== 'facilityCode'
                 && item.showFieldCode !== 'facilitySpecification'){
                 editMatterPop.push(item);
             }
-
-
           }
         })
         // 判断是否只读 如果不是只读就统一塞进编辑页面

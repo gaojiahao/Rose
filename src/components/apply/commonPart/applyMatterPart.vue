@@ -75,7 +75,7 @@
       </div>
       <!-- 物料popup -->
       <pop-matter-list  :show="showPop" v-model="showPop" @shut-down-outsidePop="closePop" @sel-matter="selMatterFn" :config="matterPopConfig"
-                        :filter-list="filterList" :matter-params="matterParams" :default-value="defaultValue" ref="matter"></pop-matter-list>
+                        :order-title="orderListTitle" :filter-list="filterList" :matter-params="matterParams" :default-value="defaultValue" ref="matter"></pop-matter-list>
       <!-- 物料编辑 -->
       <pop-matter :chosen-matter='chosenMatter' :show-pop="showModifyPop" @sel-confirm='selConfirmFn' @show-down-modify="closeModify"
                   v-model='showModifyPop' :btn-is-hide="btnIsHide" :config="matterEditConfig" :check-amt="checkAmtFn">

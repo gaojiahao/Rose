@@ -628,22 +628,6 @@
           this.$loading.hide();
         })
       },
-      // TODO 获取物料的辅助计量
-      // getMoreUnit(item) {
-      //   let {inventoryCode} = item;
-      //   return getObjInvMoreUnitByInvCode(inventoryCode).then(({tableContent = []}) => {
-      //     item.showDrop = false;
-      //     tableContent.forEach(unit => {
-      //       unit.name = unit.invSubUnitName;
-      //       unit.value = unit.invSubUnitName;
-      //     });
-      //     item.moreUnitList = tableContent;
-      //   });
-      // },
-      // TODO 点击辅助计量栏
-      // moreUnitClick(item) {
-      //   item.showDrop = !item.showDrop;
-      // },
       // TODO 选中辅助计量
       moreUnitSelected(val) {
         this.matter.assMeasureUnit = val.invSubUnitName;
@@ -715,7 +699,6 @@
         this.warehouseStoreInfo = draft.warehouseStoreInfo;
         this.formData = draft.formData;
         this.contactInfo = draft.contactInfo;
-        this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
         sessionStorage.removeItem(DRAFT_KEY);
       }
 
