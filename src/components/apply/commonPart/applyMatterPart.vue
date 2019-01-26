@@ -41,8 +41,8 @@
                   </template>
                 </matter-item>
                 <div class='delete_icon' @click="delClickFn(item, index, key)" v-if='matterModifyClass'>
-                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIconFn(item)"></x-icon>
-                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIconFn(item)"></x-icon>
+                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIconFn(item, index)"></x-icon>
+                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIconFn(item, index)"></x-icon>
                 </div>
               </div>
             </div>
@@ -58,8 +58,8 @@
                 </template>
               </matter-item>
               <div class='delete_icon' @click="delClickFn(item, index)" v-if='matterModifyClass'>
-                <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIconFn(item)"></x-icon>
-                <x-icon type="ios-circle-outline" size="20" v-show="!showSelIconFn(item)"></x-icon>
+                <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIconFn(item, index)"></x-icon>
+                <x-icon type="ios-circle-outline" size="20" v-show="!showSelIconFn(item, index)"></x-icon>
               </div>
             </div>
           </template>
@@ -75,7 +75,7 @@
       </div>
       <!-- 物料popup -->
       <pop-matter-list  :show="showPop" v-model="showPop" @shut-down-outsidePop="closePop" @sel-matter="selMatterFn" :config="matterPopConfig"
-                        :filter-list="filterList" :matter-params="matterParams" :default-value="defaultValue" ref="matter"></pop-matter-list>
+                        :order-title="orderListTitle" :filter-list="filterList" :matter-params="matterParams" :default-value="defaultValue" ref="matter"></pop-matter-list>
       <!-- 物料编辑 -->
       <pop-matter :chosen-matter='chosenMatter' :show-pop="showModifyPop" @sel-confirm='selConfirmFn' @show-down-modify="closeModify"
                   v-model='showModifyPop' :btn-is-hide="btnIsHide" :config="matterEditConfig" :check-amt="checkAmtFn">

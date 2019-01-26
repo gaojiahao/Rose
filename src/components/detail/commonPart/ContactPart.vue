@@ -20,7 +20,7 @@
         <div class="contact_dealer_item">
           <i class="icon icon-address"></i>
           <span class="contact_dealer_title">往来地址：</span>
-          <span class="contact_dealer_value">{{address || '暂无'}}</span>
+          <span class="contact_dealer_value">{{contactInfo.address || '暂无'}}</span>
         </div>
       </div>
     </div>
@@ -54,19 +54,8 @@
         }
       }
     },
-    data() {
-      return {}
-    },
-    computed: {
-      address() {
-        let {province = '', city = '', county = '', address = ''} = this.contactInfo;
-        return !province && !city && !county && !address ? '' : `${province}${city}${county}${address}`;
-      }
-    },
     filters: {
       dateFormat,
-    },
-    created() {
     }
   }
 </script>

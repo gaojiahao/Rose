@@ -13,16 +13,6 @@
             </div>
             <!-- 物料基本信息 -->
             <div class="matter_info">
-              <div class="matter_info_item">
-                <span class="matter_info_title">编码：</span>
-                <span class="matter_info_value">{{chosenMatter.inventoryCode || chosenMatter.facilityCode || chosenMatter.outPutMatCode}}</span>
-              </div>
-              <div class="matter_info_item">
-                <span class="matter_info_title">规格：</span>
-                <span class="matter_info_value">{{chosenMatter.specification || chosenMatter.facilitySpecification || chosenMatter.specification_outPutMatCode ||'无'}}</span>
-              </div>
-            </div>
-            <div class="matter_info">
               <div class="matter_info_item" v-for="(item, index) in config.property" :key="index">
                 <span class="matter_info_title">{{item.text}}：</span>
                 <span class="matter_info_value" v-if="item.showFieldCode">
@@ -70,14 +60,6 @@
                 </template>
               </x-input>
               <!--日期-->
-              <!-- <datetime class="vux-1px-b" :start-date="chosenMatter[eItem.fieldCode]"
-                        :end-date="chosenMatter[eItem.fieldCode]"
-                        v-model="chosenMatter[eItem.fieldCode]" placeholder="请选择"
-                        v-if="eItem.editorType === 'r2Datefield'">
-                <template slot="title">
-                  <span :class="{required: !eItem.allowBlank}">{{eItem.text}}</span>
-                </template>
-              </datetime> -->
               <datetime class="vux-1px-b" v-model="chosenMatter[eItem.fieldCode]" placeholder="请选择"
                         v-if="eItem.editorType === 'r2Datefield'">
                 <template slot="title">

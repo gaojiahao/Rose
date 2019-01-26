@@ -412,14 +412,7 @@ export default {
           editMatterPopConfig.editPart = editMatterPop.slice(index)
           break;
         }
-
-        // if(!item.readOnly) {
-        //   editMatterPopConfig.property = editMatterPop.slice(0, index);
-        //   editMatterPopConfig.editPart = editMatterPop.slice(index);
-        //   break;
-        // }
       }
-
     },
     // 获取表单配置基本信息
     async getFormViewInfo() {
@@ -482,8 +475,7 @@ export default {
             }
 
             // 配置中的字段要去除掉物料名称，交易号
-            if(!cItem.h && cItem.k !== 'inventoryName' && cItem.k !== 'transCode' && cItem.k !== 'inventoryCode' && cItem.k !== 'invName' 
-             && cItem.k !== 'matCode' && cItem.k !== 'specification'){
+            if(!cItem.h && cItem.k !== 'inventoryName' && cItem.k !== 'transCode' && cItem.k !== 'invName'){
               arr.push(cItem)
             }
           })
@@ -536,8 +528,13 @@ export default {
                 this.$set(item, 'remoteData', data.tableContent)
               })
             }
+            // 处理 静态数据
             else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
-              this.$set(item, 'remoteData', item.dataSource.data)
+              let arr = [];
+              for(let val of item.dataSource.data) {
+                arr.push({ name: val })
+              }
+              this.$set(item, 'remoteData', arr)
             }
             // 过滤往来编码，关系便签，地址，联系人，电话
             if(!dealerFilter.includes(item.fieldCode)){
@@ -686,13 +683,10 @@ export default {
               item.showFieldCode = this.dataIndexMap[item.fieldCode];
             }
             if(item.valueField !== "transCode" && item.valueField !== 'inventoryName' && item.valueField !== 'facilityName'
-                && item.text !== '物料名称' && item.text !== '物料编码' && item.text !== '规格' && item.text !== '产品规格'
-                && item.showFieldCode !== 'transCode' && item.showFieldCode !== 'facilityName' && item.showFieldCode !== 'facilityCode'
+                && !item.fieldCode.includes('inventoryName') && item.showFieldCode !== 'transCode' && item.showFieldCode !== 'facilityName' && item.showFieldCode !== 'facilityCode'
                 && item.showFieldCode !== 'facilitySpecification'){
                 editMatterPop.push(item);
             }
-
-
           }
         })
         // 判断是否只读 如果不是只读就统一塞进编辑页面

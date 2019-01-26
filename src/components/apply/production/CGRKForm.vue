@@ -62,7 +62,6 @@
   import applyCommon from 'components/mixins/applyCommon'
   // 组件引入
   import PopDealerList from 'components/Popup/PopDealerList'
-  import PopMatterList from 'components/Popup/PopMatterListTest'
   import PopOrderList from 'components/Popup/PopOrderList'
   import PopWarehouseList from 'components/Popup/PopWarehouseList'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
@@ -85,7 +84,7 @@
     data() {
       return {
         orderList: {},
-        matterList: [], // 订单列表
+        // matterList: [], // 订单列表
         showDealerPop: false, // 是否显示供应商的popup
         dealerInfo: {}, // 供应商客户信息
         contactInfo: {},
@@ -107,7 +106,6 @@
         biReferenceId: '',
         actions: [],
         taskId: '',
-        tmpItems: {}, // 选中的订单
         matter: {},
         showMatterPop: false,
         modifyIndex: null,
@@ -125,32 +123,26 @@
             value: 'transCode',
           },
         ],
-        checkFieldList: [
-          {
-            key: 'tdQty',
-            message: '请填写本次收票数量'
-          },
-          {
-            key: 'price',
-            message: '请填写含税单价'
-          },
-          {
-            key: 'taxRate',
-            message: '请填写税率'
-          },
-          {
-            key: 'productionDate',
-            message: '请选择生产日期'
-          },
-        ],
         numMap: {},
       }
+    },
+    computed: {
+      // TODO 将orderList转为数组
+      matterList() {
+        let arr = [];
+        for (let items of Object.values(this.orderList)) {
+          for (let item of items) {
+            arr.push(item);
+          }
+        }
+        return arr;
+      },
     },
     mixins: [applyCommon],
     components: {
       Cell, RDropdown, XInput, Group,
       XTextarea, Datetime, PopOrderList, RNumber,
-      PopDealerList, PopWarehouseList, PopMatterList,
+      PopDealerList, PopWarehouseList,
       PopSingleSelect, PopMatter, RPicker, PopBaseinfo, DealerOtherPart,
       ApplyMatterPart, OpButton,
     },
@@ -169,7 +161,6 @@
         };
         if (this.matterParams.data && this.matterParams.data.dealerCode != null) {
           this.matterParams.data.dealerCode = this.dealerInfo.dealerCode
-          this.matterList = [];
           this.orderList = {};
         }
       },
@@ -227,20 +218,11 @@
           orderList[orderListKey].push(item);
           // this.getMoreUnit(item);
         });
-        this.matterList = sels;
         this.orderList = orderList;
       },
       // TODO 更新修改后的物料信息
       selConfirm(val) {
         let modMatter = JSON.parse(val);
-        this.matterList.every((item, index) => {
-          // 修改matterList，触发合计金额计算
-          if (modMatter.transCode === item.transCode && modMatter.inventoryCode === item.inventoryCode) {
-            this.$set(this.matterList, index, modMatter);
-            return false
-          }
-          return true
-        });
         this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
       },
       // TODO 选择默认图片
@@ -251,10 +233,14 @@
         }
         return url
       },
+      // TODO 查找数据索引
+      findIndex(arr, sItem){
+        return arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
+      },
       // 滑动删除
-      delClick(index, sItem) {
+      delClick(sItem, index, key) {
         let arr = this.selItems;
-        let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
+        let delIndex = this.findIndex(arr, sItem);
         //若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
@@ -264,7 +250,7 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
+        return this.findIndex(this.selItems, sItem) !== -1;
       },
       // 全选
       checkAll() {
@@ -280,32 +266,16 @@
           content: '确认删除?',
           // 确定回调
           onConfirm: () => {
-            let newArr = [];
-            let keys = Object.keys(this.orderList);
-            keys.forEach(item => {
-              newArr = newArr.concat(this.orderList[item]);
-            })
-            this.selItems.forEach(SItem => {
-              newArr.forEach(OItem => {
-                if (OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode) {
-                  let delArr = this.orderList[OItem.transCode];
-                  let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
-                  if (delIndex >= 0) {
-                    this.$refs.matter.delSelItem(delArr[delIndex]);
-                    delArr.splice(delIndex, 1);
-                  }
-                  if (!delArr.length) {
-                    delete this.orderList[OItem.transCode];
-                  }
-                }
-              })
-              this.matterList.forEach((item, index) => {
-                if (item.inventoryCode === SItem.inventoryCode) {
-                  this.matterList.splice(index, 1);
-                  index--;
-                }
-              })
-            })
+            let orderList = {};
+            let remainder = this.matterList.filter((item, index) => this.findIndex(this.selItems, item) === -1); // 没被删除的
+            remainder.forEach(item => {
+              let orderListKey = item.transCode ? item.transCode : 'noCode';
+              if (!orderList[orderListKey]) {
+                orderList[orderListKey] = []
+              }
+              orderList[orderListKey].push(item);
+            });
+            this.orderList = orderList;
             this.selItems = [];
             this.matterModifyClass = false;
           }
@@ -547,7 +517,6 @@
             modifer: formData.modifer,
           }
           this.biReferenceId = formData.biReferenceId;
-          this.matterList = dataSet;
           this.orderList = orderList;
           this.$loading.hide();
         })
@@ -621,29 +590,12 @@
             dealerCode: this.dealerInfo.dealerCode
           };
 
-          this.matterList = dataSet;
           this.orderList = {
             [this.relationKey]: dataSet,
           };
           this.$loading.hide();
         })
       },
-      // TODO 获取物料的辅助计量
-      // getMoreUnit(item) {
-      //   let {inventoryCode} = item;
-      //   return getObjInvMoreUnitByInvCode(inventoryCode).then(({tableContent = []}) => {
-      //     item.showDrop = false;
-      //     tableContent.forEach(unit => {
-      //       unit.name = unit.invSubUnitName;
-      //       unit.value = unit.invSubUnitName;
-      //     });
-      //     item.moreUnitList = tableContent;
-      //   });
-      // },
-      // TODO 点击辅助计量栏
-      // moreUnitClick(item) {
-      //   item.showDrop = !item.showDrop;
-      // },
       // TODO 选中辅助计量
       moreUnitSelected(val) {
         this.matter.assMeasureUnit = val.invSubUnitName;
@@ -705,17 +657,11 @@
       if (data) {
         let draft = JSON.parse(data);
         this.orderList = draft.orderList;
-        for (let items of Object.values(this.orderList)) {
-          for (let item of items) {
-            this.matterList.push(item)
-          }
-        }
         this.dealerInfo = draft.dealer;
         this.warehouse = draft.warehouse;
         this.warehouseStoreInfo = draft.warehouseStoreInfo;
         this.formData = draft.formData;
         this.contactInfo = draft.contactInfo;
-        this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
         sessionStorage.removeItem(DRAFT_KEY);
       }
 

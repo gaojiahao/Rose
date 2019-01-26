@@ -9,20 +9,6 @@
         {{item.inventoryName || item.invName || item.facilityName}}
         <span class="icon-matter-bianji" @click.stop="modifyMatter" v-if="!showDelete"></span>
       </div>
-      <div class="matter_info_item">
-         <div class="matter_detail">
-          <span class="matter_item_title">编码:</span>
-          <span class="matter_item_value">{{item.inventoryCode || item.facilityCode || item.outPutMatCode}}</span>
-        </div>
-        <div class="matter_detail" v-if="item.tdProcessing">
-          <span class="matter_item_title">属性:</span>
-          <span class="matter_item_value">{{item.tdProcessing}}</span>
-        </div>
-        <div class="matter_detail">
-          <span class="matter_item_title">规格:</span>
-          <span class="matter_item_value">{{item.specification || item.facilitySpecification || item.specification_outPutMatCode || '无'}}</span>
-        </div>
-      </div>
       <div class="matter_more">
         <div class="each_info" v-for="(cItem,cIndex) in config" :key="cIndex">
           <span class="title">{{cItem.text}}:</span>
@@ -32,7 +18,6 @@
           <span v-else>
             {{item[cItem.fieldCode] != null &&  item[cItem.fieldCode] !== "" ? item[cItem.fieldCode] : "无"}}
           </span>
-          
         </div>
       </div>
       <slot name="info" :item="item"></slot>

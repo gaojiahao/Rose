@@ -16,7 +16,8 @@
       <!-- 物料列表 -->
        <matter-list :order-list='orderList' :order-title="orderTitle" @on-show-more="onShowMore"></matter-list>
       <!-- 备注 -->
-      <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
+      <other-part :other-info="orderInfo" :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"
+                  :attachment="attachment"></other-part>
       <!-- 物料详情 -->
       <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->

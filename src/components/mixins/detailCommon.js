@@ -25,6 +25,7 @@ export default {
   },
   data() {
     return {
+      clientHeight: document.documentElement.clientHeight,
       orderTitle: '所属订单', // 物料交易号名称
       uploadStyle: { //附件容器样式
         width: '100%',
@@ -54,12 +55,15 @@ export default {
       orderInfo: {}, // 表单内容
       currentWL: {}, // 当前工作流
       matterDetail: {}, // 选中物料的详细信息
+      matterDetailIndex: 0,
+      matterDetailKey: '',
       workFlowInfo: {},
       fullWL: [], // 完整工作流
       actions: [],
       attachment: [],
       matterList: [],
       dealerConfig: [],
+      matterConfig: [],
       btnIsHide: false,
       submitMatterField: [], // 审批时要提交的物料字段
       matterConfig: [], // 用于存放非物料的重复项配置
@@ -71,7 +75,7 @@ export default {
     noTaxAmount() {
       let total = 0;
       this.orderInfo.order.dataSet.forEach(item => {
-        if(item.noTaxAmount != null){
+        if (item.noTaxAmount != null) {
           total = accAdd(total, item.noTaxAmount);
         }
       });
@@ -81,7 +85,7 @@ export default {
     taxAmount() {
       let total = 0;
       this.orderInfo.order.dataSet.forEach(item => {
-        if(item.taxAmount != null){
+        if (item.taxAmount != null) {
           total = accAdd(total, item.taxAmount);
         }
       });
@@ -401,7 +405,7 @@ export default {
               this.setWarehouseConfg(ckConfig, '出库');
             }
             // 入库信息
-            if(item.name === 'rk') {
+            if (item.name === 'rk') {
               // 处理 入库的仓库配置信息
               rkConfig = item.items;
               this.setWarehouseConfg(rkConfig, '入库');
@@ -434,7 +438,7 @@ export default {
           // 判断是否存在映射关系，若有映射关系，则判断是否有该字段且判断字段是否隐藏，没有映射关系则直接展示
           let needShow = key ? (matchedCol ? !matchedCol.h : false) : true;
           // 组合要提交的物料字段
-          if(item.submitValue){
+          if (item.submitValue) {
             submitMatterField.push(item)
           }
           if (item.fieldCode === 'transMatchedCode') {
@@ -460,7 +464,7 @@ export default {
         } else if (this.matterList.length) {
           listData = this.matterList;
         }
-        this.setMatterConfig(listData, matterConfig);
+        this.setMatterConfig(listData);
         otherConfig = otherConfig.reduce((arr, item, index) => {
           if (!item.hidden) {
             arr.push(item);
@@ -473,9 +477,9 @@ export default {
     // 设置 仓库信息 动态渲染部分
     setWarehouseConfg(config = [], type = '') {
       let wareConfig = this.warehouseConfig;
-      let info = { warehouseAction: type, config: [] };
-      for(let item of config) {
-        if(!item.hiddenInRun) {
+      let info = {warehouseAction: type, config: []};
+      for (let item of config) {
+        if (!item.hiddenInRun) {
           item.fieldValue = this.warehouse[item.fieldCode]
           info.config.push(item);
         }
@@ -483,13 +487,16 @@ export default {
       wareConfig.push(info);
     },
     // TODO 设置物料的动态渲染部分
-    setMatterConfig(arr, matterConfig) {
+    setMatterConfig(arr) {
+      let numTypeList = ['r2Numberfield', 'r2Percentfield', 'r2Permilfield'];
+      let matterConfig = this.matterConfig;
       arr.forEach(matter => {
         let others = [];
         let dates = [];
         let matterComment = {};
         matterConfig.forEach(item => {
-          item.value = item.editorType === 'r2Numberfield' ? numberComma(matter[item.fieldCode]) || '0' : matter[item.fieldCode] || '无';
+          item = {...item};
+          item.value = numTypeList.includes(item.editorType) ? numberComma(matter[item.fieldCode]) || '0' : matter[item.fieldCode] || '无';
           if (item.editorType === 'r2Datefield') {
             dates.push(item);
           } else if (item.fieldCode === 'comment') {
@@ -498,14 +505,18 @@ export default {
             others.push(item);
           }
         });
-        this.$set(matter, 'others', JSON.parse(JSON.stringify(others)));
-        this.$set(matter, 'dates', JSON.parse(JSON.stringify(dates)));
-        this.$set(matter, 'matterComment', JSON.parse(JSON.stringify(matterComment)));
+        matter.others = others;
+        matter.dates = dates;
+        matter.matterComment = matterComment;
       });
     },
     // TODO 查看更多
-    onShowMore(item) {
-      this.matterDetail = item;
+    onShowMore(item, index, key) {
+      if (key) {
+        this.matterDetailKey = key;
+      }
+      this.matterDetail = JSON.parse(JSON.stringify(item));
+      this.matterDetailIndex = index;
       this.showMatterDetail = true;
     },
   },
@@ -517,15 +528,8 @@ export default {
     //解决android键盘收起input没有失去焦点，底部按钮遮挡输入框
     if (platfrom.isAndroid) {
       window.onresize = () => {
-        if (this.clientHeight > document.documentElement.clientHeight) {
-          //底部按钮隐藏
-          this.btnIsHide = true;
-        } else {
-          this.btnIsHide = false;
-          if (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA") {
-            document.activeElement.blur();
-          }
-        }
+        //底部按钮隐藏
+        this.btnIsHide = this.clientHeight > document.documentElement.clientHeight;
       }
     }
   }

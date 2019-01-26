@@ -28,16 +28,6 @@
                 </div>
                 <!-- 物料基本信息 -->
                 <div class="matter_info">
-                  <div class="matter_info_item">
-                    <span class="matter_info_title">编码：</span>
-                    <span class="matter_info_value">{{item.inventoryCode || item.facilityCode}}</span>
-                  </div>
-                  <div class="matter_info_item">
-                    <span class="matter_info_title">规格：</span>
-                    <span class="matter_info_value">{{item.specification || item.facilitySpecification || '无'}}</span>
-                  </div>
-                </div>
-                <div class="matter_info">
                   <div class="matter_info_item" v-for="(fItem,fIndex) in config" :key="fIndex">
                     <span class="matter_info_title">{{fItem.v}}:</span>
                     <span class="matter_info_value">{{item[fItem.k] != null && item[fItem.k] !== "" ? item[fItem.k] : "无" }}</span>

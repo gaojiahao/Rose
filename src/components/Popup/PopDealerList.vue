@@ -14,14 +14,14 @@
             </span>
           </div>
         </div>
-        <span class='icon-right'></span>  
+        <span class='icon-right'></span>
       </div>
       <div class='no-content' v-else>
         <span class="title required">{{dealerTitle}}列表</span>
         <div class="picker">
           <span>请选择</span>
           <span class="icon-right"></span>
-        </div> 
+        </div>
       </div>
     </div>
     <pop-contact-list :dealer-info="dealerInfo" :default-value="contactInfo"
@@ -29,6 +29,9 @@
     <!-- 往来 Popup -->
     <div v-transfer-dom>
       <popup v-model="showDealerPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
+        <div class="popup-top">
+          <i class="icon-close" @click="onHide"></i>
+        </div>
         <div class="trade_pop">
           <d-search @search="searchList" @turn-off="onHide"></d-search>
           <!-- 往来列表 -->
@@ -175,7 +178,8 @@
       dealerParams: {
         handler() {
           this.getDealer()
-        }
+        },
+        deep: true
       }
     },
     methods: {
@@ -387,7 +391,7 @@
             margin-left: .1rem;
           }
         }
-        
+
       }
       .user-content {
         display: flex;
@@ -432,28 +436,37 @@
         }
       }
     }
-    
+
   }
 
   // 弹出层
   .trade_pop_part {
     background: #fff;
+    .popup-top {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 0 .15rem;
+      height: .4rem;
+      background-color: #fff;
+      .icon-close {
+        display: inline-block;
+        width: .14rem;
+        height: .14rem;
+      }
+    }
     .trade_pop {
-      height: 100%;
+      height: calc(100% - .4rem);
       overflow: hidden;
-      // 顶部
-      .title {
-        height: 100%;
-        font-size: .2rem;
-        position: relative;
-        padding-top: 0.08rem;
+      .search {
+        padding-top: 0;
       }
       // 往来列表
       .mater_list {
         width: 100%;
         overflow: hidden;
         box-sizing: border-box;
-        height: calc(100% - .5rem);
+        height: calc(100% - .42rem);
         .dealer-list-wrapper {
           position: relative;
           width: 100%;

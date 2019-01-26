@@ -9,8 +9,11 @@
     <!-- 项目弹窗 -->
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
+        <div class="popup-top">
+          <i class="icon-close" @click="onHide"></i>
+        </div>
         <div class="trade_pop">
-          <m-search @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
+          <m-search @search='searchList' @turn-off="onHide"></m-search>
           <!-- 费用列表 -->
           <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !projectList.length" @on-pulling-up="onPullingUp"
@@ -189,8 +192,25 @@
   // 弹出层
   .trade_pop_part {
     background: #fff;
+    .popup-top {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 0 .15rem;
+      height: .4rem;
+      background-color: #fff;
+      .icon-close {
+        display: inline-block;
+        width: .14rem;
+        height: .14rem;
+      }
+    }
     .trade_pop {
-      height: 100%;
+      height: calc(100% - .4rem);
+      overflow: hidden;
+      .search {
+        padding-top: 0;
+      }
       // 顶部
       .title {
         height: 100%;

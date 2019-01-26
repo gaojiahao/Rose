@@ -1,6 +1,7 @@
 <template>
   <div v-transfer-dom>
-    <popup class="popup-matter-container" :class="{'has-edit': hasEditPart}" height="80%" v-model="showPop">
+    <popup class="popup-matter-container" :class="{'has-edit': hasEditPart, 'is-focus': btnIsHide}" height="80%"
+           v-model="showPop">
       <div class="popup-top">
         <i class="icon-close" @click="hidePop"></i>
       </div>
@@ -30,7 +31,7 @@
             </div>
           </div>
         </div>
-        <div class="matter-edit-part">
+        <div class="matter-edit-part" v-if="hasEditPart">
           <template v-for="(eItem, eIndex) in editParts">
             <x-input class="vux-1px-b" type="number" v-model.number='item[eItem.fieldCode]'
                      text-align="right"
@@ -62,7 +63,7 @@
           <div class="matter_comment_value">{{item.matterComment.value}}</div>
         </div>
       </r-scroll>
-      <div class='confirm_btn' :class="{btn_hide : btnIsHide}" @click="confirm" v-if="hasEditPart">
+      <div class='confirm_btn' @click="confirm" v-if="hasEditPart">
         <div class='confirm'>确认</div>
       </div>
     </popup>
@@ -144,6 +145,7 @@
           this.readOnlyParts = readOnlyParts;
         },
         immediate: true,
+        deep: true
       }
     },
     methods: {
@@ -172,6 +174,7 @@
               return false
             }
           }
+          matter[eItem.fieldCode] = val;
           return true
         });
         if (warn) {
@@ -180,7 +183,8 @@
           });
           return
         }
-        this.$emit('sel-confirm', JSON.stringify(this.chosenMatter))
+        this.$emit('on-confirm', matter);
+        this.showPop = false;
       },
       //输入框获取焦点时内容选中
       getFocus(e) {
@@ -195,12 +199,21 @@
 
   .popup-matter-container {
     width: 100%;
-    background-color: #fff;
+    /*background-color: #fff;*/
+    background-color: #f6f6f6;
     color: #333;
     box-sizing: border-box;
     &.has-edit {
       .scroll-container {
         height: calc(100% - 1.22rem);
+      }
+    }
+    &.is-focus {
+      .scroll-container {
+        height: calc(100% - 0.62rem);
+      }
+      .confirm_btn {
+        display: none;
       }
     }
     .vux-1px-t:before {
@@ -213,6 +226,7 @@
       align-items: center;
       padding: 0 .15rem;
       height: .4rem;
+      background-color: #fff;
       .icon-close {
         display: inline-block;
         width: .14rem;
@@ -221,9 +235,9 @@
     }
 
     .popup-header {
-      margin-top: .05rem;
-      padding: 0 .15rem;
+      padding: .05rem .15rem 0;
       line-height: .17rem;
+      background-color: #fff;
       font-size: .16rem;
       font-weight: 600;
     }
@@ -234,8 +248,8 @@
 
     .matter-main {
       display: flex;
-      margin-top: .24rem;
-      padding: 0 .15rem;
+      padding: .24rem .15rem 0;
+      background-color: #fff;
       .matter_img {
         width: .9rem;
         height: .9rem;
@@ -278,12 +292,12 @@
 
     /* 其他数据 */
     .matter-other {
-      margin-bottom: .24rem;
-      padding: 0 .15rem;
+      padding: 0 .15rem .24rem;
+      background-color: #fff;
       .matter_other_item {
         display: flex;
         justify-content: space-between;
-        margin-top: .12rem;
+        padding-top: .12rem;
         line-height: .14rem;
         font-size: .14rem;
       }
@@ -295,6 +309,7 @@
     /* 时间部分 */
     .matter-date {
       padding: .24rem .15rem .08rem;
+      background-color: #fff;
       .matter_date_item {
         display: flex;
         line-height: .12rem;
@@ -309,6 +324,7 @@
     /* 说明 */
     .matter-comment {
       padding: .24rem .15rem .19rem;
+      background-color: #fff;
       .matter_comment_title {
         line-height: .17rem;
         font-size: .16rem;
@@ -323,25 +339,23 @@
 
     /* 编辑部分 */
     .matter-edit-part {
+      margin: .1rem 0;
+      background-color: #fff;
       color: #333;
       .required {
         color: $main_color;
-      }
-      .vux-cell-box {
-        &:after {
-          border-color: #e8e8e8;
-        }
       }
       .weui-cell {
         padding: .15rem;
         line-height: .2rem;
         font-size: .14rem;
+        &:before {
+          display: none;
+        }
         &:after {
           border-color: #e8e8e8;
         }
-        .weui-cell__hd {
-          display: flex;
-          align-items: center;
+        /deep/ .weui-cell__hd {
           color: #696969;
         }
       }
@@ -356,9 +370,6 @@
       box-sizing: border-box;
       background: #fff;
       padding: 0.08rem .2rem;
-      &.btn_hide {
-        display: none;
-      }
       .confirm {
         width: 100%;
         height: 0.44rem;

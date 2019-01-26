@@ -19,7 +19,7 @@
         <div class="no-warehouse">
           <div class="picker">
             <span class="mode required">请选择库位</span>
-          </div>  
+          </div>
         </div>
       </div>
     </div>
@@ -27,8 +27,11 @@
     <!-- 仓库popup -->
     <div v-transfer-dom>
       <popup v-model="storeStorePop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
+        <div class="popup-top">
+          <i class="icon-close" @click="onHide"></i>
+        </div>
         <div class="trade_pop">
-          <d-search @search="searchList" @turn-off="onHide" :isFill="true"></d-search>
+          <d-search @search="searchList" @turn-off="onHide"></d-search>
           <!-- 仓库列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
@@ -82,7 +85,7 @@
     },
     directives: {TransferDom},
     components: {
-      Icon, Popup, RScroll, DSearch, 
+      Icon, Popup, RScroll, DSearch,
     },
     data() {
       return {
@@ -290,14 +293,24 @@
   // 弹出层
   .trade_pop_part {
     background: #fff;
+    .popup-top {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 0 .15rem;
+      height: .4rem;
+      background-color: #fff;
+      .icon-close {
+        display: inline-block;
+        width: .14rem;
+        height: .14rem;
+      }
+    }
     .trade_pop {
-      height: 100%;
+      height: calc(100% - .4rem);
       overflow: hidden;
-      // 顶部
-      .title {
-        position: relative;
-        margin: .08rem 0;
-        font-size: .2rem;
+      .search {
+        padding-top: 0;
       }
       .each_mode {
         margin-right: .1rem;

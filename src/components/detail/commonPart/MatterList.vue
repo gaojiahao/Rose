@@ -1,7 +1,7 @@
 <template>
   <div class="materiel_ct_list">
     <div class="mater_list" v-if="matterList.length">
-      <matter-item :item="item" v-for="(item, index) in matterList" :key='index' @on-show-more="onShowMore"
+      <matter-item :item="item" v-for="(item, index) in matterList" :key='index' @on-show-more="onShowMore(item, index)"
                    v-if="showAllMatter || index < 3"></matter-item>
       <div class="matter-more-wrapper" v-show="matterList.length > 3 && !showAllMatter">
         <div class="matter-more" @click="clickMore('')">
@@ -18,7 +18,8 @@
           <span class="order_num">{{key || '未查询到相关订单，请检查数据是否正确'}}</span>
         </div>
         <div class="order_matter">
-          <matter-item :item="item" v-for="(item, index) in oItem" :key='index' @on-show-more="onShowMore"
+          <matter-item :item="item" v-for="(item, index) in oItem" :key='index'
+                       @on-show-more="onShowMore(item, index, key)"
                        v-if="orderListMap[key] || index < 3"></matter-item>
           <div class="matter-more-wrapper" v-show="oItem.length > 3 && !orderListMap[key]">
             <div class="matter-more" @click="clickMore(key)">
@@ -82,8 +83,8 @@
       }
     },
     methods: {
-      onShowMore(item) {
-        this.$emit('on-show-more', item);
+      onShowMore(item, index, key) {
+        this.$emit('on-show-more', item, index, key);
       },
       clickMore(key) {
         if (key) {
