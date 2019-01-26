@@ -12,7 +12,7 @@
         <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
         <!-- 物料列表 -->
         <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :show-matter-pop="showMatterPop" :filter-list="filterList"
-          :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="matterList" 
+          :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="[]"
           :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
           :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
           :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
@@ -61,7 +61,7 @@ export default {
           name: '物料编码',
           value: 'inventoryCode',
         }
-      ],        
+      ],
       showMatterPop: false,
       showMaterielPop: false, // 是否显示物料的popup
       numMap: {}, // 用于记录订单物料的数量和价格
@@ -70,8 +70,19 @@ export default {
       dealerInfo: {},
       modifyKey: null,
       contactInfo: {},
-      matterList: [], // 物料列表
     }
+  },
+  computed: {
+    // TODO 将orderList转为数组
+    matterList() {
+      let arr = [];
+      for (let items of Object.values(this.orderList)) {
+        for (let item of items) {
+          arr.push(item);
+        }
+      }
+      return arr;
+    },
   },
   components: {
     XTextarea, OpButton,
@@ -90,7 +101,6 @@ export default {
         this.dealerInfo = chosenDealer;
         if(this.matterParams.data && this.matterParams.data.dealerCode != null){
           this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
-          this.matterList = [];
           this.orderList = {};
         }
         // 重新选择客户时，需要重新请求物料是否有上下线
@@ -105,11 +115,11 @@ export default {
               item.tdQty = '';
               item.taxRate = 0.16;
               item.dealerInventoryName = '';
-              item.dealerInventoryCode = '';               
+              item.dealerInventoryCode = '';
             }
           }
-        }  
-      }  
+        }
+      }
     },
     selContact(val) {
       this.contactInfo = {...val};
@@ -124,14 +134,6 @@ export default {
     // TODO 更新修改后的物料信息
     selConfirm(val) {
       let modMatter = JSON.parse(val);
-      this.matterList.every((item, index) => {
-        // 修改matterList，触发合计金额计算
-        if (modMatter.transCode === item.transCode && modMatter.inventoryCode === item.inventoryCode) {
-          this.$set(this.matterList, index, modMatter);
-          return false
-        }
-        return true
-      });
       this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
     },
     // 选择物料，显示物料pop
@@ -168,33 +170,26 @@ export default {
     // TODO 选中物料项
     selMatter(val) {
       let sels = JSON.parse(val);
-      let orderList = {};
+      let orderList = JSON.parse(JSON.stringify(this.orderList));
       sels.forEach(item => {
+        let orderListKey = item.transCode ? item.transCode : 'noCode';
         if(this.dealerInfo.dealerCode){
           this.getQtyRange(item);
         }
-        let key = `${item.transCode}_${item.inventoryCode}`;
-        let {
-          tdQty = item.qtyBal,
-          price = item.price,
-          taxRate = this.taxRate,
-          promDeliTime = '',
-        } = this.numMap[key] || {};
-        item.tdQty = tdQty || '';
-        item.price = price || '';
-        item.taxRate = taxRate;
+        item.taxRate = this.taxRate;
+        item.tdQty = item.qtyBal || '';
         item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
         item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
         item.assMeasureDescription =  item.assMeasureDescription || item.invSubUnitComment || null; // 辅助计量说明
-        item.promDeliTime = promDeliTime;
+        item.promDeliTime = '';
         item.dateActivation = dateFormat(item.dateActivation, 'YYYY-MM-DD');
         item.executionDate = dateFormat(item.executionDate, 'YYYY-MM-DD');
         // 如果有销售合同号
         if(item.transCode){
-          if (!orderList[item.transCode]) {
-            orderList[item.transCode] = [];
+          if (!orderList[orderListKey]) {
+            orderList[orderListKey] = [];
           }
-          orderList[item.transCode].push(item);
+          orderList[orderListKey].push(item);
         }
         else {
           if(!orderList['noCode']) {
@@ -204,8 +199,6 @@ export default {
 
         }
       });
-      this.numMap = {};
-      this.matterList = sels;
       this.orderList = orderList;
     },
     //选择默认图片
@@ -219,30 +212,18 @@ export default {
     // 滑动删除
     delClick(sItem, index, key) {
       let arr = this.selItems;
-      let delIndex = null;
-      if(sItem.transCode){
-        delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
-      }
-      else{
-        delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
-      }
-      
+      let delIndex = arr.findIndex(item => item === index);
+
       //若存在重复的 则清除
       if (delIndex !== -1) {
         arr.splice(delIndex, 1);
         return;
       }
-      arr.push(sItem);
+      arr.push(index);
     },
     // TODO 判断是否展示选中图标
-    showSelIcon(sItem) {
-      if(sItem.transCode){
-        return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode) !== -1;
-      }
-      else{
-        return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
-      }
-      
+    showSelIcon(sItem, index) {
+      return this.selItems.includes(index);
     },
     // 全选
     checkAll() {
@@ -250,7 +231,7 @@ export default {
         this.selItems = [];
         return
       }
-      this.selItems = JSON.parse(JSON.stringify(this.matterList));
+      this.selItems = this.matterList.map((item, index) => index);
     },
     // 删除选中的
     deleteCheckd() {
@@ -258,45 +239,17 @@ export default {
         content: '确认删除?',
         // 确定回调
         onConfirm: () => {
-          let newArr = [];
-          let keys = Object.keys(this.orderList);
-          keys.forEach(item => {
-            newArr = [...newArr, ...this.orderList[item]];
+          let orderList = {};
+          let selItems = this.selItems;
+          let remainder = this.matterList.filter((item, index) => !selItems.includes(index)); // 没被删除的
+          remainder.forEach(item => {
+            let orderListKey = item.transCode ? item.transCode : 'noCode';
+            if (!orderList[orderListKey]) {
+              orderList[orderListKey] = []
+            }
+            orderList[orderListKey].push(item);
           });
-          this.selItems.forEach(SItem => {
-            newArr.forEach(OItem => {
-              if(SItem.transCode){
-                if (OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode) {
-                  let delArr = this.orderList[OItem.transCode];
-                  let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
-                  if (delIndex >= 0) {
-                    delArr.splice(delIndex, 1);
-                  }
-                  if (!delArr.length) {
-                    delete this.orderList[OItem.transCode];
-                  }
-                }
-              }
-              else{
-                if (OItem.inventoryCode === SItem.inventoryCode) {
-                  let delArr = this.orderList['noCode'];
-                  let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
-                  if (delIndex >= 0) {
-                    delArr.splice(delIndex, 1);
-                  }
-                  if (!delArr.length) {
-                    delete this.orderList['noCode'];
-                  }
-                }
-              }
-            });
-            this.matterList.forEach((item, index) => {
-              if (item.inventoryCode === SItem.inventoryCode) {
-                this.matterList.splice(index, 1);
-                index--;
-              }
-            })
-          });
+          this.orderList = orderList;
           this.selItems = [];
           this.matterModifyClass = false;
         }
@@ -304,12 +257,6 @@ export default {
     },
     // TODO 新增更多物料
     addMatter() {
-      for (let items of Object.values(this.orderList)) {
-        for (let item of items) {
-          // 存储已输入的价格
-          this.numMap[`${item.transCode}_${item.inventoryCode}`] = {...item};
-        }
-      }
       this.showMaterielPop = !this.showMaterielPop;
     },
     // TODO 展示时间选择器
@@ -336,7 +283,7 @@ export default {
             warn = `${item.fieldLabel}不能为空`;
             break
           }
-          
+
         }
       }
       if(!warn && !Object.keys(this.orderList).length) {
@@ -428,7 +375,7 @@ export default {
           this.saveData(operation, submitData);
         }
       })
-      
+
     },
     // 获取订单信息用于重新提交
     getFormData() {
@@ -458,8 +405,8 @@ export default {
           drDealerLogisticsTerms: formData.drDealerLogisticsTerms, //物流条件
           daysOfAccount: formData.order.daysOfAccount,
         };
-        // let [dealerInfo = {}] = order.dataSet;
         order.dataSet.map(item => {
+          let orderListKey = item.transCode ? item.transCode : 'noCode';
           item = {
             ...item,
             inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
@@ -476,20 +423,11 @@ export default {
             transCode: item.transMatchedCode,
             invSubUnitMulti: item.assMeasureScale,
           };
-          this.getQtyRange(item)
-          this.matterList.push(item);
-          if(item.transCode){
-            if (!orderList[item.transCode]) {
-              orderList[item.transCode] = [];
-            }
-            orderList[item.transCode].push(item);
+          this.getQtyRange(item);
+          if (!orderList[orderListKey]) {
+            orderList[orderListKey] = [];
           }
-          else{
-            if(!orderList.noCode) {
-              orderList.noCode = [];
-            }
-            orderList.noCode.push(item);
-          }
+          orderList[orderListKey].push(item);
         });
         this.handlerDefault = {
           handler: formData.handler,
@@ -545,11 +483,6 @@ export default {
       this.formData = draft.formData;
       this.contactInfo = draft.contactInfo;
       this.orderList = draft.orderList;
-      for (let items of Object.values(this.orderList)) {
-        for (let item of items) {
-          this.matterList.push(item)
-        }
-      }
       // 物料列表请求参数
       if(this.matterParams.data && this.matterParams.data.dealerCode){
         this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
