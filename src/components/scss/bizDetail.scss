@@ -518,8 +518,7 @@
 // 表格
 .form_content {
   position: relative;
-  background: #FFF;
-  // padding-top: .06rem;
+  margin: .1rem .1rem 0;
   &.has_margin{
     margin-top:0.1rem;
   }
@@ -534,7 +533,26 @@
 
   }
   .main_content {
+    background: #fff;
     padding: 0 .1rem;
+    margin-bottom: .1rem;
+  }
+  .each_info {
+    padding: .17rem 0;
+    font-size: .14rem;
+    color: #333;
+    line-height: .14rem;
+    display: flex;
+    justify-content: space-between;
+    line-height: .16rem;
+    label{
+      color: #999;
+      margin-right: .08rem;
+    }
+    .field_value{
+      flex: 1;
+      text-align: right;
+    }
   }
   &.show_border {
     border-bottom: .03rem solid #e8e8e8;

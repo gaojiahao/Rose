@@ -62,6 +62,8 @@ export default {
       dealerConfig: [],
       btnIsHide: false,
       submitMatterField: [], // 审批时要提交的物料字段
+      matterConfig: [], // 用于存放非物料的重复项配置
+      otherConfig: [], // 用于存放非往来，仓库的单一项配置
     }
   },
   computed: {
@@ -266,7 +268,7 @@ export default {
       await this.getListId();
       await this.getFlowAndActions();
       //获取与当前订单相关的实例
-      await this.getAppExampleDetails();
+      // await this.getAppExampleDetails();
       // 获取表单表单详情
       await this.getOrderList(transCode);
       await this.getFormConfig();
@@ -344,7 +346,7 @@ export default {
     getFormConfig() {
       return getFormConfig(this.formViewUniqueId).then(({config = [], dataSource = '[]', reconfig = {}}) => {
         // console.log(config)
-        let ckConfig = [], rkConfig = [], dealerConfig = [], matterConfig = [];
+        let ckConfig = [], rkConfig = [], dealerConfig = [], matterConfig = [], otherConfig = [];
         let dealerFilter = [
           'dealerName_dealerDebit',
           'drDealerLabel',
@@ -404,6 +406,9 @@ export default {
               rkConfig = item.items;
               this.setWarehouseConfg(rkConfig, '入库');
             }
+            if(item.name === 'pb'){
+              otherConfig = item.items;
+            }
           } else {
             if (item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
               matterConfig = item.items;
@@ -441,6 +446,7 @@ export default {
           }
           return arr
         }, []);
+        this.matterConfig = matterConfig;
         this.submitMatterField = submitMatterField;
         if (Object.values(this.orderList).length) {
           listData = Object.values(this.orderList).reduce((arr, item) => {
@@ -455,6 +461,13 @@ export default {
           listData = this.matterList;
         }
         this.setMatterConfig(listData, matterConfig);
+        otherConfig = otherConfig.reduce((arr, item, index) => {
+          if (!item.hidden) {
+            arr.push(item);
+          }
+          return arr
+        }, []);
+        this.otherConfig = otherConfig;
       })
     },
     // 设置 仓库信息 动态渲染部分

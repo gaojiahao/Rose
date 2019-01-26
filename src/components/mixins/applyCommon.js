@@ -46,7 +46,6 @@ export default {
       selItems: [],                               // 选中的要删除的物料
       handleORG: [],                              // 经办组织
       filterList: [],                             // 筛选字段清单
-
       attachment : [],
       otherConfig: [],
       dealerConfig: [],
@@ -241,6 +240,10 @@ export default {
           handlerRoleName: firstRole.roleName || '',  // 用户职位名称
           userCode: basicUserInfo.userCode, // 用户工号
         }
+        // 当请求数据的参数matterParams中有groupId
+        if(this.matterParams.data && this.matterParams.data.groupId != null){
+          this.matterParams.data.groupId = firstORG.groupId
+        }
         this.formData = {
           ...this.formData,
           ...defaultUserInfo,
@@ -289,7 +292,7 @@ export default {
     },
     // TODO 检查金额，取正数、保留两位小数
     checkAmt(item, key, val){
-      console.log('item:', item);
+      // console.log('item:', item);
       let { price, tdQty, taxRate, qtyBal, qtyStock, qtyBalance, 
         assistQty, qtyStockBal, qtyOnline, qtyDownline} = item;
       item[key] = Math.abs(toFixed(val));
@@ -502,7 +505,7 @@ export default {
             if(item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt' || item.name === 'gys') {
               dealerConfig = [...dealerConfig, ...item.items]
             }
-            if(item.name === 'ck'){
+            if(item.name === 'pb'){
               otherConfig = item.items;
             }
           }
@@ -562,7 +565,7 @@ export default {
           let matchedCol = matterCols.find(col => col.k === key);
           // 若存在映射表则根据映射表的字段确定显示或隐藏
           item.hidden = key ? (matchedCol ? item.hidden : true) : item.hidden;
-          // console.log(item.fieldCode, key, item.hidden)
+          // 数据源是动态请求数据
           if(item.dataSource && item.dataSource.type === 'remoteData') {
             // 物料或者订单请求
             if(item.editorType === 'r2Selector') {
@@ -598,6 +601,10 @@ export default {
                     matterParams[item] = this.dealerInfo.dealerCode;
                     return
                   }
+                  if(item === 'groupId' && this.formData.handlerUnit){
+                    matterParams[item] = this.formData.handlerUnit
+                    return
+                  }
                   matterParams[item] = params[item].type === 'text' ? params[item].value : '';
                 })
                 requestParams.data = matterParams;
@@ -625,6 +632,16 @@ export default {
                 item.remoteData = [arr];
               })
             }
+          }
+          else if(item.dataSource && item.dataSource.type === 'staticData') {
+            let remoteData = []
+            item.dataSource.data.forEach(dItem => {
+              remoteData.push({
+                name: dItem,
+                value: dItem
+              })
+            })
+            this.$set(item, 'remoteData', remoteData)
           }
           // 组合matterPop配置
           // matterPop需要隐藏的物料的字段
@@ -686,13 +703,16 @@ export default {
         // 处理其他信息的配置
         let other = [];
         otherConfig.forEach(item => {
+          if(item.submitValue){
+            this.submitMatterField.push(item)
+          }
           if(!item.hiddenInRun){
             if((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo') && item.dataSource && item.dataSource.type === 'remoteData'){
               requestData(this.handlerParams(item)).then(data => {
                 if(data.tableContent){
-                  data.tableContent.forEach(item => {
-                    item.originValue = item.value;
-                    item.value = item.name;
+                  data.tableContent.forEach(dItem => {
+                    dItem.name = dItem[item.displayField]
+                    dItem.value = dItem[item.displayField];
                   })
                   this.$set(item, 'remoteData', data.tableContent)
                 }

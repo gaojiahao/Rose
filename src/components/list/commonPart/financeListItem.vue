@@ -14,9 +14,11 @@
     <ul class="order-cost">
       <li class="each_cost" :class="{'vux-1px-b' : mIndex < item.detailItem.length-1}" v-for="(mItem, mIndex) in item.detailItem" :key="mIndex">
         <div class="cost_name">
-          <span class="name">{{mItem.costName_expCode || mItem.dealerName_dealerCodeCredit}}</span>
-          <span class="type" v-show="mItem.expSubject">科目：{{mItem.expSubject}}</span>
-          <span class='type' v-show="mItem.costType_expCod">类型：{{mItem.costType_expCode}}</span>
+          <slot name="costName" :mItem="mItem">
+            <span class="name">{{mItem.costName_expCode || mItem.dealerName_dealerCodeCredit}}</span>
+            <span class="type" v-show="mItem.expSubject">科目：{{mItem.expSubject}}</span>
+            <span class='type' v-show="mItem.costType_expCod">类型：{{mItem.costType_expCode}}</span>
+          </slot>  
         </div>
         <div class="cost_amount">
           <slot name="cost_info" :mItem="mItem">

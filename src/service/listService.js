@@ -106,6 +106,17 @@ export let getWareHouseType = (data = {}) => {
     }
   })
 }
+// 获取请假列表数据
+export let getLeaveDetailItem = (data = {}) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/mobile/getLeaveDetailItem',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+}
+
 export let filterFields = (viewId = '') => {
   return $flyio.ajax({
     url: `/H_roleplay-si/seconds/getInstanceDistinct/${viewId}`

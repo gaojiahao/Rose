@@ -216,7 +216,7 @@
 }
 // 底部为(价格 + 提交)样式
 .no_count{
-  height: 95%;
+  height: calc(100% - .44rem)
 }
 // 全部是表格提交 并且底部只有(提交)格式
 .when-is-form {
@@ -314,6 +314,7 @@
   background: #fff;
   padding: .18rem .15rem;
   box-sizing: border-box;
+  margin-top: .1rem;
   .weui-cell{
     padding: 0;
   }
@@ -324,36 +325,22 @@
 
 /* 没有金额的提交和终止按钮 */
 .btn-no-amt {
-  position: absolute;
-  left: 0;
+  z-index: 99;
   bottom: 0;
-  z-index: 5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   width: 100%;
-  height: 10%;
+  display: flex;
+  height: .44rem;
+  position: absolute;
+  line-height: .44rem;
   background: #fff;
-  text-align: center;
-  .btn-item {
-    margin-right: .2rem;
-    width: 1.4rem;
-    line-height: .4rem;
-    border-radius: .4rem;
+  display: flex;
+  .btn-item{
+    flex: 1;
+    background: #3296FA;
     color: #fff;
-    background-color: #5077aa;
-    box-shadow: 0 2px 5px #5077aa;
-    &:last-child {
-      margin-right: 0;
-    }
-    /* 只有提交按钮 */
-    &:only-child {
-      width: 2.8rem;
-      line-height: .44rem;
-    }
-    &.stop {
+    text-align: center;
+    &.stop{
       background: #ea5455;
-      box-shadow: 0 2px 5px #ea5455;
     }
   }
 }

@@ -1,12 +1,12 @@
 
 @font-face {
   font-family: 'iconfont';  /* project id 667058 */
-  src: url('//at.alicdn.com/t/font_667058_miero8isvhk.eot');
-  src: url('//at.alicdn.com/t/font_667058_miero8isvhk.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_667058_miero8isvhk.woff2') format('woff2'),
-  url('//at.alicdn.com/t/font_667058_miero8isvhk.woff') format('woff'),
-  url('//at.alicdn.com/t/font_667058_miero8isvhk.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_667058_miero8isvhk.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_667058_ceujwoykzyk.eot');
+  src: url('//at.alicdn.com/t/font_667058_ceujwoykzyk.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_667058_ceujwoykzyk.woff2') format('woff2'),
+  url('//at.alicdn.com/t/font_667058_ceujwoykzyk.woff') format('woff'),
+  url('//at.alicdn.com/t/font_667058_ceujwoykzyk.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_667058_ceujwoykzyk.svg#iconfont') format('svg');
 }
 
 .iconfont {
@@ -206,4 +206,6 @@
 .icon-jia:before { content: "\e632"; }
 
 .icon-iconfontmove:before { content: "\e628"; }
+
+.icon-shanchu1:before { content: "\e6b7"; }
 

@@ -3,12 +3,12 @@
   <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
-        <m-search @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
+        <m-search @search='searchList'></m-search>
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !costList.length" @on-pulling-up="onPullingUp"
                    ref="bScroll">
-          <div class="each_mater box_sd" v-for="(item, index) in costList" :key='index'
+          <div class="each_mater box_sd" :class="{selected: showSelIcon(item)}" v-for="(item, index) in costList" :key='index'
                @click.stop="selThis(item, index)">
             <div class="mater_main ">
               <!-- 物料名称 -->
@@ -20,8 +20,6 @@
                 {{item.costType}}
               </div>
             </div>
-            <!-- icon -->
-            <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
           </div>
         </r-scroll>
       </div>
@@ -31,11 +29,12 @@
 
 <script>
   import {Icon, Popup, LoadMore} from 'vux'
- import { getProjectCostByGroupId, getCostByGroupId } from 'service/costService.js'
+  import { getProjectCostByGroupId, getCostByGroupId } from 'service/costService.js'
+  import {requestData} from 'service/commonService'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
   export default {
-    name: "MatterList",
+    name: "costList",
     props: {
       show: {
         type: Boolean,
@@ -56,6 +55,12 @@
         type: String,
         default: 'getCostByGroupId'
       },
+      costParams: {
+        type: Object,
+        default() {
+          return {}
+        }
+      }
     },
     components: {
       Icon, Popup, LoadMore, RScroll,MSearch
@@ -90,8 +95,14 @@
       },
       groupId: {
         handler() {
-          this[this.getListMethod]();
+          this.getCostList();
         }
+      },
+      costParams: {
+        handler() {
+          this.getCostList()
+        },
+        deep: true
       }
     },
     methods: {
@@ -134,9 +145,8 @@
         this.selItems = [...this.defaultValue];
       },
       // TODO 获取物料列表
-      getCostByGroupId() {
+      getCostList() {
         let filter = [];
-
         if (this.srhInpTx) {
           filter = [
             ...filter,
@@ -147,41 +157,23 @@
             },
           ];
         }
-        return getCostByGroupId({
-          groupId: this.groupId,
+        let data = {
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
-        }).then(this.dataHandler);
-      },
-      getProjectCostByGroupId() {
-        let filter = [];
-
-        if (this.srhInpTx) {
-          filter = [
-            ...filter,
-            {
-              operator: 'like',
-              value: this.srhInpTx,
-              property: 'costName'
-            },
-          ];
+          ...this.costParams.data,
         }
-        return getProjectCostByGroupId({
-          groupId: this.groupId,
-          limit: this.limit,
-          page: this.page,
-          start: (this.page - 1) * this.limit,
-          filter: JSON.stringify(filter),
-        }).then(this.dataHandler);
-      },
-      dataHandler({dataCount = 0, tableContent = []}){
-        this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+         return requestData({
+          url: this.costParams.url,
+          data
+        }).then(({dataCount = 0, tableContent = []}) => {
+          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.costList = this.page === 1 ? tableContent : [...this.costList, ...tableContent];
           this.$nextTick(() => {
             this.$refs.bScroll.finishPullUp();
           })
+        })
       },
       // TODO 搜索物料
       searchList({val = ''}) {
@@ -190,17 +182,17 @@
         this.page = 1;
         this.hasNext = true;
         this.$refs.bScroll.scrollTo(0, 0);
-        this[this.getListMethod]();
+        this.getCostList();
       },
       // TODO 上拉加载
       onPullingUp() {
         this.page++;
-        this[this.getListMethod]();
+        this.getCostList();
       },
     },
     created() {
       this.setDefaultValue();
-      this[this.getListMethod]();
+      // this.getCostList();
     }
   }
 </script>
@@ -213,7 +205,6 @@
   .trade_pop_part {
     background: #fff;
     .trade_pop {
-      
       height: 100%;
       // 顶部
       .title {
@@ -297,19 +288,23 @@
         height: calc(100% - .38rem);
         /* 使用深度作用选择器进行样式覆盖 */
         /deep/ .scroll-wrapper {
-          padding: .14rem .04rem 0 .3rem;
+          padding: .14rem .15rem 0;
         }
         // 每个物料
         .each_mater {
           position: relative;
           display: flex;
-          padding: 0.08rem;
+          padding: 0.1rem;
           margin-bottom: .2rem;
           box-sizing: border-box;
+          border-radius: .04rem;
           // 阴影
           &.box_sd {
             box-sizing: border-box;
             box-shadow: 0 0 8px #e8e8e8;
+          }
+          &.selected {
+            border: 1px solid #3296FA;
           }
           // 物料主体
           .mater_main {
