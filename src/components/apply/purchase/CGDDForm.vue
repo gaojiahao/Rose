@@ -7,13 +7,13 @@
           :status-data="currentStage" v-model="formData.biProcessStatus" :showStatus="false">
         </pop-baseinfo>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" :defaultContact="contact" 
+        <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" :defaultContact="contact"
                           dealerTitle="供应商" @sel-contact="selContact" :dealer-params="dealerParams"></pop-dealer-list>
         <!-- 结算方式 -->
         <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
         <!-- 物料列表 -->
         <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :show-matter-pop="showMatterPop" :filter-list="filterList"
-          :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="matterList" 
+          :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="matterList"
           :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
           :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
           :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
@@ -70,10 +70,21 @@ export default {
       dealerInfo: {},
       contact: {},
       orderList: {},
-      matterList: [], // 物料列表
       showMaterielPop: false, // 是否显示物料的popup
       showDealerPop: false, // 是否显示供应商的popup
     }
+  },
+  computed: {
+    // TODO 将orderList转为数组
+    matterList() {
+      let arr = [];
+      for (let items of Object.values(this.orderList)) {
+        for (let item of items) {
+          arr.push(item);
+        }
+      }
+      return arr;
+    },
   },
   mixins: [common],
   filters: {
@@ -117,16 +128,13 @@ export default {
       this.dealerInfo.daysOfAccount= this.dealerInfo.pamentDays;
       if(this.matterParams.data && this.matterParams.data.dealerCode != null){
         this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
-        this.matterList = [];
         this.orderList = {};
       }
       // 修改往来时候，若有物料需要重新请物料的价格和税率
-      if(Object.values(this.orderList).length){
-        for(let key in this.orderList){
-          for(let item of this.orderList[key]){
-            this.getPrice(item)             
-          }
-        }
+      if (this.matterList.length) {
+        this.matterList.forEach(item => {
+          this.getPrice(item)
+        })
       }
     },
     // 选中联系人
@@ -151,10 +159,9 @@ export default {
       }
       getPriceFromProcurementContract(params).then(({data = {}}) =>{
         if(Object.keys(data).length){
-          this.$set(item, 'price', Object.values(data)[0].price);
-          this.$set(item, 'taxRate', Object.values(data)[0].taxRate)
-          // item.price = Object.values(data)[0].price;
-          // item.taxRate =  Object.values(data)[0].taxRate;
+          // 有值则不修改
+          !item.price && item.price !== 0 && this.$set(item, 'price', Object.values(data)[0].price);
+          !item.taxRate && item.taxRate !== 0 && this.$set(item, 'taxRate', Object.values(data)[0].taxRate)
         }
       })
     },
@@ -162,7 +169,10 @@ export default {
     selMatter (val) {
       let sels = JSON.parse(val);
       let orderList = {};
+      let matCodes = [];
       sels.map(item => {
+        let orderListKey = item.transCode ? item.transCode : 'noCode';
+        matCodes.push(item.inventoryCode);
         for(let key in this.dataIndexMap){
           // 格式化日期
           if(key === 'promDeliTime' || key === 'shippingTime'){
@@ -171,7 +181,7 @@ export default {
           else{
             item[key] = item[key] || item[this.dataIndexMap[key]];
           }
-          
+
         }
         item.tdQty = item.tdQty || item.qtyBal;
         item.assistQty = toFixed(accDiv(item.tdQty, item.assMeasureScale))
@@ -179,18 +189,10 @@ export default {
         if(this.dealerInfo.dealerCode){
           this.getPrice(item)
         }
-        if(item.transCode){
-          if (!orderList[item.transCode]) {
-            orderList[item.transCode] = [];
-          }
-          orderList[item.transCode].push(item);
+        if (!orderList[orderListKey]) {
+          orderList[orderListKey] = [];
         }
-        else {
-          if(!orderList['noCode']) {
-            orderList['noCode'] = []
-          }
-          orderList['noCode'].push(item);
-        }
+        orderList[orderListKey].push(item);
         // let defaultTime = item.processingStartDate ? dateFormat(item.processingStartDate, 'YYYY-MM-DD') : '';
         // let defaultTdQty = item.qtyBal < item.qty ? item.qty : item.qtyBal;
         // item.tdQty = item.tdQty || defaultTdQty;
@@ -202,9 +204,12 @@ export default {
         // item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
         // item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
         // item.assMeasureDescription =  item.assMeasureDescription || item.invSubUnitComment || null; // 辅助计量说明
-      })
+      });
+      this.dealerParams.data = {
+        ...this.dealerParams.data,
+        matCodes: matCodes.join(','),
+      };
       this.numMap = {};
-      this.matterList = sels;
       this.orderList = orderList;
     },
     // 选择默认图片
@@ -225,26 +230,22 @@ export default {
     // TODO 更新修改后的物料信息
     selConfirm(val) {
       let modMatter = JSON.parse(val);
-      this.matterList.every((item, index) => {
-        // 修改matterList，触发合计金额计算
-        if (modMatter.transCode === item.transCode && modMatter.inventoryCode === item.inventoryCode) {
-          this.$set(this.matterList, index, modMatter);
-          return false
-        }
-        return true
-      });
       this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
+    },
+    // TODO 匹配相同项的索引
+    findIndex (arr, sItem) {
+      return arr.findIndex(item => item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode);
     },
     // 滑动删除
     delClick(sItem, index, key) {
       let arr = this.selItems;
-      let delIndex = null;
-      if(sItem.transCode){
+      let delIndex = this.findIndex(arr, sItem);
+      /*if(sItem.transCode){
         delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
       }
       else{
         delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
-      }
+      }*/
       //若存在重复的 则清除
       if (delIndex !== -1) {
         arr.splice(delIndex, 1);
@@ -254,13 +255,13 @@ export default {
     },
     // TODO 判断是否展示选中图标
     showSelIcon(sItem) {
-      if(sItem.transCode){
+      /*if(sItem.transCode){
         return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode) !== -1;
       }
       else{
         return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
-      }
-      
+      }*/
+      return this.findIndex(this.selItems, sItem) !== -1;
     },
     // 全选
     checkAll() {
@@ -276,55 +277,17 @@ export default {
         content: '确认删除?',
         // 确定回调
         onConfirm: () => {
-          let newArr = [];
-          let keys = Object.keys(this.orderList);
-          keys.forEach(item => {
-            newArr = newArr.concat(this.orderList[item]);
+          let orderList = {};
+          let selItems = this.selItems;
+          let remainder = this.matterList.filter((item, index) => this.findIndex(selItems, item) === -1); // 没被删除的
+          remainder.forEach(item => {
+            let orderListKey = item.transCode ? item.transCode : 'noCode';
+            if (!orderList[orderListKey]) {
+              orderList[orderListKey] = []
+            }
+            orderList[orderListKey].push(item);
           });
-          this.selItems.forEach(SItem => {
-            newArr.forEach(OItem => {
-              if(SItem.transCode){
-                if (OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode) {
-                  let delArr = this.orderList[OItem.transCode];
-                  let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
-                  if (delIndex >= 0) {
-                    delArr.splice(delIndex, 1);
-                  }
-                  if (!delArr.length) {
-                    delete this.orderList[OItem.transCode];
-                  }
-                }
-              }
-              else{
-                if (OItem.inventoryCode === SItem.inventoryCode) {
-                  let delArr = this.orderList['noCode'];
-                  let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
-                  if (delIndex >= 0) {
-                    delArr.splice(delIndex, 1);
-                  }
-                  if (!delArr.length) {
-                    delete this.orderList['noCode'];
-                  }
-                }
-
-              }
-            });
-            this.matterList.forEach((item, index) => {
-              if(item.transCode){
-                if(item.transCode === SItem.transCode && item.inventoryCode === SItem.inventoryCode){
-                  this.matterList.splice(index, 1);
-                  index--;
-                }
-              }
-              else{
-                if (item.inventoryCode === SItem.inventoryCode) {
-                  this.matterList.splice(index, 1);
-                  index--;
-                }
-              }
-              
-            })
-          });
+          this.orderList = orderList;
           this.selItems = [];
           this.matterModifyClass = false;
         }
@@ -337,11 +300,11 @@ export default {
     },
     // 校验数字
     checkAmt(item, key, val) {
-      item[key] = Math.abs(toFixed(val)); 
+      item[key] = Math.abs(toFixed(val));
       if(key === 'tdQty'){
         if(val > item.thenQtyBal){
           item[key] = item.thenQtyBal;
-        } 
+        }
       }
     },
     // 提价订单
@@ -474,7 +437,9 @@ export default {
         let{inPut = {}, order = {}} = formData;
         this.attachment = data.attachment;
         let orderList = {}, dataSet = [];
+        let matCodes = [];
         dataSet = order.dataSet.map(item=>{
+          matCodes.push(item.inventoryCode_transObjCode);
           item = {
             ...item,
             inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
@@ -503,7 +468,6 @@ export default {
           return item
         })
         this.orderList = orderList;
-        this.matterList = dataSet;
         this.handlerDefault = {
           handler: formData.handler,
           handlerName: formData.handlerName,
@@ -540,6 +504,10 @@ export default {
           dealerName: formData.dealerDebitContactPersonName,
           dealerMobilePhone: formData.dealerDebitContactInformation,
         }
+        this.dealerParams.data = {
+          ...this.dealerParams.data,
+          matCodes: matCodes.join(','),
+        };
         this.$loading.hide();
       })
     },
@@ -563,11 +531,6 @@ export default {
     let data = sessionStorage.getItem(DRAFT_KEY);
     if (data) {
       this.orderList = JSON.parse(data).orderList;
-      for (let items of Object.values(this.orderList)) {
-        for (let item of items) {
-          this.matterList.push(item)
-        }
-      }
       this.dealerInfo = JSON.parse(data).dealerInfo;
       this.formData = JSON.parse(data).formData;
       this.contact = JSON.parse(data).contact;

@@ -178,7 +178,8 @@
       dealerParams: {
         handler() {
           this.getDealer()
-        }
+        },
+        deep: true
       }
     },
     methods: {
