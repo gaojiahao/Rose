@@ -160,7 +160,7 @@ export default {
               item[key] = priceTag[key];
               delete priceTag[key];
             }
-            else if(!item.hasOwnProperty(key)){
+            else if(!item.hasOwnProperty(key) && !key.includes('price')){
               this.$set(item, key, priceTag[key]);
             }
           }
