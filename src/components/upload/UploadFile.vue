@@ -192,7 +192,7 @@
 
 <style scoped lang="scss">
   .upload-file-container {
-    margin: .1rem ;
+    // margin: .1rem 0;
     background: #fff;
     position: relative;
     padding: .18rem .15rem;
