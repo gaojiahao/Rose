@@ -10,7 +10,7 @@
                       @on-item-click="tabClick(item, index)">{{item.name}}
             </tab-item>
           </tab>-->
-          <r-sort @on-sort="onSortList" @on-filter="onFilter" :view-id="listViewID" ref="sort"></r-sort>
+          <r-sort @on-sort="onSortList" @on-filter="onFilter" :list-id="listId" ref="sort"></r-sort>
         </div>
       </div>
       <r-scroll class="list_wrapper " :options="scrollOptions" :has-next="hasNext"
@@ -24,7 +24,6 @@
 </template>
 
 <script>
-  import {getSellOrderList} from 'service/listService'
   import listCommon from 'pageMixins/bizListCommon'
 
   export default {

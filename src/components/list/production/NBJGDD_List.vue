@@ -24,7 +24,6 @@
 </template>
 
 <script>
-  import {getSellOrderList} from 'service/listService'
   import listCommon from 'pageMixins/bizListCommon'
 
   export default {

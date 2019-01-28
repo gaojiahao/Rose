@@ -10,7 +10,7 @@
                       @on-item-click="tabClick(item, index)">{{item.name}}
             </tab-item>
           </tab>-->
-          <r-sort @on-sort="onSortList" @on-filter="onFilter" :view-id="listViewID"></r-sort>
+          <r-sort @on-sort="onSortList" @on-filter="onFilter" :list-id="listId"></r-sort>
         </div>
       </div>
       <r-scroll class="list_wrapper " :options="scrollOptions" :has-next="hasNext"

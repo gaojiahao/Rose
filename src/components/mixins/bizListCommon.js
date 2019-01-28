@@ -280,7 +280,7 @@ export default {
         }
         filter.push(obj);
       }
-      return getSellOrderList(this.listViewID,{
+      return getSellOrderList(this.listId,{
         limit: this.limit,
         page: this.page,
         filter: JSON.stringify(filter),
@@ -429,8 +429,7 @@ export default {
     },
     // TODO 获取应用详情
     getAppDetail() {
-      let {listId = ''} = this.$route.query;
-      return getAppDetail(listId).then(([data = {}]) => {
+      return getAppDetail(this.listId).then(([data = {}]) => {
         let {action} = data;
         this.action = action;
       })
@@ -480,7 +479,8 @@ export default {
   created() {
     register(); // 注册wx-js-sdk
     this.applyCode = this.$route.query.listId;
-    let { name, transCode } = this.$route.query;
+    let { name, listId, transCode } = this.$route.query;
+    this.listId = listId;
     this.getAppDetail();
     this.getData(false).then(() => {
       /*

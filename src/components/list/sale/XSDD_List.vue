@@ -5,7 +5,7 @@
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search='searchList' ref="search"></searchIcon>
         <div class="filter_part">
-          <r-sort @on-sort="onSortList" @on-filter="onFilter" :view-id="listViewID" ref="sort"></r-sort>
+          <r-sort @on-sort="onSortList" @on-filter="onFilter" :list-id="listId" ref="sort"></r-sort>
           <!-- <r-tab @on-click="onTabClick"></r-tab> -->
         </div>
       </div>
@@ -24,7 +24,6 @@
 
 <script>
   import listCommon from 'pageMixins/bizListCommon'
-  import {getSellOrderList} from 'service/listService'
   import ApplyChart from 'components/list/commonPart/ApplyChart'
   export default {
     data() {

@@ -7,17 +7,10 @@ export let getList = (id,data = {}) => {
     data
   })
 };
-
 // TODO 获取销售订单列表
-// export let getSellOrderList = (data = {}) => {
-//   return $flyio.ajax({
-//     url: '/H_roleplay-si/seconds/getSellOrderList',
-//     data
-//   })
-// };
-export let getSellOrderList = (viewId, data = {}) => {
+export let getSellOrderList = (listId, data = {}) => {
   return $flyio.ajax({
-    url: `/H_roleplay-si/seconds/mergeDetailItemList/${viewId}`,
+    url: `/H_roleplay-si/seconds/mergeDetailItemList/${listId}`,
     data
   })
 };
@@ -117,9 +110,9 @@ export let getLeaveDetailItem = (data = {}) => {
   })
 }
 
-export let filterFields = (viewId = '') => {
+export let filterFields = (listId = '') => {
   return $flyio.ajax({
-    url: `/H_roleplay-si/seconds/getInstanceDistinct/${viewId}`
+    url: `/H_roleplay-si/seconds/getInstanceDistinct/${listId}`
   })
 }
 export default {

@@ -68,7 +68,11 @@ fly.interceptors.response.use(
           }
         })
       })
-      
+    }
+    else if(error.status === 1) {
+      if(error.message.includes('timeout')) {
+        rejectError('reject', '抱歉，网络无法联系，请稍后再试')
+      }
     }
     rejectError('reject', error.response.data.message) 
   }
@@ -121,7 +125,11 @@ let Rxports = {
           }
         }
       }
-      fly.request(params, params.data).then( res => resolve(res.data))
+      fly.request(params, params.data)
+        .then( res => resolve(res.data))
+        .catch( err => {
+          console.log('err:', err);
+        })
     })
   },
   

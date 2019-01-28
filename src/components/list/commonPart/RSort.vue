@@ -102,8 +102,8 @@ export default {
         ]
       }
     },
-    viewId: {
-      type: Number,
+    listId: {
+      type: [String, Number],
       default: 2190
     },
   },
@@ -332,7 +332,7 @@ export default {
     },
     // 请求过滤字段
     getFilterFields(){
-      filterFields(this.viewId).then(data=>{
+      filterFields(this.listId).then(data=>{
         let formStatusList = ['进行中', '已生效', '草稿'];
         let filtersList = {
           biStatus: {
