@@ -22,7 +22,7 @@
             <div class="instance_info_wrapper">
               <div class="instance_header_wrapper">
                 <span class="instance_header">{{item.demandTitle}}</span>
-                <span class="instance_process_status">{{item.biProcessStatus || '暂无流程'}}</span>
+                <span class="instance_process_status">{{item.processStatus || '暂无流程'}}</span>
               </div>
               <div class="instance_detail">
                 <div class="instance_detail_item">

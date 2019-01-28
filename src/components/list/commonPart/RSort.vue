@@ -19,17 +19,19 @@
         <div class="filter-container-part">
           <r-scroll class="list_wrapper" :options="scrollOptions" ref="bScroll">
             <!-- 流程状态 -->
-            <div class="process-status-container vux-1px-b" v-if="filtersList.biProcessStatus && filtersList.biProcessStatus.value.length">
-              <div class="process-wrapper">
-                <div class="filter_title">{{filtersList.biProcessStatus.alias}}</div>
-                <div class="process_status">
-                  <div class="each_status"  :class="{'active vux-1px' : showSelIcon(item, 'biProcessStatus')}"
-                  v-for="(item, index) in filtersList.biProcessStatus.value" :key="index"
-                  @click="selProcee(item, 'biProcessStatus', index)">
-                    <div class="status_content">{{item}}</div>
+            <div class="process-status-container vux-1px-b" v-for="(val, key, index) in statusList" :key="key">
+              <template v-if="val.value.length">
+                <div class="process-wrapper">
+                  <div class="filter_title">{{statusList[key].alias}}</div>
+                  <div class="process_status">
+                    <div class="each_status"  :class="{'active vux-1px' : showSelIcon(item, key)}"
+                        v-for="(item, index) in statusList[key].value" :key="index"
+                        @click="selProcee(item, key, index)">
+                      <div class="status_content">{{item}}</div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </template>
             </div>
             <!-- 时间 -->
             <div class="time-filter-container vux-1px-b">
@@ -52,7 +54,7 @@
                 </div>
               </div>
             </div>
-            <div class="process-status-container vux-1px-b" v-for="(val, key, index) in filtersList" :key="index" v-if="val.alias !== '流程状态' && val.value.length">
+            <div class="process-status-container vux-1px-b" v-for="(val, key, index) in filtersList" :key="index" v-if="key !== 'biProcessStatus' && val.value.length">
               <div class="process-wrapper">
                 <div class="filter_title " @click="val.showAll = !val.showAll">
                   <span>{{val.alias}}</span>
@@ -115,6 +117,7 @@ export default {
       lastFilter: {}, // 上次的过滤条件，用于判断列表是否需要刷新
       fieldVlaue: {}, // 被选中的流程状态
       filtersList:{},
+      statusList: {}, // 流畅状态列表
       timeFilter: { // 时间栏
         startDate: '',
         endDate: '',
@@ -218,9 +221,18 @@ export default {
         arr.push(sItem);
       }
       else{
-        let obj = {
-          alias: this.filtersList[key].alias,
-          value: [sItem]
+        let obj = {};
+        if(key !== 'biProcessStatus' && key !== 'bugProcessStatus' && key !== 'processStatus'){
+          obj = {
+            alias: this.filtersList[key].alias,
+            value: [sItem]
+          }
+        }
+        else{
+          obj = {
+            alias: this.statusList[key].alias,
+            value: [sItem]
+          }
         }
         this.$set(this.fieldVlaue, key, {...obj})
       }
@@ -329,16 +341,28 @@ export default {
             showValue: formStatusList,
             value: formStatusList,
           }
-        };
+        },
+       statusList = {};
         for(let key of Object.keys(data)){
           let item = data[key];
-          filtersList[key] = {
-            ...item,
-            showValue: item.value.slice(0,9),
-            showAll: false,
-          };
+          if(key !== 'biProcessStatus' && key !== 'bugProcessStatus' && key !== 'processStatus'){
+            filtersList[key] = {
+              ...item,
+              showValue: item.value.slice(0,9),
+              showAll: false,
+            };
+          }
+          else{
+            statusList[key] = {
+              ...item,
+              showValue: item.value.slice(0,9),
+              showAll: false,
+            }
+          }
+          
         }
         this.filtersList = {...filtersList};
+        this.statusList = {...statusList};
       })
     }
   },

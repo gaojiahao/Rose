@@ -49,7 +49,6 @@ export default {
       formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
       contactInfo: {}, // 客户、付款方式、物流条款的值
       uploadStyle: {
-        width: '100%',
         padding :'0.06rem 0.1rem'
       }
     }

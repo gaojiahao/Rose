@@ -4,42 +4,50 @@
       <div class="wrapper">
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
                       :handle-org-list="handleORG" :user-role-list="userRoleList" :showStatus="false"></pop-baseinfo>
-        <!-- <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker> -->
-        <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo" :dealer-params="dealerParams"
-                         :defaultContact="contactInfo" v-if="Object.keys(dealerParams).length"></pop-dealer-list>
-        <!-- <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"
-                         :defaultContact="contactInfo" v-if=""></pop-dealer-list> -->
         <div class="materiel_list">
           <div :class="{'vux-1px-t': index > 0}" v-for="(item, index) in otherConfig" :key="index">
-            <!-- 下拉框 -->
-            <r-picker :title="item.fieldLabel" :data="item.remoteData" :value="formData[item.fieldCode]"
-                    v-model="formData[item.fieldCode]" :required="!item.allowBlank"
-                    v-if="item.xtype === 'r2Combo' || item.xtype === 'r2Selector'"></r-picker>
-            <!-- 输入框（文字） -->
-            <div class='each_property' v-if="item.xtype === 'r2Textfield'">
-              <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
-              <input type='text' v-model="formData[item.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
-            </div>
-            <!-- 输入框（数字） -->
-            <div class='each_property ' v-if="item.xtype === 'r2Numberfield'">
-              <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
-              <input type='number' v-model.number="formData[item.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
-            </div>
-            <!-- 日期 -->
-            <div class='each_property' v-if="item.xtype === 'r2Datefield'" @click="getDate(formData,item)">
-              <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
-              <div class='picker'>
-                <span class='mater_nature'>{{formData[item.fieldCode] || "请选择"}}</span>
-                <span class='icon-right'></span>
+            <!--被授权者-->
+            <template v-if="item.fieldCode === 'authorized'">
+              <div class='each_property' @click="getAuthorized">
+                <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+                <div class='picker'>
+                  <span class='mater_nature'>{{formData[item.fieldCode] || "请选择"}}</span>
+                  <span class='icon-right'></span>
+                </div>
               </div>
-            </div>
-            <!-- 文本框 -->
-            <x-textarea v-model="formData[item.fieldCode]" :max="100" v-if="item.xtype === 'r2TextArea'">
-              <template slot="label">
-                <span :class="{required : !item.allowBlank}" style="display: block; width: 3em;">{{item.fieldLabel}}</span>
-              </template>
-            </x-textarea>
+              <pop-handler-list :show="showAuthorized" :default-value="currentAuthorized" :requestParams="item.requestParams"
+                    v-model="showAuthorized" @sel-handler="selHandler"></pop-handler-list>
+            </template>
+            <template v-else>
+              <!-- 下拉框 -->
+              <r-picker :title="item.fieldLabel" :data="item.remoteData" :value="formData[item.fieldCode]"
+                      v-model="formData[item.fieldCode]" :required="!item.allowBlank"
+                      v-if="item.xtype === 'r2Combo' || item.xtype === 'r2Selector'"></r-picker>
+              <!-- 输入框（文字） -->
+              <div class='each_property' v-if="item.xtype === 'r2Textfield'">
+                <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+                <input type='text' v-model="formData[item.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
+              </div>
+              <!-- 输入框（数字） -->
+              <div class='each_property ' v-if="item.xtype === 'r2Numberfield'">
+                <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+                <input type='number' v-model.number="formData[item.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
+              </div>
+              <!-- 日期 -->
+              <div class='each_property' v-if="item.xtype === 'r2Datefield'" @click="getDate(formData,item)">
+                <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+                <div class='picker'>
+                  <span class='mater_nature'>{{formData[item.fieldCode] || "请选择"}}</span>
+                  <span class='icon-right'></span>
+                </div>
+              </div>
+              <!-- 文本框 -->
+              <x-textarea v-model="formData[item.fieldCode]" :max="100" v-if="item.xtype === 'r2TextArea'">
+                <template slot="label">
+                  <span :class="{required : !item.allowBlank}" style="display: block; width: 3em;">{{item.fieldLabel}}</span>
+                </template>
+              </x-textarea>
+            </template>
           </div>
         </div>
         <!--备注-->
@@ -58,8 +66,8 @@
   import { Group, Popup, XInput, XTextarea, Datetime } from 'vux'
   import RPicker from 'components/basicPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
-  import PopDealerList from 'components/Popup/PopDealerList'
   import OpButton from 'components/apply/commonPart/OpButton'
+  import PopHandlerList from 'components//Popup/PopHandlerList'
   // 请求 引入
   import {
     submitAndCalc,
@@ -76,38 +84,36 @@
     name: 'ApplyCPXQForm',
     data() {
       return {
-        listId: 'b30f4d3e-b23d-11e8-96a5-005056a136d0',
-        formViewUniqueId: 'b018ef18-f0d1-41a8-985e-29de19e6b705',
+        listId: 'f27a8921-6bb4-4256-a2a2-525dd34455f7',
+        formViewUniqueId: '9a38a5ea-44f7-4dae-8c3c-d998987cfbcd',
         formData: {
           biId: '',
-          demandTitle: '', // 标题
-          demandDescribe: '', // 描述
           biComment: '', // 备注
         },
         biReferenceId: '',
-        dealerInfo: {},
-        contactInfo: {},
-        uploadStyle : {}
+        uploadStyle : {},
+        showAuthorized: false,
+        currentAuthorized: {}
       }
     },
     mixins: [ApplyCommon],
     components: {
       Group, XInput, XTextarea, Datetime ,
-      RPicker, PopBaseinfo, PopDealerList, OpButton
+      RPicker, PopBaseinfo, OpButton, PopHandlerList
     },
     computed: {
-      bigType() {
-        return this.formData.demandType
+      bugType() {
+        return this.formData.bugType
       }
     },
     watch: {
       // 监听大类变化，根据子类
-      bigType: {
+      bugType: {
         handler(val){
           if(val){
             let type = '';
             for(let item of this.otherConfig){
-              if(item.fieldCode === 'demandType'){
+              if(item.fieldCode === 'bugType'){
                 for(let dItem of item.remoteData){
                   if(dItem.name === val){
                     type = dItem.type;
@@ -115,7 +121,7 @@
                   }
                 }
               }
-              if(item.fieldCode === 'demandSubclass'){
+              if(item.fieldCode === 'bugSubclass'){
                 let requestParams = {
                   url: item.dataSource.data.url,
                   data: {
@@ -123,11 +129,11 @@
                   }
                 }
                 requestData(requestParams).then(({tableContent = []}) =>{
-                  if(this.formData.demandSubclass != null) {
-                    this.formData.demandSubclass = tableContent[0].name
+                  if(this.formData.bugSubclass != null) {
+                    this.formData.bugSubclass = tableContent[0].name
                   }
                   else{
-                    this.$set(this.formData, 'demandSubclass', tableContent[0].name)
+                    this.$set(this.formData, 'bugSubclass', tableContent[0].name)
                   }
                   tableContent.forEach(dItem =>{
                     dItem.originValue = dItem.value;
@@ -144,15 +150,13 @@
       }
     },
     methods: {
-      // 选择联系人
-      selContact(val) {
-        this.contactInfo = {...val};
-      },    
-      // 选择客户
-      selDealer(val) {
-        this.dealerInfo = JSON.parse(val)[0];
-        this.formData.launchDealerCode = this.dealerInfo.dealerCode;
-      },  
+      getAuthorized(){
+        this.showAuthorized = true;
+      }, 
+      selHandler(val){
+        this.currentAuthorized = {...val};
+        this.formData.authorized = val.nickname;
+      },
       // 选择日期
       getDate(sItem, dItem){
         this.$vux.datetime.show({
@@ -197,28 +201,18 @@
           onConfirm: () => {
             this.$HandleLoad.show();
             let formData = this.formData,
-                dealerInfo = Object.keys(this.dealerParams).length ? {
-                  productDealerCode: this.dealerInfo.dealerCode,  // 往来编码
-                  address_productDealerCode: this.dealerInfo.address, // 往来地址
-                  demandDealerLabel: this.dealerInfo.dealerLabelName,  // 往来关系标签
-                  dealerName_productDealerCode: this.dealerInfo.dealerName, // 往来名称
-                } : {},
-                contactInfo = Object.keys(this.dealerParams).length? {
-                  dealerDebitContactPersonName: this.contactInfo.dealerName, // 往来联系人 名称
-                  dealerDebitContactInformation: this.contactInfo.dealerMobilePhone // 往来联系人 信息 (不敢相信PC这里存的是电话)
-                }: {},
                 operation = this.processCode.length ? saveAndStartWf : submitAndCalc;
             let submitData = {
               biComment: '',
               listId: this.listId,
-              biReferenceId: this.biReferenceId,
               formData: JSON.stringify({
                 handlerEntity: this.entity.dealerName,
                 ...formData,
-                ...dealerInfo,
-                ...contactInfo
               }),
             };
+            if(this.biReferenceId){
+              submitData.biReferenceId = this.biReferenceId
+            }
             if (this.transCode) {
               operation = updateData;
             }
