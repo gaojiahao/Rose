@@ -106,6 +106,10 @@ export default {
       type: [String, Number],
       default: 2190
     },
+    hasFormStatus: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {
@@ -334,15 +338,17 @@ export default {
     getFilterFields(){
       filterFields(this.listId).then(data=>{
         let formStatusList = ['进行中', '已生效', '草稿'];
-        let filtersList = {
-          biStatus: {
-            alias: '表单状态',
-            showAll: false,
-            showValue: formStatusList,
-            value: formStatusList,
+        let filtersList = {}, statusList = {};
+        if(this.hasFormStatus){
+          filtersList = {
+            biStatus: {
+              alias: '表单状态',
+              showAll: false,
+              showValue: formStatusList,
+              value: formStatusList,
+            }
           }
-        },
-       statusList = {};
+        }
         for(let key of Object.keys(data)){
           let item = data[key];
           if(key !== 'biProcessStatus' && key !== 'bugProcessStatus' && key !== 'processStatus'){

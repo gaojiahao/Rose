@@ -28,8 +28,8 @@
                     <div class="creator">
                       <img :src="item.photo" alt="user-img" @error="getDefaultImg(item, item.gender)">
                       <div class="creator_name">
-                        <span class="name">{{item.creatorName}}</span>
-                        <span>工号: {{item.handler}}</span>
+                        <span class="name">{{item.handlerName}}</span>
+                        <span>工号: {{item.userCode}}</span>
                       </div>
                     </div>
                     <div class="leave_days">
@@ -42,7 +42,7 @@
               <div class="instance_detail vux-1px-t">
                 <div class="instance_detail_item">
                   <i class="icon icon-handler"></i>
-                  <span>经办人：{{item.creatorName}}</span>
+                  <span>创建人：{{item.creatorName}}</span>
                 </div>
                 <div class="instance_detail_item">
                   <i class="icon icon-mod-time"></i>
@@ -69,14 +69,14 @@
   import Apps from '@/home/pages/apps/bizApp/maps/Apps'
 
   export default {
-    name: 'CPXQ_List',
+    name: 'QJ_List',
     data() {
       return {
         listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
         filterList: [ // 过滤列表
           {
             name: '经办人',
-            value: 'handlerName',
+            value: 'creatorName',
           },{
             name: '交易号',
             value: 'transCode',
@@ -355,9 +355,6 @@
         line-height: .12rem;
         color: #999;
         font-size: .12rem;
-        & + .instance_detail_item {
-          margin-left: .3rem;
-        }
       }
     }
   }

@@ -5,7 +5,7 @@
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search='searchList' ref="search"></searchIcon>
         <div class="filter_part">
-          <r-sort @on-sort="onSortList" @on-filter="onFilter" :list-id="listId" ref="sort"></r-sort>
+          <r-sort @on-sort="onSortList" @on-filter="onFilter" :list-id="listId" ref="sort" :hasFormStatus="false"></r-sort>
         </div>
       </div>
       <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
@@ -15,7 +15,7 @@
              :class="{visited: item.visited}" :key="index">
           <div class="instance-header">
             <span class="instance_code vux-1px-l">{{item.transCode}}</span>
-            <span class="instance_status" :class="item.statusClass">{{item.biStatus}}</span>
+            <span class="instance_status" :class="item.statusClass">{{item.priority}}</span>
           </div>
           <div class="instance-main">
             <i class="icon icon-light"></i>
@@ -24,10 +24,13 @@
                 <span class="instance_header">{{item.bugTitle}}</span>
                 <span class="instance_process_status">{{item.bugProcessStatus || '暂无流程'}}</span>
               </div>
+              <p>产品需求： {{item.productDemand}}</p>
+              <p>所属大类: {{item.bugType}}</p>
+              <p>子类： {{item.bugSubclass}}</p>
               <div class="instance_detail">
                 <div class="instance_detail_item">
                   <i class="icon icon-handler"></i>
-                  <span>经办人：{{item.creatorName}}</span>
+                  <span>被授权者：{{item.authorized}}</span>
                 </div>
                 <div class="instance_detail_item">
                   <i class="icon icon-mod-time"></i>
@@ -51,7 +54,7 @@
   import Apps from '@/home/pages/apps/bizApp/maps/Apps'
 
   export default {
-    name: 'CPXQ_List',
+    name: 'CPBUG_List',
     data() {
       return {
         listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
@@ -63,10 +66,6 @@
             name: '交易号',
             value: 'transCode',
           },
-          // {
-          //   name: '标题',
-          //   value: 'demandTitle',
-          // },
         ],
         listViewID: 2336
       }
