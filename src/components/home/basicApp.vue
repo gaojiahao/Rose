@@ -1,5 +1,5 @@
 <template>
-  <div class="app-part">
+  <div class="app-part" v-if="BasicApps.length">
       <div class="app-container">
         <div class="app_classify_name">
           <p>基础对象</p>

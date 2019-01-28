@@ -130,6 +130,7 @@ export default {
       this.initPage();
       this.$route.meta.reload = false;
     }
+    this.refresh();
   },
   beforeRouteEnter(to, from, next) {
     let { name = '' } = to.query;

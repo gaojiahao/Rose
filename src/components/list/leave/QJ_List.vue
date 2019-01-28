@@ -46,7 +46,7 @@
                 </div>
                 <div class="instance_detail_item">
                   <i class="icon icon-mod-time"></i>
-                  <span>修改时间：{{item.modTime}}</span>
+                  <span>修改时间：{{item.modTime | dateFormat("YYYY-MM-DD HH:mm")}}</span>
                 </div>
               </div>
             </div>
@@ -156,7 +156,6 @@
           filter: JSON.stringify(filter),
           sort: JSON.stringify(this.sort),
         }).then(({total = 0, instanceList = []}) => {
-          console.log(instanceList)
           this.hasNext = total > (this.page - 1) * this.limit + instanceList.length;
           instanceList.forEach(item => {
             this.setStatus(item);
@@ -341,8 +340,9 @@
       }
 
       .instance_detail {
-        padding-top: .15rem;
         display: flex;
+        padding-top: .15rem;
+        justify-content: space-between;
         .icon {
           margin-right: .05rem;
           width: .16rem;
