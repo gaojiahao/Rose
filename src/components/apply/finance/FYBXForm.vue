@@ -7,7 +7,7 @@
         <!-- 费用明细-->
         <div class="cost_list">
           <div class="cost_item" :class="{'has_border' : sIndex > 0}" v-for="(sItem, sIndex) in costList" :key="sIndex">
-            <div class="cost_title vux-1px-b">
+            <div class="cost_title vux-1px-b" v-show="costList.length > 1">
               <label>费用{{sIndex+1}}</label>
               <span class="iconfont icon-shanchu1" @click="deleteCost(sIndex)"></span>
             </div>
@@ -51,12 +51,19 @@
               </template>
             </div>
           </div>
-          <div class="add_more">
+          <div class="vux-1px-t" :class="[this.actions.includes('stop') ? 'resubmit-part' : 'sumbit-part']">
+            <div class="add_more" @click="addCost">
+              <span class="icon-add"></span>
+              <span class="add_text">新增报销</span>
+            </div>
+            <span class="add_more stop" v-if="this.actions.includes('stop')" @click="stopOrder">终止提交</span>
+          </div>
+          <!-- <div class="add_more">
             您还需要添加新的报销?请点击
             <span class='add' @click="addCost">新增</span>
             <em v-show="this.actions.includes('stop')">或</em>
             <span class='delete' @click="stopOrder" v-show="this.actions.includes('stop')">终止</span>
-          </div>
+          </div> -->
         </div>
         <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost'
                        :cost-params="matterParams" ref="matter"></pop-cost-list>
@@ -394,22 +401,72 @@
       }
     }
   }
-  /* 重复项新增和删除按钮*/
-  .add_more {
+   // 新增更多
+  .sumbit-part {
     width: 100%;
+    display: flex;
     text-align: center;
-    font-size: 0.12rem;
-    padding: 0.1rem 0;
-    color: #757575;
-    span {
-      margin: 0 5px;
+    position: relative;
+    background: #fff;
+    .add_more {
+      display: flex;
       color: #3296FA;
+      font-weight: bold;
+      text-align: center;
+      align-items: center;
+      margin: .1rem auto;
+      // margin: 0 auto .2rem;
+      border-radius: .15rem;
+      padding: .06rem .08rem;
+      border: 1px solid #3296FA;
+      .icon-add {
+        width: .14rem;
+        height: .14rem;
+        box-sizing: border-box;
+        margin: .015rem .05rem 0 0;
+      }
+      .add_text {
+        font-size: .12rem;
+        line-height: .12rem;
+      }
     }
-    .delete {
-      color: red;
+    .symbol {
+      left: 50%;
+      bottom: 25%;
+      color: #757575;
+      font-size: .12rem;
+      position: absolute;
+      transform: translate(-50%, 0);
     }
-    em {
-      font-style: normal;
+    .native {
+      margin-right: .24rem;
+      background: #ea5455;
+      box-shadow: 0 2px 5px #ea5455;
+    }
+
+  }
+  .resubmit-part {
+    display: flex;
+    padding: .1rem .15rem;
+    background: #fff;
+    font-size: .12rem;
+    text-align: center;
+    position: relative;
+    justify-content: flex-end;
+    .add_more {
+      color: #FFF;
+      font-weight: bold;
+      text-align: center;
+      background: #3296FA;
+      border-radius: .04rem;
+      padding: .08rem .04rem;
+      &.stop {
+        color: #a1a1a1;
+        background: #dfdfdf;
+      }
+      & + .add_more {
+        margin-left: .1rem;
+      }
     }
   }
 

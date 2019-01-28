@@ -702,6 +702,7 @@ export default {
           }
           if(!item.hiddenInRun){
             if((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo') && item.dataSource && item.dataSource.type === 'remoteData'){
+              item.requestParams = this.handlerParams(item)
               requestData(this.handlerParams(item)).then(data => {
                 if(data.tableContent){
                   data.tableContent.forEach(dItem => {

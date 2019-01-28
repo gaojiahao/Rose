@@ -46,7 +46,7 @@
                 </div>
                 <div class="instance_detail_item">
                   <i class="icon icon-mod-time"></i>
-                  <span>创建时间：{{item.crtTime | dateFormat('YYYY-MM-DD HH:mm')}}</span>
+                  <span>修改时间：{{item.modTime}}</span>
                 </div>
               </div>
             </div>
@@ -164,7 +164,7 @@
             item.leaveTypes = []
             // 不同应用返回的字段名不同，统一增加渲染的公共字段包括（物料，往来）
             item.crtTime = dateFormat(item.crtTime, 'YYYY-MM-DD HH:mm:ss');
-            // item.modTime = dateFormat(item.modTime, 'YYYY-MM-DD HH:mm:ss');
+            item.modTime = dateFormat(item.modTime, 'YYYY-MM-DD HH:mm:ss');
             item.itemCount = item.detailItem.length;
             // 列表当中每个订单最多展现3个物料
             item.detailItem = item.detailItem.slice(0, 3);

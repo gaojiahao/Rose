@@ -87,8 +87,8 @@
 <style lang='scss' scoped>
   @import './../../scss/bizDetail';
   .comment{
-    background: #fff;
-    margin: .1rem .1rem 0;
+    margin: .1rem;
     padding: 0 .1rem;
+    background: #fff;
   }
 </style>

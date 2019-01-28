@@ -178,10 +178,17 @@
         }
         .cost_amount {
           display: flex;
-          justify-content: space-between;
+          // justify-content: space-between;
           align-items: flex-end;
           .each_amount{
             text-align: center;
+            flex: 1;
+            &:first-child{
+              text-align: left;
+            }
+            &:last-child{
+              text-align: right
+            }
             span {
               display: block;
             }
