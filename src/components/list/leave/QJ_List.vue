@@ -355,9 +355,6 @@
         line-height: .12rem;
         color: #999;
         font-size: .12rem;
-        & + .instance_detail_item {
-          margin-left: .3rem;
-        }
       }
     }
   }
