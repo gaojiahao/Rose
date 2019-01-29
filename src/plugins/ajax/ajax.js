@@ -54,6 +54,7 @@ fly.interceptors.response.use(
     }
   },
   function (error) {
+    console.log('error:', error);
     // 响应拦截 报错标识
     if(error.status === 401) {
       this.lock();
@@ -71,7 +72,7 @@ fly.interceptors.response.use(
     }
     else if(error.status === 1) {
       if(error.message.includes('timeout')) {
-        rejectError('reject', '抱歉，网络无法联系，请稍后再试')
+        rejectError('reject', '不好意思，网络似乎出了点问题，请稍后再试')
       }
     }
     rejectError('reject', error.response.data.message) 
