@@ -127,7 +127,16 @@
           this.tdAmount = toFixed(count)
         },
         deep: true,
-      },     
+      },
+      // 此处监听 经办组织id
+      departId(val) {
+        this.matterParams.data.groupId = val;
+      }
+    },
+    computed: {
+      departId() {
+        return this.formData.handlerUnit;
+      }
     },
     methods: {
       // TODO 点击增加费用

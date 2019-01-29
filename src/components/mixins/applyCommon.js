@@ -594,15 +594,9 @@ export default {
                     matterParams[item] = this.warehouse.warehouseCode;
                     return
                   }
-                  if(item === 'dealerCode' && this.dealerInfo.dealerCode){
-                    matterParams[item] = this.dealerInfo.dealerCode;
-                    return
-                  }
-                  if(item === 'groupId' && this.formData.handlerUnit){
-                    matterParams[item] = this.formData.handlerUnit
-                    return
-                  }
-                  matterParams[item] = params[item].type === 'text' ? params[item].value : '';
+                  // 根据form配置返回dataSource参数 此处组装 <组件请求参数> 默认值
+                  matterParams[item] = params[item].type === 'text' ? params[item].value : '';                  // if(item === 'dealerCode' && this.dealerInfo.dealerCode){
+                  
                 })
                 requestParams.data = matterParams;
               }
@@ -751,7 +745,6 @@ export default {
     // 请求页面的数据
     (async () => {
       await this.getFormViewInfo();
-      // this.getModelConfigByListId()
       this.getProcess();
       if(!transCode){
         this.getBaseInfoData();

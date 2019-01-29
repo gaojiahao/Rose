@@ -11,14 +11,8 @@
           <div class="each_mater box_sd" :class="{selected: showSelIcon(item)}" v-for="(item, index) in costList" :key='index'
                @click.stop="selThis(item, index)">
             <div class="mater_main ">
-              <!-- 物料名称 -->
-              <div class="cost_name">
-                {{item.costName}}
-              </div>
-              <!-- 物料基本信息 -->
-              <div class="cost_type">
-                {{item.costType}}
-              </div>
+              <div class="cost_name">{{item.costName}}</div>
+              <div class="cost_type">{{item.costType}}</div>
             </div>
           </div>
         </r-scroll>
@@ -28,173 +22,183 @@
 </template>
 
 <script>
-  import {Icon, Popup, LoadMore} from 'vux'
-  import { getProjectCostByGroupId, getCostByGroupId } from 'service/costService.js'
-  import {requestData} from 'service/commonService'
-  import RScroll from 'components/RScroll'
-  import MSearch from 'components/search'
-  export default {
-    name: "costList",
-    props: {
-      show: {
-        type: Boolean,
-        default: false
-      },
-      // 默认值
-      defaultValue: {
-        type: Array,
-        default() {
-          return []
-        }
-      },
-      groupId: {
-        type: Number,
-        default: 990713
-      },
-      getListMethod: {
-        type: String,
-        default: 'getCostByGroupId'
-      },
-      costParams: {
-        type: Object,
-        default() {
-          return {}
-        }
+import {Icon, Popup, LoadMore} from 'vux'
+import { getProjectCostByGroupId, getCostByGroupId } from 'service/costService.js'
+import {requestData} from 'service/commonService'
+import RScroll from 'components/RScroll'
+import MSearch from 'components/search'
+export default {
+  name: "costList",
+  props: {
+    show: {
+      type: Boolean,
+      default: false
+    },
+    // 默认值
+    defaultValue: {
+      type: Array,
+      default() {
+        return []
       }
     },
-    components: {
-      Icon, Popup, LoadMore, RScroll,MSearch
+    groupId: {
+      type: Number,
+      default: 990713
     },
-    data() {
-      return {
-        showPop: false,
-        srhInpTx: '', // 搜索框内容
-        selItems: [], // 哪些被选中了
-        tmpItems: [],
-        costList: [],
-        limit: 10,
-        page: 1.,
-        hasNext: true,
-        scrollOptions: {
-          click: true,
-          pullUpLoad: true,
-        },
+    getListMethod: {
+      type: String,
+      default: 'getCostByGroupId'
+    },
+    costParams: {
+      type: Object,
+      default() {
+        return {}
       }
-    },
-    watch: {
-      show: {
-        handler(val) {
-          this.showPop = val;
-        }
-      },
-      defaultValue: {
-        handler(val) {
-          // 默认值改变，重新赋值
-          this.setDefaultValue();
-        }
-      },
-      groupId: {
-        handler() {
-          this.getCostList();
-        }
-      },
-      costParams: {
-        handler() {
-          this.getCostList()
-        },
-        deep: true
-      }
-    },
-    methods: {
-      // TODO 弹窗展示时调用
-      onShow() {
-        this.$nextTick(() => {
-          if (this.$refs.bScroll) {
-            this.$refs.bScroll.refresh();
-          }
-        })
-      },
-      // TODO 弹窗隐藏时调用
-      onHide() {
-        this.tmpItems = [...this.selItems];
-        this.$emit('input', false);
-        // 组件传值 传回给search组件 强制关闭下拉框
-        this.$event.$emit('shut-down-filter', false);
-      },
-      // TODO 判断是否展示选中图标
-      showSelIcon(sItem) {
-        let flag = false;
-        this.selItems && this.selItems.every(item => {
-          if (sItem.costCode === item.costCode) {
-            flag = true;
-            return false;
-          }
-          return true;
-        });
-        return flag;
-      },
-      // TODO 选择物料
-      selThis(sItem, sIndex) {
-        this.showPop = false;
-        this.selItems = [sItem];
-        this.$emit('sel-matter',this.selItems[0]);
-      },
-      // TODO 设置默认值
-      setDefaultValue() {
-        this.tmpItems = [...this.defaultValue];
-        this.selItems = [...this.defaultValue];
-      },
-      // TODO 获取物料列表
-      getCostList() {
-        let filter = [];
-        if (this.srhInpTx) {
-          filter = [
-            ...filter,
-            {
-              operator: 'like',
-              value: this.srhInpTx,
-              property: 'costName'
-            },
-          ];
-        }
-        let data = {
-          limit: this.limit,
-          page: this.page,
-          start: (this.page - 1) * this.limit,
-          filter: JSON.stringify(filter),
-          ...this.costParams.data,
-        }
-         return requestData({
-          url: this.costParams.url,
-          data
-        }).then(({dataCount = 0, tableContent = []}) => {
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.costList = this.page === 1 ? tableContent : [...this.costList, ...tableContent];
-          this.$nextTick(() => {
-            this.$refs.bScroll.finishPullUp();
-          })
-        })
-      },
-      // TODO 搜索物料
-      searchList({val = ''}) {
-        this.srhInpTx = val;
-        this.costList = [];
-        this.page = 1;
-        this.hasNext = true;
-        this.$refs.bScroll.scrollTo(0, 0);
-        this.getCostList();
-      },
-      // TODO 上拉加载
-      onPullingUp() {
-        this.page++;
-        this.getCostList();
-      },
-    },
-    created() {
-      this.setDefaultValue();
-      // this.getCostList();
     }
+  },
+  components: {
+    Icon, Popup, LoadMore, RScroll,MSearch
+  },
+  data() {
+    return {
+      showPop: false,
+      srhInpTx: '', // 搜索框内容
+      selItems: [], // 哪些被选中了
+      tmpItems: [],
+      costList: [],
+      limit: 10,
+      page: 1.,
+      hasNext: true,
+      scrollOptions: {
+        click: true,
+        pullUpLoad: true,
+      },
+    }
+  },
+  watch: {
+    show: {
+      handler(val) {
+        this.showPop = val;
+      }
+    },
+    defaultValue: {
+      handler(val) {
+        // 默认值改变，重新赋值
+        this.setDefaultValue();
+      }
+    },
+    groupId(){
+      this.costList();
+    },
+    // 请求 参数
+    costParams: {
+      handler(val) {
+        // 为避免触发重复请求 此处设置监听
+        let Parmsdata = val.data, isRequest = false;
+        for(let [key, item] of Object.entries(Parmsdata)) {
+          if(item) {
+            isRequest = true
+          }
+          else {
+            isRequest = false;
+            break;
+          }
+        }
+        isRequest && this.getCostList() 
+      },
+      deep: true
+    }
+  },
+  methods: {
+    // TODO 弹窗展示时调用
+    onShow() {
+      this.$nextTick(() => {
+        if (this.$refs.bScroll) {
+          this.$refs.bScroll.refresh();
+        }
+      })
+    },
+    // TODO 弹窗隐藏时调用
+    onHide() {
+      this.tmpItems = [...this.selItems];
+      this.$emit('input', false);
+      // 组件传值 传回给search组件 强制关闭下拉框
+      this.$event.$emit('shut-down-filter', false);
+    },
+    // TODO 判断是否展示选中图标
+    showSelIcon(sItem) {
+      let flag = false;
+      this.selItems && this.selItems.every(item => {
+        if (sItem.costCode === item.costCode) {
+          flag = true;
+          return false;
+        }
+        return true;
+      });
+      return flag;
+    },
+    // TODO 选择物料
+    selThis(sItem, sIndex) {
+      this.showPop = false;
+      this.selItems = [sItem];
+      this.$emit('sel-matter',this.selItems[0]);
+    },
+    // TODO 设置默认值
+    setDefaultValue() {
+      this.tmpItems = [...this.defaultValue];
+      this.selItems = [...this.defaultValue];
+    },
+    // TODO 获取物料列表
+    getCostList() {
+      let filter = [];
+      if (this.srhInpTx) {
+        filter = [
+          ...filter,
+          {
+            operator: 'like',
+            value: this.srhInpTx,
+            property: 'costName'
+          },
+        ];
+      }
+      let data = {
+        limit: this.limit,
+        page: this.page,
+        start: (this.page - 1) * this.limit,
+        filter: JSON.stringify(filter),
+        ...this.costParams.data,
+      }
+        return requestData({
+        url: this.costParams.url,
+        data
+      }).then(({dataCount = 0, tableContent = []}) => {
+        this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+        this.costList = this.page === 1 ? tableContent : [...this.costList, ...tableContent];
+        this.$nextTick(() => {
+          this.$refs.bScroll.finishPullUp();
+        })
+      })
+    },
+    // TODO 搜索物料
+    searchList({val = ''}) {
+      this.srhInpTx = val;
+      this.costList = [];
+      this.page = 1;
+      this.hasNext = true;
+      this.$refs.bScroll.scrollTo(0, 0);
+      this.getCostList();
+    },
+    // TODO 上拉加载
+    onPullingUp() {
+      this.page++;
+      this.getCostList();
+    },
+  },
+  created() {
+    this.setDefaultValue();
+    // this.getCostList();
   }
+}
 </script>
 
 <style scoped lang="scss">
