@@ -34,7 +34,7 @@
                           <span class="symbol">￥</span>{{item.price}}
                         </div>
                         <slot name="rNumber" :item="item">
-                          <r-number :num="item.tdQty" :max="item.qtyBal" v-model="item.tdQty"></r-number>
+                          <r-number :num="item.tdQty" :max="item[maxField]" v-model="item.tdQty"></r-number>
                         </slot>
                       </div>
                     </slot>
@@ -216,6 +216,11 @@ export default {
     btnIsHide: {
       type: Boolean,
       default: false
+    },
+    // 数字框r-number绑定的最大值
+    maxField: {
+      type: String,
+      default: 'qtyBal'
     }
   },
   components: {

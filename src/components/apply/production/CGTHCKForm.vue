@@ -24,7 +24,7 @@
                            :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify"
                            :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
                            :chosen-matter="matter" :check-amt-fn="checkAmt" :sel-confirm-fn="selConfirm"
-                           :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
+                           :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify" :maxField="'storehouseQtyBal'">
         </apply-matter-part>
 
         <!--备注-->
@@ -172,7 +172,7 @@
           let key = `${item.transCode}_${item.inventoryCode}`;
           let orderListKey = item.transCode ? item.transCode : 'noCode';
           let {
-            tdQty = item.qtyBal,
+            tdQty = '',
             price = item.price,
             taxRate = item.taxRate || this.taxRate,
           } = this.numMap[key] || {};
@@ -270,12 +270,12 @@
       },
       // TODO 检查金额，取正数、保留两位小数
       checkAmt(item, key, val) {
-        let {qtyBal} = item;
+        let {storehouseQtyBal} = item;
         val = Math.abs(toFixed(val));
         switch (key) {
           case 'tdQty':
-            if (qtyBal && val > qtyBal) {
-              val = qtyBal;
+            if (storehouseQtyBal && val > storehouseQtyBal) {
+              val = storehouseQtyBal;
             }
             break;
         }
