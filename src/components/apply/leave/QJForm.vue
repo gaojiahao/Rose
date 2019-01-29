@@ -257,14 +257,15 @@
       },
       // TODO 是否保存草稿
       hasDraftData() {
-        return {
-          [DRAFT_KEY]: {
-            dealerInfo: this.dealerInfo,
-            cashInfo: this.contactInfo,
-            costList: this.costList,
-            formData: this.formData
-          }
-        };
+        if(Object.values(this.costList[0]).length){
+          return {
+            [DRAFT_KEY]: {
+              costList: this.costList,
+              formData: this.formData
+            }
+          };
+        }
+        
       },
       // 选择日期
       getDate(sItem, dItem){
@@ -303,8 +304,6 @@
       if (data) {
         let draft = JSON.parse(data);
         this.formData = draft.formData;
-        this.dealerInfo = draft.dealerInfo;
-        this.cashInfo = draft.cashInfo;
         this.costList = draft.costList;
         sessionStorage.removeItem(DRAFT_KEY)
       }

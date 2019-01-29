@@ -230,15 +230,29 @@ export default {
         // 默认取第一个值
         let [firstORG = {}] = handleORG,
             [firstRole = {}] = userRoleList;
-        // 用户相关经办信息初始化
-        let defaultUserInfo = {
-          handler: basicUserInfo.userId,  // 用户id
-          handlerName: basicUserInfo.nickname,  //用户名称
-          handlerUnit: firstORG.groupId,  // 用户组织id
-          handlerUnitName: firstORG.groupName,  // 用户组织名称
-          handlerRole: firstRole.roleId || '',  // 用户职位id
-          handlerRoleName: firstRole.roleName || '',  // 用户职位名称
-          userCode: basicUserInfo.userCode, // 用户工号
+        // 用户相关经办信息初始化,如果是保存草稿之后重新进入，则使用已经保存的值
+        let defaultUserInfo = {};
+        if(this.formData.handler){
+          defaultUserInfo = {
+            handler: this.formData.handler,  // 用户id
+            handlerName: this.formData.handlerName,  //用户名称
+            handlerUnit: this.formData.handlerUnit,  // 用户组织id
+            handlerUnitName: this.formData.handlerUnitName,  // 用户组织名称
+            handlerRole: this.formData.handlerRole,  // 用户职位id
+            handlerRoleName: this.formData.handlerRoleName ,  // 用户职位名称
+            userCode: this.formData.userCode, // 用户工号
+          }
+        }
+        else{
+          defaultUserInfo = {
+            handler: basicUserInfo.userId,  // 用户id
+            handlerName: basicUserInfo.nickname,  //用户名称
+            handlerUnit: firstORG.groupId,  // 用户组织id
+            handlerUnitName: firstORG.groupName,  // 用户组织名称
+            handlerRole: firstRole.roleId || '',  // 用户职位id
+            handlerRoleName: firstRole.roleName || '',  // 用户职位名称
+            userCode: basicUserInfo.userCode, // 用户工号
+          }
         }
         // 当请求数据的参数matterParams中有groupId
         if(this.matterParams.data && this.matterParams.data.groupId != null){
