@@ -10,9 +10,10 @@
                    ref="bScroll">
           <div class="each_mater box_sd" :class="{selected: showSelIcon(item)}" v-for="(item, index) in costList" :key='index'
                @click.stop="selThis(item, index)">
-            <div class="mater_main ">
+            <div class="mater_main">
               <div class="cost_name">{{item.costName}}</div>
               <div class="cost_type">{{item.costType}}</div>
+              <div class="cost_subject">{{item.costSubject}}</div>
             </div>
           </div>
         </r-scroll>
@@ -312,15 +313,15 @@ export default {
           }
           // 物料主体
           .mater_main {
+            font-size: .14rem;
+            font-weight: bold;
             padding-left: .04rem;
-            box-sizing: border-box;
             display: inline-block;
+            box-sizing: border-box;
             // 物料名称
             .cost_name {
               overflow: hidden;
               color: #5077aa;
-              font-size: .14rem;
-              font-weight: bold;
               max-height: .46rem;
               display: -webkit-box;
               -webkit-line-clamp: 2;
@@ -329,10 +330,10 @@ export default {
             }
             // 物料信息
             .cost_type {
-              color: #111;
-              font-weight: bold;
               color: #757575;
-              font-size: .14rem;
+            }
+            .cost_subject {
+              color: #111;
             }
           }
           // 下划线
