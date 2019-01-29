@@ -89,7 +89,7 @@
   import {toFixed} from '@/plugins/calc'
   import {accAdd, accSub} from '@/home/pages/maps/decimalsAdd'
 
-  const DRAFT_KEY = 'QJ_DATA';
+  const DRAFT_KEY = 'FYBX_DATA';
   export default {
     data() {
       return {

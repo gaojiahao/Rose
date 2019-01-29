@@ -79,7 +79,7 @@
   import { getSOList } from 'service/detailService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
-  const DRAFT_KEY = 'CPXQ_DATA';
+  const DRAFT_KEY = 'CPBUG_DATA';
   export default {
     name: 'ApplyCPXQForm',
     data() {
@@ -179,10 +179,7 @@
           }
         }
         let warn = '';
-        if(Object.keys(this.dealerParams).length && !this.dealerInfo.dealerCode){
-          warn = '请选择客户'
-        }
-        !warn && this.submitMatterField.every(item => {
+        this.submitMatterField.every(item => {
           if(!item.hidden && !item.allowBlank && !this.formData[item.fieldCode]){
             warn = `${item.fieldLabel}不能为空`;
             return false;
@@ -248,28 +245,16 @@
             ...this.formData,
             ...formData
           };
-          this.dealerInfo = {
-            dealerCode: formData.productDealerCode,  // 往来编码
-            address: formData.address_productDealerCode, // 往来地址
-            dealerLabelName: formData.demandDealerLabel,  // 往来关系标签
-            dealerName: formData.dealerName_productDealerCode // 往来名称
-          }
-          this.contactInfo = {
-            dealerName: formData.dealerDebitContactPersonName,
-            dealerMobilePhone: formData.dealerDebitContactInformation,
-          }
           this.$loading.hide();
         })
       },
       // 是否保存草稿
       hasDraftData () {
         let formData = this.formData;
-        if (formData.demandTitle || formData.demandDescribe ||  formData.processStatus) {
+        if (formData.bugTitle || formData.bugDescribe) {
           return {
             [DRAFT_KEY]: {
               formData: this.formData,
-              dealerInfo: this.dealerInfo,
-              contactInfo: this.contactInfo
             }
           };
         }
@@ -279,8 +264,6 @@
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         this.formData = JSON.parse(data).formData;
-        this.dealerInfo = JSON.parse(data).dealerInfo;
-        this.contactInfo = JSON.parse(data).contactInfo;
         sessionStorage.removeItem(DRAFT_KEY);
       }
     },
