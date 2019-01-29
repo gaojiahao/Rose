@@ -58,12 +58,6 @@
             </div>
             <span class="add_more stop" v-if="this.actions.includes('stop')" @click="stopOrder">终止提交</span>
           </div>
-          <!-- <div class="add_more">
-            您还需要添加新的报销?请点击
-            <span class='add' @click="addCost">新增</span>
-            <em v-show="this.actions.includes('stop')">或</em>
-            <span class='delete' @click="stopOrder" v-show="this.actions.includes('stop')">终止</span>
-          </div> -->
         </div>
         <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost'
                        :cost-params="matterParams" ref="matter"></pop-cost-list>
@@ -129,8 +123,15 @@
         deep: true,
       },
       // 此处监听 经办组织id
-      departId(val) {
-        this.matterParams.data.groupId = val;
+      departId: {
+        handler(newVal, oldVal){
+          if(this.matterParams.data && this.matterParams.data.groupId != null){
+            this.matterParams.data.groupId = newVal;
+          }
+          if(oldVal){
+            this.costList = [{}]
+          }
+        }     
       }
     },
     computed: {
@@ -297,14 +298,14 @@
       },
       // TODO 是否保存草稿
       hasDraftData() {
-        return {
-          [DRAFT_KEY]: {
-            dealerInfo: this.dealerInfo,
-            cashInfo: this.contactInfo,
-            costList: this.costList,
-            formData: this.formData
-          }
-        };
+        if(Object.values(this.costList[0]).length){
+          return {
+            [DRAFT_KEY]: {
+              costList: this.costList,
+              formData: this.formData
+            }
+          };
+        } 
       },
       // 选择日期
       getDate(sItem, dItem){
@@ -330,8 +331,6 @@
       if (data) {
         let draft = JSON.parse(data);
         this.formData = draft.formData;
-        this.dealerInfo = draft.dealerInfo;
-        this.cashInfo = draft.cashInfo;
         this.costList = draft.costList;
         sessionStorage.removeItem(DRAFT_KEY)
       }
