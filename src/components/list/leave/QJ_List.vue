@@ -177,7 +177,7 @@
             })
             item.leaveTypes = [...new Set(item.leaveTypes)]
           });
-          this.listData = this.page === 1 ? instanceList : [...instanceList, ...this.listData];
+          this.listData = this.page === 1 ? instanceList : [...this.listData, ...instanceList];
           if (!noReset) {
             this.$nextTick(() => {
               this.resetScroll();
