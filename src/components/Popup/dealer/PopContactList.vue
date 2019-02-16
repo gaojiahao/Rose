@@ -239,6 +239,7 @@
           padding: .15rem;
           // 阴影
           &.box_sd {
+            border-radius: .04rem;
             box-sizing: border-box;
             box-shadow: 0 0 8px #e8e8e8;
           }
