@@ -41,18 +41,18 @@ export default {
       matterParams: {},                           // 请求物料的接口，参数
       handlerDefault: {},                         // 经办人默认信息
       matterEditConfig: {},                       // 物料编辑的pop
-      submitMatterField: [],                      // 物料要提交的字段
       actions: [],
       selItems: [],                               // 选中的要删除的物料
       handleORG: [],                              // 经办组织
       filterList: [],                             // 筛选字段清单
       attachment : [],
-      otherConfig: [],
-      dealerConfig: [],
+      otherConfig: [],                            // 表单 <其他部分> 配置 （非往来、物料等部分都放置于此）
+      dealerConfig: [],                           // 表单 <往来> 配置
       userRoleList: [],                           // 经办职位
       currentStage: [],                           // 流程状态
       matterPopConfig: [],                        // 物料列表pop配置
-      modifyIndex: null,                           // 选中编辑物料的pop
+      submitMatterField: [],                      // 物料要提交的字段
+      modifyIndex: null,                          // 选中编辑物料的pop
       fillBscroll: null,
       btnIsHide : false,
       isResubmit: false,
@@ -222,7 +222,7 @@ export default {
         }
       })
     },
-    // TODO 获取用户基本信息
+    // 获取用户基本信息
     getBaseInfoData() {
       getBaseInfoData().then(({handleORG, userRoleList, ...basicUserInfo}) => {
         this.handleORG = handleORG;
@@ -255,7 +255,7 @@ export default {
           }
         }
         // 当请求数据的参数matterParams中有groupId
-        if(this.matterParams.data && this.matterParams.data.groupId != null){
+        if(this.matterParams.data && this.matterParams.data.groupId !== null){
           this.matterParams.data.groupId = firstORG.groupId
         }
         this.formData = {
@@ -271,7 +271,7 @@ export default {
         this.$loading.hide();
       })
     },
-    // TODO 获取物料价格
+    // 获取物料价格
     getMatPrice() {
       this.matterList.forEach((item, index) => {
         // 如果已有价格，则不发起请求
@@ -288,7 +288,7 @@ export default {
         })
       });
     },
-    // TODO 获取工作流的processCode
+    // 获取工作流的processCode
     getProcess() {
       return getProcess(this.listId).then(([data = {}]) => {
         this.processCode = data.processCode || '';
@@ -304,7 +304,7 @@ export default {
         this.currentStage = tableContent;
       })
     },
-    // TODO 检查金额，取正数、保留两位小数
+    // 检查金额，取正数、保留两位小数
     checkAmt(item, key, val){
       // console.log('item:', item);
       let { price, tdQty, taxRate, qtyBal, qtyStock, qtyBalance, 
@@ -327,13 +327,12 @@ export default {
           item.tdQty = qtyBalance;
         }
         else if (qtyOnline && qtyDownline) {
-          /*
-          * assistQty => 辅助计量 数量
-          * qtyDownline => 数量下限
-          * qtyOnline => 数量上限
-          * 
-          * 只有当符合下列条件时 数据才会相应的动态赋值
-          * */ 
+          /** 
+           *  @assistQty  辅助计量 数量
+           *  @qtyDownline  数量下限
+           *  @qtyOnline  数量上限
+           *  只有当符合下列条件时 数据才会相应的动态赋值
+           */ 
           if (assistQty >= qtyDownline && assistQty <= qtyOnline) {
             this.defineObjVal(item, item.otherField, item.otherField)
           }
@@ -356,11 +355,11 @@ export default {
     getFocus(e){
       event.currentTarget.select();
     },
-    // TODO 上传文件成功
+    // 上传文件成功
     onUploadFile({biReferenceId}) {
       this.biReferenceId = biReferenceId;
     },
-    // TODO 监听返回事件
+    // 监听返回事件
     listenBack() {
       wx.ready(() => {
         wx.onHistoryBack && wx.onHistoryBack(() => {
@@ -372,7 +371,7 @@ export default {
     listenShare (){
       // shareContent();
     },
-    // TODO 判断是返回上一页还是跳转详情页
+    // 判断是返回上一页还是跳转详情页
     judgePage() {
       // 在企业微信的提醒中打开重新提交页面history为1，此时终止成功则跳转详情页
       if (window.history.length !== 1) {
@@ -390,14 +389,14 @@ export default {
         });
       }
     },
-    // TODO 获取应用详情
+    // 获取应用详情
     getAppDetail() {
       return getAppDetail(this.listId).then(([data = {}]) => {
         let {action, prefix} = data;
         this.businessKey = prefix;
       })
     },
-    // TODO 计算物料相关值
+    // 计算物料相关值
     calcMatter(item) {
       let price = item.price || 0,
           tdQty = item.tdQty || 0,
@@ -408,7 +407,19 @@ export default {
       item.taxAmount = toFixed(accMul(item.assistQty, taxRate, item.noTaxPrice));
       item.noTaxAmount = toFixed(accSub(item.tdAmount, item.taxAmount));
     },
-    // ToDo 简单计算物料相关值
+    // 校验 提交参数
+    verifyData(config = [], info = {}) {
+      let warn = '';
+      for(let item of config) {
+        if(!item.allowBlank && !info[item.fieldCode]) {
+          console.log(item.fieldCode);
+          warn = `${item.fieldLabel}不能为空`;
+          break;
+        }
+      }
+      return warn;
+    },
+    // 简单计算物料相关值
     simpleCalcMatter(item) {
       let price = item.price || 0,
           tdQty = item.tdQty || 0,
@@ -507,6 +518,7 @@ export default {
               return {...cItem, ...matched,}
             });
           }
+          // 处理表单配置 <非重复项渲染> 部分
           if(!item.isMultiple) {
             if(item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt' || item.name === 'gys') {
               dealerConfig = [...dealerConfig, ...item.items]
@@ -515,6 +527,7 @@ export default {
               otherConfig = item.items;
             }
           }
+          // 处理表单配置 <重复项渲染> 部分
           else{
             if(item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
               matterConfig = item.items;
@@ -800,7 +813,7 @@ export default {
     //解决android键盘收起input没有失去焦点，底部按钮遮挡输入框
     if(platfrom.isAndroid){
       window.onresize= ()=>{
-        if(this.clientHeight>document.documentElement.clientHeight) {
+        if(this.clientHeight > document.documentElement.clientHeight) {
           //底部按钮隐藏
             this.btnIsHide  = true;
         }else{

@@ -1,7 +1,7 @@
 <template>
-  <div class="each_cell" :class="{'vux-1px-t' : showTopBorder, 'when-is-right' : textRight}">
-    <span class="cell_name">{{ cellTitle }}: </span>
-    <span class="cell_content">
+  <div class="each-cell" :class="{'vux-1px-b' : showBottomBorder, 'when-is-right' : textRight}">
+    <span class="cell-name">{{ cellTitle }}: </span>
+    <span class="cell-content">
       <span class="symbol" v-if="showSymbol">￥</span>{{ cellContent || '无' }}
     </span>
   </div>
@@ -13,7 +13,7 @@ export default {
   props:{
     cellTitle: [String, Number],    // 标题
     cellContent: [String, Number],  // 内容
-    showTopBorder: {                // 是否展示上划线
+    showBottomBorder: {             // 是否展示上划线
       type: Boolean,
       default: true
     },
@@ -30,23 +30,25 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-
-.each_cell {
+.each-cell {
   font-size: .14rem;
-  padding: .08rem 0;
-  .cell_name {
-    color: #757575;
+  padding: .15rem 0;
+  line-height: .2rem;
+  .cell-name {
+    color: #696969;
     margin-right: .04rem;
   }
-  .cell_content {
-    line-height: .28rem;
-    font-weight: bold;
+  .cell-content {
+    color: #333;
+  }
+  &.vux-1px-b:after {
+    border-color: #e8e8e8;
   }
 }
 .when-is-right {
   display: flex;
   align-items: center;
-  .cell_content {
+  .cell-content {
     flex: 1;
     text-align: right;
   }

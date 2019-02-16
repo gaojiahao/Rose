@@ -67,7 +67,7 @@
                 </template>
               </datetime>
               <!-- 下拉框 -->
-              <r-picker class="picker vux-1px-b":title="eItem.text" :data="eItem.remoteData" v-model="modifyMatter[eItem.fieldCode]"
+              <r-picker class="picker vux-1px-b" :title="eItem.text" :data="eItem.remoteData" v-model="modifyMatter[eItem.fieldCode]"
                         :required="eItem.allowBlank" placeholder="请选择" v-if="eItem.editorType === 'r2Combo'">
               </r-picker>
             </template>
@@ -87,6 +87,7 @@
         <div class='confirm'>确认</div>
       </div>
     </popup>
+
     <x-dialog class="dialog-view" v-if="chosenMatter.otherField" v-model="showDialog" hide-on-blur>
       <div class="tip-top">
         <p class="header_content">温馨提示</p>

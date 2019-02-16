@@ -123,12 +123,13 @@
   }
 
   .work-flow-container {
-    margin: .1rem .1rem 0;
-    padding: .15rem;
-    width: calc(100% - .2rem);
-    background-color: #fff;
     color: #333;
+    padding: .15rem;
+    border-radius: .04rem;
+    margin: .1rem .1rem 0;
     box-sizing: border-box;
+    background-color: #fff;
+    width: calc(100% - .2rem);
     .work-flow-header {
       display: flex;
       font-size: .16rem;

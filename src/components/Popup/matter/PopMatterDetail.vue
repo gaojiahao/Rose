@@ -5,7 +5,7 @@
       <div class="popup-top">
         <i class="icon-close" @click="hidePop"></i>
       </div>
-      <header class="popup-header">物料信息</header>
+      <header class="popup-header">其他信息</header>
       <r-scroll ref="bScroll">
         <div class="matter-main">
           <img class="matter_img" :src="item.inventoryPic" alt="mater_img" @error="getMatterDefault(item)">
@@ -32,7 +32,7 @@
           </div>
         </div>
         <div class="matter-edit-part" v-if="hasEditPart">
-          <template v-for="(eItem, eIndex) in editParts">
+          <div v-for="(eItem, eIndex) in editParts" :key="eIndex">
             <x-input class="vux-1px-b" type="number" v-model.number='item[eItem.fieldCode]'
                      text-align="right"
                      placeholder="请输入"
@@ -43,16 +43,16 @@
                 <span :class="{required: !eItem.allowBlank}">{{eItem.text}}</span>
               </template>
             </x-input>
-          </template>
+          </div>
         </div>
         <div class="matter-other">
-          <div class="matter_other_item" v-for="other in readOnlyParts">
+          <div class="matter_other_item" v-for="(other, index) in readOnlyParts" :key="index">
             <span class="matter_other_title">{{other.text}}</span>
             <span>{{other.value}}</span>
           </div>
         </div>
         <div class="matter-date vux-1px-t" v-if="hasDate">
-          <div class="matter_date_item" v-for="date in item.dates">
+          <div class="matter_date_item" v-for="(date, index) in item.dates" :key="index">
             <span class="matter_date_title">{{date.text}}：</span>
             <span>{{date.value}}</span>
           </div>
@@ -135,14 +135,15 @@
       },
       item: {
         handler(val) {
+          // *部分应用* 物料详情在审批节点可以重新录入数据 此处进行数据分割
           let {others = []} = val;
           let editParts = [];
           let readOnlyParts = [];
           others.forEach(item => {
             item.readOnly ? readOnlyParts.push(item) : editParts.push(item);
           });
-          this.editParts = editParts;
-          this.readOnlyParts = readOnlyParts;
+          this.editParts = editParts;   // 可编辑部分
+          this.readOnlyParts = readOnlyParts;   // 只读部分
         },
         immediate: true,
         deep: true
@@ -196,16 +197,14 @@
 
 <style scoped lang="scss">
   @import '~@/scss/color';
-
   .popup-matter-container {
     width: 100%;
-    /*background-color: #fff;*/
-    background-color: #f6f6f6;
     color: #333;
     box-sizing: border-box;
+    background-color: #f6f6f6;
     &.has-edit {
       .scroll-container {
-        height: calc(100% - 1.22rem);
+        height: calc(100% - 1.32rem);
       }
     }
     &.is-focus {
@@ -235,11 +234,11 @@
     }
 
     .popup-header {
-      padding: .05rem .15rem 0;
+      font-weight: 600;
+      font-size: .16rem;
       line-height: .17rem;
       background-color: #fff;
-      font-size: .16rem;
-      font-weight: 600;
+      padding: .05rem .15rem .1rem;
     }
 
     .scroll-container {

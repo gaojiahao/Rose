@@ -62,14 +62,15 @@
 
 <style scoped lang="scss">
   .contact-container {
-    margin: .1rem;
-    width: calc(100% - .2rem);
-    background-color: #fff;
     color: #333;
+    margin: .1rem;
+    border-radius: .04rem;
+    background-color: #fff;
+    width: calc(100% - .2rem);
     .contact-main {
-      padding: .15rem .15rem .2rem;
       width: 100%;
       box-sizing: border-box;
+      padding: .15rem .15rem .2rem;
       .contact_header {
         line-height: .16rem;
         font-size: 16px;
@@ -122,7 +123,7 @@
     .contact-other {
       display: flex;
       flex-wrap: wrap;
-      padding: .12rem .15rem .15rem;
+      padding: .08rem .15rem .15rem;
       &:before {
         border-color: #e8e8e8;
       }

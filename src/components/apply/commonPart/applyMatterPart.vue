@@ -308,7 +308,7 @@ export default {
   // 有物料的title的样式
   .has-matter {
     display: flex;
-    padding-top: .28rem;
+    padding-top: .2rem;
     line-height: .14rem;
     justify-content: space-between;
     .title {
@@ -409,8 +409,8 @@ export default {
       .icon-add {
         width: .14rem;
         height: .14rem;
+        margin-right: .05rem;
         box-sizing: border-box;
-        margin: .015rem .05rem 0 0;
       }
       .add_text {
         font-size: .12rem;

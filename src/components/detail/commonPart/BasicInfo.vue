@@ -108,13 +108,14 @@
 <style scoped lang="scss">
   // 基本信息 （订单、经办主体等）
   .basic-container {
-    margin: .1rem;
-    width: calc(100% - .2rem);
-    background-color: #fff;
     color: #333;
+    margin: .1rem;
+    border-radius: .04rem;
+    background-color: #fff;
+    width: calc(100% - .2rem);
     .basic-info-main {
-      padding: .15rem .15rem .24rem;
       width: 100%;
+      padding: .15rem .15rem;
       box-sizing: border-box;
       .basic_header {
         display: flex;
@@ -153,10 +154,6 @@
       .basic_code_title {
         color: #999;
       }
-      .basic_status {
-        margin-right: .15rem;
-      }
-
       .basic_detail {
         margin-top: .24rem;
         line-height: .14rem;

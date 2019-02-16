@@ -107,29 +107,28 @@ export default {
         }
       })
     },
-    // TODO 生成随机ID
+    // 生成随机ID
     randomID() {
       function S4() {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
       }
-
       return (S4() + S4() + S4());
     },
-    // TODO 获取当前用户
+    // 获取当前用户
     getCurrentUser() {
       return currentUser().then(({userId, nickname, userCode}) => {
         this.userId = `${userId}`;
         this.userName = `${nickname}-${userCode}`;
       })
     },
-    // TODO 获取listid
+    // 获取listid
     getListId() {
       return getListId(this.transCode).then(data => {
         this.formViewUniqueId = data[0].uniqueId;
         this.listId = data[0].listId;
       });
     },
-    // TODO 判断是否为我的任务
+    // 判断是否为我的任务
     isMyflow() {
       return isMyflow({
         _dc: this.randomID(),
@@ -143,7 +142,7 @@ export default {
         transCode: this.transCode,
       })
     },
-    // TODO 处理简易版工作流数据
+    // 处理简易版工作流数据
     workFlowInfoHandler() {
       let orderInfo = {...this.orderInfo};
       this.workFlowInfo = {
@@ -167,14 +166,13 @@ export default {
           break;
       }
     },
-    // TODO 处理工作流，判断审批按钮
+    // 处理工作流，判断审批按钮
     getFlowAndActions() {
       return Promise.all([this.isMyflow(), this.getWorkFlow()]).then(([data = {}, data2 = {}]) => {
         let myFlow = data.tableContent || [];
         let workFlow = data2.tableContent || [];
         let [flow = {}] = myFlow;
         let {isMyTask = 0, actions = '', taskId, viewId} = flow;
-
         let [createFlow = {}] = workFlow;
         let last = workFlow[workFlow.length - 1] || {};
         let operationList = ['同意', '不同意']; // 操作列表的status
@@ -184,9 +182,7 @@ export default {
         this.currentWL = flow;
 
         // 已终止
-        if (last.status === '终止') {
-          return
-        }
+        if (last.status === '终止') return;
 
         // 判断是否有审批操作
         workFlow.filter(item => item.isFirstNode === 1).every(item => {
@@ -198,8 +194,8 @@ export default {
           return true
         });
 
-        // this.actions = actions.split(',');
-        this.actions = ['agreement', 'disagree', 'transfer']; // actions字段没有返回，修改固定赋值
+        // actions字段没有返回，修改固定赋值
+        this.actions = ['agreement', 'disagree', 'transfer']; 
         // 判断是否为我创建的任务
         if (createFlow.isFirstNode === 0 && createFlow.startUserId === this.userId) {
           this.isMine = true;
@@ -208,9 +204,9 @@ export default {
             this.actions.splice(this.actions.findIndex(item => item === 'disagree'), 1, 'revoke');
           }
         }
-
         this.taskId = taskId;
         this.isMyTask = isMyTask === 1;
+
         // 不为我审批
         if (!this.isMyTask) {
           this.actions = this.isMine && this.noOperation ? ['revoke'] : [];
@@ -219,7 +215,7 @@ export default {
         this.formViewUniqueId = viewId;
       })
     },
-    // TODO 同意、拒绝、撤回成功时的回调
+    // 同意、拒绝、撤回成功时的回调
     submitSuccessCallback(val) {
       let type = JSON.parse(val).type;
       if (type !== 'revoke') {
@@ -250,7 +246,7 @@ export default {
         this.$event.$emit('commentCount', dataCount);
       })
     },
-    // TODO 是否已经关注该订单
+    // 是否已经关注该订单
     isSubscribeByRelationKey() {
       isSubscribeByRelationKey(this.transCode).then(data => {
         this.$emit('is-subscribe', data)
@@ -293,7 +289,7 @@ export default {
         shareContent(shareInfo);
       })
     },
-    // TODO 获取应用详情
+    // 获取应用详情
     getAppDetail() {
       let {listId = ''} = this.$route.params;
       return getAppDetail(listId).then(([data = {}]) => {
@@ -301,11 +297,11 @@ export default {
         this.action = action;
       })
     },
-    // TODO 输入框获取焦点，内容选中
+    // 输入框获取焦点，内容选中
     getFocus(e) {
       event.currentTarget.select();
     },
-    // TODO 审批
+    // 审批
     saveData(formData = {}, wfPara = {}) {
       this.$vux.confirm.prompt('', {
         title: '审批意见',
@@ -346,10 +342,9 @@ export default {
         }
       });
     },
-    // TODO 请求配置
+    // 请求配置
     getFormConfig() {
       return getFormConfig(this.formViewUniqueId).then(({config = [], dataSource = '[]', reconfig = {}}) => {
-        // console.log(config)
         let ckConfig = [], rkConfig = [], dealerConfig = [], matterConfig = [], otherConfig = [];
         let dealerFilter = [
           'dealerName_dealerDebit',
@@ -461,10 +456,15 @@ export default {
               undefined: listData,
             }
           }
-        } else if (this.matterList.length) {
+        } 
+        else if (this.matterList.length) {
           listData = this.matterList;
         }
+
+        //设置物料的动态渲染部分
         this.setMatterConfig(listData);
+
+        // 此处针对 <其他部分> 表单配置 进行分割处理
         otherConfig = otherConfig.reduce((arr, item, index) => {
           if (!item.hidden) {
             arr.push(item);
@@ -486,7 +486,7 @@ export default {
       }
       wareConfig.push(info);
     },
-    // TODO 设置物料的动态渲染部分
+    // 设置物料的动态渲染部分
     setMatterConfig(arr) {
       let numTypeList = ['r2Numberfield', 'r2Percentfield', 'r2Permilfield'];
       let matterConfig = this.matterConfig;
@@ -510,11 +510,12 @@ export default {
         matter.matterComment = matterComment;
       });
     },
-    // TODO 查看更多
+    // 查看更多
     onShowMore(item, index, key) {
       if (key) {
         this.matterDetailKey = key;
       }
+      console.log('item:', item);
       this.matterDetail = JSON.parse(JSON.stringify(item));
       this.matterDetailIndex = index;
       this.showMatterDetail = true;

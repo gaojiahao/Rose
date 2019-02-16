@@ -13,8 +13,7 @@
                 <p class="user_other">@{{userInfo.userCode}}</p>
               </div>
             </div>
-            <div class="entity-part" :class="{'active': showDrop}"
-              @click="showDrop = !showDrop">
+            <div class="entity-part" :class="{'active': showDrop}" @click="showDrop = !showDrop">
               <span class="entity_name">{{userInfo.entityName}}</span>
               <span v-if="entityList.length > 1" class="iconfont" :class="{'icon-xia' : !showDrop, 'icon-shang' : showDrop}"></span>
               <ul class="r-dropdown-list" v-show="showDrop">
@@ -28,7 +27,7 @@
                     <span class="tips_word">当前选中</span>
                   </div>
                 </li>
-              </ul>    
+              </ul>
             </div>
           </div>
         </div>
@@ -36,6 +35,7 @@
         <bus-app :BusApps='BusApps' :goList='goList' :goAppDetail='goAppDetail' :getDefaultIcon='getDefaultIcon'></bus-app>
       </div>
     </div>
+    <div class="close-part" v-show="showDrop" @click="showDrop = false"></div> 
   </div>
 </template>
 
@@ -236,47 +236,6 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-.fade-enter-active, .fade-leave-active {
-  transition: all .3s ease;
-}
-.fade-enter, .fade-leave-active {
-  opacity: 0;
-}
-.fade-enter {
-  transform: translateX(30px);
-}
-.fade-leave-active {
-  transform: translateX(-30px);
-}
-
-.bounce-enter-active {
-  animation: bounce-in .5s;
-}
-.bounce-leave-active {
-  animation: bounce-in .5s reverse;
-}
-@keyframes bounce-in {
-  0% {
-    transform: scale(0);
-  }
-  50% {
-    transform: scale(1.5);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-.list-enter {
-  // opacity: 0;
-  // transform: translateY(-20px);
-}
-.list-leave-to {
-  // opacity: 0;
-  // transform: translateY(-10px);
-}
-.inPage {
-  // background: #F5F5F5;
-}
 .vux-1px-b:after {
   border-color: #e8e8e8;
 }
@@ -287,6 +246,13 @@ export default {
   .wrapper {
     padding-bottom: .1rem;
   }
+}
+.close-part {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
 }
 // 顶部 用户头像部分
 .top-part-container {
@@ -310,31 +276,6 @@ export default {
     background: #F5F5F5;
     padding: .1rem .12rem;
     justify-content: center;
-    // &:before {
-    //   width: 0;
-    //   height: 0;
-    //   bottom: -13px; 
-    //   right: 50%;
-    //   transform: translateX(50%);
-    //   content: '';
-    //   z-index: 9999;
-    //   border-width: 9px;
-    //   position: absolute;
-    //   border-style: solid; 
-    //   border-color: transparent transparent #FFF transparent;
-    // }
-    // &:after {
-    //   width: 0;
-    //   height: 0;
-    //   bottom: -12px; 
-    //   right: 50%;
-    //   transform: translateX(50%);
-    //   content: '';
-    //   position: absolute;
-    //   border-style: solid; 
-    //   border-width: 10px;
-    //   border-color: transparent transparent rgba(232, 232, 232, .3) transparent;
-    // }
     .entity_name {
       font-size: .14rem;
       &.when-is-out {
@@ -387,7 +328,6 @@ export default {
       .user_other {
         color: #757575;
         font-size: .14rem;
-        // font-weight: bold;
       }
     }
   }
@@ -402,9 +342,9 @@ export default {
   z-index: 100;
   position: absolute;
   background: $bgColor;
-  box-shadow: 0 1px 5px #e8e8e8;
   border-radius: .06rem;
   box-sizing: border-box;
+  box-shadow: 0 1px 5px #e8e8e8;
   &:before {
     width: 0;
     height: 0;
@@ -431,7 +371,8 @@ export default {
 }
 /* 列表项 */
 .r-dropdown-item {
-  width:100%;
+  width: 100%;
+  z-index: 101;
   display: flex;
   position: relative;
   align-items: baseline;

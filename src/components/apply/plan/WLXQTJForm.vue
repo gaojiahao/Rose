@@ -219,7 +219,7 @@
           return isSameColId && item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode
         });
       },
-      // TODO 滑动删除
+      // TODO 选择要删除的物料
       delClick(index, sItem, key) {
         let arr = this.selItems;
         let delIndex = this.findIndex(arr, sItem);

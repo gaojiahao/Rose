@@ -73,7 +73,7 @@ export default {
     }
   },
   computed: {
-    // TODO 将orderList转为数组
+    // 基于 orderList 此处重组 matterList 数据
     matterList() {
       let arr = [];
       for (let items of Object.values(this.orderList)) {
@@ -209,11 +209,10 @@ export default {
       }
       return url
     },
-    // 滑动删除
+    // 选择要删除的物料
     delClick(sItem, index, key) {
       let arr = this.selItems;
       let delIndex = arr.findIndex(item => item === index);
-
       //若存在重复的 则清除
       if (delIndex !== -1) {
         arr.splice(delIndex, 1);
@@ -241,7 +240,9 @@ export default {
         onConfirm: () => {
           let orderList = {};
           let selItems = this.selItems;
-          let remainder = this.matterList.filter((item, index) => !selItems.includes(index)); // 没被删除的
+          // 没被删除的
+          let remainder = this.matterList.filter((item, index) => !selItems.includes(index)); 
+          
           remainder.forEach(item => {
             let orderListKey = item.transCode ? item.transCode : 'noCode';
             if (!orderList[orderListKey]) {

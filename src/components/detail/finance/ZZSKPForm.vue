@@ -12,20 +12,8 @@
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
-      <div class="form_part" v-if="orderInfo.ticketNumber">
-        <div class="form_title vux-1px-b">
-          <span class="iconfont icon-xiangmu"></span><span class="title">发票信息</span>
-        </div>
-        <div class="form_content" style="margin-bottom:0.1rem;">
-          <div class="main_content">
-            <form-cell cellTitle='票号' :cellContent="orderInfo.ticketNumber" textRight></form-cell>
-            <form-cell cellTitle='发票类型' :cellContent="orderInfo.invoiceType" textRight></form-cell>
-            <!--<form-cell cellTitle='发票金额' showSymbol :cellContent="orderInfo.invoiceAmount | toFixed | numberComma(3)" textRight></form-cell>-->
-            <form-cell cellTitle='发票日期' :cellContent="orderInfo.invoiceDate" textRight></form-cell>
-            <form-cell cellTitle='发票内容' :cellContent="orderInfo.invoiceContent" textRight></form-cell>
-          </div>
-        </div>
-      </div>
+      <!-- 发票等部分 -->
+      <only-word :config="otherConfig" :info="orderInfo"></only-word>
       <!-- 物料列表 -->
       <matter-list :order-list="orderList" :order-title="orderTitle" @on-show-more="onShowMore"></matter-list>
       <!-- 备注 -->
@@ -42,18 +30,19 @@
 
 <script>
   // vux组件引入
-  import {dateFormat} from 'vux'
+  import { dateFormat } from 'vux'
   // 请求 引入
-  import {getSOList} from 'service/detailService'
+  import { getSOList } from 'service/detailService'
   // mixins 引入
   import detailCommon from 'components/mixins/detailCommon'
   // 组件引入
   import RAction from 'components/RAction'
   import workFlow from 'components/workFlow'
+  import onlyWord from 'components/detail/commonPart/form-part/onlyWord'
   import contactPart from 'components/detail/commonPart/ContactPart'
   //公共方法引入
-  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
-  import {toFixed} from '@/plugins/calc'
+  import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
+  import { toFixed } from '@/plugins/calc'
 
   export default {
     data() {
@@ -66,7 +55,7 @@
     },
     mixins: [detailCommon],
     components: {
-      workFlow, RAction, contactPart
+      onlyWord, workFlow, RAction, contactPart
     },
     methods: {
       //选择默认图片

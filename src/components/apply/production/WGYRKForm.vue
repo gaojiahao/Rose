@@ -160,7 +160,7 @@
       }
     },
     methods: {
-      // TODO 滑动删除
+      // TODO 选择要删除的物料
       delClick(index, sItem) {
         let arr = this.selItems;
         let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);

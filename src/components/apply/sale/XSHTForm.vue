@@ -164,7 +164,7 @@ export default {
     addMatter(){
       this.showMaterielPop = !this.showMaterielPop
     },
-    // 滑动删除
+    // 选择要删除的物料
     delClick(sItem, index) {
       let arr = this.selItems;
       let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);

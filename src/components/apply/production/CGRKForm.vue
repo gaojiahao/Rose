@@ -237,7 +237,7 @@
       findIndex(arr, sItem){
         return arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
       },
-      // 滑动删除
+      // 选择要删除的物料
       delClick(sItem, index, key) {
         let arr = this.selItems;
         let delIndex = this.findIndex(arr, sItem);

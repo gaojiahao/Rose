@@ -163,7 +163,6 @@
       color: #999;
     }
     .matter_tax {
-      margin-left: -.05rem;
       color: #999;
     }
     .matter_total_wrapper {

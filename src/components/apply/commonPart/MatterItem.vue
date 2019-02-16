@@ -10,7 +10,7 @@
         <span class="icon-matter-bianji" @click.stop="modifyMatter" v-if="!showDelete"></span>
       </div>
       <div class="matter_more">
-        <div class="each_info" v-for="(cItem,cIndex) in config" :key="cIndex">
+        <div class="each_info" v-for="(cItem, cIndex) in config" :key="cIndex">
           <span class="title">{{cItem.text}}:</span>
           <span v-if="cItem.showFieldCode">
             {{item[cItem.showFieldCode] != null &&  item[cItem.showFieldCode] !== "" ? item[cItem.showFieldCode] : "无"}}

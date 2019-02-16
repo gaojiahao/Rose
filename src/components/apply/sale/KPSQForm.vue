@@ -193,7 +193,7 @@
         }
         return url
       },
-      // 滑动删除
+      // 选择要删除的物料
       delClick(index, sItem, key) {
         let arr = this.selItems;
         let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);

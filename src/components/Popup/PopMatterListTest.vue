@@ -28,7 +28,7 @@
                 </div>
                 <!-- 物料基本信息 -->
                 <div class="matter_info">
-                  <div class="matter_info_item" v-for="(fItem,fIndex) in config" :key="fIndex">
+                  <div class="matter_info_item" v-for="(fItem, fIndex) in config" :key="fIndex">
                     <span class="matter_info_title">{{fItem.v}}:</span>
                     <span class="matter_info_value">{{item[fItem.k] != null && item[fItem.k] !== "" ? item[fItem.k] : "无" }}</span>
                   </div>
@@ -41,7 +41,7 @@
       <!-- 底部栏 -->
       <div class="count_mode vux-1px-t">
         <span class="count_num"> {{tmpItems.length ? `已选${tmpItems.length}件` : '请选择'}} </span>
-        <span class="count_btn" @click="cfmMater">确定</span>
+        <span class="count_btn" @click="confirmMater">确定</span>
       </div>
     </popup>
   </div>
@@ -143,8 +143,15 @@
       matterParams: {
         handler(val) {
           this.resetCondition();
-          // 参数改变，重新请求接口
-          this.requestData();
+          for(let item in val.data) {
+            if(val.data[item] !== '') {
+              /*
+               * 参数改变 重新请求接口；
+               * 请注意 若<参数为空> 则不会发起请求
+               */
+              this.requestData();
+            }
+          }
         },
         deep: true
       }
@@ -170,8 +177,7 @@
       // TODO 匹配相同项的索引
       findIndex(arr, sItem) {
         return arr.findIndex(item => {
-          let isSameTransCode = true,
-            isSameOrderCode = true;
+          let isSameTransCode = true, isSameOrderCode = true;
           if (item.orderCode) {
             isSameOrderCode = item.orderCode === sItem.orderCode;
             if (item.inventoryCode) {
@@ -184,6 +190,9 @@
           else if(item.transCode){
             isSameTransCode = item.transCode === sItem.transCode;
             if (item.inventoryCode) {
+              if(item.salesOutCode) {
+                return isSameTransCode && item.salesOutCode === sItem.salesOutCode
+              }              
               return isSameTransCode && item.inventoryCode === sItem.inventoryCode
             }
             else if (item.facilityCode) {
@@ -216,7 +225,6 @@
         }
         let arr = this.tmpItems;
         let delIndex = this.findIndex(arr, sItem);
-        // console.log(this.findIndex(this.tmpItems, sItem))
         // 若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
@@ -225,7 +233,7 @@
         arr.push(sItem);
       },
       // TODO 确定选择物料
-      cfmMater() {
+      confirmMater() {
         let sels = [];
         this.showPop = false;
         this.tmpItems.sort((a, b) => b.effectiveTime - a.effectiveTime);

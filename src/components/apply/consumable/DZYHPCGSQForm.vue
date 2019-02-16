@@ -199,7 +199,7 @@
         this.modifyIndex = index;
         this.modifyKey = key;
       },
-      // 滑动删除
+      // 选择要删除的物料
       delClick(index, sItem) {
         let arr = this.selItems;
         let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);

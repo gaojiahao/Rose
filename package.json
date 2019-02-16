@@ -1,8 +1,8 @@
 {
-  "name": "sp",
+  "name": "ROLETASK",
   "version": "1.0.0",
-  "description": "A Vue.js project",
-  "author": "",
+  "description": "基于ROLETASK PC版打造的移动版",
+  "author": "refordom",
   "private": true,
   "scripts": {
     "clean": "rm -rf dist",
