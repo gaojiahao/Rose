@@ -433,11 +433,6 @@ export default {
       this.orderList = draft.invoice.orderList;
       this.contactInfo = draft.invoice.contactInfo;
       this.matterParams.data.dealerCode = draft.invoice.dealer.dealerCode;
-      // for (let items of Object.values(this.orderList)) {
-      //   for (let item of items) {
-      //     this.matterList.push(item)
-      //   }
-      // }
       sessionStorage.removeItem(DRAFT_KEY);
     }
   },

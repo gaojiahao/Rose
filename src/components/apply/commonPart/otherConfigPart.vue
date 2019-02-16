@@ -31,7 +31,7 @@
           <div class="cell-item vux-1px-b" v-if="item.xtype === 'r2TextArea'">
             <div class="title" :class="{required: !item.allowBlank}">{{item.fieldLabel}}</div>
             <div class="mode">
-              <textarea ref="multiText" v-model="other[item.fieldCode]"></textarea>
+              <input type='text' placeholder="请输入" ref="multiText" v-model="other[item.fieldCode]"/>
             </div>
           </div>
           <!-- 日期 -->
