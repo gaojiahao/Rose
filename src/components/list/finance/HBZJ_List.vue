@@ -3,7 +3,7 @@
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
-        <searchIcon @search='searchList'></searchIcon>
+        <searchIcon @search='searchList' :place-holder="tipsWord"></searchIcon>
         <div class="tab-container" ref="tabContainer">
           <div class="tab-item" :class="{active: index === activeIndex}" v-for="(item, index) in listView"
                @click="tabClick(item, index)" ref="tabs">
@@ -93,8 +93,7 @@
               </template>
               <!-- 现金流计划表 -->
               <template v-else-if="key === 'view_140'">
-                <div class="schedule-item-wrapper" v-for='(item, index) in slide.listData' :key='index'
-                     @click="getFlow(item)">
+                <div class="schedule-item-wrapper" v-for='(item, index) in slide.listData' :key='index'>
                   <div class="schedule-main">
                     <img class="schedule_img" :src="item.appIcon" alt="app-icon">
                     <div class="schedule_info">
@@ -291,18 +290,32 @@
       currentScroll() {
         return this.$refs.bScroll[this.activeIndex]
       },
+      // 搜索提示文字
+      tipsWord() {
+        let currentView = this.view_id;
+        let viewList = {
+          view_48: '账户名称/编码/银行/余额', 
+          view_49: '应用名称/实例编码/往来名称/银行/', 
+          view_140: '应用名称/实例编码/往来编码/往来名称'
+        };
+        if(viewList.hasOwnProperty(currentView)) return viewList[currentView];
+      }
     },
     mixins: [listCommon],
     methods: {
-      // TODO 重置列表条件
+      // 重置列表条件
       resetCondition() {
         let {view_id} = this.listView[this.activeIndex];
         this.listMap[view_id] = {...BASE_PARAMS};
         this.currentScroll.scrollTo(0, 0);
         this.currentScroll.resetPullDown();
       },
-      ///tab切换
+      // tab切换
       tabClick(val, index) {
+        if(index === this.activeIndex) {
+          this.currentScroll.scrollTo(0, 0);
+          return;
+        }
         this.activeIndex = index;
         this.activeTab = val.view_name;
         this.calc_rel_code = val.calc_rel_code;
@@ -408,17 +421,17 @@
         await this.getView();
         await this.getListData(noReset);
       },
-      // TODO 重置下拉刷新、上拉加载的状态
+      // 重置下拉刷新、上拉加载的状态
       resetScroll() {
         this.currentScroll.finishPullDown();
         this.currentScroll.finishPullUp();
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.currentItem.page++;
         this.getListData();
       },
-      // TODO 下拉刷新
+      // 下拉刷新
       onPullingDown() {
         this.currentItem.page = 1;
         this.getData(true);
@@ -437,7 +450,7 @@
         }
         await this.getList();
       },
-      // TODO 初始化swiper
+      // 初始化swiper
       initSwiper() {
         this.$nextTick(() => {
           this.listSwiper = new this.Swiper('.list-container', {
@@ -462,7 +475,7 @@
           });
         })
       },
-      // TODO 滑动显示完整名字
+      // 滑动显示完整名字
       scrollToShow(index) {
         let $container = this.$refs.tabContainer;
         let paddingLeft = parseFloat(getComputedStyle($container).paddingLeft);
