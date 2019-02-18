@@ -132,7 +132,7 @@
         text-align: center;
         padding: .1rem 0 .16rem 0 ;
         .amount {
-          font-size: .24rem;
+          font-size: .2rem;
           color: #FA7138;
           font-weight: bold;
         }
@@ -219,21 +219,22 @@
     }
     // 订单创建人
     .order-creator {
+      color: #999;
       height: .3rem;
       display: flex;
+      margin: 0 .12rem;
       align-items: center;
-      margin: 0 .18rem 0 .12rem;
-      box-sizing: border-box;
+      justify-content: space-around;
       background: #F7F7F7;
       border-radius: .21rem;
-      color: #999;
+      box-sizing: border-box;
       .icon {
         width: .16rem;
         height: .16rem;
         margin-right: .05rem;
       }
       .creator {
-        margin-left: .1rem;
+        // margin-left: .1rem;
         display: flex;
         align-items: center;
       }
