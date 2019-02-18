@@ -14,7 +14,7 @@
         <img class="warehouse_img" :src="item.warehousePic">
       </div>
       <div class="warehouse_info" v-if="warehouseConfig[activeIndex]">
-        <div class="warehouse_info_item" v-for="(item, index) in warehouseConfig[activeIndex].config" :key="index">
+        <div class="warehouse_info_item" v-for="(item, index) in warehouseConfig[activeIndex].config" :key="index" v-show="item.fieldLabel">
           <span class="warehouse_item_title">{{item.fieldLabel}}:</span>
           <span class="warehouse_item_value">{{item.fieldValue || '无'}}</span>
         </div>
