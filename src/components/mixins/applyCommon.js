@@ -536,7 +536,7 @@ export default {
             if(item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt' || item.name === 'gys') {
               dealerConfig = [...dealerConfig, ...item.items]
             }
-            if(item.name === 'pb' || item.name === 'projectApproval' || item.name === 'projectPlanTask'){
+            if(item.name === 'pb' || item.name === 'projectApproval' || item.name === 'projectPlanTask' || item.name === 'jobLog'){
               otherConfig = item.items;
             }
           }
