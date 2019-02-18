@@ -88,7 +88,7 @@
             value: 'handlerName',
           }, {
             name: '项目名称',
-            value: 'projectName_project',
+            value: 'projectName_projectApprovalId',
           },
         ],
         listViewID: 2301,

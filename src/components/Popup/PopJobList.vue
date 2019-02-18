@@ -120,7 +120,8 @@
         handler() {
           this.getList()
         },
-        deep: true
+        deep: true,
+        immediate: true
       }
     },
     methods: {

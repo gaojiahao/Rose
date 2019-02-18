@@ -1,7 +1,7 @@
-import {getWorkFlow, currentUser, getListId, isMyflow, getAppExampleDetails, getListById} from 'service/detailService'
+import {getWorkFlow, currentUser, getListId, isMyflow, getAppExampleDetails, getListById } from 'service/detailService'
 import {getPCCommentList, isSubscribeByRelationKey} from 'service/commentService'
 import {getAppDetail} from 'service/appSettingService'
-import {saveAndCommitTask, getFormConfig} from 'service/commonService'
+import {saveAndCommitTask, getFormConfig, getFormViews} from 'service/commonService'
 import {numberComma} from 'vux'
 // 组件引入
 import BasicInfo from 'components/detail/commonPart/BasicInfo'
@@ -132,11 +132,26 @@ export default {
     // 获取当前应用是否有修改按钮
     getAction(){
       return getListById({uniqueId: this.listId}).then(data => {
-        if(data[0].action.update){
+        // statusText === '已生效' && model != 'revise' && hasReviseView && action.update
+        let config = data[0];
+        if(config === 1 && hasReviseView && config.action.update){
           this.actions.push('update')
         }
       })
 
+    },
+    // 获取当前应用表单类型
+    getFormViews(){
+      return getFormViews(this.listId).then(data => {
+        console.log(data)
+        data.forEach(item => {
+          if(item.viewType === 'revise') {
+            this.hasReviseView = true;
+            return false;
+          }
+        })
+
+      })
     },
     // 判断是否为我的任务
     isMyflow() {
@@ -282,6 +297,7 @@ export default {
       // 获取表单表单详情
       await this.getOrderList(transCode);
       await this.getFormConfig();
+      await this.getFormViews();
       await this.getAction();
       await this.getCommentList();
       await this.isSubscribeByRelationKey()
