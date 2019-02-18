@@ -345,6 +345,7 @@ export default {
     // 请求配置
     getFormConfig() {
       return getFormConfig(this.formViewUniqueId).then(({config = [], dataSource = '[]', reconfig = {}}) => {
+        console.log('config:', config);
         let ckConfig = [], rkConfig = [], dealerConfig = [], matterConfig = [], otherConfig = [];
         let dealerFilter = [
           'dealerName_dealerDebit',

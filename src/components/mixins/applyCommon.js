@@ -124,7 +124,7 @@ export default {
     // 更新修改后的物料信息
     selConfirm(val){
       let modMatter = JSON.parse(val);
-      this.$set(this.matterList,this.modifyIndex,modMatter);
+      this.$set(this.matterList, this.modifyIndex, modMatter);
     },
     // 获取listId
     getListId(transCode) {

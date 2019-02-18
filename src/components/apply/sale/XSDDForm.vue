@@ -7,8 +7,8 @@
                       :status-data="currentStage" v-model="formData.biProcessStatus">
         </pop-baseinfo>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo" :dealer-params="dealerParams"
-                         :defaultContact="contactInfo"></pop-dealer-list>
+        <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo" 
+                         :dealer-params="dealerParams" :defaultContact="contactInfo"></pop-dealer-list>
         <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
         <!-- 物料列表 -->
         <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :show-matter-pop="showMatterPop" :filter-list="filterList"
