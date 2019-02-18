@@ -306,7 +306,6 @@ export default {
     },
     // 检查金额，取正数、保留两位小数
     checkAmt(item, key, val){
-      // console.log('item:', item);
       let { price, tdQty, taxRate, qtyBal, qtyStock, qtyBalance, 
         assistQty, qtyStockBal, qtyOnline, qtyDownline} = item;
       item[key] = Math.abs(toFixed(val));
@@ -622,8 +621,7 @@ export default {
                     return
                   }
                   // 根据form配置返回dataSource参数 此处组装 <组件请求参数> 默认值
-                  matterParams[item] = params[item].type === 'text' ? params[item].value : '';                  // if(item === 'dealerCode' && this.dealerInfo.dealerCode){
-                  
+                  matterParams[item] = params[item].type === 'text' ? params[item].value : '';
                 })
                 requestParams.data = matterParams;
               }

@@ -143,14 +143,28 @@
       matterParams: {
         handler(val) {
           this.resetCondition();
-          for(let item in val.data) {
-            if(val.data[item] !== '') {
-              /*
-               * 参数改变 重新请求接口；
-               * 请注意 若<参数为空> 则不会发起请求
-               */
-              this.requestData();
+          // 判断 <请求参数> 是否全部都已就位
+          let paramsIsOk = true;
+          // 判断 <请求参数> 是否存在
+          let hasParamsData = Object.prototype.toString.call(val.data) === '[object Object]';
+          
+          /*
+          * 参数改变 重新请求接口；
+          * 请注意 若<参数为空> 则不会发起请求
+          */
+          if(hasParamsData) {
+            console.log('if');
+            for(let item in val.data) {
+              console.log('item:', item);
+              if(!val.data[item]) {
+                paramsIsOk = false;
+                break;
+              }
             }
+            if(paramsIsOk) this.requestData();
+          }
+          else {
+            this.requestData();
           }
         },
         deep: true
