@@ -40,6 +40,13 @@ export let updateData = (data = {}) => {
   })
 };
 
+// TODO 修改项目(没有工作流)
+export let update = (data = {}) => {
+  return $flyio.post({
+    url: '/H_roleplay-si/projectApproval/update',
+    data
+  })
+}
 export let commitTask = (data = {}) => {
   return $flyio.ajax({
     type: 'POST',

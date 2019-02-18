@@ -142,7 +142,6 @@ export default {
         orderList[item.transCode].push(item);
       });
       this.numMap = {};
-      // this.matterList = sels;
       this.orderList = orderList;
     },
     //选择默认图片
@@ -384,7 +383,6 @@ export default {
           item.qtyBal = item.thenQtyBal,
           item.processing = item.tdProcessing,
           item.measureUnit = item.measureUnit_transObjCode;
-          // this.matterList.push(item);
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
@@ -424,10 +422,11 @@ export default {
     },
   },
   updated() {
-    let data = sessionStorage.getItem('ZZSKP_DATA');
+    // *重新提交*页面 不需要清除缓存
+    if(this.transCode) return;
     // 若存在缓存 此处对页面进行赋值
-    if (data) {
-      let draft = JSON.parse(data);
+    let draft = JSON.parse(sessionStorage.getItem('ZZSKP_DATA'));
+    if (draft && this.matterParams.data) {
       this.dealerInfo = draft.invoice.dealer;
       this.otherInfo = draft.invoice.otherInfo;
       this.orderList = draft.invoice.orderList;

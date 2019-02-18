@@ -52,14 +52,16 @@ export default {
       type: Array,
       default() {
         return []
-      }
+      },
+      required: true
     },
     dealerInfo: {
       type: Object,
       default() {
         return {}
-      }
-    },
+      },
+      required: true
+    }
   },
   computed: {
     config(){
@@ -86,25 +88,18 @@ export default {
     },
     // 监听子组件的dealer,当修改了dealer中的值时，通知父组件修改
     dealer: {
-      handler(val){
-        let { drDealerPaymentTerm, crDealerPaymentTerm } = val;   
-        // 当结算方式有值时，判断预付款和预付到期日是否显示  
-        (drDealerPaymentTerm || crDealerPaymentTerm) && this.config.forEach(item => {
-          if(item.fieldCode === 'tdAmountCopy1' || item.fieldCode === 'prepaymentDueDate' || item.fieldCode === 'advancePaymentDueDate'){
-            if(drDealerPaymentTerm && drDealerPaymentTerm.includes('预收')) {
-              item.hiddenInRun = false
-              return
-            }
-            item.hiddenInRun = true
-          }
-        })
-        let currentDealer = JSON.stringify(val),
+      handler(val) {
+        let currentDealer = JSON.stringify(val), 
             parentDealer = JSON.stringify(this.dealerInfo);
+        // 根据结算方式 判断其他配置是否显示
+        this.verifyPayments(val);
+        // 是否已修改数据 若修改则传值回父组件
         if(currentDealer !== parentDealer){
           this.$emit('input', val)
         } 
       },
-      deep: true  
+      deep: true,
+      immediate: true
     },
   },
   methods: {
@@ -125,6 +120,32 @@ export default {
         },
       })
     },
+    // 校验 *结算方式* 判断 <预付款>/<预付到期日>/账期 等 是否显示
+    verifyPayments(val) {
+      let { drDealerPaymentTerm, crDealerPaymentTerm } = val;  
+      this.config.forEach(item => {
+        // 根据结算方式 判断 <预付款> 和 <预付到期日> 是否显示  
+        if(item.fieldCode === 'tdAmountCopy1' || item.fieldCode.includes('paymentDueDate')){
+          if(drDealerPaymentTerm && drDealerPaymentTerm.includes('预收')) {
+            item.hiddenInRun = false;
+            return;
+          }
+          item.hiddenInRun = true
+        }
+        // 根据结算方式 判断 <账期> 是否显示  
+        if(item.fieldCode.includes('pamentDays')) {
+          if(crDealerPaymentTerm && crDealerPaymentTerm.includes('账期')) {
+            item.hiddenInRun = false;
+            return;
+          }
+          item.hiddenInRun = true;
+        }
+      })
+    }
+  },
+  updated() {
+    // 根据结算方式 初始化其他配置
+    this.verifyPayments(this.dealer);
   }
 }
 </script>

@@ -6,6 +6,7 @@
       <span class="btn_item reject" @click="reject" v-if="actions.includes('disagree')">拒绝</span>
       <span class="btn_item agree" @click="agree" v-if="actions.includes('agreement')">同意</span>
       <span class="btn_item transfer" @click="transfer" v-if="actions.includes('transfer')">转办</span>
+      <span class="btn_item update" @click="update" v-if="actions.includes('update')">修改</span>
     </div>
     <pop-user-list :show="showUserList" :default-value="selectedUser" @sel-item="selUser"
                    v-model="showUserList" v-if="actions.includes('transfer')"></pop-user-list>
@@ -171,6 +172,25 @@
         }).catch(e => {
           this.$HandleLoad.hide();
         });
+      },
+      // TODO 修改
+      update() {
+        let { listId } = this.$route.query,
+            { folder, fileName } = this.$route.params;
+        this.$vux.confirm.show({
+          title: '',
+          content: '确定修改？',
+          onConfirm: () =>{
+            this.$router.replace({
+              path: `/fillform/${folder}/${fileName}`,
+              query: {
+                listId,
+                name: this.name,
+                transCode: this.code,
+              },
+            });
+          }
+        }) 
       },
       // TODO 转办
       transfer() {

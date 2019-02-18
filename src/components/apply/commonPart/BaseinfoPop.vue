@@ -2,17 +2,16 @@
   <div class="baseinfo_wrapper">
     <div class="baseinfo_content">
       <div class="each_info vux-1px-b" @click="showPop = true">
-        <div class="title">经办人</div>
+        <div class="title" :class="{required: requiredField === 'nickname'}">经办人</div>
         <div class="mode">
           <span class="mode_content">{{selItems.nickname}}</span>
           <span class="icon-right"></span>
-          <!-- <x-icon class="r_arrow" type="ios-arrow-forward" size="18"></x-icon> -->
         </div>
       </div>
       <r-picker class="vux-1px-b" title="经办组织" :data="groupList" :value="group" 
-                v-model="group" :required="isRequired" @on-change="changeGroup"></r-picker>
+                v-model="group" :required="requiredField === 'group'" @on-change="changeGroup"></r-picker>
       <r-picker class="vux-1px-b" title="经办职位" :data="roleList" :value="role" v-model="role" @on-change="changeRole"></r-picker>
-      <r-picker title="流程状态" :data="statusData" v-model="biProcessStatus" v-if="showStatus"></r-picker>
+      <r-picker title="流程状态" :data="statusData" v-model="biProcessStatus" :value="biProcessStatus" v-if="showStatus"></r-picker>
     </div>
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
@@ -79,9 +78,9 @@
         required: true
       },
       //是否为必填项
-      isRequired: {
-        type: Boolean,
-        default: true
+      requiredField: {
+        type: String,
+        default: 'group'
       },
       // 当前路程状态的数据
       statusData:{
@@ -94,6 +93,10 @@
       showStatus: {
         type: Boolean,
         default: true
+      },
+      processStatus: {
+        type: String,
+        default: ''
       }
     },
     directives: {TransferDom},
@@ -120,6 +123,7 @@
         roleList: [], // 职位列表
         groupList: [], // 组织列表
         biProcessStatus: '', //当前流程
+        currentStatus: ''
       }
     },
     watch: {
@@ -129,8 +133,10 @@
       // 监听流程变化，传值到父组件
       biProcessStatus(val) {
         this.$emit('input', val)
-      }
-      
+      },
+      processStatus(val){
+        this.biProcessStatus = val;
+      } 
     },
     methods: {
       // 弹窗展示时调用
@@ -355,11 +361,15 @@
         justify-content: space-between;
         .title {
           color: #696969;
+          &.required {
+            font-weight: bold;
+            color: $main_color;
+          }
         }
         .mode {
           display: flex;
           align-items: center;
-          .icon-right{
+          .icon-right {
             width: .08rem;
             height: .14rem;
             margin-left: .1rem;
@@ -367,7 +377,7 @@
         }
       }
     }
-    .vux-1px-b:after{
+    .vux-1px-b:after {
       border-color: #e8e8e8;
       left: 0;
     }

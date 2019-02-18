@@ -63,6 +63,12 @@ export let getListView = (data = {})=>{
     })
 }
 
+export let getListById = (data = {})=>{
+    return $flyio.ajax({
+        url:'/H_roleplay-si/ds/list/getListById',
+        data
+    })
+}
 
 export default{
     isMyflow,

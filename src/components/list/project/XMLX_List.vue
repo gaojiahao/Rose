@@ -19,33 +19,33 @@
               <span class="instance_status" :class="item.statusClass">{{item.biStatus}}</span>
             </div>
             <div class="instance-project-type">
-              <span class="text">{{item.projectType_project}}</span>
+              <span class="text">{{item.projectType_projectApprovalId}}</span>
               <span class="instance_process_status">{{item.biProcessStatus || '暂无流程'}}</span>
             </div>
             <div class="instance-project-container">
               <i class="icon-project"></i>
               <div class="instance_project_detail">
                 <div class="project_detail_top">
-                  <div class="project_name">{{item.projectName_project}}</div>
-                  <div class="project_detail_amt">
+                  <div class="project_name">{{item.projectName_projectApprovalId}}</div>
+                  <!-- <div class="project_detail_amt">
                     <div class="amt">
                       <span class="symbol">￥</span>{{item.budgetIncome_project | numberComma}}
                     </div>
                     <div class="text">收入</div>
-                  </div>
+                  </div> -->
                 </div>
                 <div class="project_detail_bottom">
                   <div>
                     <div class="project_detail_item">
                       <span class="project_detail_title">项目经理：</span>
-                      <span class="project_detail_value">{{item.projectManager_project}}</span>
+                      <span class="project_detail_value">{{item.dealerName_dealerDebit}}</span>
                     </div>
                     <div class="project_detail_item">
                       <span class="project_detail_title">经理电话：</span>
-                      <span class="project_detail_value">{{item.phoneNumber_project || '无'}}</span>
+                      <span class="project_detail_value">{{item.dealerMobilePhone_dealerDebit || '无'}}</span>
                     </div>
                   </div>
-                  <div class="project_profit">利润率：<span class="value">{{item.budgetProfitMargin_project | percent}}</span></div>
+                  <!-- <div class="project_profit">利润率：<span class="value">{{item.budgetProfitMargin_project | percent}}</span></div> -->
                 </div>
               </div>
             </div>
@@ -112,7 +112,7 @@
         }
         // 交易号、应用名称等
         let {transCode} = item,
-          {name} = this.$route.query,
+          {name, listId} = this.$route.query,
           {folder, fileName} = this.$route.params;
         // 高亮 点击过的数据
         this.clickVisited = true;
@@ -123,7 +123,7 @@
           this.clickVisited = false;
           this.$router.push({
             path: `/detail/${folder}/${fileName}`,
-            query: {name, transCode}
+            query: {name, transCode, listId}
           })
         }, 200)
       },

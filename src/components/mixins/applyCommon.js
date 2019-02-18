@@ -1,4 +1,4 @@
-import {commitTask, getBaseInfoData, getProcess, getProcessStatus, getFormConfig, requestData, getFormViews, getModelConfigByListId} from 'service/commonService'
+import {commitTask, getBaseInfoData, getProcess, getProcessStatus, getFormConfig, requestData, getFormViews, getModelConfigByListId, update} from 'service/commonService'
 import {getListId, isMyflow, getSaleQuotePrice,} from 'service/detailService'
 import {getAppDetail} from 'service/appSettingService'
 import {numberComma} from 'vux'
@@ -124,7 +124,7 @@ export default {
     // 更新修改后的物料信息
     selConfirm(val){
       let modMatter = JSON.parse(val);
-      this.$set(this.matterList,this.modifyIndex,modMatter);
+      this.$set(this.matterList, this.modifyIndex, modMatter);
     },
     // 获取listId
     getListId(transCode) {
@@ -306,7 +306,6 @@ export default {
     },
     // 检查金额，取正数、保留两位小数
     checkAmt(item, key, val){
-      // console.log('item:', item);
       let { price, tdQty, taxRate, qtyBal, qtyStock, qtyBalance, 
         assistQty, qtyStockBal, qtyOnline, qtyDownline} = item;
       item[key] = Math.abs(toFixed(val));
@@ -355,6 +354,20 @@ export default {
     getFocus(e){
       event.currentTarget.select();
     },
+    // 选择日期
+    getDate(sItem, dItem){
+      this.$vux.datetime.show({
+        confirmText: '确认',
+        cancelText: '取消',
+        onConfirm: (val)=> {
+          if(sItem[dItem.fieldCode] == null){
+            this.$set(sItem, dItem.fieldCode, val)
+            return
+          }
+          sItem[dItem.fieldCode] = val;
+        },
+      })
+    },   
     // 上传文件成功
     onUploadFile({biReferenceId}) {
       this.biReferenceId = biReferenceId;
@@ -523,7 +536,7 @@ export default {
             if(item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt' || item.name === 'gys') {
               dealerConfig = [...dealerConfig, ...item.items]
             }
-            if(item.name === 'pb'){
+            if(item.name === 'pb' || item.name === 'projectApproval' || item.name === 'projectPlanTask'){
               otherConfig = item.items;
             }
           }
@@ -622,8 +635,7 @@ export default {
                     return
                   }
                   // 根据form配置返回dataSource参数 此处组装 <组件请求参数> 默认值
-                  matterParams[item] = params[item].type === 'text' ? params[item].value : '';                  // if(item === 'dealerCode' && this.dealerInfo.dealerCode){
-                  
+                  matterParams[item] = params[item].type === 'text' ? params[item].value : '';
                 })
                 requestParams.data = matterParams;
               }
@@ -722,11 +734,12 @@ export default {
             this.submitMatterField.push(item)
           }
           if(!item.hiddenInRun){
-            if((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo') && item.dataSource && item.dataSource.type === 'remoteData'){
+            if((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo' || item.xtype === 'r2Selector') && item.dataSource && item.dataSource.type === 'remoteData'){
               item.requestParams = this.handlerParams(item)
               requestData(this.handlerParams(item)).then(data => {
                 if(data.tableContent){
                   data.tableContent.forEach(dItem => {
+                    dItem.originValue = dItem.value;
                     dItem.name = dItem[item.displayField]
                     dItem.value = dItem[item.displayField];
                   })

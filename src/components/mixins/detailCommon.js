@@ -1,4 +1,4 @@
-import {getWorkFlow, currentUser, getListId, isMyflow, getAppExampleDetails} from 'service/detailService'
+import {getWorkFlow, currentUser, getListId, isMyflow, getAppExampleDetails, getListById} from 'service/detailService'
 import {getPCCommentList, isSubscribeByRelationKey} from 'service/commentService'
 import {getAppDetail} from 'service/appSettingService'
 import {saveAndCommitTask, getFormConfig} from 'service/commonService'
@@ -52,6 +52,7 @@ export default {
       cancelStatus1: false,
       showMatterDetail: false, // 是否展示物料详情弹窗
       action: {}, // 表单允许的操作
+      hasUpdate: {}, //
       orderInfo: {}, // 表单内容
       currentWL: {}, // 当前工作流
       matterDetail: {}, // 选中物料的详细信息
@@ -127,6 +128,15 @@ export default {
         this.formViewUniqueId = data[0].uniqueId;
         this.listId = data[0].listId;
       });
+    },
+    // 获取当前应用是否有修改按钮
+    getAction(){
+      return getListById({uniqueId: this.listId}).then(data => {
+        if(data[0].action.update){
+          this.actions.push('update')
+        }
+      })
+
     },
     // 判断是否为我的任务
     isMyflow() {
@@ -272,6 +282,7 @@ export default {
       // 获取表单表单详情
       await this.getOrderList(transCode);
       await this.getFormConfig();
+      await this.getAction();
       await this.getCommentList();
       await this.isSubscribeByRelationKey()
       this.$loading.hide();
@@ -345,6 +356,7 @@ export default {
     // 请求配置
     getFormConfig() {
       return getFormConfig(this.formViewUniqueId).then(({config = [], dataSource = '[]', reconfig = {}}) => {
+        console.log('config:', config);
         let ckConfig = [], rkConfig = [], dealerConfig = [], matterConfig = [], otherConfig = [];
         let dealerFilter = [
           'dealerName_dealerDebit',
@@ -405,7 +417,7 @@ export default {
               rkConfig = item.items;
               this.setWarehouseConfg(rkConfig, '入库');
             }
-            if(item.name === 'pb'){
+            if(item.name === 'pb' || item.name === 'projectApproval'){
               otherConfig = item.items;
             }
           } else {
@@ -466,7 +478,7 @@ export default {
 
         // 此处针对 <其他部分> 表单配置 进行分割处理
         otherConfig = otherConfig.reduce((arr, item, index) => {
-          if (!item.hidden) {
+          if (!item.hiddenInRun) {
             arr.push(item);
           }
           return arr

@@ -3,174 +3,181 @@
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
-                      :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
-        <pop-manager-list @sel-item="selManager" :defaultValue="defaultManager"></pop-manager-list>
-        <!-- 项目类型-->
-        <r-picker title="项目大类" :data="typeList" mode="3" placeholder="请选择项目大类"
-                  @on-change="projectBigChange" :has-border="false"
-                  v-model="ProjectApproval.projectType" :required="ProjectApproval.projectType === ''"></r-picker>
-        <r-picker title="项目子类" :data="subclassList" mode="3" placeholder="请选择项目子类" :has-border="false"
-                  v-model="ProjectApproval.projectSubclass"></r-picker>
-        <!-- 项目立项明细 -->
-        <div class="materiel_list mg_auto">
-          <div class="title">项目立项明细</div>
-          <group @group-title-margin-top="0">
-            <x-input title="项目名称" v-model="ProjectApproval.projectName" text-align='right' placeholder='请填写'>
-              <template slot="label">
-                <span class='required'>项目名称</span>
-              </template>
-            </x-input>
-            <x-input title="预算收入" type="number" v-model.number="ProjectApproval.budgetIncome"
-                     text-align='right' placeholder='请填写'
-                     @on-blur="checkAmt('budgetIncome', $event)">
-              <template slot="label">
-                <span class='required'>预算收入</span>
-              </template>
-            </x-input>
-            <x-input title="预算成本" type="number" v-model.number="ProjectApproval.budgetCapital"
-                     text-align='right' placeholder='请填写'
-                     @on-blur="checkAmt('budgetCapital', $event)">
-              <template slot="label">
-                <span class='required'>预算成本</span>
-              </template>
-            </x-input>
-            <x-input title="预算费用" type="number" v-model.number="ProjectApproval.budgetCost"
-                     text-align='right' placeholder='请填写'
-                     @on-blur="checkAmt('budgetCost', $event)">
-              <template slot="label">
-                <span class='required'>预算费用</span>
-              </template>
-            </x-input>
-            <datetime title="预期开始日期" v-model='ProjectApproval.expectStartDate'>
-              <template slot="title">
-                <span class='required'>预期开始日期</span>
-              </template>
-            </datetime>
-            <datetime title="预期截止日期" v-model='ProjectApproval.expectEndDate'>
-              <template slot="title">
-                <span class='required'>预期截止日期</span>
-              </template>
-            </datetime>
-            <cell title="预算利润" :value="profit"></cell>
-            <cell title="预算利润率" :value="profitMargin"></cell>
-            <x-textarea title="项目说明" v-model="ProjectApproval.comment" :max="200"></x-textarea>
-          </group>
+                      :handle-org-list="handleORG" :user-role-list="userRoleList"
+                      :status-data="currentStage" v-model="formData.biProcessStatus" 
+                      requiredField="nickname" :processStatus="formData.biProcessStatus"></pop-baseinfo>
+         <div class="materiel_list">
+          <div :class="{'vux-1px-t': index > 0}" v-for="(item, index) in otherConfig" :key="index">
+            <!--项目经理-->
+            <template v-if="item.fieldCode === 'projectManagerName'">
+              <pop-manager-list class="vux-1px-t" :requestParams="item.requestParams" 
+                                @sel-item="selManager" :defaultValue="defaultManager"></pop-manager-list>
+            </template>
+            <template v-else>
+              <!-- 下拉框 -->
+              <r-picker :title="item.fieldLabel" :data="item.remoteData" :value="ProjectApproval[item.fieldCode]"
+                      v-model="ProjectApproval[item.fieldCode]" :required="!item.allowBlank"
+                      v-if="item.xtype === 'r2Combo' || item.xtype === 'r2Selector'"></r-picker>
+              <!-- 输入框（文字） -->
+              <div class='each_property' v-if="item.xtype === 'r2Textfield'">
+                <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+                <input type='text' v-model="ProjectApproval[item.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
+              </div>
+              <!-- 输入框（数字） -->
+              <div class='each_property ' v-if="item.xtype === 'r2Numberfield'">
+                <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+                <input type='number' v-model.number="ProjectApproval[item.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
+              </div>
+              <!-- 日期 -->
+              <div class='each_property' v-if="item.xtype === 'r2Datefield'" @click="getDate(ProjectApproval,item)">
+                <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+                <div class='picker'>
+                  <span class='mater_nature'>{{ProjectApproval[item.fieldCode] || "请选择"}}</span>
+                  <span class='icon-right'></span>
+                </div>
+              </div>
+              <!-- 文本框 -->
+              <x-textarea v-model="ProjectApproval[item.fieldCode]" :max="100" v-if="item.xtype === 'r2TextArea'">
+                <template slot="label">
+                  <span :class="{required : !item.allowBlank}" style="display: block; width: 4em;">{{item.fieldLabel}}</span>
+                </template>
+              </x-textarea>
+            </template>
+          </div>
         </div>
-        <div class="materiel_list">
-          <group title="其他信息" class="costGroup">
-            <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
-          </group>
+        <!-- 备注 -->
+        <div class="comment">         
+          <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
         </div>
-        <upload-file @on-upload="onUploadFile"></upload-file>
-        
       </div>
     </div>
-    <!-- 底部确认栏 -->
-    <div class='btn vux-1px-t' :class="{btn_hide : btnIsHide}">
-      <div class="cfm_btn" @click="save">提交</div>
-    </div>
+    <!-- 底部按钮 -->
+    <op-button :hide="btnIsHide" @on-submit="save"></op-button>
   </div>
 </template>
 
 <script>
   // vux组件引入
   import {
-    Cell, Group, XInput,
-    XTextarea, Datetime, dateFormat
+    XTextarea, dateFormat
   } from 'vux'
   // 请求 引入
   import { saveProjectApproval, findProjectApproval } from 'service/projectService'
-  import { getDictByType, getDictByValue } from 'service/commonService'
+  import { getDictByType, getDictByValue, requestData, update} from 'service/commonService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   import common from '@/mixins/common'
   // 组件 引入
-  import RPicker from 'components/RPicker'
+  import RPicker from 'components/basicPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopManagerList from 'components/Popup/PopManagerList'
+  import OpButton from 'components/apply/commonPart/OpButton'
   import { accMul, accAdd, accSub } from '@/home/pages/maps/decimalsAdd'
   import { toFixed } from '@/plugins/calc'
   const DRAFT_KEY = 'XMLX_DATA';
   export default {
     mixins: [ApplyCommon, common],
     components: {
-      Cell, Group, XInput,
-       RPicker, PopBaseinfo, Datetime, XTextarea, PopManagerList,
+      RPicker, PopBaseinfo, XTextarea, PopManagerList, OpButton
     },
     data() {
       return {
         listId: '630a9b96-f257-48b6-b0bc-fd64c455d92b',
-        typeList: [], // 项目大类列表
-        subclassList: [], // 项目子类列表
-        ProjectApproval: {
-          projectName: '', // 项目名称
-          projectType: '', // 项目类型
-          projectManager: '', // 项目经理
-          phoneNumber: '', // 手机号
-          expectStartDate: dateFormat(new Date, 'YYYY-MM-DD'), // 预期开始日期
-          expectEndDate: dateFormat(new Date, 'YYYY-MM-DD'), // 预期截止日期
-          budgetIncome: '', // 预算收入
-          budgetCapital: '', // 预算成本
-          budgetCost: '', // 预算费用
-          budgetProfit: '', // 预算利润
-          budgetProfitMargin: '', // 预算利润率
-          comment: '', // 项目说明
-          projectSubclass: '', // 项目子类
-        },
+        ProjectApproval: {},
         formData: {
           biComment: '',
-          biProcessStatus: ''
+          biProcessStatus: '',
+          biProcessStatus: '',
         },
         defaultManager: {}, // 项目经理的默认值
         hasDefault: false, // 是否为界面回写
       }
     },
     computed: {
-      // 利润
-      profit () {
-        let {budgetIncome = 0, budgetCapital = 0, budgetCost = 0} = this.ProjectApproval,
-            difference = accSub(budgetIncome, budgetCapital),
-        // let budgetProfit = Number(budgetIncome) - Number(budgetCapital) - Number(budgetCost);
-            budgetProfit = toFixed(accSub(difference, budgetCost));
-        this.ProjectApproval.budgetProfit = budgetProfit;
-        return budgetProfit;
-      },
-      // 利润率
-      profitMargin () {
-        let {budgetIncome = 0, budgetProfit = 1} = this.ProjectApproval;
-        let budgetProfitMargin = toFixed(Math.floor(Number(budgetProfit) / (Number(budgetIncome) || 1) * 10000) / 10000);
-        this.ProjectApproval.budgetProfitMargin = budgetProfitMargin;
-        return `${budgetProfitMargin * 10000 / 100}%`;
+      projectType() {
+        return this.ProjectApproval.projectType
+      }
+    },
+    watch: {
+      // 监听大类变化，修改子类
+      projectType: {
+        handler(val){
+          if(val){
+            let type = ''; // 当前项目大类对应的类型，请求子类的参数
+            for(let item of this.otherConfig){
+              if(item.fieldCode === 'projectType'){
+                for(let dItem of item.remoteData){
+                  if(dItem.name === val){
+                    type = dItem.originValue;
+                    break;
+                  }
+                }
+              }
+              if(item.fieldCode === 'projectSubclass'){
+                let requestParams = {
+                  url: item.dataSource.data.url,
+                  data: {
+                    value: type
+                  }
+                }
+                requestData(requestParams).then(({tableContent = []}) =>{
+                  if(this.ProjectApproval.projectSubclass != null) {
+                    this.ProjectApproval.projectSubclass = tableContent[0].name
+                  }
+                  else{
+                    this.$set(this.ProjectApproval, 'projectSubclass', tableContent[0].name)
+                  }
+                  tableContent.forEach(dItem =>{
+                    dItem.originValue = dItem.value;
+                    dItem.name = dItem[item.displayField]
+                    dItem.value = dItem[item.displayField];
+                  })
+                  item.remoteData = tableContent;
+                })
+              }
+            }
+          }
+        }
+        
       }
     },
     methods: {
+      // 选择日期
+      getDate(sItem, dItem){
+        let startDate = '', endDate = '';
+        // 当存在开始日期，选在结束日期时不能小于开始日期
+        if(dItem.fieldCode === 'expectEndDate' && sItem.expectStartDate){
+          startDate = sItem.expectStartDate;
+          endDate = '';
+        }
+        // 当存在结束日期，选在开始日期时不能大于结束日期
+        else if(dItem.fieldCode === 'expectStartDate' && sItem.expectEndDate){
+          endDate = sItem.expectEndDate;
+          startDate = '';
+        }
+        this.$vux.datetime.show({
+          confirmText: '确认',
+          cancelText: '取消',
+          startDate: startDate,
+          endDate: endDate,
+          onConfirm: (val)=> {
+            if(sItem[dItem.fieldCode] == null){
+              this.$set(sItem, dItem.fieldCode, val)
+              return
+            }
+            sItem[dItem.fieldCode] = val;
+          },
+        })
+      }, 
       // TODO 提交
       save () {
-        let objArr = [
-          {tip: 'projectManager', msg: '项目经理'},
-          {tip: 'projectType', msg: '项目大类'},
-          {tip: 'projectName', msg: '项目名称'},
-          {tip: 'budgetIncome', msg: '预算收入'},
-          {tip: 'budgetCapital', msg: '预算成本'},
-          {tip: 'budgetCost', msg: '预算费用'},
-          {tip: 'expectStartDate', msg: '预期开始日期'},
-          {tip: 'expectEndDate', msg: '预期截止日期'},
-        ];
-        let selArr = ['projectManager', 'projectType'];
+        /**
+         * @warn 提示文字
+         * 
+         */
         let warn = '';
-        objArr.every(item => {
-          if (!this.ProjectApproval[item.tip]) {
-            if (selArr.includes(item.tip)) {
-              warn = `请选择${item.msg}`;
-            } else {
-              warn = `请填写${item.msg}`;
-            }
-            return false
-          }
-          return true
-        });
+        // 校验 <项目> 必填字段
+        warn = this.verifyData(this.otherConfig, this.ProjectApproval);
         if (warn) {
           this.$vux.alert.show({
             content: warn
@@ -183,23 +190,20 @@
           onConfirm: () => {
             this.$HandleLoad.show();
             let operation = saveProjectApproval;
+            if(this.$route.query.transCode){
+              operation = update;
+            }
             let submitData = {
               listId: this.listId,
               formData: {
-                handlerEntity: this.entity.dealerName,
                 comment: {
                   biComment: this.formData.biComment,
                 },
                 baseinfo: {
-                  creator: this.formData.handler,
-                  handler: this.formData.handler,
-                  handlerName: this.formData.handlerName,
-                  handlerRole: this.formData.handlerRole,
-                  handlerRoleName: this.formData.handlerRoleName,
-                  handlerUnit: this.formData.handlerUnit,
-                  handlerUnitName: this.formData.handlerUnitName,
                   id: '',
-                  modifer: this.formData.handler,
+                  handlerEntity: this.entity.dealerName,
+                  ...this.formData,
+                  
                 },
                 projectApproval: this.ProjectApproval
               },
@@ -212,49 +216,9 @@
       // TODO 选中项目经理
       selManager (val) {
         let sel = JSON.parse(val);
-        this.ProjectApproval.projectManager = sel.dealerName;
-        this.ProjectApproval.phoneNumber = sel.dealerMobilePhone;
-      },
-      // TODO 检查金额
-      checkAmt (key = '', val) {
-        if (val) {
-          this.ProjectApproval[key] = toFixed(val);
-        }
-      },
-      // TODO 获取项目大类
-      getBigType () {
-        return getDictByType('projectType').then(({tableContent = []}) => {
-          tableContent && tableContent.forEach(item => {
-            item.originValue = item.value;
-            item.value = item.name;
-          });
-          this.typeList = tableContent;
-        });
-      },
-      // TODO 获取项目子类
-      getType () {
-        let selected = this.typeList.find(item => {
-          return item.name === this.ProjectApproval.projectType
-        }) || {};
-        return getDictByValue(selected.originValue).then(({tableContent = []}) => {
-          tableContent && tableContent.forEach(item => {
-            item.originValue = item.value;
-            item.value = item.name;
-          });
-          this.subclassList = tableContent;
-          return tableContent;
-        });
-      },
-      // TODO 项目大类切换
-      projectBigChange (val) {
-        this.getType().then(data => {
-          if (this.hasDefault) {
-            return
-          }
-          // 默认取第一个
-          let [defaultSelect = {}] = data;
-          this.ProjectApproval.projectSubclass = defaultSelect.name;
-        })
+        this.$set(this.ProjectApproval, 'projectManagerName', sel.dealerName)
+        this.$set(this.ProjectApproval, 'phoneNumber', sel.dealerMobilePhone)
+        this.$set(this.ProjectApproval, 'projectManager', sel.dealerCode)
       },
       // TODO 获取显示数据
       getFormData () {
@@ -283,83 +247,93 @@
           this.formData = {
             ...this.formData,
             ...this.handlerDefault,
-            biComment: formData.baseinfo.biComment,
-            biId: formData.baseinfo.biId,
+            biComment: formData.comment.biComment,
+            id: formData.baseinfo.id,
             biProcessStatus: formData.baseinfo.biProcessStatus,
             creator: formData.baseinfo.creator,
             modifer: formData.baseinfo.modifer,
+            handlerEntity: formData.baseinfo.handlerEntity,
           }
           this.biReferenceId = formData.biReferenceId;
           this.$loading.hide()
         })
       },
-      // TODO 初始化页面的数据
-      initRequest () {
-        let data = sessionStorage.getItem(DRAFT_KEY);
-        let promises = [];
-        if (data) {
-          let draft = JSON.parse(data);
-          this.ProjectApproval = draft.ProjectApproval;
-          this.defaultManager = {
-            dealerName: this.ProjectApproval.projectManager,
-            dealerMobilePhone: this.ProjectApproval.phoneNumber,
-          };
-          this.getBigType().then(() => {
-            this.getType();
-          });
-          sessionStorage.removeItem(DRAFT_KEY);
-          return
-        }
-        promises.push(this.getBigType());
-        return Promise.all(promises);
-      },
       // TODO 保存草稿数据
       hasDraftData () {
         // 是否选择项目经理
-        if (!this.ProjectApproval.projectManager) {
+        if (!this.ProjectApproval.projectName && !this.ProjectApproval.projectType &&  !this.ProjectApproval.projectManagerName) {
           return false
         }
         return {
           [DRAFT_KEY]: {
             ProjectApproval: this.ProjectApproval,
+            formData: this.formData
           }
         };
       },
     },
     created () {
+      let data = sessionStorage.getItem(DRAFT_KEY);
+      if (data) {
+        let draft = JSON.parse(data);
+        this.ProjectApproval = draft.ProjectApproval;
+        this.formData = draft.formData;
+        this.defaultManager = {
+          dealerName: this.ProjectApproval.projectManager,
+          dealerMobilePhone: this.ProjectApproval.phoneNumber,
+        };
+        sessionStorage.removeItem(DRAFT_KEY);
+      }
     },
   }
 </script>
 
 <style lang="scss" scoped>
   @import './../../scss/bizApply';
-
-  .xmlx-apply-container {
-    /deep/ .weui-cells {
-      margin-top: 0;
-      font-size: .16rem;
-      &:before {
-        border-top: none;
-      }
-      &:after {
-        border-bottom: none;
-      }
-      .weui-cell {
-        padding: 10px 0;
-        &:before {
-          left: 0;
-        }
+  .materiel_list {
+    background: #fff;
+    padding: 0 .15rem;
+    font-size: .14rem;
+    color: #333;
+    .weui-cell {
+      padding: .1rem 0;
+      /deep/ .weui-textarea {
+        text-align: right;
       }
     }
-    .materiel_list{
-      /deep/ .weui-cells__title {
-        padding-left: 0;
-        font-size: .12rem;
-      }
-      /deep/ .weui-cells{
-        &:before{
-          border-top: 1px solid #D9D9D9;
-        }
+  }
+  .each_property {
+    padding: .18rem 0;
+    display: flex;
+    justify-content: space-between;
+    line-height: .14rem;
+    input {  
+      border: none;
+      outline: none;
+      font-size: .14rem;
+    } 
+    label {
+      color: #696969;
+    }
+    .required {
+      color: #3296FA;
+      font-weight: bold;
+    }
+    .property_val {
+      text-align: right;
+      flex: 1;
+      margin-left: .1rem;
+    }
+    .readonly {
+      color: #999;
+    }
+    .picker {
+      display: flex;
+      align-items: center;
+      .icon-right{
+        width: .08rem;
+        height: .14rem;
+        margin-left: .1rem;
       }
     }
   }

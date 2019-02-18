@@ -8,21 +8,27 @@
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="orderInfo" :order-info="orderInfo"></basic-info>
       <!-- 项目信息 -->
-      <div class="project_info">
-        <div class="info_title vux-1px-b"><span class="iconfont icon-xiangmu"></span>项目信息</div>
-        <div class="project_content">
-          <form-cell cellTitle="名称" :cellContent="approval.projectName" :showTopBorder=false></form-cell>
-          <form-cell cellTitle="大类" :cellContent="approval.projectType"></form-cell>
-          <form-cell cellTitle="子类" :cellContent="approval.projectSubclass"></form-cell>
-          <form-cell cellTitle="经理" :cellContent="approval.projectManager"></form-cell>
-          <form-cell cellTitle="经理电话" :cellContent="approval.phoneNumber"></form-cell>
-          <form-cell cellTitle="说明" :cellContent="approval.comment || '无'"></form-cell>
-          <form-cell cellTitle="预期开始日期" :cellContent="approval.expectStartDate | timeSplit"></form-cell>
-          <form-cell cellTitle="预期截止日期" :cellContent="approval.expectEndDate | timeSplit"></form-cell>
+      <div class="form_content">
+        <!-- <div class="info_title vux-1px-b"><span class="iconfont icon-xiangmu"></span>项目信息</div> -->
+        <div class="main_content">
+          <div class="vux-1px-b" v-for="(item, index) in otherConfig" :key="index">
+            <template v-if="item.id.includes('Datefield')">
+              <div class="each_info">
+                <label>{{item.fieldLabel}}</label>
+                <span class="field_value">{{approval[item.fieldCode] | timeSplit}}</span>
+              </div>
+            </template>
+            <template v-else>
+              <div class="each_info">
+                <label>{{item.fieldLabel}}</label>
+                <span class="field_value">{{approval[item.fieldCode]}}</span>
+              </div>
+            </template> 
+          </div>
         </div>
       </div>
       <!-- 预算明细 -->
-      <div class="project_info">
+      <!-- <div class="project_info">
         <div class="info_title vux-1px-b"><span class="iconfont icon-yusuan2"></span>预算明细</div>
         <div class="project_content">
           <form-cell cellTitle="收入" showSymbol textRight :cellContent="numberComma(approval.budgetIncome)" :showTopBorder=false></form-cell>
@@ -31,8 +37,10 @@
           <form-cell cellTitle="利润" showSymbol textRight :cellContent="numberComma(approval.budgetProfit)"></form-cell>
           <form-cell cellTitle="利润率" textRight :cellContent="percent(approval.budgetProfitMargin)"></form-cell>
         </div>
-      </div>
+      </div> -->
       <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
+      <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
 
     </div>
   </div>
@@ -46,6 +54,7 @@
   // mixins 引入
   import detailCommon from 'components/mixins/detailCommon'
   import {accMul} from '@/home/pages/maps/decimalsAdd'
+  import RAction from 'components/RAction'
 
   export default {
     data() {
@@ -63,6 +72,7 @@
     components: {
       Group,
       Cell,
+      RAction
     },
     methods: {
       // 获取详情
@@ -73,6 +83,7 @@
           this.comment = formData.comment;
           this.orderInfo = {
             ...formData.baseinfo,
+            ...formData.comment,
             biStatus: '已生效'
           };
         })
