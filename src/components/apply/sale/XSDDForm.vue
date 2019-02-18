@@ -41,6 +41,7 @@ import { saveAndStartWf, saveAndCommitTask, submitAndCalc, getPriceFromSalesCont
 // mixins 引入
 import common from 'components/mixins/applyCommon'
 // 组件引入
+import RNumber from 'components/RNumber'
 import PopDealerList from 'components/Popup/PopDealerList'
 import OpButton from 'components/apply/commonPart/OpButton'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
@@ -85,7 +86,7 @@ export default {
     },
   },
   components: {
-    XTextarea, OpButton,
+    RNumber, XTextarea, OpButton,
     PopBaseinfo, PopDealerList, DealerOtherPart, ApplyMatterPart
   },
   mixins: [common],

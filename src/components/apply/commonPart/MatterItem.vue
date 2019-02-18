@@ -1,22 +1,22 @@
 <template>
   <div class="matter-item">
     <div class="mater_img">
-      <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
+      <img :src="matter.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
     </div>
     <div class="mater_main">
       <!-- 物料名称 -->
       <div class="mater_name">
-        {{item.inventoryName || item.invName || item.facilityName}}
+        {{matter.inventoryName || matter.invName || matter.facilityName}}
         <span class="icon-matter-bianji" @click.stop="modifyMatter" v-if="!showDelete"></span>
       </div>
       <div class="matter_more">
         <div class="each_info" v-for="(cItem, cIndex) in config" :key="cIndex">
           <span class="title">{{cItem.text}}:</span>
           <span v-if="cItem.showFieldCode">
-            {{item[cItem.showFieldCode] != null && item[cItem.showFieldCode] !== "" ? item[cItem.showFieldCode] : "无"}}
+            {{matter[cItem.showFieldCode] != null && matter[cItem.showFieldCode] !== "" ? matter[cItem.showFieldCode] : "无"}}
           </span>
           <span v-else>
-            {{item[cItem.fieldCode] != null && item[cItem.fieldCode] !== "" ? item[cItem.fieldCode] : "无"}}
+            {{matter[cItem.fieldCode] != null && matter[cItem.fieldCode] !== "" ? matter[cItem.fieldCode] : "无"}}
           </span>
         </div>
       </div>
@@ -57,24 +57,48 @@ export default {
         return []
       }
     }
+  },
+  watch: {
+    item: {
+      handler(val) {
+        // 对父组件传进来的值 声明新的对象
+        this.matter = {...this.item};
+      },
+      deep: true,
+      immediate: true
+    },
+    matter: {
+      handler(val) {
+        console.log('matter:', val);
+        // let currentMatter = JSON.stringify(val), 
+        //     parentMatter = JSON.stringify(this.item);
 
+        // // 是否已修改数据 若修改则传值回父组件
+        // if(currentDealer !== parentDealer){
+        //   this.$emit('input', val)
+        // } 
+      },
+      deep: true
+    }
   },
   computed: {
     showEdit () {
       // 存在 价格、数量 输入
-      if(this.item.price || this.item.tdQty){
-        return this.item.price || this.item.tdQty
+      if(this.matter.price || this.matter.tdQty){
+        return this.matter.price || this.matter.tdQty
       }
     },
     hideEdit () {
       // 存在 价格、数量 输入
-      if (this.item.price === '' || this.item.tdQty === '' || this.item.price === 0 || this.item.tdQty === 0) {
-        return !this.item.price || !this.item.tdQty
+      if (this.matter.price === '' || this.matter.tdQty === '' || this.matter.price === 0 || this.matter.tdQty === 0) {
+        return !this.matter.price || !this.matter.tdQty
       }
     }
   },
   data () {
-    return {}
+    return {
+      matter: {}
+    }
   },
   methods: {
     // TODO 选择默认图片

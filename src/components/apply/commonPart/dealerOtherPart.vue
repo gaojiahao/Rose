@@ -80,9 +80,7 @@ export default {
     // 监听父组件的传值，赋值给子组件的dealer
     dealerInfo: {
       handler(val){
-        this.dealer = {
-          ...this.dealerInfo
-        }
+        this.dealer = { ...this.dealerInfo }
       },
       immediate: true
     },
@@ -91,8 +89,10 @@ export default {
       handler(val) {
         let currentDealer = JSON.stringify(val), 
             parentDealer = JSON.stringify(this.dealerInfo);
+
         // 根据结算方式 判断其他配置是否显示
         this.verifyPayments(val);
+
         // 是否已修改数据 若修改则传值回父组件
         if(currentDealer !== parentDealer){
           this.$emit('input', val)
