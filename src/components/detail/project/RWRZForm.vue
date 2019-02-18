@@ -15,13 +15,13 @@
             <template v-if="item.id.includes('Datefield')">
               <div class="each_info">
                 <label>{{item.fieldLabel}}</label>
-                <span class="field_value">{{approval[item.fieldCode] | timeSplit}}</span>
+                <span class="field_value">{{jobLog[item.fieldCode] | timeSplit}}</span>
               </div>
             </template>
             <template v-else>
               <div class="each_info">
                 <label>{{item.fieldLabel}}</label>
-                <span class="field_value">{{approval[item.fieldCode]}}</span>
+                <span class="field_value">{{jobLog[item.fieldCode] || "无"}}</span>
               </div>
             </template> 
           </div>
@@ -31,11 +31,11 @@
       <!-- <div class="project_info">
         <div class="info_title vux-1px-b"><span class="iconfont icon-yusuan2"></span>预算明细</div>
         <div class="project_content">
-          <form-cell cellTitle="收入" showSymbol textRight :cellContent="numberComma(approval.budgetIncome)" :showTopBorder=false></form-cell>
-          <form-cell cellTitle="成本" showSymbol textRight :cellContent="numberComma(approval.budgetCapital)"></form-cell>
-          <form-cell cellTitle="费用" showSymbol textRight :cellContent="numberComma(approval.budgetCost)"></form-cell>
-          <form-cell cellTitle="利润" showSymbol textRight :cellContent="numberComma(approval.budgetProfit)"></form-cell>
-          <form-cell cellTitle="利润率" textRight :cellContent="percent(approval.budgetProfitMargin)"></form-cell>
+          <form-cell cellTitle="收入" showSymbol textRight :cellContent="numberComma(jobLog.budgetIncome)" :showTopBorder=false></form-cell>
+          <form-cell cellTitle="成本" showSymbol textRight :cellContent="numberComma(jobLog.budgetCapital)"></form-cell>
+          <form-cell cellTitle="费用" showSymbol textRight :cellContent="numberComma(jobLog.budgetCost)"></form-cell>
+          <form-cell cellTitle="利润" showSymbol textRight :cellContent="numberComma(jobLog.budgetProfit)"></form-cell>
+          <form-cell cellTitle="利润率" textRight :cellContent="percent(jobLog.budgetProfitMargin)"></form-cell>
         </div>
       </div> -->
       <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
@@ -50,7 +50,7 @@
   // vux组件引入
   import {Cell, Group, numberComma} from 'vux'
   // 请求 引入
-  import {findProjectApproval} from 'service/projectService'
+  import {jobLog} from 'service/projectService'
   // mixins 引入
   import detailCommon from 'components/mixins/detailCommon'
   import {accMul} from '@/home/pages/maps/decimalsAdd'
@@ -59,7 +59,7 @@
   export default {
     data() {
       return {
-        approval: {},
+        jobLog: {},
         comment: {},
       }
     },
@@ -77,8 +77,8 @@
     methods: {
       // 获取详情
       getOrderList(transCode = '') {
-        return findProjectApproval(transCode).then(({formData = {},attachment = []}) => {
-          this.approval = formData.projectApproval;
+        return jobLog(transCode).then(({formData = {},attachment = []}) => {
+          this.jobLog = formData.jobLog;
           this.attachment = attachment;
           this.comment = formData.comment;
           this.orderInfo = {

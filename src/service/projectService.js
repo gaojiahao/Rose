@@ -8,7 +8,13 @@ export let saveProjectApproval = (data = {}) => {
     data
   })
 };
-
+// 保存任务日志
+export let saveJobLog = (data = {}) => {
+  return $flyio.post({
+    url: '/H_roleplay-si/jobLog/save',
+    data
+  })
+};
 // TODO 修改项目立项
 export let updateProjectApproval = (data = {}) => {
   return $flyio.post({
@@ -21,6 +27,13 @@ export let updateProjectApproval = (data = {}) => {
 export let findProjectApproval = (transCode = '') => {
   return $flyio.ajax({
     url: '/H_roleplay-si/projectApproval/findData',
+    data: {transCode}
+  })
+};
+
+export let jobLog = (transCode = '') => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/jobLog/findData',
     data: {transCode}
   })
 };

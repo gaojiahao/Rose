@@ -38,7 +38,7 @@
                   </div>
                 </div>
                 <!-- 文本框 -->
-                <x-textarea v-model="jobLog[item.fieldCode]" v-if="item.xtype === 'r2TextArea'">
+                <x-textarea v-model="jobLog[item.fieldCode]" v-if="item.xtype === 'r2TextArea'" placeholder="请输入">
                   <template slot="label">
                     <span :class="{required : !item.allowBlank}" style="display: block; width: 4em;">{{item.fieldLabel}}</span>
                   </template>
@@ -57,6 +57,7 @@
         <div class="comment">         
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
         </div>
+        <upload-file @on-upload="onUploadFile"></upload-file>
       </div>
     </div>
     <!-- 底部按钮 -->
@@ -70,7 +71,7 @@
     XTextarea, dateFormat
   } from 'vux'
   // 请求 引入
-  import { saveProjectApproval, findProjectApproval } from 'service/projectService'
+  import { saveProjectApproval, findProjectApproval, saveJobLog } from 'service/projectService'
   import { getDictByType, getDictByValue, requestData, update} from 'service/commonService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
@@ -106,77 +107,7 @@
         return this.jobLog.projectType
       }
     },
-    watch: {
-      // 监听大类变化，修改子类
-      projectType: {
-        handler(val){
-          if(val){
-            let type = ''; // 当前项目大类对应的类型，请求子类的参数
-            for(let item of this.otherConfig){
-              if(item.fieldCode === 'projectType'){
-                for(let dItem of item.remoteData){
-                  if(dItem.name === val){
-                    type = dItem.originValue;
-                    break;
-                  }
-                }
-              }
-              if(item.fieldCode === 'projectSubclass'){
-                let requestParams = {
-                  url: item.dataSource.data.url,
-                  data: {
-                    value: type
-                  }
-                }
-                requestData(requestParams).then(({tableContent = []}) =>{
-                  if(this.jobLog.projectSubclass != null) {
-                    this.jobLog.projectSubclass = tableContent[0].name
-                  }
-                  else{
-                    this.$set(this.jobLog, 'projectSubclass', tableContent[0].name)
-                  }
-                  tableContent.forEach(dItem =>{
-                    dItem.originValue = dItem.value;
-                    dItem.name = dItem[item.displayField]
-                    dItem.value = dItem[item.displayField];
-                  })
-                  item.remoteData = tableContent;
-                })
-              }
-            }
-          }
-        }
-        
-      }
-    },
     methods: {
-      // 选择日期
-      getDate(sItem, dItem){
-        let startDate = '', endDate = '';
-        // 当存在开始日期，选在结束日期时不能小于开始日期
-        if(dItem.fieldCode === 'expectEndDate' && sItem.expectStartDate){
-          startDate = sItem.expectStartDate;
-          endDate = '';
-        }
-        // 当存在结束日期，选在开始日期时不能大于结束日期
-        else if(dItem.fieldCode === 'expectStartDate' && sItem.expectEndDate){
-          endDate = sItem.expectEndDate;
-          startDate = '';
-        }
-        this.$vux.datetime.show({
-          confirmText: '确认',
-          cancelText: '取消',
-          startDate: startDate,
-          endDate: endDate,
-          onConfirm: (val)=> {
-            if(sItem[dItem.fieldCode] == null){
-              this.$set(sItem, dItem.fieldCode, val)
-              return
-            }
-            sItem[dItem.fieldCode] = val;
-          },
-        })
-      }, 
       // TODO 提交
       save () {
         /**
@@ -197,7 +128,7 @@
           // 确定回调
           onConfirm: () => {
             this.$HandleLoad.show();
-            let operation = saveProjectApproval;
+            let operation = saveJobLog;
             if(this.$route.query.transCode){
               operation = update;
             }
@@ -213,7 +144,16 @@
                   ...this.formData,
                   
                 },
-                jobLog: this.jobLog
+                jobLog: {
+                  groupName: this.formData.groupName,
+                  roleName: this.formData.roleName,
+                  hourlyCost: '',
+                  jobLogId: '',
+                  logGroupCode: '',
+                  logRoleCode: '',
+                  missionCost: '',
+                  ...this.jobLog
+                }
               },
               wfParam: null
             };
@@ -224,9 +164,14 @@
       // TODO 选中项目经理
       selJob (val) {
         let sel = JSON.parse(val);
-        this.$set(this.jobLog, 'projectManagerName', sel.dealerName)
-        this.$set(this.jobLog, 'phoneNumber', sel.dealerMobilePhone)
-        this.$set(this.jobLog, 'projectManager', sel.dealerCode)
+        this.jobLog = {
+          ...this.jobLog,
+          projectName: sel.projectName,
+          dealerName: sel.dealerName,
+          executor: sel.executor,
+          projectTaskName: sel.taskName,
+          projectTaskId: sel.taskId
+        }
       },
       // TODO 获取显示数据
       getFormData () {

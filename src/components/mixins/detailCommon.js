@@ -433,7 +433,7 @@ export default {
               rkConfig = item.items;
               this.setWarehouseConfg(rkConfig, '入库');
             }
-            if(item.name === 'pb' || item.name === 'projectApproval'){
+            if(item.name === 'pb' || item.name === 'projectApproval' || item.name === 'jobLog'){
               otherConfig = item.items;
             }
           } else {

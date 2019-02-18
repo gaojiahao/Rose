@@ -1,11 +1,11 @@
 <template>
-  <div class="pages xmlx-list-container" :class="{'no-add': !action.add}" ref='list'>
+  <div class="pages xsbj-list-conatiner" :class="{'no-add': !action.add}" ref='list'>
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search='searchList' ref="search"></searchIcon>
         <div class="filter_part">
-          <r-sort @on-sort="onSortList" @on-filter="onFilter" :list-id="listId" ref="sort" :hasFormStatus="false"></r-sort>
+          <r-sort @on-sort="onSortList" @on-filter="onFilter" :list-id="listId" ref="sort"></r-sort>
         </div>
       </div>
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
@@ -18,25 +18,32 @@
               <span class="instance_code vux-1px-l">{{item.transCode}}</span>
               <span class="instance_status" :class="item.statusClass">{{item.biStatus}}</span>
             </div>
-            <div class="instance-project-type">
-              <span class="text">{{item.projectType_projectApprovalId}}</span>
-              <span class="instance_process_status">{{item.biProcessStatus || '暂无流程'}}</span>
-            </div>
             <div class="instance-project-container">
-              <i class="icon-project"></i>
-              <div class="instance_project_detail">
-                <div class="project_detail_top">
-                  <div class="project_name">{{item.logTitle}}</div>
-                </div>
-                <div class="project_detail_bottom">
-                  <div>
-                    <div class="project_detail_item">
-                      <span class="project_detail_title">项目经理：</span>
-                      <span class="project_detail_value">{{item.dealerName_dealerDebit}}</span>
+              <div class="project_name" :class="{'time-to-wrap': item.logTitle.length > 15}">标题：{{item.logTitle}}</div>
+              <div class="project_manager">
+                <span class="project_manager_title">标准工时：</span>
+                <span class="project_manager_value">{{item.logDeclarationHours || 0}}</span>
+              </div>
+            </div>
+            <div class="instance-task-container">
+              <div class="instance_task_item" v-for="(task, tIndex) in item.detailItem" :key="tIndex">
+                <i class="icon" :class="[getTaskIcon(tIndex)]"></i>
+                <div class="task-detail vux-1px-b">
+                  <div class="task_name">{{task.taskName}}</div>
+                  <div class="task_info">
+                    <div class="task_info_item">
+                      <span class="task_info_title">预算成本：</span>
+                      <span class="task_info_amt">￥{{task.budgetCapital_project || 0 | numberComma}}</span>
                     </div>
-                    <div class="project_detail_item">
-                      <span class="project_detail_title">经理电话：</span>
-                      <span class="project_detail_value">{{item.dealerMobilePhone_dealerDebit || '无'}}</span>
+                    <div class="task_info_item">
+                      <span class="task_info_title">周期天数：</span>
+                      <span class="task_info_day">{{task.planCycleDays || 0}}天</span>
+                    </div>
+                  </div>
+                  <div class="task_info">
+                    <div class="task_info_item">
+                      <span class="task_info_title">日期</span>
+                      <span class="task_info_day">{{task.expectEndDate_project | dateFormat('YYYY-MM-DD') || '无'}}</span>
                     </div>
                   </div>
                 </div>
@@ -45,7 +52,7 @@
           </div>
           <div class="instance-bottom vux-1px-t">
             <div class="instance-bottom-wrapper">
-              <div class="instance_bottom_item instance_handler" :class="{'when-is-more' : item.handlerName.length > 3 }">
+              <div class="instance_bottom_item instance_handler">
                 <i class="icon icon-handler"></i>
                 <span>经办人：{{item.handlerName}}</span>
               </div>
@@ -56,6 +63,9 @@
             </div>
           </div>
         </div>
+
+        <!--<just-word-item :item="item" v-for="(item, index) in listData" :key="index"
+                        noCount @click.native="goDetail(item, index)"></just-word-item>-->
       </r-scroll>
     </div>
     <add-btn :action="action" :goEdit="goEdit"></add-btn>
@@ -65,8 +75,6 @@
 <script>
   import {getList} from 'service/commonService'
   import listCommon from 'pageMixins/bizListCommon'
-  // 方法引入
-  import {accMul} from '@/home/pages/maps/decimalsAdd'
 
   export default {
     data() {
@@ -80,24 +88,17 @@
             name: '经办人',
             value: 'handlerName',
           }, {
+            name: '任务类型',
+            value: 'taskType',
+          }, {
             name: '项目名称',
             value: 'projectName_project',
           },
         ],
-        listViewID: 2301,
+        listViewID: 2326,
       }
     },
     mixins: [listCommon],
-    filters: {
-      // TODO 转为百分比
-      percent(val) {
-        if (!val && val !== 0) {
-          return '无';
-        }
-        let budget = accMul(val,100);
-        return `${budget}%`;
-      },
-    },
     methods: {
       goDetail(item, index) {
         if (this.clickVisited) {
@@ -120,6 +121,11 @@
           })
         }, 200)
       },
+      // TODO 返回任务icon
+      getTaskIcon(index) {
+        let icons = ['icon-task', 'icon-task2', 'icon-task3'];
+        return icons[index % 3]
+      },
     }
   }
 </script>
@@ -128,102 +134,84 @@
 @import './project.scss';
 .instance-item-wrapper {
   .instance-main {
-    padding: .15rem;
-  }
-  .instance-project-type {
-    width: 100%;
-    display: flex;
-    color: #696969;
-    font-size: .14rem;
-    margin-top: .15rem;
-    align-items: center;
-    justify-content: space-between;
-    .text {
-      z-index: 10;
-      position: relative;
-      display: inline-block;
-      padding: .02rem .06rem;
-      &:before {
-        top: 0;
-        left: 0;
-        content: '';
-        z-index: -1;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        border-radius: 4px;
-        transform: skewX(-10deg);
-        background-color: #e6e6e6;
-      }
-    }
+    padding: .15rem .15rem 0;
   }
   .instance-project-container {
     display: flex;
-    align-items: flex-start;
-    margin-top: .15rem;
-    .icon-project {
+    align-items: center;
+    margin-top: .25rem;
+    .project_name {
+      line-height: .12rem;
+      font-size: .12rem;
+      &.time-to-wrap {
+        flex: 1;
+        line-height: .16rem;
+      }
+    }
+    .project_manager {
+      display: flex;
+      margin-left: .1rem;
+      line-height: .12rem;
+      font-size: .12rem;
+    }
+    .project_manager_title {
+      color: #999;
+    }
+    .project_manager_value {
+      color: #696969;
+    }
+  }
+  .instance-task-container {
+    margin-top: .2rem;
+    .instance_task_item {
+      display: flex;
+      & + .instance_task_item {
+        margin-top: .15rem;
+      }
+      &:last-child {
+        .task-detail {
+          &:after {
+            display: none;
+          }
+        }
+      }
+    }
+    .icon {
+      display: inline-block;
       width: .5rem;
       height: .5rem;
     }
-    .instance_project_detail {
+    .task-detail {
       flex: 1;
       margin-left: .1rem;
+      padding-bottom: .15rem;
     }
-    .project_detail_top {
-      display: flex;
-      justify-content: space-between;
-    }
-    .project_name {
-      flex: 1;
-      margin-bottom: .15rem;
+    .task_name {
+      font-size: .14rem;
       line-height: .18rem;
-      font-size: .14rem;
     }
-    .project_detail_amt {
-      color: #FA7138;
-      font-size: .2rem;
-      text-align: center;
-    }
-    .amt {
-      line-height: .2rem;
-    }
-    .symbol {
-      line-height: .12rem;
-      font-size: .14rem;
-    }
-    .text {
-      margin-top: .05rem;
-      line-height: .12rem;
-      color: #999;
-      font-size: .12rem;
-    }
-
-    .project_detail_bottom {
+    .task_info {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-    }
-    .project_detail_item {
+      margin-top: .12rem;
       line-height: .12rem;
       font-size: .12rem;
-      & + .project_detail_item {
-        margin-top: .1rem;
+      & + .task_info {
+        margin-top: .08rem;
       }
     }
-    .project_detail_title {
+    .task_info_item {
+      & + .task_info_item {
+        margin-left: .1rem;
+      }
+    }
+    .task_info_title {
       color: #999;
     }
-    .project_detail_value {
+    .task_info_amt {
+      color: #FA7138;
+    }
+    .task_info_day {
       color: #696969;
-    }
-    .project_profit {
-      line-height: .12rem;
-      color: #999;
-      font-size: .1rem;
-      .value {
-        color: #FA7138;
-        font-size: .12rem;
-      }
     }
   }
 }

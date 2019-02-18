@@ -3,9 +3,9 @@
     <!-- 仓库信息 -->
     <div>
       <div class='each_property'>
-        <label class="required">{{title}}</label>
+        <label>{{title}}</label>
         <div class='picker'>
-          <span class='mater_nature'>{{selItems.dealerName || "请选择"}}</span>
+          <span class='mater_nature'>{{selItems.taskName || "请选择"}}</span>
           <span class='icon-right'></span>
         </div>
       </div>
@@ -25,20 +25,16 @@
                   <!--联系人电话 -->
                   <div class="withColor">
                     <div class="ForInline name" style="display:inline-block">
-                      <span>{{item.dealerName}}</span>
+                      <span>{{item.taskName}}</span>
                     </div>
                     <div class="ForInline name" style="display:inline-block">
                       <span></span>
                     </div>
                   </div>
-                  <div class="withColor" v-if="item.dealerMobilePhone">
+                  <div class="withColor">
                     <div class="ForInline " style="display:inline-block">
-                      <span class='creator'>{{item.dealerMobilePhone}}</span>
+                      <span class='project_name'>项目名称：{{item.projectName}}</span>
                     </div>
-                  </div>
-                  <!-- 地址 -->
-                  <div class="withoutColor">
-                    <span>{{item.province}}{{item.city}}{{item.county}}{{item.address}}</span>
                   </div>
                 </div>
               </div>
@@ -146,7 +142,7 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.selItems.dealerName === sItem.dealerName;
+        return this.selItems.taskId === sItem.taskId;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
@@ -300,13 +296,12 @@
               .withColor {
                 margin-top: .04rem;
                 .name {
-                  color: #5077aa;
-                  font-size: .14rem;
-                  font-weight: bold;
-                }
-                .creator {
                   color: #111;
                   font-weight: bold;
+                }
+                .project_name {
+                  color: #999;
+                  font-size: .12rem;
                 }
               }
             }
