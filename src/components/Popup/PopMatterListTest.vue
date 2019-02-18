@@ -153,9 +153,7 @@
           * 请注意 若<参数为空> 则不会发起请求
           */
           if(hasParamsData) {
-            console.log('if');
             for(let item in val.data) {
-              console.log('item:', item);
               if(!val.data[item]) {
                 paramsIsOk = false;
                 break;

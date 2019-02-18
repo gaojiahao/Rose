@@ -153,15 +153,13 @@ export default {
         dealerCode: this.dealerInfo.dealerCode
       }).then(({ data = [] }) => {
           let [priceTag = {}] = data;
+          // 为了在<MatterPop>组件中提供必要的提示 <数量上限、下限为默认需要字段> 
           let defaultKey = ['qtyOnline', 'qtyDownline'];
           // 动态添加字段
           for(let key in priceTag) {
             if(defaultKey.includes(key)) {
               item[key] = priceTag[key];
               delete priceTag[key];
-            }
-            else if(!item.hasOwnProperty(key) && !key.includes('price')){
-              this.$set(item, key, priceTag[key]);
             }
           }
           item.otherField = {...priceTag};
@@ -173,9 +171,6 @@ export default {
       let orderList = JSON.parse(JSON.stringify(this.orderList));
       sels.forEach(item => {
         let orderListKey = item.transCode ? item.transCode : 'noCode';
-        if(this.dealerInfo.dealerCode){
-          this.getQtyRange(item);
-        }
         item.taxRate = this.taxRate;
         item.tdQty = item.qtyBal || '';
         item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
@@ -184,6 +179,10 @@ export default {
         item.promDeliTime = '';
         item.dateActivation = dateFormat(item.dateActivation, 'YYYY-MM-DD');
         item.executionDate = dateFormat(item.executionDate, 'YYYY-MM-DD');
+        // 此处请求 <数量上限、下限>
+        if(this.dealerInfo.dealerCode){
+          this.getQtyRange(item);
+        }
         // 如果有销售合同号
         if(item.transCode){
           if (!orderList[orderListKey]) {

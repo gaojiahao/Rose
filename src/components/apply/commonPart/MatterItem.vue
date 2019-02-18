@@ -13,10 +13,10 @@
         <div class="each_info" v-for="(cItem, cIndex) in config" :key="cIndex">
           <span class="title">{{cItem.text}}:</span>
           <span v-if="cItem.showFieldCode">
-            {{item[cItem.showFieldCode] != null &&  item[cItem.showFieldCode] !== "" ? item[cItem.showFieldCode] : "无"}}
+            {{item[cItem.showFieldCode] != null && item[cItem.showFieldCode] !== "" ? item[cItem.showFieldCode] : "无"}}
           </span>
           <span v-else>
-            {{item[cItem.fieldCode] != null &&  item[cItem.fieldCode] !== "" ? item[cItem.fieldCode] : "无"}}
+            {{item[cItem.fieldCode] != null && item[cItem.fieldCode] !== "" ? item[cItem.fieldCode] : "无"}}
           </span>
         </div>
       </div>
