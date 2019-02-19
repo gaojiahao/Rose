@@ -3,126 +3,50 @@
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
-                      :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
+                      :handle-org-list="handleORG" :user-role-list="userRoleList" :showStatus="false"></pop-baseinfo>
         <!-- 物料列表 -->
-        <div class="materiel_list">
-          <!-- 没有选择物料 -->
-          <template v-if="!matterList.length">
-            <div @click="showMaterielPop = !showMaterielPop">
-              <div class="title">{{orderListTitle}}列表</div>
-              <div class="required">请选择{{orderListTitle}}</div>
-              <i class="iconfont icon-youjiantou r_arrow"></i>
-            </div>
-          </template>
-          <!-- 已经选择了物料 -->
-          <template v-else>
-            <div class="title" @click="showDelete">
-              <div>{{orderListTitle}}列表</div>
-              <div class='edit' v-if='!matterModifyClass'>编辑</div>
-              <div class='finished' v-else>完成</div>
-            </div>
-            <div class="mater_list">
-              <div class="each_mater"
-                   :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1 }"
-                   v-for="(item, index) in matterList" :key='index'>
-                <matter-item :item="item" @on-modify="getMatterModify(item, index)" :show-delete="matterModifyClass"
-                             @click.native="delClick(index,item)" :config="matterEditConfig.property">
-                  <template slot="info" slot-scope="{item}">
-                    <!-- 物料数量和价格 -->
-                    <div class='mater_other' v-if="item.price && item.tdQty">
-                      <div class='mater_price'>
-                        <span class="symbol">￥</span>{{item.price}}
-                      </div>
-                      <div>
-                        <r-number :num="item.tdQty" :checkAmt='checkAmt(item)' v-model="item.tdQty"></r-number>
-                      </div>
-                    </div>
-                  </template>
-                  <template slot="edit" slot-scope="{item}">
-                    <div class='mater_other' @click="getMatterModify(item, index)" v-if="!item.tdQty && !matterModifyClass">
-                      <div class="edit-tips">
-                        <span class="tips-word">点击进行填写</span>
-                      </div>
-                    </div>
-                  </template>
-                  <template slot="editPart" slot-scope="{item}">
-                    <div class="edit-part vux-1px-l" @click="getMatterModify(item, index)"
-                         v-show="item.tdQty && !matterModifyClass">
-                      <span class='iconfont icon-bianji1'></span>
-                    </div>
-                  </template>
-                </matter-item>
-                <div class='delete_icon' @click="delClick(index,item)" v-if='matterModifyClass'>
-                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
-                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
-                </div>
+        <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :show-matter-pop="showMatterPop"
+          :actions="actions" :btnInfo="btnInfo" :matter-list="consumableList" :default-value="[]"
+          :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
+          :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
+          :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
+          :chosen-matter="consumables" :check-amt-fn="checkAmt" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
+          <template slot="info" slot-scope="{item}">
+            <div class='mater_other' v-if="item.price && item.tdQty">
+              <div class='mater_price'>
+                <span class="symbol">￥</span>{{item.price}}
               </div>
+              <r-number :num="item.tdQty" v-model="item.tdQty"></r-number>
             </div>
           </template>
-          <!-- 新增更多 按钮 -->
-          <div class="handle_part vx-1px-t" v-if="matterList.length && !matterModifyClass">
-            <span class="add_more stop" v-if="this.actions.includes('stop')"
-                  @click="stopOrder">终止提交</span>
-            <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
-            <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
-          </div>
-          <!-- 物料popup -->
-          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                           :default-value="matterList" :config="matterPopConfig" :matter-params="matterParams"
-                           ref="matter">
-          </pop-matter-list>
-        </div>
-        <!--物料编辑pop-->
-        <pop-matter :modify-matter='consumables' :show-pop="showMatterPop" @sel-confirm='selConfirm'
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
-        </pop-matter>
+        </apply-matter-part>
         <!--备注-->
-        <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
+        <div class='comment vux-1px-t' :class="{no_margin : !consumableList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       </div>
     </div>
-    <!-- 底部确认栏 -->
-    <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
-      <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{tdAmount | numberComma(3)}}
-        <!--<span class="taxAmount">[含税: ￥{{taxAmount |numberComma(3)}}]</span>-->
-      </span>
-      <span class="count_btn" @click="save">提交</span>
-    </div>
-    <!-- 底部删除确认栏 -->
-    <div class="count_mode vux-1px-t delete_mode" :class="{btn_hide : btnIsHide}" v-else>
-      <div class='count_num all_checked' @click="checkAll">
-        <x-icon type="ios-circle-outline" size="20" class='outline'
-                v-show="selItems.length !== matterList.length"></x-icon>
-        <x-icon type="ios-checkmark" size="20" class="checked" v-show="selItems.length === matterList.length"></x-icon>
-        全选
-      </div>
-      <div class='delete_btn' @click="deleteCheckd">删除</div>
-    </div>
+    <op-button :is-modify="matterModifyClass" :hide="btnIsHide" :td-amount="tdAmount" :tax-amount="taxAmount"
+               :all-check="selItems.length === consumableList.length" @on-submit="save" @on-check-all="checkAll"
+               @on-delete="deleteCheckd"></op-button>
   </div>
 </template>
 
 <script>
   // vux组件引入
-  import {Icon, XInput, XTextarea, Cell, Group} from 'vux'
+  import { XTextarea } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
   import {submitAndCalc, saveAndStartWf, getDictByType, saveAndCommitTask} from 'service/commonService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
-  import RPicker from 'components/RPicker'
-  import PopMatterList from 'components/Popup/PopMatterListTest'
-  import PopDealerList from 'components/Popup/PopDealerList'
-  import PopSingleSelect from 'components/Popup/PopSingleSelect'
-  import PopMatter from 'components/apply/commonPart/MatterPop'
   import UploadFile from 'components/upload/UploadFile'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import RNumber from 'components/RNumber'
+  import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
+  import OpButton from 'components/apply/commonPart/OpButton'
 
   // 方法引入
   import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
@@ -134,54 +58,20 @@
     data() {
       return {
         listId: '4472a646-f2c8-4a07-bad6-4c01f0b9292f',
-        matterList: [], // 物料列表
+        consumableList: [], // 物料列表
         showMaterielPop: false, // 是否显示物料的popup
         transCode: '',
         formData: {
           biComment: '',
         },
-        priceMap: {},
-        consumables: {},
-        checkFieldList: [
-          {
-            key: 'tdQty',
-            message: '请填写本次申请数量'
-          },
-          {
-            key: 'price',
-            message: '请填写估计价格'
-          },
-        ]
+        consumables: {}, // 当前要编辑的物料
       }
     },
     components: {
-      Icon, XInput, RPicker, XTextarea, Group,
-      PopMatterList, PopMatter, UploadFile,
-      PopBaseinfo, Cell, RNumber,
+      XTextarea, UploadFile,
+      PopBaseinfo,RNumber, ApplyMatterPart, OpButton
     },
     mixins: [ApplyCommon],
-    computed: {
-      // 合计金额
-      totalAmount() {
-        let total = 0;
-        this.matterList.forEach(item => {
-          this.simpleCalcMatter(item);
-          total = accAdd(total, item.noTaxAmount);
-        });
-        return Number(total);
-      },
-      // 税金
-      taxAmount() {
-        let total = 0;
-        this.matterList.forEach(item => {
-          total = toFixed(accAdd(total, item.taxAmount));
-        });
-        return total;
-      },
-      tdAmount() {
-        return parseFloat(accAdd(this.totalAmount, Number(this.taxAmount)).toFixed(2))
-      },
-    },
     watch:{
       //修改的物料
       consumables:{
@@ -189,6 +79,19 @@
           this.simpleCalcMatter(val)
         },
         deep:true
+      },
+      consumableList: {
+        handler(val) {
+          let tdAmount = 0, taxAmount = 0;
+          for (let item of val) {
+            this.simpleCalcMatter(item);
+            tdAmount = toFixed(accAdd(tdAmount, item.tdAmount));
+            taxAmount = toFixed(accAdd(taxAmount, item.taxAmount));
+          }
+          this.tdAmount = tdAmount;
+          this.taxAmount = taxAmount;
+        },
+        deep: true
       }
     },
     methods: {
@@ -200,27 +103,27 @@
         this.modifyKey = key;
       },
       // 选择要删除的物料
-      delClick(index, sItem) {
+      delClick(sItem, index) {
         let arr = this.selItems;
-        let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
-        // 若存在重复的 则清除
+        let delIndex = arr.findIndex(item => item === index);
+        //若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
           return;
         }
-        arr.push(sItem);
+        arr.push(index);
       },
       // TODO 判断是否展示选中图标
-      showSelIcon(sItem) {
-        return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
+      showSelIcon(sItem, index) {
+        return this.selItems.includes(index);
       },
       // 全选
       checkAll() {
-        if (this.selItems.length === this.matterList.length) {
+        if (this.selItems.length === this.consumableList.length) {
           this.selItems = [];
           return
         }
-        this.selItems = JSON.parse(JSON.stringify(this.matterList));
+        this.selItems = this.consumableList.map((item, index) => index);
       },
       // 删除选中的
       deleteCheckd() {
@@ -228,16 +131,19 @@
           content: '确认删除?',
           // 确定回调
           onConfirm: () => {
-            this.selItems.forEach(item => {
-              let index = this.matterList.findIndex(item2 => item2.inventoryCode === item.inventoryCode);
-              if (index >= 0) {
-                this.matterList.splice(index, 1);
-              }
-            })
+            let selItems = this.selItems;
+            // 没被删除的
+            let remainder = this.consumableList.filter((item, index) => !selItems.includes(index)); 
+            this.consumableList = remainder;
             this.selItems = [];
             this.matterModifyClass = false;
           }
         })
+      },
+      // 更新修改后的物料信息
+      selConfirm(val){
+        let modMatter = JSON.parse(val);
+        this.$set(this.consumableList, this.modifyIndex, modMatter);
       },
       // TODO 点击增加更多物料
       addMatter() {
@@ -247,10 +153,10 @@
       selMatter(val) {
         let sels = JSON.parse(val);
         sels.forEach(item => {
-          item.price = item.price || '';
-          item.tdQty = item.tdQty || '';
+          item.price = '';
+          item.tdQty = '';
         });
-        this.matterList = [...sels];
+        this.consumableList = [...this.consumableList, ...sels];
       },
       // TODO 获取默认图片
       getDefaultImg(item) {
@@ -262,50 +168,28 @@
       },
       // TODO 提交
       save() {
-        let warn = '',
-          dataSet = [];
-        let validateMap = [
-          {
-            key: 'matterList',
-            message: '物料'
+        /**
+         * @warn 提示文字
+         * @dataSet 组装提交的物料数据
+         * 
+         */
+        let warn = '', dataSet = [];
+        if(!this.consumableList.length){
+          warn = '请选择物料'
+        }
+        // 动态组装 dataSet
+        for (let item of this.consumableList) {
+          let oItem = {};
+          for(let sItem of this.submitMatterField){
+            let val = item[sItem.fieldCode] || item[sItem.displayField] || item[sItem.showFieldCode];
+            if(!sItem.hidden && !sItem.allowBlank && !val){
+              warn = `${sItem.text}不为空`
+              break;
+            }
+            oItem[sItem.fieldCode] = val !== null ? val : null;
           }
-        ];
-        validateMap.every(item => {
-          if (!Object.values(this[item.key]).length) {
-            warn = `请选择${item.message}`;
-            return false
-          }
-          return true
-        });
-        this.matterList.every(item => {
-          if (!item.tdQty) {
-            warn = '请输入本次申请数量';
-            return false
-          }
-          if(!item.price){
-            warn = '请输入估计价格';
-            return false
-          }
-          let mItem = {
-            transObjCode: item.inventoryCode,
-            inventoryName_transObjCode: item.inventoryName,
-            tdProcessing: item.processing,
-            specification_transObjCode: item.specification,
-            measureUnit_transObjCode: item.measureUnit,
-            assMeasureUnit: item.assMeasureUnit || null,
-            assMeasureScale: item.assMeasureScale || null,
-            assistQty: item.assistQty || 0,
-            tdQty: item.tdQty,
-            price: item.price,
-            tdAmount: item.tdAmount,
-            comment: item.comment || null
-          };
-          if (this.transCode) {
-            mItem.tdId = item.tdId || '';
-          }
-          dataSet.push(mItem);
-          return true
-        });
+          dataSet.push(oItem);
+        }
         if (warn) {
           this.$vux.alert.show({
             content: warn,
@@ -378,7 +262,7 @@
             });
             return;
           }
-          let matterList = [];
+          let consumableList = [];
           this.attachment = attachment;
           // 获取合计
           let {order} = formData;
@@ -394,7 +278,7 @@
               measureUnit: item.measureUnit_transObjCode,
               inventoryColor: item.inventoryColor_transObjCode,
             };
-            matterList.push(item);
+            consumableList.push(item);
           }
           this.handlerDefault = {
             handler: formData.handler,
@@ -415,18 +299,18 @@
             modifer: formData.modifer,
           }
           this.biReferenceId = formData.biReferenceId;
-          this.matterList = matterList;
+          this.consumableList = consumableList;
           this.$loading.hide();
         })
       },
       // TODO 是否保存草稿
       hasDraftData() {
-        if (!this.matterList.length) {
+        if (!this.consumableList.length) {
           return false
         }
         return {
           [DRAFT_KEY]: {
-            matter: this.matterList,
+            matter: this.consumableList,
             formData: this.formData
           }
         };
@@ -449,7 +333,7 @@
     created() {
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
-        this.matterList = JSON.parse(data).matter;
+        this.consumableList = JSON.parse(data).matter;
         this.formData = JSON.parse(data).formData;
         sessionStorage.removeItem(DRAFT_KEY)
       }

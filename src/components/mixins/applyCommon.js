@@ -255,7 +255,7 @@ export default {
           }
         }
         // 当请求数据的参数matterParams中有groupId
-        if(this.matterParams.data && this.matterParams.data.groupId !== null){
+        if(this.matterParams.data && this.matterParams.data.groupId !== undefined){
           this.matterParams.data.groupId = firstORG.groupId
         }
         this.formData = {
