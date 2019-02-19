@@ -2,8 +2,7 @@
   <div class="other_comment vux-1px-t">
     <div class="title">
       <span>评论</span>
-      <span class="more"  @click="goCommentList" v-if="commentList.length">查看更多</span>
-       <span class="more"  @click="goCommentList" v-else>发表评论</span>
+      <span class="more"  @click="goCommentList">发表评论</span>
     </div>
     <div class="no_data" v-if="!commentList.length">暂无评论</div>
     <div class="comment_list" v-else>
