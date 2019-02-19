@@ -31,7 +31,7 @@
                     <slot name="info" :item="item">
                       <div class='mater_other' v-if="item.price && item.tdQty">
                         <div class='mater_price'>
-                          <span class="symbol">￥</span>{{item.price}}
+                          <span class="symbol" v-show="!isNaN(item.price)">￥</span>{{item.price}}
                         </div>
                         <slot name="rNumber" :item="item">
                           <r-number :num="item.tdQty" :max="item[maxField]" v-model="item.tdQty"></r-number>

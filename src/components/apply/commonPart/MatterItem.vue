@@ -67,19 +67,6 @@ export default {
       deep: true,
       immediate: true
     },
-    matter: {
-      handler(val) {
-        console.log('matter:', val);
-        // let currentMatter = JSON.stringify(val), 
-        //     parentMatter = JSON.stringify(this.item);
-
-        // // 是否已修改数据 若修改则传值回父组件
-        // if(currentDealer !== parentDealer){
-        //   this.$emit('input', val)
-        // } 
-      },
-      deep: true
-    }
   },
   computed: {
     showEdit () {
@@ -101,7 +88,7 @@ export default {
     }
   },
   methods: {
-    // TODO 选择默认图片
+    // 选择默认图片
     getDefaultImg (item) {
       let url = require('assets/wl_default03.png');
       if (item) {
@@ -109,7 +96,7 @@ export default {
       }
       return url
     },
-    // TODO 触发编辑事件
+    // 触发编辑事件
     modifyMatter () {
       this.$emit('on-modify', this.item);
     }

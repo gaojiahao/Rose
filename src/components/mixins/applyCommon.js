@@ -425,7 +425,7 @@ export default {
       let warn = '';
       for(let item of config) {
         if(!item.allowBlank && !info[item.fieldCode]) {
-          console.log(item.fieldCode);
+          console.log('缺失字段: ',item.fieldCode);
           warn = `${item.fieldLabel}不能为空`;
           break;
         }
