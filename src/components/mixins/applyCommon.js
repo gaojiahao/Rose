@@ -472,52 +472,54 @@ export default {
         // 处理将数据源配置在data中的情况
         if(data.dataSource){
           let dataSource = JSON.parse(JSON.parse(data.dataSource)[0].dataSource.source);
-          matterCols = dataSource.cols;
-          // 请求数据，组合要渲染的matterList配置
-          let url = dataSource.url,
-              params = dataSource.params,
-              keys = Object.keys(params),
-              requestParams = {
-                url
-              };
-          if(keys.length){
-            let matterParams = {};
-            keys.forEach(item => {
-              // 处理销售出库默认选中成品仓
-              if(item === 'whCode' && this.warehouse.warehouseCode) {
-                matterParams[item] = this.warehouse.warehouseCode;
-                return
-              }
-              if(item === 'dealerCode' && this.dealerInfo.dealerCode){
-                matterParams[item] = this.dealerInfo.dealerCode;
-                return
-              }
-              matterParams[item] = params[item].type === 'text' ? params[item].value : '';
-            })
-            requestParams.data = matterParams;
-          }
-          this.matterParams = requestParams;
-          // 处理物料的配置
-          let arr = []
-          dataSource.cols.forEach(cItem => {
-            // 确定要物料段落显示的title
-            if(cItem.k === 'inventoryCode' && !cItem.h && !this.orderListTitle){
-              this.orderListTitle = '物料'
+          if(dataSource){
+            matterCols = dataSource.cols;
+            // 请求数据，组合要渲染的matterList配置
+            let url = dataSource.url,
+                params = dataSource.params,
+                keys = Object.keys(params),
+                requestParams = {
+                  url
+                };
+            if(keys.length){
+              let matterParams = {};
+              keys.forEach(item => {
+                // 处理销售出库默认选中成品仓
+                if(item === 'whCode' && this.warehouse.warehouseCode) {
+                  matterParams[item] = this.warehouse.warehouseCode;
+                  return
+                }
+                if(item === 'dealerCode' && this.dealerInfo.dealerCode){
+                  matterParams[item] = this.dealerInfo.dealerCode;
+                  return
+                }
+                matterParams[item] = params[item].type === 'text' ? params[item].value : '';
+              })
+              requestParams.data = matterParams;
             }
-            else if(cItem.k === 'transCode' && !cItem.h){
-              if(cItem.v.includes('编码')){
-                this.orderListTitle = cItem.v.slice(0, cItem.v.indexOf('编码'))
-                return 
+            this.matterParams = requestParams;
+            // 处理物料的配置
+            let arr = []
+            dataSource.cols.forEach(cItem => {
+              // 确定要物料段落显示的title
+              if(cItem.k === 'inventoryCode' && !cItem.h && !this.orderListTitle){
+                this.orderListTitle = '物料'
               }
-              this.orderListTitle = cItem.v
-            }
+              else if(cItem.k === 'transCode' && !cItem.h){
+                if(cItem.v.includes('编码')){
+                  this.orderListTitle = cItem.v.slice(0, cItem.v.indexOf('编码'))
+                  return 
+                }
+                this.orderListTitle = cItem.v
+              }
 
-            // 配置中的字段要去除掉物料名称，交易号
-            if(!cItem.h && cItem.k !== 'inventoryName' && cItem.k !== 'transCode' && cItem.k !== 'invName'){
-              arr.push(cItem)
-            }
-          })
-          this.matterPopConfig = arr;
+              // 配置中的字段要去除掉物料名称，交易号
+              if(!cItem.h && cItem.k !== 'inventoryName' && cItem.k !== 'transCode' && cItem.k !== 'invName'){
+                arr.push(cItem)
+              }
+            })
+            this.matterPopConfig = arr;
+          }
         }
         console.log(config)
         let dealerConfig = [], matterConfig = [], otherConfig = [];
