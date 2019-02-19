@@ -28,8 +28,8 @@
             <div class="instance-task-container">
               <div class="instance_task_item" v-for="(task, tIndex) in item.detailItem" :key="tIndex">
                 <i class="icon" :class="[getTaskIcon(tIndex)]"></i>
-                <div class="task-detail vux-1px-b">
-                  <div class="task_name">{{task.taskName}}</div>
+                <div class="task-detail">
+                  <div class="task_name" v-show="task.taskName">{{task.taskName}}</div>
                   <div class="task_info">
                     <div class="task_info_item">
                       <span class="task_info_title">预算成本：</span>
@@ -50,7 +50,7 @@
               </div>
             </div>
           </div>
-          <div class="instance-bottom vux-1px-t">
+          <div class="instance-bottom">
             <div class="instance-bottom-wrapper">
               <div class="instance_bottom_item instance_handler">
                 <i class="icon icon-handler"></i>
@@ -192,7 +192,7 @@
     }
     .task_info {
       display: flex;
-      margin-top: .12rem;
+      margin-top: .05rem;
       line-height: .12rem;
       font-size: .12rem;
       & + .task_info {

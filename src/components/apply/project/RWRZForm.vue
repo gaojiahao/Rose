@@ -25,9 +25,10 @@
                   <input type='text' v-model="jobLog[item.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
                 </div>
                 <!-- 输入框（数字） -->
-                <div class='each_property ' v-if="item.xtype === 'r2Numberfield'">
+                <div class='each_property' v-if="item.xtype === 'r2Numberfield'">
                   <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
-                  <input type='number' v-model.number="jobLog[item.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
+                  <input type='number' v-model.number="jobLog[item.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"
+                        @blur="checkAmt(jobLog, item.fieldCode, jobLog[item.fieldCode])"/>
                 </div>
                 <!-- 日期 -->
                 <div class='each_property' v-if="item.xtype === 'r2Datefield'" @click="getDate(jobLog,item)">
@@ -64,14 +65,13 @@
     <op-button :hide="btnIsHide" @on-submit="save"></op-button>
   </div>
 </template>
-
 <script>
   // vux组件引入
   import {
     XTextarea, dateFormat
   } from 'vux'
   // 请求 引入
-  import { saveProjectApproval, findProjectApproval, saveJobLog } from 'service/projectService'
+  import { jobLog, saveJobLog } from 'service/projectService'
   import { getDictByType, getDictByValue, requestData, update} from 'service/commonService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
@@ -108,6 +108,10 @@
       }
     },
     methods: {
+      // 校验数字
+      checkAmt(jobLog, code, val){
+        this.jobLog[code] = toFixed(val, 1);
+      },
       // TODO 提交
       save () {
         /**
@@ -175,7 +179,7 @@
       },
       // TODO 获取显示数据
       getFormData () {
-        return findProjectApproval(this.transCode).then(({formData = {}}) => {
+        return jobLog(this.transCode).then(({formData = {}}) => {
           this.hasDefault = true;
           this.defaultJob = {
             dealerName: formData.jobLog.projectManager,
