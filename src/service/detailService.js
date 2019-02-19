@@ -56,20 +56,25 @@ export let getAppExampleDetails = (data = {})=>{
     })
 }
 // TODO 获取相关实例应用的视图
-export let getListView = (data = {})=>{
+export let getListView = (data = {})=> {
     return $flyio.ajax({
         url:'/H_roleplay-si/ds/list/getListViews',
         data
     })
 }
 
-export let getListById = (data = {})=>{
+export let getListById = (data = {})=> {
     return $flyio.ajax({
         url:'/H_roleplay-si/ds/list/getListById',
         data
     })
 }
-
+export let getFromStatus = (data ={})=> {
+    return $flyio.ajax({
+        url:'/H_roleplay-si/ds/getFromStatusByTransCode',
+        data
+    })
+}
 export default{
     isMyflow,
     getSOList,

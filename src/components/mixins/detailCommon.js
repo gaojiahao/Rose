@@ -1,4 +1,4 @@
-import {getWorkFlow, currentUser, getListId, isMyflow, getAppExampleDetails, getListById } from 'service/detailService'
+import {getWorkFlow, currentUser, getListId, isMyflow, getAppExampleDetails, getListById, getFromStatus} from 'service/detailService'
 import {getPCCommentList, isSubscribeByRelationKey} from 'service/commentService'
 import {getAppDetail} from 'service/appSettingService'
 import {saveAndCommitTask, getFormConfig, getFormViews} from 'service/commonService'
@@ -69,6 +69,9 @@ export default {
       submitMatterField: [], // 审批时要提交的物料字段
       matterConfig: [], // 用于存放非物料的重复项配置
       otherConfig: [], // 用于存放非往来，仓库的单一项配置
+      hasReviseView: false, // 当前应用表单状态是否含有修改
+      currenrForm: '', //当前表单类型
+      formStatus: '', // 当前表单的状态
     }
   },
   computed: {
@@ -132,18 +135,16 @@ export default {
     // 获取当前应用是否有修改按钮
     getAction(){
       return getListById({uniqueId: this.listId}).then(data => {
-        // statusText === '已生效' && model != 'revise' && hasReviseView && action.update
         let config = data[0];
-        if(config === 1 && hasReviseView && config.action.update){
+        // 当前表单状态为已生效，表单类型包含修改，当前表单状态不为修改，操作按钮包含修改时
+        if(this.formStatus === '已生效' && this.currenrForm !== 'revise' && this.hasReviseView && config.action.update){
           this.actions.push('update')
         }
       })
-
     },
-    // 获取当前应用表单类型
+    // 获取当前应用所有表单类型
     getFormViews(){
       return getFormViews(this.listId).then(data => {
-        console.log(data)
         data.forEach(item => {
           if(item.viewType === 'revise') {
             this.hasReviseView = true;
@@ -151,6 +152,12 @@ export default {
           }
         })
 
+      })
+    },
+    // 获取当前表单的状态
+    getFromStatus(){
+      return getFromStatus({transCode: this.transCode}).then(({tableContent = []}) => {
+        this.formStatus = tableContent[0].status;
       })
     },
     // 判断是否为我的任务
@@ -296,6 +303,7 @@ export default {
       // await this.getAppExampleDetails();
       // 获取表单表单详情
       await this.getOrderList(transCode);
+      await this.getFromStatus();
       await this.getFormConfig();
       await this.getFormViews();
       await this.getAction();
@@ -371,8 +379,10 @@ export default {
     },
     // 请求配置
     getFormConfig() {
-      return getFormConfig(this.formViewUniqueId).then(({config = [], dataSource = '[]', reconfig = {}}) => {
+      return getFormConfig(this.formViewUniqueId).then(data => {
         console.log('config:', config);
+        this.currenrForm = data.viewType;
+        let {config = [], dataSource = '[]', reconfig = {}} = data;
         let ckConfig = [], rkConfig = [], dealerConfig = [], matterConfig = [], otherConfig = [];
         let dealerFilter = [
           'dealerName_dealerDebit',
@@ -547,7 +557,7 @@ export default {
       this.matterDetail = JSON.parse(JSON.stringify(item));
       this.matterDetailIndex = index;
       this.showMatterDetail = true;
-    },
+    }
   },
   created() {
     register()
