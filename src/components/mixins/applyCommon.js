@@ -411,7 +411,7 @@ export default {
     },
     // 计算物料相关值
     calcMatter(item) {
-      let price = item.price || 0,
+      let price = Number(item.price) || 0,  // 此处单独针对price进行number处理 因为销售订单的业务需求
           tdQty = item.tdQty || 0,
           taxRate = item.taxRate || 0;
       item.assistQty = toFixed(accDiv(tdQty, item.assMeasureScale));
@@ -434,7 +434,7 @@ export default {
     },
     // 简单计算物料相关值
     simpleCalcMatter(item) {
-      let price = item.price || 0,
+      let price = Number(item.price) || 0,
           tdQty = item.tdQty || 0,
           taxRate = item.taxRate || 0;
       item.noTaxAmount = toFixed(accMul(price, tdQty));

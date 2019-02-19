@@ -103,7 +103,7 @@ export default {
              */ 
             let { tdQty, otherField, qtyOnline, qtyDownline, 
                   dealerInventoryCode, dealerInventoryName } = item;
-            if(otherField) {
+            if(otherField && Object.values(otherField).length) {
               if(tdQty > qtyOnline || tdQty < qtyDownline) {
                 this.tdAmount = 0;
                 item.dealerInventoryCode = item.dealerInventoryName = '';
