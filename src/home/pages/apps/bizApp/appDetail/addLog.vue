@@ -65,7 +65,7 @@ export default {
       scopeList: [
         {name: '表单', selected: false},
         {name: '科目关系', selected: false},
-        {name: '报销', selected: false},
+        {name: '报表', selected: false},
         {name: '工作流', selected: false},
         {name: '权限', selected: false},
       ],

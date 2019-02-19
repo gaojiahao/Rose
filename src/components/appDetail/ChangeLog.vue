@@ -8,7 +8,7 @@
     <div class="latest_change" v-else @click="popupShow = true">
       <div class="change_time">
         <span class="version">v{{latestLog.VERSION}}</span>
-        <span>{{latestLog.CRT_TIME | handerTime}}</span>
+        <span>{{latestLog.CRT_TIME}}</span>
       </div>
       <div class="change_content">
         <div class="each_change">
@@ -42,7 +42,7 @@
             <div class="latest_change vux-1px-b" v-for="(item, index) in changeLogList" :key="index">
               <div class="change_time">
                 <span class="version">v{{item.VERSION}}</span>
-                <span>{{item.CRT_TIME | handerTime}}</span>
+                <span>{{item.CRT_TIME}}</span>
               </div>
               <div class="change_content">
                 <div>{{item.CREATOR_NAME}}&nbsp;&nbsp;耗用时间:{{item.TIME_CONSUMING}}</div>
