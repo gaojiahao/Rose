@@ -16,7 +16,7 @@
           <span>{{item.transCode}}</span>
         </div>
         <div class="order_status" v-if="!item.dealerName"><span :class="item.statusClass">{{item.biStatus}}</span></div>
-        <div class="order_biProStatus" v-else>{{item.processStatus || "暂无流程"}}</div>
+        <div class="order_biProStatus" v-else>{{item.biProcessStatus || "暂无流程"}}</div>
       </div>
     </div>
     <!--仓库-->
@@ -27,7 +27,7 @@
         <!-- 出库库仓 -->
         <span class="warehouse_out"  v-if="item.warehouseName_containerCodeOut">出库 - {{item.warehouseName_containerCodeOut}}</span>
       </div>
-      <div class="order_biProStatus">{{item.processStatus || "暂无流程"}}</div>
+      <div class="order_biProStatus">{{item.biProcessStatus || "暂无流程"}}</div>
     </div>
     <div class="order-main vux-1px-b" :class="{'has_margin' : noCount}">
       <!-- 物料图片和名称 -->
@@ -91,7 +91,7 @@
         </div>
       </template>
       <!--无仓库和往来时 流程状态显现-->
-      <div class="order_biProStatus" v-if="isDealerWarehouse">{{item.processStatus || "暂无流程"}}</div>
+      <div class="order_biProStatus" v-if="isDealerWarehouse">{{item.biProcessStatus || "暂无流程"}}</div>
     </div>
     <!--有仓库，有往来时订单编码-->
     <div class="transcode-part vux-1px-b" v-if="istransCodeBottom">
