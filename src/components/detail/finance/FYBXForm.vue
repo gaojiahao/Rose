@@ -28,6 +28,11 @@
           </div>
         </div>
       </div>
+      <!-- 备注 -->
+      <div class="comment">
+        <form-cell cellTitle='备注' :cellContent="orderInfo.biComment"></form-cell>
+      </div>
+      <!-- 附件 -->
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle"
                    :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
@@ -95,4 +100,9 @@
 
 <style lang='scss' scoped>
   @import './../../scss/bizDetail';
+  .comment{
+    margin: .1rem;
+    padding: 0 .1rem;
+    background: #fff;
+  }
 </style>
