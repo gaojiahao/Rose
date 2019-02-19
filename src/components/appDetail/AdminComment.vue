@@ -15,7 +15,7 @@
             <div class="comment_content">
               <div class="user_info">
                 <span class="user_name">{{item.creator}}</span>
-                <span class="comment_time">{{item.crtTime | handerTime}}</span>
+                <span class="comment_time">{{item.crtTime}}</span>
               </div>
               <div class="comment">
                 <div>
@@ -53,7 +53,7 @@
               <div class="comment_content">
                 <div class="user_info">
                   <span class="user_name">{{item.creator}}</span>
-                  <span class="comment_time">{{item.crtTime | handerTime}}</span>
+                  <span class="comment_time">{{item.crtTime}}</span>
                 </div>
                 <div class="comment">
                   <div>
@@ -121,12 +121,12 @@ export default {
     XButton,
     RScroll,
   },
-  filters:{
-    handerTime(val){
-      let time  = dateFormat(val,'YYYY-MM');
-      return time
-    }
-  },
+  // filters:{
+  //   handerTime(val){
+  //     let time  = dateFormat(val,'YYYY-MM');
+  //     return time
+  //   }
+  // },
   methods:{
     onShow() {
       this.$nextTick(() => {

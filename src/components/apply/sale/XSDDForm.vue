@@ -63,6 +63,7 @@ export default {
           value: 'inventoryCode',
         }
       ],
+      customPrice: '',  //缓存用户自定义的单价
       showMatterPop: false,
       showMaterielPop: false, // 是否显示物料的popup
       numMap: {}, // 用于记录订单物料的数量和价格
@@ -99,16 +100,29 @@ export default {
              *  @qtyDownline  数量下限
              *  @dealerInventoryCode 客户物料编码
              *  @dealerInventoryName 客户物料名称
-             * 
+             *  @customPrice 缓存用户自定义的单价
              */ 
             let { tdQty, otherField, qtyOnline, qtyDownline, 
                   dealerInventoryCode, dealerInventoryName } = item;
-            if(otherField) {
+            // 当存在 *数量区间* 
+            if(otherField && Object.values(otherField).length) {
+              // 当<物料数量> 没有位于*数量区间*内
               if(tdQty > qtyOnline || tdQty < qtyDownline) {
-                this.tdAmount = 0;
-                item.dealerInventoryCode = item.dealerInventoryName = '';
-                item.price = '请重新输入单价';
+                // 用户之前位于数量区间内 但是在提交页面 通过*数量编辑按钮*加减之后
+                if(dealerInventoryName || dealerInventoryCode) {
+                  this.tdAmount = 0;
+                  item.dealerInventoryCode = item.dealerInventoryName = '';
+                  this.customPrice ? item.price = this.customPrice : item.price = '请重新输入单价';
+                }
+                // 此时用户已超出数量区间范围外 但是未自定义单价时
+                else {
+                  if(!isNaN(item.price)) {
+                    // 用户自定义单价 将其缓存
+                    this.customPrice = item.price;
+                  }
+                }
               }
+              // 用户通过数量编辑按钮 使数量回归到*数量区间*内
               else {
                 item.price = otherField.price;
                 item.dealerInventoryCode = otherField.dealerInventoryCode;
@@ -180,6 +194,7 @@ export default {
     },
     // 更新修改后的物料信息
     selConfirm(val) {
+      console.log('修改后的物料:', JSON.parse(val));
       let modMatter = JSON.parse(val);
       this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
     },

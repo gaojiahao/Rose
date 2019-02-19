@@ -89,8 +89,8 @@ export default {
       return getAppDetail(this.listId).then(data =>{
         this.appInfo = data[0];
         this.appInfo.icon = this.appInfo.icon ?`/dist/${this.appInfo.icon}`: '';
-        this.appInfo.crtTime = dateFormat(this.appInfo.crtTime, 'YYYY-MM-DD');
-        this.appInfo.modTime = dateFormat(this.appInfo.modTime, 'YYYY-MM-DD')
+        this.appInfo.crtTime = dateFormat(this.appInfo.crtTime);
+        this.appInfo.modTime = dateFormat(this.appInfo.modTime)
       })
     },
     //获取当前用户信息

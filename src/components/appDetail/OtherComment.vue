@@ -23,8 +23,6 @@
               <span class="iconfont icon-L2" :class="{praise: !item.isPraise}"></span>        
             </div>
           </div>
-          <!-- <div class="comment" v-html="changeImgPath(item)">            
-          </div> -->
           <div class="comment-container">
             <div class="comment" v-html="handleComment(item)"></div>
             <div class="comment-image" v-if="item.commentAttachments.length">

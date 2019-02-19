@@ -17,7 +17,7 @@
           <div class="duty_top">
             <p class="duty_code">
               {{item.transCode}}
-              <span class="duty_crt_man" v-if="item.processStatus">{{item.processStatus}}</span>
+              <span class="duty_crt_man" v-if="item.biProcessStatus">{{item.biProcessStatus}}</span>
             </p>
             <span class="duty_status" :class="item.statusClass">{{item.statusName}}</span>
             <i class="iconfont" :class="item.whichIcon"></i>

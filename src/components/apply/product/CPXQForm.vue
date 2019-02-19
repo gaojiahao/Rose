@@ -270,7 +270,7 @@
       // 是否保存草稿
       hasDraftData () {
         let formData = this.formData;
-        if (formData.demandTitle || formData.demandDescribe ||  formData.processStatus) {
+        if (formData.demandTitle || formData.demandDescribe ||  formData.biProcessStatus) {
           return {
             [DRAFT_KEY]: {
               formData: this.formData,
