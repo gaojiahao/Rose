@@ -37,21 +37,20 @@
     },
     data() {
       return {
+        page: 1,
+        total: 0,
+        limit: 10,
+        parentId: -1,
+        placeholder: '添加评论...',
         scrollOptions: {
-          // pullDownRefresh: true,
           pullUpLoad: true,
         },
+        listId: '',
+        comment: '',
         transCode: '',
         commentList: [],
         hasNext: true,
-        page: 1,
-        limit: 10,
-        total: 0,
-        comment: '',
-        parentId: -1,
         focusInput: false,
-        placeholder: '添加评论...',
-        listId: '',
         showEmotion: false,
       }
     },
@@ -98,6 +97,7 @@
         this.parentId = item.ID;
         this.placeholder = `回复${item.creatorName}:`;
         this.$refs.commentValue.focus();
+        console.log('bScroll:', this.$$refs.bScroll);
       },
       // TODO 点赞成功
       onPraiseSuccess(item) {
@@ -213,10 +213,10 @@
       font-size: 0;
       box-sizing: border-box;
       &.focus {
-        position: relative;
-        top: -.5rem;
-        padding-bottom: .3rem;
-        height: 1rem;
+        // position: relative;
+        // top: -.5rem;
+        // padding-bottom: .3rem;
+        // height: 1rem;
       }
       .comment-value {
         display: inline-block;

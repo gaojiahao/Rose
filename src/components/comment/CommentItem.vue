@@ -235,6 +235,7 @@
         display: flex;
         align-items: center;
         line-height: .14rem;
+        padding: 0 0 .1rem .1rem;
       }
       /* 点赞数量 */
       .praise_num {
