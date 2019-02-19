@@ -85,6 +85,43 @@ export default {
       return arr;
     },
   },
+  watch: {
+    orderList: {
+      handler(list) {
+        for(let arr of Object.values(list)) {
+          for(let item of arr) {
+            /** 
+             *  此处设置监听 是为了根据数量 实时显示或隐藏 *客户物料名称/编码*
+             * 
+             *  @tdQty 数量
+             *  @otherField 存在价格区间
+             *  @qtyOnline  数量上限
+             *  @qtyDownline  数量下限
+             *  @dealerInventoryCode 客户物料编码
+             *  @dealerInventoryName 客户物料名称
+             * 
+             */ 
+            let { tdQty, otherField, qtyOnline, qtyDownline, 
+                  dealerInventoryCode, dealerInventoryName } = item;
+            if(otherField) {
+              if(tdQty > qtyOnline || tdQty < qtyDownline) {
+                this.tdAmount = 0;
+                item.dealerInventoryCode = item.dealerInventoryName = '';
+                item.price = '请重新输入单价';
+              }
+              else {
+                item.price = otherField.price;
+                item.dealerInventoryCode = otherField.dealerInventoryCode;
+                item.dealerInventoryName = otherField.dealerInventoryName;
+              }
+            }
+            
+          }
+        }
+      },
+      deep: true
+    }
+  },
   components: {
     RNumber, XTextarea, OpButton,
     PopBaseinfo, PopDealerList, DealerOtherPart, ApplyMatterPart
@@ -96,14 +133,22 @@ export default {
     selDealer(val) {
       let [chosenDealer = {}] = JSON.parse(val);
       if(chosenDealer.dealerCode !== this.dealerInfo.dealerCode){
-        chosenDealer.drDealerPaymentTerm = chosenDealer.paymentTerm;
+
+        // 为了提交时校验字段 此处重组部分数据
         chosenDealer.daysOfAccount= chosenDealer.pamentDays;
+        chosenDealer.drDealerPaymentTerm = chosenDealer.paymentTerm;
+        chosenDealer.dealerName_dealerDebit = chosenDealer.dealerName;
         chosenDealer.drDealerLogisticsTerms = chosenDealer.dealerLogisticsTerms;
+
+        // 选中赋值
         this.dealerInfo = chosenDealer;
+
+        // 根据客户 重新匹配<物料列表>的请求参数
         if(this.matterParams.data && this.matterParams.data.dealerCode != null){
           this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
           this.orderList = {};
         }
+
         // 重新选择客户时，需要重新请求物料是否有上下线
         if(Object.values(this.orderList).length){
           for(let key in this.orderList){
@@ -122,17 +167,18 @@ export default {
         }
       }
     },
+    // 选择联系人
     selContact(val) {
       this.contactInfo = {...val};
     },
-    // TODO 显示物料修改的pop
+    // 显示物料修改的pop
     getMatterModify(item, index, key) {
       this.matter = JSON.parse(JSON.stringify(item));
       this.showMatterPop = true;
       this.modifyIndex = index;
       this.modifyKey = key;
     },
-    // TODO 更新修改后的物料信息
+    // 更新修改后的物料信息
     selConfirm(val) {
       let modMatter = JSON.parse(val);
       this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
@@ -166,7 +212,7 @@ export default {
           item.otherField = {...priceTag};
       })
     },
-    // TODO 选中物料项
+    // 选中物料项
     selMatter(val) {
       let sels = JSON.parse(val);
       let orderList = JSON.parse(JSON.stringify(this.orderList));
@@ -220,7 +266,7 @@ export default {
       }
       arr.push(index);
     },
-    // TODO 判断是否展示选中图标
+    // 判断是否展示选中图标
     showSelIcon(sItem, index) {
       return this.selItems.includes(index);
     },
@@ -242,7 +288,6 @@ export default {
           let selItems = this.selItems;
           // 没被删除的
           let remainder = this.matterList.filter((item, index) => !selItems.includes(index)); 
-          
           remainder.forEach(item => {
             let orderListKey = item.transCode ? item.transCode : 'noCode';
             if (!orderList[orderListKey]) {
@@ -256,11 +301,11 @@ export default {
         }
       })
     },
-    // TODO 新增更多物料
+    // 新增更多物料
     addMatter() {
       this.showMaterielPop = !this.showMaterielPop;
     },
-    // TODO 展示时间选择器
+    // 展示时间选择器
     dateSelect(key = '') {
       this.$vux.datetime.show({
         confirmText: '确定',
@@ -273,24 +318,29 @@ export default {
     },
     // 提价订单
     submitOrder() {
-      let warn = '', dataSet = [];
-      for (let item of this.dealerConfig) {
-        if(!item.hiddenInRun && !item.allowBlank){
-          if(item.fieldCode === 'dealerName_dealerDebit' && !this.dealerInfo.dealerName){
-            warn = '请选择客户';
-            break
-          }
-          else if(item.fieldCode !== 'dealerName_dealerDebit' && !this.dealerInfo[item.fieldCode]){
-            warn = `${item.fieldLabel}不能为空`;
-            break
-          }
+      /** 
+       * @warn    提示文字
+       * @dateSet   提交数据
+       * 
+       * @dealerConfig  <往来部分> 配置
+       * @dealerInfo  <往来部分> 信息
+       * 
+       */ 
+      
+      let warn = '', dataSet = [], 
+          isSubmitOk = this.isSubmitOk,
+          dealerInfo = this.dealerInfo, 
+          dealerConfig = this.dealerConfig;
+      
+      // 校验 <往来部分> 必填字段
+      warn = this.verifyData(dealerConfig, dealerInfo);
 
-        }
-      }
-      if(!warn && !Object.keys(this.orderList).length) {
-        warn =  '请选择物料'
-      }
+      // 校验 <物料部分> 必填字段 同时动态组装dateSet
       if(!warn) {
+        // 校验 是否已选择 <物料部分>
+        let [ matterPart = {} ] = this.submitMatterField;
+        if(!Object.keys(this.orderList).length) warn = `请选择${matterPart.text}`;
+
         // 动态组装 dataSet
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
@@ -307,12 +357,16 @@ export default {
           }
         }
       }
-      else {
+
+      // 弹窗提醒
+      if(warn) {
         this.$vux.alert.show({
-          content: warn
-        })
-        return
+          content: warn,
+        });
+        return;
       }
+      
+      // 准备提交
       this.$vux.confirm.show({
         content: '确认提交?',
         // 确定回调
@@ -461,7 +515,7 @@ export default {
         this.$loading.hide();
       })
     },
-    // TODO 是否保存草稿
+    // 是否保存草稿
     hasDraftData() {
       if (!Object.values(this.orderList).length) {
         return false
