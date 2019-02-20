@@ -4,7 +4,7 @@
 }
 
 .symbol {
-  font-size: .1rem;
+  font-size: .12rem;
 }
 
 .content {
@@ -301,6 +301,9 @@
             // 金额
             .amount_money {
               @extend .count;
+            }
+            .amount_time {
+              font-size: .12rem;
             }
           }
           //数量
