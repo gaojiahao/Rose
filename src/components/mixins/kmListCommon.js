@@ -168,6 +168,7 @@ export default {
           '中国银行': require('assets/iconfont/bank/bank_zg.png'),
           '招商银行': require('assets/iconfont/bank/bank_zs.png'),
         };
+        let hasAppIcon = ['核销余额表', '现金流计划表'];
         this.hasNext = total > (this.page - 1) * this.limit + data.length;
         data.forEach( item => {
           item.status = false;
@@ -185,7 +186,7 @@ export default {
           }
           if (this.activeTab.includes('资金账户余额')) {
             item.icon = bankMap[item.bank];
-          } else if (this.activeTab.includes('现金流计划表')) {
+          } else if (hasAppIcon.includes(this.activeTab)) {
             item.appIcon = `/dist/${item.appIcon}`;
           }
         })

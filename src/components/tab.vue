@@ -1,17 +1,17 @@
 <template>
   <div class='tab'>
     <!-- 收起状态-->
-    <div class='only_tab_item' @click="tabShow = !tabShow">
-      <div class='tab_item_name'>{{choicedTab}}
+    <div class='only-tab-item' @click="tabShow = !tabShow">
+      <div class='tab-item-name'>{{choicedTab}}
         <p class="arrow" :class='tabShow ? "arrow_up" : "arrow_down" '>
-          <x-icon type="ios-arrow-down" size="24"></x-icon>
+          <x-icon type="ios-arrow-down" size="16"></x-icon>
         </p>
       </div>
     </div>
     <!--展开状态 -->
-    <div class='all_tab_item' ref='tabItem' v-show='tabShow'>
+    <div class='all-tab-item' ref='tabItem' v-show='tabShow'>
       <div class='tab_wrapper'>
-        <div class='tab_item_name' v-for='(item, index) in tabVal' :class='{active : index===activeTabIndex}'
+        <div class='tab-item-name' v-for='(item, index) in tabVal' :class='{active : index===activeTabIndex}'
              :key='index' @click="switchTab(item, index)">
           {{item.view_name}}
         </div>
@@ -96,46 +96,40 @@
     color: rgb(117, 117, 117);
     position: relative;
     //收起的tab
-    .only_tab_item {
+    .only-tab-item {
       text-align: center;
       position: relative;
-      .tab_item_name {
-        font-size: .18rem;
-        font-weight: 400;
+      .tab-item-name {
+        font-weight: bold;
         color: #757575;
-        line-height: 44px;
+        line-height: .44rem;
         .arrow {
           position: absolute;
           display: inline-block;
         }
         .arrow_up {
-          transition: all .2s;
-          -webkit-transition: all .2s;
           transform: rotate(-180deg);
           -webkit-transform: rotate(-180deg);
         }
         .arrow_down {
-          transition: all .2s;
-          -webkit-transition: all .2s;
           transform: rotate(0);
           -webkit-transform: rotate(0);
         }
       }
     }
     //展开的tab
-    .all_tab_item {
-      position: absolute;
+    .all-tab-item {
       left: 0;
-      top: 45px;
+      // top: 45px;
       z-index: 10;
       width: 100%;
-      text-align: center;
-      background: rgba(245, 245, 245, 0.95);
-      height: 132px;
+      height: 150px;
       overflow: hidden;
-      opacity: 0.95;
+      text-align: center;
+      position: absolute;
       border-bottom: 1px solid #e8e8e8;
-      .tab_item_name {
+      background: rgba(245, 245, 245, 0.95);
+      .tab-item-name {
         line-height: 44px;
       }
       .active {
