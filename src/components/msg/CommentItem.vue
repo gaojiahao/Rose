@@ -192,27 +192,12 @@
         let prefix = dateFormat(val, 'YYYY-MM-DD');
         let date = +new Date(val);
         let calc = now - date;
-        /*let second = calc / 1000;
-        let minute = second / 60;
-        let hour = minute / 60;
-        let day = hour / 24;
-        if (second < 60) {
-          return '刚刚';
-        } else if (minute < 60) {
-          return `${parseInt(minute)}分钟前`;
-        } else if (hour < 24) {
-          return `${parseInt(hour)}小时前`;
-        } else if (day < 30) {
-          return `${parseInt(day)}天前`;
-        }
-        return dateFormat(val, 'YYYY-MM-DD')*/
-
         if (calc < dayTime) {
           prefix = '今天'
         } else if (calc < 2 * dayTime) {
           prefix = '昨天'
         }
-        return `${prefix} ${dateFormat(val, 'HH:mm')}`;
+        return `${prefix} ${dateFormat(val, 'HH:mm:ss')}`;
       },
     },
     created() {
