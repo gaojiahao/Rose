@@ -33,212 +33,233 @@
 </template>
 
 <script>
-  import {commitTask, transferTask} from 'service/commonService'
-  import {Confirm} from 'vux'
-  import PopUserList from 'components/Popup/PopUserList'
+import { commitTask, transferTask } from 'service/commonService'
+import { isMyflow } from 'service/detailService'
+import { Confirm } from 'vux'
+import PopUserList from 'components/Popup/PopUserList'
 
-  export default {
-    name: "RAction",
-    props: {
-      code: {
-        type: String,
-        default: ''
-      },
-      taskId: {
-        type: String,
-        default: ''
-      },
-      actions: {
-        type: Array,
-        default() {
-          return []
-        }
-      },
-      name: {
-        type: String,
-        default: ''
-      },
-      // 同意的处理
-      agreeHandler: {
-        type: Function,
-        default: null
+export default {
+  name: "RAction",
+  props: {
+    code: {
+      type: String,
+      default: ''
+    },
+    taskId: {
+      type: String,
+      default: ''
+    },
+    actions: {
+      type: Array,
+      default() {
+        return []
       }
     },
-    components: {
-      Confirm,
-      PopUserList,
+    name: {
+      type: String,
+      default: ''
     },
-    data() {
-      return {
-        showUserList: false, // 是否展示用户列表
-        selectedUser: {}, // 选中的转办用户
-        showConfirm: false,
-        transferInfo: {
-          taskTime: 0.1, // 工时
-          comment: '', // 备注
-        },
-        showTaskWarn: false,
-        showCommentWarn: false,
-      }
-    },
-    methods: {
-      // TODO 拒绝
-      reject() {
-        this.$vux.confirm.prompt('', {
-          title: '审批意见',
-          onConfirm: (value) => {
-            this.commitTask({
-              result: 0,
-              successMsg: '拒绝成功',
-              value
-            });
-          }
-        });
+    // 同意的处理
+    agreeHandler: {
+      type: Function,
+      default: null
+    }
+  },
+  components: {
+    Confirm,
+    PopUserList,
+  },
+  data() {
+    return {
+      showUserList: false, // 是否展示用户列表
+      selectedUser: {}, // 选中的转办用户
+      showConfirm: false,
+      transferInfo: {
+        taskTime: 0.1, // 工时
+        comment: '', // 备注
       },
-      // TODO 同意
-      agree() {
-        if (this.agreeHandler && this.agreeHandler()) {
-          return
-        }
-        this.$vux.confirm.prompt('', {
-          title: '审批意见',
-          onConfirm: (value) => {
-            this.commitTask({
-              result: 1,
-              successMsg: '同意成功',
-              value
-            });
-          }
-        });
-      },
-      // TODO 撤回
-      revoke() {
-        this.$vux.confirm.prompt('', {
-          title: '撤回原因',
-          onConfirm: (value) => {
-            this.commitTask({
-              result: 2,
-              successMsg: '撤回成功',
-              value,
-              callback: () => {
-                let { listId } = this.$route.query,
-                    { folder, fileName } = this.$route.params;
-                this.$router.replace({
-                  path: `/fillform/${folder}/${fileName}`,
-                  query: {
-                    listId,
-                    name: this.name,
-                    transCode: this.code,
-                  },
-                });
-              }
-            });
-          }
-        });
-      },
-      // TODO 审批
-      commitTask({result, value, successMsg, callback}) {
-        this.$HandleLoad.show();
-        let submitData = {
-          taskId: this.taskId,
-          taskData: JSON.stringify({
-            result,
-            transCode: this.code,
-            comment: value
-          })
-        };
-        return commitTask(submitData).then(data => {
-          this.$HandleLoad.hide();
-          let {success = false, message = '提交失败'} = data;
-          let actionMap = {0: 'reject', 1: 'agree', 2: 'revoke'};
-          if (success) {
-            message = successMsg;
-            this.$emit('on-submit-success', JSON.stringify({
-              type: actionMap[result]
-            }));
-          }
-          this.$vux.alert.show({
-            content: message,
-            onHide: () => {
-              if (success) {
-                if (callback) {
-                  callback();
+      showTaskWarn: false,
+      showCommentWarn: false,
+    }
+  },
+  methods: {
+    // TODO 拒绝
+    reject() {
+      this.$vux.confirm.prompt('', {
+        title: '审批意见',
+        onConfirm: (value) => {
+          this.commitTask({
+            result: 0,
+            successMsg: '拒绝成功',
+            callback: () => {
+              // 当某个节点审批为自己 如果用户点击了拒绝 则需要判断情况 决定是否回到重新提交页面
+              let { folder, fileName } = this.$route.params,
+                  { name, listId, transCode } = this.$route.query;
+              isMyflow({transCode: this.code}).then(({tableContent}) => {
+                let path = '';
+                if (tableContent.length > 0) {
+                  let {isMyTask, nodeName} = tableContent[0];
+                  if (isMyTask === 1 && nodeName === '重新提交') {
+                    path = `/fillform/${folder}/${fileName}`;
+                  } else {
+                    path = `/detail/${folder}/${fileName}`;
+                  }
                 } else {
-                  this.$router.go(0);
+                  path = `/detail/${folder}/${fileName}`;
                 }
+                this.$router.replace({
+                  path, query: {name, listId, transCode}
+                })
+              })
+            }
+          });
+        }
+      });
+    },
+    // TODO 同意
+    agree() {
+      if (this.agreeHandler && this.agreeHandler()) {
+        return
+      }
+      this.$vux.confirm.prompt('', {
+        title: '审批意见',
+        onConfirm: (value) => {
+          this.commitTask({
+            result: 1,
+            successMsg: '同意成功',
+            value
+          });
+        }
+      });
+    },
+    // TODO 撤回
+    revoke() {
+      this.$vux.confirm.prompt('', {
+        title: '撤回原因',
+        onConfirm: (value) => {
+          this.commitTask({
+            result: 2,
+            successMsg: '撤回成功',
+            value,
+            callback: () => {
+              let { listId } = this.$route.query,
+                  { folder, fileName } = this.$route.params;
+              this.$router.replace({
+                path: `/fillform/${folder}/${fileName}`,
+                query: {
+                  listId,
+                  name: this.name,
+                  transCode: this.code,
+                },
+              });
+            }
+          });
+        }
+      });
+    },
+    // TODO 审批
+    commitTask({result, value, successMsg, callback}) {
+      this.$HandleLoad.show();
+      let submitData = {
+        taskId: this.taskId,
+        taskData: JSON.stringify({
+          result,
+          transCode: this.code,
+          comment: value
+        })
+      };
+      return commitTask(submitData).then(data => {
+        this.$HandleLoad.hide();
+        let {success = false, message = '提交失败'} = data;
+        let actionMap = {0: 'reject', 1: 'agree', 2: 'revoke'};
+        if (success) {
+          message = successMsg;
+          this.$emit('on-submit-success', JSON.stringify({
+            type: actionMap[result]
+          }));
+        }
+        this.$vux.alert.show({
+          content: message,
+          onHide: () => {
+            if (success) {
+              if (callback) {
+                callback();
+              } else {
+                this.$router.go(0);
               }
             }
-          });
-        }).catch(e => {
-          this.$HandleLoad.hide();
-        });
-      },
-      // TODO 修改
-      update() {
-        let { listId } = this.$route.query,
-            { folder, fileName } = this.$route.params;
-        this.$vux.confirm.show({
-          title: '',
-          content: '确定修改？',
-          onConfirm: () =>{
-            this.$router.replace({
-              path: `/fillform/${folder}/${fileName}`,
-              query: {
-                listId,
-                name: this.name,
-                transCode: this.code,
-              },
-            });
           }
-        }) 
-      },
-      // TODO 转办
-      transfer() {
-        this.selectedUser = {};
-        this.showUserList = true;
-      },
-      // TODO 选中转办账号
-      selUser(val) {
-        this.selectedUser = {...val};
-        this.showConfirm = true;
-      },
-      // TODO 点击confirm确定
-      onConfirm() {
-        let warn = '';
-        let submitData = {
-          userId: this.selectedUser.userId,
-          taskId: this.taskId,
-          ...this.transferInfo,
-        };
-        this.showTaskWarn = !this.transferInfo.taskTime;
-        this.showCommentWarn = !this.transferInfo.comment;
-        if (this.showTaskWarn || this.showCommentWarn) {
-          return
-        }
-
-        this.showConfirm = false;
-        this.$HandleLoad.show();
-        transferTask(submitData).then(data => {
-          this.$HandleLoad.hide();
-          let {success = false, message = '提交失败'} = data;
-          if (success) {
-            message = '转办成功';
-            this.$emit('on-submit-success', JSON.stringify({
-              type: 'transfer'
-            }));
-          }
-          this.$vux.alert.show({
-            content: message,
-            onHide: () => {
-              this.$router.go(0);
-            }
-          });
-        }).catch(e => {
-          this.$HandleLoad.hide();
         });
-      },
+      }).catch(e => {
+        this.$HandleLoad.hide();
+      });
     },
-  }
+    // TODO 修改
+    update() {
+      let { listId } = this.$route.query,
+          { folder, fileName } = this.$route.params;
+      this.$vux.confirm.show({
+        title: '',
+        content: '确定修改？',
+        onConfirm: () =>{
+          this.$router.replace({
+            path: `/fillform/${folder}/${fileName}`,
+            query: {
+              listId,
+              name: this.name,
+              transCode: this.code,
+            },
+          });
+        }
+      }) 
+    },
+    // TODO 转办
+    transfer() {
+      this.selectedUser = {};
+      this.showUserList = true;
+    },
+    // TODO 选中转办账号
+    selUser(val) {
+      this.selectedUser = {...val};
+      this.showConfirm = true;
+    },
+    // TODO 点击confirm确定
+    onConfirm() {
+      let warn = '';
+      let submitData = {
+        userId: this.selectedUser.userId,
+        taskId: this.taskId,
+        ...this.transferInfo,
+      };
+      this.showTaskWarn = !this.transferInfo.taskTime;
+      this.showCommentWarn = !this.transferInfo.comment;
+      if (this.showTaskWarn || this.showCommentWarn) {
+        return
+      }
+
+      this.showConfirm = false;
+      this.$HandleLoad.show();
+      transferTask(submitData).then(data => {
+        this.$HandleLoad.hide();
+        let {success = false, message = '提交失败'} = data;
+        if (success) {
+          message = '转办成功';
+          this.$emit('on-submit-success', JSON.stringify({
+            type: 'transfer'
+          }));
+        }
+        this.$vux.alert.show({
+          content: message,
+          onHide: () => {
+            this.$router.go(0);
+          }
+        });
+      }).catch(e => {
+        this.$HandleLoad.hide();
+      });
+    },
+  },
+}
 </script>
 
 <style scoped lang="scss">
