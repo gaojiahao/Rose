@@ -140,8 +140,12 @@
           let editParts = [];
           let readOnlyParts = [];
           others.forEach(item => {
-            item.readOnly ? readOnlyParts.push(item) : editParts.push(item);
-            // readOnlyParts.push(item);
+            // 当Grid组件只读为false时 各个字段的readOnly才能启用
+            if(item.r2GridXtype && !item.r2GridXtype.readOnly) {
+              item.readOnly ? readOnlyParts.push(item) : editParts.push(item);
+              return;
+            }
+            readOnlyParts.push(item);
           });
           this.editParts = editParts;   // 可编辑部分
           this.readOnlyParts = readOnlyParts;   // 只读部分

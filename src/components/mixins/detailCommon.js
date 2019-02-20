@@ -449,6 +449,12 @@ export default {
             }
           } else {
             if (item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
+              // 如果为<Grid>组件 为了方便<PopMatterDetail>组件的判断 此处做数据处理
+              if(item.r2GridXtype) {
+                item.items.forEach(each => {
+                  each['r2GridXtype'] = item.r2GridXtype;
+                })
+              }
               matterConfig = item.items;
               dataIndexMap = item.dataIndexMap || {};
               hasDataIndexMap = !!Object.keys(dataIndexMap).length;
@@ -534,8 +540,11 @@ export default {
         let dates = [];
         let matterComment = {};
         matterConfig.forEach(item => {
+          // console.log('config-item:', item);
           item = {...item};
-          item.value = numTypeList.includes(item.editorType) ? numberComma(matter[item.fieldCode]) || '0' : matter[item.fieldCode] || '无';
+          item.value = numTypeList.includes(item.editorType) 
+            ? numberComma(matter[item.fieldCode]) || '0' 
+            : matter[item.fieldCode] || '无';
           if (item.editorType === 'r2Datefield') {
             dates.push(item);
           } else if (item.fieldCode === 'comment') {
