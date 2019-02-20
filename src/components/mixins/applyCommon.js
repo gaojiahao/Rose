@@ -696,27 +696,27 @@ export default {
             })
             this.matterPopConfig = matterPopField;
           }
+          // 没有映射表时，根据物料poplist中数据来去对应的字段的值
+          if(item.dataSource && item.dataSource.type === 'formData'){
+            if(typeof(item.dataSource.data.valueField) === 'string') {
+              let arr = item.dataSource.data.valueField.replace(/\[|]/g, '').split(/\"/);
+              let valueField = [];
+              arr.forEach(item => {
+                if(item) {
+                  valueField.push(item)
+                }
+              })
+              item.dataSource.data.valueField = valueField;
+
+            }
+            item.showFieldCode = item.dataSource.data.valueField[1];
+          }
+          // 当存在映射表时，根据映射表来取对应的值
+          if(Object.keys(this.dataIndexMap).length){
+            item.showFieldCode = this.dataIndexMap[item.fieldCode];
+          }
           // 组合物料编辑的matterPop的配置
           if(!item.hidden){
-            // 没有映射表时，根据物料poplist中数据来去对应的字段的值
-            if(item.dataSource && item.dataSource.type === 'formData'){
-              if(typeof(item.dataSource.data.valueField) === 'string') {
-                let arr = item.dataSource.data.valueField.replace(/\[|]/g, '').split(/\"/);
-                let valueField = [];
-                arr.forEach(item => {
-                  if(item) {
-                    valueField.push(item)
-                  }
-                })
-                item.dataSource.data.valueField = valueField;
-
-              }
-              item.showFieldCode = item.dataSource.data.valueField[1];
-            }
-            // 当存在映射表时，根据映射表来取对应的值
-            if(Object.keys(this.dataIndexMap).length){
-              item.showFieldCode = this.dataIndexMap[item.fieldCode];
-            }
             if(item.valueField !== "transCode" && item.valueField !== 'inventoryName' && item.valueField !== 'facilityName'
                 && !item.fieldCode.includes('inventoryName') && item.showFieldCode !== 'transCode' && item.showFieldCode !== 'facilityName' && item.showFieldCode !== 'facilityCode'
                 && item.showFieldCode !== 'facilitySpecification'){
