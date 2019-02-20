@@ -29,6 +29,22 @@
           {name: '进行中', status: '进行中'}
         ],
         listViewID: 2478,
+        filterList: [
+          {
+            name: '物料名称',
+            value: 'inventoryName_transObjCode',
+          }, {
+            name: '物料编码',
+            value: 'inventoryCode_transObjCode',
+          }, {
+            name: '申请号',
+            value: 'transCode',
+          },
+          {
+            name: '往来名称',
+            value: 'dealerName_dealerCodeCredit',
+          },
+        ]
 
       }
     },
