@@ -57,7 +57,7 @@
               </div>
               <load-more tip="加载中" v-show="hasNext" slot="loadmore"></load-more>
               <!-- 当没有数据的时候 显示提醒文字 -->
-              <div class="when-null" v-show="!dealerList.length && !hasNext" slot="loadmore">
+              <div class="when-null" v-show="srhInpTx && !dealerList.length && !hasNext" slot="loadmore">
                 <div class="title">抱歉，没有找到您搜索的内容</div>
                 <ul class="tips">
                   <li>
