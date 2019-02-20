@@ -101,13 +101,13 @@
     watch: {
       // 监听大类变化，修改子类
       projectType: {
-        handler(val){
-          if(val){
+        handler(newVal, oldVal){
+          if(oldVal && newVal){
             let type = ''; // 当前项目大类对应的类型，请求子类的参数
             for(let item of this.otherConfig){
               if(item.fieldCode === 'projectType'){
                 for(let dItem of item.remoteData){
-                  if(dItem.name === val){
+                  if(dItem.name === newVal){
                     type = dItem.originValue;
                     break;
                   }
@@ -225,7 +225,7 @@
         return findProjectApproval(this.transCode).then(({formData = {}}) => {
           this.hasDefault = true;
           this.defaultManager = {
-            dealerName: formData.projectApproval.projectManager,
+            dealerName: formData.projectApproval.projectManagerName,
             dealerMobilePhone: formData.projectApproval.phoneNumber,
           };
           formData.projectApproval.expectStartDate = this.changeDate(formData.projectApproval.expectStartDate);

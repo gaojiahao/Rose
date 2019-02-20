@@ -64,11 +64,11 @@ export default {
       attachment: [],
       matterList: [],
       dealerConfig: [],
-      matterConfig: [],
-      btnIsHide: false,
-      submitMatterField: [], // 审批时要提交的物料字段
       matterConfig: [], // 用于存放非物料的重复项配置
       otherConfig: [], // 用于存放非往来，仓库的单一项配置
+      baseinfoExtConfig: [],
+      btnIsHide: false,
+      submitMatterField: [], // 审批时要提交的物料字段
       hasReviseView: false, // 当前应用表单状态是否含有修改
       currenrForm: '', //当前表单类型
       formStatus: '', // 当前表单的状态
@@ -384,7 +384,7 @@ export default {
         let {config = [], dataSource = '[]', reconfig = {}} = data;
         console.log('config:', config);
 
-        let ckConfig = [], rkConfig = [], dealerConfig = [], matterConfig = [], otherConfig = [];
+        let ckConfig = [], rkConfig = [], dealerConfig = [], matterConfig = [], otherConfig = [], baseinfoExtConfig = [];
         let dealerFilter = [
           'dealerName_dealerDebit',
           'drDealerLabel',
@@ -446,6 +446,10 @@ export default {
             }
             if(item.name === 'pb' || item.name === 'outPut' || item.name === 'projectApproval' || item.name === 'jobLog'){
               otherConfig = item.items;
+            }
+            // baseInfoExt的配置 目前用于费用报销中的项目
+            if(item.name === 'baseinfoExt') {
+              baseinfoExtConfig = item.items;
             }
           } else {
             if (item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
@@ -511,6 +515,14 @@ export default {
           return arr
         }, []);
         this.otherConfig = otherConfig;
+
+        baseinfoExtConfig = baseinfoExtConfig.reduce((arr, item, index) => {
+          if (!item.hiddenInRun) {
+            arr.push(item);
+          }
+          return arr
+        }, []);
+        this.baseinfoExtConfig = baseinfoExtConfig;
       })
     },
     // 设置 仓库信息 动态渲染部分
