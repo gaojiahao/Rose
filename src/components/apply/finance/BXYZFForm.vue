@@ -3,44 +3,90 @@
     <div class="basicPart no_count" ref='fill'>
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
-                      :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
+                      :handle-org-list="handleORG" :user-role-list="userRoleList" :showStatus="false"></pop-baseinfo>
         <!-- 费用明细-->
-        <div class="materiel_list" v-for="(item, index) in CostList" :key='index'>
-          <div class="title">{{`费用明细${index+1}`}}</div>
-          <group class="SJ_group" @group-title-margin-top="0">
-            <cell title="费用名称" v-model='item.exptName' is-link @click.native="getCost(index,item)">
-              <span class='required' slot="title">费用名称</span>
-            </cell>
-            <cell title="费用编码" v-model="item.expCode"></cell>
-            <cell title="费用科目" v-model="item.expSubject">
-              <span class='required' slot="title">费用科目</span>
-            </cell>
-            <cell title="费用类型" v-model="item.costType"></cell>
-            <x-input title="申请金额" text-align='right' placeholder='请填写' @on-focus="getFocus($event)"
-                     @on-blur="checkAmt(item)" type='number' v-model.number='item.tdAmount'>
-              <span class='required' slot="label">申请金额</span>
-            </x-input>
-            <x-input title="报销事由" text-align='right' placeholder='请填写' v-model='item.expCause'></x-input>
-          </group>
-        </div>
-        <div class="add_more">
-          您还需要添加新的报销?请点击
-          <span class='add' @click="addCost">新增</span>
-          <em v-show="CostList.length>1">或</em>
-          <span class='delete' @click="deleteCost" v-show="CostList.length>1">删除</span>
+        <div class="cost_list">
+          <div class="cost_item" :class="{'has_border' : sIndex > 0}" v-for="(sItem, sIndex) in costList" :key="sIndex">
+            <div class="cost_title vux-1px-b" v-show="costList.length > 1">
+              <label>费用{{sIndex+1}}</label>
+              <span class="iconfont icon-shanchu1" @click="deleteCost(sIndex)"></span>
+            </div>
+            <div v-for="(dItem,dIndex) in matterEditConfig.editPart" :key="dIndex" :class="{'vux-1px-b': dIndex < matterEditConfig.editPart.length-1}">
+              <!-- 可编辑的字段 -->
+              <template v-if="!dItem.readOnly">
+                <!-- 下拉框 -->
+                <div class='each_property' v-if="dItem.editorType === 'r2Selector'" @click="getCost(sItem,sIndex)">
+                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                  <div class='picker'>
+                    <span class='mater_nature'>{{sItem[dItem.fieldCode] || "请选择"}}</span>
+                    <span class='icon-right'></span>
+                  </div>
+                </div>
+                <!-- 输入框（数字） -->
+                <div class='each_property ' v-if="dItem.editorType === 'r2Numberfield'">
+                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                  <input type='number' v-model.number="sItem[dItem.fieldCode]" placeholder="请输入" class='property_val' 
+                         @focus="getFocus($event)" @blur="checkAmt(sItem, dItem.fieldCode, sItem[dItem.fieldCode]) "/>
+                </div>
+                <!-- 输入框（文字） -->
+                <div class='each_property' v-if="dItem.editorType === 'r2Textfield'">
+                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                  <input type='text' v-model="sItem[dItem.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
+                </div>
+                <!-- 日期 -->
+                <div class='each_property' v-if="dItem.editorType === 'r2Datefield'" @click="getDate(sItem,dItem)">
+                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                  <div class='picker'>
+                    <span class='mater_nature'>{{sItem[dItem.fieldCode] || "请选择"}}</span>
+                    <span class='icon-right'></span>
+                  </div>
+                </div>
+              </template>
+              <!--不可编辑的字段 -->
+              <template  v-else>
+                <div class='each_property readOnly'>
+                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                  <span class='property_val'>{{sItem[dItem.fieldCode]}}</span>
+                </div>
+              </template>
+            </div>
+          </div>
+          <div class="vux-1px-t" :class="[this.actions.includes('stop') ? 'resubmit-part' : 'sumbit-part']">
+            <div class="add_more" @click="addCost">
+              <span class="icon-add"></span>
+              <span class="add_text">新增报销</span>
+            </div>
+            <span class="add_more stop" v-if="this.actions.includes('stop')" @click="stopOrder">终止提交</span>
+          </div>
         </div>
         <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost'
-                       getListMethod="getProjectCostByGroupId"
-                       :group-id="Number(formData.handlerUnit)" ref="matter"></pop-cost-list>
+                       :cost-params="matterParams" ref="matter"></pop-cost-list>
+        <div class="project_part">
+          <div :class="{'vux-1px-t': dIndex>0}" v-for="(dItem,dIndex) in baseinfoExtConfig" :key="dIndex">
+            <!-- 可编辑的字段 -->
+            <template v-if="!dItem.readOnly">
+              <!-- 下拉框 -->
+              <r-picker :title="dItem.fieldLabel" :data="dItem.remoteData" :value="project[dItem.fieldCode]"
+                      v-model="project[dItem.fieldCode]" :required="!dItem.allowBlank"
+                      v-if="dItem.xtype === 'r2Selector'"></r-picker>
+            </template>
+            <!--不可编辑的字段 -->
+            <template  v-else>
+              <div class='each_property readOnly'>
+                <label :class="{required: !dItem.allowBlank}">{{dItem.fieldLabel}}</label>
+                <span class='property_val'>{{project[dItem.fieldCode]}}</span>
+              </div>
+            </template>
+          </div>
+        </div>
+        <div class='comment'>
+          <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
+        </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       </div>
     </div>
-    <div class='btn-no-amt vux-1px-t' :class="{'btn_hide' : btnIsHide}">
-      <div class="btn-item stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</div>
-      <div class="btn-item" @click="submitOrder">提交</div>
-    </div>
+    <op-button :is-modify="matterModifyClass" :hide="btnIsHide" :td-amount="tdAmount" 
+               @on-submit="submitOrder" ></op-button>
   </div>
 </template>
 
@@ -54,25 +100,16 @@
   // mixins 引入
   import common from 'components/mixins/applyCommon'
   // 组件引入
-  import RPicker from 'components/RPicker'
+  import RPicker from 'components/basicPicker'
   import PopFundList from 'components/Popup/PopFundList'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopCostList from 'components/Popup/PopCostList'
+  import OpButton from 'components/apply/commonPart/OpButton'
   // 方法引入
   import {toFixed} from '@/plugins/calc'
   import {accAdd, accSub} from '@/home/pages/maps/decimalsAdd'
 
   const DRAFT_KEY = 'BXYZF_DATA';
-  const COST_DETAIL = {
-    exptName: '', // 费用名称
-    expCode: '', // 费用编码
-    expSubject: '', // 费用科目
-    costType: '', // 费用类型
-    tdAmount: 0, //申请金额
-    taxAmount: 0, // 税金
-    noTaxAmount: 0, // 不含税金额
-  };
-
   export default {
     data() {
       return {
@@ -86,7 +123,7 @@
           thenAlreadyAmnt: 0, // 本次贷方增加
           thenTotalAmntBal: 0, // 本次支付
           differenceAmount: 0, // 本次报销与支付后余额
-          // tdAmount: 0, // 差异金额
+          tdAmount: 0, // 差异金额
         },
         formData: {
           biId: '', // 为空
@@ -100,23 +137,27 @@
           thenAmntBalCopy1: '', // 账户余额
           tdAmountCopy1: '', // 支付金额
         },
-        CostList: [{...COST_DETAIL}],
+        costList: [{}],
         biReferenceId: '',
         showCostPop: false, // 费用的Pop
-        costIndex: 0,
         selectedCost: [],
+        costIndex: null,
         showFundPop: false, // 账户的Pop
-        selectedFund: []
+        selectedFund: [],
+        project: {}
       }
     },
     components: {
       Cell, Group, XInput, XTextarea,
-      RPicker, PopFundList, PopBaseinfo, PopCostList
+      RPicker, PopFundList, PopBaseinfo, PopCostList, OpButton
     },
     mixins: [common],
     computed: {
+      departId() {
+        return this.formData.handlerUnit;
+      },
       creatorName() {
-        return this.formData.userCode
+        return this.formData.handlerName
       },
       // 本次报销与支付后余额
       differenceAmount() {
@@ -125,26 +166,27 @@
         total = accAdd(subAmount, this.dealerInfo.thenTotalAmntBal);
         return toFixed(total);
       },
-      // 往来差异金额
-      tdAmount() {
-        // let total = accSub(this.dealerInfo.thenAlreadyAmnt, this.cashInfo.tdAmountCopy1);
-        let {thenAlreadyAmnt = 0, thenTotalAmntBal = 0} = this.dealerInfo;
-        let total = accSub(thenAlreadyAmnt, thenTotalAmntBal);
-        return toFixed(total);
-      },
     },
     watch: {
-      creatorName(val) {
+      creatorName(newVal, oldVal) {
+        if(oldVal){
+          this.costList = [{}]
+        }
         this.getEmployeeBal()
       },
-      CostList: {
+      costList: {
         handler(val) {
           let total = 0;
           val.forEach(item => {
-            item.noTaxAmount = toFixed(accSub(item.tdAmount, item.taxAmount))
-            total = accAdd(total, item.tdAmount)
+            if(item.tdAmount){
+              item.taxAmount = 0;
+              item.noTaxAmount = toFixed(accSub(item.tdAmount, item.taxAmount))
+              total = accAdd(total, item.tdAmount)
+            }  
           })
+          this.tdAmount = toFixed(total)
           this.dealerInfo.thenAlreadyAmnt = toFixed(total);
+          this.dealerInfo.thenTotalAmntBal = toFixed(total);
         },
         deep: true,
       },
@@ -162,6 +204,36 @@
           }
         },
         deep: true
+      },
+      // 此处监听 经办组织id
+      departId: {
+        handler(newVal, oldVal){
+          if(this.matterParams.data && this.matterParams.data.groupId != null){
+            this.matterParams.data.groupId = newVal;
+          }
+          if(oldVal){
+            this.costList = [{}]
+          }
+        }     
+      },
+      project: {
+        handler(val) {
+          // 修改项目名称，获取对应的项目类型
+          if(val.project) {
+            for(let item of this.baseinfoExtConfig) {
+             if(item.fieldCode === 'project'){
+               for(let dItem of item.remoteData){
+                 if(dItem.name === val.project){
+                   this.project.projectType_project = dItem.PROJECT_TYPE;
+                   break
+                 }
+               }
+               break
+             }
+           }
+          }
+        },
+        deep: true
       }
     },
     methods: {
@@ -170,8 +242,8 @@
         let filter = [
           {
             operator: "eq",
-            value: this.formData.userCode,
-            property: "dealerCode"
+            value: this.formData.handlerName,
+            property: "nickname"
           }
         ]
         getEmployeeBal(JSON.stringify(filter)).then(({tableContent = []}) => {
@@ -186,52 +258,59 @@
           }
         })
       },
-      getCost(index, item) {
-        this.showCostPop = true;
-        this.costIndex = index;
-        this.selectedCost = [item];
-      },
       // TODO 点击增加费用
       addCost() {
-        this.CostList.push({...COST_DETAIL})
+        this.costList.push({})
       },
       // 删除费用明细
-      deleteCost() {
-        this.CostList.pop();
+      deleteCost(index) {
+        this.costList.splice(index, 1);
+      },
+      getCost(item, index) {
+        this.showCostPop = true;
+        this.costIndex = index;
+        if(!item.costName_expCode){
+          this.selectedCost = [];
+          return
+        }
+        this.selectedCost = [item];
       },
       // TODO 选中费用
       selMatter(val) {
-        let sels = val;
-        this.CostList[this.costIndex].exptName = sels.costName;
-        this.CostList[this.costIndex].expCode = sels.costCode;
-        this.CostList[this.costIndex].expSubject = sels.costSubject;
-        this.CostList[this.costIndex].costType = sels.costType;
-        this.CostList[this.costIndex].expCause = '';
+        this.selectedCost.push(val)
+        let obj = {
+          ...this.costList[this.costIndex],
+          ...val,
+          costName_expCode: val.costName,
+          expCode: val.costCode,
+          costType_expCode: val.costType,
+          expSubject: val.costSubject
+        }
+        this.$set(this.costList, this.costIndex , {...obj})
+      },
+      // 校验数字
+      checkAmt(item, key, val) {
+        item[key] = Math.abs(toFixed(val)); 
       },
       // TODO 提交
       submitOrder() {
+        /**
+         * @warn 提示文字 
+         * @dataSet 组装的提交的数据
+         */
         let warn = '';
         let dataSet = [];
-        this.CostList.every(item => {
-          if (!item.exptName) {
-            warn = '请选择费用名称';
-            return false
+        for (let item of this.costList) {
+          let oItem = {};
+          for(let sItem of this.submitMatterField){
+            if(!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode]){
+              warn = `${sItem.text}不为空`
+              break;
+            }
+            oItem[sItem.fieldCode] = item[sItem.fieldCode] != null ? item[sItem.fieldCode] : null
           }
-          if (!item.tdAmount) {
-            warn = '请填写申请金额';
-            return false
-          }
-          dataSet.push({
-            tdId: item.tdId || '',
-            expCode: item.expCode, // 费用编码
-            expSubject: item.expSubject, // 费用科目
-            tdAmount: item.tdAmount, // 申请金额
-            taxAmount: item.taxAmount, // 税金
-            noTaxAmount: item.noTaxAmount, // 不含税金额
-            expCause: item.expCause, // 报销事由
-          });
-          return true
-        });
+          dataSet.push(oItem);
+        }
         if (warn) {
           this.$vux.alert.show({
             content: warn,
@@ -251,11 +330,11 @@
                 dataSet: [{
                   ...this.dealerInfo,
                   differenceAmount: this.differenceAmount,
-                  tdAmount: this.tdAmount, // 差异金额
                   tdId: this.dealerInfo.tdId || '',
                 }]
               },
               order: {
+                project: this.project.project,
                 departmentName: this.formData.handlerUnitName,
                 dataSet,
               },
@@ -358,43 +437,27 @@
             tdAmountCopy1: cashInfo.tdAmountCopy1, // 本次支付
             tdIdCopy1: cashInfo.tdIdCopy1
           }
-          this.CostList = [];
+          this.costList = [];
           order.dataSet.forEach(item => {
-            this.CostList.push({
+            this.costList.push({
+              ...item,
               tdId: item.tdId,
-              exptName: item.costName_expCode, // 费用名称
-              expCode: item.expCode, // 费用编码
-              expSubject: item.expSubject, // 费用科目
+              costName: item.costName_expCode, // 费用名称
+              costCode: item.expCode, // 费用编码
+              costSubject: item.expSubject, // 费用科目
               costType: item.costType_expCode, // 费用类型
-              tdAmount: item.tdAmount, //申请金额
-              taxAmount: item.taxAmount, // 税金
-              noTaxAmount: item.noTaxAmount, // 不含税金额
             })
           })
+          if(this.matterParams.data && this.matterParams.data.groupId != null) {
+            this.matterParams.data.groupId = this.formData.handlerUnit;
+          }
+          this.project = {
+            project: order.project,
+            projectType_project: order.projectType_project
+          }
           this.biReferenceId = formData.biReferenceId;
           this.$loading.hide();
         })
-      },
-      // TODO 检查金额
-      checkAmt(item) {
-        let {tdAmount, taxAmount} = item,
-          {tdCreditLine, thenTotalAmntBal} = this.dealerInfo,
-          {tdAmountCopy1} = this.cashInfo;
-        if (tdAmount) {
-          item.tdAmount = Math.abs(toFixed(tdAmount));
-        }
-        if (taxAmount) {
-          item.taxAmount = Math.abs(toFixed(taxAmount));
-        }
-        if (tdCreditLine) {
-          this.dealerInfo.tdCreditLine = Math.abs(toFixed(tdCreditLine));
-        }
-        if (thenTotalAmntBal) {
-          this.dealerInfo.thenTotalAmntBal = Math.abs(toFixed(thenTotalAmntBal));
-        }
-        if (tdAmountCopy1) {
-          this.cashInfo.tdAmountCopy1 = Math.abs(toFixed(tdAmountCopy1));
-        }
       },
       // TODO 是否保存草稿
       hasDraftData() {
@@ -403,9 +466,28 @@
             dealerInfo: this.dealerInfo,
             cashInfo: this.contactInfo,
             costList: this.costList,
-            formData: this.formData
+            formData: this.formData,
+            project: this.project
           }
         };
+      },
+      // 选择日期
+      getDate(sItem, dItem){
+        this.$vux.datetime.show({
+          value: '', // 其他参数同 props
+          confirmText: '确认',
+          cancelText: '取消',
+          onConfirm: (val)=> {
+            if(sItem[dItem.fieldCode] == null){
+              this.$set(sItem, dItem.fieldCode, val)
+              return
+            }
+            sItem[dItem.fieldCode] = val;
+          },
+        })
+      },
+      splitConfig(editMatterPop, editMatterPopConfig){
+        editMatterPopConfig.editPart = editMatterPop;
       },
     },
     created() {
@@ -416,6 +498,7 @@
         this.dealerInfo = draft.dealerInfo;
         this.cashInfo = draft.cashInfo;
         this.costList = draft.costList;
+        this.project = draft.project;
         sessionStorage.removeItem(DRAFT_KEY)
       }
     }
@@ -424,68 +507,149 @@
 
 <style lang="scss" scoped>
   @import './../../scss/bizApply.scss';
-
-  .materiel_list .mater_list .each_mater {
-    padding: unset;
+  .vux-1px-b:after{
+    border-color: #e8e8e8;
   }
-
-  .sj-apply-container {
-    .SJ_group {
-
-      /deep/ .vux-no-group-title {
-        margin-top: 0.08rem;
+  
+  .cost_list{
+    input {
+      border: none;
+      outline: none;
+      font-size: .14rem;
+    }
+    .cost_item {
+      background: #fff;
+      padding: 0 .15rem;
+      &.has_border {
+        margin-top: .1rem;
       }
-      /deep/ .weui-cells {
-        font-size: .16rem;
-        .vux-tap-active {
-          .vux-label {
-            color: #5077aa;
-            font-weight: bold;
-          }
+      .cost_title{
+        display: flex;
+        justify-content: space-between;
+        height: .4rem;
+        line-height: .4rem;
+        label{
+          color: #333;
+          font-weight: bold;
         }
-        &:after {
-          border-bottom: none;
-        }
-      }
-      .vux-cell-box {
-        &:before {
-          left: 0;
-        }
-        /deep/ .weui-cell {
-          padding: 10px 0;
+        span{
+          color: red;
         }
       }
     }
-    .weui-cell {
-      padding: 10px 0;
-
-      &:before {
-        left: 0;
+  }
+  .project_part{
+    margin-top: .1rem;
+    background: #fff;
+    padding: 0 .15rem;
+  }
+  .fill_wrapper{
+    padding-bottom: .1rem;
+    font-size: .14rem;
+    
+  }
+  .each-info{
+    background-color: #fff;
+    padding: 0 .15rem;
+  }
+  .each_property {
+    padding: .18rem 0;
+    display: flex;
+    justify-content: space-between;
+    line-height: .14rem;
+    label{
+      color: #696969;
+    }
+    .add{
+      color: #3296FA;
+    }
+    .required {
+      color: #3296FA;
+      font-weight: bold;
+    }
+    .property_val {
+      text-align: right;
+    }
+    .readonly {
+      color: #999;
+    }
+    .picker {
+      display: flex;
+      align-items: center;
+      .icon-right{
+        width: .08rem;
+        height: .14rem;
+        margin-left: .1rem;
       }
     }
-
   }
-
-  .add_more {
+   // 新增更多
+  .sumbit-part {
     width: 100%;
+    display: flex;
     text-align: center;
-    font-size: 0.12rem;
-    padding: 0.1rem 0;
-    color: #757575;
-    span {
-      margin: 0 5px;
-      color: #fff;
-      padding: .01rem .06rem;
-      border-radius: .12rem;
+    position: relative;
+    background: #fff;
+    .add_more {
+      display: flex;
+      color: #3296FA;
+      font-weight: bold;
+      text-align: center;
+      align-items: center;
+      margin: .1rem auto;
+      // margin: 0 auto .2rem;
+      border-radius: .15rem;
+      padding: .06rem .08rem;
+      border: 1px solid #3296FA;
+      .icon-add {
+        width: .14rem;
+        height: .14rem;
+        box-sizing: border-box;
+        margin: .015rem .05rem 0 0;
+      }
+      .add_text {
+        font-size: .12rem;
+        line-height: .12rem;
+      }
     }
-    .add {
-      background: #5077aa;
+    .symbol {
+      left: 50%;
+      bottom: 25%;
+      color: #757575;
+      font-size: .12rem;
+      position: absolute;
+      transform: translate(-50%, 0);
     }
-    .delete {
-      background: red;
+    .native {
+      margin-right: .24rem;
+      background: #ea5455;
+      box-shadow: 0 2px 5px #ea5455;
     }
-    em {
-      font-style: normal;
+
+  }
+  .resubmit-part {
+    display: flex;
+    padding: .1rem .15rem;
+    background: #fff;
+    font-size: .12rem;
+    text-align: center;
+    position: relative;
+    justify-content: flex-end;
+    .add_more {
+      color: #FFF;
+      font-weight: bold;
+      text-align: center;
+      background: #3296FA;
+      border-radius: .04rem;
+      padding: .08rem .04rem;
+      &.stop {
+        color: #a1a1a1;
+        background: #dfdfdf;
+      }
+      & + .add_more {
+        margin-left: .1rem;
+      }
     }
   }
+
 </style>

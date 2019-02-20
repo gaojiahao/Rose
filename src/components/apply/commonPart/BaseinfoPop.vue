@@ -217,6 +217,8 @@
         this.selItems = sItem;
         this.getNewHandleORG();
         this.getNewUserRole();
+        this.changeGroup(this.group);
+        this.changeRole(this.role)
       },
       // 搜索 经办人
       searchList({val = ''}) {

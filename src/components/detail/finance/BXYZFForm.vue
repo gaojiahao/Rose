@@ -12,6 +12,7 @@
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
+      <!-- 费用列表 -->
       <div class="form_content">
         <div class="main_content" v-for="(item, index) in costList" :key="index">
           <div :class="{'vux-1px-t': cIndex > 0}" v-for="(cItem, cIndex) in matterConfig" :key="cIndex">
@@ -35,9 +36,24 @@
                      v-if="isCashier" required>
         <template slot="other">
           <form-cell cellTitle='支付金额' showSymbol
-                     :cellContent="cashInfo.tdAmountCopy1 | toFixed | numberComma(3)"></form-cell>
+                     :cellContent="cashInfo.tdAmountCopy1 | toFixed | numberComma(3)" v-if="isEditAdmout"></form-cell>
+          <div class='each_property vux-1px-t' v-else>
+            <label>支付金额</label>
+            <input type='number' v-model.number="cashInfo.tdAmountCopy1" placeholder="请输入" class='property_val' @blur="checkAmt(cashInfo, 'tdAmountCopy1', cashInfo.tdAmountCopy1)"/>
+          </div>
         </template>
       </pop-cash-list>
+      <!-- 项目 -->
+      <div class="form_content">
+        <div class="main_content">
+          <div :class="{'vux-1px-t': cIndex > 0}" v-for="(cItem, cIndex) in baseinfoExtConfig" :key="cIndex">
+            <div class="each_info">
+              <label>{{cItem.fieldLabel}}</label>
+              <span class="field_value">{{orderInfo.order[cItem.fieldCode] || "无"}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- 备注 -->
       <div class="comment">
         <form-cell cellTitle='备注' :cellContent="orderInfo.biComment"></form-cell>
@@ -97,6 +113,16 @@
         return {
           transCode: this.transCode
         }
+      },
+      // 判断纸巾账户的支付金额是否可编辑
+      isEditAdmout() {
+        let isEdit = false;
+        this.otherConfig.forEach(item => {
+          if(item.fieldCode === "tdAmountCopy1"){
+           isEdit = item.readOnly;
+          }
+        })
+        return isEdit
       }
     },
     mixins: [detailCommon],
@@ -104,6 +130,9 @@
       workFlow, RAction, contactPart, XInput, PopCashList
     },
     methods: {
+      checkAmt(item, key, val) {
+        item[key] = Math.abs(toFixed(val)); 
+      },
       // 获取详情
       getOrderList(transCode = '') {
         return getSOList({
@@ -221,4 +250,21 @@
 
 <style lang='scss' scoped>
   @import './../../scss/bizDetail';
+  .each_property {
+    padding: .18rem 0;
+    display: flex;
+    justify-content: space-between;
+    line-height: .14rem;
+    input{  
+      border: none;
+      outline: none;
+      font-size: .14rem;
+    }
+    label{
+      color: #696969;
+    }
+    .property_val {
+      text-align: right;
+    }
+  }
 </style>

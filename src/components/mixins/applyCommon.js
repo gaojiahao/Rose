@@ -51,6 +51,7 @@ export default {
       userRoleList: [],                           // 经办职位
       currentStage: [],                           // 流程状态
       matterPopConfig: [],                        // 物料列表pop配置
+      baseinfoExtConfig: [],                   // baseinfoExt配置
       submitMatterField: [],                      // 物料要提交的字段
       modifyIndex: null,                          // 选中编辑物料的pop
       fillBscroll: null,
@@ -522,7 +523,7 @@ export default {
           }
         }
         console.log(config)
-        let dealerConfig = [], matterConfig = [], otherConfig = [];
+        let dealerConfig = [], matterConfig = [], otherConfig = [], baseinfoExtConfig = [];
         // 从请求回来的配置中拆分往来，物料，其他段落的配置
         config.forEach(item => {
           // 覆盖配置
@@ -540,6 +541,9 @@ export default {
             }
             if(item.name === 'pb' || item.name === 'projectApproval' || item.name === 'projectPlanTask' || item.name === 'jobLog'){
               otherConfig = item.items;
+            }
+            if(item.name === 'baseinfoExt'){
+              baseinfoExtConfig = item.items;
             }
           }
           // 处理表单配置 <重复项渲染> 部分
@@ -756,6 +760,32 @@ export default {
           }
         })
         this.otherConfig = other;
+        let baseinfoExt = [];
+        baseinfoExtConfig.forEach(item => {
+          if(item.submitValue){
+            this.submitMatterField.push(item)
+          }
+          if(!item.hiddenInRun){
+            if((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo' || item.xtype === 'r2Selector') && item.dataSource && item.dataSource.type === 'remoteData'){
+              item.requestParams = this.handlerParams(item)
+              requestData(this.handlerParams(item)).then(data => {
+                if(data.tableContent){
+                  data.tableContent.forEach(dItem => {
+                    dItem.originValue = dItem.value;
+                    dItem.name = dItem[item.displayField]
+                    dItem.value = dItem[item.displayField];
+                  })
+                  this.$set(item, 'remoteData', data.tableContent)
+                }
+              })
+            }
+            else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
+              this.$set(item, 'remoteData', item.dataSource.data)
+            }
+            baseinfoExt.push(item)
+          }
+        })
+        this.baseinfoExtConfig = baseinfoExt;
       })
     },
     // 处理配置中数据请求
