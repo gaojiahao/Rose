@@ -140,8 +140,8 @@
           let editParts = [];
           let readOnlyParts = [];
           others.forEach(item => {
-            // item.readOnly ? readOnlyParts.push(item) : editParts.push(item);
-            readOnlyParts.push(item);
+            item.readOnly ? readOnlyParts.push(item) : editParts.push(item);
+            // readOnlyParts.push(item);
           });
           this.editParts = editParts;   // 可编辑部分
           this.readOnlyParts = readOnlyParts;   // 只读部分
