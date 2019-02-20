@@ -22,6 +22,12 @@
                 <span class="field_value">￥{{item[cItem.fieldCode]}}</span>
               </div>
             </template>
+            <template v-else-if="cItem.editorType === 'r2Numberfield'">
+              <div class="each_info">
+                <label>{{cItem.text}}</label>
+                <span class="field_value">{{item[cItem.fieldCode]}}</span>
+              </div>
+            </template>
             <template v-else>
               <div class="each_info">
                 <label>{{cItem.text}}</label>
