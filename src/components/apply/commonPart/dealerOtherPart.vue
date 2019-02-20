@@ -163,11 +163,11 @@ export default {
   }
 }
 .cell-item {
+  display: flex;
   height: .5rem;
   line-height: .5rem;
-  display: flex;
   justify-content: space-between;
-  input{
+  input {
     width: 100%;
     font-size: .14rem;
     outline: none;
@@ -176,7 +176,6 @@ export default {
   }
   .title {
     color: #696969;
-    max-width: .8rem;
     margin-right: .1rem;
     &.required {
       color: #3296FA;
@@ -184,9 +183,9 @@ export default {
     }
   }
   .mode {
+    flex: 1;
     display: flex;
     align-items: center;
-    flex: 1;
     justify-content: flex-end;
     .icon-right{
       width: .08rem;
