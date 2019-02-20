@@ -3,7 +3,7 @@
   <div class="contact-container">
     <div class="contact-main">
       <header class="contact_header vux-1px-l">往来信息</header>
-      <div class="contact_top">
+      <div class="contact_top" v-if="contactInfo.dealerContactPersonName || contactInfo.dealerMobilePhone">
         <div class="contact_top_item">
           <span class="contact_top_title">联系人: </span>{{contactInfo.dealerContactPersonName || '暂无'}}
         </div>
@@ -11,13 +11,21 @@
           <span class="contact_top_title">手机号: </span>{{contactInfo.dealerMobilePhone || '暂无'}}
         </div>
       </div>
+      <div class="contact_top" v-else-if="contactInfo.dealerCode_dealerCodeCredit">
+        <div class="contact_top_item">
+          <span class="contact_top_title">往来编码: </span>{{contactInfo.dealerCode_dealerCodeCredit || '暂无'}}
+        </div>
+        <div class="contact_top_item">
+          <span class="contact_top_title">往来标签: </span>{{contactInfo.crDealerLabel || '暂无'}}
+        </div>
+      </div>
       <div class="contact_dealer">
         <div class="contact_dealer_item">
           <i class="icon icon-dealer2"></i>
           <span class="contact_dealer_title">往来名称：</span>
-          <span class="contact_dealer_value">{{contactInfo.dealerName}}</span>
+          <span class="contact_dealer_value">{{contactInfo.dealerName || contactInfo.dealerName_dealerCodeCredit}}</span>
         </div>
-        <div class="contact_dealer_item">
+        <div class="contact_dealer_item" v-if="showAddress">
           <i class="icon icon-address"></i>
           <span class="contact_dealer_title">往来地址：</span>
           <span class="contact_dealer_value">{{contactInfo.address || '暂无'}}</span>
@@ -28,7 +36,7 @@
       <div class="contact_other_wrapper" v-for="(item, index) in configs" :key="index">
         <div class="contact_other_item">
           <span class="contact_other_title">{{item.fieldLabel}}：</span>
-          <span class="contact_other_value">{{item.fieldValue || '暂无'}}</span>
+          <span class="contact_other_value">{{item.fieldValue || contactInfo[item.fieldCode]|| '暂无'}}</span>
         </div>
       </div>
     </div>
@@ -52,6 +60,10 @@
         default() {
           return []
         }
+      },
+      showAddress: {
+        type: Boolean,
+        default: true
       }
     },
     filters: {
@@ -69,8 +81,8 @@
     width: calc(100% - .2rem);
     .contact-main {
       width: 100%;
+      padding: .15rem;
       box-sizing: border-box;
-      padding: .15rem .15rem .2rem;
       .contact_header {
         line-height: .16rem;
         font-size: 16px;

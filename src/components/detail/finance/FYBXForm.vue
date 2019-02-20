@@ -10,6 +10,7 @@
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
+      <!-- 费用列表 -->
       <div class="form_content">
         <div class="main_content" v-for="(item, index) in costList" :key="index">
           <div :class="{'vux-1px-t': cIndex > 0}" v-for="(cItem, cIndex) in matterConfig" :key="cIndex">
@@ -100,9 +101,4 @@
 
 <style lang='scss' scoped>
   @import './../../scss/bizDetail';
-  .comment{
-    margin: .1rem;
-    padding: 0 .1rem;
-    background: #fff;
-  }
 </style>

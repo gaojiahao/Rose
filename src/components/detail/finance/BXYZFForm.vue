@@ -7,51 +7,27 @@
       </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
+      <!-- 往来联系部分 交易基本信息-->
+      <contact-part :contact-info="dealerInfo" :configs="dealerConfig" :showAddress=false></contact-part>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <div class="form_content">
-        <div class="form_title">
-          <span class="iconfont icon-baoxiao"></span>
-          <span class="title">费用信息</span>
-        </div>
-        <div class="main_content" :class="{'has_border' : index > 0}" v-for="(item, index) in costList" :key="index">
-          <form-cell cellTitle='费用名称' :cellContent="item.costName_expCode"></form-cell>
-          <form-cell cellTitle='费用科目' :cellContent="item.expSubject"></form-cell>
-          <form-cell cellTitle='费用类型' :cellContent="item.costType_expCode"></form-cell>
-          <form-cell cellTitle='申请金额' showSymbol
-                     :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
-          <form-cell cell-title="报销事由" :cell-content="item.expCause"></form-cell>
-          <x-input type="number" title="可抵扣税金" :value="item.taxAmount" text-align="right" @on-focus="getFocus"
-                   @on-blur="calcTax(item)" v-model.number="item.taxAmount" v-if="isAccounting"></x-input>
-          <form-cell cellTitle='可抵扣税金' showSymbol
-                     :cellContent="item.taxAmount | toFixed | numberComma(3)" v-else></form-cell>
-          <form-cell cellTitle='抵扣后金额' showSymbol
-                     :cellContent="item.noTaxAmount | toFixed | numberComma(3)"></form-cell>
-        </div>
-      </div>
-      <div class="form_content" style="margin-top:0.1rem;">
-        <div class="form_title">
-          <span class="iconfont icon-mingxi1"></span>
-          <span>往来信息</span>
-        </div>
-        <div class="main_content">
-          <form-cell cellTitle='往来名称' :cellContent="dealerInfo.dealerName_dealerCodeCredit"></form-cell>
-          <!-- <form-cell cellTitle='往来编码' :cellContent="dealerInfo.dealerCodeCredit" ></form-cell> -->
-          <form-cell cellTitle='往来关系标签' :cellContent="dealerInfo.crDealerLabel"></form-cell>
-          <form-cell cellTitle='信用额度' showSymbol
-                     :cellContent="dealerInfo.tdCreditLine | toFixed | numberComma(3)"></form-cell>
-          <form-cell cellTitle='往来余额' showSymbol
-                     :cellContent="dealerInfo.thenAmntBal | toFixed | numberComma(3)"></form-cell>
-          <form-cell cellTitle='本次贷方增加' showSymbol
-                     :cellContent="dealerInfo.thenAlreadyAmnt | toFixed | numberComma(3)"></form-cell>
-          <x-input type="number" title="本次支付" :value="dealerInfo.thenTotalAmntBal" text-align="right"
-                   @on-focus="getFocus" @on-blur="calcPayment(dealerInfo)" v-model.number="dealerInfo.thenTotalAmntBal"
-                   v-if="isAccounting"></x-input>
-          <form-cell cellTitle='本次支付' showSymbol
-                     :cellContent="dealerInfo.thenTotalAmntBal | toFixed | numberComma(3)" v-else></form-cell>
-          <form-cell cellTitle='本次报销与支付后余额' showSymbol
-                     :cellContent="dealerInfo.differenceAmount | toFixed | numberComma(3)"></form-cell>
+        <div class="main_content" v-for="(item, index) in costList" :key="index">
+          <div :class="{'vux-1px-t': cIndex > 0}" v-for="(cItem, cIndex) in matterConfig" :key="cIndex">
+            <template v-if="cItem.fieldCode === 'tdAmount'">
+              <div class="each_info">
+                <label>{{cItem.text}}</label>
+                <span class="field_value">￥{{item[cItem.fieldCode]}}</span>
+              </div>
+            </template>
+            <template v-else>
+              <div class="each_info">
+                <label>{{cItem.text}}</label>
+                <span class="field_value">{{item[cItem.fieldCode] || "无"}}</span>
+              </div>
+            </template>
+          </div>
         </div>
       </div>
       <!-- 资金 -->
@@ -62,20 +38,9 @@
                      :cellContent="cashInfo.tdAmountCopy1 | toFixed | numberComma(3)"></form-cell>
         </template>
       </pop-cash-list>
-      <div class="form_content" style="margin-top:0.1rem;" v-else-if="!isCashier && !isAccounting && !isApproval">
-        <div class="form_title">
-          <span class="iconfont icon-baoxiao"></span>
-          <span class="title">资金账户信息</span>
-        </div>
-        <div class="main_content">
-          <form-cell cellTitle='资金账户' :cellContent="cashInfo.fundName_cashInCode"></form-cell>
-          <!-- <form-cell cellTitle='资金编码' :cellContent="cashInfo.cashInCode" ></form-cell> -->
-          <form-cell cellTitle='资金账户类型' :cellContent="cashInfo.cashType_cashInCode"></form-cell>
-          <form-cell cellTitle='账户余额' showSymbol
-                     :cellContent="cashInfo.thenAmntBalCopy1 | toFixed | numberComma(3)"></form-cell>
-          <form-cell cellTitle='支付金额' showSymbol
-                     :cellContent="cashInfo.tdAmountCopy1 | toFixed | numberComma(3)"></form-cell>
-        </div>
+      <!-- 备注 -->
+      <div class="comment">
+        <form-cell cellTitle='备注' :cellContent="orderInfo.biComment"></form-cell>
       </div>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle"
                    :title-style="uploadTitleStyle"></upload-file>
@@ -256,33 +221,4 @@
 
 <style lang='scss' scoped>
   @import './../../scss/bizDetail';
-
-  .detail_wrapper {
-    .pop_dealer_list {
-      width: 100%;
-    }
-  }
-
-  .form_content {
-    .main_content {
-      /deep/ .weui-cell {
-        padding: .08rem 0;
-        &:before {
-          left: 0;
-        }
-      }
-      /deep/ .weui-label {
-        color: #757575;
-        font-size: .14rem;
-      }
-      &.has_border{
-        border-top:2px solid #e8e8e8;
-      }
-    }
-  }
-
-  .form_part .form_title .iconfont {
-    font-size: .14rem;
-    margin-right: .04rem;
-  }
 </style>

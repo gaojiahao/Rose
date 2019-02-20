@@ -380,9 +380,10 @@ export default {
     // 请求配置
     getFormConfig() {
       return getFormConfig(this.formViewUniqueId).then(data => {
-        console.log('config:', config);
         this.currenrForm = data.viewType;
         let {config = [], dataSource = '[]', reconfig = {}} = data;
+        console.log('config:', config);
+
         let ckConfig = [], rkConfig = [], dealerConfig = [], matterConfig = [], otherConfig = [];
         let dealerFilter = [
           'dealerName_dealerDebit',
@@ -443,7 +444,7 @@ export default {
               rkConfig = item.items;
               this.setWarehouseConfg(rkConfig, '入库');
             }
-            if(item.name === 'pb' || item.name === 'projectApproval' || item.name === 'jobLog'){
+            if(item.name === 'pb' || item.name === 'outPut' || item.name === 'projectApproval' || item.name === 'jobLog'){
               otherConfig = item.items;
             }
           } else {
@@ -455,7 +456,7 @@ export default {
           }
         });
         this.judgeDealerConfig && this.judgeDealerConfig(dealerConfig);
-        // 处理往来配置里面的接口请求
+        // 处理<往来配置>里面的渲染字段
         dealerConfig = dealerConfig.reduce((arr, item) => {
           if (!item.hiddenInRun && !dealerFilter.includes(item.fieldCode)) {
             item.fieldValue = orderInfo[item.fieldCode];
