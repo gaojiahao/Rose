@@ -36,7 +36,8 @@
       <div class="contact_other_wrapper" v-for="(item, index) in configs" :key="index">
         <div class="contact_other_item">
           <span class="contact_other_title">{{item.fieldLabel}}：</span>
-          <span class="contact_other_value">{{item.fieldValue || contactInfo[item.fieldCode]|| '暂无'}}</span>
+          <span class="contact_other_value" v-if="item.xtype === 'r2Permilfield'">{{item.fieldValue || contactInfo[item.fieldCode]}}</span>
+          <span class="contact_other_value" v-else>{{item.fieldValue || contactInfo[item.fieldCode]|| '暂无'}}</span>
         </div>
       </div>
     </div>
