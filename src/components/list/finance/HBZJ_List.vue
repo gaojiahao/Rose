@@ -21,7 +21,7 @@
               <template v-if="key === 'view_49'">
                 <div class="classification-item-wrapper" v-for='(item, index) in slide.listData' :key='index'>
                   <div class="classification-header-wrapper">
-                    <img class="classification_img" :src="item.AppIcon" alt="app-icon">
+                    <img class="classification_img" :src="item.AppIcon" alt="icon">
                     <div class="classification_app">
                       <div class="app_top">
                         <div class="app_name">{{item.appTitle}}</div>
@@ -78,7 +78,7 @@
                 <div class="bank-item-wrapper" :class="{bg2: index % 3 === 2, bg3: index % 3 === 0}"
                      v-for='(item, index) in slide.listData' :key='index' @click="getFlow(item)">
                   <div class="bank-header-wrapper">
-                    <img class="bank_icon" :src="item.icon" alt="bank-icon">
+                    <img class="bank_icon" :src="item.icon">
                     <div class="bank_info">
                       <div class="bank">{{item.bank}}</div>
                       <div class="bank_name">{{item.fundName}}</div>
@@ -87,7 +87,7 @@
                   </div>
                   <div class="bank-balance-wrapper">
                     <div class="bank-balance">{{item.amountBalance | numberComma}}</div>
-                    <div class="text">余额</div>
+                    <div class="text">余额<span>（{{item.fundCurrency}}）</span></div>
                   </div>
                 </div>
               </template>
@@ -95,7 +95,7 @@
               <template v-else-if="key === 'view_140'">
                 <div class="schedule-item-wrapper" v-for='(item, index) in slide.listData' :key='index'>
                   <div class="schedule-main">
-                    <img class="schedule_img" :src="item.appIcon" alt="app-icon">
+                    <img class="schedule_img" :src="item.appIcon">
                     <div class="schedule_info">
                       <div class="app_name">{{item.appTitle}}</div>
                       <div class="schedule_info_item">
@@ -205,11 +205,11 @@
                       <div class="amount_money">
                         <div class="num_part" v-if="Fitem.drAmnt>0">
                           <span class="symbol">借方金额: </span>
-                          <span class="number_incre">+ {{Fitem.drAmnt | toFixed}}</span>
+                          <span class="number_incre">+{{Fitem.drAmnt | toFixed}}</span>
                         </div>
                         <div class="num_part" v-else-if="Fitem.drAmnt<0">
                           <span class="symbol">借方金额: </span>
-                          <span class="number_redu">- {{Fitem.drAmnt | toFixed}}</span>
+                          <span class="number_redu">-{{Fitem.drAmnt | toFixed}}</span>
                         </div>
                         <div class="num_part" v-else>
                           <span class="symbol">借方金额: </span>
@@ -220,16 +220,21 @@
                       <div class="amount_money">
                         <div class="num_part" v-if="Fitem.crAmnt>0">
                           <span class="symbol">贷方金额: </span>
-                          <span class="number_incre">+ {{Fitem.crAmnt | toFixed}}</span>
+                          <span class="number_incre">+{{Fitem.crAmnt | toFixed}}</span>
                         </div>
                         <div class="num_part" v-else-if="Fitem.crAmnt<0">
                           <span class="symbol">贷方金额: </span>
-                          <span class="number_redu">- {{Fitem.crAmnt | toFixed}}</span>
+                          <span class="number_redu">-{{Fitem.crAmnt | toFixed}}</span>
                         </div>
                         <div class="num_part" v-else>
                           <span class="symbol">贷方金额: </span>
-                          <span>0</span>
+                          <span>&nbsp;0</span>
                         </div>
+                      </div>
+                      <!-- 记账日期与时间 -->
+                      <div class="amount_time">
+                        <span class="title">记账日期与时间: </span>
+                        <span>{{Fitem.effectiveTime}}</span>
                       </div>
                     </div>
                   </div>
