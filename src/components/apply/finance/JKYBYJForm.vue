@@ -314,7 +314,7 @@
         return {
           [DRAFT_KEY]: {
             dealerInfo: this.dealerInfo,
-            cashInfo: this.contactInfo,
+            cashInfo: this.cashInfo,
             formData: this.formData
           }
         };

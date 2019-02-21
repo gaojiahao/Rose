@@ -464,7 +464,7 @@
         return {
           [DRAFT_KEY]: {
             dealerInfo: this.dealerInfo,
-            cashInfo: this.contactInfo,
+            cashInfo: this.cashInfo,
             costList: this.costList,
             formData: this.formData,
             project: this.project
