@@ -428,7 +428,7 @@ export default {
               return {...cItem, ...matched,}
             });
           }
-          if (!item.isMultiple) {
+          if (!item.hiddenInRun && !item.isMultiple) {
             if (item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt' || item.name === 'gys') {
               dealerConfig = [...dealerConfig, ...item.items]
             }
@@ -451,7 +451,7 @@ export default {
             if(item.name === 'baseinfoExt') {
               baseinfoExtConfig = item.items;
             }
-          } else {
+          } else if (!item.hiddenInRun && item.isMultiple){
             if (item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
               // 如果为<Grid>组件 为了方便<PopMatterDetail>组件的判断 此处做数据处理
               if(item.r2GridXtype) {

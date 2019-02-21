@@ -8,12 +8,12 @@
         <!-- 物料列表 -->
         <r-scroll class="r-popup-list" :options="options" :has-next="hasNext"
                   :no-data="!hasNext && !data.length" @on-pulling-up="onPullingUp" ref="bScroll">
-          <div class="r-popup-item box_sd" v-for="(item, index) in data" :key='index'
+          <div class="r-popup-item box_sd"  :class="{selected : showSelIcon(item)}" v-for="(item, index) in data" :key='index'
                @click.stop="selThis(item, index)">
             <slot name="pop-item" :item="item" :index="index"></slot>
             <!-- icon -->
             <x-icon class="selIcon" type="ios-circle-outline" size="20" v-if="multipart"></x-icon>
-            <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
+            <!-- <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon> -->
           </div>
         </r-scroll>
       </div>
@@ -247,7 +247,7 @@
         height: calc(100% - .46rem);
         /* 使用深度作用选择器进行样式覆盖 */
         /deep/ .scroll-wrapper {
-          padding: .04rem .04rem 0 .3rem;
+          padding: .14rem .15rem 0;
         }
         /deep/ .vux-loadmore {
           position: relative;
@@ -270,6 +270,9 @@
           }
           .isSelIcon {
             fill: #5077aa;
+          }
+          &.selected {
+            border: 1px solid #3296FA;
           }
         }
       }

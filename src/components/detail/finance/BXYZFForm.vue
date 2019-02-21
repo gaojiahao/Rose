@@ -8,7 +8,7 @@
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 往来联系部分 交易基本信息-->
-      <contact-part :contact-info="dealerInfo" :configs="dealerConfig" :showAddress=false></contact-part>
+      <contact-part :contact-info="dealerInfo" :configs="dealerConfig" :showAddress=false v-show="dealerConfig.length"></contact-part>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
@@ -19,13 +19,13 @@
             <template v-if="cItem.fieldCode === 'tdAmount'">
               <div class="each_info">
                 <label>{{cItem.text}}</label>
-                <span class="field_value">￥{{item[cItem.fieldCode]}}</span>
+                <span class="field_value">￥{{item[cItem.fieldCode] | numberComma}}</span>
               </div>
             </template>
             <template v-else-if="cItem.editorType === 'r2Numberfield'">
               <div class="each_info">
                 <label>{{cItem.text}}</label>
-                <span class="field_value">{{item[cItem.fieldCode]}}</span>
+                <span class="field_value">{{item[cItem.fieldCode] | numberComma}}</span>
               </div>
             </template>
             <template v-else>
@@ -37,18 +37,35 @@
           </div>
         </div>
       </div>
-      <!-- 资金 -->
+      <!-- 资金账户可编辑-->
       <pop-cash-list :default-value="cashInfo" @sel-item="selCash" request="4" :params="cashParams"
-                     v-if="isCashier" required>
+                     v-show="otherConfig.length &&  !isEditAdmout" required>
         <template slot="other">
-          <form-cell cellTitle='支付金额' showSymbol
-                     :cellContent="cashInfo.tdAmountCopy1 | toFixed | numberComma(3)" v-if="isEditAdmout"></form-cell>
-          <div class='each_property vux-1px-t' v-else>
+          <div class='each_property vux-1px-t'>
             <label>支付金额</label>
             <input type='number' v-model.number="cashInfo.tdAmountCopy1" placeholder="请输入" class='property_val' @blur="checkAmt(cashInfo, 'tdAmountCopy1', cashInfo.tdAmountCopy1)"/>
           </div>
         </template>
       </pop-cash-list>
+      <!-- 资金账户不可编辑 -->
+      <div class="form_content" v-show="otherConfig.length &&  isEditAdmout">
+        <div class="main_content">
+          <div :class="{'vux-1px-t': cIndex > 0}" v-for="(cItem, cIndex) in otherConfig" :key="cIndex">
+            <template v-if="cItem.xtype === 'r2Permilfield'">
+              <div class="each_info">
+                <label>{{cItem.fieldLabel}}</label>
+                <span class="field_value">￥{{cashInfo[cItem.fieldCode] | numberComma}}</span>
+              </div>
+            </template>
+            <template v-else>
+              <div class="each_info">
+                <label>{{cItem.fieldLabel}}</label>
+                <span class="field_value">{{cashInfo[cItem.fieldCode] || "无"}}</span>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
       <!-- 项目 -->
       <div class="form_content">
         <div class="main_content">
@@ -128,6 +145,15 @@
            isEdit = item.readOnly;
           }
         })
+        if(!isEdit){
+          this.cashInfo = {
+            ...this.cashInfo,
+            fundCode: this.cashInfo.fundCode || this.cashInfo.cashInCode,
+            fundType: this.cashInfo.fundType || this.cashInfo.cashType_cashInCode,
+            fundName: this.cashInfo.fundName || this.cashInfo.fundName_cashInCode,
+            thenAmntBal: this.cashInfo.thenAmntBal || this.cashInfo.thenAmntBalCopy1,
+          }
+        }
         return isEdit
       }
     },
@@ -203,14 +229,14 @@
               dataSet,
             },
           };
-          if (this.isCashier) {
+          if (this.otherConfig.length) {
             let cashInfo = this.cashInfo;
             formData.outPut = {
               dataSet: [{
-                fundName_cashInCode: cashInfo.fundName,
-                cashInCode: cashInfo.fundCode,
-                cashType_cashInCode: cashInfo.fundType,
-                thenAmntBalCopy1: cashInfo.thenAmntBal,
+                fundName_cashInCode: cashInfo.fundName_cashInCode || cashInfo.fundName,
+                cashInCode: cashInfo.cashInCode || cashInfo.fundCode,
+                cashType_cashInCode: cashInfo.cashType_cashInCode || cashInfo.fundType,
+                thenAmntBalCopy1: cashInfo.thenAmntBalCopy1 || cashInfo.thenAmntBal,
                 tdAmountCopy1: cashInfo.tdAmountCopy1,
                 tdIdCopy1: cashInfo.tdIdCopy1,
               }],
