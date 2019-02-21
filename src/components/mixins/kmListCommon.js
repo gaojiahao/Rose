@@ -49,7 +49,7 @@ export default {
   },
   filters: { dateFormat, numberComma },
   methods: {
-    // TODO 重置列表条件
+    // 重置列表条件
     resetCondition() {
       this.listData = [];
       this.page = 1;
@@ -57,7 +57,7 @@ export default {
       this.$refs.bScroll.scrollTo(0, 0);
       this.$refs.bScroll.resetPullDown();
     },
-    ///tab切换
+    // tab切换
     tabClick(val, index) {
       this.activeIndex = index;
       this.activeTab = val.view_name;
@@ -71,6 +71,9 @@ export default {
       this.serachVal = val;
       this.resetCondition();
       this.getListData();
+    },
+    getDefaultImg(item) {
+      item.inventoryPic = require('assets/wl_default03.png');
     },
     //获取列表视图
     getClassfiy() {
@@ -184,10 +187,20 @@ export default {
                 break;
             }
           }
+          // 应用图标 初始化
           if (this.activeTab.includes('资金账户余额')) {
             item.icon = bankMap[item.bank];
           } else if (hasAppIcon.includes(this.activeTab)) {
             item.appIcon = `/dist/${item.appIcon}`;
+          }
+
+          // 物料图标 初始化
+          if(item.inventoryPic) {
+            item.inventoryPic = `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400`;
+          }
+          else {
+            // 设置默认物料图片
+            this.getDefaultImg(item)
           }
         })
         this.listData = this.page === 1 ? data : this.listData.concat(data);
@@ -225,17 +238,17 @@ export default {
       await this.getView();
       await this.getListData(noReset);
     },
-    // TODO 重置下拉刷新、上拉加载的状态
+    // 重置下拉刷新、上拉加载的状态
     resetScroll() {
       this.$refs.bScroll.finishPullDown();
       this.$refs.bScroll.finishPullUp();
     },
-    // TODO 上拉加载
+    // 上拉加载
     onPullingUp() {
       this.page++;
       this.getListData();
     },
-    // TODO 下拉刷新
+    // 下拉刷新
     onPullingDown() {
       this.page = 1;
       this.getData(true);

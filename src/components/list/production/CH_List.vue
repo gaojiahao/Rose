@@ -8,55 +8,277 @@
           <tab-item :tabVal="listView" @tab-click='tabClick'></tab-item>
         </div>
       </div>
-      <r-scroll class="list_wrapper":options="scrollOptions" :has-next="hasNext"
+      <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class='each_duty' v-for='(item, index) in listData' :key='index' @click="getFlow(item)">
-          <!-- 存货顶部信息栏 -->
-          <div class="duty_top vux-1px-b">
-              <div class="warehouse_info">
-                <!-- 仓库名称 -->
-                <span class="warehouse warehouse_name">{{item.warehouseName}}</span>
-                <!-- 仓库编码 -->
-                <span class="warehouse warehouse_code">{{item.whCode}}</span>
+        <!-- 库位库存表 -->
+        <template v-if="activeTab.includes('库位库存')">
+          <div class="classification-item-wrapper" v-for='(item, index) in listData' :key='index'>
+            <div class="classification-header-wrapper">
+              <img class="classification_img" :src="item.inventoryPic" alt="icon">
+              <div class="classification_app">
+                <div class="app_top">
+                  <div class="app_name">{{item.inventoryName}}</div>
+                  <div class="app_flow">{{item.invProcessing}}</div>
+                </div>
+                <div class="classification_detail_item">
+                  <span class="classification_detail_title">物料编码: </span>{{item.matCode}}
+                </div>
+                <div class="classification_detail_item">
+                  <span class="classification_detail_title">产品规格: </span>{{item.specification || '无'}}
+                  <span class="classification_detail_title">主计量单位: </span>{{item.measureUnit || '无'}}
+                </div>
               </div>
-              <!-- 数量余额 -->
-              <div class="mater_code" v-if="item.qtyBalance >= 0">
-                <span class="title">数量余额</span>
-                <span class="num">{{item.qtyBalance}}</span>
+            </div>
+            <div class="classification-split"></div>
+            <div class="mater-info">
+              <div class="mater_detail">
+                <div class="mater">
+                  <span class="title">仓库名称: </span>{{item.warehouseName || '暂无'}}
+                </div>
+                <div class="mater">
+                  <span class="title">仓库编码: </span>{{item.whCode || '无'}}
+                </div>
+                <div class="mater">
+                  <span class="title">仓库关系类型: </span>{{item.warehouseType || '无'}}
+                </div>
+                <template>
+                </template>
+                <div class="mater">
+                  <span class="title">库位名称: </span>{{item.storehouseName || '无'}}
+                </div>
+                <div class="mater">
+                  <span class="title">库位编码: </span>{{item.storehouseCode || '无'}}
+                </div>
               </div>
-              <div class="mater_code" v-if="item.qtyLocked >= 0">
-                <span class="title">数量余额</span>
-                <span class="num">{{item.qtyLocked}}</span>
+              <div class="mater_amt_wrapper">
+                <div class="mater_amt">{{item.qtyBalance | numberComma}}
+                </div>
+                <div class="text">数量余额</div>
               </div>
-          </div>
-          <!-- 物料 -->
-          <div class='matter'>
-            <div class="matter_code" v-if="item.matCode">
-              <span class="iconfont icon-bianma"></span>
-              <span>物料编码: {{item.matCode}}</span>
             </div>
-            <div class='matter_name'>
-              {{item.inventoryName}}<span class="type">[{{item.invProcessing}}]</span>
-            </div>
-            <div class="mater_days" v-if="item.accountAge || item.libraryAge || item.nearKeepingDays">
-              <span class="days" v-if="item.accountAge >= 0">账龄天数 {{item.accountAge}}</span>
-              <span class="days" v-if="item.libraryAge >= 0">库龄天数 {{item.libraryAge}}</span>
-              <span class="days" v-if="item.nearKeepingDays >= 0">保质剩余天数 {{item.nearKeepingDays}}</span>
-            </div>
-          </div>
-          <!-- 仓库类型、金额余额等 -->
-          <div class='duty_btm vux-1px-t'>
-            <!-- 仓库类型 -->
-            <div class="ware_type">
-              {{item.warehouseType || '暂无'}}<span class="type">[仓库类型]</span>
-            </div>
-            <!-- 余额 -->
-            <div class="balance" v-if="item.amountBalance !== ''">
-              <span class="symbol">金额余额: ￥</span>{{item.amountBalance}}
+            <div class="classification-split"></div>
+            <div class="classification-bottom">
+              <div class="classification_bottom_item days">
+                <div class="classification_bottom_value">{{item.drQty || 0 | numberComma}}</div>
+                <div class="classification_bottom_title">增加数量</div>
+              </div>
+              <div class="classification_bottom_item">
+                <div class="classification_bottom_value">{{item.crQty || 0 | numberComma }}</div>
+                <div class="classification_bottom_title">减少数量</div>
+              </div>
+              <div class="classification_bottom_item amt noticed">
+                <div class="classification_bottom_value">
+                  {{item.qtyLocked | numberComma}}
+                </div>
+                <div class="classification_bottom_title">工作流占用</div>
+              </div>
             </div>
           </div>
-        </div>
+        </template>
+        <!-- 库存表 -->
+        <template v-else-if="activeTab.includes('库存')">
+          <div class="classification-item-wrapper" v-for='(item, index) in listData' :key='index'>
+            <div class="classification-header-wrapper">
+              <img class="classification_img" :src="item.inventoryPic" alt="icon">
+              <div class="classification_app">
+                <div class="app_top">
+                  <div class="app_name">{{item.inventoryName}}</div>
+                  <div class="app_flow">{{item.invProcessing}}</div>
+                </div>
+                <div class="classification_detail_item">
+                  <span class="classification_detail_title">物料编码: </span>{{item.matCode}}
+                </div>
+                <div class="classification_detail_item">
+                  <span class="classification_detail_title">产品规格: </span>{{item.specification || '无'}}
+                  <span class="classification_detail_title">主计量单位: </span>{{item.measureUnit || '无'}}
+                </div>
+                <div class="classification_detail_item">
+                  <span class="classification_detail_title">仓库名称: </span>{{item.warehouseName || '无'}}
+                </div>
+                <div class="classification_detail_item">
+                  <span class="classification_detail_title">仓库编码: </span>{{item.whCode || '无'}}
+                </div>
+                <div class="classification_detail_item">
+                  <span class="classification_detail_title">仓库关系类型: </span>{{item.warehouseType || '无'}}
+                </div>
+              </div>
+            </div>
+            <div class="classification-split"></div>
+            <div class="classification-bottom">
+              <div class="classification_bottom_item days">
+                <div class="classification_bottom_value">{{item.drQty || 0 | numberComma}}</div>
+                <div class="classification_bottom_title">入库数量</div>
+              </div>
+              <div class="classification_bottom_item">
+                <div class="classification_bottom_value">{{item.crQty || 0 | numberComma }}</div>
+                <div class="classification_bottom_title">出库数</div>
+              </div>
+              <div class="classification_bottom_item amt noticed">
+                <div class="classification_bottom_value">
+                  {{item.qtyBalance | numberComma}}
+                </div>
+                <div class="classification_bottom_title">在库库存</div>
+              </div>
+            </div>
+            <div class="classification-bottom">
+              <div class="classification_bottom_item days noticed">
+                <div class="classification_bottom_value">{{item.orderQtyLocked || 0 | numberComma }}</div>
+                <div class="classification_bottom_title">计划占用</div>
+              </div>
+              <div class="classification_bottom_item noticed">
+                <div class="classification_bottom_value">{{item.qtyLocked || 0 | numberComma}}</div>
+                <div class="classification_bottom_title">工作流占用</div>
+              </div>
+              <div class="classification_bottom_item amt noticed">
+                <div class="classification_bottom_value">
+                  {{item.useAbleQtyBalance | numberComma}}
+                </div>
+                <div class="classification_bottom_title">可用库存</div>
+              </div>
+            </div>
+          </div>
+        </template>
+        <!-- 核销余额表 -->
+        <template v-else-if="activeTab.includes('核销余额')">
+          <div class="classification-item-wrapper" v-for='(item, index) in listData' :key='index'>
+            <div class="classification-header-wrapper">
+              <img class="classification_img" :src="item.inventoryPic" alt="icon">
+              <div class="classification_app">
+                <div class="app_top">
+                  <div class="app_name">{{item.inventoryName}}</div>
+                  <div class="app_flow">{{item.invProcessing}}</div>
+                </div>
+                <div class="classification_detail_part">
+                  <div class="classification_detail_item">
+                    <span class="classification_detail_title">实例编码: </span>{{item.baseTransCode}}
+                  </div>
+                  <div class="classification_detail_item">
+                    <span class="classification_detail_title">应用名称: </span>{{item.appTitle}}
+                  </div>
+                  <div class="classification_detail_item">
+                    <span class="classification_detail_title">应用类型: </span>{{item.transName}}
+                  </div>
+                  <div class="classification_detail_item">
+                    <span class="classification_detail_title">记账日期: </span>{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}
+                  </div>
+                </div>
+                <div class="classification_detail_part">
+                  <div class="classification_detail_item">
+                    <span class="classification_detail_title">物料编码: </span>{{item.matCode}}
+                  </div>
+                  <div class="classification_detail_item">
+                    <span class="classification_detail_title">产品规格: </span>{{item.specification || '无'}}
+                    <span class="classification_detail_title">主计量单位: </span>{{item.measureUnit || '无'}}
+                  </div>
+                  <div class="classification_detail_item">
+                    <span class="classification_detail_title">保质期天数: </span>{{item.keepingDays}}
+                    <span class="classification_detail_title">质龄: </span>{{item.qualityAge}}
+                    <span class="classification_detail_title">临保: </span>{{item.nearKeepingDays}}
+                  </div>
+                  <div class="classification_detail_item">
+                    <span class="classification_detail_title">生产日期: </span>{{item.productionDate | dateFormat('YYYY-MM-DD')}}
+                    <span class="classification_detail_title">到期日期: </span>{{item.validUntil | dateFormat('YYYY-MM-DD')}}
+                  </div>
+                </div>
+                <div class="classification_detail_part">
+                  <div class="classification_detail_item">
+                    <span class="classification_detail_title">入库数: </span>{{item.drQty || 0 | numberComma}}
+                    <span class="classification_detail_title">出库数: </span>{{item.crQty || 0 | numberComma}}
+                    <span class="classification_detail_title">工作流占用: </span>{{item.qtyLocked || 0 | numberComma}}
+                    <span class="classification_detail_title">计划占用: </span>{{item.orderQtyLocked || 0 | numberComma}}
+                  </div>
+                  <div class="classification_detail_item">
+                    <span class="classification_detail_title">可用库存: </span>{{item.qtyBalance || 0 | numberComma}}
+                    <span class="classification_detail_title">账龄天数: </span>{{item.accountAge || 0 | numberComma}}
+                    <span class="classification_detail_title">生产日期: </span>{{item.libraryAge || 0 | numberComma}}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="classification-split"></div>
+            <div class="mater-info">
+              <div class="mater_detail">
+                <div class="mater">
+                  <span class="title">仓库名称: </span>{{item.warehouseName || '暂无'}}
+                </div>
+                <div class="mater">
+                  <span class="title">仓库编码: </span>{{item.whCode || '无'}}
+                </div>
+                <div class="mater">
+                  <span class="title">仓库关系类型: </span>{{item.warehouseType || '无'}}
+                </div>
+              </div>
+              <div class="mater_amt_wrapper">
+                <div class="mater_amt">{{item.isNearKeeping}}
+                </div>
+                <div class="text">是否临保</div>
+              </div>
+            </div>
+          </div>
+        </template>
+        <template v-else-if="activeTab.includes('加工在制')">
+          <div class="classification-item-wrapper" v-for='(item, index) in listData' :key='index'>
+            <div class="classification-header-wrapper">
+              <img class="classification_img" :src="item.inventoryPic" alt="icon">
+              <div class="classification_app">
+                <div class="app_top">
+                  <div class="app_name">{{item.inventoryName}}</div>
+                  <div class="app_flow">{{item.invProcessing}}</div>
+                </div>
+                <div class="classification_detail_item">
+                  <span class="classification_detail_title">物料编码: </span>{{item.matCode}}
+                </div>
+                <div class="classification_detail_item">
+                  <span class="classification_detail_title">产品规格: </span>{{item.specification || '无'}}
+                  <span class="classification_detail_title">主计量单位: </span>{{item.measureUnit || '无'}}
+                </div>
+                <div class="classification_detail_item">
+                  <span class="classification_detail_title">仓库名称: </span>{{item.warehouseName || '无'}}
+                </div>
+                <div class="classification_detail_item">
+                  <span class="classification_detail_title">仓库编码: </span>{{item.whCode || '无'}}
+                </div>
+                <div class="classification_detail_item">
+                  <span class="classification_detail_title">仓库关系类型: </span>{{item.warehouseType || '无'}}
+                </div>
+              </div>
+            </div>
+            <div class="classification-split"></div>
+            <div class="classification-bottom">
+              <div class="classification_bottom_item days">
+                <div class="classification_bottom_value">{{item.drQty || 0 | numberComma}}</div>
+                <div class="classification_bottom_title">入库数量</div>
+              </div>
+              <div class="classification_bottom_item">
+                <div class="classification_bottom_value">{{item.crQty || 0 | numberComma }}</div>
+                <div class="classification_bottom_title">出库数</div>
+              </div>
+              <div class="classification_bottom_item amt">
+                <div class="classification_bottom_value">
+                  {{item.orderQtyLocked || 0 | numberComma}}
+                </div>
+                <div class="classification_bottom_title">计划占用</div>
+              </div>
+            </div>
+            <div class="classification-bottom">
+              <div class="classification_bottom_item days noticed">
+                <div class="classification_bottom_value">{{item.qtyBalance || 0 | numberComma }}</div>
+                <div class="classification_bottom_title">可用库存</div>
+              </div>
+              <div class="classification_bottom_item noticed">
+                <div class="classification_bottom_value">{{item.qtyLocked || 0 | numberComma}}</div>
+                <div class="classification_bottom_title">工作流占用</div>
+              </div>
+              <div class="classification_bottom_item amt">
+                <div class="classification_bottom_value">
+                  {{item.amountBalance | numberComma}}
+                </div>
+                <div class="classification_bottom_title">金额余额</div>
+              </div>
+            </div>
+          </div>
+        </template>
       </r-scroll>
 
       <!-- 展开状态 -->
@@ -176,4 +398,188 @@
 
 <style lang='scss' scoped>
   @import './../../scss/SUB/subList';
+  .classification-item-wrapper {
+    color: #333;
+    margin: .1rem;
+    position: relative;
+    border-radius: 4px;
+    background: #FFF;
+    padding: .2rem .15rem;
+    box-sizing: border-box;
+    width: calc(100% - .2rem);
+    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
+    .classification-header-wrapper {
+      display: flex;
+      .classification_img {
+        width: .5rem;
+        height: .5rem;
+        border-radius: .04rem;
+      }
+      .classification_app {
+        flex: 1;
+        margin-left: .12rem;
+      }
+      .app_top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .app_name {
+        line-height: .18rem;
+        font-size: .14rem;
+        font-weight: bold;
+      }
+      .app_flow {
+        padding: .04rem .06rem;
+        line-height: .12rem;
+        border: 1px solid;
+        border-radius: .04rem;
+        font-size: .1rem;
+        &.cashOut {
+          color: #FB880B;
+        }
+        &.cashIn {
+          color: #00D38B;
+        }
+      }
+      .iconfont {
+        font-size: .1rem;
+        font-weight: bold;
+      }
+      .classification_detail_part {
+        & + .classification_detail_part {
+          margin-top: .12rem;
+        }
+      }
+      .classification_detail_item {
+        margin-top: .1rem;
+        line-height: .12rem;
+        font-size: .12rem;
+        & + .classification_detail_item {
+          margin-top: .08rem;
+        }
+      }
+      .classification_detail_title {
+        color: #696969;
+        & + .classification_detail_title {
+          margin-left: .06rem;
+        }
+      }
+    }
+
+    /* 分割线 */
+    .classification-split {
+      position: relative;
+      margin: .17rem 0 .12rem;
+      height: 1px;
+      border-top: 1px dashed #DEDFE6;
+    }
+
+    .mater-info {
+      display: flex;
+      justify-content: space-between;
+      .mater_detail {
+        flex: 1;
+      }
+      .mater {
+        line-height: .18rem;
+        font-size: .12rem;
+        .title {
+          color: #999;
+        }
+        & + .mater {
+          margin-top: .02rem;
+        }
+        span {
+          & + span {
+            margin-left: .06rem;
+          }
+        }
+      }
+      .mater_amt_wrapper {
+        text-align: center;
+      }
+      .mater_amt {
+        line-height: .17rem;
+        color: #FA7138;
+        font-size: .18rem;
+        font-weight: 600;
+      }
+      .symbol {
+        font-size: .12rem;
+      }
+      .text {
+        margin-top: .08rem;
+        line-height: .12rem;
+        color: #999;
+        font-size: .12rem;
+      }
+    }
+
+    .mater-name {
+      font-weight: 600;
+      font-size: .14rem;
+      line-height: .18rem;
+    }
+    .flow-info {
+      margin-top: .12rem;
+      line-height: .12rem;
+      font-size: .12rem;
+      .flow_info_item {
+        display: flex;
+        & + .flow_info_item {
+          margin-top: .08rem;
+        }
+        /* 账户大类 */
+        .flow_account_sub {
+          margin-left: .1rem;
+          .title {
+            color: #696969;
+          }
+        }
+        .title {
+          color: #999;
+        }
+      }
+    }
+    .classification-bottom {
+      font-size: .12rem;
+      text-align: center;
+      position: relative;
+      line-height: .12rem;
+      .classification_bottom_item {
+        &.days, &.amt {
+          position: absolute;
+        }
+        &.days {
+          left: 0;
+        }
+        &.amt {
+          top: -1px;
+          right: 0;
+        }
+        &.noticed {
+          .classification_bottom_value {
+            font-weight: bold;
+            font-size: .16rem;
+          }
+        }
+      }
+      .classification_bottom_value {
+        font-size: .14rem;
+      }
+      .classification_bottom_title {
+        margin-top: .08rem;
+        color: #999;
+      }
+      .symbol {
+        font-size: .12rem;
+      }
+      & + .classification-bottom {
+        margin-top: .2rem;
+      }
+    }
+  }
+
+
 </style>
