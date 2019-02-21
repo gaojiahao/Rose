@@ -61,7 +61,7 @@
             </div>
             <div class="verification-bottom">
               <div class="verification_bottom_item days">
-                <div class="verification_bottom_value">{{item.drAmnt}}</div>
+                <div class="verification_bottom_value">{{item.drAmnt | numberComma}}</div>
                 <div class="verification_bottom_title">发生金额</div>
               </div>
               <div class="verification_bottom_item">
@@ -78,7 +78,7 @@
           </div>
         </template>
         <!-- 手动核销明细 -->
-        <template v-if="activeTab.includes('手动核销明细')">
+        <template v-else-if="activeTab.includes('手动核销明细')">
           <div class="classification-item-wrapper" v-for='(item, index) in listData' :key='index'>
             <div class="classification-header-wrapper">
               <div class="classification_app">
@@ -155,7 +155,6 @@
           </div>
         </template>
       </r-scroll>
-
       <!-- 点击展开状态 -->
       <div v-transfer-dom>
         <popup v-model="flowShow" position="bottom" height="80%">
