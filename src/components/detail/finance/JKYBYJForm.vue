@@ -4,13 +4,38 @@
       <!-- <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
         <span>其他应用里存在与本条相关联的数据，快去看看</span>
         <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
-      </div>
+      </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
+      <!-- 费用列表 -->
       <div class="form_content">
+        <div class="main_content">
+          <div :class="{'vux-1px-t': cIndex > 0}" v-for="(cItem, cIndex) in fundConfig" :key="cIndex">
+            <template v-if="cItem.fieldCode === 'tdAmount'">
+              <div class="each_info">
+                <label>{{cItem.fieldLabel}}</label>
+                <span class="field_value">￥{{dealerInfo[cItem.fieldCode] | numberComma}}</span>
+              </div>
+            </template>
+            <template v-else-if="cItem.xtype === 'r2Numberfield' || cItem.xtype === 'r2Permilfield'">
+              <div class="each_info">
+                <label>{{cItem.fieldLabel}}</label>
+                <span class="field_value">{{dealerInfo[cItem.fieldCode] | numberComma}}</span>
+              </div>
+            </template>
+            <template v-else>
+              <div class="each_info">
+                <label>{{cItem.fieldLabel}}</label>
+                <span class="field_value">{{dealerInfo[cItem.fieldCode] || "无"}}</span>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="form_content">
         <div class="form_title">
           <span class="iconfont icon-mingxi1"></span>
           <span>往来信息</span>
@@ -36,16 +61,37 @@
           <form-cell cellTitle='本次支付后余额' :cellContent="dealerInfo.differenceAmount | toFixed | numberComma(3)"
                      v-if="!isApproval" showSymbol></form-cell>
         </div>
-      </div>
-      <!-- 资金 -->
+      </div> -->
+      <!-- 资金账户可编辑 -->
       <pop-cash-list :default-value="cashInfo" @sel-item="selCash" request="0" :params="cashParams"
-                     v-if="isCashier" required>
+                      required v-show="otherConfig.length &&  !isEditAdmout">
         <template slot="other">
-          <form-cell cellTitle='本次支付' :cellContent="cashInfo.tdAmount | toFixed | numberComma(3)"
-                     showSymbol></form-cell>
+          <div class='each_property vux-1px-t'>
+            <label>本次支付</label>
+            <input type='number' v-model.number="cashInfo.tdAmount" placeholder="请输入" class='property_val' @blur="checkAmt"/>
+          </div>
         </template>
       </pop-cash-list>
-      <div class="form_content" style="margin-top:0.1rem;"
+      <!-- 资金账户不可编辑 -->
+      <div class="form_content" v-show="otherConfig.length &&  isEditAdmout">
+        <div class="main_content">
+          <div :class="{'vux-1px-t': cIndex > 0}" v-for="(cItem, cIndex) in otherConfig" :key="cIndex">
+            <template v-if="cItem.xtype === 'r2Permilfield'">
+              <div class="each_info">
+                <label>{{cItem.fieldLabel}}</label>
+                <span class="field_value">￥{{cashInfo[cItem.fieldCode] | numberComma}}</span>
+              </div>
+            </template>
+            <template v-else>
+              <div class="each_info">
+                <label>{{cItem.fieldLabel}}</label>
+                <span class="field_value">{{cashInfo[cItem.fieldCode] || "无"}}</span>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="form_content" style="margin-top:0.1rem;"
            v-else-if="!isApproval && !isAccount">
         <div class="form_title">
           <span class="iconfont icon-baoxiao"></span>
@@ -60,6 +106,10 @@
           <form-cell cellTitle='本次支付' :cellContent="cashInfo.tdAmount | toFixed | numberComma(3)"
                      showSymbol></form-cell>
         </div>
+      </div> -->
+       <!-- 备注 -->
+      <div class="comment">
+        <form-cell cellTitle='备注' :cellContent="orderInfo.biComment"></form-cell>
       </div>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle"
                    :title-style="uploadTitleStyle"></upload-file>
@@ -82,6 +132,7 @@
   import RAction from 'components/RAction'
   import workFlow from 'components/workFlow'
   import contactPart from 'components/detail/commonPart/ContactPart'
+  
   import PopCashList from 'components/Popup/finance/PopCashList'
   //公共方法引入
   import {accAdd} from '@/home/pages/maps/decimalsAdd'
@@ -94,7 +145,7 @@
         formViewUniqueId: '7aa1ae41-77a0-4905-84b4-9fa09926be70',
         contactInfo: {}, // 客户、付款方式、物流条款的值
         dealerInfo: {},
-        cashInfo: {}
+        cashInfo: {},
       }
     },
     computed: {
@@ -122,6 +173,25 @@
         return {
           transCode: this.transCode
         }
+      },
+      // 判断纸巾账户的支付金额是否可编辑
+      isEditAdmout() {
+        let isEdit = false;
+        this.otherConfig.forEach(item => {
+          if(item.fieldCode === "tdAmount"){
+           isEdit = item.readOnly;
+          }
+        })
+        if(!isEdit){
+          this.cashInfo = {
+            ...this.cashInfo,
+            fundCode: this.cashInfo.fundCode || this.cashInfo.cashInCode,
+            fundType: this.cashInfo.fundType || this.cashInfo.cashType_cashInCode,
+            fundName: this.cashInfo.fundName || this.cashInfo.fundName_cashInCode,
+            thenAmntBal: this.cashInfo.thenAmntBal || this.cashInfo.thenAmntBalCopy1,
+          }
+        }
+        return isEdit
       }
     },
     mixins: [detailCommon],
@@ -129,6 +199,10 @@
       workFlow, RAction, contactPart, PopCashList, XInput,
     },
     methods: {
+      checkAmt() {
+        let { tdAmount } = this.cashInfo;
+        if(tdAmount) this.cashInfo.tdAmount =  Math.abs(toFixed(tdAmount));
+      },
       // 获取详情
       getOrderList(transCode = '') {
         return getSOList({
@@ -220,29 +294,21 @@
 <style lang='scss' scoped>
   @import './../../scss/bizDetail';
 
-  .detail_wrapper {
-    .pop_dealer_list {
-      width: 100%;
+  .each_property {
+    padding: .18rem 0;
+    display: flex;
+    justify-content: space-between;
+    line-height: .14rem;
+    input{  
+      border: none;
+      outline: none;
+      font-size: .14rem;
     }
-  }
-
-  .form_content {
-    .main_content {
-      /deep/ .weui-cell {
-        padding: .08rem 0;
-        &:before {
-          left: 0;
-        }
-      }
-      /deep/ .weui-label {
-        color: #757575;
-        font-size: .14rem;
-      }
+    label{
+      color: #696969;
     }
-  }
-
-  .form_part .form_title .iconfont {
-    font-size: .14rem;
-    margin-right: .04rem;
+    .property_val {
+      text-align: right;
+    }
   }
 </style>

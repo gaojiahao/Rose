@@ -67,6 +67,7 @@ export default {
       matterConfig: [], // 用于存放非物料的重复项配置
       otherConfig: [], // 用于存放非往来，仓库的单一项配置
       baseinfoExtConfig: [],
+      fundConfig: [],
       btnIsHide: false,
       submitMatterField: [], // 审批时要提交的物料字段
       hasReviseView: false, // 当前应用表单状态是否含有修改
@@ -384,7 +385,7 @@ export default {
         let {config = [], dataSource = '[]', reconfig = {}} = data;
         console.log('config:', config);
 
-        let ckConfig = [], rkConfig = [], dealerConfig = [], matterConfig = [], otherConfig = [], baseinfoExtConfig = [];
+        let ckConfig = [], rkConfig = [], dealerConfig = [], matterConfig = [], otherConfig = [], baseinfoExtConfig = [], fundConfig = [];
         let dealerFilter = [
           'dealerName_dealerDebit',
           'drDealerLabel',
@@ -444,12 +445,16 @@ export default {
               rkConfig = item.items;
               this.setWarehouseConfg(rkConfig, '入库');
             }
-            if(item.name === 'pb' || item.name === 'outPut' || item.name === 'projectApproval' || item.name === 'jobLog'){
+            if(item.name === 'pb' || item.name === 'outPut' || item.name === 'projectApproval' || item.name === 'jobLog' || item.name === 'projectPlanTask'){
               otherConfig = item.items;
             }
             // baseInfoExt的配置 目前用于费用报销中的项目
             if(item.name === 'baseinfoExt') {
               baseinfoExtConfig = item.items;
+            }
+            // 员工借款与备用金 往来的配置
+            if(item.name === 'order'){
+              fundConfig = item.items
             }
           } else if (!item.hiddenInRun && item.isMultiple){
             if (item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
@@ -529,6 +534,14 @@ export default {
           return arr
         }, []);
         this.baseinfoExtConfig = baseinfoExtConfig;
+
+        fundConfig = fundConfig.reduce((arr, item, index) => {
+          if (!item.hiddenInRun) {
+            arr.push(item);
+          }
+          return arr
+        }, []);
+        this.fundConfig = fundConfig;
       })
     },
     // 设置 仓库信息 动态渲染部分

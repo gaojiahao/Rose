@@ -52,6 +52,7 @@ export default {
       currentStage: [],                           // 流程状态
       matterPopConfig: [],                        // 物料列表pop配置
       baseinfoExtConfig: [],                   // baseinfoExt配置
+      fundConfig: [],
       submitMatterField: [],                      // 物料要提交的字段
       modifyIndex: null,                          // 选中编辑物料的pop
       fillBscroll: null,
@@ -526,7 +527,7 @@ export default {
           }
         }
         console.log(config)
-        let dealerConfig = [], matterConfig = [], otherConfig = [], baseinfoExtConfig = [];
+        let dealerConfig = [], matterConfig = [], otherConfig = [], baseinfoExtConfig = [], fundConfig = [];
         // 从请求回来的配置中拆分往来，物料，其他段落的配置
         config.forEach(item => {
           // 覆盖配置
@@ -538,7 +539,7 @@ export default {
             });
           }
           // 处理表单配置 <非重复项渲染> 部分
-          if(!item.isMultiple) {
+          if(!item.hiddenInRun && !item.isMultiple) {
             if(item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt' || item.name === 'gys') {
               dealerConfig = [...dealerConfig, ...item.items]
             }
@@ -548,9 +549,14 @@ export default {
             if(item.name === 'baseinfoExt'){
               baseinfoExtConfig = item.items;
             }
+            // 用于借款与备用金
+            if(item.name === 'order'){
+              fundConfig = item.items
+
+            }
           }
           // 处理表单配置 <重复项渲染> 部分
-          else{
+          else if(!item.hiddenInRun && item.isMultiple){
             if(item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
               matterConfig = item.items;
               if(item.dataIndexMap){
@@ -790,6 +796,48 @@ export default {
           }
         })
         this.baseinfoExtConfig = baseinfoExt;
+        let fund = [];
+        // 用于借款与备用金中往来的配置
+        fundConfig.forEach(item => {
+          // 没有映射表时，根据物料poplist中数据来去对应的字段的值
+          if(item.dataSource && item.dataSource.type === 'formData'){
+            if(typeof(item.dataSource.data.valueField) === 'string') {
+              let arr = item.dataSource.data.valueField.replace(/\[|]/g, '').split(/\"/);
+              let valueField = [];
+              arr.forEach(item => {
+                if(item) {
+                  valueField.push(item)
+                }
+              })
+              item.dataSource.data.valueField = valueField;
+
+            }
+            item.showFieldCode = item.dataSource.data.valueField.length === 1 ? item.dataSource.data.valueField[0] : item.dataSource.data.valueField[1];
+          }
+          if(item.submitValue){
+            this.submitMatterField.push(item)
+          } 
+          if(!item.hiddenInRun){
+            if((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo' || item.xtype === 'r2Selector') && item.dataSource && item.dataSource.type === 'remoteData'){
+              item.requestParams = this.handlerParams(item)
+              requestData(this.handlerParams(item)).then(data => {
+                if(data.tableContent){
+                  data.tableContent.forEach(dItem => {
+                    dItem.originValue = dItem.value;
+                    dItem.name = dItem[item.displayField]
+                    dItem.value = dItem[item.displayField];
+                  })
+                  this.$set(item, 'remoteData', data.tableContent)
+                }
+              })
+            }
+            else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
+              this.$set(item, 'remoteData', item.dataSource.data)
+            }
+            fund.push(item)
+          }
+        })
+        this.fundConfig = fund;
       })
     },
     // 处理配置中数据请求
