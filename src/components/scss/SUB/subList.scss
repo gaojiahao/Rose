@@ -130,13 +130,10 @@
       color: #454545;
       font-size: .12rem;
       font-weight: bold;
-      .each_info {
-        // line-height: .28rem;
-      }
     }
     // 物料名称
     .matter {
-      padding: .02rem 0;
+      padding: .06rem 0;
       .matter_code {
         color: #757575;
         font-size: .12rem;
@@ -146,7 +143,7 @@
         }
       }
       .matter_name {
-        font-size: .18rem;
+        font-size: .16rem;
         word-break: break-all;
         .type {
           font-size: .1rem;

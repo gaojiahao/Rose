@@ -12,57 +12,108 @@
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <template v-if="activeTab.includes('核销')">
+        <!-- 核销余额表 -->
+        <template v-if="activeTab.includes('核销余额')">
           <div class="verification-item-wrapper" v-for='(item, index) in listData' :key='index'>
-            <div class="verification-header-wrapper">
-              <img class="verification_img" :src="item.appIcon" alt="icon">
-              <div class="verification_app">
-                <div class="app_top">
-                  <div class="app_name">{{item.appTitle}}</div>
-                  <div class="app_flow" :class="item.flowWordClass">
-                    {{item.cashInOrOut}}<i :class="item.flowIconClass"></i>
-                  </div>
+            <div class="verification-main">
+              <img class="verification_img" :src="item.appIcon">
+              <div class="verification_info">
+                <div class="app_name">{{item.appTitle}}</div>
+                <div class="verification_info_item">
+                  <span class="verification_info_title">应用类型: </span>{{item.transName}}
                 </div>
-                <div class="verification_detail_item">
-                  <span class="verification_detail_title">实例编码：</span>{{item.transCode}}
+                <div class="verification_info_item">
+                  <span class="verification_info_title">实例编码: </span>{{item.transCode}}
                 </div>
-                <div class="verification_detail_item">
-                  <span class="verification_detail_title">往来名称：</span>{{item.dealerName || '无'}}
+                <div class="verification_info_item">
+                  <span class="verification_info_title">往来编码: </span>{{item.dealerCode}}
+                </div>
+                <div class="verification_info_item">
+                  <span class="verification_info_title">往来名称: </span>{{item.dealerName}}
+                </div>
+                <div class="verification_info_item">
+                  <span class="verification_info_title">结算方式: </span>{{item.paymentTerm || '无'}}
+                </div>
+                <div class="verification_info_item">
+                  <span class="verification_info_title">记账日期与时间: </span>
+                  {{item.effectiveTime | dateFormat('YYYY-MM-DD')|| '无'}}
+                </div>
+                <div class="verification_info_item">
+                  <span class="verification_info_title">到期日: </span>
+                  {{item.paymentDays | dateFormat('YYYY-MM-DD')|| '无'}}
                 </div>
               </div>
             </div>
             <div class="verification-split"></div>
-            <div class="bank-info">
-              <div class="bank_detail">
-                <div class="bank">
-                  <span class="title">开户银行: </span>{{item.bank || '暂无银行信息'}}
-                </div>
-                <div class="bank_account">
-                  <span class="title">银行账号: </span>{{item.account || '无'}}
-                </div>
+            <div class="verification-bottom">
+              <div class="verification_bottom_item days">
+                <div class="verification_bottom_value">{{item.paymentSurplusDays || '无'}}</div>
+                <div class="verification_bottom_title">剩余天数</div>
               </div>
-              <div class="bank_amt_wrapper">
-                <!-- 付款：crAmt，收款：drAmt -->
-                <div class="bank_amt">{{item.crAmnt || item.drAmnt | numberComma}}
-                </div>
-                <div class="text">总{{item.transName}}({{item.fundCurrency}})</div>
+              <div class="verification_bottom_item">
+                <div class="verification_bottom_value">{{item.accountAge}}</div>
+                <div class="verification_bottom_title">账龄天数</div>
+              </div>
+              <div class="verification_bottom_item acount_day">
+                <div class="verification_bottom_value">{{item.daysOfAccount || 0}}</div>
+                <div class="verification_bottom_title">到账天数</div>
               </div>
             </div>
-            <div class="bank-name">{{item.fundName}}</div>
-            <div class="flow-info">
-              <div class="flow_info_item">
-                <div class="flow_account_item">
-                  <span class="title">账户编码：</span>{{item.cashCode}}
+            <div class="verification-bottom">
+              <div class="verification_bottom_item days">
+                <div class="verification_bottom_value">{{item.drAmnt}}</div>
+                <div class="verification_bottom_title">发生金额</div>
+              </div>
+              <div class="verification_bottom_item">
+                <div class="verification_bottom_value">{{item.crAmnt}}</div>
+                <div class="verification_bottom_title">已核销</div>
+              </div>
+              <div class="verification_bottom_item amt">
+                <div class="verification_bottom_value">
+                  {{item.amountBalance | numberComma}}
                 </div>
-                <div class="flow_account_item flow_account_sub">
-                  <span class="title">账户大类：</span>{{item.accountSub}}
+                <div class="verification_bottom_title">金额余额</div>
+              </div>
+            </div>
+          </div>
+        </template>
+        <!-- 手动核销明细 -->
+        <template v-if="activeTab.includes('手动核销明细')">
+          <div class="classification-item-wrapper" v-for='(item, index) in listData' :key='index'>
+            <div class="classification-header-wrapper">
+              <div class="classification_app">
+                <div class="app_top">
+                  <div class="app_name">{{item.appTitle}}</div>
+                </div>
+                <div class="classification_detail_item">
+                  <span class="classification_detail_title">应用名称: </span>{{item.transName}}
+                </div>
+                <div class="classification_detail_item">
+                  <span class="classification_detail_title">实例编码: </span>{{item.transCode}}
+                </div>
+                <div class="classification_detail_item">
+                  <span class="classification_detail_title">记账与生效时间: </span>
+                  {{item.effectiveTime | dateFormat('YYYY-MM-DD')|| '无'}}
                 </div>
               </div>
-              <div class="flow_info_item">
-                <span class="title">现金流类型：</span>{{item.cashType}}
+            </div>
+            <div class="classification-split"></div>
+            <div class="dealer-info">
+              <div class="dealer_detail">
+                <div class="dealer">
+                  <span class="title">往来名称: </span>{{item.dealerName || '暂无'}}
+                </div>
+                <div class="dealer">
+                  <span class="title">往来编码: </span>{{item.dealerCode || '暂无'}}
+                </div>
+                <div class="dealer">
+                  <span class="title">往来关系标签: </span>{{item.dealerLabel || '暂无'}}
+                </div>
               </div>
-              <div class="flow_info_item">
-                <span class="title">现金流项目：</span>{{item.cashFlow}}
+              <div class="dealer_amt_wrapper">
+                <div class="dealer_amt">{{item.amount | numberComma}}
+                </div>
+                <div class="text">核销金额</div>
               </div>
             </div>
           </div>
@@ -207,26 +258,106 @@ export default {
 
 <style lang='scss' scoped>
   @import './../../scss/SUB/subList';
+  .list_wrapper {
+    height: calc(100% - 1rem);
+  }
   .verification-item-wrapper {
     color: #333;
     margin: .1rem;
-    background: #FFF;
+    position: relative;
     border-radius: 4px;
+    background: #FFF;
+    padding: .2rem .15rem;
     box-sizing: border-box;
     width: calc(100% - .2rem);
-    padding: .2rem .15rem .13rem;
     box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
-    .verification-header-wrapper {
+    .verification-main {
       display: flex;
       .verification_img {
         width: .5rem;
         height: .5rem;
         border-radius: .04rem;
       }
-      .verification_app {
-        flex: 1;
+      .verification_info {
         margin-left: .12rem;
+        line-height: .12rem;
+        font-size: .12rem;
       }
+      .app_name {
+        line-height: .18rem;
+        font-size: .14rem;
+        font-weight: 600;
+      }
+      .verification_info_item {
+        margin-top: .12rem;
+        & + .verification_info_item {
+          margin-top: .08rem;
+        }
+      }
+      .verification_info_title {
+        color: #999;
+      }
+    }
+
+    .verification-split {
+      position: relative;
+      margin: .2rem 0 .13rem;
+      height: 1px;
+      border-top: 1px dashed #DEDFE6;
+    }
+
+    .verification-bottom {
+      font-size: .12rem;
+      text-align: center;
+      position: relative;
+      line-height: .12rem;
+      .verification_bottom_item {
+        &.days, &.amt, &.acount_day {
+          position: absolute;
+        }
+        &.days {
+          left: 0;
+        }
+        &.amt {
+          top: -1px;
+          right: 0;
+          color: #FA7138;
+          .verification_bottom_value {
+            font-weight: bold;
+            font-size: .16rem;
+          }
+        }
+        &.acount_day {
+          top: -1px;
+          right: 0;
+        }
+      }
+      .verification_bottom_value {
+        font-size: .14rem;
+      }
+      .verification_bottom_title {
+        margin-top: .08rem;
+        color: #999;
+      }
+      .symbol {
+        font-size: .12rem;
+      }
+    }
+    & .verification-bottom + .verification-bottom {
+      margin-top: .2rem;
+    }
+  }
+  .classification-item-wrapper {
+    color: #333;
+    margin: .1rem;
+    position: relative;
+    border-radius: 4px;
+    background: #FFF;
+    padding: .2rem .15rem;
+    box-sizing: border-box;
+    width: calc(100% - .2rem);
+    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
+    .classification-header-wrapper {
       .app_top {
         display: flex;
         justify-content: space-between;
@@ -255,38 +386,39 @@ export default {
         font-weight: bold;
       }
 
-      .verification_detail_item {
+      .classification_detail_item {
         margin-top: .1rem;
         line-height: .12rem;
         font-size: .12rem;
-        & + .verification_detail_item {
+        & + .classification_detail_item {
           margin-top: .08rem;
         }
       }
-      .verification_detail_title {
+      .classification_detail_title {
         color: #696969;
       }
     }
 
     /* 分割线 */
-    .verification-split {
+    .classification-split {
       position: relative;
       margin: .17rem 0 .12rem;
       height: 1px;
       border-top: 1px dashed #DEDFE6;
     }
 
-    .bank-info {
+    .dealer-info {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      .bank {
+      .dealer {
         line-height: .18rem;
         font-size: .12rem;
         .title {
           color: #999;
         }
       }
-      .bank_account {
+      .dealer_account {
         margin-top: .07rem;
         line-height: .12rem;
         font-size: .12rem;
@@ -294,10 +426,10 @@ export default {
           color: #696969;
         }
       }
-      .bank_amt_wrapper {
+      .dealer_amt_wrapper {
         text-align: center;
       }
-      .bank_amt {
+      .dealer_amt {
         line-height: .17rem;
         color: #FA7138;
         font-size: .18rem;
@@ -314,7 +446,7 @@ export default {
       }
     }
 
-    .bank-name {
+    .dealer-name {
       margin: .18rem 0 0;
       line-height: .18rem;
       font-size: .14rem;
@@ -342,5 +474,4 @@ export default {
       }
     }
   }
-  
 </style>
