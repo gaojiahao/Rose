@@ -118,7 +118,7 @@
                   </div>
                   <div class="schedule-split"></div>
                   <div class="schedule-bottom">
-                    <div class="schedule_bottom_item">
+                    <div class="schedule_bottom_item days">
                       <div class="schedule_bottom_value">{{item.paymentSurplusDays || 0}}</div>
                       <div class="schedule_bottom_title">剩余天数</div>
                     </div>
@@ -788,18 +788,23 @@
     }
 
     .schedule-bottom {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      line-height: .12rem;
       font-size: .12rem;
       text-align: center;
+      position: relative;
+      line-height: .12rem;
       .schedule_bottom_item {
+        &.days, &.amt {
+          position: absolute;
+        }
+        &.days {
+          left: 0;
+        }
         &.amt {
+          top: -1px;
+          right: 0;
           color: #FA7138;
           .schedule_bottom_value {
-            line-height: .17rem;
-            font-weight: 600;
+            font-weight: bold;
             font-size: .16rem;
           }
         }
