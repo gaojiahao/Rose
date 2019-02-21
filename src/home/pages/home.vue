@@ -174,9 +174,17 @@ export default {
             if(item.packagePath) {
               // 获取 应用类型ID 对应相应文件夹
               item.fileID = val.id;
-              item.icon = item.icon 
-                ? `/dist/${item.icon}` 
-                : this.getDefaultIcon();
+              if(item.icon) {
+                item.icon.includes('download') 
+                  // 用户自定义上传 应用icon
+                  ? item.icon = `${location.origin}${item.icon}`
+                  // 系统自带图标
+                  : item.icon = `/dist/${item.icon}`
+              }
+              else {
+                // 初始化应用图标
+                this.getDefaultIcon();
+              }
               // 归类到相应的小数组
               BUSobj[val.text].push(item);
             }
