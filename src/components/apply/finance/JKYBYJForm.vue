@@ -3,74 +3,64 @@
     <div class="basicPart no_count" ref='fill'>
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
-                      :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
+                      :handle-org-list="handleORG" :user-role-list="userRoleList" :showStatus="false"></pop-baseinfo>
         <!-- 往来信息-->
-        <div class="materiel_list">
-          <div class="mater_list">
-            <div class="each_mater">
-              <div class="userInp_mode">
-                <div class="title">往来明细</div>
-                <group class="SJ_group" @group-title-margin-top="0">
-                  <!-- 商机标题 -->
-                  <cell title="往来名称" v-model="dealerInfo.dealerName" text-align='right'>
-                    <template slot="title">
-                      <span class="required">往来名称</span>
-                    </template>
-                  </cell>
-                  <cell title="往来编码" v-model="dealerInfo.dealerCodeCredit" text-align='right'>
-                    <template slot="title">
-                      <span class="required">往来编码</span>
-                    </template>
-                  </cell>
-                  <cell title="往来关系标签" v-model="dealerInfo.crDealerLabel" text-align='right'>
-                    <template slot="title">
-                      <span class="required">往来关系标签</span>
-                    </template>
-                  </cell>
-                  <popup-picker title="类型" :data="currentType" v-model="dealerInfo.applicationType"
-                                placeholder="请选择">
-                    <template slot="title">
-                      <span class="required">类型</span>
-                    </template>
-                  </popup-picker>
-                  <cell title="信用额度" v-model="dealerInfo.tdCreditLine" text-align='right'></cell>
-                  <cell title="往来余额" v-model="dealerInfo.thenAmntBalCopy1" text-align='right'></cell>
-                  <x-input type="number" text-align='right' placeholder='请填写'
-                           @on-blur="checkAmt(dealerInfo.thenTotalAmntBal)" @on-focus="getFocus"
-                           v-model.number="dealerInfo.thenTotalAmntBal">
-                    <span class="required" slot="label">申请金额</span>
-                  </x-input>
-                  <!--<template v-if="transCode">
-                    <cell title="本次支付" v-model="dealerInfo.tdAmountCopy1" text-align='right'></cell>
-                    <cell title="本次支付后余额" v-model="dealerInfo.differenceAmount" text-align='right'></cell>
-                  </template>-->
-                  <x-input title="事由" text-align='right' placeholder='请填写'
-                           v-model="dealerInfo.expCause"></x-input>
-                </group>
-              </div>
+        <div class="dealer_list">
+          <div class="dealer_info">
+            <div v-for="(item, index) in fundConfig" :key="index" :class="{'vux-1px-t': index > 0}">
+              <!-- 可编辑的字段 -->
+              <template v-if="!item.readOnly">
+                <!-- 下拉框 -->
+                <r-picker :title="item.fieldLabel" :data="item.remoteData" :value="dealerInfo[item.fieldCode]"
+                    v-model="dealerInfo[item.fieldCode]" :required="!item.allowBlank"
+                    v-if="item.xtype === 'r2Combo'"></r-picker>
+                <!-- 输入框（数字） -->
+                <div class='each_property ' v-if="item.xtype === 'r2Numberfield' || item.xtype === 'r2Permilfield'">
+                  <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+                  <input type='number' v-model.number="dealerInfo[item.fieldCode]" placeholder="请输入" class='property_val' 
+                         @focus="getFocus($event)" @blur="checkAmt(dealerInfo, item.fieldCode, dealerInfo[item.fieldCode]) "/>
+                </div>
+                <!-- 输入框（文字） -->
+                <div class='each_property' v-if="item.xtype === 'r2Textfield' || item.xtype === 'r2TextArea'">
+                  <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+                  <input type='text' v-model="dealerInfo[item.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
+                </div>
+                <!-- 日期 -->
+                <div class='each_property' v-if="item.xtype === 'r2Datefield'" @click="getDate(dealerInfo,item)">
+                  <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+                  <div class='picker'>
+                    <span class='mater_nature'>{{dealerInfo[item.fieldCode] || "请选择"}}</span>
+                    <span class='icon-right'></span>
+                  </div>
+                </div>
+              </template>
+              <!--不可编辑的字段 -->
+              <template  v-else>
+                <div class='each_property readOnly'>
+                  <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+                  <span class='property_val'>{{dealerInfo[item.fieldCode]}}</span>
+                </div>
+              </template>
             </div>
           </div>
+        </div>
+        <div class='comment'>
+          <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       </div>
     </div>
-    <div class='btn-no-amt vux-1px-t' :class="{'btn_hide' : btnIsHide}">
+    <op-button :hide="btnIsHide" @on-submit="submitOrder" ></op-button>
+    <!-- <div class='btn-no-amt vux-1px-t' :class="{'btn_hide' : btnIsHide}">
       <div class="btn-item stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</div>
       <div class="btn-item" @click="submitOrder">提交</div>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
   // vux组件引入
-  import {
-    Cell, Popup, TransferDom,
-    Group, XInput, CellBox, Datetime,
-    XTextarea, numberComma, dateFormat,
-    PopupRadio, AlertModule, PopupPicker
-  } from 'vux'
+  import { XTextarea, numberComma, dateFormat} from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
   import {submitAndCalc, saveAndStartWf, saveAndCommitTask, getDictByType} from 'service/commonService'
@@ -78,9 +68,10 @@
   // mixins 引入
   import common from 'components/mixins/applyCommon'
   // 组件引入
-  import RPicker from 'components/RPicker'
+  import RPicker from 'components/basicPicker'
   import PopFundList from 'components/Popup/PopFundList'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
+  import OpButton from 'components/apply/commonPart/OpButton'
   // 方法引入
   import {toFixed} from '@/plugins/calc'
   import {accAdd} from '@/home/pages/maps/decimalsAdd'
@@ -92,18 +83,7 @@
       return {
         listId: '418bd0e9-1dce-4e01-aa5a-3d4cd80e87d4',
         showCostPop: false, // 是否显示客户的popup
-        dealerInfo: {
-          dealerName: '', // 往来名称
-          dealerCodeCredit: '', // 用户编码
-          crDealerLabel: '', // 关系标签
-          applicationType: [], // 类型
-          tdCreditLine: '', // 信用额度
-          thenAmntBalCopy1: '', // 往来余额
-          thenTotalAmntBal: '', // 申请金额
-          tdAmountCopy1: '', // 本次支付
-          differenceAmount: '', // 本次支付后余额
-          expCause: '', // 事由
-        },
+        dealerInfo: {},
         formData: {
           biId: '', // 为空
           biComment: '',
@@ -117,13 +97,12 @@
           tdAmount: '', // 本次支付
         },
         biReferenceId: '',
-        currentType: [['借款', '备用金']],
         selectedCost: []
       }
     },
     computed: {
       creatorName() {
-        return this.formData.userCode
+        return this.formData.handlerName
       },
     },
     watch: {
@@ -131,11 +110,9 @@
         this.getEmployeeBal()
       }
     },
-    directives: {TransferDom},
     components: {
-      Cell, Popup, Group, XInput, PopupPicker,
-      Datetime, XTextarea,
-      RPicker, PopFundList, PopBaseinfo
+      XTextarea,
+      RPicker, PopFundList, PopBaseinfo, OpButton
     },
     mixins: [common],
     filters: {numberComma},
@@ -145,32 +122,37 @@
         let filter = [
           {
             operator: "eq",
-            value: this.formData.userCode,
-            property: "dealerCode"
+            value: this.formData.handlerName,
+            property: "nickname"
           }
         ]
         getEmployeeBal(JSON.stringify(filter)).then(({tableContent = []}) => {
           let [data = {}] = tableContent;
-          this.dealerInfo = {
-            ...this.dealerInfo,
-            dealerName: data.nickname, // 往来名称
-            dealerCodeCredit: data.dealerCode, // 用户编码
-            crDealerLabel: data.dealerLabelName, // 关系标签
-            tdCreditLine: data.tdCreditLine, // 信用额度
-            thenAmntBalCopy1: data.amntBal, // 往来余额
-          }
+          this.fundConfig.forEach(item => {
+            if((item.displayField && item.displayField !== 'text') || item.showFieldCode){
+              this.$set(this.dealerInfo, item.fieldCode, data[item.displayField] || data[item.showFieldCode])
+            }
+          })
+          
         })
       },
       // TODO 提交
       submitOrder() {
+        /**
+         * @warn 提示文字 
+         * @dataSet 组装的提交的数据
+         */
         let warn = '';
-        let dealerInfo = this.dealerInfo;
-        if (!dealerInfo.applicationType.length) {
-          warn = '请选择类型';
+        let dataSet = [];
+        let oItem = {};
+        for(let sItem of this.submitMatterField){
+          if(!sItem.hiddenInRun && !sItem.allowBlank && !this.dealerInfo[sItem.fieldCode]){
+            warn = `${sItem.fieldLabel}不为空`
+            break;
+          }
+          oItem[sItem.fieldCode] = this.dealerInfo[sItem.fieldCode] != null ? this.dealerInfo[sItem.fieldCode] : null
         }
-        if (!warn && !dealerInfo.thenTotalAmntBal && dealerInfo.thenTotalAmntBal !== 0) {
-          warn = '请输入申请金额';
-        }
+        dataSet.push(oItem);
         // 有必填值为空，或者金额为0，展示错误提示
         if (warn) {
           this.$vux.alert.show({
@@ -188,18 +170,19 @@
               ...this.formData,
               handlerEntity: this.entity.dealerName,
               order: {
-                dataSet: [{
-                  tdIdCopy1: dealerInfo.tdIdCopy1 || '',
-                  dealerCodeCredit: dealerInfo.dealerCodeCredit,
-                  crDealerLabel: dealerInfo.crDealerLabel,
-                  applicationType: dealerInfo.applicationType[0],
-                  tdCreditLine: dealerInfo.tdCreditLine,
-                  thenAmntBalCopy1: dealerInfo.thenAmntBalCopy1,
-                  thenTotalAmntBal: dealerInfo.thenTotalAmntBal,
-                  tdAmountCopy1: dealerInfo.tdAmountCopy1,
-                  differenceAmount: dealerInfo.differenceAmount,
-                  expCause: dealerInfo.expCause,
-                }]
+                dataSet
+                // dataSet: [{
+                //   tdIdCopy1: dealerInfo.tdIdCopy1 || '',
+                //   dealerCodeCredit: dealerInfo.dealerCodeCredit,
+                //   crDealerLabel: dealerInfo.crDealerLabel,
+                //   applicationType: dealerInfo.applicationType[0],
+                //   tdCreditLine: dealerInfo.tdCreditLine,
+                //   thenAmntBalCopy1: dealerInfo.thenAmntBalCopy1,
+                //   thenTotalAmntBal: dealerInfo.thenTotalAmntBal,
+                //   tdAmountCopy1: dealerInfo.tdAmountCopy1,
+                //   differenceAmount: dealerInfo.differenceAmount,
+                //   expCause: dealerInfo.expCause,
+                // }]
               },
               outPut: {
                 dataSet: [{
@@ -208,8 +191,8 @@
                   cashType_cashInCode: this.cashInfo.cashType_cashInCode,
                   thenAmntBal: this.cashInfo.thenAmntBal,
                   tdAmount: this.cashInfo.tdAmount,
-                  dealerCodeCredit: dealerInfo.dealerCodeCredit,
-                  crDealerLabel: dealerInfo.crDealerLabel,
+                  dealerCodeCreditCopy1: this.dealerInfo.dealerCodeCredit,
+                  crDealerLabelCopy1: this.dealerInfo.crDealerLabel,
                 }]
               }
             };
@@ -274,7 +257,7 @@
             dealerName: dealerInfo.dealerName_dealerCodeCredit, // 往来名称
             dealerCodeCredit: dealerInfo.dealerCodeCredit, // 用户编码
             crDealerLabel: dealerInfo.crDealerLabel, // 关系标签
-            applicationType: [dealerInfo.applicationType], // 类型
+            applicationType: dealerInfo.applicationType, // 类型
             tdCreditLine: dealerInfo.tdCreditLine, // 信用额度
             thenAmntBalCopy1: dealerInfo.thenAmntBalCopy1, // 往来余额
             thenTotalAmntBal: dealerInfo.thenTotalAmntBal, // 申请金额
@@ -336,6 +319,9 @@
           }
         };
       },
+      splitConfig(editMatterPop, editMatterPopConfig){
+        editMatterPopConfig.editPart = editMatterPop;
+      },
     },
     created() {
       let data = sessionStorage.getItem(DRAFT_KEY);
@@ -353,48 +339,76 @@
 <style lang="scss" scoped>
   @import './../../scss/bizApply.scss';
 
-  .materiel_list .mater_list .each_mater {
-    padding: unset;
+  .dealer_list{
+    input {
+      border: none;
+      outline: none;
+      font-size: .14rem;
+    }
+    .dealer_info {
+      background: #fff;
+      padding: 0 .15rem;
+      &.has_border {
+        margin-top: .1rem;
+      }
+      .cost_title{
+        display: flex;
+        justify-content: space-between;
+        height: .4rem;
+        line-height: .4rem;
+        label{
+          color: #333;
+          font-weight: bold;
+        }
+        span{
+          color: red;
+        }
+      }
+    }
   }
-
-  .sj-apply-container {
-    .SJ_group {
-
-      /deep/ > .vux-label {
-        color: #5077aa;
-        font-weight: bold;
-      }
-      /deep/ > .vux-no-group-title {
-        margin-top: 0.08rem;
-      }
-      /deep/ > .weui-cells {
-        font-size: .16rem;
-        .vux-tap-active {
-          .vux-label {
-            color: #5077aa;
-            font-weight: bold;
-          }
-        }
-        &:after {
-          border-bottom: none;
-        }
-      }
-      .vux-cell-box {
-        &:before {
-          left: 0;
-        }
-        /deep/ > .weui-cell {
-          padding: 10px 0;
-        }
+  .project_part{
+    margin-top: .1rem;
+    background: #fff;
+    padding: 0 .15rem;
+  }
+  .fill_wrapper{
+    padding-bottom: .1rem;
+    font-size: .14rem;
+    
+  }
+  .each-info{
+    background-color: #fff;
+    padding: 0 .15rem;
+  }
+  .each_property {
+    padding: .18rem 0;
+    display: flex;
+    justify-content: space-between;
+    line-height: .14rem;
+    label{
+      color: #696969;
+    }
+    .add{
+      color: #3296FA;
+    }
+    .required {
+      color: #3296FA;
+      font-weight: bold;
+    }
+    .property_val {
+      text-align: right;
+    }
+    .readonly {
+      color: #999;
+    }
+    .picker {
+      display: flex;
+      align-items: center;
+      .icon-right{
+        width: .08rem;
+        height: .14rem;
+        margin-left: .1rem;
       }
     }
-    .weui-cell {
-      padding: 10px 0;
-
-      &:before {
-        left: 0;
-      }
-    }
-
   }
 </style>

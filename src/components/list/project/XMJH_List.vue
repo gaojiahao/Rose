@@ -19,19 +19,19 @@
               <span class="instance_status" :class="item.statusClass">{{item.biStatus}}</span>
             </div>
             <div class="instance-project-container">
-              <div class="project_name" :class="{'time-to-wrap': item.projectName_project.length > 12}">{{item.projectName_project}}</div>
+              <div class="project_name" :class="{'time-to-wrap': item.projectName_projectApprovalId.length > 12}">{{item.projectName_projectApprovalId}}</div>
               <div>
                 <div class="project_manager">
                   <span class="project_manager_title">项目经理：</span>
-                  <span class="project_manager_value">{{item.projectManager_project}}</span>
+                  <span class="project_manager_value">{{item.dealerName_dealerDebit}}</span>
                 </div>
               </div>
             </div>
             <div class="instance-task-container">
               <div class="instance_task_item" v-for="(task, tIndex) in item.detailItem" :key="tIndex">
                 <i class="icon" :class="[getTaskIcon(tIndex)]"></i>
-                <div class="task-detail vux-1px-b" :class="{'when-is-long': task.taskName.length > 18}">
-                  <div class="task_name">{{task.taskName}}</div>
+                <div class="task-detail vux-1px-b" :class="{'when-is-long': task.taskName_projectPlanTask.length > 18}">
+                  <div class="task_name">{{task.taskName_projectPlanTask}}</div>
                   <div class="task_info">
                     <div class="task_info_item">
                       <span class="task_info_title">预算成本：</span>
@@ -39,7 +39,7 @@
                     </div>
                     <div class="task_info_item">
                       <span class="task_info_title">周期天数：</span>
-                      <span class="task_info_day">{{task.planCycleDays || 0}}天</span>
+                      <span class="task_info_day">{{task.planCycleDays_projectPlanTask || 0}}天</span>
                     </div>
                   </div>
                 </div>

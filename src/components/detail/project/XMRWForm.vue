@@ -8,21 +8,22 @@
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="orderInfo" :order-info="orderInfo"></basic-info>
       <!-- 任务信息 -->
-      <div class="project_info">
-        <div class="info_title vux-1px-b"><span class="iconfont icon-renwu"></span>任务信息</div>
-        <div class="project_content">
-          <form-cell cellTitle="项目名称" :cellContent="projectTask.projectName" :showTopBorder=false></form-cell>
-          <form-cell cellTitle="任务名称" :cellContent="projectTask.taskName"></form-cell>
-          <form-cell cellTitle="任务类型" :cellContent="projectTask.taskType"></form-cell>
-          <form-cell cellTitle="任务说明" :cellContent="projectTask.comment || '无'"></form-cell>
-          <form-cell cellTitle="计划截止日期" :cellContent="projectTask.deadline"></form-cell>
-          <form-cell cellTitle="周期天数" :cellContent="projectTask.cycleNumber"></form-cell>
-          <form-cell cellTitle="标准工时" :cellContent="projectTask.planTime"></form-cell>
-          <form-cell cellTitle="作业费率" :cellContent="projectTask.operatingRate"></form-cell>
-          <form-cell cellTitle="预算作业成本" :cellContent="projectTask.budgetHomeworkCost"></form-cell>
-          <form-cell cellTitle="实际完成日期" :cellContent="projectTask.actualCompleteTime"></form-cell>
-          <form-cell cellTitle="实际工时" :cellContent="projectTask.actualTime"></form-cell>
-          <form-cell cellTitle="实际作业成本" :cellContent="projectTask.actualtHomeworkCost"></form-cell>
+      <div class="form_content">
+        <div class="main_content">
+          <div class="vux-1px-b" v-for="(item, index) in otherConfig" :key="index">
+            <template v-if="item.id.includes('Datefield')">
+              <div class="each_info">
+                <label>{{item.fieldLabel}}</label>
+                <span class="field_value">{{projectTask[item.fieldCode] || '无' | timeSplit}}</span>
+              </div>
+            </template>
+            <template v-else>
+              <div class="each_info">
+                <label>{{item.fieldLabel}}</label>
+                <span class="field_value">{{projectTask[item.fieldCode] || '无'}}</span>
+              </div>
+            </template> 
+          </div>
         </div>
       </div>
       <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
@@ -55,6 +56,11 @@ export default {
     Cell,
     RPicker,
   },
+  filters: {
+    timeSplit(val) {
+      return val ? val.split(' ')[0] : '';
+    }
+  },
   methods: {
     //选择默认图片
     getDefaultImg(item) {
@@ -67,14 +73,14 @@ export default {
     // 获取详情
     getOrderList(transCode = '') {
       return findProjectTask(transCode).then(({formData = {},attachment = []}) => {
-        let projectTask = formData.projectTask || {};
         this.jsonData = formData;
         this.attachment = attachment;
         this.comment = formData.comment;
         this.projectTask = {
-          ...projectTask,
-          deadline: this.changeDate(projectTask.deadline),
-          actualCompleteTime: this.changeDate(projectTask.actualCompleteTime),
+          ...formData.projectPlanTask,
+          ...formData.projectApproval,
+          // deadline: this.changeDate(projectTask.deadline),
+          // actualCompleteTime: this.changeDate(projectTask.actualCompleteTime),
         };
         this.orderInfo = {
           ...formData.baseinfo,

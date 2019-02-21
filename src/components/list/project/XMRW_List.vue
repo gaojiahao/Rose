@@ -5,7 +5,7 @@
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search='searchList' ref="search"></searchIcon>
         <div class="filter_part">
-          <r-sort @on-sort="onSortList" @on-filter="onFilter" :list-id="listId" ref="sort"></r-sort>
+          <r-sort @on-sort="onSortList" @on-filter="onFilter" :list-id="listId" :hasFormStatus="false" ref="sort"></r-sort>
         </div>
       </div>
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
@@ -19,7 +19,7 @@
               <span class="instance_status" :class="item.statusClass">{{item.biStatus}}</span>
             </div>
             <div class="instance-project-container">
-              <div class="project_name" :class="{'time-to-wrap': item.projectName_project.length > 15}">项目名称：{{item.projectName_project}}</div>
+              <div class="project_name" :class="{'time-to-wrap': item.projectName_projectApprovalId.length > 15}">项目名称：{{item.projectName_projectApprovalId}}</div>
               <div class="project_manager">
                 <span class="project_manager_title">标准工时：</span>
                 <span class="project_manager_value">{{item.planTime || 0}}</span>
@@ -29,7 +29,7 @@
               <div class="instance_task_item" v-for="(task, tIndex) in item.detailItem" :key="tIndex">
                 <i class="icon" :class="[getTaskIcon(tIndex)]"></i>
                 <div class="task-detail vux-1px-b">
-                  <div class="task_name">{{task.taskName}}</div>
+                  <div class="task_name">{{task.taskName_projectPlanTask}}</div>
                   <div class="task_info">
                     <div class="task_info_item">
                       <span class="task_info_title">预算成本：</span>
@@ -43,7 +43,7 @@
                   <div class="task_info">
                     <div class="task_info_item">
                       <span class="task_info_title">计划截止日期：</span>
-                      <span class="task_info_day">{{task.expectEndDate_project | dateFormat('YYYY-MM-DD') || '无'}}</span>
+                      <span class="task_info_day">{{task.deadline_projectPlanTask | dateFormat('YYYY-MM-DD') || '无'}}</span>
                     </div>
                   </div>
                 </div>
