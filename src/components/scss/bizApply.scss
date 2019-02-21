@@ -292,7 +292,8 @@
     text-align: center;
     background: #3296FA;
     &.stop {
-      background: #ea5455;
+      color: #a1a1a1;
+      background: #dfdfdf;
     }
   }
   .delete_btn {
@@ -340,7 +341,8 @@
     color: #fff;
     text-align: center;
     &.stop{
-      background: #ea5455;
+      color: #a1a1a1;
+      background: #dfdfdf;
     }
   }
 }

@@ -50,11 +50,11 @@
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       </div>
     </div>
-    <op-button :hide="btnIsHide" @on-submit="submitOrder" ></op-button>
-    <!-- <div class='btn-no-amt vux-1px-t' :class="{'btn_hide' : btnIsHide}">
+    <!-- <op-button :is-modify="matterModifyClass" :hide="btnIsHide" @on-submit="submitOrder" ></op-button> -->
+    <div class='btn-no-amt vux-1px-t' :class="{'btn_hide' : btnIsHide}">
       <div class="btn-item stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</div>
       <div class="btn-item" @click="submitOrder">提交</div>
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -338,7 +338,9 @@
 
 <style lang="scss" scoped>
   @import './../../scss/bizApply.scss';
-
+  /* .btn-no-amt .btn-item.stop{
+    flex: 0.5;
+  } */
   .dealer_list{
     input {
       border: none;

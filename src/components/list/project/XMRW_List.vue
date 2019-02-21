@@ -106,7 +106,7 @@
         }
         // 交易号、应用名称等
         let {transCode} = item,
-          {name} = this.$route.query,
+          {name, listId} = this.$route.query,
           {folder, fileName} = this.$route.params;
         // 高亮 点击过的数据
         this.clickVisited = true;
@@ -117,7 +117,7 @@
           this.clickVisited = false;
           this.$router.push({
             path: `/detail/${folder}/${fileName}`,
-            query: {name, transCode}
+            query: {name, transCode, listId}
           })
         }, 200)
       },

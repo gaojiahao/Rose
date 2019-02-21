@@ -13,14 +13,43 @@
       <contact-part :contact-info="dealerInfo" :configs="dealerConfig"></contact-part>
       <!-- 物料列表 -->
       <matter-list :order-list='orderList' :order-title="orderTitle" @on-show-more="onShowMore"></matter-list>
-      <pop-cash-list :default-value="cashInfo" @sel-item="selCash" request="3" :params="cashParams"
+      <!-- <pop-cash-list :default-value="cashInfo" @sel-item="selCash" request="3" :params="cashParams"
                      v-if="isCashier" required>
         <template slot="other">
           <form-cell cellTitle='支付金额' showSymbol
                      :cellContent="cashInfo.tdAmountCopy1 | toFixed | numberComma(3)"></form-cell>
         </template>
+      </pop-cash-list> -->
+      <!-- 资金账户可编辑-->
+      <pop-cash-list :default-value="cashInfo" @sel-item="selCash" request="3" :params="cashParams"
+                     v-show="otherConfig.length &&  !isEditAdmout" required>
+        <template slot="other">
+          <div class='each_property vux-1px-t'>
+            <label>支付金额</label>
+            <input type='number' v-model.number="cashInfo.tdAmountCopy1" placeholder="请输入" class='property_val' @blur="checkAmt(cashInfo, 'tdAmountCopy1', cashInfo.tdAmountCopy1)"/>
+          </div>
+        </template>
       </pop-cash-list>
-      <div class="form_part" v-else>
+      <!-- 资金账户不可编辑 -->
+      <div class="form_content" v-show="otherConfig.length &&  isEditAdmout">
+        <div class="main_content">
+          <div :class="{'vux-1px-t': cIndex > 0}" v-for="(cItem, cIndex) in otherConfig" :key="cIndex">
+            <template v-if="cItem.xtype === 'r2Permilfield'">
+              <div class="each_info">
+                <label>{{cItem.fieldLabel}}</label>
+                <span class="field_value">￥{{cashInfo[cItem.fieldCode] | numberComma}}</span>
+              </div>
+            </template>
+            <template v-else>
+              <div class="each_info">
+                <label>{{cItem.fieldLabel}}</label>
+                <span class="field_value">{{cashInfo[cItem.fieldCode] || "无"}}</span>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="form_part" v-else>
         <div class="form_title vux-1px-b">
           <span class="iconfont icon-baoxiao"></span><span class="title">资金账户详情</span>
         </div>
@@ -35,7 +64,7 @@
                        showSymbol></form-cell>
           </div>
         </div>
-      </div>
+      </div> -->
       <!-- 备注 -->
       <other-part :other-info="orderInfo" :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"
                   :attachment="attachment"></other-part>
@@ -105,6 +134,25 @@
           transCode: this.transCode,
           fundType: '银行存款'
         }
+      },
+      // 判断纸巾账户的支付金额是否可编辑
+      isEditAdmout() {
+        let isEdit = false;
+        this.otherConfig.forEach(item => {
+          if(item.fieldCode === "tdAmountCopy1"){
+           isEdit = item.readOnly;
+          }
+        })
+        if(!isEdit){
+          this.cashInfo = {
+            ...this.cashInfo,
+            fundCode: this.cashInfo.fundCode || this.cashInfo.cashInCode,
+            fundType: this.cashInfo.fundType || this.cashInfo.cashType_cashInCode,
+            fundName: this.cashInfo.fundName || this.cashInfo.fundName_cashInCode,
+            thenAmntBal: this.cashInfo.thenAmntBal || this.cashInfo.thenAmntBalCopy1,
+          }
+        }
+        return isEdit
       }
     },
     mixins: [detailCommon],
@@ -112,6 +160,9 @@
       workFlow, RAction, contactPart, MatterList, MatterItem, FormCell, PopCashList
     },
     methods: {
+      checkAmt(item, key, val) {
+        item[key] = Math.abs(toFixed(val)); 
+      },
       //选择默认图片
       getDefaultImg(item) {
         let url = require('assets/wl_default03.png');

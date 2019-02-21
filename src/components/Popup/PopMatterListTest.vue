@@ -156,6 +156,7 @@
             for(let item in val.data) {
               if(!val.data[item]) {
                 paramsIsOk = false;
+                this.hasNext = false;
                 break;
               }
             }

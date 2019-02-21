@@ -547,14 +547,17 @@ export default {
     // 设置 仓库信息 动态渲染部分
     setWarehouseConfg(config = [], type = '') {
       let wareConfig = this.warehouseConfig;
-      let info = {warehouseAction: type, config: []};
-      for (let item of config) {
-        if (!item.hiddenInRun) {
-          item.fieldValue = this.warehouse[item.fieldCode]
-          info.config.push(item);
+      if(this.warehouseConfig){
+        let info = {warehouseAction: type, config: []};
+        for (let item of config) {
+          if (!item.hiddenInRun) {
+            item.fieldValue = this.warehouse[item.fieldCode]
+            info.config.push(item);
+          }
         }
+        wareConfig.push(info);
       }
-      wareConfig.push(info);
+      
     },
     // 设置物料的动态渲染部分
     setMatterConfig(arr) {
