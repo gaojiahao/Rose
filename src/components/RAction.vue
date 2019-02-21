@@ -102,10 +102,10 @@ export default {
                   if (isMyTask === 1 && nodeName === '重新提交') {
                     path = `/fillform/${folder}/${fileName}`;
                   } else {
-                    path = `/detail/${folder}/${fileName}`;
+                    this.$router.go(0);
                   }
                 } else {
-                  path = `/detail/${folder}/${fileName}`;
+                  this.$router.go(0);
                 }
                 this.$router.replace({
                   path, query: {name, listId, transCode}
