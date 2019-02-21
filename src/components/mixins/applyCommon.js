@@ -514,6 +514,9 @@ export default {
                 }
                 this.orderListTitle = cItem.v
               }
+              else {
+                this.orderListTitle = '物料'
+              }
 
               // 配置中的字段要去除掉物料名称，交易号
               if(!cItem.h && cItem.k !== 'inventoryName' && cItem.k !== 'transCode' && cItem.k !== 'invName'){
@@ -625,6 +628,7 @@ export default {
                 this.orderListTitle = '设施'
               }
               else{
+                console.log('text:', item.text);
                 if(item.text.includes('编码')){
                   this.orderListTitle = item.text.slice(0, item.text.indexOf('编码')); 
                 }

@@ -114,7 +114,7 @@ export default {
     RScroll,
   },
   methods: {
-    // TODO 跳转到修改页面
+    // 跳转到修改页面
     goEdit() {
       this.$router.push({
         path: '/materlist/addMater',
@@ -123,7 +123,7 @@ export default {
         }
       })
     },
-    // TODO 获取物料详情
+    // 获取物料详情
     findData() {
       return findData(this.transCode).then(({formData}) => {
         this.formData = formData;
@@ -162,11 +162,11 @@ export default {
         })
       });
     },
-    // TODO 获取默认图片
+    // 获取默认图片
     getDefaultImg() {
       this.inventory.inventoryPic = require('assets/wl_default03.png');
     },
-    // TODO 获取应用详情
+    // 获取应用详情
     getAppDetail() {
       return getAppDetail(this.listId).then(([data = {}]) => {
         let {action} = data;

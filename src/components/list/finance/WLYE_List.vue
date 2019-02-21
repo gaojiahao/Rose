@@ -47,16 +47,16 @@
             <div class="verification-split"></div>
             <div class="verification-bottom">
               <div class="verification_bottom_item days">
+                <div class="verification_bottom_value">{{item.daysOfAccount || 0}}</div>
+                <div class="verification_bottom_title">账期天数</div>
+              </div>
+              <div class="verification_bottom_item acount_day">
                 <div class="verification_bottom_value">{{item.paymentSurplusDays || '无'}}</div>
                 <div class="verification_bottom_title">剩余天数</div>
               </div>
               <div class="verification_bottom_item">
                 <div class="verification_bottom_value">{{item.accountAge}}</div>
                 <div class="verification_bottom_title">账龄天数</div>
-              </div>
-              <div class="verification_bottom_item acount_day">
-                <div class="verification_bottom_value">{{item.daysOfAccount || 0}}</div>
-                <div class="verification_bottom_title">到账天数</div>
               </div>
             </div>
             <div class="verification-bottom">
@@ -86,14 +86,14 @@
                   <div class="app_name">{{item.appTitle}}</div>
                 </div>
                 <div class="classification_detail_item">
-                  <span class="classification_detail_title">应用名称: </span>{{item.transName}}
+                  <span class="classification_detail_title">应用类型: </span>{{item.transName}}
                 </div>
                 <div class="classification_detail_item">
                   <span class="classification_detail_title">实例编码: </span>{{item.transCode}}
                 </div>
                 <div class="classification_detail_item">
-                  <span class="classification_detail_title">记账与生效时间: </span>
-                  {{item.effectiveTime | dateFormat('YYYY-MM-DD')|| '无'}}
+                  <span class="classification_detail_title">记账与生效日期: </span>
+                  {{item.effectiveTime | dateFormat('YYYY-MM-DD')}}
                 </div>
               </div>
             </div>
@@ -206,6 +206,13 @@
                             {{Fitem.crAmnt | toFixed}}
                           </span>
                           <span v-else>&nbsp;0</span>
+                        </div>
+                      </div>
+                      <!-- 时间 -->
+                      <div class="count">
+                        <div class="num_part">
+                          <span class="symbol">记账日期与时间: </span>
+                          <span>&nbsp;{{Fitem.effectiveTime | dateFormat}}</span>
                         </div>
                       </div>
                     </div>
@@ -341,9 +348,9 @@ export default {
       .symbol {
         font-size: .12rem;
       }
-    }
-    & .verification-bottom + .verification-bottom {
-      margin-top: .2rem;
+      & + .verification-bottom {
+        margin-top: .2rem;
+      }
     }
   }
   .classification-item-wrapper {
