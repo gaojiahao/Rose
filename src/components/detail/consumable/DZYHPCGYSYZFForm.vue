@@ -13,20 +13,13 @@
       <contact-part :contact-info="dealerInfo" :configs="dealerConfig"></contact-part>
       <!-- 物料列表 -->
       <matter-list :order-list='orderList' :order-title="orderTitle" @on-show-more="onShowMore"></matter-list>
-      <!-- <pop-cash-list :default-value="cashInfo" @sel-item="selCash" request="3" :params="cashParams"
-                     v-if="isCashier" required>
-        <template slot="other">
-          <form-cell cellTitle='支付金额' showSymbol
-                     :cellContent="cashInfo.tdAmountCopy1 | toFixed | numberComma(3)"></form-cell>
-        </template>
-      </pop-cash-list> -->
       <!-- 资金账户可编辑-->
       <pop-cash-list :default-value="cashInfo" @sel-item="selCash" request="3" :params="cashParams"
                      v-show="otherConfig.length &&  !isEditAdmout" required>
         <template slot="other">
           <div class='each_property vux-1px-t'>
-            <label>支付金额</label>
-            <input type='number' v-model.number="cashInfo.tdAmountCopy1" placeholder="请输入" class='property_val' @blur="checkAmt(cashInfo, 'tdAmountCopy1', cashInfo.tdAmountCopy1)"/>
+            <label>支付金额：</label>
+            <span class='property_val'>￥{{cashInfo.tdAmountCopy1 | numberComma(3)}}</span>
           </div>
         </template>
       </pop-cash-list>
@@ -49,22 +42,6 @@
           </div>
         </div>
       </div>
-      <!-- <div class="form_part" v-else>
-        <div class="form_title vux-1px-b">
-          <span class="iconfont icon-baoxiao"></span><span class="title">资金账户详情</span>
-        </div>
-        <div class="form_content">
-          <div class="main_content">
-            <form-cell cellTitle='资金账户' :cellContent="cashInfo.fundName_cashOutCode" :showTopBorder=false></form-cell>
-            <form-cell cellTitle='资金编码' :cellContent="cashInfo.cashOutCode"></form-cell>
-            <form-cell cellTitle='资金账户类型' :cellContent="cashInfo.cashType_cashOutCode"></form-cell>
-            <form-cell cellTitle='账户余额' :cellContent="cashInfo.thenAmntBalCopy1 | toFixed | numberComma(3)"
-                       showSymbol></form-cell>
-            <form-cell cellTitle='支付金额' :cellContent="cashInfo.tdAmountCopy1 | toFixed | numberComma(3)"
-                       showSymbol></form-cell>
-          </div>
-        </div>
-      </div> -->
       <!-- 备注 -->
       <other-part :other-info="orderInfo" :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"
                   :attachment="attachment"></other-part>
@@ -139,7 +116,7 @@
       isEditAdmout() {
         let isEdit = false;
         this.otherConfig.forEach(item => {
-          if(item.fieldCode === "tdAmountCopy1"){
+          if(item.fieldCode === "fundName_cashOutCode"){
            isEdit = item.readOnly;
           }
         })
@@ -311,5 +288,21 @@
 
 <style lang='scss' scoped>
   @import './../../scss/bizDetail';
+  .each_property {
+    padding: .18rem 0;
+    display: flex;
+    /* justify-content: space-between; */
+    line-height: .14rem;
+    color: #696969;
+    font-size: .14rem;
+    input{  
+      border: none;
+      outline: none;
+      font-size: .14rem;
+    }
+    label{
+      color: #696969;
+    }
+  }
 </style>
 
