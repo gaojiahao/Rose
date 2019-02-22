@@ -5,12 +5,12 @@
       <div class="trade_pop">
         <div class="title">
           <!-- 搜索栏 -->
-          <d-search @search='searchList' @turn-off="onHide" :isFill='true'></d-search>
+          <d-search @search='searchList' @turn-off="onHide"></d-search>
         </div>
         <!-- 设备列表 -->
         <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
-          <div class="pop-mater-list-item box_sd" v-for="(item, index) in listData" :key='index'
+          <div class="pop-mater-list-item box_sd" :class="{selected: showSelIcon(item)}" v-for="(item, index) in listData" :key='index'
                 @click.stop="selThis(item, index)">
             <div class="pop-list-main ">
               <div class="pop-list-info">
@@ -27,8 +27,6 @@
                 </div>
               </div>
             </div>
-            <!-- icon -->
-            <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
           </div>
         </r-scroll>
       </div>
@@ -171,6 +169,7 @@
 </script>
 
 <style scoped lang="scss">
+@import '~@/scss/color.scss';
   .pop-company-container {
     position: relative;
     padding: .06rem .1rem;
@@ -251,7 +250,7 @@
         box-sizing: border-box;
         height: calc(100% - .46rem);
         /deep/ .scroll-wrapper {
-          padding: .04rem .04rem 0 .3rem;
+          padding: .04rem .15rem 0;
         }
         // 列表项
         .pop-mater-list-item {
@@ -260,10 +259,12 @@
           padding: 0.08rem;
           margin-bottom: .2rem;
           box-sizing: border-box;
-          // 阴影
           &.box_sd {
             box-sizing: border-box;
-            box-shadow: 0 0 8px #e8e8e8;
+            box-shadow: 0 2px 10px 0 rgba(228, 228, 232, 0.5);
+          }
+          &.selected {
+            border: 1px solid $main_color;
           }
           // 列表主体
           .pop-list-main {

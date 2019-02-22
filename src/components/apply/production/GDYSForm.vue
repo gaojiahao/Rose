@@ -4,14 +4,54 @@
       <div class='fill_wrapper'>
         <!-- <div class="scan" @click="scanQRCode">扫一扫 {{scanResult}}</div> -->
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
-                      :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态"
-                  v-model="biProcessStatus" :hasBorder="false"></r-picker>
+                      :handle-org-list="handleORG" :user-role-list="userRoleList" :showStatus="false"></pop-baseinfo>
         <!-- 物料列表 -->
-        <div class="materiel_list">
-          <div class="title">工序信息</div>
-          <group class='costGroup' group-title-margin-top="0">
-            <cell isLink title='工单启动号' v-model="workInfo.transCode || '请选择'"
+        <div class="materiel_list work_list">
+          <div class="vux-1px-t" v-for="(dItem,dIndex) in fundConfig" :key="dIndex" >
+            <!-- 可编辑的字段 -->
+            <template v-if="!dItem.readOnly">
+              <div class='each_property' v-if="dItem.fieldCode === 'transMatchedCode'">
+                <label :class="{required: !dItem.allowBlank}">{{dItem.fieldLabel}}</label>
+                <span class='property_val'>{{workInfo[dItem.fieldCode] || workInfo[dItem.displayField]}}</span>
+              </div>
+              <!-- 下拉框 -->
+              <div class='each_property' v-if="dItem.xtype === 'r2Selector' && dItem.fieldCode !== 'transMatchedCode'" @click="showManager()">
+                <label :class="{required: !dItem.allowBlank}">{{dItem.fieldLabel}}</label>
+                <div class='picker'>
+                  <span class='mater_nature'>{{workInfo[dItem.fieldCode] || "请选择"}}</span>
+                  <span class='icon-right'></span>
+                </div>
+              </div>
+              <!-- 输入框（数字） -->
+              <div class='each_property ' v-if="dItem.xtype === 'r2Numberfield'">
+                <label :class="{required: !dItem.allowBlank}">{{dItem.fieldLabel}}</label>
+                <input type='number' v-model.number="workInfo[dItem.fieldCode]" placeholder="请输入" class='property_val' 
+                      @focus="getFocus($event)" @blur="checkAmt(workInfo) "/>
+              </div>
+              <!-- 输入框（文字） -->
+              <div class='each_property' v-if="dItem.xtype === 'r2Textfield'">
+                <label :class="{required: !dItem.allowBlank}">{{dItem.fieldLabel}}</label>
+                <input type='text' v-model="workInfo[dItem.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
+              </div>
+              <!-- 日期 -->
+              <div class='each_property' v-if="dItem.xtype === 'r2Datefield'" @click="getDate(workInfo,dItem)">
+                <label :class="{required: !dItem.allowBlank}">{{dItem.fieldLabel}}</label>
+                <div class='picker'>
+                  <span class='mater_nature'>{{workInfo[dItem.fieldCode] || "请选择"}}</span>
+                  <span class='icon-right'></span>
+                </div>
+              </div>
+            </template>
+            <!--不可编辑的字段 -->
+            <template  v-else>
+              <div class='each_property readOnly'>
+                <label :class="{required: !dItem.allowBlank}">{{dItem.fieldLabel}}</label>
+                <span class='property_val'>{{workInfo[dItem.fieldCode] || workInfo[dItem.showFieldCode]}}</span>
+              </div>
+            </template>
+          </div>
+          <!-- <group class='costGroup' group-title-margin-top="0">
+            <cell isLink title='工单启动号' v-model="workInfo.transCode"
                   @click.native="showWorkPop = !showWorkPop"></cell>
             <cell title='工单派工号' v-model="workInfo.orderCode" :disabled="!workInfo.orderCode"></cell>
             <cell title='加工订单号' v-model="workInfo.processCode" :disabled="!workInfo.orderCode"></cell>
@@ -25,7 +65,7 @@
                 <span class='required'>本次验收</span>
               </template>
             </x-input>
-            <!--<cell title="后置工序" v-model="workInfo.rearProcedureName" :disabled="!workInfo.rearProcedureName"></cell>-->
+            <cell title="后置工序" v-model="workInfo.rearProcedureName" :disabled="!workInfo.rearProcedureName"></cell>
             <cell title="工艺路线编码" v-model="workInfo.proFlowCode" :disabled="!workInfo.rearProcedureName"></cell>
             <cell title="工艺路线名称" v-model="workInfo.technicsName" :disabled="!workInfo.rearProcedureName"></cell>
             <cell title="物料名称" v-model="workInfo.inventoryName" :disabled="!workInfo.inventoryName">
@@ -41,15 +81,16 @@
             <cell title="加工属性" v-model="workInfo.processing || '无'" :disabled="!workInfo.processing"></cell>
             <cell title="制造费用" v-model="workInfo.skinFee" :disabled="!workInfo.skinFee"></cell>
             <cell title="工价" v-model="workInfo.wages" :disabled="!workInfo.wages"></cell>
-          </group>
+          </group> -->
           <!-- 物料popup -->
           <pop-work-check-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
                                @sel-work="selWork" ref="matter"></pop-work-check-list>
         </div>
-        <pop-manager-list title='验收者' @sel-item="selManager" :defaultValue="defaultManager"></pop-manager-list>
-        <pop-warehouse-list title="入库仓库" :filter-params="filterParams" :default-value="warehouse"
-                            @sel-item="selWarehouse" isRequired></pop-warehouse-list>
-        <div class="materiel_list" v-show="bomList.length">
+        <pop-manager-list :show="showManagerPop" v-model="showManagerPop" @sel-item="selManager"
+                          :defaultValue="defaultManager"></pop-manager-list>
+        <pop-warehouse-list title="入库仓库" :filter-params="filterParams" :default-value="warehouse" :default-store="warehouseStoreInfo" 
+                            @get-store="getStore" @sel-item="selWarehouse" isRequired isShowStore></pop-warehouse-list>
+        <div class="materiel_list work_list" v-show="bomList.length">
           <bom-list :boms="bomList">
             <template slot-scope="{bom}" slot="specification">
               <div class="content-unit">
@@ -95,7 +136,7 @@
   // mixins 引入
   import Applycommon from 'components/mixins/applyCommon'
   // 组件引入
-  import PopManagerList from 'components/Popup/PopManagerList'
+  import PopManagerList from 'components/Popup/workList/PopManagerList'
   import PopWarehouseList from 'components/Popup/PopWarehouseList'
   import PopWorkCheckList from 'components/Popup/workList/PopWorkCheckList'
   import RPicker from 'components/RPicker'
@@ -132,6 +173,8 @@
         warehouse: {},
         filterParams: [{property: 'warehouseType', operator: 'eq', value: '加工车间仓'}],
         bomList: [],
+        showManagerPop: false,
+        warehouseStoreInfo: {}
       }
     },
     mixins: [Applycommon],
@@ -151,15 +194,21 @@
           this.setBomQty();
         })
       },
+     // 显示组长pop
+      showManager() {
+        this.showManagerPop = !this.showManagerPop;
+      },
       // 选择员工
       selManager (val) {
         this.defaultManager = JSON.parse(val);
         // 员工 工号
+        this.workInfo.dealerName_dealerDebit = this.defaultManager.dealerName;
         this.workInfo.dealerDebit = this.defaultManager.dealerCode;
       },
       // 检验本次验收数量
       checkAmt (item) {
         let {tdQty, qtyBal} = item;
+        item.tdQty = Math.abs(toFixed(tdQty))
         if (tdQty) {
           if (tdQty > qtyBal) {
             item.tdQty = qtyBal;
@@ -167,31 +216,31 @@
           this.setBomQty();
         }
       },
+      // 选择的库位
+      getStore(val){
+        this.warehouseStoreInfo = {...val};
+      },
       // 提价订单
       submitOrder () {
+         /** 
+         * @warn    提示文字
+         * @dateSet   提交数据
+         * @outPutDataSet bom提交的数据
+         */ 
         let warn = '',
           dataSet = [],
           outPutDataSet = [];
         if (!this.workInfo.transCode) {
           warn = '请选择工序'
         }
-        let checkData = [
-          {key: 'tdQty', msg: '请填写验收数量'},
-        ]
-        if (!warn) {
-          checkData.every(item => {
-            if (!this.workInfo[item.key]) {
-              warn = item.msg;
-              return false;
-            }
-            return true;
-          })
-        }
-        if (!warn && !this.defaultManager.dealerCode) {
-          warn = '请选择验收者'
+        if(!this.defaultManager.dealerCode){
+          warn = '验收者不能为空'
         }
         if (!warn && !this.warehouse.warehouseCode) {
           warn = '请选择入库仓库'
+        }
+        if (!warn && !this.warehouseStoreInfo.warehouseCode) {
+          warn = '请选择库位'
         }
         if (warn) {
           this.$vux.alert.show({
@@ -200,7 +249,7 @@
           return
         }
         let workInfo = this.workInfo;
-        // 赋值
+        // // 赋值
         dataSet.push({
           transMatchedCode: workInfo.transCode, // 工单任务号
           orderCode: workInfo.orderCode, // 工单任务号
@@ -216,7 +265,6 @@
           skinFee: workInfo.skinFee,
           wages: workInfo.wages
         });
-
         this.bomList.forEach(item => {
           outPutDataSet.push({
             inventoryName_outPutMatCode: item.inventoryName,
@@ -231,6 +279,8 @@
             specification_outPutMatCode: item.specification,
             measureUnit_outPutMatCode: item.measureUnit,
             containerCodeOut: item.whCode,
+            warehouseName_storehouseOutCode: item.warehouseName,
+            storehouseOutCode: this.warehouseStoreInfo.warehouseCode,
             bomType: item.bomType,
             bomQty: item.qty,
             bomSpecificLoss: item.specificLoss,
@@ -272,7 +322,10 @@
                 containerInWarehouseManager: this.warehouse.containerInWarehouseManager || null,
                 order: {
                   containerCode: this.warehouse.warehouseCode,
-                  dataSet,
+                  warehouseName_containerCode: this.warehouse.warehouseName,
+                  storehouseInCode: this.warehouseStoreInfo.warehouseCode,
+                  warehouseInType: this.warehouseStoreInfo.warehouseType,
+                  dataSet
                 },
                 outPut: {
                   containerCode: this.warehouse.warehouseCode,
@@ -443,26 +496,51 @@
   @import '~@/scss/color';
 
   .gdrw-apply-container {
-    .basicPart {
-      height: 90%;
-    }
+    
     .scan {
       width: 100%;
       text-align: center;
     }
-    /deep/ .weui-cells {
-      margin-top: 0;
-      font-size: .16rem;
-      &:before {
-        border-top: none;
+    .work_list{
+      padding: 0 .15rem;
+      box-sizing: border-box;
+      background: #fff;
+      margin-bottom: .1rem;
+      font-size: .14rem;
+      input {
+        border: none;
+        outline: none;
+        font-size: .14rem;
       }
-      &:after {
-        border-bottom: none;
+    }
+    .each_property {
+      padding: .18rem 0;
+      display: flex;
+      justify-content: space-between;
+      line-height: .14rem;
+      label{
+        color: #696969;
       }
-      .weui-cell {
-        padding: 10px 0;
-        &:before {
-          left: 0;
+      .add{
+        color: #3296FA;
+      }
+      .required {
+        color: #3296FA;
+        font-weight: bold;
+      }
+      .property_val {
+        text-align: right;
+      }
+      .readonly {
+        color: #999;
+      }
+      .picker {
+        display: flex;
+        align-items: center;
+        .icon-right{
+          width: .08rem;
+          height: .14rem;
+          margin-left: .1rem;
         }
       }
     }

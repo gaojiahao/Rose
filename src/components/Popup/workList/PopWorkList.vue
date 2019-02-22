@@ -3,7 +3,7 @@
   <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
-        <m-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
+        <m-search :filterList="filterList" @search='searchList' @turn-off="onHide"></m-search>
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !workList.length" @on-pulling-up="onPullingUp"
@@ -176,6 +176,7 @@ import MSearch from 'components/search'
         let filter = [];
         let {orderId = '[]'} = this.$route.query;
         let orderIds = JSON.parse(orderId);
+        let filterArr = [];
         if (this.srhInpTx) {
           filter = [
             ...filter,
@@ -234,6 +235,7 @@ import MSearch from 'components/search'
             }
             filterArr[0].value += `${item},`
           })
+          console.log(filterArr)
           filter = [
             ...filter,
             ...filterArr

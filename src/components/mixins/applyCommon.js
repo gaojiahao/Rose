@@ -613,10 +613,12 @@ export default {
           if(item.submitValue){
             this.submitMatterField.push(item)
           }
-          let key = this.dataIndexMap[item.fieldCode];
-          let matchedCol = matterCols.find(col => col.k === key);
-          // 若存在映射表则根据映射表的字段确定显示或隐藏
-          item.hidden = key ? (matchedCol ? item.hidden : true) : item.hidden;
+          if(matterCols.length){
+            let key = this.dataIndexMap[item.fieldCode];
+            let matchedCol = matterCols.find(col => col.k === key);
+            // 若存在映射表则根据映射表的字段确定显示或隐藏
+            item.hidden = key ? (matchedCol ? item.hidden : true) : item.hidden;
+          }
           // 数据源是动态请求数据
           if(item.dataSource && item.dataSource.type === 'remoteData') {
             // 物料或者订单请求

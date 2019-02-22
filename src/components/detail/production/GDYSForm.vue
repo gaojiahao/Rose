@@ -8,43 +8,28 @@
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 仓库信息 -->
-      <warehouse-content :warehouse="warehouse"></warehouse-content>
+      <warehouse-content :warehouse-config="warehouseConfig"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
       <div class="form_content">
-        <div class="form_title">
-          <span class="iconfont icon-mingxi1"></span>
-          <span>工单信息</span>
-        </div>
         <div class="main_content">
-          <form-cell cellTitle='工单启动号' :cellContent="workInfo.transMatchedCode"></form-cell>
-          <form-cell cellTitle='工单派工号' :cellContent="workInfo.orderCode"></form-cell>
-          <form-cell cellTitle='工序名称' :cellContent="workInfo.procedureName_proPointCode"></form-cell>
-          <form-cell cellTitle='工序编码' :cellContent="workInfo.proPointCode"></form-cell>
-          <form-cell cellTitle='可验收余额' :cellContent="workInfo.thenQtyBal"></form-cell>
-          <form-cell cellTitle='本次验收' :cellContent="workInfo.tdQty"></form-cell>
-          <form-cell cellTitle='后置工序' :cellContent="workInfo.procedureName_rearProPointCode"></form-cell>
-          <form-cell cellTitle='验收者' :cellContent="workInfo.dealerName_dealerDebit"></form-cell>
-          <form-cell cellTitle='工艺路线编码' :cellContent="workInfo.proFlowCode"></form-cell>
-          <form-cell cellTitle='工艺路线名称' :cellContent="workInfo.technicsName_proFlowCode"></form-cell>
-          <form-cell cellTitle='物料名称' :cellContent="workInfo.inventoryName_transObjCode"></form-cell>
-          <form-cell cellTitle='物料编码' :cellContent="workInfo.transObjCode"></form-cell>
-          <form-cell cellTitle='加工属性' :cellContent="workInfo.tdProcessing"></form-cell>
-          <form-cell cellTitle='备注' :cellContent="orderInfo.biComment"></form-cell>
+          <div class="vux-1px-b" v-for="(cItem, cIndex) in fundConfig" :key="cIndex">
+            <template v-if="cItem.editorType === 'r2Datefield'">
+              <div class="each_info">
+                <label>{{cItem.fieldLabel}}</label>
+                <span class="field_value">{{workInfo[cItem.fieldCode] | timeSplit}}</span>
+              </div>
+            </template>
+            <template v-else>
+              <div class="each_info">
+                <label>{{cItem.fieldLabel}}</label>
+                <span class="field_value">{{workInfo[cItem.fieldCode]}}</span>
+              </div>
+            </template> 
+          </div>
         </div>
       </div>
-      <!--<div class="form_content has_margin">
-        <div class="form_title">
-          <span class="iconfont icon-mingxi1"></span>
-          <span>加工订单信息</span>
-        </div>
-        <div class="main_content">
-          <form-cell cellTitle='加工订单号' :cellContent="workInfo.processCode"></form-cell>
-          <form-cell cellTitle='成品名称' :cellContent="workInfo.inventoryName_transObjCode"></form-cell>
-          <form-cell cellTitle='备注' :cellContent="orderInfo.biComment"></form-cell>
-        </div>
-      </div>-->
       <div class="bom_list" v-show="bomList.length">
         <bom-list :boms="bomList">
           <template slot-scope="{bom}" slot="specification">
@@ -91,12 +76,18 @@ export default {
       orderInfo: {},      // 表单内容
       warehouse: {},
       bomList: [],
+      warehouseConfig: []
     }
   },
   mixins: [detailCommon],
   components: {
     Cell, Group, RAction, workFlow, contactPart,
     BomList, WarehouseContent,
+  },
+  filters: {
+    timeSplit(val) {
+      return val ? val.split(' ')[0] : '';
+    }
   },
   methods: {
     // 获取详情
@@ -118,10 +109,16 @@ export default {
         let {order = {}, outPut = {}} = formData;
         let {dataSet = []} = outPut;
         this.warehouse = {
-          warehouseName: order.warehouseName_containerCode,
-          warehouseType: order.warehouseType_containerCode,
-          warehouseAddress: order.warehouseAddress_containerCode,
-        };
+          ...this.warehouse,
+          containerCode: order.containerCode,
+          storehouseInCode: order.storehouseInCode,
+          warehouseAddress_containerCode: order.warehouseAddress_containerCode,
+          warehouseAddress_storehouseInCode: order.warehouseAddress_storehouseInCode,
+          warehouseName_containerCode: order.warehouseName_containerCode,
+          warehouseName_storehouseInCode: order.warehouseName_storehouseInCode,
+          warehouseType_containerCode: order.warehouseType_containerCode,
+          warehouseType_storehouseInCode: order.warehouseType_storehouseInCode,
+        }
         // 设置bom列表
         dataSet.forEach(item => {
           item.inventoryName = item.inventoryName_outPutMatCode;
@@ -163,7 +160,7 @@ export default {
       position: relative;
       background: #FFF;
       padding: .06rem .08rem;
-      margin-top:0.1rem;
+      margin:0.1rem;
     }
     .comment-part {
       background: #fff;

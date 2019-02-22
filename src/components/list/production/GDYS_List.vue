@@ -5,7 +5,7 @@
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search='searchList' ref="search"></searchIcon>
         <div class="filter_part">
-          <r-sort @on-sort="onSortList" @on-filter="onFilter" :list-id="listId" ref="sort"></r-sort>
+          <r-sort @on-sort="onSortList" @on-filter="onFilter" :list-id="listId" :hasFormStatus="false" ref="sort"></r-sort>
         </div>
       </div>
       <r-scroll class="list_wrapper " :options="scrollOptions" :has-next="hasNext"
@@ -40,7 +40,7 @@
             name: '经办人',
             value: 'handlerName',
           }, {
-            name: '成品名称',
+            name: '物料名称',
             value: 'inventoryName_outPutMatCode',
           },
         ],
@@ -57,13 +57,13 @@
         this.popShow = true;
       },
       selTask(val) {
-        let { name } = this.$route.query,
+        let { name, listId} = this.$route.query,
             { folder, fileName } = this.$route.params;
         this.$router.push({
           path: `/fillform/${folder}/${fileName}`,
           query: {
             name,
-            childId,
+            listId,
             inventoryCode: val[0].matCode,
             orderCode: val[0].transCode,
           }

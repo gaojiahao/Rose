@@ -290,7 +290,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
         width: 100%;
         overflow: hidden;
         box-sizing: border-box;
-        height: calc(100% - .38rem - .66rem);
+        height: calc(100% - .5rem - .66rem);
         /* 使用深度作用选择器进行样式覆盖 */
         /deep/ .scroll-wrapper {
           padding: .14rem .04rem 0 .3rem;

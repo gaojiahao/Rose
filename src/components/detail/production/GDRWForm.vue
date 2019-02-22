@@ -7,27 +7,44 @@
       </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
-      <warehouse-content :warehouse="warehouse" v-show="warehouse.warehouseName"></warehouse-content>
+      <warehouse-content :warehouse-config="warehouseConfig"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
-      <div class="form_content">
-        <div class="form_title">
-          <span class="iconfont icon-mingxi1"></span>
-          <span>工单信息</span>
+      <!-- <div class="form_content">
+        <div class="main_content">
+          <div class="vux-1px-b" v-for="(item, index) in matterConfig" :key="index">
+            <template v-if="item.editorType === 'r2Datefield'">
+              <div class="each_info">
+                <label>{{item.text}}</label>
+                <span class="field_value">{{approval[item.fieldCode] | timeSplit}}</span>
+              </div>
+            </template>
+            <template v-else>
+              <div class="each_info">
+                <label>{{item.text}}</label>
+                <span class="field_value">{{approval[item.fieldCode]}}</span>
+              </div>
+            </template> 
+          </div>
         </div>
-        <div class="main_content" :class="{'has_border' : index > 0}" v-for="(item, index) in workInfo" :key="index">
-          <form-cell cellTitle='工序名称' :cellContent="item.procedureName_proPointCode"></form-cell>
-          <form-cell cellTitle='工序编码' :cellContent="item.proPointCode"></form-cell>
-           <form-cell cellTitle='物料名称' :cellContent="item.inventoryName_transObjCode || '无'"></form-cell>
-          <form-cell cellTitle='物料编码' :cellContent="item.transObjCode || '无'"></form-cell>
-          <form-cell cellTitle='工序可派工' :cellContent="item.thenQtyBal"></form-cell>
-          <form-cell cellTitle='派工数量' :cellContent="item.tdQty"></form-cell>
-          <form-cell cellTitle='组长' :cellContent="item.dealerName_dealerDebit"></form-cell>
-          <form-cell cellTitle='工人数量' :cellContent="item.numberWorkers"></form-cell>
-          <form-cell cellTitle='设施' :cellContent="item.facilityName_facilityObjCode || '无'"></form-cell>
-          <form-cell cellTitle='工艺路线名称' :cellContent="item.technicsName_proFlowCode || '无'"></form-cell>
-          <form-cell cellTitle='工艺路线编码' :cellContent="item.proFlowCode || '无'"></form-cell>
+      </div> -->
+      <div class="form_content">
+        <div class="main_content" v-for="(item, index) in workInfo" :key="index">
+          <div class="vux-1px-b" v-for="(cItem, cIndex) in matterConfig" :key="cIndex">
+            <template v-if="cItem.editorType === 'r2Datefield'">
+              <div class="each_info">
+                <label>{{cItem.text}}</label>
+                <span class="field_value">{{item[cItem.fieldCode] | timeSplit}}</span>
+              </div>
+            </template>
+            <template v-else>
+              <div class="each_info">
+                <label>{{cItem.text}}</label>
+                <span class="field_value">{{item[cItem.fieldCode]}}</span>
+              </div>
+            </template> 
+          </div>
         </div>
       </div>
       <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
@@ -61,11 +78,17 @@ export default {
       orderInfo: {},      // 表单内容
       warehouse : {},     //仓库信息
       bomList: [],        //bom信息
+      warehouseConfig: []
     }
   },
   mixins: [detailCommon],
   components: {
     Cell, Group, RAction, workFlow, contactPart,WarehouseContent,BomList
+  },
+  filters: {
+    timeSplit(val) {
+      return val ? val.split(' ')[0] : '';
+    }
   },
   methods: {
     // 获取详情
@@ -91,9 +114,17 @@ export default {
         this.workInfo = order.dataSet;
         this.warehouse = {
           ...this.warehouse,
-          warehouseName: order.warehouseName_containerCode,
-          warehouseType: order.warehouseType_containerCode,
-          warehouseAddress: order.warehouseAddress_containerCode,
+          containerCode: order.containerCode,
+          storehouseInCode: order.storehouseInCode,
+          warehouseAddress_containerCode: order.warehouseAddress_containerCode,
+          warehouseAddress_storehouseInCode: order.warehouseAddress_storehouseInCode,
+          warehouseName_containerCode: order.warehouseName_containerCode,
+          warehouseName_storehouseInCode: order.warehouseName_storehouseInCode,
+          warehouseType_containerCode: order.warehouseType_containerCode,
+          warehouseType_storehouseInCode: order.warehouseType_storehouseInCode,
+          // warehouseName: order.warehouseName_containerCode,
+          // warehouseType: order.warehouseType_containerCode,
+          // warehouseAddress: order.warehouseAddress_containerCode,
         }
         this.workFlowInfoHandler();
       })

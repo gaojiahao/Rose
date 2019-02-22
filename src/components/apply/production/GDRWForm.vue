@@ -4,40 +4,89 @@
       <div class='fill_wrapper'>
         <!-- <div class="scan" @click="scanQRCode">扫一扫 {{scanResult}}</div> -->
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
-                      :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
-        <pop-warehouse-list title="在制仓库" :default-value="warehouse" @sel-item="selWarehouse"
-                            :filter-params="filterParams" :is-required="true">
+                      :handle-org-list="handleORG" :user-role-list="userRoleList" :showStatus="false"></pop-baseinfo>
+        <!-- <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker> -->
+        <pop-warehouse-list title="在制仓库" :default-value="warehouse" @sel-item="selWarehouse" :default-store="warehouseStoreInfo" 
+                            @get-store="getStore" :filter-params="filterParams" isRequired isShowStore>
         </pop-warehouse-list>
         <!-- 工单列表 -->
-        <div class="materiel_list">
+        <div class="materiel_list work_list">
           <div class="order-info" @click="showWorkPop = true" v-if="!workInfo.length">
             <div class="title">工序信息</div>
             <div class="mode">请选择工序</div>
             <span class="iconfont icon-youjiantou r-arrow"></span>
           </div>
           <template v-else>
-            <div class="title">工序信息</div>
-            <div class="order-detail" :class="{'vux-1px-t': index !== 0}" v-for="(item, index) in workInfo"
+            <!-- <div class="title">工序信息</div> -->
+            <div class="order-detail" :class="{'vux-1px-t': index > 0}" v-for="(item, index) in workInfo"
                  :key="index">
-              <div class="detail-item top">
-                <span class="info-item">{{item.inventoryName}}</span>
+              <div class="work_info">
+                <div class="matter_name">{{item.inventoryName}}</div>
+                <div class="detail-item">
+                  <span class="item-title">订单号:</span>
+                  <span>{{item.transCode}}</span>
+                </div>
+                <div class="detail-item" v-for="(cItem, cIndex) in matterEditConfig.property" :key="cIndex">
+                  <span class="item-title">{{cItem.text}}:</span>
+                  <span>{{item[cItem.fieldCode] || item[cItem.showFieldCode] || "无"}}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="item-title">工艺路线编码:</span>
+                  <span>{{item.proFlowCode|| "无"}}</span>
+                </div>
+                <div class="detail-item" >
+                  <span class="item-title">工艺路线名称:</span>
+                  <span>{{item.technicsName || "无"}}</span>
+                </div>
               </div>
-              <div class="detail-item">
-                <span class="info-item">订单号: {{item.transCode}}</span>
-                <span class="info-item">工序名称: {{item.procedureName}}</span>
-                <span class="info-item">工序编码: {{item.proPointCode}}</span>
+              <div class="vux-1px-t" v-for="(dItem,dIndex) in matterEditConfig.editPart" :key="dIndex" >
+                <!-- 可编辑的字段 -->
+                <template v-if="!dItem.readOnly">
+                  <!-- 下拉框 -->
+                  <div class='each_property' v-if="dItem.editorType === 'r2Selector'" @click="getSeletor(dItem.fieldCode, index)">
+                    <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                    <div class='picker'>
+                      <span class='mater_nature'>{{item[dItem.fieldCode] || "请选择"}}</span>
+                      <span class='icon-right'></span>
+                    </div>
+                  </div>
+                  <!-- 输入框（数字） -->
+                  <div class='each_property ' v-if="dItem.editorType === 'r2Numberfield'">
+                    <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                    <input type='number' v-model.number="item[dItem.fieldCode]" placeholder="请输入" class='property_val' 
+                          @focus="getFocus($event)" @blur="checkAmt(item, index) "/>
+                  </div>
+                  <!-- 输入框（文字） -->
+                  <div class='each_property' v-if="dItem.editorType === 'r2Textfield'">
+                    <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                    <input type='text' v-model="item[dItem.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
+                  </div>
+                  <!-- 日期 -->
+                  <div class='each_property' v-if="dItem.editorType === 'r2Datefield'" @click="getDate(item,dItem)">
+                    <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                    <div class='picker'>
+                      <span class='mater_nature'>{{item[dItem.fieldCode] || "请选择"}}</span>
+                      <span class='icon-right'></span>
+                    </div>
+                  </div>
+                </template>
+                <!--不可编辑的字段 -->
+                <template  v-else>
+                  <div class='each_property readOnly'>
+                    <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                    <span class='property_val'>{{item[dItem.fieldCode]}}</span>
+                  </div>
+                </template>
               </div>
-              <div class="detail-item">
-                <span class="info-item">工艺路线名称: {{item.technicsName}}</span>
-                <span class="info-item">工艺路线编码: {{item.proFlowCode}}</span>
+              <div class='each_property vux-1px-t' @click="getSeletor('facilityName_facilityObjCode', index)">
+                <label>设施</label>
+                <div class='picker'>
+                  <span class='mater_nature'>{{item.facilityName_facilityObjCode || "请选择"}}</span>
+                  <span class='icon-right'></span>
+                </div>
               </div>
-              <div class="detail-item">
-                <span class="info-item">派工总数: {{item.productDemandQty}}</span>
-                <span class="info-item">工序可派工: {{item.thenQtyBal}}</span>
-              </div>
-              <x-input text-align='right' placeholder='请填写' type='number' @on-blur="checkAmt(item, index)"
+              <!-- <x-input text-align='right' placeholder='请填写' type='number' @on-blur="checkAmt(item, index)"
                        @on-focus="getFocus($event)" v-model.number='item.tdQty'>
                 <template slot="label">
                   <span class="required">派工数量</span>
@@ -57,7 +106,7 @@
                        @on-focus="getFocus($event)" v-model.number='item.numberWorkers'>
               </x-input>
               <cell v-model="item.facilityName_facilityObjCode" title="设施" isLink @click.native="showFacility(index)">
-              </cell>
+              </cell> -->
             </div>
           </template>
         </div>
@@ -65,9 +114,9 @@
         <pop-work-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
                         @sel-work="selWork" ref="matter"></pop-work-list>
         <pop-manager-list :show="showManagerPop" v-model="showManagerPop" @sel-item="selManager"
-                          :defaultValue="defaultManager"></pop-manager-list>
+                          :defaultValue="defaultManager[managerIndex]"></pop-manager-list>
         <pop-work-facility-list :show="showFacilityPop" v-model="showFacilityPop" @sel-item="selFacility"
-                                :defaultValue="defaultFacility">
+                                :defaultValue="defaultFacility[facilityIndex]">
         </pop-work-facility-list>
         <!--备注-->
         <div class='comment vux-1px-t'>
@@ -132,10 +181,11 @@ export default {
         biProcessStatus:'', // 流程状态
       },
       workInfo: [], // 工序信息
-      defaultManager: {},
-      defaultFacility: {},
+      defaultManager:[],
+      defaultFacility: [],
       scanResult: '',
       warehouse: {}, // 选中仓库属性
+      warehouseStoreInfo: {},
       filter: [ // bom请求参数
         {
           operator: "in",
@@ -166,6 +216,15 @@ export default {
         item.tdQty = item.thenQtyBal;
       })
     },
+    // 处理选择器，根据不同字段调用不同组件
+    getSeletor(fieldCode, index) {
+      if(fieldCode === 'dealerName_dealerDebit'){
+        this.showManager(index)
+      }
+      else if(fieldCode === 'facilityName_facilityObjCode'){
+        this.showFacility(index)
+      }
+    },
     // 显示组长pop
     showManager(index) {
       this.managerIndex = index;
@@ -173,10 +232,11 @@ export default {
     },
     // 选择组长
     selManager (val) {
-      this.defaultManager = JSON.parse(val);
-      this.workInfo[this.managerIndex].dealerName_dealerDebit = this.defaultManager.dealerName;
-			this.workInfo[this.managerIndex].dealerDebit = this.defaultManager.dealerCode;
-			this.workInfo[this.managerIndex].drDealerLabel = this.defaultManager.dealerLabelName;
+      let selItem = JSON.parse(val);
+      this.defaultManager[this.managerIndex] = selItem;
+      this.workInfo[this.managerIndex].dealerName_dealerDebit = selItem.dealerName;
+			this.workInfo[this.managerIndex].dealerDebit = selItem.dealerCode;
+			this.workInfo[this.managerIndex].drDealerLabel = selItem.dealerLabelName;
     },
     // 显示设备pop
     showFacility(index) {
@@ -185,19 +245,23 @@ export default {
     },
     // 选择设备
     selFacility (val) {
-      this.defaultFacility = val;
-      this.workInfo[this.facilityIndex].facilityName_facilityObjCode = this.defaultFacility.facilityName;
-			this.workInfo[this.facilityIndex].facilityObjCode = this.defaultFacility.facilityCode;
-			this.workInfo[this.facilityIndex].facilityTypebase_facilityObjCode = this.defaultFacility.facilityType;
+      this.defaultFacility[this.facilityIndex] = val;
+      this.workInfo[this.facilityIndex].facilityName_facilityObjCode = val.facilityName;
+			this.workInfo[this.facilityIndex].facilityObjCode = val.facilityCode;
+			this.workInfo[this.facilityIndex].facilityTypebase_facilityObjCode = val.facilityType;
+    },
+    // 选择的库位
+    getStore(val){
+      this.warehouseStoreInfo = {...val};
     },
     // 校验数量
     checkAmt (item, index) {
       let {tdQty, thenQtyBal, numberWorkers} = item;
+      item.tdQty = Math.abs(toFixed(tdQty))
       if (tdQty) {
         if(tdQty > thenQtyBal){
           item.tdQty = thenQtyBal;
         }
-        item.tdQty = Math.abs(toFixed(tdQty))
         // 重新计算bom
         item.boms && item.boms.forEach(bom => {
           let tdQty = accMul(item.tdQty, bom.qty);
@@ -223,39 +287,39 @@ export default {
     },
     // 提价订单
     submitOrder () {
+       /** 
+       * @warn    提示文字
+       * @dateSet   提交数据
+       * 
+       */ 
       let warn = '',
           dataSet = [];
-      let validateMap = [
-        {
-          key: 'tdQty',
-          message: '请填写派工数量'
-        }, {
-          key: 'dealerName_dealerDebit',
-          message: '请选择组长'
-        }, {
-          key: 'promDeliTime',
-          message: '请选择要求完工日期'
-        }
-      ];
       if (!this.workInfo.length) {
         warn = '请选择工序';
       }
       if (!warn && !this.warehouse.warehouseCode) {
         warn = '请选择在制仓库';
       }
+      if (!warn && !this.warehouseStoreInfo.warehouseCode) {
+        warn = '请选择库位';
+      }
       if (!warn) {
-        this.workInfo.every(item => {
-          validateMap.every(vItem => {
-            if (!item[vItem.key] && item[vItem.key] !== 0) {
-              warn = vItem.message;
-              return false;
+        // 动态组装 dataSet
+        for (let item of this.workInfo) {
+          let oItem = {};
+          for(let sItem of this.submitMatterField){
+            let val = item[sItem.fieldCode] || item[sItem.displayField] || item[sItem.showFieldCode];
+            if(!sItem.hidden && !sItem.allowBlank && !val){
+              warn = `${sItem.text}不为空`
+              break;
             }
-            return true
-          });
+            oItem[sItem.fieldCode] = val !== undefined ? val : null;
+          }
           let bom = [];
           item.boms.forEach(bItem => {
             bom.push({
               tdQty: bItem.tdQty,
+              storehouseInCode: this.warehouseStoreInfo.warehouseCode,
               proPointCode: item.proPointCode,
               processCode: item.transCode,
               processProCode: item.inventoryCode,
@@ -273,32 +337,12 @@ export default {
             })
           })
           dataSet.push({
-            transMatchedCode: item.transCode,
-            processProQty: item.processProQty || null,
-            transObjCode: item.inventoryCode,
-            inventoryName_transObjCode: item.inventoryName,
-            tdProcessing: item.processing,
-            proPointCode: item.proPointCode,
-            procedureName_proPointCode: item.procedureName,
-            tdId: item.tdId || null,
-            productDemandQty: item.productDemandQty,
-            thenLockQty: item.thenLockQty,
-            thenQtyBal: item.thenQtyBal,
-            tdQty: item.tdQty,
-            dealerName_dealerDebit: item.dealerName_dealerDebit,
-            dealerDebit: item.dealerDebit,
-            drDealerLabel: item.drDealerLabel,
-            numberWorkers: item.numberWorkers || null,
-            facilityName_facilityObjCode: item.facilityName_facilityObjCode || null,
-            proFlowCode: item.proFlowCode || '',
-            technicsName_proFlowCode: item.technicsName,
-            promDeliTime: item.promDeliTime,
-            facilityObjCode: item.facilityObjCode || null, // 设备编码
-            facilityTypebase_facilityObjCode: item.facilityTypebase_facilityObjCode || null,
+            processProQty: null,
+            tdId: null,
+            ...oItem,
             boms: bom
-          })
-          return true
-        })
+          });
+        }
       }
       if (warn) {
         this.$vux.alert.show({
@@ -333,6 +377,7 @@ export default {
               handlerEntity: this.entity.dealerName,
               order: {
                 containerCode: this.warehouse.warehouseCode,
+                storehouseInCode: this.warehouseStoreInfo.warehouseCode,
                 dataSet,
               },
             }),
@@ -350,7 +395,6 @@ export default {
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
           }
-          console.log(submitData)
           this.saveData(operation, submitData);
         }
       })
@@ -422,6 +466,11 @@ export default {
           warehouseDistrict: order.warehouseDistrict_containerCode,
           warehouseAddress: order.warehouseAddress_containerCode,
         };
+        this.warehouseStoreInfo = {
+          warehouseName: order.warehouseName_storehouseInCode,
+          warehouseCode: order.storehouseInCode,
+          warehouseAddress: order.warehouseAddress_storehouseInCode,
+        }
         this.handlerDefault = {
           handler: formData.handler,
           handlerName: formData.handlerName,
@@ -464,38 +513,29 @@ export default {
   @import './../../scss/bizApply';
   @import '~@/scss/color';
   .gdrw-apply-container {
-    .basicPart {
-      height: 90%;
-    }
     .scan {
       width: 100%;
       text-align: center;
-    }
-    /deep/ .weui-cells {
-      margin-top: 0;
-      font-size: .16rem;
-      &:before {
-        border-top: none;
-      }
-      &:after {
-        border-bottom: none;
-      }
-      .weui-cell {
-        padding: 10px 0;
-        &:before {
-          left: 0;
-        }
-      }
     }
     // 备注
     .comment{
       margin-top: .1rem;
     }
+    .work_list{
+      padding: 0 .15rem;
+      box-sizing: border-box;
+      background: #fff;
+      margin-bottom: .1rem;
+      font-size: .14rem;
+      input {
+        border: none;
+        outline: none;
+        font-size: .14rem;
+      }
+    }
     .order-info {
       position: relative;
-      .title {
-        font-size: .12rem;
-      }
+      
       .r-arrow {
         position: absolute;
         top: 50%;
@@ -504,32 +544,72 @@ export default {
         transform: translate(0, -50%);
       }
     }
+    .title {
+      font-size: .12rem;
+      padding-top: .2rem;
+    }
     .order-detail {
-      margin-bottom: .1rem;
       &:first-child {
         padding-top: 0;
       }
       &:last-child {
         margin-bottom: 0;
       }
-      .detail-item {
-        display: flex;
-        flex-wrap: wrap;
-        color: #757575;
-        font-size: .12rem;
-        &.top {
-          color: #000;
-          font-size: .14rem;
-        }
+      .work_info{
+        padding: .1rem 0;
       }
-      .info-item {
-        margin-right: .05rem;
+      .matter_name {
+        color: #333;
+        font-size: .14rem;
+        font-weight: bold;
+        line-height: .22rem;
+      }
+      .detail-item {
+        display: inline-block;
+        font-size: .12rem;
+        color: #333;
+        margin-right: .08rem;
+        line-height: .22rem;
+        .item-title{
+          color: #999;
+        }
       }
       .weui-cell {
         padding: 10px 0;
         font-size: .14rem;
         &:before {
           left: 0;
+        }
+      }
+    }
+    .each_property {
+      padding: .18rem 0;
+      display: flex;
+      justify-content: space-between;
+      line-height: .14rem;
+      label{
+        color: #696969;
+      }
+      .add{
+        color: #3296FA;
+      }
+      .required {
+        color: #3296FA;
+        font-weight: bold;
+      }
+      .property_val {
+        text-align: right;
+      }
+      .readonly {
+        color: #999;
+      }
+      .picker {
+        display: flex;
+        align-items: center;
+        .icon-right{
+          width: .08rem;
+          height: .14rem;
+          margin-left: .1rem;
         }
       }
     }

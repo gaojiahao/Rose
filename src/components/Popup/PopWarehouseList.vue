@@ -11,13 +11,11 @@
           <span class='icon-right'></span>
         </template>
         <template v-else>
-          <div class="no-warehouse">
             <div class="title" :class='{required : isRequired}'>{{title}}</div>
             <div class="picker">
               <span class="mode">请选择</span>
               <span class="icon-right"></span>
             </div>
-          </div>
         </template>
       </div>
     </div>
@@ -362,6 +360,10 @@
     }
     .title {
       color: #696969;
+      &.required {
+        color: #3296FA;
+        font-weight: bold;
+      }
     }
     .mode {
       font-weight: 500;

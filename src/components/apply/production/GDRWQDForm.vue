@@ -4,14 +4,20 @@
       <div class='fill_wrapper'>
         <!--<div class="scan" @click="scanQRCode">扫一扫 {{scanResult}}</div>-->
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
-                      :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态"
-                  v-model="biProcessStatus" :hasBorder="false"></r-picker>
+                      :handle-org-list="handleORG" :user-role-list="userRoleList" :showStatus=false></pop-baseinfo>
         <!-- 物料列表 -->
-        <div class="materiel_list">
+        <div class="materiel_list work_list">
+          <div class="vux-1px-t" v-for="(item, index) in fundConfig" :key="index" >
+            <div class='each_property readOnly'>
+              <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+              <span class='property_val'>{{workInfo[item.fieldCode] || workInfo[item.showFieldCode] || workInfo[item.displayField] || '无'}}</span>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="materiel_list">
           <div class="title">工序信息</div>
           <group class='costGroup' group-title-margin-top="0">
-            <cell isLink title='工序名称' v-model="workInfo.procedureName || '请选择'"
+            <cell isLink title='工序名称' v-model="workInfo.procedureName"
                   @click.native="showWorkPop = !showWorkPop"></cell>
             <cell title='工序编码' v-model="workInfo.proPointCode" :disabled="!workInfo.proPointCode"></cell>
             <cell title='工序待启动' v-model="workInfo.thenQtyBal" :disabled="!workInfo.thenQtyBal"></cell>
@@ -22,7 +28,6 @@
                 <span class='required'>组长</span>
               </template>
             </x-input>
-            <!-- <cell title='借方往来标签' v-model="workInfo.dealerLabel" :disabled="!workInfo.dealerLabel"></cell> -->
             <cell title='物料名称' v-model="workInfo.inventoryName" :disabled="!workInfo.inventoryName">
               <template slot="title">
                 <span class='required'>物料名称
@@ -36,24 +41,26 @@
               </template>
             </cell>
           </group>
-          <!-- 物料popup -->
           <pop-work-start-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
                                @sel-work="selWork"></pop-work-start-list>
-        </div>
-        <div class="warehouse materiel_list" v-show="workInfo.whInCode">
-          <div class="title required">在制仓库</div>
-          <div class="mode">
-            <span class="mode-item">{{workInfo.wareName}}</span>
-            <span class="mode-item">{{workInfo.whInCode}}</span>
+        </div> -->
+        <pop-work-start-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
+                               @sel-work="selWork"></pop-work-start-list>
+        <div class="work_list warehouse " v-show="workInfo.whInCode">
+          <div class="user_info">
+            <span class="user_name">{{workInfo.wareName}}</span>
+            <span class="user_tel">{{workInfo.whInCode}}</span>
           </div>
-          <div class="cp_info" v-show="workInfo.wareAddress">
-            <i class="iconfont icon-icon-test"></i>
-            <span class="cp_ads">{{workInfo.wareAddress}}</span>
+          <div class="cp_info">
+            <span class="icon-dealer-address"></span>
+            <span class="cp_ads">
+              {{workInfo.wareAddress}}
+            </span>
           </div>
         </div>
         <!--<pop-manager-list title='验收者' @sel-item="selManager" :defaultValue="defaultManager"></pop-manager-list>-->
-        <pop-facility-list @sel-item="selFacility" :default-value="facility"></pop-facility-list>
-        <div class="materiel_list" v-show="bomList.length">
+        <!-- <pop-facility-list @sel-item="selFacility" :default-value="facility"></pop-facility-list> -->
+        <div class="materiel_list work_list" v-show="bomList.length">
           <bom-list :boms="bomList">
             <!-- <template slot-scope="{bom}" slot="number">
               <div class="number-part">
@@ -130,7 +137,7 @@
     data() {
       return {
         listId: 'c54b3325-a5c1-4d75-a3c4-c6cf0e988aae',
-        showWorkPop: false, // 是否显示物料的popup
+        showWorkPop: true, // 是否显示物料的popup
         dealer: {},
         formData: {
           biComment: '', // 备注
@@ -404,9 +411,6 @@
   @import '~@/scss/color';
 
   .gdrwqd-apply-container {
-    .basicPart {
-      height: 90%;
-    }
     .scan {
       width: 100%;
       text-align: center;
@@ -414,39 +418,78 @@
     .pop-company-container {
       margin-top: .1rem;
     }
-    /deep/ .weui-cells {
-      margin-top: 0;
-      font-size: .16rem;
-      &:before {
-        border-top: none;
+    .work_list{
+      padding: 0 .15rem;
+      box-sizing: border-box;
+      background: #fff;
+      margin-bottom: .1rem;
+      font-size: .14rem;
+      input {
+        border: none;
+        outline: none;
+        font-size: .14rem;
       }
-      &:after {
-        border-bottom: none;
+    }
+    .each_property {
+      padding: .18rem 0;
+      display: flex;
+      justify-content: space-between;
+      line-height: .14rem;
+      label{
+        color: #696969;
       }
-      .weui-cell {
-        padding: 10px 0;
-        &:before {
-          left: 0;
+      .add{
+        color: #3296FA;
+      }
+      .required {
+        color: #3296FA;
+        font-weight: bold;
+      }
+      .property_val {
+        text-align: right;
+      }
+      .readonly {
+        color: #999;
+      }
+      .picker {
+        display: flex;
+        align-items: center;
+        .icon-right{
+          width: .08rem;
+          height: .14rem;
+          margin-left: .1rem;
         }
       }
     }
     .warehouse {
+      padding: .1rem .15rem;
       .mode {
         font-size: 0;
       }
-      .required{
-        font-weight: bold;
-        color: #5077aa;
-      }
-      .mode-item {
-        margin-right: .1rem;
-        font-size: .16rem;
-        &:last-child {
-          margin-right: 0;
+      // 用户信息
+      .user_info {
+        line-height: .14rem;
+        // 用户姓名
+        .user_name {
+          color: #3296FA
         }
       }
-      .icon-icon-test {
-        font-size: .1rem;
+      // 地址
+      .cp_info {
+        color: #111;
+        display: flex;
+        margin-top: .1rem;
+        align-items: center;
+        .icon-dealer-address {
+          width: .12rem;
+          height: .14rem;
+          margin-right: .06rem;
+        }
+        .cp_ads {
+          flex: 1;
+          font-size: .12rem;
+          color: #999;
+        }
       }
     }
   }

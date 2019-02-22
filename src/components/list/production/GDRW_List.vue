@@ -36,7 +36,7 @@ export default {
           name: '经办人',
           value: 'handlerName',
         }, {
-          name: '成品名称',
+          name: '物料名称',
           value: 'inventoryName_transObjCode',
         },
       ],
@@ -60,14 +60,15 @@ export default {
         // })
         arr.push(item.colId)
       })
-      let { name } = this.$route.query,
+      let { name, listId } = this.$route.query,
           { folder, fileName } = this.$route.params;
       this.$router.push({
         path: `/fillform/${folder}/${fileName}`,
         query: {
           name,
-          childId,
+          // childId,
           // orderTransCode: arr,
+          listId,
           orderId: JSON.stringify(arr),
         }
       })

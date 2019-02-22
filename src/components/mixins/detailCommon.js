@@ -494,9 +494,18 @@ export default {
             this.orderTitle = item.text;
             hideOrderTitle = hasDataIndexMap && !(key && matchedCol && !matchedCol.h);
           }
-          if (!item.hidden && !matterFilter.includes(item.fieldCode) && needShow) {
-            arr.push(item);
+          if(matterCols.length){
+            if (!item.hidden && !matterFilter.includes(item.fieldCode) && needShow) {
+              arr.push(item);
+            }
           }
+          else{
+            if (!item.hidden && !matterFilter.includes(item.fieldCode)) {
+              arr.push(item);
+            }
+
+          }
+          
           return arr
         }, []);
         this.matterConfig = matterConfig;

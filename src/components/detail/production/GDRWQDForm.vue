@@ -8,11 +8,29 @@
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 仓库信息 -->
-      <warehouse-content :warehouse="warehouse"></warehouse-content>
+      <warehouse-content :warehouse-config="warehouseConfig"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <div class="form_content">
+        <div class="main_content">
+          <div class="vux-1px-b" v-for="(cItem, cIndex) in fundConfig" :key="cIndex">
+            <template v-if="cItem.editorType === 'r2Datefield'">
+              <div class="each_info">
+                <label>{{cItem.fieldLabel}}</label>
+                <span class="field_value">{{workInfo[cItem.fieldCode] | timeSplit}}</span>
+              </div>
+            </template>
+            <template v-else>
+              <div class="each_info">
+                <label>{{cItem.fieldLabel}}</label>
+                <span class="field_value">{{workInfo[cItem.fieldCode]}}</span>
+              </div>
+            </template> 
+          </div>
+        </div>
+      </div>
+      <!-- <div class="form_content">
         <div class="form_title">
           <span class="iconfont icon-mingxi1"></span>
           <span>工单信息</span>
@@ -29,7 +47,7 @@
           <form-cell cellTitle='物料编码' :cellContent="workInfo.transObjCode"></form-cell>
           <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
         </div>
-      </div>
+      </div> -->
       <div class="bom_list" v-show="bomList.length">
         <bom-list :boms="bomList">
           <template slot-scope="{bom}" slot="specification">
@@ -77,12 +95,18 @@
         orderInfo: {},      // 表单内容
         bomList: [],
         warehouse: {},
+        warehouseConfig: []
       }
     },
     mixins: [detailCommon],
     components: {
       Cell, Group, RAction, workFlow, contactPart,
       BomList, WarehouseContent,
+    },
+    filters: {
+      timeSplit(val) {
+        return val ? val.split(' ')[0] : '';
+      }
     },
     methods: {
       // 获取详情
@@ -104,9 +128,9 @@
           let {outPut = {}} = formData;
           let {dataSet = []} = outPut;
           this.warehouse = {
-            warehouseName: outPut.warehouseName_containerCode,
-            warehouseType: outPut.warehouseType_containerCode,
-            warehouseAddress: outPut.warehouseAddress_containerCode,
+            warehouseName_containerCode: outPut.warehouseName_containerCode,
+            warehouseType_containerCode: outPut.warehouseType_containerCode,
+            warehouseAddress_containerCode: outPut.warehouseAddress_containerCode,
           };
           // 设置bom列表
           dataSet.forEach(item => {
@@ -149,8 +173,8 @@
     .bom_list{
       position: relative;
       background: #FFF;
-      padding: .06rem .08rem;
-      margin-top:0.1rem;
+      padding: .06rem .1rem;
+      margin: .1rem;
     }
     .comment-part {
       background: #fff;
