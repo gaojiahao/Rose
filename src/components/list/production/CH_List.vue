@@ -13,7 +13,7 @@
                 ref="bScroll">
         <!-- 库位库存表 -->
         <template v-if="activeTab.includes('库位库存')">
-          <div class="classification-item-wrapper" v-for='(item, index) in listData' :key='index'>
+          <div class="classification-item-wrapper" v-for='(item, index) in listData' :key='index' @click="getFlow(item)">
             <div class="classification-header-wrapper">
               <img class="classification_img" :src="item.inventoryPic" alt="icon">
               <div class="classification_app">
@@ -280,7 +280,6 @@
           </div>
         </template>
       </r-scroll>
-
       <!-- 展开状态 -->
       <div v-transfer-dom>
         <popup v-model="flowShow" position="bottom" height="80%">
@@ -297,7 +296,6 @@
               <div class="flow_list">
                 <div class='each_flow' v-for='(Fitem,Findex) in flowData' :key="Findex" @click.stop="Fitem.showList = !Fitem.showList">
                   <!--展开状态-->
-
                   <div class="duty_top">
                     <!-- 实例编码 -->
                     <div class='transCode'>

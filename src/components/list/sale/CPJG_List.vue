@@ -23,27 +23,21 @@
   export default {
     data() {
       return {
-        listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
-        listViewID: 2496,
+        filterList: [ // 过滤列表
+          {
+            name: '交易号',
+            value: 'transCode',
+          }, {
+            name: '经办人',
+            value: 'handlerName',
+          }, {
+            name: '物料名称',
+            value: 'inventoryName_transObjCode',
+          },
+        ],
       }
     },
     mixins: [listCommon],
-    methods: {
-      // tabClick(val){
-      //   this.activeTab = val.status;
-      //   this.resetCondition();
-      //   this.getList();
-      // },
-      //排序
-      // sortClick(val){
-      //   this.sort = [val];
-      //   this.resetCondition();
-      //   this.getList();
-
-      // }
-    },
-    created() {
-    }
   }
 </script>
 

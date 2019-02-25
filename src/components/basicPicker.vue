@@ -1,7 +1,7 @@
 <template>
   <div class='r-picker' @click='showStatus'>
     <div class="picker">
-      <label :class='{ required : required}'>{{title}}</label>
+      <label :class="{'required' : required}">{{title}}</label>
       <div class='content'>
         <span class='mater_nature'>{{showValue || "请选择"}}</span>
         <span class="icon-right"></span>
@@ -30,12 +30,10 @@
       // 标题
       title: {
         type: String,
-        default: ''
       },
       // 默认值
       value: {
         type: String,
-        default: ''
       },
       // picker列表
       data: {
@@ -87,7 +85,6 @@
     methods: {
       confirm() {
         let [val = ''] = this.currentValue;
-        // this.showValue = val.name;
         this.show = false;
         this.$emit('input', val);
       },

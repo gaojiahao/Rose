@@ -57,6 +57,7 @@ export default {
       submitMatterField: [],                      // 物料要提交的字段
       modifyIndex: null,                          // 选中编辑物料的pop
       fillBscroll: null,
+      isModify: false,                            // 是否为修改页面
       btnIsHide : false,
       isResubmit: false,
       showMatterPop :false,                       // 编辑物料的pop
@@ -455,7 +456,7 @@ export default {
     splitConfig(editMatterPop, editMatterPopConfig){
       for(let [index, item] of Object.entries(editMatterPop)) {
         //物料信息里面有数量
-        if(item.fieldCode === 'tdQty' || item.fieldCode === 'qualityQty' || item.fieldCode === "qtyDownline"){
+        if(item.fieldCode === 'drDealerLabel' || item.fieldCode === 'tdQty' || item.fieldCode === 'qualityQty' || item.fieldCode === "qtyDownline"){
           editMatterPopConfig.property = editMatterPop.slice(0, index);
           editMatterPopConfig.editPart = editMatterPop.slice(index)
           break;
@@ -741,10 +742,11 @@ export default {
           }
           // 组合物料编辑的matterPop的配置
           if(!item.hidden){
-            if(item.valueField !== "transCode" && item.valueField !== 'inventoryName' && item.valueField !== 'facilityName'
-                && !item.fieldCode.includes('inventoryName') && item.showFieldCode !== 'transCode' && item.showFieldCode !== 'facilityName' && item.showFieldCode !== 'facilityCode'
-                && item.showFieldCode !== 'facilitySpecification'){
-                editMatterPop.push(item);
+            if(item.valueField !== "transCode" && item.valueField !== 'inventoryName' && item.valueField !== 'facilityName' 
+              && !item.fieldCode.includes('inventoryName') 
+              && item.showFieldCode !== 'transCode' && item.showFieldCode !== 'facilityName' 
+              && item.showFieldCode !== 'facilityCode' && item.showFieldCode !== 'facilitySpecification'){
+              editMatterPop.push(item);
             }
           }
         })
@@ -870,9 +872,10 @@ export default {
   },
   created() {
     register(); // 注册wx-js-sdk
-    let { name, listId, transCode, relationKey } = this.$route.query;
+    let { name, listId, transCode, isModify = false, relationKey } = this.$route.query;
     if(transCode) this.transCode = transCode;
     this.listId = listId;
+    this.isModify = isModify;
     // 获取本地保存的当前的主体
     let data = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
     if(data) this.entity.dealerName = JSON.parse(data).entityId;

@@ -14,7 +14,7 @@
             <!-- 物料基本信息 -->
             <div class="matter_info">
               <div class="matter_info_item" v-for="(item, index) in config.property" :key="index">
-                <span class="matter_info_title">{{item.text}}：</span>
+                <span class="matter_info_title">{{item.text}}: </span>
                 <span class="matter_info_value" v-if="item.showFieldCode">
                   {{chosenMatter[item.showFieldCode] != null && chosenMatter[item.showFieldCode] !== ""  ?  chosenMatter[item.showFieldCode] : "无"}}
                 </span>
@@ -67,8 +67,8 @@
                 </template>
               </datetime>
               <!-- 下拉框 -->
-              <r-picker class="picker vux-1px-b" :title="eItem.text" :data="eItem.remoteData" v-model="modifyMatter[eItem.fieldCode]"
-                        :required="eItem.allowBlank" placeholder="请选择" v-if="eItem.editorType === 'r2Combo'">
+              <r-picker class="picker vux-1px-b" :title="eItem.text" :data="eItem.remoteData" v-model="chosenMatter[eItem.fieldCode]"
+                        :required="!eItem.allowBlank" placeholder="请选择" v-if="eItem.editorType === 'r2Combo'">
               </r-picker>
             </template>
             <!--字段不可编辑-->
@@ -91,15 +91,15 @@
     <x-dialog class="dialog-view" v-if="chosenMatter.otherField" v-model="showDialog" hide-on-blur>
       <div class="tip-top">
         <p class="header_content">温馨提示</p>
-        <p class="header_btn_tips">订单折合包装比：{{chosenMatter.assMeasureScale}}</p>
+        <p class="header_btn_tips">订单折合包装比: {{chosenMatter.assMeasureScale}}</p>
       </div>
       <div class="tip-main">
         <div class="each_info_part">
-          <span class="package_num">订单数量上限：{{chosenMatter.qtyOnline * chosenMatter.assMeasureScale}}</span>
+          <span class="package_num">订单数量上限: {{chosenMatter.qtyOnline * chosenMatter.assMeasureScale}}</span>
           <span class="order_num">[折合包装数量: {{chosenMatter.qtyOnline}}]</span>
         </div>
         <div class="each_info_part">
-          <span class="package_num">订单数量下限：{{chosenMatter.qtyDownline * chosenMatter.assMeasureScale}}</span>
+          <span class="package_num">订单数量下限: {{chosenMatter.qtyDownline * chosenMatter.assMeasureScale}}</span>
           <span class="order_num">[折合包装数量: {{chosenMatter.qtyDownline}}]</span>
         </div>
         <div class="other_info_part" v-if="chosenMatter.otherField.transCode">
