@@ -33,7 +33,7 @@
               <div class='picker'>
                 <span class='mater_nature' v-if="warehouse.warehouseProvince === '' && warehouse.warehouseCity === '' 
                       && warehouse.warehouseDistrict === ''">请选择</span>
-                <span class='mater_nature'v-else>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}</span>
+                <span class='mater_nature' v-else>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}</span>
                 <span class='icon-right'></span>
               </div>
               <x-address title="省市区"  :list="addressData" @on-hide='getAddress($event)' @on-shadow-change='changeAddress' :value="AccountAddress"
@@ -123,11 +123,17 @@
       }
     },
     computed:{
+      // 仓库类型
       warehouseType(){
         return this.warehouse.warehouseType
       },
+      // 重复项数据中库位数据
       warehouseRel() {
         return this.warehouseDuplicateData.warehouseRel
+      },
+      // 仓储条件
+      warehouseCondtions(){
+        return this.warehouse.warehouseCondtions
       }
     },
     directives: {
@@ -139,26 +145,37 @@
       UploadImage, PopWarelabeList, RScroll, Cell, Datetime, duplicateComponent
     },
     watch: {
-      warehouseType(val){
-        this.typeSub = this.typeToSubMap[val] || 'noMatched';
-        for(let item of this.warehouseConfig){
-          if(item.fieldCode === this.typeSub){
-            item.hiddenInRun = false;
+      warehouseType: {
+        handler(val){
+          this.typeSub = this.typeToSubMap[val] || 'noMatched';
+          for(let item of this.warehouseConfig){
+            if(item.fieldCode === this.typeSub){
+              item.hiddenInRun = false;
+            }
+            else{
+              if(item.fieldCode === 'staffDealerCode' || item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
+                || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
+                  item.hiddenInRun = true
+                }
+              
+            }
           }
-          else{
-            if(item.fieldCode === 'staffDealerCode' || item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
-              || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
-                item.hiddenInRun = true
-              }
-            
+          if(this.warehouseType === '库位'){
+            delete this.warehouseDuplicateData.warehouseRel
           }
-        }
-        if(this.warehouseType === '库位'){
-          delete this.warehouseDuplicateData.warehouseRel
-        }
-        else if(this.warehouseType !== '库位' && !this.warehouseDuplicateData.warehouseRel){
-          this.$set(this.warehouseDuplicateData, 'warehouseRel', [])
-        }
+          else if(this.warehouseType !== '库位' && !this.warehouseDuplicateData.warehouseRel){
+            this.$set(this.warehouseDuplicateData, 'warehouseRel', [])
+          }
+          // 当仓库类型为库位时，隐藏库位信息
+          for(let item of this.warehouseDuplicateConfig){
+            console.log(item)
+            if(item.title === '库位'){
+              item.hiddenInRun = this.warehouseType === '库位' ? true : false;
+              break
+            }
+          }
+        },
+        immediate: true
       },
       // 监听库位数组变化，选择库位名称后，自动带出库位编码
       warehouseRel: {
@@ -190,6 +207,36 @@
           })
         },
         deep: true
+      },
+      // 监听仓储条件的变化，重新请求温度区间数据
+      warehouseCondtions(val){
+        if(val){
+          let parentId = ''
+          for(let item of this.warehouseConfig){
+            if(item.fieldCode === 'warehouseCondtions'){
+              for(let dItem of item.remoteData){
+                if(dItem.name === val){
+                  parentId = dItem.id;
+                  break
+                }
+              }
+            }
+            else if(item.fieldCode === 'warehouseTemperatureRange'){
+              if(item.requestParams.data.parentId !== undefined){
+                item.requestParams.data.parentId = parentId
+              }
+              requestData(item.requestParams).then(({tableContent = []}) => {
+                tableContent.length && tableContent.forEach(sItem => {
+                  sItem.name = sItem[item.displayField];
+                  sItem.value = sItem[item.displayField];
+                })
+                item.remoteData = tableContent;
+                this.warehouse.warehouseTemperatureRange = tableContent.length ? tableContent[0].name : ''
+              })
+              break
+            }
+          }
+        }
       }
     },
     methods: {
@@ -389,6 +436,7 @@
           })
           requestParams.data = data;
         }
+        sItem.requestParams = requestParams;
         requestData(requestParams).then((data) => {
           if(data.tableContent){
             data.tableContent.forEach(item => {
@@ -434,27 +482,47 @@
           })
           // 仓库基本信息配置的处理
           warehouseConfig.forEach(item =>{
-            if(!item.hiddenInRun){
-              //下拉框的数据请求
-              if(item.fieldCode !== 'warehouseProvince' && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'){
-                if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
-                    this.handlerParams(item)
-                }
-                else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
-                  this.$set(item, 'remoteData', item.dataSource.data)
-                }
+            //下拉框的数据请求
+            if(item.fieldCode !== 'warehouseProvince' && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'){
+              if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
+                this.handlerParams(item)
               }
-              // 在渲染的配置中添加字段
-              if(item.fieldCode !== 'warehousePic'
-                && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'){
-                this.warehouseConfig.push(item);
+              else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
+                this.$set(item, 'remoteData', item.dataSource.data)
               }
             }
-            // 默认显示员工，（渠道商，组织等隐藏）
-            if(item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
-              || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
-              item.hiddenInRun = true
+            // 在渲染的配置中添加字段
+            if(item.fieldCode !== 'warehousePic'
+              && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'){
+              this.warehouseConfig.push(item);
             }
+            let typeSub = this.typeToSubMap[this.warehouseType];
+            if(this.warehouseType === '库位'){
+              typeSub = 'noMatched'
+            }
+            if(typeSub){
+              if(item.fieldCode === this.typeSub){
+                item.hiddenInRun = false;
+              }
+              else{
+                if(item.fieldCode === 'staffDealerCode' || item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
+                  || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
+                    item.hiddenInRun = true
+                  }
+                
+              }
+            }
+            else{
+              // 默认显示员工，（渠道商，组织等隐藏）
+              if(item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
+                || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
+                item.hiddenInRun = true
+              }
+              else if(item.fieldCode  === 'staffDealerCode'){
+                item.hiddenInRun = false
+              }
+            }
+            
           })
           // 仓库重复项
           warehouseMultipleConfig.forEach(item => {
@@ -474,6 +542,9 @@
             })
             item.items = arr;
             this.$set(this.warehouseDuplicateData, item.name, [])
+            if(this.warehouseType === '库位' && item.title === '库位'){
+              item.hiddenInRun = true;
+            }
           })
           this.warehouseDuplicateConfig = warehouseMultipleConfig;
           if(!this.transCode) this.$loading.hide()
@@ -504,6 +575,9 @@
         return
       }
       this.getFormViewsInfo()
+      if(query.warehouseType){
+        this.warehouse.warehouseType = query.warehouseType
+      }
       getBaseInfoDataBase().then(data => {
         this.baseinfo = {
           ...this.baseinfo,
