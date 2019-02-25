@@ -194,7 +194,8 @@
                   dItem.name = dItem.sName;
                   dItem.value = dItem.sName;
                 })
-                this.inventory.multipleAccess = tableContent[0].name;
+                this.$set(this.inventory, 'multipleAccess', tableContent[0].name)
+                // this.inventory.multipleAccess = tableContent[0].name;
               }
               else{
                 this.inventory.multipleAccess = '';

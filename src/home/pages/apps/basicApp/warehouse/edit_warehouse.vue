@@ -443,6 +443,11 @@
               item.name = item[sItem.displayField];
               item.value = item[sItem.displayField];
             })
+            if(sItem.fieldCode === 'warehouseType'){
+              if(!this.$route.query.transCode){
+                this.warehouse.warehouseType  = this.$route.query.warehouseType ? this.$route.query.warehouseType : '';
+              }
+            }
             this.$set(sItem, 'remoteData', data.tableContent)
           }
           else{
@@ -496,33 +501,14 @@
               && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'){
               this.warehouseConfig.push(item);
             }
-            let typeSub = this.typeToSubMap[this.warehouseType];
-            if(this.warehouseType === '库位'){
-              typeSub = 'noMatched'
+            // 默认显示员工，（渠道商，组织等隐藏）
+            if(item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
+              || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
+              item.hiddenInRun = true
             }
-            if(typeSub){
-              if(item.fieldCode === this.typeSub){
-                item.hiddenInRun = false;
-              }
-              else{
-                if(item.fieldCode === 'staffDealerCode' || item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
-                  || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
-                    item.hiddenInRun = true
-                  }
-                
-              }
-            }
-            else{
-              // 默认显示员工，（渠道商，组织等隐藏）
-              if(item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
-                || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
-                item.hiddenInRun = true
-              }
-              else if(item.fieldCode  === 'staffDealerCode'){
-                item.hiddenInRun = false
-              }
-            }
-            
+            else if(item.fieldCode  === 'staffDealerCode'){
+              item.hiddenInRun = false
+            }           
           })
           // 仓库重复项
           warehouseMultipleConfig.forEach(item => {
@@ -575,9 +561,6 @@
         return
       }
       this.getFormViewsInfo()
-      if(query.warehouseType){
-        this.warehouse.warehouseType = query.warehouseType
-      }
       getBaseInfoDataBase().then(data => {
         this.baseinfo = {
           ...this.baseinfo,
