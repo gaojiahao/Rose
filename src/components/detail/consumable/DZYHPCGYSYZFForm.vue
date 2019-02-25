@@ -264,7 +264,7 @@
               fundName_cashInCode: cashInfo.fundName,
               cashOutCode: cashInfo.fundCode,
               cashType_cashOutCode: cashInfo.fundType,
-              thenAmntBalCopy1: cashInfo.thenAmntBal,
+              thenAmntBalCopy1: cashInfo.amntBal,
               tdAmountCopy1: cashInfo.tdAmountCopy1,
               tdIdCopy1: cashInfo.tdIdCopy1,
             }]
