@@ -141,7 +141,7 @@ import { Popup, TransferDom, Group,
         XInput, XTextarea } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { saveAndStartWf, saveAndCommitTask, submitAndCalc } from 'service/commonService'
+import { saveAndStartWf, saveAndCommitTask, submitAndCalc, updateData } from 'service/commonService'
 import { getTaskBom } from 'service/materService'
 // mixins 引入
 import Applycommon from 'components/mixins/applyCommon'
@@ -359,7 +359,7 @@ export default {
           let wfPara = {
             [this.processCode]: {businessKey: this.businessKey, createdBy: ""}
           }
-          if (this.isResubmit) {
+          if (this.isResubmit && this.formStatus === '进行中') {
             wfPara = {
               businessKey: this.transCode,
               createdBy: this.formData.handler,
@@ -383,9 +383,12 @@ export default {
             }),
             wfPara : JSON.stringify(wfPara)
           }
-          if (this.isResubmit) { // 重新提交
+          if (this.isResubmit && this.formStatus === '进行中') { // 重新提交
             operation = saveAndCommitTask;
             submitData.biReferenceId = this.biReferenceId;
+          }
+          else if(this.isResubmit && this.formStatus === '已生效'){ // 修改
+            operation = updateData;
           }
           if(!this.processCode.length){ // 无工作流
             operation = submitAndCalc;
