@@ -341,6 +341,13 @@ export let getFormViews = (listId = '') => {
   })
 
 }
+
+export let getFromStatus = (data ={})=> {
+  return $flyio.ajax({
+      url:'/H_roleplay-si/ds/getFromStatusByTransCode',
+      data
+  })
+}
 // 获取表单要提交的字段
 export let getModelConfigByListId = (listId = '') => {
   return $flyio.ajax({

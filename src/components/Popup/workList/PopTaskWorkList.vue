@@ -86,13 +86,18 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
         btnText : '关闭',
         filterList:[
           {
-            name: '成品名称',
+            name: '物料名称',
             value: 'inventoryName',
           },
           {
             name: '工序名称',
             value: 'procedureName'
-          }    
+          },
+          {
+            name: '派工单号',
+            value: 'transCode'
+          },
+
         ],
         filterProperty: '',
         taskWorkList: {},

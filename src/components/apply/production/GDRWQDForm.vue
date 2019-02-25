@@ -69,7 +69,7 @@
             </template> -->
             <template slot-scope="{bom}" slot="specification">
               <div class="content-unit">
-                <span>型号规格: {{bom.specification}}</span>
+                <span>产品规格: {{bom.specification}}</span>
               </div>
             </template>
             <template slot-scope="{bom}" slot="number">
@@ -105,7 +105,7 @@
     XInput, XTextarea
   } from 'vux'
   // 请求 引入
-  import { saveAndStartWf, saveAndCommitTask, submitAndCalc } from 'service/commonService'
+  import { saveAndStartWf, saveAndCommitTask, submitAndCalc, updateData } from 'service/commonService'
   import { getBomWorkStart } from 'service/Product/gdService'
   import { getSOList } from 'service/detailService'
   // mixins 引入
@@ -238,7 +238,7 @@
             let wfPara = {
               [this.processCode]: {businessKey: this.businessKey, createdBy: ""}
             }
-            if (this.isResubmit) {
+            if (this.isResubmit && this.formStatus === '进行中') {
               wfPara = {
                 businessKey: this.transCode,
                 createdBy: this.formData.handler,
@@ -266,9 +266,12 @@
               }),
               wfPara: JSON.stringify(wfPara)
             }
-            if (this.isResubmit) { // 重新提交
+            if (this.isResubmit && this.formStatus === '进行中') { // 重新提交
               operation = saveAndCommitTask;
               submitData.biReferenceId = this.biReferenceId;
+            }
+            else if(this.isResubmit && this.formStatus === '已生效'){ // 修改
+              operation = updateData;
             }
             if (!this.processCode.length) { // 无工作流
               operation = submitAndCalc;

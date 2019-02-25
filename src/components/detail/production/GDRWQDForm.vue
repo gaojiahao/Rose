@@ -131,6 +131,7 @@
             warehouseName_containerCode: outPut.warehouseName_containerCode,
             warehouseType_containerCode: outPut.warehouseType_containerCode,
             warehouseAddress_containerCode: outPut.warehouseAddress_containerCode,
+            containerCode: outPut.containerCode,
           };
           // 设置bom列表
           dataSet.forEach(item => {

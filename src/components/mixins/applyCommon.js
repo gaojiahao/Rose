@@ -1,4 +1,5 @@
-import {commitTask, getBaseInfoData, getProcess, getProcessStatus, getFormConfig, requestData, getFormViews, getModelConfigByListId, update} from 'service/commonService'
+import {commitTask, getBaseInfoData, getProcess, getProcessStatus, getFormConfig, requestData, getFormViews, getModelConfigByListId, 
+        update, updateData, getFromStatus} from 'service/commonService'
 import {getListId, isMyflow, getSaleQuotePrice,} from 'service/detailService'
 import {getAppDetail} from 'service/appSettingService'
 import {numberComma} from 'vux'
@@ -61,6 +62,7 @@ export default {
       showMatterPop :false,                       // 编辑物料的pop
       showMaterielPop: false,
       matterModifyClass : false,
+      formStatus: '', // 当前表单的状态
     }
   },
   components: {
@@ -132,7 +134,7 @@ export default {
     getListId(transCode) {
       return new Promise(resolve => {
         getListId(transCode).then(data => {
-          this.uniqueId = data[0].uniqueId;
+          this.formViewUniqueId = data[0].uniqueId;
           resolve();
         })
       })
@@ -304,6 +306,12 @@ export default {
           val['name'] = val.fieldVlaue;
         }
         this.currentStage = tableContent;
+      })
+    },
+    // 获取当前表单的状态
+    getFromStatus(){
+      return getFromStatus({transCode: this.transCode}).then(({tableContent = []}) => {
+        this.formStatus = tableContent[0].status;
       })
     },
     // 检查金额，取正数、保留两位小数
@@ -877,6 +885,7 @@ export default {
         this.getBaseInfoData();
       }
       this.getProcessStatus();  // 获取流程状态
+      this.getFromStatus()
       this.getAppDetail();
       this.initRequest && this.initRequest();   // 提交页面 不共用的数据 请求
       this.getPaymentTerm && this.getPaymentTerm();   // 提交页面 结算方式 请求

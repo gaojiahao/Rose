@@ -34,7 +34,7 @@
         <bom-list :boms="bomList">
           <template slot-scope="{bom}" slot="specification">
             <div class="content-unit" v-show="bom.specification_outPutMatCode">
-              <span>型号规格: {{bom.specification_outPutMatCode}}</span>
+              <span>产品规格: {{bom.specification_outPutMatCode}}</span>
             </div>
           </template>
           <template slot-scope="{bom}" slot="number">
@@ -112,17 +112,20 @@ export default {
           ...this.warehouse,
           containerCode: order.containerCode,
           storehouseInCode: order.storehouseInCode,
+          warehouseInType: order.warehouseInType,
           warehouseAddress_containerCode: order.warehouseAddress_containerCode,
           warehouseAddress_storehouseInCode: order.warehouseAddress_storehouseInCode,
           warehouseName_containerCode: order.warehouseName_containerCode,
           warehouseName_storehouseInCode: order.warehouseName_storehouseInCode,
           warehouseType_containerCode: order.warehouseType_containerCode,
           warehouseType_storehouseInCode: order.warehouseType_storehouseInCode,
+          containerInWarehouseManager: formData.containerInWarehouseManager,
         }
         // 设置bom列表
         dataSet.forEach(item => {
           item.inventoryName = item.inventoryName_outPutMatCode;
           item.inventoryCode = item.outPutMatCode;
+          item.bomQty = toFixed(item.bomQty)
         });
         this.bomList = dataSet;
 
