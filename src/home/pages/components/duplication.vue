@@ -141,27 +141,20 @@ export default {
     onChange(val, index, dItem, sItem){
       // 选择省，更新市，区数据
       if(dItem.fieldCode === 'deliveryProvince'){
-        let cParentId = '', dParentId = '';
         for(let item of this.duplicateConfig[index].items) {
-          if(item.fieldCode === 'deliveryProvince'){
-            for(let rItem of item.remoteData){
-              if(rItem.name === val){
-                cParentId = rItem.id;
-                break
-              }
-            }
-          }
+          // 根据省，重新请求市的数据
           if(item.fieldCode === 'deliveryCity') {
-            item.requestParams.data.parentId = cParentId;
+            if(item.requestParams.data.provinceName !== undefined){
+              item.requestParams.data.provinceName = val;
+            }
             requestData(item.requestParams).then(data => {
               if(data.tableContent){
                 if(data.tableContent.length){
                   data.tableContent.forEach(dItem => {
-                    dItem.originValue = dItem.value;
-                    dItem.value = dItem.name
+                    dItem.name = dItem[item.displayField];
+                    dItem.value = dItem[item.displayField]
                   })
                   sItem.deliveryCity = data.tableContent[0].name;
-                  dParentId = data.tableContent[0].originValue
                 }
                 else{
                   sItem.deliveryCity = ''
@@ -174,24 +167,17 @@ export default {
         }
       }
       else if(dItem.fieldCode === 'deliveryCity'){
-        let dParentId = '';
         for(let item of this.duplicateConfig[index].items) {
-          if(item.fieldCode === 'deliveryCity'){
-            for(let rItem of item.remoteData){
-              if(rItem.name === val){
-                dParentId = rItem.originValue;
-                break
-              }
-            }
-          }
+          // 根据市，重新请求区的数据
           if(item.fieldCode === 'deliveryCounty') {
-            item.requestParams.data.parentId = dParentId;
+            item.requestParams.data.cityName = val;
+            item.requestParams.data.provinceName = sItem.deliveryProvince;
             requestData(item.requestParams).then(data => {
               if(data.tableContent){
                 if(data.tableContent.length){
                   data.tableContent.forEach(dItem => {
-                    dItem.originValue = dItem.value;
-                    dItem.value = dItem.name
+                    dItem.name = dItem[item.displayField];
+                    dItem.value = dItem[item.displayField];
                   })
                   sItem.deliveryCounty = data.tableContent[0].name;
                 }
