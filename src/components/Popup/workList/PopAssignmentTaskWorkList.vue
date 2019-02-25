@@ -10,20 +10,27 @@
                @click.stop="selThis(item, index)">
             <div class="work-main">
               <div class="work_mid">
+                <div class="order-code" v-show="workType === '验收'">
+                  <span class="order-title" >启动单号</span>
+                  <span class="order-num">{{item.transCode}}</span>
+                </div>
                 <div class="product_name">
                   {{item.inventoryName}}
                   <!-- <span class="symbol">[{{item.invProcessing}}]</span> -->
                 </div>
               </div>
               <div class="work_mid">
+                <div class="product_unit" v-show="item.orderCode">
+                  <span class="each_unit">工单派工号: {{item.orderCode}}</span>
+                </div>
                 <div class="product_unit">
-                  <span class="each_unit">加工订单号: {{item.transCode}}</span>
+                  <span class="each_unit">加工订单号: {{workType === '验收'? item.processCode : item.transCode}}</span>
                   <span class="each_unit">工序: {{item.procedureName}}</span>
                 </div>
                 <div class="product_unit">
                   <span class="each_unit">总数: {{item.productDemandQty}}</span>
                   <span class="each_unit">已{{workType}}: {{item.thenLockQty}}</span>
-                  <span class="each_unit">可{{workType}}: {{item.thenQtyBal}}</span>
+                  <span class="each_unit">可{{workType}}: {{item.thenQtyBal || item.qtyBal}}</span>
                 </div>
               </div>
             </div>
@@ -42,7 +49,7 @@
 
 <script>
 import { Icon, Popup, LoadMore } from 'vux'
-import { getObjFacility, getWorkOrderTask , getTaskWorkList } from 'service/Product/gdService'
+import { getObjFacility, getWorkOrderTask , getTaskWorkList, getWorkCheckList } from 'service/Product/gdService'
 import RScroll from 'components/RScroll'
 import MSearch from 'components/search'
 import {accAdd} from '@/home/pages/maps/decimalsAdd'
@@ -53,20 +60,14 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
         type: Boolean,
         default: false
       },
-      params: {
-        type: Object,
-        default(){
-          return {
-            calc_rel_code: 7051,
-            view_id: 'view_94',
-          }
-        }
-      },
       workType: {
         type: String,
         default: '派工'
-
-      }
+      },
+      getListMethod: {
+        type: String,
+        default: 'getWorkOrderTask'
+      },
     },
     components: {
       Icon, Popup, LoadMore, RScroll, MSearch
@@ -81,7 +82,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
         btnText : '关闭',
         filterList:[
           {
-            name: '成品名称',
+            name: '物料名称',
             value: 'inventoryName',
           },
           {
@@ -90,9 +91,9 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
           }    
         ],
         filterProperty: '',
-        // taskWorkList: {},
         taskWorkList: [],
-        tmpItems: []
+        tmpItems: [],
+        requestMethods: null,
       }
     },
     watch: {
@@ -101,6 +102,23 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
           this.showPop = val;
         }
       },
+      workType: {
+        handler(val){
+          if(val === '验收'){
+            this.filterList.push({
+              name: '启动单号',
+              value: 'transCode'
+            })
+          }
+          // else if(val === '派工'){
+          //   this.filterList.push({
+          //     name: '加工订单号',
+          //     value: 'transCode'
+          //   })
+          // }
+        },
+        immediate: true
+      }
     },
     methods: {
       // TODO 弹窗展示时调用
@@ -119,11 +137,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
       // TODO 匹配相同项的索引
       findIndex(arr, sItem) {
         return arr.findIndex(item => {
-          let isSameTransCode = true;
-          if (item.transCode) {
-            isSameTransCode = item.transCode === sItem.transCode;
-          }
-          return isSameTransCode && item.inventoryName === sItem.inventoryName && item.procedureName === sItem.procedureName
+          return item.colId === sItem.colId
         });
       },
       showSelIcon(sItem) {
@@ -142,7 +156,12 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
           }
           return;
         }
-        arr.push(sItem);
+        if(this.workType === '验收'){
+          this.tmpItems = [sItem]
+        }
+        else{
+          arr.push(sItem);
+        }
         this.btnText = this.tmpItems? `发起工单${this.workType}`: '关闭';
       },
       // TODO 获取物料列表
@@ -167,13 +186,35 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
           this.taskWorkList = tableContent
         });
       },
+      // TODO 获取物料列表
+      getWorkCheckList() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: this.filterProperty
+            },
+          ];
+        }
+        return getWorkCheckList({
+          filter: JSON.stringify(filter),
+        }).then(({tableContent = []}) => {
+          tableContent.forEach(item => {
+            item.isStartTask = false;
+          })
+          this.taskWorkList = tableContent
+        });
+      },
       // TODO 搜索物料
       searchList({val = '', property = ''}) {
         this.srhInpTx = val;
         this.filterProperty = property;
         this.taskWorkList = {};
         this.$refs.bScroll.scrollTo(0, 0);
-        this.getWorkOrderTask();
+        this.requestMethods();
       },
       btnHandle(){
         if(this.btnText !== '关闭'){
@@ -183,7 +224,8 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
       }
     },
     created() {
-      this.getWorkOrderTask();
+      this.requestMethods = this[this.getListMethod];
+      this.requestMethods();
     }
   }
 </script>
@@ -217,7 +259,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
         width: 100%;
         overflow: hidden;
         box-sizing: border-box;
-        height: calc(100% - .38rem - .66rem);
+        height: calc(100% - .5rem - .66rem);
         /* 使用深度作用选择器进行样式覆盖 */
         /deep/ .scroll-wrapper {
           padding: .14rem .04rem 0 .3rem;
@@ -241,6 +283,21 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
             }
             .work_code {
               background: #c93d1b
+            }
+          }
+          .order-code{
+            display: flex;
+            color: #fff;
+            font-size: .12rem;
+            .order-title{
+              padding: 0 .04rem;
+              background: #455d7a;
+              display: inline-block;
+            }
+            .order-num{
+              background: #c93d1b;
+              border-top-right-radius: .08rem;
+              padding: 0 .04rem;
             }
           }
           .work_mid {
