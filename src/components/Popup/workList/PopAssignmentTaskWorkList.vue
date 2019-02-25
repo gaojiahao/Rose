@@ -110,12 +110,12 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
               value: 'transCode'
             })
           }
-          // else if(val === '派工'){
-          //   this.filterList.push({
-          //     name: '加工订单号',
-          //     value: 'transCode'
-          //   })
-          // }
+          else if(val === '派工'){
+            this.filterList.push({
+              name: '加工订单号',
+              value: 'transCode'
+            })
+          }
         },
         immediate: true
       }
