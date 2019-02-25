@@ -19,10 +19,10 @@
               <span class="instance_status" :class="item.statusClass">{{item.biStatus}}</span>
             </div>
             <div class="instance-project-container">
-              <div class="project_name" :class="{'time-to-wrap': item.projectName_projectApprovalId.length > 15}">项目名称：{{item.projectName_projectApprovalId}}</div>
+              <div class="project_name" :class="{'time-to-wrap': item.projectName_projectApprovalId.length > 12}">项目名称: {{item.projectName_projectApprovalId}}</div>
               <div class="project_manager">
-                <span class="project_manager_title">标准工时：</span>
-                <span class="project_manager_value">{{item.planTime || 0}}</span>
+                <span class="project_manager_title">项目经理: </span>
+                <span class="project_manager_value">{{item.dealerName_dealerDebit}}</span>
               </div>
             </div>
             <div class="instance-task-container">
@@ -32,18 +32,22 @@
                   <div class="task_name">{{task.taskName_projectPlanTask}}</div>
                   <div class="task_info">
                     <div class="task_info_item">
-                      <span class="task_info_title">预算成本：</span>
-                      <span class="task_info_amt">￥{{task.budgetCapital_project || 0 | numberComma}}</span>
+                      <span class="task_info_title">执行者: </span>
+                      <span class="task_info_amt">{{task.dealerName_dealerCodeCredit || '暂无'}}</span>
                     </div>
                     <div class="task_info_item">
-                      <span class="task_info_title">周期天数：</span>
-                      <span class="task_info_day">{{task.planCycleDays || 0}}天</span>
+                      <span class="task_info_title">计划开始日期: </span>
+                      <span class="task_info_day">{{task.startDate_projectPlanTask | dateFormat('YYYY-MM-DD') || '无'}}</span>
                     </div>
                   </div>
-                  <div class="task_info">
+                  <div class="task_info" :class="{'when-is-fill': task.deadline_projectPlanTask && task.completeTime_projectPlanTask}">
                     <div class="task_info_item">
-                      <span class="task_info_title">计划截止日期：</span>
+                      <span class="task_info_title">计划截止日期: </span>
                       <span class="task_info_day">{{task.deadline_projectPlanTask | dateFormat('YYYY-MM-DD') || '无'}}</span>
+                    </div>
+                    <div class="task_info_item">
+                      <span class="task_info_title">实际完成日期: </span>
+                      <span class="task_info_day">{{task.completeTime_projectPlanTask | dateFormat('YYYY-MM-DD') || '无'}}</span>
                     </div>
                   </div>
                 </div>
@@ -54,11 +58,11 @@
             <div class="instance-bottom-wrapper">
               <div class="instance_bottom_item instance_handler">
                 <i class="icon icon-handler"></i>
-                <span>经办人：{{item.handlerName}}</span>
+                <span>经办人: {{item.handlerName}}</span>
               </div>
               <div class="instance_bottom_item instance_mod_time">
                 <i class="icon icon-mod-time"></i>
-                <span>修改时间：{{item.modTime | dateFormat('YYYY-MM-DD HH:mm')}}</span>
+                <span>修改时间: {{item.modTime | dateFormat('YYYY-MM-DD HH:mm')}}</span>
               </div>
             </div>
           </div>
@@ -197,6 +201,15 @@
       font-size: .12rem;
       & + .task_info {
         margin-top: .08rem;
+      }
+      &.when-is-fill {
+        display: block;
+        .task_info_item {
+          & + .task_info_item {
+            margin-left: unset;
+            margin-top: .08rem;
+          }
+        }
       }
     }
     .task_info_item {
