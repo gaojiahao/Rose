@@ -214,10 +214,12 @@
           let parentId = ''
           for(let item of this.warehouseConfig){
             if(item.fieldCode === 'warehouseCondtions'){
-              for(let dItem of item.remoteData){
-                if(dItem.name === val){
-                  parentId = dItem.id;
-                  break
+              if(item.remoteData){
+                for(let dItem of item.remoteData){
+                  if(dItem.name === val){
+                    parentId = dItem.id;
+                    break
+                  }
                 }
               }
             }
