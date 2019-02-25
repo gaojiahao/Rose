@@ -188,7 +188,6 @@
         if(this.matterParams.data && this.matterParams.data.dealerCode != null) {
           console.log('触发了')
           this.matterParams.data.dealerCode = this.dealerInfo.dealerCode
-          this.consumableList = [];
           this.orderList = {};
         }
       },
@@ -350,7 +349,7 @@
               for(let sItem of this.submitMatterField){
                 let val = item[sItem.fieldCode] || item[sItem.displayField] || item[sItem.showFieldCode];
                 if(sItem.text){
-                  if(!sItem.hidden && !sItem.allowBlank && !val){
+                  if(!sItem.hidden && !sItem.allowBlank && !val && val !== undefined){
                     warn = `${sItem.text}不为空`
                     break;
                   }
@@ -602,7 +601,6 @@
             county: formData.order.county_dealerDebit,
             address: formData.order.address_dealerDebit
           };
-          this.consumableList = dataSet;
           this.orderList = {
             [this.relationKey]: dataSet,
           };
@@ -652,11 +650,6 @@
       if (data) {
         let draft = JSON.parse(data);
         this.orderList = draft.matter;
-        for (let items of Object.values(this.orderList)) {
-          for (let item of items) {
-            this.consumableList.push(item)
-          }
-        }
         this.dealerInfo = draft.dealer;
         this.formData = draft.formData;
         this.contactInfo = draft.contactInfo;
@@ -667,10 +660,6 @@
         if(this.matterParams.data && this.matterParams.data.groupId != null) {
           this.matterParams.data.groupId = this.formData.handlerUnit;
         }
-        // this.matterParams = {
-        //   dealerCode: this.dealerInfo.dealerCode,
-        //   groupId: this.formData.handlerUnit,
-        // };
         sessionStorage.removeItem(DRAFT_KEY);
       }
     },

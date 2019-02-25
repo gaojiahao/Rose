@@ -109,7 +109,6 @@
             val.inventoryPic = val.inventoryPic_transObjCode
               ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
-            val.transObjCode = val.transMatchedCode;
             if (!orderList[val.transMatchedCode]) {
               orderList[val.transMatchedCode] = [];
             }
