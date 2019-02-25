@@ -447,7 +447,7 @@ export default {
     splitConfig(editMatterPop, editMatterPopConfig){
       for(let [index, item] of Object.entries(editMatterPop)) {
         //物料信息里面有数量
-        if(item.fieldCode === 'tdQty' || item.fieldCode === 'qualityQty' || item.fieldCode === "qtyDownline"){
+        if(item.fieldCode === 'drDealerLabel' || item.fieldCode === 'tdQty' || item.fieldCode === 'qualityQty' || item.fieldCode === "qtyDownline"){
           editMatterPopConfig.property = editMatterPop.slice(0, index);
           editMatterPopConfig.editPart = editMatterPop.slice(index)
           break;
@@ -733,10 +733,11 @@ export default {
           }
           // 组合物料编辑的matterPop的配置
           if(!item.hidden){
-            if(item.valueField !== "transCode" && item.valueField !== 'inventoryName' && item.valueField !== 'facilityName'
-                && !item.fieldCode.includes('inventoryName') && item.showFieldCode !== 'transCode' && item.showFieldCode !== 'facilityName' && item.showFieldCode !== 'facilityCode'
-                && item.showFieldCode !== 'facilitySpecification'){
-                editMatterPop.push(item);
+            if(item.valueField !== "transCode" && item.valueField !== 'inventoryName' && item.valueField !== 'facilityName' 
+              && !item.fieldCode.includes('inventoryName') 
+              && item.showFieldCode !== 'transCode' && item.showFieldCode !== 'facilityName' 
+              && item.showFieldCode !== 'facilityCode' && item.showFieldCode !== 'facilitySpecification'){
+              editMatterPop.push(item);
             }
           }
         })
