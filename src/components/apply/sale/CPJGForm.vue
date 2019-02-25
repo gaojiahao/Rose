@@ -5,11 +5,12 @@
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <!-- 物料列表 -->
-        <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop"
-          :actions="actions" :btnInfo="btnInfo" :matter-list="matterList" :default-value="matterList" 
+        <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :show-matter-pop="showMatterPop" :filter-list="filterList"
+          :actions="actions" :btnInfo="btnInfo" :matter-list="matterList" :default-value="[]"
           :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
-          :addMatter="addMatter" :sel-matter="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
-          :modify-matter="modifyMatter" :show-delete="showDelete" :show-sel-icon="showSelIcon" :del-click="delClick">
+          :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
+          :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
+          :chosen-matter="matter" :check-amt-fn="checkAmt" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
           <template slot="info" slot-scope="{item}">
             <div class='mater_other'>
               <div>
@@ -23,10 +24,6 @@
             </div>
           </template>
         </apply-matter-part>
-        <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
-        </pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
@@ -56,12 +53,11 @@
 import { Icon, XTextarea, dateFormat } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
+import { updateData, submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
 // mixins 引入
 import ApplyCommon from 'pageMixins/applyCommon'
 // 组件引入
 import RPicker from 'components/RPicker'
-import PopMatter from 'components/apply/commonPart/MatterPop'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 
@@ -85,7 +81,7 @@ export default {
   },
   components: {
     Icon, RPicker, XTextarea, 
-    PopMatter, PopBaseinfo, ApplyMatterPart
+    PopBaseinfo, ApplyMatterPart
   },
   methods: {
     // 选择要删除的物料
@@ -151,7 +147,7 @@ export default {
         item.price = defaultValue.price || '';
         item.qtyOnline = defaultValue.qtyOnline || '';
         item.qtyDownline = defaultValue.qtyDownline || '';
-        item.drDealerLabel = defaultValue.drDealerLabel || [];
+        item.drDealerLabel = defaultValue.drDealerLabel || '';
         item.specialReservePrice = defaultValue.specialReservePrice || '';
       });
       this.priceMap = {};
@@ -188,7 +184,7 @@ export default {
             qtyOnline: item.qtyOnline,
             qtyDownline: item.qtyDownline,
             transObjCode: item.inventoryCode,
-            drDealerLabel: item.drDealerLabel[0],
+            drDealerLabel: item.drDealerLabel,
             specialReservePrice: item.specialReservePrice
           };
           if (this.transCode) {
@@ -249,6 +245,9 @@ export default {
           }
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
+          }
+          if(this.isModify) {
+            operation = updateData;
           }
           this.saveData(operation, submitData);
         }

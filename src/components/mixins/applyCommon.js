@@ -57,6 +57,7 @@ export default {
       submitMatterField: [],                      // 物料要提交的字段
       modifyIndex: null,                          // 选中编辑物料的pop
       fillBscroll: null,
+      isModify: false,                            // 是否为修改页面
       btnIsHide : false,
       isResubmit: false,
       showMatterPop :false,                       // 编辑物料的pop
@@ -871,9 +872,10 @@ export default {
   },
   created() {
     register(); // 注册wx-js-sdk
-    let { name, listId, transCode, relationKey } = this.$route.query;
+    let { name, listId, transCode, isModify = false, relationKey } = this.$route.query;
     if(transCode) this.transCode = transCode;
     this.listId = listId;
+    this.isModify = isModify;
     // 获取本地保存的当前的主体
     let data = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
     if(data) this.entity.dealerName = JSON.parse(data).entityId;

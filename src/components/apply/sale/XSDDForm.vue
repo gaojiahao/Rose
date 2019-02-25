@@ -106,7 +106,7 @@ export default {
                   dealerInventoryCode, dealerInventoryName } = item;
             // 当存在 *数量区间* 
             if(otherField && Object.values(otherField).length) {
-              // 当<物料数量> 没有位于*数量区间*内
+              // 当 <物料数量> 没有位于*数量区间*内
               if(tdQty > qtyOnline || tdQty < qtyDownline) {
                 // 用户之前位于数量区间内 但是在提交页面 通过*数量编辑按钮*加减之后
                 if(dealerInventoryName || dealerInventoryCode) {
@@ -194,7 +194,6 @@ export default {
     },
     // 更新修改后的物料信息
     selConfirm(val) {
-      console.log('修改后的物料:', JSON.parse(val));
       let modMatter = JSON.parse(val);
       this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
     },

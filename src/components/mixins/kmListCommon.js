@@ -90,6 +90,7 @@ export default {
     },
     //显示流水详情
     async getFlow(item) {
+      // console.log('item:', item);
       if(this.activeTab.includes('现金流分类')) return; // ‘现金流分类识别’不需要点击事件
       this.flowData = [];
       this.flowPage = 1;

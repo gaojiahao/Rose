@@ -199,8 +199,8 @@ export default {
       let { listId } = this.$route.query,
           { folder, fileName } = this.$route.params;
       this.$vux.confirm.show({
-        title: '',
-        content: '确定修改？',
+        title: '温馨提示',
+        content: '即将进入修改页面，确认吗？',
         onConfirm: () =>{
           this.$router.replace({
             path: `/fillform/${folder}/${fileName}`,
@@ -208,6 +208,7 @@ export default {
               listId,
               name: this.name,
               transCode: this.code,
+              isModify: true
             },
           });
         }

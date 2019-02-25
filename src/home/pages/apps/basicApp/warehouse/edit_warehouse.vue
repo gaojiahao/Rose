@@ -33,7 +33,7 @@
               <div class='picker'>
                 <span class='mater_nature' v-if="warehouse.warehouseProvince === '' && warehouse.warehouseCity === '' 
                       && warehouse.warehouseDistrict === ''">请选择</span>
-                <span class='mater_nature'v-else>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}</span>
+                <span class='mater_nature' v-else>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}</span>
                 <span class='icon-right'></span>
               </div>
               <x-address title="省市区"  :list="addressData" @on-hide='getAddress($event)' @on-shadow-change='changeAddress' :value="AccountAddress"
