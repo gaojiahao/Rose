@@ -465,6 +465,7 @@ export default {
                 })
               }
               matterConfig = item.items;
+              console.log('old-config:', matterConfig);
               dataIndexMap = item.dataIndexMap || {};
               hasDataIndexMap = !!Object.keys(dataIndexMap).length;
             }
@@ -480,16 +481,24 @@ export default {
           return arr;
         }, []);
         this.dealerConfig = dealerConfig;
+
         // 物料相关配置
         matterConfig = matterConfig.reduce((arr, item, index) => {
+          // 是否展示字段
+          let needShow = true;
+          // 匹配 *映射表字段*
           let key = dataIndexMap[item.fieldCode];
+          // 根据*数据源* 查询映射表中存在字段 
           let matchedCol = matterCols.find(col => col.k === key);
           // 判断是否存在映射关系，若有映射关系，则判断是否有该字段且判断字段是否隐藏，没有映射关系则直接展示
-          let needShow = key ? (matchedCol ? !matchedCol.h : false) : true;
+          if(key) {
+            item.hidden ? needShow = false : needShow = true;
+          }
           // 组合要提交的物料字段
           if (item.submitValue) {
             submitMatterField.push(item)
           }
+          // 是否存在 *交易号* 判断是否显示中文抬头
           if (item.fieldCode === 'transMatchedCode') {
             this.orderTitle = item.text;
             hideOrderTitle = hasDataIndexMap && !(key && matchedCol && !matchedCol.h);
@@ -503,9 +512,7 @@ export default {
             if (!item.hidden && !matterFilter.includes(item.fieldCode)) {
               arr.push(item);
             }
-
-          }
-          
+          }          
           return arr
         }, []);
         this.matterConfig = matterConfig;
