@@ -21,9 +21,11 @@
         </div>
       </div>
       <div class="dealer_other">
-        <div class="each_property" :class="{'vux-1px-b': index < dealerConfig.length-1 }" v-for="(item, index) in dealerConfig" :key="index">
-          <label>{{item.fieldLabel}}:</label>
-          <div class='property_val'>{{dealer[item.fieldCode] || "无"}}</div>
+        <div  v-for="(item, index) in dealerConfig" :key="index">
+          <div class="each_property" :class="{'vux-1px-b': index < dealerConfig.length-1 }" v-show="!item.hiddenInRun">
+            <label>{{item.fieldLabel}}:</label>
+            <div class='property_val'>{{dealer[item.fieldCode] || "无"}}</div>
+          </div>
         </div>
       </div>
       <div v-for="(cItem, cIndex) in dealerDuplicateConfig" :key="`${cIndex}${cItem.name}`">
@@ -144,6 +146,17 @@ export default {
         let [imgFileObj = {}] = attachment.filter(item => {
           return item.attacthment === this.dealer.dealerPic
         });
+        for(let cItem of this.dealerConfig) {
+          // 主体类型为机构， 税号显示
+          if(cItem.fieldCode === 'taxNo'){
+            cItem.hiddenInRun = this.dealer.mianTypes === '机构' ? false : true
+          }
+          // 默认结算方式为后支付，默认账期方式显示
+          else if(cItem.fieldCode === 'wayOfPayment') {
+            cItem.hiddenInRun = this.dealer.paymentTerm === '后支付' ? false : true
+            break
+          }
+        }
         this.imgFileObj = imgFileObj;
       }).catch(e=>{
         this.$loading.hide();
@@ -189,13 +202,15 @@ export default {
         })
         //往来基本信息配置的处理
         dealerConfig.forEach(item =>{
-          if(!item.hiddenInRun){
-            // 在渲染的配置中添加字段
-            if(item.fieldCode !== 'dealerCode' && item.fieldCode !== 'dealerName' && item.fieldCode !== 'dealerPic'
-              && item.fieldCode !== 'province' && item.fieldCode !== 'city' && item.fieldCode !== 'county'
-              && item.fieldCode !== 'address' && item.fieldCode !== 'dealerStatus' ){
-              this.dealerConfig.push(item);
-            }
+          // 在渲染的配置中添加字段
+          if(item.fieldCode !== 'dealerCode' && item.fieldCode !== 'dealerName' && item.fieldCode !== 'dealerPic'
+            && item.fieldCode !== 'province' && item.fieldCode !== 'city' && item.fieldCode !== 'county'
+            && item.fieldCode !== 'address' && item.fieldCode !== 'dealerStatus' ){
+            this.dealerConfig.push(item);
+          }
+          // 默认将税号,账期方式隐藏
+          if(item.fieldCode === 'taxNo' || item.fieldCode === 'wayOfPayment'){
+            item.hiddenInRun = true
           }
         })
         this.dealerDuplicateConfig = dealerDuplicateConfig;
