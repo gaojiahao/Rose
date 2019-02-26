@@ -3,6 +3,7 @@ import {AlertModule} from 'vux'
 
 // 错误处理回调
 export default function errorHandler(err){
+
   if(err && err.includes('查询')){
     err = '抱歉，数据似乎出了点问题，请稍后重试'
   }

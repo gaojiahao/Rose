@@ -106,13 +106,15 @@ export default {
                   dealerInventoryCode, dealerInventoryName } = item;
             // 当存在 *数量区间* 
             if(otherField && Object.values(otherField).length) {
-              // 当 <物料数量> 没有位于*数量区间*内
+              // 当 <物料数量> 没有位于 *数量区间* 内
               if(tdQty > qtyOnline || tdQty < qtyDownline) {
                 // 用户之前位于数量区间内 但是在提交页面 通过*数量编辑按钮*加减之后
                 if(dealerInventoryName || dealerInventoryCode) {
                   this.tdAmount = 0;
                   item.dealerInventoryCode = item.dealerInventoryName = '';
-                  this.customPrice ? item.price = this.customPrice : item.price = '请重新输入单价';
+                  this.customPrice 
+                    ? item.price = this.customPrice 
+                    : item.price = '请重新输入单价';
                 }
                 // 此时用户已超出数量区间范围外 但是未自定义单价时
                 else {
