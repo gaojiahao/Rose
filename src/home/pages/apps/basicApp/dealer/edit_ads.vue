@@ -8,54 +8,56 @@
         </div>
       </div>
       <div class="each-info" v-for="(item, index) in dealerConfig" :key="index">
-        <template v-if="item.fieldCode !== 'dealerLabelName' && item.fieldCode !== 'province' && item.fieldCode !== 'dealerStatus'" >
-          <!-- 输入框（文字字） -->
-          <div class='each_property vux-1px-t' v-if="item.xtype === 'r2Textfield'">
-            <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
-            <div class='property_val' >
-              <input type='text' placeholder="请输入" v-model="dealer[item.fieldCode]"  @blur="check(item)" @focus="getFocus($event)"/>
-              <icon type="warn" class='warn' v-if='item.warn'></icon>
-            </div> 
-          </div>
-          <!-- 输入框（数字） -->
-          <div class='each_property vux-1px-t' v-if="item.xtype === 'r2Numberfield'">
-            <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
-            <div class='property_val' >
-              <input type='number' placeholder="请输入" v-model="dealer[item.fieldCode]" @blur="check(item)" @focus="getFocus($event)"/>
-              <icon type="warn" class='warn' v-if='item.warn'></icon>
+        <template v-if="!item.hiddenInRun">
+          <template v-if="item.fieldCode !== 'dealerLabelName' && item.fieldCode !== 'dealerStatus'" >
+            <!-- 输入框（文字字） -->
+            <div class='each_property vux-1px-t' v-if="item.xtype === 'r2Textfield'">
+              <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+              <div class='property_val' >
+                <input type='text' placeholder="请输入" v-model="dealer[item.fieldCode]"  @blur="check(item)" @focus="getFocus($event)"/>
+                <icon type="warn" class='warn' v-if='item.warn'></icon>
+              </div> 
             </div>
-          </div>
-          <!-- 下拉框 -->
-          <r-picker class="vux-1px-t" :title="item.fieldLabel" :data="item.remoteData" :value="dealer[item.fieldCode]" 
-                v-model="dealer[item.fieldCode]" :required="!item.allowBlank" v-if="item.xtype === 'r2Combo'"></r-picker>
-        </template>
-        <!--往来状态 -->
-        <template v-else-if="item.fieldCode === 'dealerStatus'">
-          <r-picker class="vux-1px-t" :title="item.fieldLabel" :data="item.remoteData" :value="dealerStatus" 
-                v-model="dealerStatus" :required="!item.allowBlank"></r-picker>
-        </template>
-        <!-- 省市区 -->
-        <template v-else-if="item.fieldCode === 'province'">
-          <div class='each_property vux-1px-t' @click="showAddress = true">
-            <label>省市区:</label>
-            <div class='picker'>
-              <span class='mater_nature' v-if="dealer.province === '' && dealer.city === '' && dealer.county === ''">请选择</span>
-              <span class='mater_nature'v-else>{{dealer.province}}{{dealer.city}}{{dealer.county}}</span>
-              <span class='icon-right'></span>
+            <!-- 输入框（数字） -->
+            <div class='each_property vux-1px-t' v-if="item.xtype === 'r2Numberfield'">
+              <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+              <div class='property_val' >
+                <input type='number' placeholder="请输入" v-model="dealer[item.fieldCode]" @blur="check(item)" @focus="getFocus($event)"/>
+                <icon type="warn" class='warn' v-if='item.warn'></icon>
+              </div>
             </div>
-            <x-address title="省市区"  :list="addressData" @on-hide='getAddress()' @on-shadow-change='changeAddress' :value="cAccountAddress"
-                      :show.sync="showAddress" v-show="false"></x-address>
-          </div>
-        </template>
-        <!-- 往来类型 -->
-        <template v-else>
-          <div class='each_property vux-1px-t' @click="DealerPop">
-            <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
-            <div class='picker'>
-                <span class='mater_nature'>{{dealer[item.fieldCode] || "请选择"}}</span>
+            <!-- 下拉框 -->
+            <r-picker class="vux-1px-t" :title="item.fieldLabel" :data="item.remoteData" :value="dealer[item.fieldCode]" 
+                  v-model="dealer[item.fieldCode]" :required="!item.allowBlank" v-if="item.xtype === 'r2Combo'"></r-picker>
+          </template>
+          <!--往来状态 -->
+          <template v-else-if="item.fieldCode === 'dealerStatus'">
+            <r-picker class="vux-1px-t" :title="item.fieldLabel" :data="item.remoteData" :value="dealerStatus" 
+                  v-model="dealerStatus" :required="!item.allowBlank"></r-picker>
+          </template>
+          <!-- 省市区 -->
+          <!-- <template v-else-if="item.fieldCode === 'province'">
+            <div class='each_property vux-1px-t' @click="showAddress = true">
+              <label>省市区:</label>
+              <div class='picker'>
+                <span class='mater_nature' v-if="dealer.province === '' && dealer.city === '' && dealer.county === ''">请选择</span>
+                <span class='mater_nature' v-else>{{dealer.province}}{{dealer.city}}{{dealer.county}}</span>
                 <span class='icon-right'></span>
+              </div>
+              <x-address title="省市区"  :list="addressData" @on-hide='getAddress()' @on-shadow-change='changeAddress' :value="cAccountAddress"
+                        :show.sync="showAddress" v-show="false"></x-address>
             </div>
-          </div>
+          </template> -->
+          <!-- 往来类型 -->
+          <template v-else>
+            <div class='each_property vux-1px-t' @click="DealerPop">
+              <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+              <div class='picker'>
+                  <span class='mater_nature'>{{dealer[item.fieldCode] || "请选择"}}</span>
+                  <span class='icon-right'></span>
+              </div>
+            </div>
+          </template>
         </template>
       </div>
       <!-- 重复项 -->
@@ -98,6 +100,7 @@ import common from 'mixins/common.js'
 import RScroll from 'components/RScroll'
 import UploadImage from 'components/UploadImage'
 import duplicateComponent from '../../../components/duplication'
+import { request } from 'http';
 
 export default {
   data() {
@@ -131,21 +134,6 @@ export default {
         comment: '' // 注释
       },
       dealer: {
-        dealerCode: '', // 往来编码
-        dealerName: '', // 往来名称
-        dealerLabelName : '',//往来类型
-        province  : '',  //省
-        city: '',  //市
-        county: '',  //区
-        address: '',  //地址
-        dealerPhone: '', //联系电话
-        dealerMobilePhone: '',  //手机
-        dealerMail: '',  //电子邮件
-        paymentTerm: '',  //结算方式
-        dealerLogisticsTerms: '', //物流条款
-        pamentDays: '',  //账期天数
-        dealerStatus: '', //往来状态
-        comment: '',  //往来说明
         dealerPic : '',
       },
       statusList: [],
@@ -162,19 +150,34 @@ export default {
   },
   computed: {
     // 提交按钮是否可点击
-    disabledSubmit(){
+    disabledSubmit() {
       return this.PhoneWarn || this.MobileWarn || this.EmailWarn || this.codeWarn;
     },
     dealerLabelName() {
       return this.dealer.dealerLabelName
+    },
+    mianTypes() {
+      return this.dealer.mianTypes
+    },
+    country() {
+      return this.dealer.country
+    },
+    province() {
+      return this.dealer.province
+    },
+    city() {
+      return this.dealer.city
+    },
+    paymentTerm() {
+      return this.dealer.paymentTerm
     }
-    
   },
   watch: {
-    dealerLabelName(val){
+    dealerLabelName(val) {
       // 根据往来类型绝的哪个重复项显示
       let dealerLabelName = this.dealer.dealerLabelName;
       this.dealerDuplicateConfig.forEach(item => {
+        // 当关系标签包含客户，供应商，加工商，渠道商，服务商时，省市区显示
         if(item.name === 'deliveryAddresses'){
           item.hiddenInRun = false;
           if(!dealerLabelName || (!dealerLabelName.includes('客户') && !dealerLabelName.includes('供应商') && !dealerLabelName.includes('加工商') 
@@ -182,6 +185,7 @@ export default {
             item.hiddenInRun = true
           }
         }
+        // 当关系标签包含生产商,经销供应商 证件显示
         if(item.name === 'dealerCertificateRel'){
           item.hiddenInRun = false;
           if(!dealerLabelName || (!dealerLabelName.includes('生产商') && !dealerLabelName.includes('经销供应商'))) {
@@ -189,6 +193,115 @@ export default {
           }
         } 
       })
+    },
+    mianTypes(val) {
+      if(val){
+        for(let item of this.dealerConfig){
+          // 主题类型为机构时，税号显示
+          if(item.fieldCode === 'taxNo'){
+            item.hiddenInRun = val === '机构' ? false : true;
+            break
+          }
+        }
+      } 
+    },
+    country(val) {
+      if(val) {
+        for(let item of this.dealerConfig){
+          // 当前字段为【省】，将【国家或地区】的值赋值给请求【省】的参数中, 并设置【市】的默认值
+          if(item.fieldCode === 'province') {
+            item.requestParams.data.countryName = val;
+            requestData(item.requestParams).then(({tableContent = []}) => {
+              tableContent.length && tableContent.forEach(dItem => {
+                dItem.name = dItem[item.displayField];
+                dItem.value = dItem[item.displayField];
+              })
+              let province = tableContent.length ? tableContent[0].name : '';
+              this.$set(this.dealer, 'province', province)
+              this.$set(item, 'remoteData', tableContent)
+            })
+            break
+          }
+        }
+      }
+    },
+    province(val) {
+      if(val) {
+        for(let item of this.dealerConfig){
+          // 当前字段为【市】，将【省】的值赋值给请求【市】的参数中, 并设置【市】的默认值
+          if(item.fieldCode === 'city') {
+            item.requestParams.data.countryName = this.dealer.country;
+            item.requestParams.data.provinceName = this.dealer.province;
+            requestData(item.requestParams).then(({tableContent = []}) => {
+              tableContent.length && tableContent.forEach(dItem => {
+                dItem.name = dItem[item.displayField];
+                dItem.value = dItem[item.displayField];
+              })
+              let city = tableContent.length ? tableContent[0].name : '';
+              this.$set(this.dealer, 'city', city)
+              this.$set(item, 'remoteData', tableContent)
+            })
+            break
+          }  
+        }
+      }
+    },
+    city(val) {
+      if(val) {
+        for(let item of this.dealerConfig){
+          // 当前字段为【区】，将【市区】的值赋值给请求【区】的参数中, 并设置【区】的默认值
+          if(item.fieldCode === 'county') {
+            item.requestParams.data.countryName = this.dealer.country;
+            item.requestParams.data.provinceName = this.dealer.province;
+            item.requestParams.data.cityName = this.dealer.city;
+            requestData(item.requestParams).then(({tableContent = []}) => {
+              tableContent.length && tableContent.forEach(dItem => {
+                dItem.name = dItem[item.displayField];
+                dItem.value = dItem[item.displayField];
+              })
+              let county = tableContent.length ? tableContent[0].name : '';
+              this.$set(this.dealer, 'county', county)
+              this.$set(item, 'remoteData', tableContent)
+            })
+            break
+          }         
+        }
+      }
+    },
+    paymentTerm(val) {
+      if(val) {
+        let paramsValue = ''
+        for(let item of this.dealerConfig){
+          if(item.fieldCode === 'paymentTerm'){
+            if(item.remoteData && item.remoteData.length) {
+              for(let dItem of item.remoteData) {
+                if(dItem.name === val){
+                  paramsValue = dItem.OriginValue;
+                  break;
+                }
+              }
+            }
+          }
+          if(item.fieldCode === 'wayOfPayment'){
+            item.hiddenInRun = val === '后支付' ? false : true;
+            if(!item.hiddenInRun){
+              item.requestParams.data.value = paramsValue;
+              requestData(item.requestParams).then(({tableContent = []}) =>{
+                tableContent.length && tableContent.forEach(sItem => {
+                  sItem.OriginValue = sItem.value;
+                  sItem.name = sItem[item.displayField];
+                  sItem.value = sItem[item.displayField];
+                })
+                let wayOfPayment = tableContent.length ? tableContent[0].name : '';
+                this.$set(this.dealer, 'wayOfPayment', wayOfPayment)
+                this.$set(item, 'remoteData', tableContent)
+
+              })
+            }
+            break;
+          }
+        }
+      }
     }
   },
   directives: {
@@ -488,33 +601,14 @@ export default {
     save() {
       if (!this.disabledSubmit) {
         let warn = '';
-        let validateMap = [
-          {
-            key: 'dealerCode',
-            message: '【往来编码】',
-          }, {
-            key: 'dealerName',
-            message: '【往来名称】',
-          }, {
-            key: 'dealerLabelName',
-            message: '【往来类型】',
-          },
-        ];
-        validateMap.every(item => {
-          if (this.dealer[item.key] === '') {
-            warn = `${item.message}不能为空`;
-            return false
+        for(let item of this.dealerConfig){
+          if(!item.allowBlank && !this.dealer[item.fieldCode]){
+            warn = `${item.fieldLabel}不能为空`
+            break
           }
-          return true
-        });
-        if (!warn && this.PhoneWarn) {
-          warn = '电话号码格式不正确'
-        }
-        if (!warn && this.MobileWarn) {
-          warn = '手机号码格式不正确'
-        }
-        if (!warn && this.EmailWarn) {
-          warn = '邮件格式不正确'
+          if(item.submitValue){
+            this.dealer[item.fieldCode] = this.dealer[item.fieldCode] || ''
+          }
         }
         // 校验重复项
         if(!warn && Object.keys(this.dealerDuplicateData).length){
@@ -555,30 +649,40 @@ export default {
       let requestParams = {
         url,
       }
+      let paramsIsOk = true;
       if(keys.length){
         let data = {};
         keys.forEach(key => {
           data[key] = params[key].type === 'text' ? params[key].value : '';
+          if(!data[key]){
+            paramsIsOk = false;
+          }
         })
         requestParams.data = data;
       }
       sItem.requestParams = requestParams;
-      requestData(requestParams).then((data) => {
-        if(data.tableContent){
-          data.tableContent.forEach(item => {
-            item.name = item[sItem.displayField];
-            item.value = item[sItem.displayField];
-          })
-          this.$set(sItem, 'remoteData', data.tableContent)
-        }
-        else{
-          data.forEach(item => {
-            item.name = item[sItem.displayField];
-            item.value = item[sItem.displayField];
-          })
-          this.$set(sItem, 'remoteData', data)
-        }
-      })
+      
+      // 判断当请求参数都有值,才发起请求
+      if(paramsIsOk){
+        requestData(requestParams).then((data) => {
+          if(data.tableContent){
+            data.tableContent.forEach(item => {
+              item.OriginValue = item.value;
+              item.name = item[sItem.displayField];
+              item.value = item[sItem.displayField];
+            })
+            this.$set(sItem, 'remoteData', data.tableContent)
+          }
+          else{
+            data.forEach(item => {
+              item.name = item[sItem.displayField];
+              item.value = item[sItem.displayField];
+            })
+            this.$set(sItem, 'remoteData', data)
+          }
+        })
+      }
+      
     },
     // 请求表单配置的基本信息
     async getFormViewsInfo(){
@@ -595,7 +699,7 @@ export default {
       })
       // 根据uniqueId 请求表单的配置
       await getFormConfig(this.uniqueId).then(({config = []}) => {
-        console.log(config);
+        // console.log(config);
         let dealerConfig = [], dealerDuplicateConfig = [];
         config.forEach(item => {
           if(!item.isMultiple) {
@@ -611,18 +715,27 @@ export default {
         dealerConfig.forEach(item =>{
           if(!item.hiddenInRun){
             //下拉框的数据请求
-            if(item.fieldCode !== 'province' && item.fieldCode !== 'city' && item.fieldCode !== 'county' &&  item.fieldCode !=='dealerLabelName'){
+            if(item.fieldCode !=='dealerLabelName'){
               if((item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.dataSource && item.dataSource.type === 'remoteData' ) {
                 this.handlerParams(item)
+                // 有默认值，在dealer中添加默认值
+                if(item.defaultValue && item.defaultValue.type === 'staticData' && item.defaultValue.data && item.defaultValue.data.length){
+                  this.$set(this.dealer, item.fieldCode, item.defaultValue.data[0])
+                  // this.dealer[item.fieldCode] = item.defaultValue.data[0]
+                }
               }
               else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
                 this.$set(item, 'remoteData', item.dataSource.data)
               }
             }
-            // 在渲染的配置中添加字段
-            if(item.fieldCode !== 'dealerPic' && item.fieldCode !== 'city' && item.fieldCode !== 'county'){
-              this.dealerConfig.push(item);
-            }
+          }
+          // 在渲染的配置中添加字段
+          if(item.fieldCode !== 'dealerPic'){
+            this.dealerConfig.push(item);
+          }
+          // 默认将税号隐藏
+          if(item.fieldCode === 'taxNo' || item.fieldCode === 'wayOfPayment'){
+            item.hiddenInRun = true
           }
         })
         // 处理重复项配置
