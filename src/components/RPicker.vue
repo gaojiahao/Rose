@@ -154,12 +154,10 @@
 </script>
 
 <style scoped lang="scss">
-  .vux-1px-b:after {
-    left: .1rem;
-  }
   .r-picker {
+    width: 100%;
+    box-sizing: border-box;
     padding: 0.05rem 0.08rem;
-    font-size: 0.16rem;
     &.r-picker-2 {
       > label {
         display: none;
