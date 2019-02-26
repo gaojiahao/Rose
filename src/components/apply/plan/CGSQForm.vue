@@ -204,14 +204,9 @@ export default {
       item[key] = Math.abs(toFixed(val)); 
       let min = Math.max(item.thenQtyBal, item.moq)
       if(key === 'tdQty'){
-        if(val < min){
-          item[key] = min;
-        } 
-        else{
-          // 因包装数量要为整数，先根据当前的申请数量计算包装数量，如有小数向上取整后，再反算本次申请数量
-          item.assistQty = Math.ceil(item.assistQty);
-          item.tdQty = accMul(item.assistQty, item.assMeasureScale)
-        }
+        // 因包装数量要为整数，先根据当前的申请数量计算包装数量，如有小数向上取整后，再反算本次申请数量
+        item.assistQty = Math.ceil(item.assistQty);
+        item.tdQty = accMul(item.assistQty, item.assMeasureScale)
       }
     },
     // 物料修改确定
