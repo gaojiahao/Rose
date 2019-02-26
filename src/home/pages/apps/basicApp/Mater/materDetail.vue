@@ -10,7 +10,7 @@
               <p class="code">物料编码：<span class="symbol"></span>{{inventory.inventoryCode}}</p>
             </div>
           </div>
-          <span class="inventory_status vux-1px" :class="{'no_use' : inventory.status !== '使用中'}">{{inventory.status}}</span>
+          <span class="inventory_status vux-1px" :class="{'no_use' : baseinfo.status === '草稿'}">{{baseinfo.status}}</span>
         </div>
       </div>
       <div class="inventory_other has_margin">
@@ -20,7 +20,6 @@
         </div>
       </div>
       <div class="common_style d_main" v-for="(cItem, cIndex) in matterDuplicateConfig" :key="`${cIndex}${cItem.name}`" v-if="cItem.show">
-        <!-- <div class='title vux-1px-b'>{{cItem.title}}</div> -->
         <div class='content' v-for="(item, index) in formData[cItem.name]" :key="index">
           <div class="each_property vux-1px-b"  v-for="(sItem, sIndex) in cItem.items" :key="sIndex">
             <label>{{sItem.text}}:</label>
@@ -60,6 +59,7 @@ import { findData } from 'service/materService'
 import { getAppDetail } from 'service/appSettingService'
 import { getFormConfig, getFormViews } from 'service/commonService.js'
 import RScroll from 'components/RScroll'
+import { callbackify } from 'util';
 export default {
   name: 'materDetail',
   filters: {
@@ -126,7 +126,34 @@ export default {
     // 获取物料详情
     findData() {
       return findData(this.transCode).then(({formData}) => {
+        let { baseinfo = {}, inventory = {}}  = formData;
+        let status = ['', '使用中', '未使用', '草稿'], 
+            statusClass = ['', 'inUse', 'unUse'];
+
         this.formData = formData;
+
+        // 表单状态 转换
+        switch(baseinfo.status) {
+          case -3 :
+            baseinfo.status = '已归档';
+            break;
+          case -2 :
+            baseinfo.status = '已删除';
+            break;
+          case -1 :
+            baseinfo.status = '已失效';
+            break;
+          case 0 :
+            baseinfo.status = '草稿';
+            break;
+          case 1 :
+            baseinfo.status = '已生效';
+            break;
+          case 2 :
+            baseinfo.status = '进行中';
+            break;
+        }
+
         this.matterDuplicateConfig.forEach(item => {
           if(this.formData[item.name] && !this.formData[item.name].length){
             item.show = false;
@@ -134,9 +161,7 @@ export default {
           }
           item.show = true;
         })
-        let {inventory = {}} = formData;
-        let status = ['', '使用中', '未使用', '草稿'],
-          statusClass = ['', 'inUse', 'unUse'];
+
         inventory.statusClass = statusClass[inventory.inventoryStatus];
         inventory.status = status[inventory.inventoryStatus] || '停用';
         this.baseinfo = formData.baseinfo;
@@ -145,6 +170,7 @@ export default {
         this.invMoreUnit = formData.invMoreUnit;
         this.invDealerRel = formData.invDealerRel || [];
         this.invCustomerRel = formData.invCustomerRel || [];
+
         let {inventoryPic, inventoryCode, specification} = this.inventory;
         // 获取规格和编码的字符串总长度
         this.contentLength = inventoryCode.length + specification.length;
@@ -154,6 +180,7 @@ export default {
         } else {
           this.getDefaultImg();
         }
+
         this.$loading.hide();
       }).catch(e => {
         this.$loading.hide();
