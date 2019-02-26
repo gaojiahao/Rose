@@ -30,20 +30,20 @@ export default {
         status: "使用中",
         type: "",
       },
-      jobType:[//职位类型列表
+      jobType: [//职位类型列表
         {name:'管理类',value:'管理类'},
         {name:'营销类',value:'营销类'},
         {name:'技术类',value:'技术类'},
         {name:'专业类',value:'专业类'},
         {name:'操作类',value:'操作类',status:'C'}
       ],
-      jobStatus:[//职位状态列表
+      jobStatus: [//职位状态列表
         {name:'停用',value:'停用'},
         {name:'未使用',value:'未使用'},
         {name:'使用中',value:'使用中'},
         {name:'草稿',value:'草稿'},
       ],
-      jobId:null,//职位id
+      jobId: null,//职位id
     }
   },
   components: { RPicker,},

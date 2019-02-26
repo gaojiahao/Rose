@@ -37,10 +37,10 @@
     display: flex;
     justify-content: space-between;
     line-height: .14rem;
-    label{
+    label {
       color: #696969;
     }
-    .add{
+    .add {
       color: #3296FA;
     }
     .required {
@@ -49,9 +49,16 @@
     }
     .property_val {
       text-align: right;
+      &:disabled {
+        color: #b2b2b2;
+        background: unset;
+      }
     }
-    .readonly {
-      color: #999;
+    &.readonly {
+      color: #b2b2b2;
+      label {
+        color: #b2b2b2;
+      }
     }
     .picker {
       display: flex;

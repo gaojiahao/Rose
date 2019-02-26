@@ -233,12 +233,13 @@ export default {
 
 <style lang='scss' scoped>
 @import './../../scss/bizApply';
-.mater_baseinfo{
-  .upload-image-container {
-    width: 1.2rem;
-    height: 1.2rem;
+.childPage{
+  width: 100%;
+  height: 100%;
+  .content {
+    .mater_baseinfo {
+      align-items: unset;
+    }
   }
 }
-
-
 </style>

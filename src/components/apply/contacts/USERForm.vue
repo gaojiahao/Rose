@@ -328,9 +328,10 @@
 .childPage{
   width: 100%;
   height: 100%;
-  .upload-image-container {
-    width: 1.2rem;
-    height: 1.2rem;
+  .content {
+    .mater_baseinfo {
+      align-items: unset;
+    }
   }
 }
 </style>
