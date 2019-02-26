@@ -225,7 +225,7 @@ export default {
             }),
           };
           // 若为重新提交，则修改提交参数
-          if (this.transCode) {
+          if (this.transCode && !this.isModify) {
             operation = saveAndCommitTask;
             submitData.biReferenceId = this.biReferenceId;
             submitData.wfPara = JSON.stringify({

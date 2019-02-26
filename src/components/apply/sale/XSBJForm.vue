@@ -67,7 +67,7 @@
 import {Icon, XInput, XTextarea, dateFormat, Cell} from 'vux'
 // 请求 引入
 import {getSOList} from 'service/detailService'
-import {submitAndCalc, saveAndStartWf, getDictByType, saveAndCommitTask} from 'service/commonService'
+import {submitAndCalc, saveAndStartWf, getDictByType, saveAndCommitTask, updateData} from 'service/commonService'
 import {getPriceRange} from 'service/materService'
 // mixins 引入
 import ApplyCommon from 'pageMixins/applyCommon'
@@ -318,7 +318,7 @@ export default {
             }),
           };
           // 若为重新提交，则修改提交参数
-          if (this.transCode) {
+          if (this.transCode && !this.isModify) {
             operation = saveAndCommitTask;
             submitData.biReferenceId = this.biReferenceId;
             submitData.wfPara = JSON.stringify({
@@ -338,6 +338,9 @@ export default {
           }
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
+          }
+          if(this.isModify) {
+            operation = updateData;
           }
           this.saveData(operation, submitData);
         }

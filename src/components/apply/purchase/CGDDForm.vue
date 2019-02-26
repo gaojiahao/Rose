@@ -38,7 +38,7 @@
 import { XTextarea, dateFormat,} from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc, getPriceFromProcurementContract } from 'service/commonService'
+import { getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc, getPriceFromProcurementContract, updateData } from 'service/commonService'
 // mixins 引入
 import common from 'components/mixins/applyCommon'
 // 组件引入
@@ -370,7 +370,7 @@ export default {
           let wfPara = {
             [this.processCode]: {businessKey:this.businessKey,createdBy:""}
           }
-          if (this.isResubmit) {
+          if (this.isResubmit && !this.isModify) {
             wfPara = {
               businessKey: this.transCode,
               createdBy: this.formData.handler,
@@ -419,6 +419,9 @@ export default {
           }
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
+          }
+          if(this.isModify) {
+            operation = updateData;
           }
           this.saveData(operation,submitData);
         }

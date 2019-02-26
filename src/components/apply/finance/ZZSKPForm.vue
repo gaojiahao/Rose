@@ -39,7 +39,7 @@
 import { XTextarea, dateFormat } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
+import { submitAndCalc, saveAndStartWf, saveAndCommitTask, updateData } from 'service/commonService'
 // mixins 引入
 import ApplyCommon from 'pageMixins/applyCommon'
 // 组件引入
@@ -271,7 +271,7 @@ export default {
               createdBy: JSON.stringify(this.formData.handler)
             }
           }
-          if (this.isResubmit) {
+          if (this.isResubmit && !this.isModify) {
             wfPara = {
               businessKey: this.transCode,
               createdBy: this.formData.handler,
@@ -315,6 +315,9 @@ export default {
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
           }
+          if(this.isModify) {
+            operation = updateData;
+          }
           this.saveData(operation, submitData);
         }
       });
@@ -322,7 +325,7 @@ export default {
     // 获取订单信息用于重新提交
     getFormData() {
       return getSOList({
-        formViewUniqueId: this.uniqueId,
+        formViewUniqueId: this.formViewUniqueId,
         transCode: this.transCode
       }).then((data) => {
         let { formData } = data, 

@@ -43,7 +43,7 @@
 import { XTextarea, dateFormat } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { commitTask, saveAndStartWf, saveAndCommitTask, submitAndCalc, requestData } from 'service/commonService'
+import { commitTask, saveAndStartWf, saveAndCommitTask, submitAndCalc, requestData, updateData } from 'service/commonService'
 // mixins 引入
 import applyCommon from 'components/mixins/applyCommon'
 // 组件引入
@@ -454,7 +454,7 @@ export default {
             }
           };
           // 重新提交
-          if (this.transCode) {
+          if (this.transCode && !this.isModify) {
             operation = saveAndCommitTask;
             wfPara = {
               businessKey: this.transCode,
@@ -482,6 +482,9 @@ export default {
           }
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
+          }
+          if(this.isModify) {
+            operation = updateData;
           }
           this.saveData(operation, submitData);
         }

@@ -190,7 +190,7 @@
           onConfirm: () => {
             this.$HandleLoad.show();
             let operation = saveProjectApproval;
-            if(this.$route.query.transCode){
+            if(this.isModify){
               operation = update;
             }
             let submitData = {

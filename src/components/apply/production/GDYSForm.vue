@@ -302,7 +302,7 @@
                 inWarehouseName: this.warehouse.warehouseName,
               }
             }
-            if (this.isResubmit && this.formStatus === '进行中') {
+            if (this.isResubmit && !this.isModify) {
               wfPara = {
                 businessKey: this.transCode,
                 createdBy: this.formData.handler,
@@ -334,12 +334,9 @@
               }),
               wfPara: JSON.stringify(wfPara)
             }
-            if (this.isResubmit && this.formStatus === '进行中') { // 重新提交
+            if (this.isResubmit) { // 重新提交
               operation = saveAndCommitTask;
               submitData.biReferenceId = this.biReferenceId;
-            }
-            else if(this.isResubmit && this.formStatus === '已生效'){ // 修改
-              operation = updateData;
             }
             if (!this.processCode.length) { // 无工作流
               operation = submitAndCalc;
@@ -348,6 +345,9 @@
             }
             if (this.biReferenceId) {
               submitData.biReferenceId = this.biReferenceId
+            }
+            if(this.isModify){ // 修改
+              operation = updateData;
             }
             this.saveData(operation, submitData);
           }

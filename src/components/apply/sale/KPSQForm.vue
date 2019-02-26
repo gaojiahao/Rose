@@ -57,7 +57,7 @@
     XTextarea, Datetime, PopupPicker
   } from 'vux'
   // 请求 引入
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
+  import {submitAndCalc, saveAndStartWf, saveAndCommitTask, updateData} from 'service/commonService'
   import {getSOList} from 'service/detailService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
@@ -327,7 +327,7 @@
                 createdBy: JSON.stringify(this.formData.handler)
               }
             }
-            if (this.isResubmit) {
+            if (this.isResubmit && !this.isModify) {
               wfPara = {
                 businessKey: this.transCode,
                 createdBy: this.formData.handler,
@@ -369,6 +369,9 @@
             if (this.biReferenceId) {
               submitData.biReferenceId = this.biReferenceId
             }
+            if(this.isModify) {
+              operation = updateData;
+            }
             this.saveData(operation, submitData);
           }
         });
@@ -376,7 +379,7 @@
       // 获取订单信息用于重新提交
       getFormData() {
         return getSOList({
-          formViewUniqueId: this.uniqueId,
+          formViewUniqueId: this.formViewUniqueId,
           transCode: this.transCode
         }).then((data) => {
           this.listId = data.listId;

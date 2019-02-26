@@ -44,7 +44,7 @@
 import {XTextarea, dateFormat} from 'vux'
 // 请求 引入
 import {getSOList} from 'service/detailService'
-import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc} from 'service/commonService'
+import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc, updateData} from 'service/commonService'
 // mixins 引入
 import common from 'components/mixins/applyCommon'
 // 组件引入
@@ -206,7 +206,7 @@ export default {
           let wfPara = {
             [this.processCode]: {businessKey: this.businessKey, createdBy: ""}
           }
-          if (this.isResubmit) {
+          if (this.isResubmit && !this.isModify) {
             wfPara = {
               businessKey: this.transCode,
               createdBy: this.formData.handler,
@@ -248,6 +248,9 @@ export default {
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
           }
+          if(this.isModify) {
+            operation = updateData;
+          }
           this.saveData(operation, submitData);
         }
       })
@@ -255,7 +258,7 @@ export default {
     // 获取订单信息用于重新提交
     async getFormData() {
       await getSOList({
-        formViewUniqueId: this.uniqueId,
+        formViewUniqueId: this.formViewUniqueId,
         transCode: this.transCode
       }).then((data) => {
         this.listId = data.listId;

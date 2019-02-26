@@ -95,7 +95,7 @@
 import { Icon, Cell, Group, XInput, XTextarea } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
+import { submitAndCalc, saveAndStartWf, saveAndCommitTask, updateData } from 'service/commonService'
 // mixins 引入
 import ApplyCommon from 'pageMixins/applyCommon'
 // 组件引入
@@ -308,7 +308,7 @@ export default {
             }),
           };
           // 若为重新提交，则修改提交参数
-          if (this.transCode) {
+          if (this.transCode && !this.isModify) {
             operation = saveAndCommitTask;
             submitData.biReferenceId = this.biReferenceId;
             submitData.wfPara = JSON.stringify({
@@ -328,6 +328,9 @@ export default {
           }
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
+          }
+          if(this.isModify) {
+            operation = updateData;
           }
           this.saveData(operation, submitData);
         }

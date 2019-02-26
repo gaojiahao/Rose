@@ -95,7 +95,7 @@
   import {Cell, Group, XInput, XTextarea} from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
+  import {submitAndCalc, saveAndStartWf, saveAndCommitTask, updateData} from 'service/commonService'
   import {getEmployeeBal} from 'service/costService'
   // mixins 引入
   import common from 'components/mixins/applyCommon'
@@ -356,7 +356,7 @@
                 }
               }),
             };
-            if (this.isResubmit) {
+            if (this.isResubmit && !this.isModify) {
               operation = saveAndCommitTask;
               submitData.biReferenceId = this.biReferenceId;
               submitData.wfPara = JSON.stringify({
@@ -376,6 +376,9 @@
             }
             if (this.biReferenceId) {
               submitData.biReferenceId = this.biReferenceId
+            }
+            if(this.isModify) {
+              operation = updateData;
             }
             this.saveData(operation, submitData);
           }

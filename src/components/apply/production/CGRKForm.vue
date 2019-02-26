@@ -56,7 +56,8 @@
     saveAndCommitTask,
     commitTask,
     getDictByType,
-    submitAndCalc
+    submitAndCalc,
+    updateData
   } from 'service/commonService'
   // mixins 引入
   import applyCommon from 'components/mixins/applyCommon'
@@ -382,7 +383,7 @@
               }
             };
             // 重新提交
-            if (this.transCode) {
+            if (this.transCode && !this.isModify) {
               operation = saveAndCommitTask;
               wfPara = {
                 businessKey: this.transCode,
@@ -412,6 +413,9 @@
             }
             if (this.biReferenceId) {
               submitData.biReferenceId = this.biReferenceId
+            }
+            if(this.isModify) {
+              operation = updateData;
             }
             this.saveData(operation, submitData);
           }
