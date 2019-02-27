@@ -47,7 +47,8 @@
           </div>
           <div class="each_info vux-1px-b">
             <label class="required">申报工时</label>
-            <input type='number' v-model.number="taskLog.logDeclarationHours" placeholder="请输入" class='field_value' @focus="getFocus($event)"/>
+            <input type='number' v-model.number="taskLog.logDeclarationHours" placeholder="请输入" class='field_value' @focus="getFocus($event)" 
+                  @blur="checkHour(taskLog.logDeclarationHours)"/>
           </div>
           <x-textarea class="vux-1px-b" title="备注" v-model="taskLog.biComment" placeholder="请输入"></x-textarea>
         </div>
@@ -140,6 +141,11 @@ export default {
           this.taskLog.taskDate = val;
         },
       })
+    },
+    checkHour(val){
+      if(val < 0) {
+        this.taskLog.logDeclarationHours = Math.abs(val)
+      }
     },
     save(){
       let warn = '';
