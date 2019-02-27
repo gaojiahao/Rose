@@ -1,24 +1,20 @@
 import { querystring } from 'vux'
 import { corpid, secret, agentid, redirect_uri } from '@/plugins/ajax/conf'
 import Fly from 'flyio/dist/npm/fly'
-const fly = new Fly();
 
-const TOKEN_KEY = 'ROSE_LOGIN_TOKEN';
-const RFD_TOKEN_KEY = 'roleplay-token';
+const fly = new Fly();
+const ROSE_TOKEN_KEY = 'ROSE_LOGIN_TOKEN';
+const PC_RFD_TOKEN_KEY = 'roleplay-token';
 
 let tokenService = {
-  /**
-   * 清除toke
-   */
+  // 清除token
   clean() {
-    window.sessionStorage.removeItem(TOKEN_KEY);
-    window.localStorage.removeItem(RFD_TOKEN_KEY);
+    window.sessionStorage.removeItem(ROSE_TOKEN_KEY);
+    window.localStorage.removeItem(PC_RFD_TOKEN_KEY);
   },
-  /**
-   * 设置token
-   */
+  // 设置token
   setToken(data) {
-    window.sessionStorage.setItem(TOKEN_KEY, JSON.stringify({
+    window.sessionStorage.setItem(ROSE_TOKEN_KEY, JSON.stringify({
       entityId: data.entityId,
       token: data.token,
       name: data.name,
@@ -27,7 +23,7 @@ let tokenService = {
       position : data.position,
       timestamp: +new Date()
     }));
-    window.localStorage.setItem(RFD_TOKEN_KEY, JSON.stringify({
+    window.localStorage.setItem(PC_RFD_TOKEN_KEY, JSON.stringify({
       key1: data.key1,
       active: data.active,
       entityId: data.entityId,
@@ -35,10 +31,10 @@ let tokenService = {
     }));
   },
   // 检查是否登录
-  checkLogin(key = 'token') {
-    let token = JSON.parse(window.sessionStorage.getItem(TOKEN_KEY)) || {};
+  checkLogin() {
+    let token = JSON.parse(window.sessionStorage.getItem(ROSE_TOKEN_KEY)) || {};
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
-    if (token[key]) {
+    if (token['token']) {
       let timestamp = token.timestamp;
       let timeCalc = new Date() - timestamp;
       if (isQYWX && (timeCalc > (2 * 3600 * 1000))) {
@@ -50,21 +46,27 @@ let tokenService = {
     } else {
       return ''
     }
-    return token[key]
+    return token['token']
   },
-  // 开发时用于获取账号的登录信息
-  login(key) {
+  // 登录
+  login() {
+    // 清楚token缓存
     this.clean();
-    let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
-    //本地测试模拟线上
-    return this.pcLogin(key);
-    //实际开发
-    if (isQYWX) {
-      return this.QYWXLogin(key);
-    } else {
-      if (process.env.NODE_ENV === 'development') { // 不是开发环境则不调用登录接口
-        return this.pcLogin(key);
-      } else {
+    // 获取当前域名
+    let nowUrl = location.origin;
+    // 是否为企业微信客户端
+    let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; 
+
+    // 根据环境不同 调用不同的登录接口
+    if(nowUrl.includes('192.168.3.') || nowUrl.includes('localhost')) {
+      console.log('当前为测试环境');
+      return this.pcLogin();
+    }
+    else {
+      if (isQYWX) {
+        return this.QYWXLogin();
+      } 
+      else {
         window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redirect_uri}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
       }
     }
@@ -81,10 +83,8 @@ let tokenService = {
             'Content-Type': 'application/json',
           },
           data: {
-            loginModel: 1,
-            password: '123456',
-            // userCode: 'rfd130'
-            userCode: '15399909500'
+            password: '',
+            userCode: ''
           }
         };
         fly.request(params, params.data).then( res => {
