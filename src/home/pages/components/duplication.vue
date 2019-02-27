@@ -51,8 +51,8 @@
     <div class="add_more" v-show="duplicateData[item.name].length">
       您还需要添加新的{{item.title}}?请点击
       <span class='add' @click="addMoreUnit(item)">新增</span>
-      <em v-show="duplicateData[item.name].length > 1">或</em>
-      <span class='delete' @click="deleteMoreUnit(item)" v-show="duplicateData[item.name].length > 1">删除</span>
+      <em v-show="duplicateData[item.name].length > 0">或</em>
+      <span class='delete' @click="deleteMoreUnit(item)" v-show="duplicateData[item.name].length > 0">删除</span>
     </div> 
     </template>
     

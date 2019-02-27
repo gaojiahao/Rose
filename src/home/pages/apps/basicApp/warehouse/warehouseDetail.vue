@@ -24,7 +24,7 @@
         <div v-for="(item, index) in warehouseConfig" :key="index">
           <div class="each_property" :class="{'vux-1px-b': index < warehouseConfig.length-1 }" v-if="!item.hiddenInRun">
             <label>{{item.fieldLabel}}:</label>
-            <div class='property_val'>{{warehouse[item.fieldCode] || "无"}}</div>
+            <div class='property_val'>{{warehouse[item.displayField] || warehouse[item.fieldCode] || "无"}}</div>
           </div>
         </div>
       </div>
@@ -69,7 +69,7 @@
 <script>
 import { dateFormat } from 'vux'
 import {getwarehouseInfo, getDepartMentWage} from 'service/warehouseService'
-import {getObjDealerByLabelName, getFormConfig, requestData, getFormViews} from 'service/commonService.js'
+import {getObjDealerByLabelName, getFormConfig, requestData, getFormViews,} from 'service/commonService.js'
 import RScroll from 'components/RScroll'
 export default {
   filters: {
@@ -164,6 +164,36 @@ export default {
   components: {
     RScroll
   },
+  computed: {
+    // 仓库类型
+    warehouseType(){
+      return this.warehouse.warehouseType
+    },
+  },
+  watch: {
+    warehouseType: {
+      handler(val){
+        this.typeSub = this.typeToSubMap[val] || 'noMatched';
+        for(let item of this.warehouseConfig){
+          if(item.fieldCode === this.typeSub) {
+            // 将当前员工编码, 组织编码等找到对应的名称
+            if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
+              let requestParams = this.handlerParams(item);
+              requestData(requestParams).then(({tableContent = []}) => {
+                for(let dItem of tableContent){
+                  if(dItem[item.valueField] === this.warehouse[item.fieldCode]) {
+                    this.$set(this.warehouse, item.displayField, dItem[item.displayField])
+                    break;
+                  }
+                }
+              })  
+            }
+          }
+        }
+      },
+      immediate: true
+    },
+  },
   methods: {
     // TODO 获取默认图片
     getDefaultImg() {
@@ -177,6 +207,23 @@ export default {
           transCode: this.transCode
         }
       })
+    },
+    // 处理配置中的接口请求
+    handlerParams(sItem) {
+      let url = sItem.dataSource.data.url;
+      let params = sItem.dataSource.data.params;
+      let keys = Object.keys(params);
+      let requestParams = {
+        url,
+      }
+      if(keys.length) {
+        let data = {};
+        keys.forEach(key => {
+          data[key] = params[key].type === 'text' ? params[key].value : '';
+        })
+        requestParams.data = data;
+      }
+      return requestParams
     },
     // 获取 表单基本信息
     async getFormViewInfo() {
@@ -232,15 +279,15 @@ export default {
       })
     },
     // 获取组织并将id转换成对应的中文名
-    getDepart() {
-      return getDepartMentWage().then(({ tableContent }) => {
-        for(let item of tableContent) {
-          if(item['GROUP_CODE'] === this.warehouse['groupCode']) {
-            this.$set(this.warehouse, 'groupCode', item.GROUP_NAME)
-          }
-        }
-      })
-    },
+    // getDepart() {
+    //   return getDepartMentWage().then(({ tableContent }) => {
+    //     for(let item of tableContent) {
+    //       if(item['GROUP_CODE'] === this.warehouse['groupCode']) {
+    //         this.$set(this.warehouse, 'groupCode', item.GROUP_NAME)
+    //       }
+    //     }
+    //   })
+    // },
     //仓库信息
     async findData() {
       await getwarehouseInfo(this.transCode).then(({formData = {}, attachment = []}) => {
@@ -293,7 +340,7 @@ export default {
         this.$loading.hide();  
       });
       // 获取组织并将id转换成对应的中文名
-      await this.getDepart();
+      // await this.getDepart();
     }
   },
   created() {

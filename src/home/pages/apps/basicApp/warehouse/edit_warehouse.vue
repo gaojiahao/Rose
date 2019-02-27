@@ -16,9 +16,18 @@
           </div>
           <!-- 下拉框 -->
           <div v-if="item.xtype === 'r2Combo' && item.fieldCode !== 'warehouseProvince' && item.fieldCode !== 'warehouseStatus'" >
-            <r-picker class="vux-1px-t" :title="item.fieldLabel" :data="item.remoteData" :value="warehouse[item.fieldCode]"
+            <!-- 显示字段和提价的字段一样 -->
+            <template v-if="item.valueField === item.displayField">
+               <r-picker class="vux-1px-t" :title="item.fieldLabel" :data="item.remoteData" :value="warehouse[item.fieldCode]"
                       v-model="warehouse[item.fieldCode]" :required='!item.allowBlank' >
-            </r-picker>
+              </r-picker>
+            </template>
+            <template v-else>
+                <r-picker class="vux-1px-t" :title="item.fieldLabel" :data="item.remoteData" :value="warehouse[item.fieldCode]"
+                      v-model="warehouse[item.displayField]" :required='!item.allowBlank' @on-change="onChange(item, warehouse[item.displayField])">
+                </r-picker>
+            </template>
+           
           </div>
           <!-- 仓库状态 -->
           <template v-else-if="item.fieldCode === 'warehouseStatus'">
@@ -66,6 +75,7 @@ import common from 'mixins/common.js'
 import UploadImage from 'components/UploadImage'
 import PopWarelabeList from 'components/Popup/PopWarelabelList'
 import duplicateComponent from '../../../components/duplication'
+import { setTimeout } from 'timers';
 export default {
   data() {
     return {
@@ -149,8 +159,15 @@ export default {
       handler(val){
         this.typeSub = this.typeToSubMap[val] || 'noMatched';
         for(let item of this.warehouseConfig){
-          if(item.fieldCode === this.typeSub){
+          if(item.fieldCode === this.typeSub) {
             item.hiddenInRun = false;
+            // 将当前员工编码, 组织编码等找到对应的名称
+            for(let dItem of item.remoteData){
+              if(dItem[item.valueField] === this.warehouse[item.fieldCode]) {
+                this.$set(this.warehouse, item.displayField, dItem[item.displayField])
+                break;
+              }
+            }
           }
           else{
             if(item.fieldCode === 'staffDealerCode' || item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
@@ -159,6 +176,7 @@ export default {
               }
             
           }
+
         }
         if(this.warehouseType === '库位'){
           delete this.warehouseDuplicateData.warehouseRel
@@ -264,7 +282,6 @@ export default {
         })
         let {baseinfo = {}, warehouse = {}} = formData;
         this.hasDefault = true;
-
         switch (warehouse.warehouseStatus) {
           case 1:
             this.warehouseStatus = '使用中';
@@ -282,7 +299,6 @@ export default {
         this.baseinfo = baseinfo;
         this.warehouse = warehouse;
         this.biReferenceId = this.warehouse.referenceId;
-
         if (this.warehouse.warehousePic) {
           this.picShow = true;
           this.MatPic = `/H_roleplay-si/ds/download?url=${this.warehouse.warehousePic}&width=400&height=400`;
@@ -310,6 +326,14 @@ export default {
           return
         };
         this.warehouse.warehouseCity = this.AccountAddress[1];
+      }
+    },
+    onChange(item, val) {
+      for(let cItem of item.remoteData){
+        if(cItem[item.displayField] === val) {
+          this.$set(this.warehouse, item.fieldCode, cItem[item.valueField])
+          break;
+        }
       }
     },
     //提交
