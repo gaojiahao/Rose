@@ -7,7 +7,7 @@
       </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="orderInfo" :order-info="orderInfo"></basic-info>
-      <!-- 任务信息 -->
+      <!-- 项目任务信息 -->
       <div class="form_content">
         <div class="main_content">
           <div class="vux-1px-b" v-for="(item, index) in otherConfig" :key="index">
@@ -24,9 +24,13 @@
               </div>
             </template> 
           </div>
+          <div class="each_info">
+            <label>备注</label>
+            <span class="field_value">{{orderInfo.comment || "无"}}</span>
+          </div>
         </div>
       </div>
-      <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
+      <!-- 任务日志 -->
       <div class="form_content">
         <div class="main_content task_log">
           <span class="log_title vux-1px-b">任务日志</span>
@@ -52,6 +56,7 @@
         </div>
         
       </div>
+      <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
     </div>
@@ -228,10 +233,10 @@ export default {
         margin-bottom: 0;
         .log_title{
           display: block;
-          padding: .1rem .05rem;
-          font-size: .16rem;
+          font-size: 16px;
+          padding: .1rem 0;
+          line-height: 16px;
           font-weight: bold;
-          color: #333;
         }
       }
       .weui-cell {

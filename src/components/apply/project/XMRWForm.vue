@@ -330,7 +330,9 @@
 
 <style lang="scss" scoped>
   @import './../../scss/bizApply';
-
+  .no_count {
+    height: calc(100% - .8rem);
+  }
   .materiel_list {
     background: #fff;
     padding: 0 .15rem;
