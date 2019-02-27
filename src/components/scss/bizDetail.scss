@@ -550,12 +550,13 @@
     display: flex;
     justify-content: space-between;
     line-height: .16rem;
-    label{
+    label {
       color: #999;
       margin-right: .08rem;
     }
-    .field_value{
+    .field_value {
       flex: 1;
+      font-size: .14rem;
       text-align: right;
     }
   }
