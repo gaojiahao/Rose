@@ -31,7 +31,7 @@
 // vux插件引入
 import {dateFormat} from 'vux'
 //请求 引入
-import {getAppDetail} from 'service/appSettingService.js'
+import {getAppDetail} from 'service/app-basic/appSettingService'
 import homeService from 'service/homeservice'
 //组件引入
 import RScroll from 'components/RScroll'
@@ -86,7 +86,7 @@ export default {
     },
     //获取应用信息
     getAppInfo(){
-      return getAppDetail(this.listId).then(data =>{
+      return getAppDetail(this.listId).then(data => {
         this.appInfo = data[0];
         this.appInfo.icon = this.appInfo.icon ?`/dist/${this.appInfo.icon}`: '';
         this.appInfo.crtTime = dateFormat(this.appInfo.crtTime);

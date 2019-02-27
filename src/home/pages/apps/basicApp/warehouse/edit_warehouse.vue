@@ -66,12 +66,12 @@
 </template>
 <script>
 import {TransferDom, Picker, Popup, Group, XAddress, ChinaAddressV4Data, Icon, Cell, Datetime} from 'vux';
-import {getBaseInfoDataBase, getFormConfig, requestData, getFormViews} from 'service/commonService.js';
-import {save, update, getwarehouseInfo, getDepartMentWage} from 'service/warehouseService.js'
-import {getDictByType, getObjDealerByLabelName} from 'service/commonService.js'
+import {getBaseInfoDataBase, getFormConfig, requestData, getFormViews} from 'service/commonService';
+import {save, update, getwarehouseInfo, getDepartMentWage} from 'service/warehouseService'
+import {getDictByType, getObjDealerByLabelName} from 'service/commonService'
 import RPicker from 'components/basicPicker';
 import RScroll from 'components/RScroll'
-import common from 'mixins/common.js'
+import common from 'mixins/common'
 import UploadImage from 'components/UploadImage'
 import PopWarelabeList from 'components/Popup/PopWarelabelList'
 import duplicateComponent from '../../../components/duplication'

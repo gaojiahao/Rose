@@ -80,10 +80,10 @@
 </template>
 <script>
 import { TransferDom, Picker, Popup, Group,XAddress, ChinaAddressV4Data, Icon, XInput, Datetime } from 'vux';
-import { getBaseInfoDataBase,getDictByType, getFormConfig, requestData, getFormViews } from 'service/commonService.js';
-import dealerService from 'service/dealerService.js'
+import { getBaseInfoDataBase,getDictByType, getFormConfig, requestData, getFormViews } from 'service/commonService';
+import dealerService from 'service/dealerService'
 import RPicker from 'components/basicPicker';
-import common from 'mixins/common.js'
+import common from 'mixins/common'
 import RScroll from 'components/RScroll'
 import UploadImage from 'components/UploadImage'
 import duplicateComponent from '../../../components/duplication'

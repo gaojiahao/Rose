@@ -1,8 +1,8 @@
-import {getWorkFlow, currentUser, getListId, isMyflow, getAppExampleDetails, getListById, getFromStatus} from 'service/detailService'
-import {getPCCommentList, isSubscribeByRelationKey} from 'service/commentService'
-import {getAppDetail} from 'service/appSettingService'
-import {saveAndCommitTask, getFormConfig, getFormViews} from 'service/commonService'
-import {numberComma} from 'vux'
+import { isMyflow, getListById, getListId, getWorkFlow, currentUser, getFromStatus, getAppExampleDetails } from 'service/detailService'
+import { isSubscribeByRelationKey } from 'service/commentService'
+import { getAppDetail, getPCCommentList } from 'service/app-basic/appSettingService'
+import { saveAndCommitTask, getFormConfig, getFormViews } from 'service/commonService'
+import { numberComma } from 'vux'
 // 组件引入
 import BasicInfo from 'components/detail/commonPart/BasicInfo'
 import FormCell from 'components/detail/commonPart/FormCell'
@@ -12,12 +12,12 @@ import PopMatterDetail from 'components/Popup/matter/PopMatterDetail'
 import PriceTotal from 'components/detail/commonPart/PriceTotal'
 import OtherPart from 'components/detail/commonPart/OtherPart'
 //公共方法引入
-import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
-import {toFixed} from '@/plugins/calc'
+import { accAdd } from '@/home/pages/maps/decimalsAdd'
+import { toFixed } from '@/plugins/calc'
 import platfrom from '@/plugins/platform/index'
 /* 引入微信相关 */
-import {register} from 'plugins/wx'
-import {shareContent} from 'plugins/wx/api'
+import { register } from 'plugins/wx'
+import { shareContent } from 'plugins/wx/api'
 
 export default {
   components: {

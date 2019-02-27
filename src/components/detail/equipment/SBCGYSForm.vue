@@ -39,7 +39,7 @@
   import MatterItem from 'components/detail/commonPart/MatterItem'
   import FormCell from 'components/detail/commonPart/FormCell'
   //公共方法引入
-  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd.js'
+  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
 
   export default {

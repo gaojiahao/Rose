@@ -42,7 +42,7 @@
 
 <script>
 //请求 引入
-import {getPCCommentList} from 'service/appSettingService.js'
+import {getPCCommentList} from 'service/app-basic/appSettingService'
 import {savePraise} from 'service/commentService'
 import emotion from '@/home/pages/maps/emotion'
   /* 引入微信相关 */

@@ -24,7 +24,7 @@
 
 <script>
 import {Icon, Popup, LoadMore} from 'vux'
-import { getProjectCostByGroupId, getCostByGroupId } from 'service/costService.js'
+import { getProjectCostByGroupId, getCostByGroupId } from 'service/costService'
 import {requestData} from 'service/commonService'
 import RScroll from 'components/RScroll'
 import MSearch from 'components/search'

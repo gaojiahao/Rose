@@ -19,12 +19,16 @@
   </div>
 </template>
 <script>
+// 请求引入
 import { save, update, getJobList } from 'service/Directorys/jobService';
+// 自定义组件引入
 import RPicker from 'components/RPicker';
+// mixin引入
 import common from 'mixins/common';
 export default {
   data() {
     return {
+      listId: '',
       jobInfo: {
         name: "",
         status: "使用中",
@@ -216,14 +220,16 @@ export default {
   },
   created() {
     this.$loading.show();
-    let query = this.$route.query;
+    let { query } = this.$route;
+    this.listId = query.listId;
     if(query.id){
       this.jobId = query.id;
       this.findData().then(()=>{
         this.$loading.hide();
-      });   
+      }); 
       return  
     }
+    // 列表的tab栏如果处于被选中状态 此时点击*新增* 职位类型默认为tab选中值
     if(query.jobType) {
       this.jobInfo.type = query.jobType;
     }

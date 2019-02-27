@@ -35,7 +35,7 @@
 <script>
   // 请求 引入
   import {getUserDetail} from 'service/Directorys/userService'
-  import {getAppDetail} from 'service/appSettingService'
+  import {getAppDetail} from 'service/app-basic/appSettingService'
   import FormCell from 'components/detail/commonPart/FormCell'
 
   export default {

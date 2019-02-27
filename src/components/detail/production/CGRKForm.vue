@@ -44,7 +44,7 @@
   import MatterList from 'components/detail/commonPart/MatterList'
   import MatterItem from 'components/detail/commonPart/MatterItem'
   //公共方法引入
-  import {accAdd, accMul, accDiv, accSub} from '@/home/pages/maps/decimalsAdd.js'
+  import {accAdd, accMul, accDiv, accSub} from '@/home/pages/maps/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
 
   export default {

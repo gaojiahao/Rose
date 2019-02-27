@@ -7,8 +7,6 @@ import tokenService from '../../service/tokenService'
 import { AlertModule } from 'vux'
 import errHandle from 'service/errHandle'
 
-
-// import qs from 'qs';
 let qs = require('querystring');
 
 // reject处理
@@ -47,10 +45,11 @@ fly.interceptors.request.use((request) => {
 fly.interceptors.response.use(
   function (response) {
     let { success = true, message = '请求异常' } = response.data;
-    if(success){
+    if(success) {
       return response;
-    }else {
-      rejectError('reject', message)
+    }
+    else {
+      return rejectError('reject', message);
     }
   },
   function (error) {
@@ -95,7 +94,6 @@ let Rxports = {
   
   // 标准请求 （支持GET、POST）
   ajax(opts = {}) {
-    
     return new Promise((resolve, reject) => {
       let params = {
         method: opts.type || opts.method || 'GET',
@@ -108,7 +106,7 @@ let Rxports = {
       }
       if (params.method.toUpperCase() === 'POST') {
         params.data = qs.stringify(opts.data || opts.body) || {}
-        if(opts.contentType === 'application/json'){
+        if (opts.contentType === 'application/json') {
           params.data = opts.data
         }
       } else {
@@ -120,7 +118,8 @@ let Rxports = {
           if (params.url.indexOf('?') === -1) {
             // url上没有?
             params.url = encodeURI(`${params.url}?${query.join('&')}`)
-          } else {
+          } 
+          else {
             // url上有?，给其拼上&
             params.url = encodeURI(`${params.url}&${query.join('&')}`)
           }
@@ -134,7 +133,7 @@ let Rxports = {
     })
   },
   
-  // post请求，使用Payload
+  // POST请求
   post(opts = {}) {
     return new Promise((resolve, reject) => {
       fly.post(opts.url, opts.data).then(res => resolve(res.data));
@@ -143,10 +142,13 @@ let Rxports = {
 
   // 上传图片，单个文件
   upload({file = {}, biReferenceId = ''}) {
-    let param = new FormData();  // 创建form对象
-    param.append('file', file);  // 通过append向form对象添加数据
+    // 创建form对象
+    let param = new FormData(); 
+    // 通过append向form对象添加数据
+    param.append('file', file);  
+    // 添加form表单中其他数据
     if (biReferenceId) {
-      param.append('biReferenceId', biReferenceId); // 添加form表单中其他数据
+      param.append('biReferenceId', biReferenceId); 
     }
     return this.post({
       url: '/H_roleplay-si/ds/upload',

@@ -27,7 +27,7 @@
 
 <script>
   import {Icon, Popup, LoadMore} from 'vux'
-  import {getVATBilling, getVATReceipt, getManyVATBilling, getManyVATReceipt} from 'service/invoiceService.js'
+  import {getVATBilling, getVATReceipt, getManyVATBilling, getManyVATReceipt} from 'service/invoiceService'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
   import {sep} from 'path';

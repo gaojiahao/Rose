@@ -36,7 +36,7 @@ import PriceTotal from 'components/detail/commonPart/PriceTotal'
 import MatterList from 'components/detail/commonPart/MatterList'
 import MatterItem from 'components/detail/commonPart/MatterItem'
 //公共方法引入
-import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
+import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd'
 export default {
   data() {
     return {

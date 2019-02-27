@@ -42,7 +42,7 @@
   import {Tab, Icon, TabItem,} from 'vux'
   import {getList, getDictByType, getListViewById} from 'service/commonService'
   import {getMatList} from 'service/materService'
-  import {getAppDetail} from 'service/appSettingService'
+  import {getAppDetail} from 'service/app-basic/appSettingService'
   import RScroll from 'components/RScroll'
   import RSearch from 'components/search'
   import addBtn from 'components/list/commonPart/addBtn'

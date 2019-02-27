@@ -58,7 +58,7 @@ import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
 import contactPart from 'components/detail/commonPart/ContactPart'
 //公共方法引入
-import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
+import {accAdd} from '@/home/pages/maps/decimalsAdd'
 export default {
   data() {
     return {

@@ -63,7 +63,7 @@
 
 <script>
 import RPicker from 'components/basicPicker';
-import { requestData } from 'service/commonService.js';
+import { requestData } from 'service/commonService';
 export default {
   name: 'duplicateComponent',
   props: {

@@ -68,7 +68,7 @@
   import FormCell from 'components/detail/commonPart/FormCell'
   import PopCashList from 'components/Popup/finance/PopCashList'
   //公共方法引入
-  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd.js'
+  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
 
   export default {
