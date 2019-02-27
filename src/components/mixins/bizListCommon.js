@@ -2,7 +2,7 @@
 import { Tab, Icon, TabItem, numberComma, dateFormat } from 'vux'
 // 公共请求引入
 import { isMyflow } from 'service/detailService'
-import {getAppDetail} from 'service/appSettingService'
+import {getAppDetail} from 'service/app-basic/appSettingService'
 import { getSellOrderList } from 'service/listService'
 // 公共组装引入
 import RScroll from 'components/RScroll'

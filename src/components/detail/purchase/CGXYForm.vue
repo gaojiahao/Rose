@@ -38,7 +38,7 @@
   import PriceTotal from 'components/detail/commonPart/PriceTotal'
   import MatterList from 'components/detail/commonPart/MatterList'
   //公共方法引入
-  import {accAdd, accMul, accSub} from '@/home/pages/maps/decimalsAdd.js'
+  import {accAdd, accMul, accSub} from '@/home/pages/maps/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
 
   export default {

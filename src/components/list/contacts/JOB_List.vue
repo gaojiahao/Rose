@@ -179,11 +179,15 @@
       },
       // 新增
       goEdit() {
-        let {name} = this.$route.query,
-          {folder, fileName} = this.$route.params;
+        let { name, listId } = this.$route.query,
+            { folder, fileName } = this.$route.params;
         this.$router.push({
           path: `/fillform/${folder}/${fileName}`,
-          query: {name, jobType: this.activeName}
+          query: {
+            name, 
+            listId,
+            jobType: this.activeName
+          }
         })
       },
       // TODO 设置状态的class

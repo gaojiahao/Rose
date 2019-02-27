@@ -65,7 +65,7 @@
 import {TransferDom, Popup, Group, Icon, XButton,dateFormat} from 'vux'
 import RScroll from 'components/RScroll'
 //请求 引入
-import {getChangeLog,saveLog} from 'service/appSettingService.js'
+import {getChangeLog,saveLog} from 'service/app-basic/appSettingService'
 export default {
   name:'ChangeLog',
   props:{

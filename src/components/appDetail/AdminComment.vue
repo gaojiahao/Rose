@@ -84,7 +84,7 @@
 import {TransferDom, Popup, Group, Icon, XButton,dateFormat} from 'vux'
 import RScroll from 'components/RScroll'
 //请求 引入
-import {getAdminCommentList} from 'service/appSettingService.js'
+import {getAdminCommentList} from 'service/app-basic/appSettingService'
 import { setTimeout } from 'timers';
 export default {
   name:'ChangeLog',

@@ -59,7 +59,7 @@
 <script>
   import {Tab, Icon, TabItem, dateFormat} from 'vux'
   import dealerService from 'service/dealerService'
-  import {getAppDetail} from 'service/appSettingService'
+  import {getAppDetail} from 'service/app-basic/appSettingService'
   import searchIcon from 'components/search'
   import RScroll from 'components/RScroll'
   import addBtn from 'components/list/commonPart/addBtn'

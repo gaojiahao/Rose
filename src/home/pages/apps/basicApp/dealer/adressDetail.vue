@@ -67,8 +67,8 @@
 </template>
 <script>
 import { dateFormat } from 'vux'
-import dealerService from 'service/dealerService.js'
-import { getFormConfig, getFormViews } from 'service/commonService.js'
+import dealerService from 'service/dealerService'
+import { getFormConfig, getFormViews } from 'service/commonService'
 import RScroll from 'components/RScroll'
 import FormCell from 'components/detail/commonPart/FormCell'
 export default {

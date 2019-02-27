@@ -20,7 +20,7 @@
 <script>
   require('../static/css/iconfont/iconfont.css')
   import platfrom from './plugins/platform/index'
-  import { getMsgList } from 'service/msgService.js'
+  import { getMsgList } from 'service/msgService'
   import { Badge } from 'vux'
   export default {
     name: 'app',

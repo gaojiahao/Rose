@@ -1,7 +1,7 @@
 import $flyio from '../plugins/ajax';
 
 
-// TODO 保存物料
+// 保存物料
 export let save = (data = {}) => {
   return $flyio.post({
     url: '/H_roleplay-si/inventory/save',
@@ -9,7 +9,7 @@ export let save = (data = {}) => {
   })
 };
 
-// TODO 修改物料
+// 修改物料
 export let update = (data = {}) => {
   return $flyio.post({
     url: '/H_roleplay-si/inventory/update',
@@ -17,7 +17,7 @@ export let update = (data = {}) => {
   })
 };
 
-// TODO 查看物料详情
+// 查看物料详情
 export let findData = (transCode = '') => {
   return $flyio.ajax({
     url: '/H_roleplay-si/inventory/findData',
@@ -25,7 +25,7 @@ export let findData = (transCode = '') => {
   })
 };
 
-// TODO 上传图片
+// 上传图片
 export let upload = ({file = {}, biReferenceId = ''}) => {
   return $flyio.upload({
     file,
@@ -33,7 +33,7 @@ export let upload = ({file = {}, biReferenceId = ''}) => {
   })
 };
 
-// TODO 删除上传的图片
+// 删除上传的图片
 export let delImg = (id = '') => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/delete',
@@ -44,7 +44,7 @@ export let delImg = (id = '') => {
   })
 };
 
-// TODO 获取仓库出库物料
+// 获取仓库出库物料
 export let getSumInvBalance = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getSumInvBalance',
@@ -67,7 +67,7 @@ export let getCostById = (data = {}) => {
   })
 }
 
-// TODO 获取物料Pop列表
+// 获取物料Pop列表
 export let getObjInventoryByProcessing = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getObjInventoryByProcessing',
@@ -77,7 +77,7 @@ export let getObjInventoryByProcessing = (data = {}) => {
     }
   })
 };
-// TODO 获取物料pop列表
+// 获取物料pop列表
 export let getObjInventory = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getObjInventory',
@@ -87,7 +87,7 @@ export let getObjInventory = (data = {}) => {
     }
   })
 };
-// TODO 获取物料Pop列表(采购订单)
+// 获取物料Pop列表(采购订单)
 export let getInventory7501 = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getPurchaseOrder',
@@ -98,7 +98,7 @@ export let getInventory7501 = (data = {}) => {
   })
 };
 
-// TODO 获取物料Pop列表(采购入库)
+// 获取物料Pop列表(采购入库)
 export let getInventory7502 = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getPurchaseWarehousing',
@@ -116,7 +116,7 @@ export let getMatList = (data = {}) => {
   })
 }
 
-// TODO 获取物料Pop列表(盘点)
+// 获取物料Pop列表(盘点)
 export let getKCPDList = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getSumInvBalance_KCPD',
@@ -134,7 +134,7 @@ export let getCKTHCKList = (data = {}) => {
     data
   })
 }
-// TODO 获取物料列表(需求调减/加工订单)
+// 获取物料列表(需求调减/加工订单)
 export let getXQTJList = (data = {}, method = 'getDemandAdjustment') => {
   return $flyio.ajax({
     url: `/H_roleplay-si/ds/${method}`,
@@ -151,7 +151,7 @@ export let getPurchaseInNeeds = (data = {}) => {
     data
   })
 }
-// TODO 获取加工订单Bom
+// 获取加工订单Bom
 export let getJGDDBom = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getInProcessingOrderBom',
@@ -162,7 +162,7 @@ export let getJGDDBom = (data = {}) => {
   })
 };
 
-// TODO 获取加工入库Bom
+// 获取加工入库Bom
 export let getJGRKBom = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getBomByPInvCode',
@@ -172,7 +172,7 @@ export let getJGRKBom = (data = {}) => {
     }
   })
 };
-// TODO 获取工单任务派工Bom
+// 获取工单任务派工Bom
 export let getTaskBom = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getBomWorkOrderTask',
@@ -183,7 +183,7 @@ export let getTaskBom = (data = {}) => {
   })
 };
 
-// TODO 获取工艺路线名称
+// 获取工艺路线名称
 export let getObjTechnics = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getObjTechnics',
@@ -193,7 +193,7 @@ export let getObjTechnics = (data = {}) => {
     }
   })
 };
-// TODO 获取工序名称
+// 获取工序名称
 export let getUsingProcedure = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getUsingProcedure',
@@ -204,7 +204,7 @@ export let getUsingProcedure = (data = {}) => {
   })
 };
 
-// TODO 获取物料的辅助计量
+// 获取物料的辅助计量
 export let getObjInvMoreUnitByInvCode = (inventoryCode) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getObjInvMoreUnitByInvCode',
@@ -218,7 +218,7 @@ export let getObjInvMoreUnitByInvCode = (inventoryCode) => {
   })
 };
 
-// TODO 获取物料列表(低值易耗品采购订单)
+// 获取物料列表(低值易耗品采购订单)
 export let getLowValueConsumPurchaseOrder = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getLowValueConsumPurchaseOrder',
@@ -232,7 +232,7 @@ export let getLowValueConsumPurchaseOrder = (data = {}) => {
   })
 };
 
-// TODO 获取物料列表(低值易耗品采购验收与支付)
+// 获取物料列表(低值易耗品采购验收与支付)
 export let getLowPriceConsumableInWarehouse = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getLowPriceConsumableInWarehouse',
@@ -256,7 +256,7 @@ export let getProductPriceAllInventory = (data = {}) => {
   })
 };
 
-// TODO 获取销售合同的物料列表
+// 获取销售合同的物料列表
 export let getSalesContract = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getSalesContract',
@@ -267,7 +267,7 @@ export let getSalesContract = (data = {}) => {
   })
 };
 
-// TODO 获取销售订单预测的物料列表
+// 获取销售订单预测的物料列表
 export let getInventoryToProcessing = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getInventoryToProcessing',
@@ -278,7 +278,7 @@ export let getInventoryToProcessing = (data = {}) => {
   })
 };
 
-// TODO 获取产品销售订单的物料列表
+// 获取产品销售订单的物料列表
 export let getSalesOrderNew = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getSalesOrderNew',
@@ -289,7 +289,7 @@ export let getSalesOrderNew = (data = {}) => {
   })
 };
 
-// TODO 获取销售报价的价格区间
+// 获取销售报价的价格区间
 export let getPriceRange = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getPriceRange',
@@ -301,7 +301,7 @@ export let getPriceRange = (data = {}) => {
   })
 };
 
-// TODO 获取物料列表(完工预入库)
+// 获取物料列表(完工预入库)
 export let getEtcPutInStorage = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getEtcPutInStorage',
@@ -312,7 +312,7 @@ export let getEtcPutInStorage = (data = {}) => {
   })
 };
 
-// TODO 获取物料bom库存
+// 获取物料bom库存
 export let getInProcessingStorageSumSource = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getInProcessingStorageSumSource',
@@ -323,10 +323,4 @@ export let getInProcessingStorageSumSource = (data = {}) => {
   })
 };
 
-export default {
-  save,
-  update,
-  findData,
-  upload,
-  delImg,
-}
+export default {}

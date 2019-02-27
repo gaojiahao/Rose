@@ -42,7 +42,7 @@
 <script>
 // 接口引入
 import homeService from 'service/homeservice'
-import { getMsgList } from 'service/msgService.js'
+import { getMsgList } from 'service/msgService'
 // 映射表引入
 import basicMap from './maps/basic'
 import Apps from './maps/businessApp'

@@ -24,7 +24,7 @@
 // vux插件引入
 import { Popup, Group,dateFormat} from 'vux'
 //请求 引入
-import {saveAssessment} from 'service/appSettingService.js'
+import {saveAssessment} from 'service/app-basic/appSettingService'
 import platfrom from '@/plugins/platform/index'
 export default {
   data(){

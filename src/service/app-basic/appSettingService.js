@@ -1,7 +1,6 @@
-/* 评论相关接口 */
-import $flyio from '../plugins/ajax';
+import $flyio from 'plugins/ajax';
 
-// TODO 获取pc评论列表
+// 获取pc评论列表
 export let getPCCommentList = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/comment/getCommentByRelationKey',
@@ -15,7 +14,7 @@ export let getPCCommentList = (data = {}) => {
   })
 };
 
-// TODO 获取评论列表
+// 获取评论列表
 export let getCommentList = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getMobileCommentByTransCode',
@@ -27,7 +26,7 @@ export let getCommentList = (data = {}) => {
   })
 };
 
-// TODO 获取回复列表
+// 获取回复列表
 export let getReply = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/comment/getCommentByParentId',
@@ -41,7 +40,7 @@ export let getReply = (data = {}) => {
   })
 };
 
-// TODO 发送评论
+// 发送评论
 export let saveComment = (data = {}) => {
   return $flyio.post({
     url: '/H_roleplay-si/comment/saveComment',
@@ -54,7 +53,7 @@ export let saveComment = (data = {}) => {
   })
 };
 
-// TODO 点赞
+// 点赞
 export let savePraise = (commentId = '') => {
   return $flyio.post({
     url: '/H_roleplay-si/comment/savePraise',
@@ -63,7 +62,8 @@ export let savePraise = (commentId = '') => {
     }
   })
 };
-//获取应用的详情
+
+// 获取 应用的基本信息（权限、图标、管理员等）
 export let getAppDetail = (uniqueId = '') => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/list/getListById',
@@ -72,21 +72,24 @@ export let getAppDetail = (uniqueId = '') => {
     }
   })
 };
-//获取更新日志列表
+
+// 获取 更新日志列表
 export let getChangeLog = (data={}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getChangeLog',
     data
   })
 };
-//获取管理员自评列表
+
+// 获取 管理员自评列表
 export let getAdminCommentList = (data={}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getAssessmentByListId',
     data
   })
 };
-//提交日志
+
+// 提交日志
 export let saveLog = (data={}) =>{
   return $flyio.ajax({
     type: 'POST',
@@ -95,18 +98,13 @@ export let saveLog = (data={}) =>{
     data
   })
 }
+
+// 提交管理员自评
 export let saveAssessment = (data={}) =>{
   return $flyio.post({
     url: '/H_roleplay-si/app/saveAssessment',
     data
   })
 }
-export default {
-  getAppDetail,
-  getChangeLog,
-  getAdminCommentList,
-  getPCCommentList,
-  saveLog
-
-}
+export default {}
 

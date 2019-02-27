@@ -36,7 +36,7 @@
   import contactPart from 'components/detail/commonPart/ContactPart'
   import MatterList from 'components/detail/commonPart/MatterList'
   import UploadFile from 'components/upload/UploadFile'
-  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd.js'
+  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 
   export default {
     data() {

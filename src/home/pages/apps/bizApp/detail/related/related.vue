@@ -39,7 +39,7 @@
   import {getList} from 'service/commonService'
   import {getListView} from 'service/detailService'
   import Apps from '../../maps/Apps'
-  import relatedKey from './../../maps/related.js'
+  import relatedKey from './../../maps/related'
   export default {
     data() {
       return {

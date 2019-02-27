@@ -1,5 +1,5 @@
 import { CellFormPreview, Group, Cell,Tab, Icon, TabItem, TransferDom, Popup,dateFormat,numberComma } from 'vux'
-import { getListClassfiy, getView, getViewList } from 'service/kmService.js'
+import { getListClassfiy, getView, getViewList } from 'service/kmService'
 import searchIcon from 'components/search'
 import RScroll from 'components/RScroll'
 

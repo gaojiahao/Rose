@@ -1,7 +1,7 @@
 /* 评论相关接口 */
 import $flyio from '../plugins/ajax';
 
-// TODO 获取评论列表(PC)
+// 获取评论列表(PC)
 export let getPCCommentList = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/comment/getCommentByRelationKey',
@@ -15,7 +15,7 @@ export let getPCCommentList = (data = {}) => {
   })
 };
 
-// TODO 获取评论列表
+// 获取评论列表
 export let getCommentList = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getMobileCommentByTransCode',
@@ -27,7 +27,7 @@ export let getCommentList = (data = {}) => {
   })
 };
 
-// TODO 获取回复列表
+// 获取回复列表
 export let getReply = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/comment/getCommentByParentId',
@@ -41,7 +41,7 @@ export let getReply = (data = {}) => {
   })
 };
 
-// TODO 发送评论
+// 发送评论
 export let saveComment = (data = {}) => {
   return $flyio.post({
     url: '/H_roleplay-si/comment/saveComment',
@@ -53,7 +53,7 @@ export let saveComment = (data = {}) => {
   })
 };
 
-// TODO 点赞
+// 点赞
 export let savePraise = (commentId = '') => {
   return $flyio.post({
     url: '/H_roleplay-si/comment/savePraise',
@@ -63,7 +63,7 @@ export let savePraise = (commentId = '') => {
   })
 };
 
-// TODO 是否关注
+// 是否关注
 export let isSubscribeByRelationKey = (relationKey = '') => {
   return $flyio.ajax({
     url: '/H_roleplay-si/comment/isSubscribeByRelationKey',
@@ -73,7 +73,8 @@ export let isSubscribeByRelationKey = (relationKey = '') => {
     }
   })
 }
-// ToDo 关注
+
+// 关注
 export let subscribeApp = (data = {}) => {
   return $flyio.ajax({
     type: 'POST',
@@ -81,14 +82,9 @@ export let subscribeApp = (data = {}) => {
     url: '/H_roleplay-si/comment/subscribeApp',
     data: data
   })
-  // return $flyio.post({
-  //   url: '/H_roleplay-si/comment/subscribeApp',
-  //   data: {
-  //     ...data
-  //   }
-  // })
 }
-// TODO 取关
+
+// 取关
 export let unsubscribeApp = (data = {}) => {
   return $flyio.ajax({
     type: 'POST',
@@ -100,7 +96,7 @@ export let unsubscribeApp = (data = {}) => {
     }
   })
 }
-// TODO 获取关注的人数
+// 获取关注的人数
 export let getUserList = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/comment/getUserByRelationKey',
@@ -108,9 +104,5 @@ export let getUserList = (data = {}) => {
   })
 }
 
-export default {
-  getCommentList: getPCCommentList,
-  saveComment,
-  savePraise,
-}
+export default {}
 

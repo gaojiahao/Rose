@@ -61,7 +61,7 @@ import detailCommon from 'components/mixins/detailCommon'
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
 //公共方法引入
-import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
+import {accAdd} from '@/home/pages/maps/decimalsAdd'
 export default {
   data() {
     return {

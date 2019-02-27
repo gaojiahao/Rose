@@ -60,7 +60,7 @@ import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
 import ProjectPart from 'components/detail/commonPart/Project'
 //公共方法引入
-import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
+import {accAdd} from '@/home/pages/maps/decimalsAdd'
 export default {
   data() {
     return {

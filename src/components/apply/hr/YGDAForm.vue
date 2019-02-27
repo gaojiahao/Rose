@@ -69,7 +69,7 @@
   import { getSOList } from 'service/detailService'
   import { submitAndCalc, saveAndStartWf, saveAndCommitTask, getDictByType } from 'service/commonService'
   // mixins 引入
-  import common from 'components/mixins/applyCommon.js'
+  import common from 'components/mixins/applyCommon'
   // 组件引入
   import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'

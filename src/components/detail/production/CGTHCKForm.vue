@@ -32,7 +32,7 @@ import { getSOList } from 'service/detailService'
 // mixins 引入
 import detailCommon from 'components/mixins/detailCommon'
 //公共方法引入
-import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
+import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
 // 组件 引入
 import RAction from 'components/RAction'

@@ -28,7 +28,7 @@
 // 插件 引入
 import Bscroll from 'better-scroll'
 // 请求 引入
-import { isSubscribeByRelationKey, subscribeApp, unsubscribeApp, getUserList } from 'service/commentService.js'
+import { isSubscribeByRelationKey, subscribeApp, unsubscribeApp, getUserList } from 'service/commentService'
 /* 引入微信相关 */
 import {register} from 'plugins/wx'
 export default {

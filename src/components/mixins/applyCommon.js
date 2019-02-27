@@ -1,7 +1,7 @@
 import {commitTask, getBaseInfoData, getProcess, getProcessStatus, getFormConfig, requestData, getFormViews, getModelConfigByListId, 
         update, updateData, getFromStatus} from 'service/commonService'
 import {getListId, isMyflow, getSaleQuotePrice,} from 'service/detailService'
-import {getAppDetail} from 'service/appSettingService'
+import {getAppDetail} from 'service/app-basic/appSettingService'
 import {numberComma} from 'vux'
 import Bscroll from 'better-scroll'
 import {accAdd, accMul, accSub, accDiv} from '@/home/pages/maps/decimalsAdd'
