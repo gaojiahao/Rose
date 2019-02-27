@@ -22,7 +22,7 @@
             <div class='each_property vux-1px-t' v-if="item.xtype === 'r2Numberfield'">
               <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
               <div class='property_val' >
-                <input type='number' placeholder="请输入" v-model="dealer[item.fieldCode]" @blur="check(item)" @focus="getFocus($event)"/>
+                <input type='number' placeholder="请输入" v-model.number="dealer[item.fieldCode]" @blur="check(item)" @focus="getFocus($event)"/>
                 <icon type="warn" class='warn' v-if='item.warn'></icon>
               </div>
             </div>
@@ -35,19 +35,6 @@
             <r-picker class="vux-1px-t" :title="item.fieldLabel" :data="item.remoteData" :value="dealerStatus" 
                   v-model="dealerStatus" :required="!item.allowBlank"></r-picker>
           </template>
-          <!-- 省市区 -->
-          <!-- <template v-else-if="item.fieldCode === 'province'">
-            <div class='each_property vux-1px-t' @click="showAddress = true">
-              <label>省市区:</label>
-              <div class='picker'>
-                <span class='mater_nature' v-if="dealer.province === '' && dealer.city === '' && dealer.county === ''">请选择</span>
-                <span class='mater_nature' v-else>{{dealer.province}}{{dealer.city}}{{dealer.county}}</span>
-                <span class='icon-right'></span>
-              </div>
-              <x-address title="省市区"  :list="addressData" @on-hide='getAddress()' @on-shadow-change='changeAddress' :value="cAccountAddress"
-                        :show.sync="showAddress" v-show="false"></x-address>
-            </div>
-          </template> -->
           <!-- 往来类型 -->
           <template v-else>
             <div class='each_property vux-1px-t' @click="DealerPop">
@@ -100,7 +87,6 @@ import common from 'mixins/common.js'
 import RScroll from 'components/RScroll'
 import UploadImage from 'components/UploadImage'
 import duplicateComponent from '../../../components/duplication'
-import { request } from 'http';
 
 export default {
   data() {
@@ -146,6 +132,7 @@ export default {
       dealerDuplicateConfig: [], // 往来重复项的配置
       dealerDuplicateData: {}, // 往来重复项数据,
       uniqueId: '',
+      hasDefault: false
     }
   },
   computed: {
@@ -178,7 +165,7 @@ export default {
       let dealerLabelName = this.dealer.dealerLabelName;
       this.dealerDuplicateConfig.forEach(item => {
         // 当关系标签包含客户，供应商，加工商，渠道商，服务商时，省市区显示
-        if(item.name === 'deliveryAddresses'){
+        if(item.name === 'deliveryAddresses') {
           item.hiddenInRun = false;
           if(!dealerLabelName || (!dealerLabelName.includes('客户') && !dealerLabelName.includes('供应商') && !dealerLabelName.includes('加工商') 
             && !dealerLabelName.includes('渠道商') && !dealerLabelName.includes('服务商'))) {
@@ -186,7 +173,7 @@ export default {
           }
         }
         // 当关系标签包含生产商,经销供应商 证件显示
-        if(item.name === 'dealerCertificateRel'){
+        if(item.name === 'dealerCertificateRel') {
           item.hiddenInRun = false;
           if(!dealerLabelName || (!dealerLabelName.includes('生产商') && !dealerLabelName.includes('经销供应商'))) {
             item.hiddenInRun = true
@@ -196,9 +183,9 @@ export default {
     },
     mianTypes(val) {
       if(val){
-        for(let item of this.dealerConfig){
+        for(let item of this.dealerConfig) {
           // 主题类型为机构时，税号显示
-          if(item.fieldCode === 'taxNo'){
+          if(item.fieldCode === 'taxNo') {
             item.hiddenInRun = val === '机构' ? false : true;
             break
           }
@@ -207,7 +194,8 @@ export default {
     },
     country(val) {
       if(val) {
-        for(let item of this.dealerConfig){
+        let hasDefault = this.hasDefault;
+        for(let item of this.dealerConfig) {
           // 当前字段为【省】，将【国家或地区】的值赋值给请求【省】的参数中, 并设置【市】的默认值
           if(item.fieldCode === 'province') {
             item.requestParams.data.countryName = val;
@@ -216,8 +204,10 @@ export default {
                 dItem.name = dItem[item.displayField];
                 dItem.value = dItem[item.displayField];
               })
-              let province = tableContent.length ? tableContent[0].name : '';
-              this.$set(this.dealer, 'province', province)
+              if(!hasDefault) {
+                let province = tableContent.length ? tableContent[0].name : '';
+                this.$set(this.dealer, 'province', province)
+              } 
               this.$set(item, 'remoteData', tableContent)
             })
             break
@@ -227,7 +217,8 @@ export default {
     },
     province(val) {
       if(val) {
-        for(let item of this.dealerConfig){
+        let hasDefault = this.hasDefault;
+        for(let item of this.dealerConfig) {
           // 当前字段为【市】，将【省】的值赋值给请求【市】的参数中, 并设置【市】的默认值
           if(item.fieldCode === 'city') {
             item.requestParams.data.countryName = this.dealer.country;
@@ -237,8 +228,10 @@ export default {
                 dItem.name = dItem[item.displayField];
                 dItem.value = dItem[item.displayField];
               })
-              let city = tableContent.length ? tableContent[0].name : '';
-              this.$set(this.dealer, 'city', city)
+              if(!hasDefault) {
+                let city = tableContent.length ? tableContent[0].name : '';
+                this.$set(this.dealer, 'city', city)
+              } 
               this.$set(item, 'remoteData', tableContent)
             })
             break
@@ -248,7 +241,8 @@ export default {
     },
     city(val) {
       if(val) {
-        for(let item of this.dealerConfig){
+        let hasDefault = this.hasDefault;
+        for(let item of this.dealerConfig) { 
           // 当前字段为【区】，将【市区】的值赋值给请求【区】的参数中, 并设置【区】的默认值
           if(item.fieldCode === 'county') {
             item.requestParams.data.countryName = this.dealer.country;
@@ -259,8 +253,10 @@ export default {
                 dItem.name = dItem[item.displayField];
                 dItem.value = dItem[item.displayField];
               })
-              let county = tableContent.length ? tableContent[0].name : '';
-              this.$set(this.dealer, 'county', county)
+              if(!hasDefault) {
+                let county = tableContent.length ? tableContent[0].name : '';
+                this.$set(this.dealer, 'county', county)
+              }
               this.$set(item, 'remoteData', tableContent)
             })
             break
@@ -270,36 +266,44 @@ export default {
     },
     paymentTerm(val) {
       if(val) {
-        let paramsValue = ''
-        for(let item of this.dealerConfig){
-          if(item.fieldCode === 'paymentTerm'){
-            if(item.remoteData && item.remoteData.length) {
-              for(let dItem of item.remoteData) {
-                if(dItem.name === val){
-                  paramsValue = dItem.OriginValue;
-                  break;
+        let paramsValue = '',
+            config = this.dealerConfig,
+            { paymentTerm } = this.dealer,
+            hasDefault = this.hasDefault;
+        for(let item of config) {
+          setTimeout(() => {
+            if(item.fieldCode === 'paymentTerm') {
+              // 循环结算方式的数据, 匹配到当前结算方式的value, 该值作为请求账期方式的参数
+              if(item.remoteData && item.remoteData.length) {
+                for(let dItem of item.remoteData) {
+                  if(dItem.name === paymentTerm) {
+                    paramsValue = dItem.OriginValue;
+                    break;
+                  }
                 }
               }
             }
-          }
-          if(item.fieldCode === 'wayOfPayment'){
-            item.hiddenInRun = val === '后支付' ? false : true;
-            if(!item.hiddenInRun){
-              item.requestParams.data.value = paramsValue;
-              requestData(item.requestParams).then(({tableContent = []}) =>{
-                tableContent.length && tableContent.forEach(sItem => {
-                  sItem.OriginValue = sItem.value;
-                  sItem.name = sItem[item.displayField];
-                  sItem.value = sItem[item.displayField];
+            if(item.fieldCode === 'wayOfPayment') {
+              item.hiddenInRun = paymentTerm === '后支付' ? false : true;
+              // 账期方式显示, 重新请求数据
+              if(!item.hiddenInRun) {
+                item.requestParams.data.value = paramsValue;
+                requestData(item.requestParams).then(({tableContent = []}) =>{
+                  tableContent.length && tableContent.forEach(sItem => {
+                    sItem.OriginValue = sItem.value;
+                    sItem.name = sItem[item.displayField];
+                    sItem.value = sItem[item.displayField];
+                  })
+                  // 页面为提交时, 赋初始值
+                  if(!hasDefault) {
+                    let wayOfPayment = tableContent.length ? tableContent[0].name : '';
+                    this.$set(this.dealer, 'wayOfPayment', wayOfPayment)
+                  }
+                  this.$set(item, 'remoteData', tableContent)
                 })
-                let wayOfPayment = tableContent.length ? tableContent[0].name : '';
-                this.$set(this.dealer, 'wayOfPayment', wayOfPayment)
-                this.$set(item, 'remoteData', tableContent)
-
-              })
+              }
             }
-            break;
-          }
+          }, 0) 
         }
       }
     }
@@ -463,6 +467,7 @@ export default {
           }
         })
         let {baseinfo = {}, dealer = {}} = formData;
+        this.hasDefault = true;
         switch (dealer.dealerStatus) {
             case '1':
               this.dealerStatus = '使用中';
@@ -779,6 +784,7 @@ export default {
           this.$loading.hide()
         });
         this.getDealer()
+        this.hasDefault = false;
       })();
       return 
     }
