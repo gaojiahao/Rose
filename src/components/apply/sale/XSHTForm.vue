@@ -10,7 +10,7 @@
         <!-- <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part> -->
         <!-- 物料列表 -->
         <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :show-matter-pop="showMatterPop" :filter-list="filterList"
-          :actions="actions" :btnInfo="btnInfo" :matter-list="matterList" :default-value="matterList" 
+          :actions="actions" :btnInfo="btnInfo" :matter-list="matterList" :default-value="[]" 
           :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
           :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
           :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
@@ -139,19 +139,21 @@ export default {
     // TODO 选中物料项
     selMatter(val) {
       let sels = JSON.parse(val); 
+      let matterList = JSON.parse(JSON.stringify(this.matterList))
       sels.map(item => {
         this.submitMatterField.forEach(sItem => {
           if(sItem.fieldCode !== 'price' && sItem.showFieldCode){
             item[sItem.fieldCode] = item[sItem.fieldCode] || item[sItem.showFieldCode] 
           }
         })
-        item.price = item.price || '';
-        item.taxRate = item.taxRate || 0.16;
+        item.price = '';
+        item.taxRate = this.taxRate;
         item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
         item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
         item.assMeasureDescription =  item.assMeasureDescription || item.invSubUnitComment || null; // 辅助计量说明
+        matterList.push(item)
       });
-      this.matterList = sels;
+      this.matterList = matterList;
     },
     //选择默认图片
     getDefaultImg(item) {
@@ -165,19 +167,19 @@ export default {
       this.showMaterielPop = !this.showMaterielPop
     },
     // 选择要删除的物料
-    delClick(sItem, index) {
+    delClick(sItem, index, key) {
       let arr = this.selItems;
-      let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
+      let delIndex = arr.findIndex(item => item === index);
       //若存在重复的 则清除
       if (delIndex !== -1) {
         arr.splice(delIndex, 1);
         return;
       }
-      arr.push(sItem);
+      arr.push(index);
     },
-    // TODO 判断是否展示选中图标
-    showSelIcon(sItem) {
-      return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
+    // 判断是否展示选中图标
+    showSelIcon(sItem, index) {
+      return this.selItems.includes(index);
     },
     // 全选
     checkAll() {
@@ -185,20 +187,19 @@ export default {
         this.selItems = [];
         return
       }
-      this.selItems = JSON.parse(JSON.stringify(this.matterList));
+      this.selItems = this.matterList.map((item, index) => index);
     },
     // 删除选中的
-    deleteCheckd() {
+    deleteCheckd () {
       this.$vux.confirm.show({
         content: '确认删除?',
         // 确定回调
         onConfirm: () => {
-          this.selItems.forEach(item => {
-            let index = this.matterList.findIndex(item2 => item2.inventoryCode === item.inventoryCode);
-            if (index >= 0) {
-              this.matterList.splice(index, 1);
-            }
-          })
+          let orderList = {};
+          let selItems = this.selItems;
+          // 没被删除的
+          let remainder = this.matterList.filter((item, index) => !selItems.includes(index)); 
+          this.matterList = remainder;
           this.selItems = [];
           this.matterModifyClass = false;
         }

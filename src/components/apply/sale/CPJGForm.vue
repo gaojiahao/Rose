@@ -74,6 +74,15 @@ export default {
         biComment: '',
         biProcessStatus: ''
       },
+      filterList: [
+        {
+          name: '物料名称',
+          value: 'inventoryName',
+        }, {
+          name: '物料编码',
+          value: 'inventoryCode',
+        }
+      ],
       priceMap: {},
       matterList: [], // 物料列表
       showMaterielPop: false, // 是否显示物料的popup
@@ -85,27 +94,27 @@ export default {
   },
   methods: {
     // 选择要删除的物料
-    delClick (index, sItem) {
+    delClick(sItem, index, key) {
       let arr = this.selItems;
-      let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
-      // 若存在重复的 则清除
+      let delIndex = arr.findIndex(item => item === index);
+      //若存在重复的 则清除
       if (delIndex !== -1) {
         arr.splice(delIndex, 1);
         return;
       }
-      arr.push(sItem);
+      arr.push(index);
     },
-    // TODO 判断是否展示选中图标
-    showSelIcon (sItem) {
-      return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
+    // 判断是否展示选中图标
+    showSelIcon(sItem, index) {
+      return this.selItems.includes(index);
     },
     // 全选
-    checkAll () {
+    checkAll() {
       if (this.selItems.length === this.matterList.length) {
         this.selItems = [];
         return
       }
-      this.selItems = JSON.parse(JSON.stringify(this.matterList));
+      this.selItems = this.matterList.map((item, index) => index);
     },
     // 删除选中的
     deleteCheckd () {
@@ -113,12 +122,11 @@ export default {
         content: '确认删除?',
         // 确定回调
         onConfirm: () => {
-          this.selItems.forEach(item=>{
-            let index = this.matterList.findIndex(item2=>item2.inventoryCode === item.inventoryCode);
-            if(index >= 0){
-              this.matterList.splice(index,1);
-            }
-          })
+          let orderList = {};
+          let selItems = this.selItems;
+          // 没被删除的
+          let remainder = this.matterList.filter((item, index) => !selItems.includes(index)); 
+          this.matterList = remainder;
           this.selItems = [];
           this.matterModifyClass = false;
         }
@@ -126,32 +134,22 @@ export default {
     },
     // TODO 点击增加更多物料
     addMatter () {
-      this.matterList.forEach(item => {
-        // 存储已输入的价格
-        this.priceMap[item.inventoryCode] = {
-          price: item.price,  // 标准价格
-          qtyOnline: item.qtyOnline,  // 数量上线
-          qtyDownline: item.qtyDownline,  // 数量下线
-          drDealerLabel: item.drDealerLabel,  // 客户类型
-          specialReservePrice: item.specialReservePrice,
-        };
-      });
-      // this.showPop = !this.showPop;
       this.showMaterielPop = !this.showMaterielPop
     },
     // TODO 选中物料项
     selMatter (val) {
       let sels = JSON.parse(val);
+      let matterList = JSON.parse(JSON.stringify(this.matterList));
       sels.forEach(item => {
-        let defaultValue = this.priceMap[item.inventoryCode] || {};
-        item.price = defaultValue.price || '';
-        item.qtyOnline = defaultValue.qtyOnline || '';
-        item.qtyDownline = defaultValue.qtyDownline || '';
-        item.drDealerLabel = defaultValue.drDealerLabel || '';
-        item.specialReservePrice = defaultValue.specialReservePrice || '';
+        item.price = '';
+        item.qtyOnline = '';
+        item.qtyDownline = '';
+        item.drDealerLabel = '';
+        item.specialReservePrice = '';
+        matterList.push(item)
       });
       this.priceMap = {};
-      this.matterList = [...sels];
+      this.matterList = matterList;
     },
     // TODO 获取默认图片
     getDefaultImg (item) {

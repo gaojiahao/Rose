@@ -9,11 +9,12 @@
                          :defaultContact="contactInfo"></pop-dealer-list>
         <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
         <!-- 物料列表 -->
-        <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop"
-          :actions="actions" :btnInfo="btnInfo" :matter-list="matterList" :default-value="matterList" 
+        <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :show-matter-pop="showMatterPop" :filter-list="filterList"
+          :actions="actions" :btnInfo="btnInfo" :matter-list="matterList" :default-value="[]"
           :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
-          :addMatter="addMatter" :sel-matter="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
-          :modify-matter="modifyMatter" :show-delete="showDelete" :show-sel-icon="showSelIcon" :del-click="delClick">
+          :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
+          :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
+          :chosen-matter="matter" :check-amt-fn="checkAmt" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
           <template slot="info" slot-scope="{item}">
             <!-- 物料数量和价格 -->
             <div class='mater_other' v-if="item.price && item.tdQty">
@@ -25,10 +26,6 @@
             </div>
           </template>
         </apply-matter-part>
-        <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
-        </pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
@@ -36,29 +33,9 @@
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       </div>
     </div>
-    <!-- 底部确认栏 -->
-    <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
-      <span class="count_num"
-            :class="{nine_up : tdAmount.length  > 8 ,
-          ten_up : tdAmount.length  > 9,
-          ele_up : tdAmount.length  > 10}">
-        <span class="total_price">
-          <span class="symbol">￥</span>{{tdAmount | numberComma(3)}}
-        </span>
-        <span class="taxAmount">[含税: ￥{{taxAmount | numberComma(3)}}]</span>
-      </span>
-      <span class="count_btn" @click="save">提交</span>
-    </div>
-    <!-- 底部删除确认栏 -->
-    <div class="count_mode vux-1px-t delete_mode" :class="{btn_hide : btnIsHide}" v-else>
-      <div class='count_num all_checked' @click="checkAll">
-        <x-icon type="ios-circle-outline" size="20" class='outline'
-                v-show="selItems.length !== matterList.length"></x-icon>
-        <x-icon type="ios-checkmark" size="20" class="checked" v-show="selItems.length === matterList.length"></x-icon>
-        全选
-      </div>
-      <div class='delete_btn' @click="deleteCheckd">删除</div>
-    </div>
+    <op-button :is-modify="matterModifyClass" :hide="btnIsHide" :td-amount="tdAmount" :tax-amount="taxAmount"
+               :all-check="selItems.length === matterList.length" @on-submit="submitOrder" @on-check-all="checkAll"
+               @on-delete="deleteCheckd"></op-button>
   </div>
 </template>
 
@@ -83,6 +60,7 @@ import PopMatter from 'components/apply/commonPart/MatterPop'
 import UploadFile from 'components/upload/UploadFile'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 import RNumber from 'components/RNumber'
+import OpButton from 'components/apply/commonPart/OpButton'
 // 方法引入
 import {toFixed} from '@/plugins/calc'
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
@@ -104,6 +82,15 @@ export default {
         drDealerLogisticsTerms: '', // 物流条款
         validUntil: '', // 有效期
       },
+      filterList: [
+        {
+          name: '物料名称',
+          value: 'inventoryName',
+        }, {
+          name: '物料编码',
+          value: 'inventoryCode',
+        }
+      ],
       numMap: {},
       taxRate: 0.16,
       contactInfo: {},
@@ -112,7 +99,7 @@ export default {
   components: {
     Icon, XInput, RPicker, XTextarea, Cell, DealerOtherPart, ApplyMatterPart,
     PopMatterList, PopDealerList, PopSingleSelect,
-    PopMatter, UploadFile, PopBaseinfo, RDate, RNumber,
+    PopMatter, UploadFile, PopBaseinfo, RDate, RNumber, OpButton
   },
   mixins: [ApplyCommon],
   methods: {
@@ -129,7 +116,7 @@ export default {
       })
     },
     // 选择要删除的物料
-    delClick(index, sItem) {
+    delClick(sItem, index, key) {
       let arr = this.selItems;
       let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
       // 若存在重复的 则清除
@@ -140,7 +127,7 @@ export default {
       arr.push(sItem);
     },
     // 判断是否展示选中图标
-    showSelIcon(sItem) {
+    showSelIcon(sItem, index) {
       return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
     },
     // 全选
@@ -170,10 +157,6 @@ export default {
     },
     // 点击增加更多物料
     addMatter() {
-      this.matterList.forEach(item => {
-        // 存储已输入的价格
-        this.numMap[item.inventoryCode] = {...item};
-      });
       this.showMaterielPop = !this.showMaterielPop
     },
     // 选中往来项
@@ -187,18 +170,18 @@ export default {
     // 选中物料项
     selMatter(val) {
       let sels = JSON.parse(val);
+      let matterList = JSON.parse(JSON.stringify(this.matterList))
       sels.forEach((item, index) => {
-        let {price = '', taxRate = this.taxRate, tdQty = ''} = this.numMap[item.inventoryCode] || {};
         this.getPriceRange(item, index);
-        item.tdQty = tdQty;
-        item.price = price;
-        item.taxRate = taxRate;
+        item.tdQty = '';
+        item.price = '';
+        item.taxRate = this.taxRate;
         item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
         item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
         item.assMeasureDescription =  item.assMeasureDescription || item.invSubUnitComment || null; // 辅助计量说明
+        matterList.push(item)
       });
-      this.numMap = {};
-      this.matterList = [...sels];
+      this.matterList = matterList;
     },
     // 获取默认图片
     getDefaultImg(item) {
@@ -209,7 +192,7 @@ export default {
       return url
     },
     // 提交
-    save() {
+    submitOrder() {
       let warn = '',
         dataSet = [];
       let validateMap = [
@@ -470,7 +453,8 @@ export default {
       item.tdQty = Math.abs(toFixed(tdQty));
     },
     // 校验单价
-    checkAmt(item) {
+    checkAmt(item, key, val) {
+      console.log(item)
       let {standardPrice = 0, specialReservePrice = 0, price} = item;
       console.log('price:', price)
       if (price < specialReservePrice) {
