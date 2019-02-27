@@ -3,7 +3,7 @@
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
-                      :handle-org-list="handleORG" :user-role-list="userRoleList" :hasStatus="false"></pop-baseinfo>
+                      :handle-org-list="handleORG" :user-role-list="userRoleList" :showStatus="false"></pop-baseinfo>
         <div class="materiel_list">
           <div :class="{'vux-1px-t': index > 0}" v-for="(item, index) in otherConfig" :key="index">
             <template v-if="!item.readOnly">
