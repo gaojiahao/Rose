@@ -3,60 +3,64 @@
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
-                      :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
-        <!-- 项目-->
-        <r-picker title="项目名称" :data="projectList" mode="3" placeholder="请选择项目名称"
-                  @on-change="projectChange" v-model="projectTask.projectName" required :has-border="false"></r-picker>
-        <!-- 项目详情 -->
-        <div class="materiel_list mg_auto" v-show="projectTask.projectName">
-          <p class="title">项目详情</p>
-          <group>
-            <cell title="项目大类" :value="projectTask.projectType"></cell>
-            <cell title="项目子类" :value="projectTask.projectSubclass"></cell>
-          </group>
-        </div>
-        <!-- 任务 -->
-        <r-picker title="任务名称" :data="taskList" mode="3" placeholder="请选择任务名称"
-                  @on-change="taskChange" v-model="projectTask.taskName" required :has-border="false"></r-picker>
-        <!-- 任务详情 -->
-        <div class="materiel_list mg_auto " v-show="projectTask.taskName">
-          <p class="title">任务详情</p>
-          <group>
-            <cell title="任务类型" :value="projectTask.taskType"></cell>
-            <cell title="任务说明" :value="projectTask.comment" primary="content"></cell>
-            <cell title="截止日期" :value="projectTask.deadline"></cell>
-            <cell title="周期天数" :value="projectTask.cycleNumber" v-show="projectTask.cycleNumber"></cell>
-            <cell title="标准工时" :value="projectTask.planTime" v-show="projectTask.planTime"></cell>
-            <cell title="作业费率" :value="projectTask.operatingRate" v-show="projectTask.operatingRate"></cell>
-            <cell title="预算作业成本" :value="projectTask.budgetHomeworkCost" v-show="projectTask.budgetHomeworkCost"></cell>
-          </group>
-        </div>
-        <!-- 实际情况 -->
-        <div class="materiel_list mg_auto">
-          <p class="title">实际情况</p>
-          <group>
-            <datetime title="实际完成日期" v-model="projectTask.actualCompleteTime">
-              <span class="required" slot="title">实际完成日期</span>
-            </datetime>
-            <x-input type="number" title="实际工时" text-align="right" placeholder="请填写"
-                     @on-blur="checkTime" v-model.number="projectTask.actualTime">
-              <span class="required" slot="label">实际工时</span>
-            </x-input>
-            <cell title="实际作业成本" :value="projectTask.actualtHomeworkCost">
-              <span class="required" slot="title">实际作业成本</span>
-            </cell>
-            <!-- <x-input type="number" title="实际作业成本" text-align="right" placeholder="请填写"
-                     @on-blur="checkTime" v-model.number="projectTask.actualtHomeworkCost">
-              <span class="required" slot="label">实际作业成本</span>
-            </x-input> -->
-          </group>
-        </div>
+                      :handle-org-list="handleORG" :user-role-list="userRoleList" :hasStatus="false"></pop-baseinfo>
         <div class="materiel_list">
-          <group title="其他信息" class="costGroup">
-            <x-textarea title="备注" v-model="jsonData.comment.biComment" :max="100"></x-textarea>
-          </group>
+          <div :class="{'vux-1px-t': index > 0}" v-for="(item, index) in otherConfig" :key="index">
+            <template v-if="!item.readOnly">
+              <!--项目经理-->
+              <template v-if="item.fieldCode === 'dealerName'">
+                <div class='each_property' @click="showUserList = true">
+                  <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+                  <div class='picker'>
+                    <span class='mater_nature'>{{projectTask[item.fieldCode] || "请选择"}}</span>
+                    <span class='icon-right'></span>
+                  </div>
+                </div>
+              </template>
+              <template v-else>
+                <!-- 下拉框 -->
+                <r-picker :title="item.fieldLabel" :data="item.remoteData" :value="projectTask[item.fieldCode]"
+                        v-model="projectTask[item.fieldCode]" :required="!item.allowBlank" @on-change="projectChange(item, projectTask[item.fieldCode])"
+                        v-if="item.xtype === 'r2Combo' || item.xtype === 'r2Selector'"></r-picker>
+                <!-- 输入框（文字） -->
+                <div class='each_property' v-if="item.xtype === 'r2Textfield'">
+                  <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+                  <input type='text' v-model="projectTask[item.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
+                </div>
+                <!-- 输入框（数字） -->
+                <div class='each_property ' v-if="item.xtype === 'r2Numberfield'">
+                  <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+                  <input type='number' v-model.number="projectTask[item.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
+                </div>
+                <!-- 日期 -->
+                <div class='each_property' v-if="item.xtype === 'r2Datefield'" @click="getDate(projectTask,item)">
+                  <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+                  <div class='picker'>
+                    <span class='mater_nature'>{{projectTask[item.fieldCode] || "请选择"}}</span>
+                    <span class='icon-right'></span>
+                  </div>
+                </div>
+                <!-- 文本框 -->
+                <x-textarea v-model="projectTask[item.fieldCode]" :max="100" v-if="item.xtype === 'r2TextArea'">
+                  <template slot="label">
+                    <span :class="{required : !item.allowBlank}" style="display: block; width: 4em;">{{item.fieldLabel}}</span>
+                  </template>
+                </x-textarea>
+              </template>
+            </template>
+            <template v-else>
+              <div class='each_property'>
+                <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+                <span class='property_val'>{{projectTask[item.fieldCode]}}</span>
+              </div>
+            </template>
+          </div>
+        </div>
+        <pop-user-list :show="showUserList" :default-value="selectedUser" @sel-item="selUser"
+                   v-model="showUserList"></pop-user-list>
+        <!-- 备注 -->
+        <div class="comment">         
+          <x-textarea v-model="jsonData.comment.biComment" placeholder="备注"></x-textarea>
         </div>
         <upload-file @on-upload="onUploadFile"></upload-file>
       </div>
@@ -80,72 +84,55 @@
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
-  import RPicker from 'components/RPicker'
+  import RPicker from 'components/basicPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
+  import PopUserList from 'components/Popup/PopUserList'
   // 方法引入
   import { toFixed } from '@/plugins/calc'
-    import {accMul} from '@/home/pages/maps/decimalsAdd'
+  import {accMul} from '@/home/pages/maps/decimalsAdd'
 
   const DRAFT_KEY = 'XMRW_DATA';
   export default {
     mixins: [ApplyCommon],
     components: {
       Icon, Cell, Group, XInput,
-      RPicker, PopBaseinfo, Datetime, XTextarea
+      RPicker, PopBaseinfo, Datetime, XTextarea, PopUserList
     },
     data () {
       return {
         projectList: [], // 项目列表
         taskList: [], // 任务列表
         formData: {
-          biProcessStatus: ''
+          biProcessStatus: '',
+          id: ''
         },
         jsonData: {
-          baseinfo: {},
           comment: {
             biComment: ''
           },
         },
-        projectTask: {
-          projectName: '', // 项目名称
-          taskName: '', // 任务名称
-          taskType: '', // 任务类型
-          comment: '', // 任务说明,
-          deadline: '', // 截止时间
-          planTime: '', // 标准工时
-          cycleNumber: '', // 周期天数
-          actualCompleteTime: '', // 实际完成日期
-          actualTime: '', // 实际工时
-          actualtHomeworkCost: 0 , // 实际作业成本
-          budgetHomeworkCost: '', // 预算作业成本
-          operatingRate: '' , // 作业费率
-        },
+        projectTask: {},
+        defaultManager: {},
+        showUserList: false,
+        selectedUser: {}
       }
     },
     methods: {
       // TODO 提交
       save () {
+        /**
+         * @warn 提示文字
+         * 
+         */
         let warn = '';
-        let dataSet = [];
-        let validateMap = [
-          {
-            key: 'projectName',
-            message: '项目'
-          }, {
-            key: 'taskName',
-            message: '任务'
-          }, {
-            key: 'actualCompleteTime',
-            message: '实际完成日期'
-          },
-        ];
-        validateMap.every(item => {
-          if (!this.projectTask[item.key]) {
-            warn = `${item.message}不能为空`;
-            return false
-          }
-          return true
-        });
+        // 校验 <项目> 必填字段
+        warn = this.verifyData(this.otherConfig, this.projectTask);
+        if (warn) {
+          this.$vux.alert.show({
+            content: warn
+          });
+          return
+        }
         if (warn) {
           this.$vux.alert.show({
             content: warn,
@@ -158,38 +145,51 @@
           onConfirm: () => {
             this.$HandleLoad.show();
             this.jsonData.baseinfo = {
-              ...this.formData,
-              creator: this.formData.handler,
-              ...this.jsonData.baseinfo,
-              modifer: this.formData.handler,
+             
             };
             let operation = saveProjectTask;
-            let submitData = {
-              listId: 'ee4ff0a1-c612-419d-afd7-471913d57a2a',
-              formData: {
-                handlerEntity: this.entity.dealerName,
-                ...this.jsonData,
-                projectTask: this.projectTask,
-              },
-            };
-
             if (this.transCode) {
               operation = updateProjectTask
             }
+            let submitData = {
+              listId: 'ee4ff0a1-c612-419d-afd7-471913d57a2a',
+              formData: {
+                baseinfo: {
+                  ...this.formData,
+                  creator: this.formData.handler,
+                  modifer: this.formData.handler,
+                  handlerEntity: this.entity.dealerName,
+                },
+                comment: this.jsonData.comment,
+                projectPlanTask: this.projectTask,
+              },
+              wfParam: null
+            };
             this.saveData(operation, submitData);
           }
         });
       },
-      clickDateSelect () {
-        this.$vux.datetime.show({
-          confirmText: '确定',
-          cancelText: '取消',
-          value: this.formData.validUntil,
-          onConfirm: (value) => {
-            this.formData.validUntil = value;
-          }
-        })
+      // TODO 选中执行者
+      selUser(val) {
+        this.selectedUser = {...val};
+        this.projectTask.dealerName = val.nickname;
+        this.projectTask.executor = val.userCode;
       },
+      // 选择日期
+      getDate(sItem, dItem){
+        let startDate = '', endDate = '';
+        this.$vux.datetime.show({
+          confirmText: '确认',
+          cancelText: '取消',
+          onConfirm: (val)=> {
+            if(sItem[dItem.fieldCode] == null){
+              this.$set(sItem, dItem.fieldCode, val)
+              return
+            }
+            sItem[dItem.fieldCode] = val;
+          },
+        })
+      }, 
       // TODO 请求项目列表
       getProjectList () {
         return getProjectPlanProjectName().then(({tableContent = []}) => {
@@ -225,34 +225,46 @@
         }
       },
       // TODO 项目切换
-      projectChange (val) {
-        if (this.relationKey || this.transCode) {
-          return false;
+      projectChange (item, val) {
+        if(item.fieldCode === 'projectName'){
+          let matched = item.remoteData.find(dItem => dItem.projectName === val);
+          this.projectTask = {
+            ...this.projectTask,
+            projectType: matched.projectType || '',
+            projectSubclass: matched.projectSubclass || '',
+            projectManagerName: matched.projectManagerName,
+            projectManager: matched.projectManager,
+          };
         }
-        let matched = this.projectList.find(item => item.projectName === val);
-        this.projectTask = {
-          ...this.projectTask,
-          projectType: matched.projectType || '',
-          projectSubclass: matched.projectSubclass || '',
-          taskName: '', // 任务名称
-          taskType: '', // 任务类型
-          comment: '', // 任务说明,
-          deadline: '', // 截止时间
-          planTime: '', // 计划工时
-          budgetHomeworkCost: '',
-          operatingRate: '',
-          cycleNumber: ''
-        };
-        this.getTaskList();
+        // this.getTaskList();
       },
       // TODO 获取详情
       getFormData () {
         return findProjectTask(this.transCode).then(({formData = {}}) => {
-          let projectTask = formData.projectTask;
-          this.jsonData = formData;
+          let projectApproval = formData.projectApproval;
+          let projectPlanTask = formData.projectPlanTask;
+          this.jsonData.comment = formData.comment;
+          this.formData.id = formData.baseinfo.id;
           this.projectTask = {
-            ...projectTask,
-            actualCompleteTime: dateFormat(projectTask.actualCompleteTime, 'YYYY-MM-DD')
+            projectName: projectApproval.projectName,
+            projectManager: projectApproval.projectManager,
+            projectManagerName: projectApproval.projectManagerName,
+            projectName: projectApproval.projectName,
+            projectPlanTaskId: projectApproval.projectPlanTaskId,
+            projectSubclass: projectApproval.projectSubclass,
+            projectType: projectApproval.projectType,
+            projectPlanTaskId: projectPlanTask.projectPlanTaskId,
+            executor: projectPlanTask.executor,
+            phoneNumber: projectApproval.phoneNumber,
+            taskName: projectPlanTask.taskName,
+            taskType: projectPlanTask.taskType,
+            dealerName: projectPlanTask.dealerName,
+            cycleDays: projectPlanTask.cycleDays,
+            standardWorkingHours: projectPlanTask.standardWorkingHours,
+            startTime: projectPlanTask.startTime,
+            deadline: projectPlanTask.deadline,
+            completeTime: projectPlanTask.completeTime,
+            taskComment: projectPlanTask.taskComment,
           };
           this.handlerDefault = {
             handler: formData.baseinfo.handler,
@@ -262,7 +274,7 @@
             handlerRole: formData.baseinfo.handlerRole,
             handlerRoleName: formData.baseinfo.handlerRoleName,
           };
-          this.getTaskList()
+          // this.getTaskList()
           this.$loading.hide()
         })
       },
@@ -307,13 +319,7 @@
         return findProjectPlan(this.relationKey).then(({formData = {},attachment = []}) => {
           let plan =  formData.projectPlan[0];
           this.projectTask = {
-            ...this.projectTask,
-            projectName: formData.projectApproval.projectName, // 项目名称
-            taskName: plan.taskName, // 任务名称
-            taskType: plan.taskType, // 任务类型
-            comment: plan.comment, // 任务说明,
-            deadline: dateFormat(plan.deadline, 'YYYY-MM-DD'), // 截止时间
-            planTime: plan.planTime, // 计划工时
+            ...formData.projectApproval,
           }
         })
       }
@@ -326,7 +332,7 @@
         this.getTaskList();
         sessionStorage.removeItem(DRAFT_KEY);
       }
-      this.getProjectList();
+      // this.getProjectList();
     },
   }
 </script>
@@ -334,36 +340,50 @@
 <style lang="scss" scoped>
   @import './../../scss/bizApply';
 
-  .xmrw-apply-container {
-    // .or_ads {
-    //   padding: .06rem .08rem;
-    // }
-    /deep/ .weui-cells {
-      margin-top: 0;
-      font-size: .16rem;
-      &:before {
-        border-top: none;
-      }
-      &:after {
-        border-bottom: none;
-      }
-      .weui-cell {
-        padding: 10px 0;
-        &:before {
-          left: 0;
-        }
+  .materiel_list {
+    background: #fff;
+    padding: 0 .15rem;
+    font-size: .14rem;
+    color: #333;
+    .weui-cell {
+      padding: .1rem 0;
+      /deep/ .weui-textarea {
+        text-align: right;
       }
     }
-    // 备注
-    .materiel_list{
-      /deep/ .weui-cells__title {
-        padding-left: 0;
-        font-size: .12rem;
-      }
-      /deep/ .weui-cells{
-        &:before{
-          border-top: 1px solid #D9D9D9;
-        }
+  }
+  .each_property {
+    padding: .18rem 0;
+    display: flex;
+    justify-content: space-between;
+    line-height: .14rem;
+    input {  
+      border: none;
+      outline: none;
+      font-size: .14rem;
+    } 
+    label {
+      color: #696969;
+    }
+    .required {
+      color: #3296FA;
+      font-weight: bold;
+    }
+    .property_val {
+      text-align: right;
+      flex: 1;
+      margin-left: .1rem;
+    }
+    .readonly {
+      color: #999;
+    }
+    .picker {
+      display: flex;
+      align-items: center;
+      .icon-right{
+        width: .08rem;
+        height: .14rem;
+        margin-left: .1rem;
       }
     }
   }
