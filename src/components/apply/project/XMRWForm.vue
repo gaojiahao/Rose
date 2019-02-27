@@ -133,20 +133,11 @@
           });
           return
         }
-        if (warn) {
-          this.$vux.alert.show({
-            content: warn,
-          });
-          return
-        }
         this.$vux.confirm.show({
           content: '确认提交?',
           // 确定回调
           onConfirm: () => {
             this.$HandleLoad.show();
-            this.jsonData.baseinfo = {
-             
-            };
             let operation = saveProjectTask;
             if (this.transCode) {
               operation = updateProjectTask
@@ -176,7 +167,7 @@
         this.projectTask.executor = val.userCode;
       },
       // 选择日期
-      getDate(sItem, dItem){
+      getDate(sItem, dItem) {
         let startDate = '', endDate = '';
         this.$vux.datetime.show({
           confirmText: '确认',
@@ -226,7 +217,7 @@
       },
       // TODO 项目切换
       projectChange (item, val) {
-        if(item.fieldCode === 'projectName'){
+        if(item.fieldCode === 'projectName') {
           let matched = item.remoteData.find(dItem => dItem.projectName === val);
           this.projectTask = {
             ...this.projectTask,
