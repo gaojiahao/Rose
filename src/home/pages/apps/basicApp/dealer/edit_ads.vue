@@ -161,25 +161,27 @@ export default {
   },
   watch: {
     dealerLabelName(val) {
-      // 根据往来类型绝的哪个重复项显示
-      let dealerLabelName = this.dealer.dealerLabelName;
-      this.dealerDuplicateConfig.forEach(item => {
-        // 当关系标签包含客户，供应商，加工商，渠道商，服务商时，省市区显示
-        if(item.name === 'deliveryAddresses') {
-          item.hiddenInRun = false;
-          if(!dealerLabelName || (!dealerLabelName.includes('客户') && !dealerLabelName.includes('供应商') && !dealerLabelName.includes('加工商') 
-            && !dealerLabelName.includes('渠道商') && !dealerLabelName.includes('服务商'))) {
-            item.hiddenInRun = true
+      if(val) {
+        // 根据往来类型绝的哪个重复项显示
+        let dealerLabelName = this.dealer.dealerLabelName;
+        this.dealerDuplicateConfig.forEach(item => {
+          // 当关系标签包含客户，供应商，加工商，渠道商，服务商时，省市区显示
+          if(item.name === 'deliveryAddresses') {
+            item.hiddenInRun = false;
+            if(!dealerLabelName || (!dealerLabelName.includes('客户') && !dealerLabelName.includes('供应商') && !dealerLabelName.includes('加工商') 
+              && !dealerLabelName.includes('渠道商') && !dealerLabelName.includes('服务商'))) {
+              item.hiddenInRun = true
+            }
           }
-        }
-        // 当关系标签包含生产商,经销供应商 证件显示
-        if(item.name === 'dealerCertificateRel') {
-          item.hiddenInRun = false;
-          if(!dealerLabelName || (!dealerLabelName.includes('生产商') && !dealerLabelName.includes('经销供应商'))) {
-            item.hiddenInRun = true
-          }
-        } 
-      })
+          // 当关系标签包含生产商,经销供应商 证件显示
+          if(item.name === 'dealerCertificateRel') {
+            item.hiddenInRun = false;
+            if(!dealerLabelName || (!dealerLabelName.includes('生产商') && !dealerLabelName.includes('经销供应商'))) {
+              item.hiddenInRun = true
+            }
+          } 
+        })
+      }
     },
     mianTypes(val) {
       if(val){
