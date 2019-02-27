@@ -192,7 +192,7 @@
           for(let sItem of this.submitMatterField){
             let val = item[sItem.fieldCode] || item[sItem.displayField] || item[sItem.showFieldCode];
             if(!sItem.hidden && !sItem.allowBlank && !val && val !== undefined){
-              warn = `${sItem.text}不为空`
+              if(sItem.text) warn = `${sItem.text}不为空`;
               break;
             }
             oItem[sItem.fieldCode] = val !== null ? val : null;

@@ -160,7 +160,7 @@
                     <span class="classification_detail_title">应用类型: </span>{{item.transName}}
                   </div>
                   <div class="classification_detail_item">
-                    <span class="classification_detail_title">记账日期: </span>{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}
+                    <span class="classification_detail_title">记账日期与时间: </span>{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}
                   </div>
                 </div>
                 <div class="classification_detail_part">
@@ -191,7 +191,7 @@
                   <div class="classification_detail_item">
                     <span class="classification_detail_title">可用库存: </span>{{item.qtyBalance || 0 | numberComma}}
                     <span class="classification_detail_title">账龄天数: </span>{{item.accountAge || 0 | numberComma}}
-                    <span class="classification_detail_title">生产日期: </span>{{item.libraryAge || 0 | numberComma}}
+                    <span class="classification_detail_title">库龄天数: </span>{{item.libraryAge || 0 | numberComma}}
                   </div>
                 </div>
               </div>

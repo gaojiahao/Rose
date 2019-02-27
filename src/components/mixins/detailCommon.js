@@ -465,7 +465,6 @@ export default {
                 })
               }
               matterConfig = item.items;
-              console.log('old-config:', matterConfig);
               dataIndexMap = item.dataIndexMap || {};
               hasDataIndexMap = !!Object.keys(dataIndexMap).length;
             }
@@ -584,7 +583,6 @@ export default {
         let dates = [];
         let matterComment = {};
         matterConfig.forEach(item => {
-          // console.log('config-item:', item);
           item = {...item};
           item.value = numTypeList.includes(item.editorType) 
             ? numberComma(matter[item.fieldCode]) || '0' 
@@ -607,7 +605,6 @@ export default {
       if (key) {
         this.matterDetailKey = key;
       }
-      console.log('item:', item);
       this.matterDetail = JSON.parse(JSON.stringify(item));
       this.matterDetailIndex = index;
       this.showMatterDetail = true;
