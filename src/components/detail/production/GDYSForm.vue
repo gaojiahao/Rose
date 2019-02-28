@@ -13,7 +13,7 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
       <div class="form_content">
-        <div class="main_content">
+        <div class="main_content no_bottom">
           <div class="vux-1px-b" v-for="(cItem, cIndex) in fundConfig" :key="cIndex">
             <template v-if="cItem.editorType === 'r2Datefield'">
               <div class="each_info">
@@ -27,6 +27,12 @@
                 <span class="field_value">{{workInfo[cItem.fieldCode]}}</span>
               </div>
             </template> 
+          </div>
+        </div>
+        <div class="main_content">
+          <div class="each_info">
+            <label>备注</label>
+            <span class="field_value">{{orderInfo.biComment || '无'}}</span>
           </div>
         </div>
       </div>
@@ -142,20 +148,9 @@ export default {
 <style lang='scss' scoped>
   @import './../../scss/bizDetail';
   .xsbj-detail-container{
-    /deep/ .weui-cells {
-      margin-top: 0;
-      font-size: .16rem;
-      &:before {
-        border-top: none;
-      }
-      &:after {
-        border-bottom: none;
-      }
-      .weui-cell {
-        padding: 10px 0;
-        &:before {
-          left: 0;
-        }
+    .main_content {
+      &.no_bottom {
+        margin-bottom: 0;
       }
     }
     //bom合计

@@ -13,7 +13,7 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <div class="form_content">
-        <div class="main_content">
+        <div class="main_content no_bottom">
           <div class="vux-1px-b" v-for="(cItem, cIndex) in fundConfig" :key="cIndex">
             <template v-if="cItem.editorType === 'r2Datefield'">
               <div class="each_info">
@@ -29,25 +29,13 @@
             </template> 
           </div>
         </div>
-      </div>
-      <!-- <div class="form_content">
-        <div class="form_title">
-          <span class="iconfont icon-mingxi1"></span>
-          <span>工单信息</span>
-        </div>
         <div class="main_content">
-          <form-cell cellTitle='工序名称' :cellContent="workInfo.procedureName_proPointCode"></form-cell>
-          <form-cell cellTitle='工序编码' :cellContent="workInfo.proPointCode"></form-cell>
-          <form-cell cellTitle='工序待验收' :cellContent="`${workInfo.thenQtyStock}`"></form-cell>
-          <form-cell cellTitle='工序待启动' :cellContent="`${workInfo.thenQtyBal}`"></form-cell>
-          <form-cell cellTitle='启动数量' :cellContent="`${workInfo.tdQty}`"></form-cell>
-          <form-cell cellTitle='工人' :cellContent="workInfo.dealerName_dealerDebit"></form-cell>
-          <form-cell cellTitle='设施' :cellContent="workInfo.facilityName_facilityObjCode"></form-cell>
-          <form-cell cellTitle='物料名称' :cellContent="workInfo.inventoryName_transObjCode"></form-cell>
-          <form-cell cellTitle='物料编码' :cellContent="workInfo.transObjCode"></form-cell>
-          <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
+          <div class="each_info">
+            <label>备注</label>
+            <span class="field_value">{{orderInfo.biComment || '无'}}</span>
+          </div>
         </div>
-      </div> -->
+      </div>
       <div class="bom_list" v-show="bomList.length">
         <bom-list :boms="bomList">
           <template slot-scope="{bom}" slot="specification">
@@ -154,20 +142,9 @@
   @import './../../scss/bizDetail';
 
   .gdrwqd-detail-container {
-    /deep/ .weui-cells {
-      margin-top: 0;
-      font-size: .16rem;
-      &:before {
-        border-top: none;
-      }
-      &:after {
-        border-bottom: none;
-      }
-      .weui-cell {
-        padding: 10px 0;
-        &:before {
-          left: 0;
-        }
+    .main_content {
+      &.no_bottom {
+        margin-bottom: 0;
       }
     }
     //bom合计

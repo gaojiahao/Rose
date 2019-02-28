@@ -8,11 +8,18 @@
         <!-- 物料列表 -->
         <div class="materiel_list work_list">
           <div class="vux-1px-t" v-for="(item, index) in fundConfig" :key="index" >
-            <div class='each_property readOnly'>
+            <div class='each_property' v-if="item.fieldCode === 'procedureName_proPointCode'" @click="showWorkPop = true">
               <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
-              <span class='property_val'>{{workInfo[item.fieldCode] || workInfo[item.showFieldCode] || workInfo[item.displayField] || '无'}}</span>
+              <div class='picker'>
+                <span class='mater_nature'>{{workInfo[item.displayField] || "请选择"}}</span>
+                <span class='icon-right'></span>
+              </div>
             </div>
-          </div>
+            <div class='each_property readOnly' v-else>
+              <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+              <span class='property_val'>{{workInfo[item.fieldCode] || workInfo[item.showFieldCode] || workInfo[item.displayField]}}</span>
+            </div>
+          </div> 
         </div>
         <pop-work-start-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
                                @sel-work="selWork"></pop-work-start-list>
@@ -102,7 +109,7 @@
     data() {
       return {
         listId: 'c54b3325-a5c1-4d75-a3c4-c6cf0e988aae',
-        showWorkPop: true, // 是否显示物料的popup
+        showWorkPop: false, // 是否显示物料的popup
         dealer: {},
         formData: {
           biComment: '', // 备注
@@ -174,8 +181,8 @@
           dealerDebit: workInfo.dealerCode, // 工人
           drDealerLabel: workInfo.dealerLabel, // 标签
           proFlowCode: workInfo.proFlowCode || '', // 工艺编码
-          facilityObjCode: this.facility.facilityCode || '', // 设施编码
-          facilityTypebase_facilityObjCode: this.facility.facilityType || '', // 设施类型
+          facilityObjCode: workInfo.facilityCode || '', // 设施编码
+          facilityTypebase_facilityObjCode: workInfo.facilityType || '', // 设施类型
           transObjCode: this.workInfo.inventoryCode, // 物料编码
         });
 
@@ -334,20 +341,19 @@
         })
       },
       // TODO 是否保存草稿
-      // hasDraftData () {
-      //   if (!this.workInfo.procedureName) {
-      //     return false
-      //   }
-      //   return {
-      //     [DRAFT_KEY]: {
-      //       workInfo: this.workInfo,
-      //       bomList: this.bomList,
-      //       facility: this.facility,
-      //       formData: this.formData,
-      //       biProcessStatus: this.biProcessStatus,
-      //     }
-      //   };
-      // },
+      hasDraftData () {
+        if (!this.workInfo.procedureName) {
+          return false
+        }
+        return {
+          [DRAFT_KEY]: {
+            workInfo: this.workInfo,
+            bomList: this.bomList,
+            facility: this.facility,
+            formData: this.formData,
+          }
+        };
+      },
       // TODO 启用企业微信扫一扫
       scanQRCode () {
         scanQRCode().then(({result = ''}) => {
@@ -360,16 +366,15 @@
       },
     },
     created () {
-      // let data = sessionStorage.getItem(DRAFT_KEY);
-      // if (data) {
-      //   let draft = JSON.parse(data);
-      //   this.workInfo = draft.workInfo;
-      //   this.bomList = draft.bomList;
-      //   this.facility = draft.facility;
-      //   this.formData = draft.formData;
-      //   this.biProcessStatus = draft.biProcessStatus;
-      //   sessionStorage.removeItem(DRAFT_KEY);
-      // }
+      let data = sessionStorage.getItem(DRAFT_KEY);
+      if (data) {
+        let draft = JSON.parse(data);
+        this.workInfo = draft.workInfo;
+        this.bomList = draft.bomList;
+        this.facility = draft.facility;
+        this.formData = draft.formData;
+        sessionStorage.removeItem(DRAFT_KEY);
+      }
     }
   }
 </script>

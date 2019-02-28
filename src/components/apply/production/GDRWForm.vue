@@ -5,24 +5,26 @@
         <!-- <div class="scan" @click="scanQRCode">扫一扫 {{scanResult}}</div> -->
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList" :showStatus="false"></pop-baseinfo>
-        <!-- <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker> -->
         <pop-warehouse-list title="在制仓库" :default-value="warehouse" @sel-item="selWarehouse" :default-store="warehouseStoreInfo" 
                             @get-store="getStore" :filter-params="filterParams" isRequired isShowStore>
         </pop-warehouse-list>
         <!-- 工单列表 -->
         <div class="materiel_list work_list">
-          <div class="order-info" @click="showWorkPop = true" v-if="!workInfo.length">
-            <div class="title">工序信息</div>
-            <div class="mode">请选择工序</div>
-            <span class="iconfont icon-youjiantou r-arrow"></span>
+          <div class="order-info" @click="getOrder" v-if="!workInfo.length">
+            <div class="title">加工订单列表</div>
+            <div class="seleted_icon">
+              请选择<span class="icon-right"></span>
+            </div>
           </div>
           <template v-else>
-            <!-- <div class="title">工序信息</div> -->
-            <div class="order-detail" :class="{'vux-1px-t': index > 0}" v-for="(item, index) in workInfo"
+
+            <div class="order-detail" :class="{'has_top' : index > 0}" v-for="(item, index) in workInfo"
                  :key="index">
-              <div class="work_info">
-                <div class="matter_name">{{item.inventoryName}}</div>
+              <div class="work_info vux-1px-b">
+                <div class="matter_name">
+                  <span>{{item.inventoryName}}</span>
+                  <span class="iconfont icon-shanchu1" @click="deleteClick(index)"></span>
+                </div>
                 <div class="detail-item">
                   <span class="item-title">订单号:</span>
                   <span>{{item.transCode}}</span>
@@ -40,11 +42,11 @@
                   <span>{{item.technicsName || "无"}}</span>
                 </div>
               </div>
-              <div class="vux-1px-t" v-for="(dItem,dIndex) in matterEditConfig.editPart" :key="dIndex" >
+              <div class="edit_part" v-for="(dItem,dIndex) in matterEditConfig.editPart" :key="dIndex" >
                 <!-- 可编辑的字段 -->
                 <template v-if="!dItem.readOnly">
                   <!-- 下拉框 -->
-                  <div class='each_property' v-if="dItem.editorType === 'r2Selector'" @click="getSeletor(dItem.fieldCode, index)">
+                  <div class='each_property vux-1px-b' v-if="dItem.editorType === 'r2Selector'" @click="getSeletor(dItem.fieldCode, index)">
                     <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
                     <div class='picker'>
                       <span class='mater_nature'>{{item[dItem.fieldCode] || "请选择"}}</span>
@@ -52,18 +54,18 @@
                     </div>
                   </div>
                   <!-- 输入框（数字） -->
-                  <div class='each_property ' v-if="dItem.editorType === 'r2Numberfield'">
+                  <div class='each_property vux-1px-b' v-if="dItem.editorType === 'r2Numberfield'">
                     <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
                     <input type='number' v-model.number="item[dItem.fieldCode]" placeholder="请输入" class='property_val' 
                           @focus="getFocus($event)" @blur="checkAmt(item, index) "/>
                   </div>
                   <!-- 输入框（文字） -->
-                  <div class='each_property' v-if="dItem.editorType === 'r2Textfield'">
+                  <div class='each_property vux-1px-b' v-if="dItem.editorType === 'r2Textfield'">
                     <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
                     <input type='text' v-model="item[dItem.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
                   </div>
                   <!-- 日期 -->
-                  <div class='each_property' v-if="dItem.editorType === 'r2Datefield'" @click="getDate(item,dItem)">
+                  <div class='each_property vux-1px-b' v-if="dItem.editorType === 'r2Datefield'" @click="getDate(item,dItem)">
                     <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
                     <div class='picker'>
                       <span class='mater_nature'>{{item[dItem.fieldCode] || "请选择"}}</span>
@@ -79,7 +81,7 @@
                   </div>
                 </template>
               </div>
-              <div class='each_property vux-1px-t' @click="getSeletor('facilityName_facilityObjCode', index)">
+              <div class='each_property vux-1px-b' @click="getSeletor('facilityName_facilityObjCode', index)">
                 <label>设施</label>
                 <div class='picker'>
                   <span class='mater_nature'>{{item.facilityName_facilityObjCode || "请选择"}}</span>
@@ -108,7 +110,14 @@
               <cell v-model="item.facilityName_facilityObjCode" title="设施" isLink @click.native="showFacility(index)">
               </cell> -->
             </div>
+            <div></div>
           </template>
+          <div class="sumbit-part" v-if="workInfo.length">
+            <div class="add_more" @click="addMore">
+              <span class="icon-add"></span>
+              <span class="add_text">新增加工订单</span>
+            </div>
+          </div>
         </div>
         <!-- 工序popup -->
         <pop-work-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
@@ -170,7 +179,7 @@ export default {
     XInput, XTextarea, PopManagerList,
     RPicker, PopWorkFacilityList, PopWarehouseList, PopBaseinfo
   },
-  data () {
+  data() {
     return {
       listId: '2372f734-93c1-11e8-85db-005056a136d0',
       showWorkPop: false, // 是否显示物料的popup
@@ -208,12 +217,27 @@ export default {
     numberComma,
   },
   methods: {
+    getOrder(){
+      if(!this.warehouse.warehouseCode){
+        this.$vux.alert.show({
+          content: '请选择在制仓库'
+        })
+        return
+      }
+      this.showWorkPop = true;
+    },
     // 选择工序
-    selWork (val) {
+    selWork(val) {
       this.workInfo = JSON.parse(val);
       this.workInfo.forEach((item, index) => {
         // 数量赋初始值
         item.tdQty = item.thenQtyBal;
+        // 请求bom
+        this.filter[1].value = item.inventoryCode;
+        this.getTaskBom(index).then(data => {
+          item.boms = data
+          this.$set(this.workInfo, index, {...item})
+        })
       })
     },
     // 处理选择器，根据不同字段调用不同组件
@@ -231,7 +255,7 @@ export default {
       this.showManagerPop = !this.showManagerPop;
     },
     // 选择组长
-    selManager (val) {
+    selManager(val) {
       let selItem = JSON.parse(val);
       this.defaultManager[this.managerIndex] = selItem;
       this.workInfo[this.managerIndex].dealerName_dealerDebit = selItem.dealerName;
@@ -244,22 +268,22 @@ export default {
       this.showFacilityPop = !this.showFacilityPop;
     },
     // 选择设备
-    selFacility (val) {
+    selFacility(val) {
       this.defaultFacility[this.facilityIndex] = val;
       this.workInfo[this.facilityIndex].facilityName_facilityObjCode = val.facilityName;
 			this.workInfo[this.facilityIndex].facilityObjCode = val.facilityCode;
 			this.workInfo[this.facilityIndex].facilityTypebase_facilityObjCode = val.facilityType;
     },
     // 选择的库位
-    getStore(val){
+    getStore(val) {
       this.warehouseStoreInfo = {...val};
     },
     // 校验数量
-    checkAmt (item, index) {
+    checkAmt(item, index) {
       let {tdQty, thenQtyBal, numberWorkers} = item;
       item.tdQty = Math.abs(toFixed(tdQty))
       if (tdQty) {
-        if(tdQty > thenQtyBal){
+        if(tdQty > thenQtyBal) {
           item.tdQty = thenQtyBal;
         }
         // 重新计算bom
@@ -268,25 +292,32 @@ export default {
           bom.tdQty = Math.abs(toFixed(tdQty))
         })
       }
-      if(numberWorkers){
+      if(numberWorkers) {
         item.numberWorkers = Math.round(numberWorkers);
       }
     },
     // TODO 选中仓库
-    selWarehouse (val) {
+    selWarehouse(val) {
       this.warehouse = JSON.parse(val);
-      this.filter[0].value = this.warehouse.warehouseCode;
-      this.workInfo.forEach((item, index) => {
-        this.filter[1].value = item.inventoryCode;
-        // 获取bom
-        this.getTaskBom(index).then(data => {
-          item.boms = data
-          this.$set(this.workInfo, index, {...item})
-        })
-      })
+      // this.filter[0].value = this.warehouse.warehouseCode;
+      // this.workInfo.forEach((item, index) => {
+      //   this.filter[1].value = item.inventoryCode;
+      //   // 获取bom
+      //   this.getTaskBom(index).then(data => {
+      //     item.boms = data
+      //     this.$set(this.workInfo, index, {...item})
+      //   })
+      // })
+    },
+    addMore() {
+      this.showWorkPop = !this.showWorkPop;
+    },
+    // 刪除加工订单
+    deleteClick(index) {
+      this.workInfo.splice(index, 1)
     },
     // 提价订单
-    submitOrder () {
+    submitOrder() {
        /** 
        * @warn    提示文字
        * @dateSet   提交数据
@@ -295,7 +326,7 @@ export default {
       let warn = '',
           dataSet = [];
       if (!this.workInfo.length) {
-        warn = '请选择工序';
+        warn = '请选择加工订单';
       }
       if (!warn && !this.warehouse.warehouseCode) {
         warn = '请选择在制仓库';
@@ -403,13 +434,13 @@ export default {
       })
     },
     // TODO 启用企业微信扫一扫
-    scanQRCode () {
+    scanQRCode() {
       scanQRCode().then(({result = ''}) => {
         this.scanResult = result;
       })
     },
     // TODO 判断是否有弹窗需要关闭
-    onHistoryBack () {
+    onHistoryBack() {
       if (this.showWorkPop) {
         this.showWorkPop = false;
         return false
@@ -417,7 +448,7 @@ export default {
       return true
     },
      // TODO 获取详情
-    getFormData () {
+    getFormData() {
       return getSOList({
         formViewUniqueId: this.formViewUniqueId,
         transCode: this.transCode
@@ -506,8 +537,31 @@ export default {
         return tableContent;
       })
     },
+    // TODO 是否保存草稿
+    hasDraftData () {
+      if (!this.workInfo.length) {
+        return false
+      }
+      return {
+        [DRAFT_KEY]: {
+          workInfo: this.workInfo,
+          warehouse: this.warehouse,
+          warehouseStoreInfo: this.warehouseStoreInfo,
+          formData: this.formData,
+        }
+      };
+    },
   },
-  created () {
+  created() {
+    let data = sessionStorage.getItem(DRAFT_KEY);
+    if (data) {
+      let draft = JSON.parse(data);
+      this.workInfo = draft.workInfo;
+      this.warehouse = draft.warehouse;
+      this.warehouseStoreInfo = draft.warehouseStoreInfo;
+      this.formData = draft.formData;
+      sessionStorage.removeItem(DRAFT_KEY);
+    }
   }
 }
 </script>
@@ -515,6 +569,9 @@ export default {
 <style lang='scss' scoped>
   @import './../../scss/bizApply';
   @import '~@/scss/color';
+  .vux-1px-b:after {
+    border-color: #e8e8e8;
+  }
   .gdrw-apply-container {
     .scan {
       width: 100%;
@@ -525,9 +582,7 @@ export default {
       margin-top: .1rem;
     }
     .work_list{
-      padding: 0 .15rem;
       box-sizing: border-box;
-      background: #fff;
       margin-bottom: .1rem;
       font-size: .14rem;
       input {
@@ -537,26 +592,29 @@ export default {
       }
     }
     .order-info {
-      position: relative;
-      
-      .r-arrow {
-        position: absolute;
-        top: 50%;
-        right: -1%;
+      display: flex;
+      justify-content: space-between;
+      padding: .18rem .15rem;
+      background: #fff;
+      .title {
         font-weight: bold;
-        transform: translate(0, -50%);
+        color: #3296FA;
       }
-    }
-    .title {
-      font-size: .12rem;
-      padding-top: .2rem;
+      .seleted_icon {
+        display: flex;
+        align-items: center;
+      }
+      .icon-right {
+        width: .08rem;
+        height: .14rem;
+        margin-left: .1rem;
+      }
     }
     .order-detail {
-      &:first-child {
-        padding-top: 0;
-      }
-      &:last-child {
-        margin-bottom: 0;
+      background: #fff;
+      padding: 0 .15rem;
+      &.has_top {
+        margin-top: .1rem;
       }
       .work_info{
         padding: .1rem 0;
@@ -566,6 +624,13 @@ export default {
         font-size: .14rem;
         font-weight: bold;
         line-height: .22rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .icon-shanchu1{
+          color: red;
+          font-weight: normal;
+        }
       }
       .detail-item {
         display: inline-block;
@@ -613,6 +678,35 @@ export default {
           width: .08rem;
           height: .14rem;
           margin-left: .1rem;
+        }
+      }
+    }
+     // 新增更多
+    .sumbit-part {
+      width: 100%;
+      display: flex;
+      text-align: center;
+      position: relative;
+      background: #fff;
+      .add_more {
+        display: flex;
+        color: #3296FA;
+        font-weight: bold;
+        text-align: center;
+        align-items: center;
+        margin: .1rem auto;
+        border-radius: .15rem;
+        padding: .06rem .08rem;
+        border: 1px solid #3296FA;
+        .icon-add {
+          width: .14rem;
+          height: .14rem;
+          margin-right: .05rem;
+          box-sizing: border-box;
+        }
+        .add_text {
+          font-size: .12rem;
+          line-height: .12rem;
         }
       }
     }

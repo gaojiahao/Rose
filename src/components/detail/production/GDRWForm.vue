@@ -11,26 +11,8 @@
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
-      <!-- <div class="form_content">
-        <div class="main_content">
-          <div class="vux-1px-b" v-for="(item, index) in matterConfig" :key="index">
-            <template v-if="item.editorType === 'r2Datefield'">
-              <div class="each_info">
-                <label>{{item.text}}</label>
-                <span class="field_value">{{approval[item.fieldCode] | timeSplit}}</span>
-              </div>
-            </template>
-            <template v-else>
-              <div class="each_info">
-                <label>{{item.text}}</label>
-                <span class="field_value">{{approval[item.fieldCode]}}</span>
-              </div>
-            </template> 
-          </div>
-        </div>
-      </div> -->
       <div class="form_content">
-        <div class="main_content" v-for="(item, index) in workInfo" :key="index">
+        <div class="main_content" :class="{'no_bottom': index === workInfo.length-1}" v-for="(item, index) in workInfo" :key="index">
           <div class="vux-1px-b" v-for="(cItem, cIndex) in matterConfig" :key="cIndex">
             <template v-if="cItem.editorType === 'r2Datefield'">
               <div class="each_info">
@@ -46,8 +28,14 @@
             </template> 
           </div>
         </div>
+        <div class="main_content">
+          <div class="each_info">
+            <label>备注</label>
+            <span class="field_value">{{orderInfo.biComment || '无'}}</span>
+          </div>
+        </div>
       </div>
-      <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
+      <other-part :other-info="orderInfo" :attachment="attachment" :showComment='false'></other-part>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -135,25 +123,9 @@ export default {
 
 <style lang='scss' scoped>
   @import './../../scss/bizDetail';
-  .task_container{
-    /deep/ .weui-cells {
-      margin-top: 0;
-      font-size: .16rem;
-      &:before {
-        border-top: none;
-      }
-      &:after {
-        border-bottom: none;
-      }
-      .weui-cell {
-        padding: 10px 0;
-        &:before {
-          left: 0;
-        }
-      }
-    }
-    .has_border{
-      border-top: .03rem solid #e8e8e8;
+  .main_content {
+    &.no_bottom {
+      margin-bottom: 0;
     }
   }
 </style>

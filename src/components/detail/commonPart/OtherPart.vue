@@ -1,7 +1,7 @@
 <template>
   <div class="other-part-container">
     <price-total :amt="amt" :tax-amt="taxAmt" :count="count" v-if="count"></price-total>
-    <div class="comment-container">
+    <div class="comment-container" v-if="showComment">
       <span class="comment_title">备注：</span>
       <span class="comment_value">{{otherInfo.biComment || '无'}}</span>
     </div>
@@ -45,6 +45,11 @@
           return []
         }
       },
+      // 显示备注
+      showComment: {
+        type: Boolean,
+        default: true
+      }
     },
     components: {
       PriceTotal, UploadFile,

@@ -8,7 +8,7 @@
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !workList.length" @on-pulling-up="onPullingUp"
                   ref="bScroll">
-          <div class="each-work box_sd" v-for="(item, index) in workList" :key='index'
+          <div class="each-work box_sd" :class="{selected: showSelIcon(item)}" v-for="(item, index) in workList" :key='index'
                @click.stop="selThis(item, index)">
             <div class="work-main">
               <div class="work_top">
@@ -30,21 +30,11 @@
                 </div>
                 <div class="procedure_unit">
                   <span class="each_unit">可验收余额: {{item.qtyBal}}</span>
-                  <span class="each_unit">后置工序: {{item.rearProcedureName}}</span>
-                </div>
-              </div>
-              <!-- <div class="work_btm">
-                <div class="procedure_name">
-                  <span>{{item.rearProcedureName}}</span>
-                  <span class="symbol">[后置工序编码: {{item.proPointCode}}]</span>
-                </div>
-                <div class="procedure_unit">
+                  <span class="each_unit">工单派工号: {{item.orderCode}}</span>
                   <span class="each_unit">加工订单号: {{item.processCode}}</span>
                 </div>
-              </div> -->
-            </div>
-            <!-- icon -->
-            <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
+              </div>
+            </div>       
           </div>
         </r-scroll>
       </div>
@@ -154,7 +144,6 @@
       // TODO 获取物料列表
       getWorkOrderTask() {
         let filter = [];
-        let {orderId = ''} = this.$route.query
         if (this.srhInpTx) {
           filter = [
             ...filter,
@@ -165,16 +154,6 @@
             },
           ];
         }
-        if (orderId) {
-          filter = [
-            ...filter,
-            {
-              operator: 'eq',
-              value: orderId,
-              property: 'colId'
-            },
-          ];
-        }
         return getWorkCheckList({
           limit: this.limit,
           page: this.page,
@@ -182,9 +161,6 @@
           filter: JSON.stringify(filter),
           refresh: true
         }).then(({dataCount = 0, tableContent = []}) => {
-          if(orderId){
-            this.$emit('sel-work', tableContent[0]);
-          }
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.workList = this.page === 1 ? tableContent : [...this.workList, ...tableContent];
           this.$nextTick(() => {
@@ -216,6 +192,7 @@
 </script>
 
 <style scoped lang="scss">
+  @import '~@/scss/color.scss';
   .vux-1px-b:after {
     border-color: #e8e8e8;
   }
@@ -312,7 +289,7 @@
         height: calc(100% - .38rem);
         /* 使用深度作用选择器进行样式覆盖 */
         /deep/ .scroll-wrapper {
-          padding: .14rem .04rem 0 .3rem;
+          padding: .14rem .15rem 0 ;
         }
         // 每个物料
         .each-work {
@@ -320,6 +297,9 @@
           position: relative;
           margin-bottom: .2rem;
           box-sizing: border-box;
+          &.selected {
+            border: 1px solid $main_color;
+          }
           .work_top {
             font-size: 0;
             .code_name,
@@ -369,18 +349,7 @@
           // 阴影
           &.box_sd {
             box-sizing: border-box;
-            box-shadow: 0 0 8px #e8e8e8;
-          }
-          // 选择icon
-          .selIcon,
-          .isSelIcon {
-            top: 50%;
-            left: -.3rem;
-            position: absolute;
-            transform: translate(0, -50%);
-          }
-          .isSelIcon {
-            fill: #5077aa;
+            box-shadow: 0 2px 10px 0 rgba(228, 228, 232, 0.5);
           }
         }
       }

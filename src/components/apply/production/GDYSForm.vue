@@ -10,9 +10,12 @@
           <div class="vux-1px-t" v-for="(dItem,dIndex) in fundConfig" :key="dIndex" >
             <!-- 可编辑的字段 -->
             <template v-if="!dItem.readOnly">
-              <div class='each_property' v-if="dItem.fieldCode === 'transMatchedCode'">
+              <div class='each_property' v-if="dItem.fieldCode === 'transMatchedCode'" @click="showWorkPop = true">
                 <label :class="{required: !dItem.allowBlank}">{{dItem.fieldLabel}}</label>
-                <span class='property_val'>{{workInfo[dItem.fieldCode] || workInfo[dItem.displayField]}}</span>
+                <div class='picker'>
+                  <span class='mater_nature'>{{workInfo[dItem.fieldCode] || workInfo[dItem.displayField] || "请选择"}}</span>
+                  <span class='icon-right'></span>
+                </div>
               </div>
               <!-- 下拉框 -->
               <div class='each_property' v-if="dItem.xtype === 'r2Selector' && dItem.fieldCode !== 'transMatchedCode'" @click="showManager()">
@@ -50,38 +53,6 @@
               </div>
             </template>
           </div>
-          <!-- <group class='costGroup' group-title-margin-top="0">
-            <cell isLink title='工单启动号' v-model="workInfo.transCode"
-                  @click.native="showWorkPop = !showWorkPop"></cell>
-            <cell title='工单派工号' v-model="workInfo.orderCode" :disabled="!workInfo.orderCode"></cell>
-            <cell title='加工订单号' v-model="workInfo.processCode" :disabled="!workInfo.orderCode"></cell>
-            <cell title='工序名称' v-model="workInfo.procedureName" :disabled="!workInfo.procedureName"></cell>
-            <cell title='可验收余额' v-model="workInfo.qtyBal" :disabled="!workInfo.qtyBal"></cell>
-            <x-input title="本次验收" type="number" v-model.number="workInfo.tdQty" :disabled='!workInfo.qtyBal'
-                     text-align="right"
-                     :placeholder="workInfo.qtyBal ? '请填写':''" @on-focus="getFocus($event)"
-                     @on-blur="checkAmt(workInfo)">
-              <template slot="label">
-                <span class='required'>本次验收</span>
-              </template>
-            </x-input>
-            <cell title="后置工序" v-model="workInfo.rearProcedureName" :disabled="!workInfo.rearProcedureName"></cell>
-            <cell title="工艺路线编码" v-model="workInfo.proFlowCode" :disabled="!workInfo.rearProcedureName"></cell>
-            <cell title="工艺路线名称" v-model="workInfo.technicsName" :disabled="!workInfo.rearProcedureName"></cell>
-            <cell title="物料名称" v-model="workInfo.inventoryName" :disabled="!workInfo.inventoryName">
-              <template slot="title">
-                <span class='required'>物料名称</span>
-              </template>
-            </cell>
-            <cell title="物料编码" v-model="workInfo.matCode" :disabled="!workInfo.matCode">
-              <template slot="title">
-                <span class='required'>物料编码</span>
-              </template>
-            </cell>
-            <cell title="加工属性" v-model="workInfo.processing || '无'" :disabled="!workInfo.processing"></cell>
-            <cell title="制造费用" v-model="workInfo.skinFee" :disabled="!workInfo.skinFee"></cell>
-            <cell title="工价" v-model="workInfo.wages" :disabled="!workInfo.wages"></cell>
-          </group> -->
           <!-- 物料popup -->
           <pop-work-check-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
                                @sel-work="selWork" ref="matter"></pop-work-check-list>
@@ -118,16 +89,13 @@
       <div class="btn-item stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</div>
       <div class="btn-item" @click="submitOrder">提交</div>
     </div>
-
   </div>
 </template>
 
 <script>
   // vux组件引入
   import {
-    Popup, TransferDom, Group,
-    Cell, numberComma, Datetime,
-    XInput, XTextarea
+    TransferDom,  numberComma,  XTextarea
   } from 'vux'
   // 请求 引入
   import { saveAndStartWf, saveAndCommitTask, submitAndCalc, updateData } from 'service/commonService'
@@ -139,7 +107,6 @@
   import PopManagerList from 'components/Popup/workList/PopManagerList'
   import PopWarehouseList from 'components/Popup/PopWarehouseList'
   import PopWorkCheckList from 'components/Popup/workList/PopWorkCheckList'
-  import RPicker from 'components/RPicker'
   import BomList from 'components/detail/commonPart/BomList'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   /* 引入微信相关 */
@@ -153,9 +120,8 @@
       TransferDom
     },
     components: {
-      Popup, PopWorkCheckList,
-      Group, Cell, Datetime,
-      XInput, XTextarea, PopManagerList, RPicker,
+      XTextarea,
+      PopWorkCheckList, PopManagerList,
       PopWarehouseList, BomList, PopBaseinfo
     },
     data () {
@@ -186,6 +152,7 @@
       selWork (val) {
         val.tdQty = val.qtyBal;
         this.workInfo = val;
+        this.defaultManager = {};
         getBomWorkCheck({
           transCode: val.transCode,
           inventoryCode: val.matCode
@@ -233,7 +200,7 @@
         if (!this.workInfo.transCode) {
           warn = '请选择工序'
         }
-        if(!this.defaultManager.dealerCode){
+        if(!this.defaultManager.dealerCode) {
           warn = '验收者不能为空'
         }
         if (!warn && !this.warehouse.warehouseCode) {
@@ -421,6 +388,12 @@
             warehouseDistrict: order.warehouseDistrict_containerCode,
             warehouseAddress: order.warehouseAddress_containerCode,
           };
+          this.warehouseStoreInfo = {
+            warehouseCode: order.storehouseInCode,
+            warehouseName: order.warehouseName_storehouseInCode,
+            warehouseType: order.warehouseInType,
+            warehouseAddress: order.warehouseAddress_storehouseInCode,
+          }
           this.handlerDefault = {
             handler: formData.handler,
             handlerName: formData.handlerName,
@@ -444,20 +417,21 @@
         })
       },
       // TODO 是否保存草稿
-      // hasDraftData () {
-      //   if (!this.workInfo.transCode) {
-      //     return false
-      //   }
-      //   return {
-      //     [DRAFT_KEY]: {
-      //       workInfo: this.workInfo,
-      //       defaultManager: this.defaultManager,
-      //       formData: this.formData,
-      //       warehouse: this.warehouse,
-      //       bomList: this.bomList,
-      //     }
-      //   };
-      // },
+      hasDraftData () {
+        if (!this.workInfo.transCode) {
+          return false
+        }
+        return {
+          [DRAFT_KEY]: {
+            workInfo: this.workInfo,
+            defaultManager: this.defaultManager,
+            formData: this.formData,
+            warehouse: this.warehouse,
+            warehouseStoreInfo: this.warehouseStoreInfo,
+            bomList: this.bomList,
+          }
+        };
+      },
       // TODO 启用企业微信扫一扫
       scanQRCode () {
         scanQRCode().then(({result = ''}) => {
@@ -480,16 +454,17 @@
       },
     },
     created () {
-      // let data = sessionStorage.getItem(DRAFT_KEY);
-      // if (data) {
-      //   let draft = JSON.parse(data);
-      //   this.workInfo = draft.workInfo;
-      //   this.defaultManager = draft.defaultManager;
-      //   this.formData = draft.formData;
-      //   this.warehouse = draft.warehouse;
-      //   this.bomList = draft.bomList;
-      //   sessionStorage.removeItem(DRAFT_KEY);
-      // }
+      let data = sessionStorage.getItem(DRAFT_KEY);
+      if (data) {
+        let draft = JSON.parse(data);
+        this.workInfo = draft.workInfo;
+        this.defaultManager = draft.defaultManager;
+        this.formData = draft.formData;
+        this.warehouse = draft.warehouse;
+        this.warehouseStoreInfo = draft.warehouseStoreInfo;
+        this.bomList = draft.bomList;
+        sessionStorage.removeItem(DRAFT_KEY);
+      }
     }
   }
 </script>

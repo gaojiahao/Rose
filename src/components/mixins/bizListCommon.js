@@ -215,11 +215,6 @@ export default {
       this.resetCondition();
       // this.getData(false);
       this.onPullingDown();
-      // 工单派工，启动，验收提交成功之后返回列表需要重新请求pop数据
-      let name = this.$route.query.name;
-      if (name === '工单任务派工' || name === '工单任务启动' || name === '工单任务验收') {
-        this.$refs.taskWork.getWorkOrderTask()
-      }
     },
     // 获取上次存储的列表总数量
     getSession () {

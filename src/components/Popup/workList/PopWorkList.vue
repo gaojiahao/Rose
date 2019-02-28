@@ -168,15 +168,12 @@ import MSearch from 'components/search'
       },
       // TODO 设置默认值
       setDefaultValue() {
-        this.tmpItems = [this.defaultValue];
-        this.selItems = [this.defaultValue];
+        this.tmpItems = [...this.defaultValue];
+        this.selItems = [...this.defaultValue];
       },
       // TODO 获取物料列表
       getWorkOrderTask() {
         let filter = [];
-        let {orderId = '[]'} = this.$route.query;
-        let orderIds = JSON.parse(orderId);
-        let filterArr = [];
         if (this.srhInpTx) {
           filter = [
             ...filter,
@@ -187,70 +184,12 @@ import MSearch from 'components/search'
             },
           ];
         }
-        // if(this.$route.query.orderTransCode){
-        //   let {orderTransCode} = this.$route.query;
-        //   let filterArr = [];
-        //   orderTransCode.forEach( (item, index) => {
-        //     if(filterArr.length) {
-        //       filterArr[0].value += index === orderTransCode.length - 1 ? item.transCode : `${item.transCode},` ;
-        //       filterArr[1].value += index === orderTransCode.length - 1 ? item.inventoryCode : `${item.inventoryCode},`;
-        //     }
-        //     else{
-        //       let arr = [
-        //         {
-        //           operator: 'in',
-        //           value: `${item.transCode},`,
-        //           property: 'transCode',
-        //         },
-        //         {
-        //           attendedOperation: "and",
-        //           operator: 'in',
-        //           value: `${item.inventoryCode},`,
-        //           property: 'inventoryCode',
-        //         }
-        //       ]
-        //       if(orderTransCode.length === 1) {
-        //         arr[0].value = item.transCode;
-        //         arr[1].value = item.inventoryCode;
-        //       }
-        //       filterArr = [...arr];
-        //     }
-        //   })
-        //   filter = [
-        //     ...filter,
-        //     ...filterArr
-        //   ]
-        // }
-        // 工单任务派工从科目发起，路由传的参数用来过滤数据
-        if(orderIds.length){
-          let filterArr = [{
-            operator: 'in',
-            value: '',
-            property: 'colId',
-          }];
-          orderIds.forEach( (item, index) => {
-            if(index === orderIds.length-1){
-              filterArr[0].value += item;
-              return
-            }
-            filterArr[0].value += `${item},`
-          })
-          console.log(filterArr)
-          filter = [
-            ...filter,
-            ...filterArr
-          ]
-        }
         return getWorkOrderTask({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
-          // if(this.$route.query.orderTransCode){
-          if(orderIds.length){
-            this.$emit('sel-work', JSON.stringify(tableContent));
-          }
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.workList = this.page === 1 ? tableContent : [...this.workList, ...tableContent];
           this.$nextTick(() => {

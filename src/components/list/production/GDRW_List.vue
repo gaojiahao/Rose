@@ -15,8 +15,8 @@
                           noCount noPrice isMoreDealer></mater-list-item>
       </r-scroll>
     </div>
-    <add-btn :action="action" :goEdit="goEdit"></add-btn>    <pop-assignment-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" ref="taskWork"></pop-assignment-task-work-list>
-    <!-- <pop-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" ref="taskWork"></pop-task-work-list> -->
+    <add-btn :action="action" :goEdit="goEdit"></add-btn>    
+    <!-- <pop-assignment-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" ref="taskWork"></pop-assignment-task-work-list> -->
   </div>
 </template>
 
@@ -48,31 +48,31 @@ export default {
   },
   mixins: [listCommon],
   methods: {
-    goEdit(){
-      this.popShow = true;
-    },
-    selTask(val){
-      let arr = [];
-      val.forEach(item => {
-        // arr.push({
-        //   inventoryCode: item.matCode,
-        //   transCode: item.transCode
-        // })
-        arr.push(item.colId)
-      })
-      let { name, listId } = this.$route.query,
-          { folder, fileName } = this.$route.params;
-      this.$router.push({
-        path: `/fillform/${folder}/${fileName}`,
-        query: {
-          name,
-          // childId,
-          // orderTransCode: arr,
-          listId,
-          orderId: JSON.stringify(arr),
-        }
-      })
-    }
+    // goEdit(){
+    //   this.popShow = true;
+    // },
+    // selTask(val){
+    //   let arr = [];
+    //   val.forEach(item => {
+    //     // arr.push({
+    //     //   inventoryCode: item.matCode,
+    //     //   transCode: item.transCode
+    //     // })
+    //     arr.push(item.colId)
+    //   })
+    //   let { name, listId } = this.$route.query,
+    //       { folder, fileName } = this.$route.params;
+    //   this.$router.push({
+    //     path: `/fillform/${folder}/${fileName}`,
+    //     query: {
+    //       name,
+    //       // childId,
+    //       // orderTransCode: arr,
+    //       listId,
+    //       orderId: JSON.stringify(arr),
+    //     }
+    //   })
+    // }
   }
 }
 </script>

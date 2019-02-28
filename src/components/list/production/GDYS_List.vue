@@ -16,8 +16,8 @@
       </r-scroll>
     </div>
     <add-btn :action="action" :goEdit="goEdit"></add-btn>    
-    <pop-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" :params="requestParams" :getListMethod="'getWorkCheckList'"
-                        work-type="验收" ref="taskWork"></pop-task-work-list>
+    <!-- <pop-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" :params="requestParams" :getListMethod="'getWorkCheckList'"
+                        work-type="验收" ref="taskWork"></pop-task-work-list> -->
   </div>
 </template>
 
@@ -54,21 +54,21 @@
     },
     mixins: [listCommon],
     methods: {
-      goEdit() {
-        this.popShow = true;
-      },
-      selTask(val) {
-        let { name, listId} = this.$route.query,
-            { folder, fileName } = this.$route.params;
-        this.$router.push({
-          path: `/fillform/${folder}/${fileName}`,
-          query: {
-            name,
-            listId,
-            orderId: val[0].colId,
-          }
-        })
-      }
+      // goEdit() {
+      //   this.popShow = true;
+      // },
+      // selTask(val) {
+      //   let { name, listId} = this.$route.query,
+      //       { folder, fileName } = this.$route.params;
+      //   this.$router.push({
+      //     path: `/fillform/${folder}/${fileName}`,
+      //     query: {
+      //       name,
+      //       listId,
+      //       orderId: val[0].colId,
+      //     }
+      //   })
+      // }
     }
   }
 </script>
