@@ -15,14 +15,15 @@
                          noCount noPrice :isDealer="false"></mater-list-item>
       </r-scroll>
     </div>
-    <add-btn :action="action" :goEdit="goEdit"></add-btn>    <pop-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" :params="requestParams"
+    <add-btn :action="action" :goEdit="goEdit"></add-btn>    
+    <pop-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" :params="requestParams" :getListMethod="'getWorkStartList'"
                         :work-type="'启动'" ref="taskWork"></pop-task-work-list>
   </div>
 </template>
 
 <script>
 import listCommon from 'pageMixins/bizListCommon'
-import PopTaskWorkList from 'components/Popup/workList/PopTaskWorkList'
+import PopTaskWorkList from 'components/Popup/workList/PopAssignmentTaskWorkList'
 export default {
   data() {
     return {
@@ -63,8 +64,7 @@ export default {
         query: {
           name,
           listId,
-          inventoryCode: val[0].matCode,
-          proPointCode: val[0].proPointCode,
+          orderId: val[0].colId,
         }
       })
     }

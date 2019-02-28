@@ -152,6 +152,7 @@
       // TODO 获取物料列表
       getWorkOrderTask() {
         let filter = [];
+        let {orderId = ''} = this.$route.query
         if (this.srhInpTx) {
           filter = [
             ...filter,
@@ -162,22 +163,15 @@
             },
           ];
         }
-        if(this.$route.query.inventoryCode){
-          let {inventoryCode,proPointCode} = this.$route.query;
+        if (orderId) {
           filter = [
             ...filter,
             {
               operator: 'eq',
-              value: inventoryCode,
-              property: 'inventoryCode',
-              separator: 'and'
+              value: orderId,
+              property: 'colId'
             },
-            {
-              operator: 'eq',
-              value: proPointCode,
-              property: 'proPointCode'
-            }
-          ]
+          ];
         }
         return getWorkStartList({
           limit: this.limit,
@@ -185,7 +179,7 @@
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
-          if(this.$route.query.inventoryCode){
+          if(orderId){
             this.$emit('sel-work', tableContent[0]);
           }
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;

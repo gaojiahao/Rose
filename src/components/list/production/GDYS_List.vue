@@ -15,7 +15,8 @@
                    noCount noPrice :isDealer="false"></mater-list-item>
       </r-scroll>
     </div>
-    <add-btn :action="action" :goEdit="goEdit"></add-btn>    <pop-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" :params="requestParams" :getListMethod="'getWorkCheckList'"
+    <add-btn :action="action" :goEdit="goEdit"></add-btn>    
+    <pop-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" :params="requestParams" :getListMethod="'getWorkCheckList'"
                         work-type="验收" ref="taskWork"></pop-task-work-list>
   </div>
 </template>
@@ -65,8 +66,6 @@
             name,
             listId,
             orderId: val[0].colId,
-            // inventoryCode: val[0].matCode,
-            // orderCode: val[0].transCode,
           }
         })
       }

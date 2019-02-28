@@ -14,36 +14,6 @@
             </div>
           </div>
         </div>
-        <!-- <div class="materiel_list">
-          <div class="title">工序信息</div>
-          <group class='costGroup' group-title-margin-top="0">
-            <cell isLink title='工序名称' v-model="workInfo.procedureName"
-                  @click.native="showWorkPop = !showWorkPop"></cell>
-            <cell title='工序编码' v-model="workInfo.proPointCode" :disabled="!workInfo.proPointCode"></cell>
-            <cell title='工序待启动' v-model="workInfo.thenQtyBal" :disabled="!workInfo.thenQtyBal"></cell>
-            <cell title='启动数量' v-model="workInfo.tdQty" :disabled="!workInfo.tdQty"></cell>
-            <x-input v-model="workInfo.dealerName" :disabled='!workInfo.dealerName' text-align="right"
-                     :placeholder="workInfo.qtyBal ? '请填写':''" @on-focus="getFocus($event)">
-              <template slot="label">
-                <span class='required'>组长</span>
-              </template>
-            </x-input>
-            <cell title='物料名称' v-model="workInfo.inventoryName" :disabled="!workInfo.inventoryName">
-              <template slot="title">
-                <span class='required'>物料名称
-                </span>
-              </template>
-            </cell>
-            <cell title='物料编码' v-model="workInfo.inventoryCode" :disabled="!workInfo.inventoryCode">
-              <template slot="title">
-                <span class='required'>物料编码
-                </span>
-              </template>
-            </cell>
-          </group>
-          <pop-work-start-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
-                               @sel-work="selWork"></pop-work-start-list>
-        </div> -->
         <pop-work-start-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
                                @sel-work="selWork"></pop-work-start-list>
         <div class="work_list warehouse " v-show="workInfo.whInCode">
@@ -62,11 +32,6 @@
         <!-- <pop-facility-list @sel-item="selFacility" :default-value="facility"></pop-facility-list> -->
         <div class="materiel_list work_list" v-show="bomList.length">
           <bom-list :boms="bomList">
-            <!-- <template slot-scope="{bom}" slot="number">
-              <div class="number-part">
-                <span class="main-number">数量: {{bom.tdQty}}{{bom.measureUnit}}</span>
-              </div>
-            </template> -->
             <template slot-scope="{bom}" slot="specification">
               <div class="content-unit">
                 <span>产品规格: {{bom.specification}}</span>

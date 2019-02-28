@@ -24,11 +24,11 @@
                   <span class="each_unit">工单派工号: {{item.orderCode}}</span>
                 </div>
                 <div class="product_unit">
-                  <span class="each_unit">加工订单号: {{workType === '验收'? item.processCode : item.transCode}}</span>
+                  <span class="each_unit" v-show="item.processCode || item.transCode">加工订单号: {{workType === '验收'? item.processCode : item.transCode}}</span>
                   <span class="each_unit">工序: {{item.procedureName}}</span>
                 </div>
                 <div class="product_unit">
-                  <span class="each_unit">总数: {{item.productDemandQty}}</span>
+                  <span class="each_unit">{{workType}}总数: {{item.productDemandQty}}</span>
                   <span class="each_unit">已{{workType}}: {{item.thenLockQty}}</span>
                   <span class="each_unit">可{{workType}}: {{item.thenQtyBal || item.qtyBal}}</span>
                 </div>
@@ -49,7 +49,7 @@
 
 <script>
 import { Icon, Popup, LoadMore } from 'vux'
-import { getObjFacility, getWorkOrderTask , getTaskWorkList, getWorkCheckList } from 'service/Product/gdService'
+import { getObjFacility, getWorkOrderTask , getWorkStartList, getWorkCheckList } from 'service/Product/gdService'
 import RScroll from 'components/RScroll'
 import MSearch from 'components/search'
 import {accAdd} from '@/home/pages/maps/decimalsAdd'
@@ -156,7 +156,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
           }
           return;
         }
-        if(this.workType === '验收'){
+        if(this.workType !== '派工'){
           this.tmpItems = [sItem]
         }
         else{
@@ -200,6 +200,28 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
           ];
         }
         return getWorkCheckList({
+          filter: JSON.stringify(filter),
+        }).then(({tableContent = []}) => {
+          tableContent.forEach(item => {
+            item.isStartTask = false;
+          })
+          this.taskWorkList = tableContent
+        });
+      },
+       // TODO 获取物料列表
+      getWorkStartList() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: this.filterProperty
+            },
+          ];
+        }
+        return getWorkStartList({
           filter: JSON.stringify(filter),
         }).then(({tableContent = []}) => {
           tableContent.forEach(item => {
