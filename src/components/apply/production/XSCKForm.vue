@@ -572,6 +572,9 @@ export default {
           warehouseAddress: outPut.warehouseAddress_storehouseOutCode,
         };
         if(this.matterParams.data){
+          if(this.matterParams.data.whCode != null) {
+            this.matterParams.data.whCode = this.warehouse.warehouseCode
+          }
           if(this.matterParams.data.dealerCode != null) {
             this.matterParams.data.dealerCode = this.dealerInfo.dealerCode
           }

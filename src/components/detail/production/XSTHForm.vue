@@ -138,6 +138,7 @@
               this.warehouse[key] = inPut[key];
             }
           }
+          this.warehouse.containerCode = inPut.containerCode;
           this.orderInfo = {
             ...formData,
             ...inPut,
