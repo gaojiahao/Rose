@@ -4,7 +4,7 @@
       <div class="trade_pop">
         <r-scroll class="mater_list" :options="scrollOptions" ref="bScroll">
           <div class="bom-container" v-if="bomInfo.boms && bomInfo.boms.length">
-            <div class="title vux-1px-b">原料</div>
+            <div class="title vux-1px-b">bom</div>
             <div class="each-bom-part vux-1px-b" v-for="(bom, bIndex) in bomInfo.boms" :key="bIndex">
               <div class="main-info-part">
                 <div class="main-top" v-if="bom.warehouseName || bom.warehouseCode">

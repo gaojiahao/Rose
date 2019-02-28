@@ -45,7 +45,7 @@
           </template>
           <template slot-scope="{bom}" slot="number">
             <div class="number-part">
-              <span class="main-number">数量: {{bom.tdQty}}{{bom.measureUnit_outPutMatCode}}</span>
+              <span class="main-number">数量: {{bom.tdQtyCopy1}}{{bom.measureUnit_outPutMatCode}}</span>
               <span class="number-unit">bom数量: {{bom.bomQty}}</span>
               <span class="number-unit">损耗率: {{bom.bomSpecificLoss}}</span>
             </div>

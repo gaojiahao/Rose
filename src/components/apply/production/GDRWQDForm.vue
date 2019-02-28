@@ -197,7 +197,7 @@
             bomType: item.bomType,
             bomQty: item.qty,
             bomSpecificLoss: item.specificLoss,
-            tdQty: item.tdQty,
+            tdQtyCopy1: item.tdQty,
           })
         });
 
