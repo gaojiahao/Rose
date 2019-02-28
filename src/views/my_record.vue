@@ -164,7 +164,7 @@
                 list2 = [
                   ...list2,
                   {
-                    label: '费用明细',
+                    label: '费用明细(如下)',
                     value: '',
                   }, {
                     label: '住宿费',
@@ -192,6 +192,14 @@
               }
               break;
             case '其他A类':
+              list2 = [
+                {
+                  label: '其他A类金额',
+                  value: `￥${numberComma(toFixed(item.amount))}/折合${Number(item.coverNum)}套`,
+                },
+                ...list2
+              ]
+              totalCoverNum = accAdd(totalCoverNum, item.coverNum);
               break;
             case 'B':
               if (item.objName === 'B类产品') {

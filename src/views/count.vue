@@ -131,7 +131,7 @@
         //从缓存中拿到上个页面提交的数据
         let jsonData = JSON.parse(this.childInfo.jsonData);
         let {transDetailUncalc, baseinfoExt = {}} = jsonData;
-
+        console.log('transDetailUncalc:', transDetailUncalc);
         for (let i = 0; i < transDetailUncalc.length; i++) {
           let item = transDetailUncalc[i];
           switch (item.containerCode) {
@@ -155,8 +155,9 @@
             case '其他A类':
               listSalesAmt.unshift({
                 label: item.transObjCode,
-                value: item.amount,
+                value: `${item.amount}/折合${item.num1}套`,
               });
+              totalNum1 = accAdd(totalNum1, Number(item.num1 || 0));
               break;
             case 'B':
               if (item.transObjCode === 'B类产品') {

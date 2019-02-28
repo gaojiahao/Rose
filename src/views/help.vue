@@ -44,6 +44,7 @@
 
         <group class="caution_inputs">
           <x-input title="其他A类产品" v-model.number="Aclass" text-align="right" placeholder="请输入金额"></x-input>
+          <cell title="其他A类产品套数" disabled :value="otherAclass"></cell>
           <cell title="A类产品合计" disabled :value="AclassTotal"></cell>
         </group>
 
@@ -72,7 +73,7 @@
           <cell class="each_part" title="费用销量比" disabled :value="costVolumeRatio" value-align="right"></cell>
         </group>
 
-        <group title="每日情况汇报">
+        <!-- <group title="每日情况汇报">
           <popup-picker class="each_part" title="今日所在省份" placeholder="请选择省份" :data='provinceList' :columns="1"
                         @on-change="provinceChange" v-model="areaToday"></popup-picker>
           <popup-picker class="each_part" title="今日所在地市" placeholder="请选择地市" :data='cityTodayList' :columns="1"
@@ -94,7 +95,7 @@
                         v-model="areaNextWeek"></popup-picker>
           <popup-picker class="each_part" title="下周所在渠道" placeholder="请选择银行" :data='bankNextWeekList' :columns="1"
                         v-model="bankNextWeek"></popup-picker>
-        </group>
+        </group> -->
         <group>
           <x-input title="备注" text-align="right" placeholder="非必填 如有需要请填写" v-model="comments"></x-input>
         </group>
@@ -155,6 +156,9 @@
         total = accAdd(total, this.Aclass);
         return total;
       },
+      otherAclass() {
+        return toFixed(this.Aclass / 1996)
+      },
       BclassTotal() {
         return accAdd(this.Bclass, this.BclassDown)
       },
@@ -200,26 +204,26 @@
           {key: 'lTrafficAmt', msg: '长途交通费'},
           {key: 'otherAmt', msg: '其他金额'},
         ];
-        this.baseinfoExt.varchar14 = this.areaToday[0];
-        this.baseinfoExt.varchar15 = this.bankToday[0];
-        this.baseinfoExt.varchar19 = this.areaTomorrow[0];
-        this.baseinfoExt.varchar20 = this.areaNextWeek[0];
-        this.baseinfoExt.varchar21 = this.bankNextWeek[0];
-        this.baseinfoExt.varchar22 = this.bankTomorrow[0];
-        this.baseinfoExt.varchar23 = this.cityToday[0];
-        this.baseinfoExt.varchar24 = this.countyToday[0];
-        let validateMap = [
-          {key: 'varchar14', msg: '请选择今日所在省份'},
-          {key: 'varchar23', msg: '请选择今日所在地市'},
-          {key: 'varchar24', msg: '请选择今日所在区县'},
-          {key: 'varchar15', msg: '请选择今日所在渠道'},
-          {key: 'varchar17', msg: '请填写排期银行名称'},
-          {key: 'varchar18', msg: '请填写网点名称'},
-          {key: 'varchar19', msg: '请选择明日所在省份'},
-          {key: 'varchar22', msg: '请选择明日所在渠道'},
-          {key: 'varchar20', msg: '请选择下周所在省份'},
-          {key: 'varchar21', msg: '请选择下周所在渠道'},
-        ];
+        // this.baseinfoExt.varchar14 = this.areaToday[0];
+        // this.baseinfoExt.varchar15 = this.bankToday[0];
+        // this.baseinfoExt.varchar19 = this.areaTomorrow[0];
+        // this.baseinfoExt.varchar20 = this.areaNextWeek[0];
+        // this.baseinfoExt.varchar21 = this.bankNextWeek[0];
+        // this.baseinfoExt.varchar22 = this.bankTomorrow[0];
+        // this.baseinfoExt.varchar23 = this.cityToday[0];
+        // this.baseinfoExt.varchar24 = this.countyToday[0];
+        // let validateMap = [
+        //   {key: 'varchar14', msg: '请选择今日所在省份'},
+        //   {key: 'varchar23', msg: '请选择今日所在地市'},
+        //   {key: 'varchar24', msg: '请选择今日所在区县'},
+        //   {key: 'varchar15', msg: '请选择今日所在渠道'},
+        //   {key: 'varchar17', msg: '请填写排期银行名称'},
+        //   {key: 'varchar18', msg: '请填写网点名称'},
+        //   {key: 'varchar19', msg: '请选择明日所在省份'},
+        //   {key: 'varchar22', msg: '请选择明日所在渠道'},
+        //   {key: 'varchar20', msg: '请选择下周所在省份'},
+        //   {key: 'varchar21', msg: '请选择下周所在渠道'},
+        // ];
         tipArr.every(item => {
           if (!this[item.key] && this[item.key] !== 0) {
             tips = `请填写${item.msg}`;
@@ -245,13 +249,13 @@
           }
           return true;
         });
-        !tips && validateMap.every(item => {
-          if (!this.baseinfoExt[item.key]) {
-            tips = item.msg;
-            return false
-          }
-          return true
-        });
+        // !tips && validateMap.every(item => {
+        //   if (!this.baseinfoExt[item.key]) {
+        //     tips = item.msg;
+        //     return false
+        //   }
+        //   return true
+        // });
         if (tips) {
           this.$vux.alert.show({
             content: tips
@@ -295,7 +299,8 @@
             containerCode: "其他A类", //类型
             qty: "",
             amount: Number(this.Aclass), //总金额
-            fgCode: ""
+            fgCode: "",
+            num1: this.otherAclass
           }, {
             id: this.guid(),
             transObjCode: "A类产品", //项目类产品名称
