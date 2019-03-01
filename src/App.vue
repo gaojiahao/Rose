@@ -61,6 +61,10 @@
   @import '~vux/src/styles/1px.less';
   @import './common/swiper-4.2.2.min.css';
   @import './../static/css/icon.css';
+
+  .vux-1px-t:before {
+    border-color: #E8E8E8;
+  }
   html {
     height: 100%;
   }

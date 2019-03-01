@@ -68,6 +68,13 @@ export default {
   components: {
     UploadFile, MatterItem
   },
+  computed: {
+    // 将选中删除的物料 转换成 数组
+    checkList() {
+      let newArr = [].concat.apply([], Object.values(this.selItems));
+      return newArr
+    }
+  },
   watch:{
     //修改的物料
     matter: {
@@ -113,7 +120,7 @@ export default {
     // 展开可删除状态
     showDelete(){
       this.matterModifyClass = ! this.matterModifyClass;
-      this.selItems = [];
+      this.selItems = {};
     },
     // 显示物料修改的pop
     getMatterModify(item, index){
@@ -503,32 +510,30 @@ export default {
             }
             this.matterParams = requestParams;
             // 处理物料的配置
-            let arr = []
-            dataSource.cols.forEach(cItem => {
-              // 确定要物料段落显示的title
-              if(cItem.k === 'inventoryCode' && !cItem.h && !this.orderListTitle){
-                this.orderListTitle = '物料'
-              }
-              else if(cItem.k === 'transCode' && !cItem.h){
-                if(cItem.v.includes('编码')){
-                  this.orderListTitle = cItem.v.slice(0, cItem.v.indexOf('编码'))
-                  return 
+            let arr = [];
+            for(let cItem of dataSource.cols) {
+              if(!cItem.h) {
+                // 配置中的字段要去除掉物料名称，交易号
+                if(cItem.k !== 'inventoryName' && cItem.k !== 'transCode' && cItem.k !== 'invName'){
+                  arr.push(cItem)
                 }
-                this.orderListTitle = cItem.v
+                // 确定要物料段落显示的title
+                if(cItem.k === 'inventoryCode' && !this.orderListTitle){
+                  this.orderListTitle = '物料';
+                }
+                else if(cItem.k === 'transCode'){
+                  if(cItem.v.includes('编码')){
+                    this.orderListTitle = cItem.v.slice(0, cItem.v.indexOf('编码'));
+                    return ;
+                  }
+                  this.orderListTitle = cItem.v;
+                }
               }
-              else {
-                this.orderListTitle = '物料'
-              }
-
-              // 配置中的字段要去除掉物料名称，交易号
-              if(!cItem.h && cItem.k !== 'inventoryName' && cItem.k !== 'transCode' && cItem.k !== 'invName'){
-                arr.push(cItem)
-              }
-            })
+            }
             this.matterPopConfig = arr;
           }
         }
-        console.log(config)
+        console.log('config:', config);
         let dealerConfig = [], matterConfig = [], otherConfig = [], baseinfoExtConfig = [], fundConfig = [];
         // 从请求回来的配置中拆分往来，物料，其他段落的配置
         config.forEach(item => {
@@ -626,9 +631,11 @@ export default {
             // 物料或者订单请求
             if(item.editorType === 'r2Selector') {
               if(item.text === '物料名称' || item.text === '物料编码'){
+                console.log('if-text:', item.text);
                 this.orderListTitle = '物料'
               }
               else if(item.text === '设施名称') {
+                console.log('else-if-text:', item.text);
                 this.orderListTitle = '设施'
               }
               else{

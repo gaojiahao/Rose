@@ -12,7 +12,7 @@ var webpack = require('webpack')
 var proxyMiddleware = require('http-proxy-middleware')
 var webpackConfig = require('./webpack.dev.conf')
 
-// default port where dev server listens for incoming traffic
+/* 如果没有指定运行端口，使用 config.dev.port 作为运行端口 */
 var port = process.env.PORT || config.dev.port
 // automatically open browser, if not set will be false
 var autoOpenBrowser = !!config.dev.autoOpenBrowser

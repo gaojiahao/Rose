@@ -102,11 +102,6 @@
           }
         }
         return arr;
-      },
-      // 将要删除的物料对象selItems转成一维素组
-      checkList() {
-        let newArr = [].concat.apply([],Object.values(this.selItems));
-        return newArr
       }
     },
     watch:{
@@ -168,7 +163,6 @@
               orderList['noCode'] = []
             }
             orderList['noCode'].push(item);
-
           }
         });
         this.orderList = orderList;
@@ -213,7 +207,6 @@
         else{
           this.$set(this.selItems, key, [index])
         }
-         
       },
       // 判断是否展示选中图标
       showSelIcon(sItem, index) {
@@ -229,7 +222,7 @@
         }
         let obj = {};
         for(let key in this.orderList){
-          this.orderList[key].foeEach((item, index) => {
+          this.orderList[key].forEach((item, index) => {
             if(!obj[item.transCode]){
               obj[item.transCode] = [];
             }
@@ -245,7 +238,7 @@
           // 确定回调
           onConfirm: () => {
             for(let key in this.selItems){
-              var newIndexs =   this.selItems[key].map((val, idx) => {return val - idx})
+              let newIndexs = this.selItems[key].map((val, idx) => {return val - idx});
               // 将orderList中对应交易号的物料列表按照selItems中的索引删除
               newIndexs.forEach((sItem, sIndex) => {
                 this.orderList[key].splice(sItem, 1)
@@ -462,11 +455,6 @@
           draft = JSON.parse(data);
       if (data) {
         this.orderList = draft.orderList;
-        for (let items of Object.values(this.orderList)) {
-          for (let item of items) {
-            this.consumableList.push(item)
-          }
-        }
         this.dealerInfo = draft.dealerInfo;
         this.dealer = draft.dealer;
         this.formData = draft.formData;

@@ -8,9 +8,9 @@
         </pop-baseinfo>
         <!-- 物料列表 -->
         <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :show-matter-pop="showMatterPop" :filter-list="filterList"
-          :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="matterList" 
+          :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="[]"
           :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
-          :add-matter-fn="getMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
+          :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
           :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
           :chosen-matter="matter" :check-amt-fn="checkAmt" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
           <template slot="info" slot-scope="{item}">
@@ -29,42 +29,24 @@
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
-      <span class="count_num">
-        <span class="total_price">
-          <span style="fontSize:.14rem">合计: </span>{{totalNum}}
-        </span>
-      </span>
-      <span class="count_btn" @click="submitOrder">提交</span>
-    </div>
-    <!-- 底部删除确认栏 -->
-    <div class="count_mode vux-1px-t delete_mode" :class="{btn_hide : btnIsHide}" v-else>
-      <div class='count_num all_checked' @click="checkAll">
-        <x-icon type="ios-circle-outline" size="20" class='outline' v-show="selItems.length !== matterList.length"></x-icon>
-        <x-icon type="ios-checkmark" size="20" class="checked" v-show="selItems.length === matterList.length"></x-icon>
-        全选
-      </div>
-      <div class='delete_btn' @click="deleteCheckd">删除</div>
-    </div>
+    <op-button :is-modify="matterModifyClass" :hide="btnIsHide" :td-amount="tdAmount" :tax-amount="taxAmount"
+               :all-check="checkList.length === matterList.length" @on-submit="submitOrder" @on-check-all="checkAll"
+               @on-delete="deleteCheckd"></op-button>
   </div>
 </template>
 
 <script>
 // vux插件 引入
-import { Group, XInput, XTextarea, Datetime, Cell, dateFormat } from 'vux'
+import { XTextarea, dateFormat } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 import { getBaseInfoData, saveAndStartWf, saveAndCommitTask, submitAndCalc } from 'service/commonService'
 // mixins 引入
 import common from 'components/mixins/applyCommon'
 // 组件 引入
-import PopMatterList from 'components/Popup/PopMatterListTest'
-import PopMatter from 'components/apply/commonPart/MatterPop'
-import RNumber from 'components/RNumber'
-import RPicker from 'components/RPicker'
+import OpButton from 'components/apply/commonPart/OpButton'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
-import OpButton from 'components/apply/commonPart/OpButton'
 // 方法 引入
 import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
 import { toFixed } from '@/plugins/calc'
@@ -74,8 +56,8 @@ const DRAFT_KEY = 'CGSQ_DATA';
 export default {
   data () {
     return {
+      selItems: {},
       orderList: {},
-      matterList: [], // 物料列表
       showMaterielPop: false, // 是否显示物料的popup
       formData: {
         biId: '',
@@ -104,8 +86,8 @@ export default {
     }
   },
   components: {
-    XTextarea, Group, XInput, Datetime, Cell, RNumber,
-    PopMatter,  PopMatterList, RPicker, PopBaseinfo, ApplyMatterPart, OpButton
+    XTextarea,
+    PopBaseinfo, ApplyMatterPart, OpButton
   },
   filters: {
     dateFormat
@@ -118,19 +100,28 @@ export default {
         total = accAdd(total, item.tdQty);
       });
       return Number(total);
-    }
+    },
+    // 基于 orderList 此处重组 matterList 数据
+    matterList() {
+      let arr = [];
+      for (let items of Object.values(this.orderList)) {
+        for (let item of items) {
+          arr.push(item);
+        }
+      }
+      return arr;
+    },
   },
   watch: {
     matterList: {
       handler(list) {
         for(let item of list) {
-          /*
+          /**
            * 此处计算下单截止日
-           * shippingTime => 下单截止日
-           * promDeliTime => 到货截止日
-           * tdLeadTime => 采购提前期
-           * 算法：
-           * 下单截止日 =  “到货截止日期” 减去 “采购提前期”（如果有周末则要减去周末）
+           * @shippingTime 下单截止日
+           * @promDeliTime 到货截止日
+           * @tdLeadTime 采购提前期
+           * 算法：下单截止日 =  “到货截止日期” 减去 “采购提前期”（如果有周末则要减去周末）
            *  
            * */
           if(!item.tdLeadTime){
@@ -159,29 +150,32 @@ export default {
     // 选中物料项
     selMatter (val) {
       let sels = JSON.parse(val);
-      let orderList = {};
+      let orderList = JSON.parse(JSON.stringify(this.orderList));
       sels.map(item => {
-        for(let key in this.dataIndexMap){
+        let orderListKey = item.transCode ? item.transCode : 'noCode';
+        for(let key in this.dataIndexMap) {
           // 格式化日期
-          if(key === 'promDeliTime' || key === 'shippingTime'){
+          if(key === 'promDeliTime' || key === 'shippingTime') {
             item[key] = dateFormat(item[this.dataIndexMap[key]], 'YYYY-MM-DD') || "";
           }
           else{
             item[key] = item[key] || item[this.dataIndexMap[key]];
           }
-          
         }
         item.tdQty = item.tdQty || Math.max(item.qtyBalance, item.moq);
-        // item.promDeliTime = item.processingStartDate;
-        // item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
-        // item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
-        // item.assMeasureDescription =  item.assMeasureDescription || item.invSubUnitComment || null; // 辅助计量说明
-        if(!orderList[item.transCode]) {
-          orderList[item.transCode] = [];
+        if(item.transCode) {
+          if (!orderList[orderListKey]) {
+            orderList[orderListKey] = [];
+          }
+          orderList[orderListKey].push(item);
         }
-        orderList[item.transCode].push(item);
+        else {
+          if(!orderList['noCode']) {
+            orderList['noCode'] = []
+          }
+          orderList['noCode'].push(item);
+        }
       })
-      this.matterList = sels;
       this.orderList = orderList;
     },
     // 显示物料修改的pop
@@ -223,66 +217,106 @@ export default {
       this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
     },
     // 选择要删除的物料
-    delClick (sItem, index) {
-      let arr = this.selItems;
-      let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
-      // 若存在重复的 则清除
-      if (delIndex !== -1) {
-        arr.splice(delIndex, 1);
-        return;
+    delClick(sItem, index, key) {
+      let arr = this.selItems[key];
+      if(arr){
+        let delIndex = arr.findIndex(item => item === index);
+        if (delIndex !== -1) {
+          arr.splice(delIndex, 1);
+          if(!arr.length) delete this.selItems[key];
+          return;
+        }
+        arr.push(index);
       }
-      arr.push(sItem);
+      else{
+        this.$set(this.selItems, key, [index])
+      }
     },
-    // 判断是否展示选中图标
-    showSelIcon (sItem) {
-      return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode) !== -1;
+    // 删除的选中状态
+    showSelIcon(sItem, index) {
+      if(sItem.transCode) {
+        return this.selItems[sItem.transCode] && this.selItems[sItem.transCode].findIndex(item => item === index) !== -1;
+      }
+      else {
+        return this.checkList.includes(index);
+      }
     },
     // 全选
-    checkAll (){
-      if (this.selItems.length === this.matterList.length) {
-        this.selItems = [];
+    checkAll() {
+      // 如果已全部选中 则清除所有选中状态
+      if (this.checkList.length === this.matterList.length) {
+        this.selItems = {};
         return
       }
-      this.selItems = JSON.parse(JSON.stringify(this.matterList));
+      // 针对物料列表中的数据进行处理
+      let selItems = {};
+      for(let key in this.orderList){
+        this.orderList[key].forEach((item, index) => {
+          // 存在交易号时 key等于交易号
+          if(item.transCode) {
+            if(!selItems[item.transCode]){
+              selItems[item.transCode] = [];
+            }
+            selItems[item.transCode].push(index)
+          }
+          // 不存在时 key为 'noCode'
+          else {
+            if(!selItems['noCode']) {
+              selItems['noCode'] = []
+            }
+            selItems['noCode'].push(index);
+          }
+        })
+      }
+      this.selItems = selItems;
     },
     // 删除选中的
-    deleteCheckd (){
+    deleteCheckd() {
       this.$vux.confirm.show({
         content: '确认删除?',
         // 确定回调
         onConfirm: () => {
-          let newArr = [];
-          let keys = Object.keys(this.orderList);
-          keys.forEach(item => {
-            newArr = newArr.concat(this.orderList[item]);
-          })
-          this.selItems.forEach(SItem => {
-            newArr.forEach(OItem => {
-              if (OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode) {
-                let delArr = this.orderList[OItem.transCode];
-                let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
-                if (delIndex >= 0) {
-                  delArr.splice(delIndex, 1);
+          /** 
+           *  @selItems {String} 被选中删除的物料对象（当有交易号时 key为交易号 反之 key为noCode）
+           *  @checkList {Array} 被选中删除的物料数组 (存储被删除物料的下标)
+           *  @matterList {Array} 物料列表
+           */ 
+
+          // 被选中删除的物料
+          let selItems = this.selItems, checkList = this.checkList;
+          
+          for(let key in this.selItems) {
+            // 当没有对应的交易单号
+            if(key === 'noCode') {
+              let orderList = {};
+              let remainder = this.matterList.filter((item, index) => !checkList.includes(index));
+              remainder.forEach(item => {
+                if (!orderList[key]) {
+                  orderList[key] = []
                 }
-                if (!delArr.length) {
-                  delete this.orderList[OItem.transCode];
-                }
+                orderList[key].push(item);
+              });
+              this.orderList = orderList;
+            }
+            // 当存在对应的交易单号
+            else {
+              // 将orderList中对应交易号的物料 按照selItems中的索引删除
+              let newIndexs = this.selItems[key].map((val, idx) => val - idx);              
+              newIndexs.forEach((sItem, sIndex) => {
+                this.orderList[key].splice(sItem, 1);
+              }) 
+              if(!this.orderList[key].length){
+                delete this.orderList[key]
               }
-            })
-            this.matterList.forEach((item, index) => {
-              if (item.inventoryCode === SItem.inventoryCode) {
-                this.matterList.splice(index, 1);
-                index--;
-              }
-            })
-          })
-          this.selItems = [];
+            }
+          }
+          this.selItems = {};
           this.matterModifyClass = false;
         }
       })
     },
     // 新增物料
-    getMatter () {
+    addMatter () {
       this.showMaterielPop = !this.showMaterielPop;
     },
     // 提价订单
@@ -435,11 +469,6 @@ export default {
     if (data) {
       this.orderList = JSON.parse(data).orderList;
       this.formData = JSON.parse(data).formData;
-      for(let key in this.orderList) {
-        this.orderList[key].forEach(item => {
-          this.matterList.push(item)
-        })
-      }
       sessionStorage.removeItem(DRAFT_KEY);
     }
   },

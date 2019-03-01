@@ -3,7 +3,7 @@
       <!-- 没有选择物料 -->
       <template v-if="!DataLength">
         <div class="no-matter" @click="showPop = !showPop">
-          <div class="title">{{orderListTitle}}列表</div>
+          <div class="title">{{orderListTitle ? orderListTitle : '物料'}}列表</div>
           <div class="seleted_icon">
             请选择<span class="icon-right"></span>
           </div>
@@ -12,7 +12,7 @@
       <!-- 已经选择了物料 -->
       <template v-else>
         <div class="has-matter" @click="showDeleteFn">
-          <div class="title">{{orderListTitle}}列表</div>
+          <div class="title">{{orderListTitle ? orderListTitle : '物料'}}列表</div>
           <div class='edit' v-if='!matterModifyClass'>编辑</div>
           <div class='edit' v-else>完成</div>
         </div>
@@ -188,10 +188,7 @@ export default {
     },
     // 编辑物料时 已选中的物料
     selItems: {
-      type: Array,
-      default() {
-        return []
-      }
+      type: [Array, Object],
     },
     // 抬头
     orderListTitle: {

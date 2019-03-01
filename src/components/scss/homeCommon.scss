@@ -6,17 +6,16 @@
   box-sizing: border-box;
   .app_classify_name {
     width: 100%;
-    color: #111;
+    color: #333;
     font-weight: bold;
-    font-size: .18rem;
-    line-height: .18rem;
+    font-size: .2rem;
+    line-height: .2rem;
     padding: .04rem .1rem;
-    // margin: .2rem 0 .04rem;
     margin-top: .1rem;
     box-sizing: border-box;
     > p {
       padding-left: .04rem;
-      border-left: 4px solid #5077aa;
+      border-left: 4px solid #3296FA;
     }
   }
   .app-list {

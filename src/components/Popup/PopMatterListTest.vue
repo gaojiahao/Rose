@@ -189,39 +189,7 @@
       },
       // TODO 匹配相同项的索引
       findIndex(arr, sItem) {
-        return arr.findIndex(item => {
-          let isSameTransCode = true, isSameOrderCode = true;
-          if (item.orderCode) {
-            isSameOrderCode = item.orderCode === sItem.orderCode;
-            if (item.inventoryCode) {
-              return isSameOrderCode && item.inventoryCode === sItem.inventoryCode
-            }
-            else if (item.facilityCode) {
-              return isSameOrderCode && item.facilityCode === sItem.facilityCode
-            }
-          }
-          else if(item.transCode){
-            isSameTransCode = item.transCode === sItem.transCode;
-            if (item.inventoryCode) {
-              if(item.salesOutCode) {
-                return isSameTransCode && item.salesOutCode === sItem.salesOutCode
-              }              
-              return isSameTransCode && item.inventoryCode === sItem.inventoryCode
-            }
-            else if (item.facilityCode) {
-              return isSameTransCode && item.facilityCode === sItem.facilityCode
-            }
-          }
-          else{
-            if (item.inventoryCode) {
-              return item.inventoryCode === sItem.inventoryCode
-            }
-            else if (item.facilityCode) {
-              return item.facilityCode === sItem.facilityCode
-            }
-          }
-          
-        });
+        return arr.findIndex(item => item.colId === sItem.colId);
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
