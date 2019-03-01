@@ -83,7 +83,7 @@ export default {
     }
   },
   methods: {
-    // TODO 拒绝
+    // 拒绝
     reject() {
       this.$vux.confirm.prompt('', {
         title: '审批意见',
@@ -116,7 +116,7 @@ export default {
         }
       });
     },
-    // TODO 同意
+    // 同意
     agree() {
       if (this.agreeHandler && this.agreeHandler()) {
         return
@@ -132,7 +132,7 @@ export default {
         }
       });
     },
-    // TODO 撤回
+    // 撤回
     revoke() {
       this.$vux.confirm.prompt('', {
         title: '撤回原因',
@@ -157,7 +157,7 @@ export default {
         }
       });
     },
-    // TODO 审批
+    // 审批
     commitTask({result, value, successMsg, callback}) {
       this.$HandleLoad.show();
       let submitData = {
@@ -194,7 +194,7 @@ export default {
         this.$HandleLoad.hide();
       });
     },
-    // TODO 修改
+    // 修改
     update() {
       let { listId } = this.$route.query,
           { folder, fileName } = this.$route.params;
@@ -214,17 +214,17 @@ export default {
         }
       }) 
     },
-    // TODO 转办
+    // 转办
     transfer() {
       this.selectedUser = {};
       this.showUserList = true;
     },
-    // TODO 选中转办账号
+    // 选中转办账号
     selUser(val) {
       this.selectedUser = {...val};
       this.showConfirm = true;
     },
-    // TODO 点击confirm确定
+    // 点击confirm确定
     onConfirm() {
       let warn = '';
       let submitData = {

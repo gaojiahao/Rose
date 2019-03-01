@@ -119,7 +119,7 @@
       numberComma, dateFormat
     },
     methods: {
-      // TODO 提交
+      // 提交
       submitOrder() {
         let warn = '';
         let dataSet = [];
@@ -253,7 +253,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 保存草稿数据
+      // 保存草稿数据
       hasDraftData() {
         // 是否选择项目
         if (!this.orderList.dealerCode) {
@@ -267,10 +267,10 @@
           }
         };
       },
-      // TODO 获取关联数据
+      // 获取关联数据
       getRelationData() {
       },
-      // TODO 选中采购明细
+      // 选中采购明细
       selOrder(val) {
         val.forEach(item => {
           item.draftDate = dateFormat(item.draftDate, 'YYYY-MM-DD');
@@ -279,18 +279,18 @@
         });
         this.orderList = val;
       },
-      // TODO 新增
+      // 新增
       addOrder() {
         this.showOrder = true;
       },
-      // TODO 选中资金
+      // 选中资金
       selCash(val) {
         this.cashInfo = {
           ...val,
           thenAmntBal: val.amntBal,
         };
       },
-      // TODO 保留两位小数
+      // 保留两位小数
       checkAmt(item) {
         let {tdAmount, thenAmntBal} = item;
         if(tdAmount) {

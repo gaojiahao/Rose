@@ -92,14 +92,14 @@ export default {
     Badge, RScroll, TodoItem, CommentItem, RTab,
   },
   methods: {
-    // TODO tab切换
+    // tab切换
     onTabClick({index}) {
       this.activeIndex = index;
       this.currentScroll.scrollTo(0, 0);
       this.resetCondition();
       this.pageSwiper.slideTo(index);
     },
-    // TODO 获取应用icon
+    // 获取应用icon
     getDefaultIcon(item) {
       let url = require('assets/defaultApp.png');
       if (item) {
@@ -107,7 +107,7 @@ export default {
       }
       return url
     },
-    // TODO 重置条件
+    // 重置条件
     resetCondition() {
       let {status} = this.tabList[this.activeIndex];
       let data = {...BASE_PARAMS};
@@ -172,11 +172,11 @@ export default {
         })
       }, 200);
     },
-    // TODO 设置评论者/实例创建者的颜色
+    // 设置评论者/实例创建者的颜色
     setReply(name) {
       return `<span style="color: #2994FD;">${name}</span>`;
     },
-    // TODO 获取通知，默认取评论
+    // 获取通知，默认取评论
     getNotice(noticeType = 'comment') {
       let {page, limit} = this.currentItem;
       let filter = [{
@@ -218,7 +218,7 @@ export default {
         return data
       })
     },
-    // TODO 获取点赞列表
+    // 获取点赞列表
     getNoticeByPraise() {
       let {page, limit} = this.currentItem;
       return getNoticeByPraise({
@@ -251,15 +251,15 @@ export default {
         return data
       })
     },
-    // TODO 获取评论
+    // 获取评论
     getComment() {
       return this.getNotice();
     },
-    // TODO 获取点赞
+    // 获取点赞
     getPraise() {
       return this.getNoticeByPraise();
     },
-    // TODO 进入详情
+    // 进入详情
     goDetail(item, index) {
       let {listId, folder, packagePath, listName, RELATION_KEY, commentType } = item;
       let query = {
@@ -285,7 +285,7 @@ export default {
         this.$router.push({path, query,})
       }, 200);
     },
-    // TODO 上拉加载
+    // 上拉加载
     onPullingUp() {
       this.currentItem.page++;
       if (this.activeIndex === 1) {
@@ -294,7 +294,7 @@ export default {
         this.getPraise();
       }
     },
-    // TODO 改变访问状态
+    // 改变访问状态
     changeVisitedStatus() {
       let tmp = [];
       if (this.activeIndex === 0) {
@@ -313,14 +313,14 @@ export default {
       }, 200);
       this.isClickDetail = false;
     },
-    // TODO popover点击事件
+    // popover点击事件
     onPopoverClick() {
       let $commentItem = this.$refs.commentItem || [];
       $commentItem.forEach(comment => {
         comment.hidePopover();
       });
     },
-    // TODO 初始化swiper
+    // 初始化swiper
     initSwiper() {
       this.$nextTick(() => {
         this.pageSwiper = new this.Swiper('.notice-container', {
@@ -414,7 +414,7 @@ export default {
       .no_data {
         vertical-align: top;
       }
-      .no_data_todo {
+      .no_data_{
         width: .72rem;
         height: .66rem;
       }

@@ -1,7 +1,7 @@
 import $flyio from '../plugins/ajax';
 import errHandle from './errHandle'
 
-// TODO 获取list的分类
+// 获取list的分类
 export let getVATBilling = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getVATBilling',
@@ -11,7 +11,7 @@ export let getVATBilling = (data = {}) => {
   });
 };
 
-// TODO 获取增值税开票实例
+// 获取增值税开票实例
 export let getManyVATBilling = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getManyVATBilling',
@@ -37,7 +37,7 @@ export let getManyVATReceipt = (data = {}) => {
   });
 };
 
-// TODO 获取开票申请出库单列表
+// 获取开票申请出库单列表
 export let getBillingApplication = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getBillingApplication',

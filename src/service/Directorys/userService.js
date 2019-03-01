@@ -1,6 +1,6 @@
 import $flyio from 'plugins/ajax';
 
-// TODO 获取用户列表
+// 获取用户列表
 export let getAllUsers = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getAllUsers',
@@ -15,7 +15,7 @@ export let getAllUsers = (data = {}) => {
   })
 };
 
-// TODO 获取用户详情
+// 获取用户详情
 export let getUserDetail = (userId) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getUserInfoById',
@@ -25,7 +25,7 @@ export let getUserDetail = (userId) => {
   })
 };
 
-// TODO 获取获取公司列表
+// 获取获取公司列表
 export let getCompanyList = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/sysGroup/getCompanyList',
@@ -33,7 +33,7 @@ export let getCompanyList = (data = {}) => {
   })
 };
 
-// TODO 检查工号是否存在
+// 检查工号是否存在
 export let validateCode = (code) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/trans/validate',
@@ -44,7 +44,7 @@ export let validateCode = (code) => {
   })
 };
 
-// TODO 新建账号
+// 新建账号
 export let addUser = (data = {}) => {
   return $flyio.post({
     url: '/H_roleplay-si/userInfo/addUser',
@@ -52,7 +52,7 @@ export let addUser = (data = {}) => {
   })
 };
 
-// TODO 修改账号
+// 修改账号
 export let updateUser = (data = {}) => {
   return $flyio.post({
     url: '/H_roleplay-si/userInfo/updateUser',

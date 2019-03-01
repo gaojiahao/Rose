@@ -114,7 +114,7 @@
   import applyCommon from 'components/mixins/applyCommon'
   // 组件引入
   import PopFacilityList from 'components/Popup/equipment/PopFacilityList'
-  import PopMatterList from 'components/Popup/PopMatterListTest'
+  import PopMatterList from 'components/Popup/matter/PopMatterList'
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import RNumber from 'components/RNumber'
   import RPicker from 'components/RPicker'
@@ -187,7 +187,7 @@
       }
     },
     methods: {
-      // TODO 选中物料项
+      // 选中物料项
       selMatter(val) {
         let sels = JSON.parse(val);
         sels.map(item => {
@@ -202,7 +202,7 @@
         this.showMatterPop = true;
         this.modifyIndex = index;
       },
-      // TODO 选择默认图片
+      // 选择默认图片
       getDefaultImg(item) {
         let url = require('assets/wl_default03.png');
         if (item) {
@@ -221,7 +221,7 @@
         }
         arr.push(sItem);
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.selItems.findIndex(item => item.facilityCode === sItem.facilityCode) !== -1;
       },
@@ -250,11 +250,11 @@
           }
         })
       },
-      // TODO 新增更多订单
+      // 新增更多订单
       addOrder() {
         this.showFacilityPop = !this.showFacilityPop;
       },
-      // TODO 提价订单
+      // 提价订单
       submitOrder() {
         let warn = '';
         let dataSet = [];
@@ -353,7 +353,7 @@
           }
         })
       },
-      // TODO 获取详情
+      // 获取详情
       getFormData() {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
@@ -408,7 +408,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 是否保存草稿
+      // 是否保存草稿
       hasDraftData() {
         if (!this.matterList.length) {
           return false

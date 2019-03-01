@@ -23,7 +23,7 @@ export let getWorkCheckList = (data = {}) => {
   })
 }
 
-// TODO 获取工单补领料工单列表
+// 获取工单补领料工单列表
 export let getWorkGDBLLList = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getWorkReplenishment',
@@ -35,7 +35,7 @@ export let getWorkGDBLLList = (data = {}) => {
   })
 }
 
-// TODO 获取工单任务启动工序列表
+// 获取工单任务启动工序列表
 export let getWorkStartList = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getWorkOrderStart',
@@ -46,7 +46,7 @@ export let getWorkStartList = (data = {}) => {
   })
 };
 
-// TODO 获取工单任务启动物料Bom
+// 获取工单任务启动物料Bom
 export let getBomWorkStart = (code) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getBomWorkOrderStart',
@@ -57,7 +57,7 @@ export let getBomWorkStart = (code) => {
   })
 };
 
-// TODO 获取工单验收物料Bom
+// 获取工单验收物料Bom
 export let getBomWorkCheck = ({transCode = '', inventoryCode = ''}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getBomWorkOrderCheck',
@@ -70,7 +70,7 @@ export let getBomWorkCheck = ({transCode = '', inventoryCode = ''}) => {
     }
   })
 };
-// TODO 获取工单可派工列表
+// 获取工单可派工列表
 export let getTaskWorkList = (data = {})=>{
   return $flyio.ajax({
     url: '/account-api/account/getView',

@@ -88,7 +88,7 @@
       }
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -96,21 +96,21 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.showPop = false;
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.selItems.dealerName === sItem.dealerName;
       },
-      // TODO 选择物料
+      // 选择物料
       selThis(sItem, sIndex) {
         this.showPop = false;
         this.selItems = {...sItem};
         this.$emit('input', this.selItems);
       },
-      // TODO 获取物料列表
+      // 获取物料列表
       getList() {
         let filter = [];
 
@@ -141,7 +141,7 @@
           })
         });
       },
-      // TODO 搜索物料
+      // 搜索物料
       searchList({val = ''}) {
         this.srhInpTx = val;
         this.listData = [];
@@ -150,7 +150,7 @@
         this.$refs.bScroll.scrollTo(0, 0);
         this.getList();
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getList();

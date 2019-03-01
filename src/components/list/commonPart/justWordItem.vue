@@ -110,7 +110,7 @@ export default {
     }
   },
   filters: {
-    // TODO 转为百分比
+    // 转为百分比
     percent(val) {
       if (!val && val !== 0) {
         return '无';
@@ -123,7 +123,7 @@ export default {
     numberComma
   },
   methods: {
-    // TODO 获取默认图片
+    // 获取默认图片
     getDefaultImg(item) {
       let url = require('assets/wl_default03.png');
       if (item) {

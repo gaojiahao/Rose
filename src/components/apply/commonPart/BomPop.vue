@@ -106,7 +106,7 @@ export default {
       },
   },
   methods:{
-    // TODO 弹窗展示时调用
+    // 弹窗展示时调用
     onShow() {
       this.$nextTick(() => {
         if (this.$refs.bScroll) {
@@ -116,7 +116,7 @@ export default {
       })
       this.btnNext = '返回'
     },
-    // TODO 弹窗隐藏时调用
+    // 弹窗隐藏时调用
     onHide() {
       this.$emit('input', false);
     },
@@ -147,7 +147,7 @@ export default {
     closePop(){
       this.showPop = false;
     },
-    // TODO 修改按钮文案
+    // 修改按钮文案
     changeToConfirm() {
       this.btnNext = '确认';
     },

@@ -136,7 +136,7 @@
           
         })
       },
-      // TODO 提交
+      // 提交
       submitOrder() {
         /**
          * @warn 提示文字 
@@ -235,7 +235,7 @@
           }
         });
       },
-      // TODO 获取详情
+      // 获取详情
       getFormData() {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
@@ -297,7 +297,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 检查金额
+      // 检查金额
       checkAmt() {
         let {thenAmntBalCopy1 = 0, thenTotalAmntBal = 0} = this.dealerInfo;
         let {tdAmount} = this.cashInfo;
@@ -312,7 +312,7 @@
         this.dealerInfo.differenceAmount = toFixed(accAdd(thenAmntBalCopy1, thenTotalAmntBal)); // 支付后余额
         this.cashInfo.tdAmount = toFixed(thenTotalAmntBal);
       },
-      // TODO 是否保存草稿
+      // 是否保存草稿
       hasDraftData() {
         return {
           [DRAFT_KEY]: {

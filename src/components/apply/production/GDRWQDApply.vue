@@ -257,7 +257,7 @@
           }
         })
       },
-      // TODO 获取详情
+      // 获取详情
       getFormData () {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
@@ -340,7 +340,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 是否保存草稿
+      // 是否保存草稿
       hasDraftData () {
         if (!this.workInfo.procedureName) {
           return false
@@ -354,13 +354,13 @@
           }
         };
       },
-      // TODO 启用企业微信扫一扫
+      // 启用企业微信扫一扫
       scanQRCode () {
         scanQRCode().then(({result = ''}) => {
           this.scanResult = result;
         })
       },
-      // TODO 选择设施
+      // 选择设施
       selFacility (item) {
         this.facility = item;
       },

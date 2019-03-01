@@ -162,7 +162,7 @@
         this.costIndex = index;
         this.selectedCost = [item];
       },
-      // TODO 点击增加费用
+      // 点击增加费用
       addCost () {
         this.expSubjectList = [];
         this.CostList.push({
@@ -178,7 +178,7 @@
       deleteCost () {
         this.CostList.pop();
       },
-      // TODO 选中费用
+      // 选中费用
       selMatter (val) {
         let sels = val;
         this.CostList[this.costIndex].costName = sels.costName;
@@ -189,11 +189,11 @@
         this.CostList[this.costIndex].costType = sels.costType;
         // this.expSubjectList = [sels.COST_SUB_SUBJECTS.split(',')];
       },
-      // TODO 选中项目
+      // 选中项目
       selProject (val) {
         this.projectName = val.PROJECT_NAME;
       },
-      // TODO 提交
+      // 提交
       submitOrder () {
         let warn = '';
         let dataSet = [];
@@ -337,7 +337,7 @@
           // this.$emit('input', false);
         })
       },
-      // TODO 保存草稿数据
+      // 保存草稿数据
       hasDraftData () {
         // 是否选择项目
         if (!this.projectName) {
@@ -351,7 +351,7 @@
           }
         };
       },
-      // TODO 获取关联数据
+      // 获取关联数据
       getRelationData () {
         return findProjectApproval(this.relationKey).then(({formData = {}, attachment = []}) => {
           this.projectName = formData.approval.projectName;

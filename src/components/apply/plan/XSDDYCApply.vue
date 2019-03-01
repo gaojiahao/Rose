@@ -121,7 +121,7 @@
   import common from 'components/mixins/applyCommon'
   // 组件引入
   import RNumber from 'components/RNumber'
-  import PopMatterList from 'components/Popup/PopMatterListTest'
+  import PopMatterList from 'components/Popup/matter/PopMatterList'
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
   import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
@@ -190,7 +190,7 @@
       getMatter() {
         this.showMaterielPop = !this.showMaterielPop;
       },
-      // TODO 选中物料项
+      // 选中物料项
       selMatter(val) {
         let sels = JSON.parse(val);
         sels.map(item => {
@@ -223,7 +223,7 @@
         }
         arr.push(sItem);
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
       },
@@ -253,7 +253,7 @@
         })
 
       },
-      // TODO 新增更多物料
+      // 新增更多物料
       addMatter() {
         this.showMaterielPop = !this.showMaterielPop;
       },
@@ -427,7 +427,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 是否保存草稿
+      // 是否保存草稿
       hasDraftData() {
         if (!this.matterList.length) {
           return false

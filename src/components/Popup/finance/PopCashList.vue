@@ -100,12 +100,12 @@
       },
     },
     methods: {
-      // TODO 选择往来
+      // 选择往来
       selItem(sItem) {
         this.selInfo = {...sItem};
         this.$emit('sel-item', {...sItem});
       },
-      // TODO 获取往来列表
+      // 获取往来列表
       getList() {
         let filter = [];
         if (this.srhInpTx) {
@@ -133,7 +133,7 @@
           })
         })
       },
-      // TODO 搜索往来
+      // 搜索往来
       searchList({val = ''}) {
         this.srhInpTx = val;
         this.listData = [];

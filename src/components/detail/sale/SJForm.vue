@@ -116,7 +116,7 @@
           this.workFlowInfoHandler();
         })
       },
-      // TODO 生成contactInfo对象
+      // 生成contactInfo对象
       getcontactInfo(key = 'order') {
         let orderInfo = this.orderInfo;
         this.contactInfo = {

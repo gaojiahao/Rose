@@ -85,7 +85,7 @@ const dealerService = {
             data
         })
     },
-    // TODO 获取供应商列表(付供应商欠款)
+    // 获取供应商列表(付供应商欠款)
     getPaySupplierArrears(data = {}){
       return $flyio.ajax({
         url: '/H_roleplay-si/ds/getPaySupplierArrears',
@@ -95,7 +95,7 @@ const dealerService = {
         }
       })
     },
-    // TODO 获取供应商列表(付供应商定金)
+    // 获取供应商列表(付供应商定金)
     getDepositToPaySuppliers(data = {}) {
       return $flyio.ajax({
         url: '/H_roleplay-si/ds/getDepositToPaySuppliers',
@@ -105,7 +105,7 @@ const dealerService = {
         }
       })
     },
-    // TODO 获取往来列表(出让承兑汇票)
+    // 获取往来列表(出让承兑汇票)
     getSaleAcceptanceBill(data = {}) {
       return $flyio.ajax({
         url: '/H_roleplay-si/ds/getSaleAcceptanceBill',
@@ -115,7 +115,7 @@ const dealerService = {
         }
       })
     },
-    // TODO 获取往来列表(收到承兑汇票)
+    // 获取往来列表(收到承兑汇票)
     getObjDealerBalByLabelName(data = {}) {
       return $flyio.ajax({
         url: '/H_roleplay-si/ds/getObjDealerBalByLabelName',

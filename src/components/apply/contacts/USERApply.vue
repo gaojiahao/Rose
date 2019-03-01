@@ -136,17 +136,17 @@
       RScroll,
     },
     methods: {
-      // TODO 上传图片成功触发
+      // 上传图片成功触发
       onUpload(val) {
         this.userData.photo = `/H_roleplay-si/ds/download?width=128&height=128&url=${val.src}`;
       },
-      // TODO 类型切换
+      // 类型切换
       userTypeChange(val) {
         if (val === '临时账户') {
           this.showDate = true;
         }
       },
-      // TODO 提交/修改物料
+      // 提交/修改物料
       save() {
         let requiredMap = {
           userCode: '工号',
@@ -222,16 +222,16 @@
           }
         });
       },
-      // TODO 获取默认图片
+      // 获取默认图片
       getDefaultImg() {
         this.userData.photo = require('assets/wl_default03.png');
       },
-      // TODO 选中公司
+      // 选中公司
       selCompany(sel) {
         this.userData.entityName = sel.groupName;
         this.userData.entityId = sel.groupCode;
       },
-      // TODO 设置账户有效期
+      // 设置账户有效期
       getDate() {
         this.$vux.datetime.show({
           confirmText: '确定',
@@ -242,7 +242,7 @@
           }
         })
       },
-      // TODO 校验固定电话号
+      // 校验固定电话号
       checkPhone() {
         let reg = /^0\d{2,3}-\d{7,8}$/;
         if (this.userData.officePhone.length > 0 && !reg.test(this.userData.officePhone)) {
@@ -251,7 +251,7 @@
         }
         this.PhoneWarn = false;
       },
-      // TODO 校验手机号
+      // 校验手机号
       checkMobile() {
         let reg = /^[1][34578][0-9]{9}$/;
         if (this.userData.mobile.length > 0 && !reg.test(this.userData.mobile)) {
@@ -259,7 +259,7 @@
           return
         }
         this.MobileWarn = false;
-      },// TODO 校验工号
+      },// 校验工号
       checkUserCode() {
         validateCode(this.userData.userCode).then(({result = 0}) => {
           this.userCodeWarn = false;
@@ -273,7 +273,7 @@
           this.userCodeWarn = true;
         })
       },
-      // TODO 校验邮箱
+      // 校验邮箱
       checkEmail() {
         let reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
         if (this.userData.email.length > 0 && !reg.test(this.userData.email)) {
@@ -282,7 +282,7 @@
         }
         this.EmailWarn = false;
       },
-      // TODO 获取用户数据
+      // 获取用户数据
       getFormData() {
         return getUserDetail(this.colId).then(({tableContent = []}) => {
           let [data = {}] = tableContent;

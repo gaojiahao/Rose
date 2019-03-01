@@ -113,7 +113,7 @@ export default {
         this.commentList = tableContent;
       })
     },
-    // TODO 替换表情图片地址
+    // 替换表情图片地址
     changeImgPath(item) {
       let newContent= item.content.replace(/src="resources/g, 'src="/dist/resources');
       item.content = newContent;
@@ -128,7 +128,7 @@ export default {
         
       })
     },
-    // TODO 点赞
+    // 点赞
     savePraise(item) {
       // 已点过赞，不允许点击
       if (!item.isPraise) {

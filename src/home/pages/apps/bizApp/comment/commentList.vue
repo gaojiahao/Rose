@@ -55,16 +55,16 @@
       }
     },
     methods: {
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getCommentList();
       },
-      // TODO 设置回复内容的文字与颜色
+      // 设置回复内容的文字与颜色
       setReply(creator, conntent) {
         return `@<span style="color: #2994FD;">${creator}</span>：${conntent}`
       },
-      // TODO 获取订单详情评论列表
+      // 获取订单详情评论列表
       getCommentList() {
         let data = {
           transCode: this.transCode,
@@ -92,23 +92,23 @@
           });
         });
       },
-      // TODO 回复
+      // 回复
       onReply(item) {
         this.parentId = item.ID;
         this.placeholder = `回复${item.creatorName}:`;
         this.$refs.commentValue.focus();
         console.log('bScroll:', this.$$refs.bScroll);
       },
-      // TODO 点赞成功
+      // 点赞成功
       onPraiseSuccess(item) {
         item.isPraise = false;
         item.praiseNum++;
       },
-      // TODO 标签过滤
+      // 标签过滤
       tagFilter(val) {
         return val.replace(/</g, '&lt;').replace(/>/g, '&gt;');
       },
-      // TODO 评论
+      // 评论
       saveComment() {
         if (!this.comment) {
           this.$vux.toast.show({
@@ -149,7 +149,7 @@
           }
         });
       },
-      // TODO 聚焦评论框
+      // 聚焦评论框
       commentFocusIn(e) {
         this.$nextTick(() => {
           e.target.scrollIntoView();
@@ -157,15 +157,15 @@
         this.focusInput = true;
         this.showEmotion = false;
       },
-      // TODO 评论框失去焦点
+      // 评论框失去焦点
       commentFocusOut() {
         this.focusInput = false;
       },
-      // TODO 选中表情
+      // 选中表情
       emotionSelected(val) {
         this.comment += val;
       },
-      // TODO 判断点击是否为表情容器内
+      // 判断点击是否为表情容器内
       emotionClickOutside(e) {
         // 若点击不在表情容器内，且不为表情的展示图标，则隐藏表情包
         if (!this.$refs.emotion.$el.contains(e.target) && !this.$refs.emotionIcon.contains(e.target)) {

@@ -258,7 +258,7 @@
           }
         })
       },
-      // TODO 点击增加费用
+      // 点击增加费用
       addCost() {
         this.costList.push({})
       },
@@ -275,7 +275,7 @@
         }
         this.selectedCost = [item];
       },
-      // TODO 选中费用
+      // 选中费用
       selMatter(val) {
         this.selectedCost.push(val)
         let obj = {
@@ -292,7 +292,7 @@
       checkAmt(item, key, val) {
         item[key] = Math.abs(toFixed(val)); 
       },
-      // TODO 提交
+      // 提交
       submitOrder() {
         /**
          * @warn 提示文字 
@@ -384,7 +384,7 @@
           }
         });
       },
-      // TODO 获取详情
+      // 获取详情
       getFormData() {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
@@ -462,7 +462,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 是否保存草稿
+      // 是否保存草稿
       hasDraftData() {
         return {
           [DRAFT_KEY]: {

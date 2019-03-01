@@ -118,7 +118,7 @@
       }
     },
     methods: {
-      // TODO 提交
+      // 提交
       save () {
         /**
          * @warn 提示文字
@@ -160,7 +160,7 @@
           }
         });
       },
-      // TODO 选中执行者
+      // 选中执行者
       selUser(val) {
         this.selectedUser = {...val};
         this.projectTask.dealerName = val.nickname;
@@ -181,7 +181,7 @@
           },
         })
       }, 
-      // TODO 请求项目列表
+      // 请求项目列表
       getProjectList () {
         return getProjectPlanProjectName().then(({tableContent = []}) => {
           let tmp = [];
@@ -195,7 +195,7 @@
           this.projectList = tmp;
         })
       },
-      // TODO 切换任务
+      // 切换任务
       taskChange (val) {
         if (this.relationKey || this.transCode) {
           return false;
@@ -215,7 +215,7 @@
           cycleNumber: sel.CYCLE_DAYS,
         }
       },
-      // TODO 项目切换
+      // 项目切换
       projectChange (item, val) {
         if(item.fieldCode === 'projectName') {
           let matched = item.remoteData.find(dItem => dItem.projectName === val);
@@ -229,7 +229,7 @@
         }
         // this.getTaskList();
       },
-      // TODO 获取详情
+      // 获取详情
       getFormData () {
         return findProjectTask(this.transCode).then(({formData = {}}) => {
           let projectApproval = formData.projectApproval;
@@ -269,7 +269,7 @@
           this.$loading.hide()
         })
       },
-      // TODO 获取任务列表
+      // 获取任务列表
       getTaskList () {
         return getProjectTodoTask({
           projectName: this.projectTask.projectName
@@ -283,7 +283,7 @@
           });
         })
       },
-      // TODO 校验计划工时,保留一位小数
+      // 校验计划工时,保留一位小数
       checkTime () {
         let val = this.projectTask.actualTime;
         if (val) {
@@ -293,7 +293,7 @@
           this.projectTask.actualtHomeworkCost = accMul(this.projectTask.operatingRate, this.projectTask.actualTime)
         }
       },
-      // TODO 保存草稿数据
+      // 保存草稿数据
       hasDraftData () {
         // 是否选择项目
         if (!this.projectTask.projectName) {
@@ -305,7 +305,7 @@
           }
         };
       },
-      // TODO 获取关联数据
+      // 获取关联数据
       getRelationData () {
         return findProjectPlan(this.relationKey).then(({formData = {},attachment = []}) => {
           let plan =  formData.projectPlan[0];

@@ -92,7 +92,7 @@
         }
         this.currentStatus = currentStatus;
       },
-      // TODO 跳转到工作流列表页面
+      // 跳转到工作流列表页面
       goWorkFlowFull() {
         let {transCode = ''} = this.workFlowInfo;
         this.$router.push({

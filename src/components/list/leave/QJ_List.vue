@@ -88,7 +88,7 @@
     },
     mixins: [listCommon],
     methods: {
-      // TODO 获取默认图片
+      // 获取默认图片
       getDefaultImg(item, gender) {
         let url = gender === 1
           ? require('assets/ava01.png')

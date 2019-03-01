@@ -328,7 +328,7 @@ export default {
     duplicateComponent
   },
   methods: {
-    // TODO 上传图片成功触发
+    // 上传图片成功触发
     onUpload(val){
       this.dealer.dealerPic = val.src;
     },
@@ -375,7 +375,7 @@ export default {
         }
       })
     },
-    // TODO 判断是否展示选中图标
+    // 判断是否展示选中图标
     showSelIcon(sItem) {
         return this.dealerType.findIndex(item => item.name === sItem.name) !== -1;
       },
@@ -501,7 +501,7 @@ export default {
         this.imgFileObj = imgFileObj;
       });
     },
-    // TODO 获取默认图片
+    // 获取默认图片
     getDefaultImg() {
         this.MatPic = require('assets/contact_default02.png');
     },

@@ -121,17 +121,17 @@
       }
     },
     computed: {
-      // TODO 是否为采购总监、财务经理/总监、总经理
+      // 是否为采购总监、财务经理/总监、总经理
       isApproval() {
         let {viewId = ''} = this.currentWL;
         return this.isMyTask && viewId === '71c8f876-0617-4ff9-8a39-f9f99b14125d';
       },
-      // TODO 是否为出纳
+      // 是否为出纳
       isCashier() {
         let {viewId = ''} = this.currentWL;
         return this.isMyTask && viewId === '00690810-7eaf-4bef-931b-a72eb5093f88';
       },
-      // TODO 是否为会计
+      // 是否为会计
       isAccount() {
         let {viewId = ''} = this.currentWL;
         return this.isMyTask && viewId === 'b00796ff-5986-4cdd-8ae4-fb202ff79af1';
@@ -184,7 +184,7 @@
           this.workFlowInfoHandler();
         })
       },
-      // TODO 同意的处理
+      // 同意的处理
       agreeHandler() {
         if (this.isApproval || this.isCashier || this.isAccount) {
           if (this.isCashier && !this.cashInfo.fundCode) {
@@ -230,14 +230,14 @@
         }
         return true
       },
-      // TODO 选中资金
+      // 选中资金
       selCash(item) {
         this.cashInfo = {
           ...this.cashInfo,
           ...item,
         };
       },
-      // TODO 计算支付后余额
+      // 计算支付后余额
       calcPayment(item) {
         let {thenAmntBalCopy1 = 0, tdAmountCopy1 = 0} = item;
         if (!tdAmountCopy1) {

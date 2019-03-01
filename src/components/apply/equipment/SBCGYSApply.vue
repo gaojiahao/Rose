@@ -138,7 +138,7 @@
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopFacilityList from 'components/Popup/equipment/PopFacilityList'
   import PopMatter from 'components/apply/commonPart/MatterPop'
-  import PopMatterList from 'components/Popup/PopMatterListTest'
+  import PopMatterList from 'components/Popup/matter/PopMatterList'
   import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
   import RNumber from 'components/RNumber'
   import RPicker from 'components/RPicker'
@@ -245,7 +245,7 @@
           ...val,
         };
       },
-      // TODO 选中的供应商
+      // 选中的供应商
       selDealer(val) {
         let [sel] = JSON.parse(val);
         this.dealerInfo = {
@@ -257,18 +257,18 @@
           this.orderList = {};
         }
       },
-      // TODO 选择联系人
+      // 选择联系人
       selContact(val) {
         this.contactInfo = {...val};
       },
-      // TODO 显示物料修改的pop
+      // 显示物料修改的pop
       getMatterModify(item, index, key) {
         this.facility = JSON.parse(JSON.stringify(item));
         this.showMatterPop = true;
         this.modifyIndex = index;
         this.modifyKey = key;
       },
-      // TODO 选中物料项
+      // 选中物料项
       selMatter(val) {
         let sels = JSON.parse(val);
         let orderList = {};
@@ -283,7 +283,7 @@
         this.matterList = sels;
         this.orderList = orderList;
       },
-      // TODO 更新修改后的物料信息
+      // 更新修改后的物料信息
       selConfirm(val) {
         let modMatter = JSON.parse(val);
         this.matterList.every((item, index) => {
@@ -296,7 +296,7 @@
         });
         this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
       },
-      // TODO 选择默认图片
+      // 选择默认图片
       getDefaultImg(item) {
         let url = require('assets/wl_default03.png');
         if (item) {
@@ -315,7 +315,7 @@
         }
         arr.push(sItem);
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.selItems.findIndex(item => item.facilityCode === sItem.facilityCode) !== -1;
       },
@@ -365,11 +365,11 @@
         })
 
       },
-      // TODO 新增更多订单
+      // 新增更多订单
       addOrder() {
         this.showOrderPop = !this.showOrderPop;
       },
-      // TODO 提价订单
+      // 提价订单
       submitOrder() {
         let warn = '';
         let dataSet = [];
@@ -483,7 +483,7 @@
           }
         })
       },
-      // TODO 获取详情
+      // 获取详情
       getFormData() {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
@@ -565,7 +565,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 是否保存草稿
+      // 是否保存草稿
       hasDraftData() {
         if (!this.matterList.length) {
           return false
@@ -579,7 +579,7 @@
           }
         };
       },
-      // TODO 获取关联数据
+      // 获取关联数据
       getRelationData() {
         let {uniqueId} = this.$route.query;
         return getSOList({
@@ -632,16 +632,16 @@
           this.$loading.hide();
         })
       },
-      // TODO 点击辅助计量栏
+      // 点击辅助计量栏
       moreUnitClick(item) {
         item.showDrop = !item.showDrop;
       },
-      // TODO 选中辅助计量
+      // 选中辅助计量
       moreUnitSelected(val) {
         this.facility.assMeasureUnit = val.invSubUnitName;
         this.facility.assistQty = val.invSubUnitMulti;
       },
-      // TODO 组装orderList
+      // 组装orderList
       assembleOrder(arr) {
         let orderList = {};
         arr.forEach(item => {

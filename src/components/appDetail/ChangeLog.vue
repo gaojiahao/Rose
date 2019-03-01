@@ -124,7 +124,7 @@ export default {
         })
       })
     },
-    // TODO 上拉加载
+    // 上拉加载
     onPullingUp() {
       this.page++;
       this.getChangeList();

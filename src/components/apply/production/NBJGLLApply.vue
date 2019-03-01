@@ -166,7 +166,7 @@ export default {
     }
   },
   methods: {
-    // TODO 检查金额，取正数、保留两位小数
+    // 检查金额，取正数、保留两位小数
     checkAmt(item){
       let {tdQty, qtyBal} = item;
       // 数量
@@ -177,7 +177,7 @@ export default {
         }
       }
     },
-    // TODO 选择要删除的物料
+    // 选择要删除的物料
     delClick (index, sItem, key) {
       let arr = this.selItems;
       let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
@@ -188,7 +188,7 @@ export default {
       }
       arr.push(sItem);
     },
-    // TODO 判断是否展示选中图标
+    // 判断是否展示选中图标
     showSelIcon (sItem) {
       return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode) !== -1;
     },
@@ -232,7 +232,7 @@ export default {
       })
 
     },
-    // TODO 新增更多订单
+    // 新增更多订单
     addOrder () {
       for (let items of Object.values(this.orderList)) {
         for (let item of items) {
@@ -245,23 +245,23 @@ export default {
       }
       this.showOrderPop = !this.showOrderPop;
     },
-    // TODO 选中入库仓库
+    // 选中入库仓库
     selWarehouseIn (val) {
       this.warehouseIn = JSON.parse(val);
     },
-    // TODO 显示物料修改的pop
+    // 显示物料修改的pop
     modifyMatter (item, index, key) {
       this.matter = JSON.parse(JSON.stringify(item));
       this.showMatterPop = true;
       this.modifyIndex = index;
       this.modifyKey = key;
     },
-    // TODO 更新修改后的物料信息
+    // 更新修改后的物料信息
     selConfirm (val) {
       let modMatter = JSON.parse(val);
       this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
     },
-    // TODO 选中物料项
+    // 选中物料项
     selOrder (val) {
       let sels = JSON.parse(val);
       let orderList = {};
@@ -279,7 +279,7 @@ export default {
       this.matterList = sels;
       this.orderList = orderList;
     },
-    // TODO 获取默认图片
+    // 获取默认图片
     getDefaultImg (item) {
       let url = require('assets/wl_default03.png');
       if (item) {
@@ -287,7 +287,7 @@ export default {
       }
       return url
     },
-    // TODO 提价订单
+    // 提价订单
     submitOrder () {
       let warn = '';
       let dataSet = [];
@@ -394,7 +394,7 @@ export default {
         }
       })
     },
-    // TODO 获取详情
+    // 获取详情
     getFormData () {
       return getSOList({
         formViewUniqueId: this.formViewUniqueId,
@@ -466,7 +466,7 @@ export default {
         this.$loading.hide();
       })
     },
-    // TODO 组装matterList数据
+    // 组装matterList数据
     assembMatterList () {
       for (let matters of Object.values(this.orderList)) {
         for (let item of matters) {
@@ -474,7 +474,7 @@ export default {
         }
       }
     },
-    // TODO 保存草稿数据
+    // 保存草稿数据
     hasDraftData () {
       // 是否选择订单
       if (!Object.values(this.orderList).length) {

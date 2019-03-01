@@ -100,7 +100,7 @@ export default {
         this.workFlowInfoHandler();
       })
     },
-    // TODO 跳转到编辑页面
+    // 跳转到编辑页面
     goEdit() {
       // 交易号、应用名称等
       let { folder, fileName } = this.$route.params,

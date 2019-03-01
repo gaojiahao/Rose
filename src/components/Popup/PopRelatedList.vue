@@ -118,7 +118,7 @@ export default {
     }
   },
   methods: {
-    // TODO 弹窗展示时调用
+    // 弹窗展示时调用
     onShow() {
       this.$nextTick(() => {
         if (this.$refs.bScroll) {
@@ -136,7 +136,7 @@ export default {
         this.viewId = data[0].id
       })
     },
-    // TODO 获取相关实例列表
+    // 获取相关实例列表
     getList() {
       let value = '';
       this.filtersData.forEach((item, index) => {
@@ -170,7 +170,7 @@ export default {
         })
       });
     },
-    // TODO 搜索列表
+    // 搜索列表
     searchList({val = ''}) {
       this.srhInpTx = val;
       this.relatedAppList = [];
@@ -179,7 +179,7 @@ export default {
       this.$refs.bScroll.scrollTo(0, 0);
       this.getList()
     },
-    // TODO 上拉加载
+    // 上拉加载
     onPullingUp() {
       this.page++;
       this.getList()

@@ -93,7 +93,7 @@
       Tab, Icon, TabItem, RScroll, searchIcon, addBtn
     },
     methods: {
-      // TODO 重置列表条件
+      // 重置列表条件
       resetCondition() {
         this.dealerList = [];
         this.page = 1;
@@ -114,7 +114,7 @@
         this.resetCondition();
         this.getDealer()
       },
-      // TODO 页面跳转
+      // 页面跳转
       goNextPage(item, index, path) {
         if (this.clickVisited) {
           return
@@ -138,7 +138,7 @@
       goEditAds(item, index) {
         this.goNextPage(item, index, '/adress/edit_ads');
       },
-      // TODO 跳转详情页
+      // 跳转详情页
       goDetail(item, index) {
         this.goNextPage(item, index, '/adress/adressDetail');
       },
@@ -238,17 +238,17 @@
           })
         })
       },
-      // TODO 重置下拉刷新、上拉加载的状态
+      // 重置下拉刷新、上拉加载的状态
       resetScroll() {
         this.$refs.bScroll.finishPullDown();
         this.$refs.bScroll.finishPullUp();
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getDealer();
       },
-      // TODO 下拉刷新
+      // 下拉刷新
       onPullingDown(refresh = true) {
         this.page = 1;
         if (refresh) {
@@ -278,7 +278,7 @@
         }
         await this.getDealer();
       },
-      // TODO 修改是否访问的状态
+      // 修改是否访问的状态
       changeVisitedStatus() {
         setTimeout(() => {
           let tmp = [...this.dealerList];
@@ -288,14 +288,14 @@
           this.dealerList = tmp;
         }, 200)
       },
-      // TODO 获取应用详情
+      // 获取应用详情
       getAppDetail() {
         return getAppDetail(this.listId).then(([data = {}]) => {
           let {action} = data;
           this.action = action;
         })
       },
-      // TODO 设置状态的class
+      // 设置状态的class
       setStatus(item) {
         switch (item.dealerStatus) {
           case '使用中':
@@ -305,7 +305,7 @@
             item.statusClass = 'duty_fall_c';
         }
       },
-      // TODO 获取默认图片
+      // 获取默认图片
       getDefaultImg(item) {
         let url = require('assets/default/dealer.png');
         if (item) {

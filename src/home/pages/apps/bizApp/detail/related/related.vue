@@ -51,7 +51,7 @@
       }
     },
     methods: {
-      //TODO 获取相关实例
+      //获取相关实例
       getAppExampleDetails() {
         return getAppExampleDetails({
           transCode: this.transCode,
@@ -79,13 +79,13 @@
           })
         })
       },
-      // TODO 获取列表的id
+      // 获取列表的id
       getViewId(listId) {
         return getListView({listId}).then(data => {
           return data[0].id
         })
       },
-      // TODO 获取相关实例详情
+      // 获取相关实例详情
       async getRelatedList(item) {
         let {listId = '', defaultFilter = '', page = 1, limit = 10} = item;
         let viewId = await this.getViewId(listId);
@@ -101,7 +101,7 @@
           this.$set(item, 'relatedList', relatedList);
         });
       },
-      // TODO 跳转到详情页
+      // 跳转到详情页
       goDetail(item, rItem) {
         let {parentNav, listId} = item;
         this.$router.push({
@@ -113,7 +113,7 @@
           }
         })
       },
-      // TODO 创建并关联
+      // 创建并关联
       goRelation(item) {
         let {uniqueId} = this.$route.query;
         let {parentNav: folder, file, transName} = item;

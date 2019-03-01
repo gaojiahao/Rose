@@ -173,7 +173,7 @@
           this.workFlowInfoHandler();
         })
       },
-      // TODO 合并bom列表
+      // 合并bom列表
       mergeBomList() {
         //对合计的bom进行去重合并
         let isEqual = (a, b) => a.inventoryCode === b.inventoryCode;

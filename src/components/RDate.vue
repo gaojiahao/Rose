@@ -53,7 +53,7 @@
       }
     },
     methods: {
-      // TODO 展示时间选择器
+      // 展示时间选择器
       clickDateSelect() {
         this.$vux.datetime.show({
           confirmText: '确定',

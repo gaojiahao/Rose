@@ -183,7 +183,7 @@
       }
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.bScroll) {
@@ -191,15 +191,15 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.showDealerPop = false;
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.selItems.findIndex(item => item.dealerCode === sItem.dealerCode) !== -1;
       },
-      // TODO 选择往来
+      // 选择往来
       selDealer(sItem, sIndex) {
         this.showDealerPop = false;
         this.selItems = [sItem];
@@ -218,7 +218,7 @@
       selContact(item) {
         this.$emit('sel-contact', item);
       },
-      // TODO 获取往来列表
+      // 获取往来列表
       getDealer() {
         let filter = [];
         if (this.srhInpTx) {
@@ -270,7 +270,7 @@
         })
 
       },
-      // TODO 搜索往来
+      // 搜索往来
       searchList({val = ''}) {
         this.srhInpTx = val;
         this.dealerList = [];
@@ -278,7 +278,7 @@
         this.hasNext = true;
         this.getDealer();
       },
-      // TODO 初始化滚动
+      // 初始化滚动
       initScroll() {
         this.$nextTick(() => {
           this.bScroll = new BScroll(this.$refs.dealer, {

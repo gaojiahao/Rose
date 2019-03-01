@@ -153,7 +153,7 @@
         // 联系人电话
         this.formData.dealerDebitContactInformation = contactInfo.dealerMobilePhone || '';
       },
-      // TODO 提交
+      // 提交
       submitOrder () {
         let warn = '';
         let validateMap = [
@@ -254,7 +254,7 @@
           }
         });
       },
-      // TODO 获取详情
+      // 获取详情
       getFormData () {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
@@ -316,7 +316,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 检查金额
+      // 检查金额
       checkAmt (val) {
         if (val) {
           this.formData.tdAmount = Math.abs(toFixed(val));
@@ -333,7 +333,7 @@
         })
 
       },
-      // TODO 是否保存草稿
+      // 是否保存草稿
       hasDraftData () {
         let formData = this.formData;
         if (formData.dealerDebit || formData.opportunityTitle ||formData.tdAmount || formData.biProcessStatus) {

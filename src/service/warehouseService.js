@@ -31,7 +31,7 @@ export let getwarehouseInfo = (code) => {
   })
 };
 
-// TODO 获取组织列表
+// 获取组织列表
 export let getDepartMentWage = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getDepartMentWage',

@@ -122,7 +122,7 @@
       typeTask(e, item) {
         item.taskType = e[0];
       },
-      // TODO 选中项目计划项
+      // 选中项目计划项
       selProject(val) {
         let sel = JSON.parse(val);
         this.project = sel;
@@ -141,7 +141,7 @@
           this.projectPlan = tableContent;
         })
       },
-      // TODO 提交
+      // 提交
       save() {
         let warn = '',
             dataSet = [];
@@ -223,7 +223,7 @@
           }
         });
       },
-      // TODO 校验标准工时,保留小数位
+      // 校验标准工时,保留小数位
       checkTime(item, key, length = 1) {
         let {planTime, jobRate} = item;
         if (item[key]) {
@@ -233,7 +233,7 @@
           item.budgetHomeworkCost = accMul(Number(planTime), Number(jobRate));
         }
       },
-      // TODO 保存草稿数据
+      // 保存草稿数据
       hasDraftData() {
         // 是否选择项目
         if (!this.project.PROJECT_NAME) {
@@ -246,7 +246,7 @@
           }
         };
       },
-      // TODO 获取关联数据
+      // 获取关联数据
       getRelationData() {
         return findProjectPlan(this.relationKey).then(({formData = {}, attachment = []}) => {
           let data = JSON.parse(JSON.stringify(formData.projectApproval));
@@ -274,7 +274,7 @@
           this.$loading.hide()
         })
       },
-      // TODO 获取详情
+      // 获取详情
       getFormData() {
         return findProjectPlan(this.transCode).then(({formData = {}, attachment = []}) => {
           let data = JSON.parse(JSON.stringify(formData.projectApproval));

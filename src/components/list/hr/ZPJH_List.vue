@@ -82,7 +82,7 @@
     },
     mixins: [listCommon],
     methods: {
-      // TODO 页面跳转
+      // 页面跳转
       pathChange(item, index, path) {
         if (this.clickVisited) {
           return
@@ -106,11 +106,11 @@
           })
         }, 200)
       },
-      // TODO 跳转到详情
+      // 跳转到详情
       goDetail(item, index) {
         this.pathChange(item, index, `/detail`);
       },
-      // TODO 跳转到编辑
+      // 跳转到编辑
       goUserEdit(item, index) {
         this.pathChange(item, index, `/fillform`);
       },

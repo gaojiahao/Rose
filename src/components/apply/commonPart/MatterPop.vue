@@ -228,7 +228,7 @@
         }
         return numberComma(val);
       },
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -239,7 +239,7 @@
           this.clientHeight = document.documentElement.clientHeight;
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.showPrice = false;
         this.currentType = '渠道价';

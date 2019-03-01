@@ -101,7 +101,7 @@
           property: this.property,
         });
       },
-      // TODO 选择过滤条件
+      // 选择过滤条件
       popSelected(item) {
         this.property = item.value;
         this.$refs.searchInp.focus();

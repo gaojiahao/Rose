@@ -88,14 +88,14 @@
           };
         })
       },
-      // TODO 使用千分符
+      // 使用千分符
       numberComma(val) {
         if (!val && val !== 0) {
           return '无';
         }
         return numberComma(val);
       },
-      // TODO 转为百分比
+      // 转为百分比
       percent(val) {
         if (!val && val !== 0) {
           return '无';

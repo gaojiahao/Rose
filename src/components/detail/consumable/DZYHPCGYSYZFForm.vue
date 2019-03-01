@@ -100,7 +100,7 @@
         });
         return total;
       },
-      // TODO 是否为出纳
+      // 是否为出纳
       isCashier() {
         let {viewId = ''} = this.currentWL;
         return this.isMyTask && viewId === 'e185e706-5b21-4467-bbe9-cff1856873a7';
@@ -208,7 +208,7 @@
           this.workFlowInfoHandler();
         })
       },
-      // TODO 同意的处理
+      // 同意的处理
       agreeHandler() {
         if (this.isCashier) {
           if (this.isCashier && !this.cashInfo.fundCode) {
@@ -275,7 +275,7 @@
         }
         return false
       },
-      // TODO 选中资金
+      // 选中资金
       selCash(item) {
         this.cashInfo = {
           ...this.cashInfo,

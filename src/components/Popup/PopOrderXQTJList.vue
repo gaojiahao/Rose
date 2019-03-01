@@ -163,7 +163,7 @@
       },
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -171,14 +171,14 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.tmpItems = [...this.selItems];
         this.$emit('input', false);
         // 组件传值 传回给search组件 强制关闭下拉框
         this.$event.$emit('shut-down-filter', false);
       },
-      // TODO 匹配相同项的索引
+      // 匹配相同项的索引
       findIndex(arr, sItem) {
         return arr.findIndex(item => {
           let isSameOrderCode = true;
@@ -192,11 +192,11 @@
           return isSameOrderCode && isSameColId && item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode
         });
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.findIndex(this.tmpItems, sItem) !== -1;
       },
-      // TODO 选择物料
+      // 选择物料
       selThis(sItem, sIndex) {
         let validateMap = ['getInProcessingOrder', 'getInProcessingStorage'];
         if (validateMap.includes(this.listMethod) && !sItem.orderCode) {
@@ -221,7 +221,7 @@
         }
         arr.push(sItem);
       },
-      // TODO 确定选择订单
+      // 确定选择订单
       selConfirm() {
         let sels = [];
         // 返回上层
@@ -231,7 +231,7 @@
         this.selItems = [...this.tmpItems];
         this.$emit('sel-matter', JSON.stringify(this.selItems));
       },
-      // TODO 获取默认图片
+      // 获取默认图片
       getDefaultImg(item) {
         let url = require('assets/wl_default03.png');
         if (item) {
@@ -239,7 +239,7 @@
         }
         return url
       },
-      // TODO 获取订单列表
+      // 获取订单列表
       getList() {
         let filter = [];
         if (this.srhInpTx) {
@@ -281,27 +281,27 @@
           })
         });
       },
-      // TODO 重置列表条件
+      // 重置列表条件
       resetCondition() {
         this.listData = [];
         this.page = 1;
         this.hasNext = true;
         this.$refs.bScroll.scrollTo(0, 0);
       },
-      // TODO 搜索订单
+      // 搜索订单
       searchList({val = '', property = ''}) {
         this.srhInpTx = val;
         this.filterProperty = property;
         this.resetCondition();
         this.getList();
       },
-      // TODO 清空搜索条件
+      // 清空搜索条件
       clearList() {
         this.srhInpTx = '';
         this.resetCondition();
         this.getList();
       },
-      // TODO 删除选中项
+      // 删除选中项
       delSelItem(dItem) {
         let delIndex = this.findIndex(this.selItems, dItem);
         if (delIndex !== -1) {
@@ -309,17 +309,17 @@
         }
         this.tmpItems = [...this.selItems];
       },
-      // TODO 清空选择项
+      // 清空选择项
       clearSel() {
         this.selItems = [];
         this.tmpItems = [];
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getList();
       },
-      // TODO 设置默认值
+      // 设置默认值
       setDefaultValue() {
         let tmp = [];
         for (let items of Object.values(this.defaultValue)) {

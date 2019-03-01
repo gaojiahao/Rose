@@ -369,7 +369,7 @@ export default {
     }
   },
   methods: {
-    // TODO 上传图片成功触发
+    // 上传图片成功触发
     onUpload(val) {
       console.log(val);
       this.inventory.inventoryPic = val.src;
@@ -384,7 +384,7 @@ export default {
         item.invCompQty = Math.abs(toFixed(invCompQty));
       }
     },
-    // TODO 选择工艺路线名称
+    // 选择工艺路线名称
     selTechnics(val) {
       this.inventory = {
         ...this.inventory,
@@ -392,7 +392,7 @@ export default {
         technicsCode: val.technicsCode,
       };
     },
-    // TODO 提交/修改物料
+    // 提交/修改物料
     save() {
       let requiredMap = {
         inventoryName: '物料名称',
@@ -511,7 +511,7 @@ export default {
         }
       });
     },
-    // TODO 查询物料详情
+    // 查询物料详情
     findData() {
       return findData(this.transCode).then(({formData = {}, attachment = []}) => {
         this.matterDuplicateConfig.forEach(key => {
@@ -550,7 +550,7 @@ export default {
         this.imgFileObj = imgFileObj;
       });
     },
-    // TODO 获取用户基本信息
+    // 获取用户基本信息
     getBaseInfoData() {
       return getBaseInfoDataBase().then(data => {
         this.baseinfo = {
@@ -560,11 +560,11 @@ export default {
         }
       });
     },
-    // TODO 获取默认图片
+    // 获取默认图片
     getDefaultImg() {
       this.MatPic = require('assets/wl_default03.png');
     },
-    // TODO 校验数据
+    // 校验数据
     validateData(arr, validateMap) {
       let warn = '';
       arr.every(item => {
@@ -579,7 +579,7 @@ export default {
       });
       return warn;
     },
-    // TODO 选择工序名称
+    // 选择工序名称
     selProcedure(val) {
       this.inventory = {
         ...this.inventory,

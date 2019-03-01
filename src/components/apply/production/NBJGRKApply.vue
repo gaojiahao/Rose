@@ -192,11 +192,11 @@
       }
     },
     methods: {
-      // TODO 选中出库仓库
+      // 选中出库仓库
       selWarehouseOut (val) {
         this.warehouseOut = JSON.parse(val);
       },
-      // TODO 选中入库仓库
+      // 选中入库仓库
       selWarehouseIn (val) {
         this.warehouseIn = JSON.parse(val);
       },
@@ -209,19 +209,19 @@
           item.tdQty = tdQty > qtyStock ? qtyStock : item.tdQty
         }
       },
-      // TODO 显示物料修改的pop
+      // 显示物料修改的pop
       modifyMatter (item, index, key) {
         this.matter = JSON.parse(JSON.stringify(item));
         this.showMatterPop = true;
         this.modifyIndex = index;
         this.modifyKey = key;
       },
-      // TODO 更新修改后的物料信息
+      // 更新修改后的物料信息
       selConfirm (val) {
         let modMatter = JSON.parse(val);
         this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
       },
-      // TODO 选中物料项
+      // 选中物料项
       selOrder (val) {
         let sels = JSON.parse(val);
         let orderList = {};
@@ -242,7 +242,7 @@
         this.matterList = sels;
         this.orderList = orderList;
       },
-      // TODO 选择默认图片
+      // 选择默认图片
       getDefaultImg (item) {
         let url = require('assets/wl_default03.png');
         if (item) {
@@ -250,13 +250,13 @@
         }
         return url
       },
-      // TODO 匹配相同项的索引
+      // 匹配相同项的索引
       findIndex (arr, sItem) {
         return arr.findIndex(item => {
           return item.orderCode === sItem.orderCode && item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode
         });
       },
-      // TODO 选择要删除的物料
+      // 选择要删除的物料
       delClick (index, sItem, key) {
         let arr = this.selItems;
         let delIndex = this.findIndex(arr, sItem);
@@ -267,7 +267,7 @@
         }
         arr.push(sItem);
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon (sItem) {
         return this.findIndex(this.selItems, sItem) !== -1;
       },
@@ -310,7 +310,7 @@
           }
         })
       },
-      // TODO 新增更多订单
+      // 新增更多订单
       addOrder () {
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
@@ -320,7 +320,7 @@
         }
         this.showOrderPop = !this.showOrderPop;
       },
-      // TODO 提价订单
+      // 提价订单
       submitOrder () {
         let warn = '';
         let validateMap = [
@@ -513,7 +513,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 保存草稿数据
+      // 保存草稿数据
       hasDraftData () {
         // 是否选择订单
         if (!Object.values(this.orderList).length) {

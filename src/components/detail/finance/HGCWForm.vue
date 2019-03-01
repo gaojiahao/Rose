@@ -94,7 +94,7 @@
       RScroll,
     },
     methods: {
-      // TODO 获取资产负债表数据
+      // 获取资产负债表数据
       getData() {
         return this.listMap[this.code].request().then(res => {
           let {data = []} = res;
@@ -124,7 +124,7 @@
           })
         })
       },
-      // TODO 设置高度
+      // 设置高度
       setHeight(left, ...right) {
         let [first] = right;
         left && left.forEach((item, index) => {
@@ -138,7 +138,7 @@
           }
         });
       },
-      // TODO 初始化swiper
+      // 初始化swiper
       initSwiper() {
         this.$nextTick(() => {
           this.partRightSwiper = new this.Swiper('.part-right');

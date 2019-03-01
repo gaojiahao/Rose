@@ -127,7 +127,7 @@
       },
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -136,14 +136,14 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.tmpItems = [...this.selItems];
         this.$emit('input', false);
         // 组件传值 传回给search组件 强制关闭下拉框
         this.$event.$emit('shut-down-filter', false);
       },
-      // TODO 匹配相同项的索引
+      // 匹配相同项的索引
       findIndex(arr, sItem) {
         return arr.findIndex(item => {
           let flag = false;
@@ -156,11 +156,11 @@
           return flag
         });
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.findIndex(this.tmpItems, sItem) !== -1;
       },
-      // TODO 选中单个项
+      // 选中单个项
       selThis(sItem, sIndex) {
         if (!this.multipart) {
           this.showPop = false;
@@ -178,7 +178,7 @@
         }
         arr.push(sItem);
       },
-      // TODO 确定选择物料
+      // 确定选择物料
       cfmMater() {
         let sels = [];
         this.showPop = false;
@@ -187,12 +187,12 @@
         // 触发父组件选中事件
         this.$emit('on-select', JSON.parse(JSON.stringify(this.selItems)));
       },
-      // TODO 搜索物料
+      // 搜索物料
       searchList(val) {
         this.$refs.bScroll.scrollTo(0, 0);
         this.$emit('on-search', val);
       },
-      // TODO 删除选中项
+      // 删除选中项
       delSelItem(dItem) {
         let delIndex = this.findIndex(this.selItems, dItem);
         if (delIndex !== -1) {
@@ -200,11 +200,11 @@
         }
         this.tmpItems = [...this.selItems];
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.$emit('on-pulling-up')
       },
-      // TODO 上拉加载结束
+      // 上拉加载结束
       finishPullUp() {
         if (this.$refs.bScroll) {
           this.$nextTick(() => {

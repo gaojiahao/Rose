@@ -112,7 +112,7 @@
           ...val,
         };
       },
-      // TODO 提交订单
+      // 提交订单
       submitOrder () {
         let warn = '',
           dataSet = [];
@@ -192,11 +192,11 @@
           }
         })
       },
-      // TODO 选择项目
+      // 选择项目
       selProject (sel) {
         this.project = {...sel};
       },
-      // TODO 是否保存草稿
+      // 是否保存草稿
       hasDraftData () {
         if (!this.workInfo.procedureName) {
           return false

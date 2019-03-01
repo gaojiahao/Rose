@@ -125,7 +125,7 @@
           })
         }, 200)
       },
-      // TODO 返回任务icon
+      // 返回任务icon
       getTaskIcon(index) {
         let icons = ['icon-task', 'icon-task2', 'icon-task3'];
         return icons[index % 3]

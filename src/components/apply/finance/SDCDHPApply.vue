@@ -148,7 +148,7 @@
       },
     },
     methods: {
-      // TODO 提交
+      // 提交
       submitOrder() {
         let warn = '';
         let dataSet = [];
@@ -300,7 +300,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 保存草稿数据
+      // 保存草稿数据
       hasDraftData() {
         // 是否选择项目
         if (!this.dealerInfo.dealerCode) {
@@ -314,14 +314,14 @@
           }
         };
       },
-      // TODO 获取关联数据
+      // 获取关联数据
       getRelationData() {
       },
-      // TODO 选中供应商
+      // 选中供应商
       selDealer(item) {
         this.dealerInfo = {...item};
       },
-      // TODO 选中采购明细
+      // 选中采购明细
       selOrder(val) {
         val.forEach(item => {
           item.draftDate = dateFormat(item.draftDate, 'YYYY-MM-DD');
@@ -329,15 +329,15 @@
         });
         this.orderList = val;
       },
-      // TODO 新增
+      // 新增
       addOrder() {
         this.orderList.push({...MONEY_ORDER});
       },
-      // TODO 删除
+      // 删除
       deleteOrder() {
         this.orderList.pop();
       },
-      // TODO 保留两位小数
+      // 保留两位小数
       checkAmt(item, key) {
         switch (item) {
           case 'tdAmountCopy1':

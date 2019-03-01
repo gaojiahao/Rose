@@ -8,8 +8,6 @@
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo"  :dealer-params="dealerParams"
                          dealerTitle="供应商" :default-contact="contactInfo" @sel-contact="selContact"></pop-dealer-list>
-        <!-- 结算方式 -->
-        <!-- <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part> -->
         <!-- 物料列表 -->
         <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :show-matter-pop="showMatterPop" :filter-list="filterList"
           :actions="actions" :btnInfo="btnInfo" :matter-list="matterList" :default-value="matterList" 
@@ -65,18 +63,11 @@ export default {
   },
   data() {
     return {
-      numMap: {},
-      formData: { // 表单提交内容
-        creator: '',
-        modifer: '',
-        biId: '',
-        biComment: '',
-        biProcessStatus: ''
-      },
+      formData: {},
       dealerInfo: {},
+      contactInfo: {},
       matterList: [], // 物料列表
       showMaterielPop: false, // 是否显示物料的popup
-      contactInfo: {},
       filterList: [
         {
           name: '物料名称',
@@ -92,13 +83,15 @@ export default {
   methods: {
     // 选中的供应商
     selDealer(val) {
-      this.dealerInfo = JSON.parse(val)[0];
+      let [chosenDealer = {}] = JSON.parse(val);
+      chosenDealer.dealerName_dealerDebit = chosenDealer.dealerName;
+      this.dealerInfo = chosenDealer;
     },
     // 选中联系人
     selContact(val) {
       this.contactInfo = {...val};
     },
-    // TODO 选中物料项
+    // 选中物料项
     selMatter(val) {
       let sels = JSON.parse(val);
       sels.map(item => {
@@ -128,7 +121,7 @@ export default {
       }
       arr.push(sItem);
     },
-    // TODO 判断是否展示选中图标
+    // 判断是否展示选中图标
     showSelIcon(sItem) {
       return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
     },
@@ -139,6 +132,11 @@ export default {
         return
       }
       this.selItems = JSON.parse(JSON.stringify(this.matterList));
+    },
+    // 点击编辑
+    showDelete(){
+      this.matterModifyClass = ! this.matterModifyClass;
+      this.selItems = [];
     },
     // 删除选中的
     deleteCheckd() {
@@ -162,19 +160,33 @@ export default {
     checkAmt(item, key, val) {
       item[key] = Math.abs(toFixed(val)); 
     },
-    // TODO 新增更多物料
+    // 新增更多物料
     addMatter() {
       this.showMaterielPop = !this.showMaterielPop;
     },
     // 提价订单
     submitOrder() {
-      let warn = '';
-      let dataSet = [];
-      if (!this.dealerInfo.dealerCode) {
-        warn = '请选择供应商信息';
-      } 
+      /** 
+       * @warn    提示文字
+       * @dateSet   提交数据
+       * 
+       * @dealerConfig  <往来部分> 配置
+       * @dealerInfo  <往来部分> 信息
+       * 
+       */ 
+      
+      let warn = '', dataSet = [], 
+          dealerInfo = this.dealerInfo, 
+          dealerConfig = this.dealerConfig;
+      
+      // 校验 <往来部分> 必填字段
+      warn = this.verifyData(dealerConfig, dealerInfo);
+      
       if (!warn) {
-        // 校验
+        // 校验 是否已选择 <物料部分>
+        if(!this.matterList.length) warn = '请选择物料';
+
+        // 动态组装 dataSet
         this.matterList.forEach(item => {
           let oItem = {};
           for(let sItem of this.submitMatterField) {
@@ -316,7 +328,7 @@ export default {
         this.$loading.hide();
       })
     },
-    // TODO 是否保存草稿
+    // 是否保存草稿
     hasDraftData() {
       if (!this.matterList.length) {
         return false

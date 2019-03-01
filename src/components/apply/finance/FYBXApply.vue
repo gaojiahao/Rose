@@ -140,7 +140,7 @@
       }
     },
     methods: {
-      // TODO 点击增加费用
+      // 点击增加费用
       addCost() {
         this.costList.push({})
       },
@@ -157,7 +157,7 @@
         }
         this.selectedCost = [item];
       },
-      // TODO 选中费用
+      // 选中费用
       selMatter(val) {
         this.selectedCost.push(val)
         let obj = {
@@ -174,7 +174,7 @@
       checkAmt(item, key, val) {
         item[key] = Math.abs(toFixed(val)); 
       },
-      // TODO 提交
+      // 提交
       submitOrder() {
         let warn = '';
         let dataSet = [];
@@ -245,7 +245,7 @@
           }
         });
       },
-      // TODO 获取详情
+      // 获取详情
       getFormData() {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
@@ -296,7 +296,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 是否保存草稿
+      // 是否保存草稿
       hasDraftData() {
         if(Object.values(this.costList[0]).length){
           return {

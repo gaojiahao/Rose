@@ -121,7 +121,7 @@
       }
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -129,7 +129,7 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.showPop = false;
       },
@@ -140,17 +140,17 @@
         this.hasNext = true;
         this.getList();
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.selItems.taskId === sItem.taskId;
       },
-      // TODO 选择物料
+      // 选择物料
       selThis(sItem, sIndex) {
         this.showPop = false;
         this.selItems = sItem;
         this.$emit('sel-item', JSON.stringify(this.selItems));
       },
-      // TODO 获取默认图片
+      // 获取默认图片
       getDefaultImg(item) {
         let url = require('assets/wl_default03.png');
         if (item) {
@@ -158,7 +158,7 @@
         }
         return url
       },
-      // TODO 获取仓库列表
+      // 获取仓库列表
       getList() {
         let filter = [];
         if (this.srhInpTx) {
@@ -188,7 +188,7 @@
           })
         });
       },
-      // TODO 搜索仓库
+      // 搜索仓库
       searchList({val = ''}) {
         this.srhInpTx = val;
         this.listData = [];
@@ -196,16 +196,16 @@
         this.hasNext = true;
         this.getList();
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getList();
       },
-      // TODO 设置默认值
+      // 设置默认值
       setDefaultValue() {
         this.selItems = this.defaultValue ? {...this.defaultValue} : {};
       },
-      // TODO 点击仓库
+      // 点击仓库
       warehouseClick() {
         if (this.disabled) {
           return

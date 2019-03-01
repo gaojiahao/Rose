@@ -18,16 +18,16 @@
 // export const redirect_uri = 'http%3A%2F%2Fcpacn2012.3322.org%3A1172%2FHermes%2Fhome'; // 首页路径
 
 // 175 Roletask 
-export const corpid = 'ww3c1aa17c16e380b7'; // 企业id
-export const secret = '_MTqTVltBKS_HVBPbM00zHAdC0NpLNtcGvpTD0BQjC4'; // 应用凭证
-export const agentid = '1000039'; // 企业应用的id
-export const redirect_uri = 'http%3A%2F%2Fcpacn2012.3322.org%3A1175%2FHermes%2Fhome'; // 首页路径
-
-// 177 Roletask
 // export const corpid = 'ww3c1aa17c16e380b7'; // 企业id
-// export const secret = 'Z5p2RZTwRRNFF5UKmfK3XsO3DVs9zmS7K6_mR1nQQmo'; // 应用凭证
-// export const agentid = '1000041'; // 企业应用的id
-// export const redirect_uri = 'http%3A%2F%2Fcpacn2012.3322.org%3A1177%2FHermes%2Fhome'; // 首页路径
+// export const secret = '_MTqTVltBKS_HVBPbM00zHAdC0NpLNtcGvpTD0BQjC4'; // 应用凭证
+// export const agentid = '1000039'; // 企业应用的id
+// export const redirect_uri = 'http%3A%2F%2Fcpacn2012.3322.org%3A1175%2FHermes%2Fhome'; // 首页路径
+
+// 178 Roletask
+export const corpid = 'ww3c1aa17c16e380b7'; // 企业id
+export const secret = 'Z5p2RZTwRRNFF5UKmfK3XsO3DVs9zmS7K6_mR1nQQmo'; // 应用凭证
+export const agentid = '1000041'; // 企业应用的id
+export const redirect_uri = 'http%3A%2F%2Fcpacn2012.3322.org%3A1178%2FHermes%2Fhome'; // 首页路径
 
 // refordom Roletask
 // export const corpid = 'ww3c1aa17c16e380b7'; // 企业id

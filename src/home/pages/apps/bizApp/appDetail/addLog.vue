@@ -114,7 +114,7 @@ export default {
       }
       
     },
-    // TODO 判断是否展示选中图标
+    // 判断是否展示选中图标
     showSelIcon(sItem) {
         return this.scopeType.findIndex(item => item.name === sItem.name) !== -1;
       },

@@ -81,11 +81,11 @@
       },
     },
     methods: {
-      // TODO 选择往来
+      // 选择往来
       selItem(sItem) {
         this.$emit('sel-item', sItem);
       },
-      // TODO 获取往来列表
+      // 获取往来列表
       getList() {
         let filter = [];
         if (this.srhInpTx) {
@@ -108,7 +108,7 @@
           this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
         })
       },
-      // TODO 搜索往来
+      // 搜索往来
       searchList({val = ''}) {
         this.srhInpTx = val;
         this.listData = [];

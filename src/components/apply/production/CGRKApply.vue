@@ -128,7 +128,7 @@
       }
     },
     computed: {
-      // TODO 将orderList转为数组
+      // 将orderList转为数组
       matterList() {
         let arr = [];
         for (let items of Object.values(this.orderList)) {
@@ -148,7 +148,7 @@
       ApplyMatterPart, OpButton,
     },
     methods: {
-      // TODO 选中的供应商
+      // 选中的供应商
       selDealer(val) {
         let [sel] = JSON.parse(val);
         let day = 24 * 3600 * 1000;
@@ -165,26 +165,26 @@
           this.orderList = {};
         }
       },
-      // TODO 选择联系人
+      // 选择联系人
       selContact(val) {
         this.contactInfo = {...val};
       },
-      // TODO 选中仓库
+      // 选中仓库
       selWarehouse(val) {
         this.warehouse = JSON.parse(val);
       },
-      // TODO 选择的库位
+      // 选择的库位
       getStore(val) {
         this.warehouseStoreInfo = {...val};
       },
-      // TODO 显示物料修改的pop
+      // 显示物料修改的pop
       getMatterModify(item, index, key) {
         this.matter = JSON.parse(JSON.stringify(item));
         this.showMatterPop = true;
         this.modifyIndex = index;
         this.modifyKey = key;
       },
-      // TODO 选中物料项
+      // 选中物料项
       selMatter(val) {
         let sels = JSON.parse(val);
         let orderList = {};
@@ -221,12 +221,12 @@
         });
         this.orderList = orderList;
       },
-      // TODO 更新修改后的物料信息
+      // 更新修改后的物料信息
       selConfirm(val) {
         let modMatter = JSON.parse(val);
         this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
       },
-      // TODO 选择默认图片
+      // 选择默认图片
       getDefaultImg(item) {
         let url = require('assets/wl_default03.png');
         if (item) {
@@ -234,7 +234,7 @@
         }
         return url
       },
-      // TODO 查找数据索引
+      // 查找数据索引
       findIndex(arr, sItem){
         return arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
       },
@@ -249,7 +249,7 @@
         }
         arr.push(sItem);
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.findIndex(this.selItems, sItem) !== -1;
       },
@@ -283,7 +283,7 @@
         })
 
       },
-      // TODO 新增更多订单
+      // 新增更多订单
       addMatter() {
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
@@ -299,7 +299,7 @@
           day = 24 * 3600 * 1000;
         modifyMatter.validUntil = productionDate ? dateFormat(productionDate + accMul(modifyMatter.keepingDays, day), 'YYYY-MM-DD') : '';
       },
-      // TODO 提价订单
+      // 提价订单
       submitOrder() {
         let warn = '';
         let dataSet = [];
@@ -421,7 +421,7 @@
           }
         })
       },
-      // TODO 获取详情
+      // 获取详情
       getFormData() {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
@@ -525,7 +525,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 是否保存草稿
+      // 是否保存草稿
       hasDraftData() {
         if (!this.matterList.length) {
           return false
@@ -541,7 +541,7 @@
           }
         };
       },
-      // TODO 获取关联数据
+      // 获取关联数据
       getRelationData() {
         let {uniqueId} = this.$route.query;
         return getSOList({
@@ -600,12 +600,12 @@
           this.$loading.hide();
         })
       },
-      // TODO 选中辅助计量
+      // 选中辅助计量
       moreUnitSelected(val) {
         this.matter.assMeasureUnit = val.invSubUnitName;
         this.matter.assistQty = val.invSubUnitMulti;
       },
-      // TODO 数字校验
+      // 数字校验
       checkAmt(item, key, val) {
         let {qtyBal} = item;
         val = Math.abs(toFixed(val));
@@ -619,7 +619,7 @@
         }
         item[key] = val;
       },
-      // TODO 计算物料相关值
+      // 计算物料相关值
       calcMatter(item) {
         let {price = 0, qualityQty = 0, taxRate = 0} = item;
         item.tdQty = qualityQty;
@@ -630,7 +630,7 @@
         item.taxAmount = toFixed(accMul(item.assistQty, taxRate, item.noTaxPrice));
         item.noTaxAmount = toFixed(accSub(item.tdAmount, item.taxAmount));
       },
-      // TODO 获取物料当前字段的值
+      // 获取物料当前字段的值
       getMatterItemVal(item, sItem) {
         let valList = ['fieldCode', 'displayField', 'showFieldCode'];
         let val = '';
@@ -640,7 +640,7 @@
         });
         return val;
       },
-      // TODO 校验提交数据
+      // 校验提交数据
       validateSubmitVal(validateList = []) {
         let warn = '';
         validateList.every(item => {

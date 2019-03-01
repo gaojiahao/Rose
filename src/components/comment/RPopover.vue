@@ -16,7 +16,7 @@
       }
     },
     methods: {
-      // TODO popover点击事件
+      // popover点击事件
       showPopover() {
         // 点击的元素已展示时不抛出点击事件
         if (!this.show) {
@@ -24,11 +24,11 @@
         }
         this.show = !this.show;
       },
-      // TODO 隐藏popover
+      // 隐藏popover
       hidePopover() {
         this.show = false;
       },
-      // TODO 判断点击是否为popover
+      // 判断点击是否为popover
       clickOutside(e) {
         // 若点击不在表情容器内，且不为表情的展示图标，则隐藏表情包
         if (!this.$refs.popover.contains(e.target)) {

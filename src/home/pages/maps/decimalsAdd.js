@@ -35,7 +35,7 @@ export function accAdd(arg1, arg2) {
     return (arg1 + arg2) / m;
 }
 
-// TODO 数字相乘，可传入多个数字
+// 数字相乘，可传入多个数字
 export function accMul(...args) {
   let m = 0;
   let total = 1;

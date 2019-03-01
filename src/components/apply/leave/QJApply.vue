@@ -128,7 +128,7 @@
       },     
     },
     methods: {
-      // TODO 点击增加费用
+      // 点击增加费用
       addCost() {
         this.costList.push({})
       },
@@ -136,7 +136,7 @@
       deleteCost(index) {
         this.costList.splice(index, 1);
       },
-      // TODO 提交
+      // 提交
       submitOrder() {
         let warn = '';
         let dataSet = [];
@@ -208,7 +208,7 @@
           }
         });
       },
-      // TODO 获取详情
+      // 获取详情
       getFormData() {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
@@ -255,7 +255,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 是否保存草稿
+      // 是否保存草稿
       hasDraftData() {
         if(Object.values(this.costList[0]).length){
           return {

@@ -61,7 +61,7 @@
       }
     },
     computed: {
-      // TODO 将orderList转为数组
+      // 将orderList转为数组
       mergeMatterList() {
         let arr = [];
         let count = 0;
@@ -184,7 +184,7 @@
           this.workFlowInfoHandler();
         })
       },
-      // TODO 数字校验
+      // 数字校验
       checkAmt(item, key, val) {
         val = Math.abs(toFixed(val));
         let {qualityQty, samplesQty} = item;
@@ -216,7 +216,7 @@
         }
         item[key] = val;
       },
-      // TODO 计算物料相关值
+      // 计算物料相关值
       calcMatter(item) {
         let {price = 0, noTaxPrice = 0, qualityQty = 0, tdQty = 0, checkLossQty = 0, taxRate = 0} = item;
         let assistQty = toFixed(accDiv(tdQty, item.assMeasureScale));
@@ -233,11 +233,11 @@
         this.setMatterConfig([item]);
         this.matterDetail = item;
       },
-      // TODO 确认修改
+      // 确认修改
       onDetailConfirm(item) {
         this.$set(this.orderList[this.matterDetailKey], this.matterDetailIndex, item);
       },
-      // TODO 同意的处理
+      // 同意的处理
       agreeHandler() {
         // IQC可以修改物料参数
         if (this.isIQC) {

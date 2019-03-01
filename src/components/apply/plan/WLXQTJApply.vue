@@ -125,7 +125,7 @@
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import PopOrderXqtjList from 'components/Popup/PopOrderXQTJList'
-  import PopMatterList from 'components/Popup/PopMatterListTest'
+  import PopMatterList from 'components/Popup/matter/PopMatterList'
   const DRAFT_KEY = 'XQTJ_DATA';
 
   export default {
@@ -172,19 +172,19 @@
       }
     },
     methods: {
-      // TODO 显示物料修改的pop
+      // 显示物料修改的pop
       getMatterModify(item, index, key) {
         this.matter = JSON.parse(JSON.stringify(item));
         this.showMatterPop = true;
         this.modifyIndex = index;
         this.modifyKey = key;
       },
-      // TODO 更新修改后的物料信息
+      // 更新修改后的物料信息
       selConfirm(val) {
         let modMatter = JSON.parse(val);
         this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
       },
-      // TODO 选中物料项
+      // 选中物料项
       selOrder(val) {
         let sels = JSON.parse(val);
         let orderList = {};
@@ -201,7 +201,7 @@
         this.matterList = sels;
         this.orderList = orderList;
       },
-      // TODO 选择默认图片
+      // 选择默认图片
       getDefaultImg(item) {
         let url = require('assets/wl_default03.png');
         if (item) {
@@ -209,7 +209,7 @@
         }
         return url
       },
-      // TODO 匹配相同项的索引
+      // 匹配相同项的索引
       findIndex(arr, sItem) {
         return arr.findIndex(item => {
           let isSameColId = true;
@@ -219,7 +219,7 @@
           return isSameColId && item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode
         });
       },
-      // TODO 选择要删除的物料
+      // 选择要删除的物料
       delClick(index, sItem, key) {
         let arr = this.selItems;
         let delIndex = this.findIndex(arr, sItem);
@@ -230,7 +230,7 @@
         }
         arr.push(sItem);
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.findIndex(this.selItems, sItem) !== -1;
       },
@@ -278,7 +278,7 @@
         })
 
       },
-      // TODO 新增更多订单
+      // 新增更多订单
       addOrder() {
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
@@ -290,7 +290,7 @@
         }
         this.showOrderPop = !this.showOrderPop;
       },
-      // TODO 提价订单
+      // 提价订单
       submitOrder() {
         let warn = '';
         let dataSet = [];
@@ -444,7 +444,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 是否保存草稿
+      // 是否保存草稿
       hasDraftData() {
         if (!Object.values(this.orderList).length) {
           return false

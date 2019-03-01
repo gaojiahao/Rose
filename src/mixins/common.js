@@ -8,7 +8,7 @@ export default {
     }
   },
   methods: {
-    // TODO 时间戳转日期
+    // 时间戳转日期
     changeDate(d, hasSecond = false) {
       if (!d) {
         return '';

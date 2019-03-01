@@ -126,7 +126,7 @@ import MSearch from 'components/search'
 
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -134,14 +134,14 @@ import MSearch from 'components/search'
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.tmpItems = [...this.selItems];
         this.$emit('input', false);
         // 组件传值 传回给search组件 强制关闭下拉框
         this.$event.$emit('shut-down-filter', false);
       },
-      // TODO 匹配相同项的索引
+      // 匹配相同项的索引
       findIndex(arr, sItem) {
         return arr.findIndex(item => {
           let isSameTransCode = true;
@@ -151,11 +151,11 @@ import MSearch from 'components/search'
           return isSameTransCode && item.inventoryCode === sItem.inventoryCode
         });
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.tmpItems.findIndex(item => item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode) !== -1;
       },
-      // TODO 选择物料
+      // 选择物料
       selThis(sItem, sIndex) {
         let arr = this.tmpItems;
         let delIndex = arr.findIndex(item => item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode);
@@ -166,12 +166,12 @@ import MSearch from 'components/search'
         }
         arr.push(sItem);
       },
-      // TODO 设置默认值
+      // 设置默认值
       setDefaultValue() {
         this.tmpItems = [...this.defaultValue];
         this.selItems = [...this.defaultValue];
       },
-      // TODO 获取物料列表
+      // 获取物料列表
       getWorkOrderTask() {
         let filter = [];
         if (this.srhInpTx) {
@@ -197,7 +197,7 @@ import MSearch from 'components/search'
           })
         });
       },
-      // TODO 确定选择物料
+      // 确定选择物料
       cfmMater() {
         let sels = [];
         this.showPop = false;
@@ -206,7 +206,7 @@ import MSearch from 'components/search'
         // 触发父组件选中事件
         this.$emit('sel-work', JSON.stringify(this.selItems));
       },
-      // TODO 搜索物料
+      // 搜索物料
       searchList({val = '', property = ''}) {
         this.srhInpTx = val;
         this.filterProperty = property;
@@ -216,7 +216,7 @@ import MSearch from 'components/search'
         this.$refs.bScroll.scrollTo(0, 0);
         this.getWorkOrderTask();
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getWorkOrderTask();

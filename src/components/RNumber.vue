@@ -53,19 +53,19 @@
       }
     },
     methods: {
-      // TODO 数量减一
+      // 数量减一
       subNum() {
         if (this.currentNum <= this.min) return;
         this.currentNum = parseFloat(accSub(this.currentNum, 1));
         this.$emit('input', this.currentNum);
       },
-      // TODO 数量加一
+      // 数量加一
       plusNum() {
         if (this.max && this.max === this.num) return;
         this.currentNum = parseFloat(accAdd(this.currentNum, 1));
         this.$emit('input', this.currentNum);
       },
-      // TODO 数量自定义
+      // 数量自定义
       getNum(e) {
         let val = Number(e.target.value);
         if (this.max && val > this.max) {

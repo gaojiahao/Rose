@@ -110,7 +110,7 @@
       }
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -118,7 +118,7 @@
           }
         })
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.contactInfo.dealerName === sItem.dealerName;
       },
@@ -148,7 +148,7 @@
           })
         })
       },
-      // TODO 搜索往来
+      // 搜索往来
       searchList({val = ''}) {
         this.srhInpTx = val;
         this.contactList = [];
@@ -156,12 +156,12 @@
         this.hasNext = true;
         this.getContact();
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getContact();
       },
-      // TODO 重新请求联系人列表
+      // 重新请求联系人列表
       resetCondition() {
         this.page = 1;
         this.hasNext = true;

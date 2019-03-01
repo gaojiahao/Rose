@@ -64,7 +64,7 @@
 
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -72,11 +72,11 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.$emit('input', false);
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         let flag = false;
         if(sItem.name === this.defaultValue){
@@ -84,12 +84,12 @@
         }
         return flag;
       },
-      // TODO 选择物料
+      // 选择物料
       selThis(sItem, sIndex) {
         this.showPop = false;
         this.$emit('sel-group',sItem.name);
       },
-      // TODO 搜索物料
+      // 搜索物料
       searchList({val = ''}) {
         this.$emit('list-search',val)
       }

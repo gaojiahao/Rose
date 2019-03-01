@@ -28,7 +28,7 @@
       }
     },
     methods: {
-      // TODO 点击表情
+      // 点击表情
       emotionClick(item, index) {
         this.$emit('on-select', `[${item}]`);
       },

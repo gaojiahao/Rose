@@ -45,7 +45,7 @@
       }
     },
     methods: {
-      // TODO 切换tab
+      // 切换tab
       switchTab(item, index) {
         if (this.activeTabIndex === index) return;
         this.activeTabIndex = index;

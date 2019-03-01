@@ -138,7 +138,7 @@
       },
     },
     methods: {
-      // TODO 提交
+      // 提交
       submitOrder() {
         let warn = '';
         let dataSet = [];
@@ -296,7 +296,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 保存草稿数据
+      // 保存草稿数据
       hasDraftData() {
         // 是否选择项目
         if (!this.dealerInfo.dealerCode) {
@@ -310,14 +310,14 @@
           }
         };
       },
-      // TODO 获取关联数据
+      // 获取关联数据
       getRelationData() {
       },
-      // TODO 选中供应商
+      // 选中供应商
       selDealer(item) {
         this.dealerInfo = {...item};
       },
-      // TODO 选中采购明细
+      // 选中采购明细
       selOrder(val) {
         val.forEach(item => {
           item.hasOrigin = true; // 是否有原始的金额
@@ -327,11 +327,11 @@
         });
         this.orderList = val;
       },
-      // TODO 新增
+      // 新增
       addOrder() {
         this.showOrder = true;
       },
-      // TODO 保留两位小数
+      // 保留两位小数
       checkAmt(item, key) {
         let {hasOrigin = false, originAmt = 0, tdAmount = 0} = item;
         if (hasOrigin && tdAmount > originAmt) {

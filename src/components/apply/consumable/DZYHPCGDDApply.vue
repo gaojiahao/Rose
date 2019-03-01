@@ -143,7 +143,7 @@
         this.formData.dealerCreditContactInformation = val.dealerMobilePhone;
         this.contact = val;
       },
-      // TODO 选中物料项
+      // 选中物料项
       selMatter(val) {
         let sels = JSON.parse(val);
         let orderList = JSON.parse(JSON.stringify(this.orderList));
@@ -180,7 +180,7 @@
         }
         return url
       },
-      // TODO 显示物料修改的pop
+      // 显示物料修改的pop
       getMatterModify(item, index, key) {
         this.consumables = JSON.parse(JSON.stringify(item));
         this.showMatterPop = true;
@@ -252,7 +252,7 @@
           }
         })
       },
-      // TODO 新增更多物料
+      // 新增更多物料
       addMatter() {
         this.showMaterielPop = !this.showMaterielPop;
       },
@@ -430,7 +430,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 是否保存草稿
+      // 是否保存草稿
       hasDraftData() {
         if (!this.consumableList.length) {
           return false
@@ -445,7 +445,7 @@
           }
         };
       },
-      // TODO 获取关联数据
+      // 获取关联数据
       getRelationData() {
 
       },

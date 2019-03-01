@@ -169,7 +169,7 @@
           },
         })
       }, 
-      // TODO 提交
+      // 提交
       save () {
         /**
          * @warn 提示文字
@@ -213,14 +213,14 @@
           }
         });
       },
-      // TODO 选中项目经理
+      // 选中项目经理
       selManager (val) {
         let sel = JSON.parse(val);
         this.$set(this.ProjectApproval, 'projectManagerName', sel.dealerName)
         this.$set(this.ProjectApproval, 'phoneNumber', sel.dealerMobilePhone)
         this.$set(this.ProjectApproval, 'projectManager', sel.dealerCode)
       },
-      // TODO 获取显示数据
+      // 获取显示数据
       getFormData () {
         return findProjectApproval(this.transCode).then(({formData = {}}) => {
           this.hasDefault = true;
@@ -258,7 +258,7 @@
           this.$loading.hide()
         })
       },
-      // TODO 保存草稿数据
+      // 保存草稿数据
       hasDraftData () {
         // 是否选择项目经理
         if (!this.ProjectApproval.projectName && !this.ProjectApproval.projectType &&  !this.ProjectApproval.projectManagerName) {

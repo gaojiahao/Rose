@@ -163,11 +163,11 @@
         }
         return url
       },
-      // TODO 隐藏弹窗
+      // 隐藏弹窗
       hidePop() {
         this.showPop = false;
       },
-      // TODO 确定修改
+      // 确定修改
       confirm() {
         let warn = '';
         let matter = this.item;

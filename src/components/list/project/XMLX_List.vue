@@ -96,7 +96,7 @@
     },
     mixins: [listCommon],
     filters: {
-      // TODO 转为百分比
+      // 转为百分比
       percent(val) {
         if (!val && val !== 0) {
           return '无';

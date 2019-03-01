@@ -121,7 +121,7 @@ export default {
         this.workFlowInfoHandler();
       })
     },
-    // TODO 判断往来是否展示预收款和预收到期日
+    // 判断往来是否展示预收款和预收到期日
     judgeDealerConfig(configs) {
       let flag = this.orderInfo.crDealerPaymentTerm.includes('账期');
       let showList = ['pamentDays_dealerCodeCredit'];

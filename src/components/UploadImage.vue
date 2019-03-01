@@ -47,7 +47,7 @@
       }
     },
     methods: {
-      // TODO 将base64转为file
+      // 将base64转为file
       dataURLtoFile(dataurl, filename) {//将base64转换为文件
         let arr = dataurl.split(',');
         let bstr = window.atob(arr[1]);
@@ -60,7 +60,7 @@
         }
         return new File([u8arr], filename, {type: mime});
       },
-      // TODO 选择、预览图片
+      // 选择、预览图片
       uploadFile(e) {
         let files = [...e.target.files];
         if (!files.length) return;
@@ -100,7 +100,7 @@
           }
         }
       },
-      // TODO 上传图片
+      // 上传图片
       postImg(img) {
         let file = this.dataURLtoFile(img, this.imgFile.name);
         upload({
@@ -118,7 +118,7 @@
           })
         });;
       },
-      // TODO 压缩图片
+      // 压缩图片
       compress(img, Orientation) {
         let canvas = document.createElement("canvas");
         let ctx = canvas.getContext('2d');
@@ -185,7 +185,7 @@
         tCanvas.width = tCanvas.height = canvas.width = canvas.height = 0;
         return ndata;
       },
-      // TODO 旋转图片
+      // 旋转图片
       rotateImg(img, direction, canvas) {
         //最小与最大旋转方向，图片旋转4次后回到原方向
         const min_step = 0;
@@ -235,12 +235,12 @@
             break;
         }
       },
-      // TODO 获取默认图片
+      // 获取默认图片
       getDefaultImg(e) {
         this.showLoading = false;
         this.$emit('on-error', e);
       },
-      // TODO 加载图片成功
+      // 加载图片成功
       imgLoad() {
         this.showLoading = false;
       },

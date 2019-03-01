@@ -86,7 +86,7 @@
       },
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -94,22 +94,22 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.showPop = false;
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return sItem.dealerName === this.currentValue;
       },
-      // TODO 选择商机
+      // 选择商机
       selThis(sItem, sIndex) {
         let val = sItem.dealerName;
         this.showPop = false;
         this.currentValue = val;
         this.$emit('input', val)
       },
-      // TODO 获取销售列表
+      // 获取销售列表
       getDealer() {
         let filter = [];
         if (this.srhInpTx) {
@@ -137,12 +137,12 @@
           })
         })
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getDealer();
       },
-      // TODO 点击展示弹窗
+      // 点击展示弹窗
       itemClick() {
         this.showPop = true;
       },

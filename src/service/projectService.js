@@ -1,7 +1,7 @@
 import $flyio from '../plugins/ajax';
 
 
-// TODO 保存项目立项
+// 保存项目立项
 export let saveProjectApproval = (data = {}) => {
   return $flyio.post({
     url: '/H_roleplay-si/projectApproval/save',
@@ -15,7 +15,7 @@ export let saveJobLog = (data = {}) => {
     data
   })
 };
-// TODO 修改项目立项
+// 修改项目立项
 export let updateProjectApproval = (data = {}) => {
   return $flyio.post({
     url: '/H_roleplay-si/projectApproval/save',
@@ -23,7 +23,7 @@ export let updateProjectApproval = (data = {}) => {
   })
 };
 
-// TODO 查看项目立项
+// 查看项目立项
 export let findProjectApproval = (transCode = '') => {
   return $flyio.ajax({
     url: '/H_roleplay-si/projectApproval/findData',
@@ -38,7 +38,7 @@ export let jobLog = (transCode = '') => {
   })
 };
 
-// TODO 保存项目计划
+// 保存项目计划
 export let saveProjectPlan = (data = {}) => {
   return $flyio.post({
     url: '/H_roleplay-si/projectPlan/save',
@@ -46,7 +46,7 @@ export let saveProjectPlan = (data = {}) => {
   })
 };
 
-// TODO 修改项目计划
+// 修改项目计划
 export let updateProjectPlan = (data = {}) => {
   return $flyio.post({
     url: '/H_roleplay-si/projectPlan/update',
@@ -54,7 +54,7 @@ export let updateProjectPlan = (data = {}) => {
   })
 };
 
-// TODO 查看项目计划
+// 查看项目计划
 export let findProjectPlan = (transCode = '') => {
   return $flyio.ajax({
     url: '/H_roleplay-si/projectPlan/findData',
@@ -62,7 +62,7 @@ export let findProjectPlan = (transCode = '') => {
   })
 };
 
-// TODO 保存项目任务
+// 保存项目任务
 export let saveProjectTask = (data = {}) => {
   return $flyio.post({
     url: '/H_roleplay-si/projectTask/save',
@@ -70,7 +70,7 @@ export let saveProjectTask = (data = {}) => {
   })
 };
 
-// TODO 修改项目任务
+// 修改项目任务
 export let updateProjectTask = (data = {}) => {
   return $flyio.post({
     url: '/H_roleplay-si/projectTask/update',
@@ -78,7 +78,7 @@ export let updateProjectTask = (data = {}) => {
   })
 };
 
-// TODO 查看项目任务
+// 查看项目任务
 export let findProjectTask = (transCode = '') => {
   return $flyio.ajax({
     url: '/H_roleplay-si/projectTask/findData',
@@ -86,7 +86,7 @@ export let findProjectTask = (transCode = '') => {
   })
 };
 
-// TODO 保存项目结项
+// 保存项目结项
 export let saveProjectConclusion = (data = {}) => {
   return $flyio.post({
     url: '/H_roleplay-si/projectConclusion/save',
@@ -94,7 +94,7 @@ export let saveProjectConclusion = (data = {}) => {
   })
 };
 
-// TODO 修改项目结项
+// 修改项目结项
 export let updateProjectConclusion = (data = {}) => {
   return $flyio.post({
     url: '/H_roleplay-si/projectConclusion/update',
@@ -102,7 +102,7 @@ export let updateProjectConclusion = (data = {}) => {
   })
 };
 
-// TODO 查看项目结项
+// 查看项目结项
 export let findProjectConclusion = (transCode = '') => {
   return $flyio.ajax({
     url: '/H_roleplay-si/projectConclusion/findData',
@@ -110,7 +110,7 @@ export let findProjectConclusion = (transCode = '') => {
   })
 };
 
-// TODO 获取项目列表
+// 获取项目列表
 export let getProjectPlanProjectName = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getProjectPlanProjectName',
@@ -124,7 +124,7 @@ export let getProjectPlanProjectName = (data = {}) => {
   })
 };
 
-// TODO 获取项目列表自动填充字段带出
+// 获取项目列表自动填充字段带出
 export let getProjectApproval = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getProjectApprovalAll',
@@ -135,7 +135,7 @@ export let getProjectApproval = (data = {}) => {
   })
 };
 
-// TODO 获取项目相关的任务列表
+// 获取项目相关的任务列表
 export let getProjectTodoTask = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getProjectTodoTask',
@@ -156,7 +156,7 @@ export let getProjectList = (data = {}) => {
   })
 };
 
-//TODO 项目计划列表
+//项目计划列表
 export let getProjectPlanList = (listViewID, data = {}) => {
   return $flyio.ajax({
     // url: '/H_roleplay-si/ds/getProjectPlan',
@@ -168,7 +168,7 @@ export let getProjectPlanList = (listViewID, data = {}) => {
   })
 };
 
-//TODO 销售出库获取项目列表接口
+//销售出库获取项目列表接口
 export let getSalesOutStockProject = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getSalesOutStockProject',
@@ -179,7 +179,7 @@ export let getSalesOutStockProject = (data = {}) => {
   })
 };
 
-// TODO 查询项目对应的实际、预算、差额
+// 查询项目对应的实际、预算、差额
 export let findConclusion = (projectName) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/projectConclusion/findConclusion',
@@ -190,7 +190,7 @@ export let findConclusion = (projectName) => {
   })
 };
 
-// TODO 查询项目对应的实际、预算、差额
+// 查询项目对应的实际、预算、差额
 export let getProjectBotTask = (data) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getProjectBotTask',

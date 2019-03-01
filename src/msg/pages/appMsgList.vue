@@ -130,7 +130,7 @@ export default {
         this.$set(this.listData, index, {...item});
       })
     },
-    // TODO 重置列表条件
+    // 重置列表条件
     resetCondition() {
       this.listData = [];
       this.page = 1;
@@ -170,7 +170,7 @@ export default {
         this.resetScroll();
       })
     },
-    // TODO 获取默认图片
+    // 获取默认图片
     getDefaultImg(item) {
       let url = require('assets/avatar.png');
       if (item) {
@@ -178,17 +178,17 @@ export default {
       }
       return url
     },
-    // TODO 重置下拉刷新、上拉加载的状态
+    // 重置下拉刷新、上拉加载的状态
     resetScroll() {
       this.$refs.bScroll.finishPullDown();
       this.$refs.bScroll.finishPullUp();
     },
-    // TODO 上拉加载
+    // 上拉加载
     onPullingUp() {
       this.page++;
       this.getList();
     },
-    // TODO 下拉刷新
+    // 下拉刷新
     onPullingDown() {
       this.page = 1;
       this.getList(true).then(() => {

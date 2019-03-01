@@ -242,7 +242,7 @@
         this.$set(this.orderList[this.modifyKey], this.modifyIndex, matter);
         this.reBuildArr(matter);
       },
-      // TODO 显示物料修改的pop
+      // 显示物料修改的pop
       getMatterModify(item, index, key) {
         this.matter = JSON.parse(JSON.stringify(item));
         this.showMatterPop = true;
@@ -250,7 +250,7 @@
         this.modifyKey = key;
         this.modifyBomTdqty = [...item.boms]
       },
-      // TODO 更新修改后的物料信息
+      // 更新修改后的物料信息
       selConfirm(val) {
         let modMatter = JSON.parse(val);
         if (!modMatter.processQty) {
@@ -279,7 +279,7 @@
           })
         })
       },
-      // TODO 选中物料项
+      // 选中物料项
       selOrder(val) {
         let sels = JSON.parse(val);
         let orderList = {};
@@ -321,7 +321,7 @@
         this.matterList = sels;
         this.orderList = orderList;
       },
-      // TODO 选择默认图片
+      // 选择默认图片
       getDefaultImg(item) {
         let url = require('assets/wl_default03.png');
         if (item) {
@@ -329,13 +329,13 @@
         }
         return url
       },
-      // TODO 匹配相同项的索引
+      // 匹配相同项的索引
       findIndex(arr, sItem) {
         return arr.findIndex(item => {
           return item.orderCode === sItem.orderCode && item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode
         });
       },
-      // TODO 选择要删除的物料
+      // 选择要删除的物料
       delClick(index, sItem, key) {
         let arr = this.selItems;
         let delIndex = this.findIndex(arr, sItem);
@@ -346,7 +346,7 @@
         }
         arr.push(sItem);
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.findIndex(this.selItems, sItem) !== -1;
       },
@@ -405,7 +405,7 @@
           }
         })
       },
-      // TODO 新增更多订单
+      // 新增更多订单
       addOrder() {
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
@@ -415,7 +415,7 @@
         }
         this.showOrderPop = !this.showOrderPop;
       },
-      // TODO 提价订单
+      // 提价订单
       submitOrder() {
         let warn = '';
         if (!warn && !Object.keys(this.orderList).length) {
@@ -623,7 +623,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 合并bom列表
+      // 合并bom列表
       mergeBomList() {
         //对合计的bom进行去重合并
         let isEqual = (a, b) => a.inventoryCode === b.inventoryCode;
@@ -640,7 +640,7 @@
         }, []);
         this.UniqueBom = getNew(this.DuplicateBoms);
       },
-      // TODO 保存草稿数据
+      // 保存草稿数据
       hasDraftData() {
         // 是否选择订单
         if (!Object.values(this.orderList).length) {
@@ -654,7 +654,7 @@
           }
         };
       },
-      // TODO 检查待计划余额数量
+      // 检查待计划余额数量
       checkQtyBal(item) {
         let {qtyBal, qtyStock} = item;
         qtyBal = Math.abs(toFixed(qtyBal));
@@ -664,7 +664,7 @@
         }
         item.qtyBal = qtyBal;
       },
-      // TODO 检查库存计划数量
+      // 检查库存计划数量
       checklockQty(item) {
         let {qtyBal, lockQty, processQty} = item;
         lockQty = Math.abs(toFixed(lockQty));
@@ -674,7 +674,7 @@
         }
         item.lockQty = lockQty;
       },
-      // TODO 检查加工计划数量
+      // 检查加工计划数量
       checkprocessQty(item) {
         let {qtyBal, lockQty, processQty} = item;
         processQty = Math.abs(toFixed(processQty));
@@ -684,7 +684,7 @@
         }
         item.processQty = processQty;
       },
-      // TODO 修改原料库存计划
+      // 修改原料库存计划
       modifyBomLockQty(bom) {
         this.$vux.confirm.prompt(bom.lockQty, {
           title: '原料库存计划',
@@ -712,7 +712,7 @@
           }
         })
       },
-      // TODO 修改采购交货日期
+      // 修改采购交货日期
       modifyBomDate(bom) {
         this.$vux.datetime.show({
           cancelText: '取消',
@@ -724,7 +724,7 @@
           },
         });
       },
-      // TODO 计算bom的值
+      // 计算bom的值
       calcBom(qty, bom) {
         // 加工计划数量 * bom消耗的原料 * (1 + 损耗率) - 原料库存计划
         return accSub(accMul(qty, bom.qty, (1 + bom.specificLoss)), bom.lockQty);

@@ -257,7 +257,7 @@
       }
     },
     methods: {
-      // TODO 选中在制仓库
+      // 选中在制仓库
       selWarehouseOut(val) {
         this.warehouseOut = JSON.parse(val);
         this.orderParams = {
@@ -266,7 +266,7 @@
         };
         this.orderList = {};
       },
-      // TODO 选中入库仓库
+      // 选中入库仓库
       selWarehouseIn(val) {
         this.warehouseIn = JSON.parse(val);
       },
@@ -295,7 +295,7 @@
         this.bomPopShow = true;
         this.modifyBomTdqty = JSON.parse(JSON.stringify(item.boms))
       },
-      // TODO 显示物料修改的pop
+      // 显示物料修改的pop
       getMatterModify(item, index, key) {
         this.matter = JSON.parse(JSON.stringify(item));
         this.showMatterPop = true;
@@ -303,13 +303,13 @@
         this.modifyKey = key;
         this.modifyBomTdqty = [...item.boms]
       },
-      // TODO 更新修改后的物料信息
+      // 更新修改后的物料信息
       selConfirm(val) {
         let modMatter = JSON.parse(val);
         this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
         this.reBuildUniqueBom(modMatter);
       },
-      // TODO 选中物料项
+      // 选中物料项
       selOrder(val) {
         let sels = JSON.parse(val);
         let orderList = {};
@@ -352,7 +352,7 @@
           this.mergeBomList();
         });
       },
-      // TODO 选择默认图片
+      // 选择默认图片
       getDefaultImg(item) {
         let url = require('assets/wl_default03.png');
         if (item) {
@@ -360,13 +360,13 @@
         }
         return url
       },
-      // TODO 匹配相同项的索引
+      // 匹配相同项的索引
       findIndex(arr, sItem) {
         return arr.findIndex(item => {
           return item.orderCode === sItem.orderCode && item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode
         });
       },
-      // TODO 选择要删除的物料
+      // 选择要删除的物料
       delClick(index, sItem, key) {
         let arr = this.selItems;
         let delIndex = this.findIndex(arr, sItem);
@@ -377,7 +377,7 @@
         }
         arr.push(sItem);
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.findIndex(this.selItems, sItem) !== -1;
       },
@@ -420,7 +420,7 @@
           }
         })
       },
-      // TODO 新增更多订单
+      // 新增更多订单
       addOrder() {
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
@@ -430,7 +430,7 @@
         }
         this.showOrderPop = !this.showOrderPop;
       },
-      // TODO 提价订单
+      // 提价订单
       submitOrder() {
         let warn = '';
         let validateMap = [
@@ -663,7 +663,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 保存草稿数据
+      // 保存草稿数据
       hasDraftData() {
         // 是否选择订单
         if (!Object.values(this.orderList).length) {
@@ -678,7 +678,7 @@
           }
         };
       },
-      // TODO 合并单个物料的bom
+      // 合并单个物料的bom
       mergeSingleBom(boms) {
         return boms.reduce((arr, bom) => {
           let matched = arr.find(a => a.inventoryCode === bom.inventoryCode);
@@ -691,7 +691,7 @@
           return arr;
         }, []);
       },
-      // TODO 一维转多维
+      // 一维转多维
       oneToMul(item, boms) {
         let parentCode = item.inventoryCode;
         let tmp = JSON.parse(JSON.stringify(boms));
@@ -703,7 +703,7 @@
         }
         return childBoms || [];
       },
-      // TODO 多维度转一维
+      // 多维度转一维
       mulToOne(boms) {
         let arr = boms;
         boms.reduce((a, bom) => {
@@ -714,7 +714,7 @@
         }, []);
         return arr
       },
-      // TODO 获取当前物料的库存
+      // 获取当前物料的库存
       getStock(matter) {
         let matched = this.UniqueBom.find(uItem => uItem.inventoryCode === matter.inventoryCode);
         let currentStock = accSub(matched.thenTotalQtyStock, matched.thenQtyBalCopy1);
@@ -739,7 +739,7 @@
         }
         return accSub(currentStock, usedBom);
       },
-      // TODO 处理Bom计算
+      // 处理Bom计算
       reBuildUniqueBom(matter) {
         let processQty = 0;
         let calc = (boms, parentQty) => {
@@ -789,7 +789,7 @@
           item.tdQty = matched.qualityQty;
         });
       },
-      // TODO 合并所有物料bom列表
+      // 合并所有物料bom列表
       mergeBomList() {
         //对合计的bom进行去重合并
         let promise = [];
@@ -814,7 +814,7 @@
           this.UniqueBom = UniqueBom;
         });
       },
-      // TODO 计算bom的值
+      // 计算bom的值
       calcBom(qty, bom) {
         // 不合格数量 * bom消耗的原料 * (1 + 损耗率)
         return accMul(qty, bom.qty, (1 + bom.specificLoss));

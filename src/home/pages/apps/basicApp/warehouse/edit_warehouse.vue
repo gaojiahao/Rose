@@ -268,7 +268,7 @@ export default {
     }
   },
   methods: {
-    // TODO 上传图片成功触发
+    // 上传图片成功触发
     onUpload(val){
       this.warehouse.warehousePic = val.src;
     },
@@ -309,7 +309,7 @@ export default {
         this.AccountAddress = [this.warehouse.warehouseProvince, this.warehouse.warehouseCity, this.warehouse.warehouseDistrict]
       });
     },
-    // TODO 获取默认图片
+    // 获取默认图片
     getDefaultImg() {
       this.MatPic = require('assets/ck_default.png');
     },

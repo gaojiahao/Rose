@@ -125,7 +125,7 @@ export default {
     selContact(val) {
       this.contact = {...val};
     },
-    // TODO 选中物料项
+    // 选中物料项
     selMatter(val) {
       let sels = JSON.parse(val); 
       let matterList = JSON.parse(JSON.stringify(this.matterList))
@@ -362,7 +362,7 @@ export default {
         this.$loading.hide();
       })
     },
-    // TODO 是否保存草稿
+    // 是否保存草稿
     hasDraftData() {
       if (!this.matterList.length) {
         return false

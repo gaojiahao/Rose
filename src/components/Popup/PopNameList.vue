@@ -127,7 +127,7 @@
       }
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -135,21 +135,21 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.showPop = false;
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.selItems.PROJECT_NAME === sItem.PROJECT_NAME;
       },
-      // TODO 选择项目计划
+      // 选择项目计划
       selThis(sItem, sIndex) {
         this.showPop = false;
         this.selItems = sItem;
         this.$emit('sel-item', JSON.stringify(this.selItems));
       },
-      // TODO 获取默认图片
+      // 获取默认图片
       getDefaultImg(item) {
         let url = require('assets/wl_default03.png');
         if (item) {
@@ -157,7 +157,7 @@
         }
         return url
       },
-      // TODO 获取项目计划列表
+      // 获取项目计划列表
       getDealer() {
         let filter = [];
         let params = {
@@ -193,7 +193,7 @@
         })
 
       },
-      // TODO 搜索项目计划
+      // 搜索项目计划
       searchList({val = ''}) {
         this.srhInpTx = val;
         this.dealerList = [];
@@ -201,12 +201,12 @@
         this.hasNext = true;
         this.getDealer();
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getDealer();
       },
-      // TODO 点击展示弹窗
+      // 点击展示弹窗
       itemClick() {
         this.showPop = true;
       }

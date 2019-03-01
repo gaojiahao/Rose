@@ -138,7 +138,7 @@
       }
     },
     methods: {
-      // TODO 检查金额，取正数、保留两位小数
+      // 检查金额，取正数、保留两位小数
       checkAmt(item){
         let {tdAmount,taxRate} = item;
         // 金额,税率
@@ -157,7 +157,7 @@
         this.costIndex = index;
         this.selectedCost = [item];
       },
-      // TODO 点击增加费用
+      // 点击增加费用
       addCost () {
         this.expSubjectList = [];
         this.CostList.push({
@@ -177,7 +177,7 @@
       deleteCost () {
         this.CostList.pop();
       },
-      // TODO 选中费用
+      // 选中费用
       selMatter (val) {
         let sels = val;
         this.CostList[this.costIndex].exptName = sels.costName;
@@ -185,7 +185,7 @@
         this.CostList[this.costIndex].expSubject = sels.costSubject;
         this.CostList[this.costIndex].costType_expCode = sels.costType;
       },
-      // TODO 提交
+      // 提交
       submitOrder () {
         let warn = '';
         let dataSet = [];
@@ -322,7 +322,7 @@
           // this.$emit('input', false);
         })
       },
-      // TODO 保存草稿数据
+      // 保存草稿数据
       hasDraftData () {
         let isSave = false;
         this.CostList.forEach(item=>{

@@ -112,7 +112,7 @@
       checkAmt(jobLog, code, val){
         this.jobLog[code] = toFixed(val, 1);
       },
-      // TODO 提交
+      // 提交
       save () {
         /**
          * @warn 提示文字
@@ -165,7 +165,7 @@
           }
         });
       },
-      // TODO 选中项目经理
+      // 选中项目经理
       selJob (val) {
         let sel = JSON.parse(val);
         this.jobLog = {
@@ -177,7 +177,7 @@
           projectTaskId: sel.taskId
         }
       },
-      // TODO 获取显示数据
+      // 获取显示数据
       getFormData () {
         return jobLog(this.transCode).then(({formData = {}}) => {
           this.hasDefault = true;
@@ -215,7 +215,7 @@
           this.$loading.hide()
         })
       },
-      // TODO 保存草稿数据
+      // 保存草稿数据
       hasDraftData () {
         // 是否选择项目经理
         if (!this.jobLog.projectName && !this.jobLog.projectType &&  !this.jobLog.projectManagerName) {

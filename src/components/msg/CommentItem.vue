@@ -100,7 +100,7 @@
       getDefaultImg(e) {
         e.target.src = require('assets/ava01.png');
       },
-      // TODO 获取预览图片链接
+      // 获取预览图片链接
       getImgUrl(item) {
         return `${location.origin}${item.attachment}`
       },
@@ -166,11 +166,11 @@
         });
         return comment;
       },
-      // TODO popover点击事件
+      // popover点击事件
       onPopoverClick() {
         this.$emit('on-popover-click');
       },
-      // TODO 隐藏popover
+      // 隐藏popover
       hidePopover() {
         let $popover = this.$refs.popover || [];
         $popover.forEach(pop => {

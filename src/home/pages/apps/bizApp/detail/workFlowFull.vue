@@ -66,13 +66,13 @@
         }
         return url;
       },
-      // TODO 获取当前用户信息
+      // 获取当前用户信息
       getCurrentUser() {
         return currentUser().then(data => {
           this.currentUser = data;
         })
       },
-      // TODO 获取工作流
+      // 获取工作流
       getWorkFlow() {
         return getWorkFlow({
           transCode: this.transCode,

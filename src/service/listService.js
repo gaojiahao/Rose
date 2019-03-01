@@ -7,14 +7,14 @@ export let getList = (id,data = {}) => {
     data
   })
 };
-// TODO 获取销售订单列表
+// 获取销售订单列表
 export let getSellOrderList = (listId, data = {}) => {
   return $flyio.ajax({
     url: `/H_roleplay-si/seconds/mergeDetailItemList/${listId}`,
     data
   })
 };
-// TODO 获取弹出框的销售订单列表
+// 获取弹出框的销售订单列表
 export let getSalesOrderList = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getSalesOutStock',
@@ -34,7 +34,7 @@ export let getMaterOrderList = (data = {})=>{
     }
   })
 }
-// TODO 获取商机订单列表
+// 获取商机订单列表
 export let getBusinessList = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getFilterBusiness',
@@ -56,7 +56,7 @@ export let getDashboard = (data = {}) => {
   })
 }
 
-// TODO 获取被授权团队列表
+// 获取被授权团队列表
 export let getAuthorizedList = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getAllGroup',
@@ -69,7 +69,7 @@ export let getAuthorizedList = (data = {}) => {
   })
 };
 
-// TODO 获取内部加工入库的仓库列表
+// 获取内部加工入库的仓库列表
 export let getWarehouse = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getObjWarehouse',

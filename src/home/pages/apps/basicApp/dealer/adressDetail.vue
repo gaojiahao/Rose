@@ -165,11 +165,11 @@ export default {
         })
       });
     },
-    // TODO 获取默认图片
+    // 获取默认图片
     getDefaultImg() {
       this.MatPic = require('assets/default/dealer.png');
     },
-    // TODO 跳转到修改页面
+    // 跳转到修改页面
     goEdit() {
       this.$router.push({
         path: '/adress/edit_ads',

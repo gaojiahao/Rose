@@ -83,8 +83,8 @@ let tokenService = {
             'Content-Type': 'application/json',
           },
           data: {
-            password: '',
-            userCode: ''
+            password: '123456',
+            userCode: '15399909500'
           }
         };
         fly.request(params, params.data).then( res => {

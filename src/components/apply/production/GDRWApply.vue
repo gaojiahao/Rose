@@ -296,7 +296,7 @@ export default {
         item.numberWorkers = Math.round(numberWorkers);
       }
     },
-    // TODO 选中仓库
+    // 选中仓库
     selWarehouse(val) {
       this.warehouse = JSON.parse(val);
       // this.filter[0].value = this.warehouse.warehouseCode;
@@ -433,13 +433,13 @@ export default {
         }
       })
     },
-    // TODO 启用企业微信扫一扫
+    // 启用企业微信扫一扫
     scanQRCode() {
       scanQRCode().then(({result = ''}) => {
         this.scanResult = result;
       })
     },
-    // TODO 判断是否有弹窗需要关闭
+    // 判断是否有弹窗需要关闭
     onHistoryBack() {
       if (this.showWorkPop) {
         this.showWorkPop = false;
@@ -447,7 +447,7 @@ export default {
       }
       return true
     },
-     // TODO 获取详情
+     // 获取详情
     getFormData() {
       return getSOList({
         formViewUniqueId: this.formViewUniqueId,
@@ -537,7 +537,7 @@ export default {
         return tableContent;
       })
     },
-    // TODO 是否保存草稿
+    // 是否保存草稿
     hasDraftData () {
       if (!this.workInfo.length) {
         return false

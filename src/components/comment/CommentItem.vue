@@ -64,15 +64,15 @@
       }
     },
     methods: {
-      // TODO 获取默认用户图片
+      // 获取默认用户图片
       getDefaultImg(e) {
         e.target.src = require('assets/ava01.png');
       },
-      // TODO 抛出回复事件
+      // 抛出回复事件
       reply() {
         this.$emit('on-reply', this.item);
       },
-      // TODO 点赞
+      // 点赞
       savePraise() {
         // 已点过赞，不允许点击
         if (!this.item.isPraise) {
@@ -84,11 +84,11 @@
           }
         });
       },
-      // TODO 获取预览图片链接
+      // 获取预览图片链接
       getImgUrl(item) {
         return `${location.origin}${item.ATTACHMENT}`
       },
-      // TODO 放大图片
+      // 放大图片
       scaleImg(img) {
         let imgUrl = this.getImgUrl(img);
         wx.previewImage({
@@ -96,7 +96,7 @@
           urls: this.attachmentImgs // 需要预览的图片http链接列表
         });
       },
-      // TODO 替换表情图片地址
+      // 替换表情图片地址
       handleComment() {
         let emotionList = [...emotion];
         let comment = this.item.CONTENT;
@@ -145,7 +145,7 @@
       },
     },
     filters: {
-      // TODO 处理时间
+      // 处理时间
       filterTime(val) {
         if (!val) {
           return

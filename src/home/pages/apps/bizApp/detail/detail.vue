@@ -48,13 +48,13 @@ export default {
     modifyRoute(val) {
       this.submitSuccess = val;
     },
-    // TODO 刷新better-scroll
+    // 刷新better-scroll
     refresh() {
       this.$nextTick(() => {
         this.detailScroll.refresh();
       })
     },
-    // TODO 跳转到评论页面
+    // 跳转到评论页面
     goDiscuss() {
       this.$router.push({
         path: '/commentList',
@@ -63,11 +63,11 @@ export default {
         }
       })
     },
-    // TODO 是否已经关注该订单
+    // 是否已经关注该订单
     isSubscribe(val){
       this.isConcern = val;
     },
-    // TODO 关注或取关
+    // 关注或取关
     goConcern() {
       let operation = subscribeApp,
           data = {
@@ -91,7 +91,7 @@ export default {
         }
       })
     },
-    // TODO 初始化页面
+    // 初始化页面
     initPage(){
       let { transCode } = this.$route.query,
           { folder, fileName } = this.$route.params;

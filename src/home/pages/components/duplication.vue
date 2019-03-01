@@ -112,7 +112,7 @@ export default {
     }
   },
   methods: {
-    // TODO 新增重复项
+    // 新增重复项
     addMoreUnit(item) {
       let obj = {};
       item.items.forEach(item => {
@@ -122,7 +122,7 @@ export default {
       })
       this.duplicateData[item.name].push(obj);
     },
-    // TODO 删除重复项
+    // 删除重复项
     deleteMoreUnit(item) {
       this.duplicateData[item.name].pop()
     },

@@ -50,7 +50,7 @@
       },
     },
     methods: {
-      // TODO 选择单条记录
+      // 选择单条记录
       dropItemClick(item) {
         this.selItem = {...item};
         this.$emit('on-selected', this.selItem);

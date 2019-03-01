@@ -162,7 +162,7 @@
       },
     },
     methods: {
-      // TODO 提交
+      // 提交
       submitOrder() {
         let warn = '';
         let dataSet = [];
@@ -361,7 +361,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 保存草稿数据
+      // 保存草稿数据
       hasDraftData() {
         // 是否选择项目
         if (!this.dealerInfo.dealerCode) {
@@ -376,17 +376,17 @@
           }
         };
       },
-      // TODO 获取关联数据
+      // 获取关联数据
       getRelationData() {
       },
-      // TODO 选中供应商
+      // 选中供应商
       selDealer(item) {
         this.dealerInfo = {...item};
         this.dealerParams = {
           dealerCode: item.dealerCode,
         }
       },
-      // TODO 选中采购明细
+      // 选中采购明细
       selOrder(val) {
         let sels = JSON.parse(val);
         sels.map(item => {
@@ -396,11 +396,11 @@
         this.numMap = {};
         this.orderList = sels;
       },
-      // TODO 选中资金
+      // 选中资金
       selCash(val) {
         this.cashInfo = {...val};
       },
-      // TODO 新增
+      // 新增
       addOrder() {
         for (let item of this.orderList) {
           // 存储已输入的价格
@@ -408,7 +408,7 @@
         }
         this.showOrder = true;
       },
-      // TODO 保留两位小数
+      // 保留两位小数
       checkAmt(item, key) {
         switch (item) {
           case 'tdAmountCopy1':

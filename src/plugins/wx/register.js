@@ -1,7 +1,7 @@
 import {corpid, redirect_uri} from 'plugins/ajax/conf'
 import {getJsApiSignature} from 'service/wxService'
 
-// TODO 注册企业微信签名，当url不同时需要重新调用
+// 注册企业微信签名，当url不同时需要重新调用
 export default (params = {}) => {
   let url = location.hostname !== 'localhost' ? encodeURIComponent(location.href.split('#')[0]) : redirect_uri;
   return getJsApiSignature(url).then(({signature = '', nonceStr = '', timestamp = ''}) => {

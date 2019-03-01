@@ -87,7 +87,7 @@
 // 组件引入
 import RNumber from 'components/RNumber'
 import PopMatter from 'components/apply/commonPart/MatterPop'
-import PopMatterList from 'components/Popup/PopMatterListTest'
+import PopMatterList from 'components/Popup/matter/PopMatterList'
 import MatterItem from 'components/apply/commonPart/MatterItem'
 export default {
   name: 'apply-matter-part',

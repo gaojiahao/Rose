@@ -111,7 +111,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
       },
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -119,12 +119,12 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.$emit('input', false);
         // this.selItems = []
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         let flag = false;
         this.selItems && this.selItems.every(item => {
@@ -143,7 +143,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
         }
         return flag;
       },
-      // TODO 选择物料
+      // 选择物料
       selThis(sItem, sIndex) {
         let arr = this.selItems;
         let delIndex = arr.findIndex(item => item.transCode === sItem.transCode && item.matCode === sItem.matCode);
@@ -161,7 +161,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
         }
         this.selItems = [sItem];
       },
-      // TODO 获取物料列表
+      // 获取物料列表
       getWorkOrderTask() {
         let filter = [];
         if (this.srhInpTx) {
@@ -181,7 +181,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
           this.taskWorkList = data;
         });
       },
-      // TODO 搜索物料
+      // 搜索物料
       searchList({val = '', property = ''}) {
         this.srhInpTx = val;
         this.filterProperty = property;

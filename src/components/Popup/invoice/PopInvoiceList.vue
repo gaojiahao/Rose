@@ -94,7 +94,7 @@
 
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -102,11 +102,11 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.$emit('input', false);
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         let flag = false;       
         this.selItems && this.selItems.every(item => {
@@ -118,7 +118,7 @@
         });
         return flag;
       },
-      // TODO 选择物料
+      // 选择物料
       selThis(sItem, sIndex) {
         //已经选择过的不允许再选
         let warn = ''
@@ -140,7 +140,7 @@
         this.showPop = false;
         this.$emit('sel-matter', sItem);
       },
-      // TODO 设置默认值
+      // 设置默认值
       setDefaultValue() {
         this.selItems = [];
         this.defaultValue.forEach(item => {
@@ -149,7 +149,7 @@
           }
         })
       },
-      // TODO 获取物料列表
+      // 获取物料列表
       getCostList() {
         let filter = [];
         let operation = getBillingApplication;
@@ -178,7 +178,7 @@
           })
         });
       },
-      // TODO 搜索物料
+      // 搜索物料
       searchList({val = ''}) {
         this.srhInpTx = val;
         this.costList = [];
@@ -187,7 +187,7 @@
         this.$refs.bScroll.scrollTo(0, 0);
         this.getCostList();
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getCostList();

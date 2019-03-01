@@ -82,7 +82,7 @@
           };
         })
       },
-      // TODO 使用千分符
+      // 使用千分符
       numberComma(val) {
         if (!val && val !== 0) {
           return '无';

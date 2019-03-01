@@ -189,7 +189,7 @@
       },
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -197,7 +197,7 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.showPop = false;
       },
@@ -208,18 +208,18 @@
         this.hasNext = true;
         this[this.getListMethod]();
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.selItems.warehouseCode === sItem.warehouseCode;
       },
-      // TODO 选择物料
+      // 选择物料
       selThis(sItem, sIndex) {
         this.showPop = false;
         this.selItems = sItem;
         this.warehouseStore = {}
         this.$emit('sel-item', JSON.stringify(this.selItems));
       },
-      // TODO 获取默认图片
+      // 获取默认图片
       getDefaultImg(item) {
         let url = require('assets/wl_default03.png');
         if (item) {
@@ -232,7 +232,7 @@
         this.warehouseStore = val;
         this.$emit('get-store', val);
       },
-      // TODO 获取仓库列表
+      // 获取仓库列表
       getWarehouse() {
         let filter = this.filterParams;
         if (this.srhInpTx) {
@@ -274,7 +274,7 @@
           ...this.params,
         }).then(this.dataHandler)
       },
-      // TODO 共用的数据处理方法
+      // 共用的数据处理方法
       dataHandler({dataCount = 0, tableContent = []}){
         this.showAddWarehouse = this.srhInpTx && tableContent.length === 0;
         this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
@@ -297,7 +297,7 @@
           this.$refs.bScroll.finishPullUp();
         })
       },
-      // TODO 搜索仓库
+      // 搜索仓库
       searchList({val = ''}) {
         this.srhInpTx = val;
         this.listData = [];
@@ -305,16 +305,16 @@
         this.hasNext = true;
         this[this.getListMethod]();
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this[this.getListMethod]();
       },
-      // TODO 设置默认值
+      // 设置默认值
       setDefaultValue() {
         this.selItems = this.defaultValue ? {...this.defaultValue} : {};
       },
-      // TODO 点击仓库
+      // 点击仓库
       warehouseClick() {
         if (this.disabled) {
           return

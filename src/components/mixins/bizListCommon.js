@@ -134,7 +134,7 @@ export default {
         query: { name, listId }
       })
     },
-    // TODO 重置列表条件
+    // 重置列表条件
     resetCondition () {
       this.listData = [];
       this.page = 1;
@@ -161,7 +161,7 @@ export default {
       this.resetCondition();
       this.getList();
     },
-    // TODO 设置状态的class和显示的名称
+    // 设置状态的class和显示的名称
     setStatus (item) {
       switch (item.biStatus) {
         case '已生效':
@@ -184,7 +184,7 @@ export default {
 
       }
     },
-    // TODO 获取默认图片
+    // 获取默认图片
     getDefaultImg (item) {
       let url = require('assets/wl_default03.png');
       if (item) {
@@ -192,17 +192,17 @@ export default {
       }
       return url
     },
-    // TODO 重置下拉刷新、上拉加载的状态
+    // 重置下拉刷新、上拉加载的状态
     resetScroll () {
       this.$refs.bScroll.finishPullDown();
       this.$refs.bScroll.finishPullUp();
     },
-    // TODO 上拉加载
+    // 上拉加载
     onPullingUp () {
       this.page++;
       this.getList();
     },
-    // TODO 下拉刷新
+    // 下拉刷新
     onPullingDown () {
       this.page = 1;
       this.getData(true);
@@ -382,7 +382,7 @@ export default {
       await this.getList();
 
     },
-    // TODO 修改是否访问的状态
+    // 修改是否访问的状态
     changeVisitedStatus () {
       let tmp = [...this.listData];
       setTimeout(() => {
@@ -392,13 +392,13 @@ export default {
       }, 200)
       this.listData = tmp;
     },
-    // TODO 排序
+    // 排序
     onSortList (val) {
       this.sort = val.property ? [val] : [];
       this.resetCondition();
       this.getList();
     },
-    // TODO tab切换
+    // tab切换
     onTabClick ({status = '', index = 0}) {
       this.activeIndex = index;
       this.activeTab = status;
@@ -422,7 +422,7 @@ export default {
       this.resetCondition();
       this.getList();
     },
-    // TODO 获取应用详情
+    // 获取应用详情
     getAppDetail() {
       return getAppDetail(this.listId).then(([data = {}]) => {
         let {action} = data;
@@ -431,7 +431,7 @@ export default {
     },
   },
   filters: {
-    // TODO 过滤日期
+    // 过滤日期
     filterTime (val) {
       if (val) {
         val = dateFormat(val);

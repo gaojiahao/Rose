@@ -320,7 +320,7 @@
           }
         })
       },
-      // TODO 获取详情
+      // 获取详情
       getFormData () {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
@@ -416,7 +416,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 是否保存草稿
+      // 是否保存草稿
       hasDraftData () {
         if (!this.workInfo.transCode) {
           return false
@@ -432,17 +432,17 @@
           }
         };
       },
-      // TODO 启用企业微信扫一扫
+      // 启用企业微信扫一扫
       scanQRCode () {
         scanQRCode().then(({result = ''}) => {
           this.scanResult = result;
         })
       },
-      // TODO 选择仓库
+      // 选择仓库
       selWarehouse (item) {
         this.warehouse = JSON.parse(item);
       },
-      // TODO 设置bom的数量
+      // 设置bom的数量
       setBomQty () {
         let tdQty = this.workInfo.tdQty;
         this.bomList = this.bomList.map(item => {

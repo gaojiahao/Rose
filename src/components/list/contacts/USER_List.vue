@@ -74,7 +74,7 @@
     },
     mixins: [listCommon],
     methods: {
-      // TODO 获取默认图片
+      // 获取默认图片
       getDefaultImg(item, gender) {
         let url = gender === 1
           ? require('assets/ava01.png')
@@ -84,7 +84,7 @@
         }
         return url;
       },
-      // TODO 页面跳转
+      // 页面跳转
       pathChange(item, index, path) {
         if (this.clickVisited) {
           return
@@ -112,15 +112,15 @@
           })
         }, 200)
       },
-      // TODO 跳转到详情
+      // 跳转到详情
       goDetail(item, index) {
         this.pathChange(item, index, `/detail`);
       },
-      // // TODO 跳转到编辑
+      // // 跳转到编辑
       // goUserEdit(item, index) {
       //   this.pathChange(item, index, `/fillform`);
       // },
-      // TODO 获取用户列表
+      // 获取用户列表
       getList(noReset = false) {
         let filter = [];
         if (this.activeTab) {
@@ -191,7 +191,7 @@
           this.resetScroll();
         })
       },
-      // TODO 设置状态的class
+      // 设置状态的class
       setStatus(item) {
         switch (item.status) {
           case '使用中':

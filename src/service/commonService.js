@@ -1,6 +1,6 @@
 import $flyio from '../plugins/ajax'
 
-// TODO 保存
+// 保存
 export let saveAndStartWf = (data = {}) => {
   return $flyio.ajax({
     type: 'POST',
@@ -10,7 +10,7 @@ export let saveAndStartWf = (data = {}) => {
   })
 };
 
-// TODO 修改
+// 修改
 export let saveAndCommitTask = (data = {}) => {
   return $flyio.ajax({
     type: 'POST',
@@ -20,7 +20,7 @@ export let saveAndCommitTask = (data = {}) => {
   })
 };
 
-// TODO 保存(没有工作流)
+// 保存(没有工作流)
 export let submitAndCalc = (data = {}) => {
   return $flyio.ajax({
     type: 'POST',
@@ -30,7 +30,7 @@ export let submitAndCalc = (data = {}) => {
   })
 };
 
-// TODO 修改(没有工作流)
+// 修改(没有工作流)
 export let updateData = (data = {}) => {
   return $flyio.ajax({
     type: 'POST',
@@ -40,7 +40,7 @@ export let updateData = (data = {}) => {
   })
 };
 
-// TODO 修改项目(没有工作流)
+// 修改项目(没有工作流)
 export let update = (data = {}) => {
   return $flyio.post({
     url: '/H_roleplay-si/projectApproval/update',
@@ -56,7 +56,7 @@ export let commitTask = (data = {}) => {
   })
 }
 
-// TODO 获取当前用户信息(基础对象调用)
+// 获取当前用户信息(基础对象调用)
 export let getBaseInfoDataBase = () => {
   return new Promise(async (resolve, reject) => {
     let {nickname, userId} = await $flyio.ajax({
@@ -142,7 +142,7 @@ export let getBaseInfoData = () => {
   });
 };
 
-// TODO 获取视图列表
+// 获取视图列表
 export let getList = (viewId = 0, data = {}) => {
   return $flyio.ajax({
     url: `/H_roleplay-si/seconds/getReportInfoByListViewId/${viewId}`,
@@ -150,7 +150,7 @@ export let getList = (viewId = 0, data = {}) => {
   })
 };
 
-// TODO 上传图片
+// 上传图片
 export let upload = ({file = {}, biReferenceId = ''}) => {
   return $flyio.upload({
     file,
@@ -158,7 +158,7 @@ export let upload = ({file = {}, biReferenceId = ''}) => {
   })
 };
 
-// TODO 获取企业微信临时素材
+// 获取企业微信临时素材
 export let mediaUpload = ({mediaId = '', biReferenceId = ''}) => {
   let param = new FormData();  // 创建form对象
   param.append('mediaId', mediaId);  // 通过append向form对象添加数据
@@ -174,7 +174,7 @@ export let mediaUpload = ({mediaId = '', biReferenceId = ''}) => {
   })
 };
 
-// TODO 删除文件
+// 删除文件
 export let deleteFile = (id = '') => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/delete',
@@ -186,7 +186,7 @@ export let deleteFile = (id = '') => {
   })
 };
 
-// TODO 获取加工属性
+// 获取加工属性
 export let getDictByType = (type = '', data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getDictByType',
@@ -214,7 +214,7 @@ export let getProcessStatus = (listId) => {
   })
 }
 
-// TODO 获取材料大类、材料子类
+// 获取材料大类、材料子类
 export let getDictByValue = (value = '', data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getDictByValue',
@@ -229,7 +229,7 @@ export let getDictByValue = (value = '', data = {}) => {
   })
 };
 
-// TODO 获取工作流的processCode
+// 获取工作流的processCode
 export let getProcess = (listId = '') => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/list/getProcessByListId',
@@ -240,7 +240,7 @@ export let getProcess = (listId = '') => {
   })
 };
 
-// TODO 获取员工、客户、加工商、渠道商
+// 获取员工、客户、加工商、渠道商
 export let getObjDealerByLabelName = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getObjDealerByLabelName',
@@ -283,7 +283,7 @@ export let getRoleByUserId = (userId = '') =>{
     }
   })
 }
-// TODO 获取转办人员列表
+// 获取转办人员列表
 export let getUserList = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/listUsers',
@@ -295,7 +295,7 @@ export let getUserList = (data = {}) => {
   })
 };
 
-// TODO 转办
+// 转办
 export let transferTask = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/flow/setAssignee',
@@ -366,7 +366,7 @@ export let requestData = ({url = '', data = {}}) => {
   })
 }
 
-// TODO 获取列表配置
+// 获取列表配置
 export let getListViewById = (uniqueId) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/list/getListViewById',

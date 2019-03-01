@@ -105,7 +105,7 @@ import { submitAndCalc, saveAndStartWf, saveAndCommitTask, updateData } from 'se
 import ApplyCommon from 'pageMixins/applyCommon'
 // 组件引入
 import RNumber from 'components/RNumber'
-import PopMatterList from 'components/Popup/PopMatterListTest'
+import PopMatterList from 'components/Popup/matter/PopMatterList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopMatter from 'components/apply/commonPart/MatterPop'
 import RPicker from 'components/RPicker'
@@ -141,7 +141,7 @@ export default {
     }
   },
   methods: {
-    // TODO 选择要删除的物料
+    // 选择要删除的物料
     delClick (index, sItem) {
       let arr = this.selItems;
       let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
@@ -152,7 +152,7 @@ export default {
       }
       arr.push(sItem);
     },
-    // TODO 判断是否展示选中图标
+    // 判断是否展示选中图标
     showSelIcon (sItem) {
       return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
     },
@@ -182,11 +182,11 @@ export default {
       })
 
     },
-    // TODO 点击增加更多物料
+    // 点击增加更多物料
     addMatter () {
       this.showMaterielPop = !this.showMaterielPop
     },
-    // TODO 选中出库仓库
+    // 选中出库仓库
     selWarehouseOut (val) {
       this.warehouse = JSON.parse(val);
       if(this.matterParams.data.whCode != null) {
@@ -194,22 +194,22 @@ export default {
         this.matterList = [];
       }
     },
-    // TODO 选中入库仓库
+    // 选中入库仓库
     selWarehouseIn (val) {
       this.warehouseIn = JSON.parse(val);
     },
-    // TODO 显示物料修改的pop
+    // 显示物料修改的pop
     modifyMatter (item, index) {
       this.matter = JSON.parse(JSON.stringify(item));
       this.showMatterPop = true;
       this.modifyIndex = index;
     },
-    // TODO 更新修改后的物料信息
+    // 更新修改后的物料信息
     selConfirm (val) {
       let modMatter = JSON.parse(val);
       this.$set(this.matterList, this.modifyIndex, modMatter);
     },
-    // TODO 选中物料项
+    // 选中物料项
     selMatter (val) {
       let sels = JSON.parse(val);
       sels.forEach(item => {
@@ -217,7 +217,7 @@ export default {
       });
       this.matterList = [...sels];
     },
-    // TODO 获取默认图片
+    // 获取默认图片
     getDefaultImg (item) {
       let url = require('assets/wl_default03.png');
       if (item) {
@@ -225,7 +225,7 @@ export default {
       }
       return url
     },
-    // TODO 提交
+    // 提交
     save () {
       let warn = '',
           dataSet = [];
@@ -335,7 +335,7 @@ export default {
         }
       });
     },
-    // TODO 获取详情
+    // 获取详情
     getFormData () {
       return getSOList({
         formViewUniqueId: this.formViewUniqueId,
@@ -412,7 +412,7 @@ export default {
         this.$loading.hide();
       })
     },
-    // TODO 保存草稿数据
+    // 保存草稿数据
     hasDraftData () {
       if (!this.matterList.length) {
         return false

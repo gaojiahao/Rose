@@ -190,7 +190,7 @@
           }
         })
       },
-      // TODO 设置状态的class
+      // 设置状态的class
       setStatus(item) {
         switch (item.status) {
           case '使用中':

@@ -80,7 +80,7 @@
       },
     },
     methods: {
-      // TODO 选择图片
+      // 选择图片
       chooseImage() {
         let options = {
           count: 5, // 默认9
@@ -92,7 +92,7 @@
           }
         });
       },
-      // TODO 设置默认值
+      // 设置默认值
       setDefault() {
         let files = [];
         let [first = {}] = this.defaultValue;
@@ -104,7 +104,7 @@
         });
         this.files = files;
       },
-      // TODO 判断图片类型
+      // 判断图片类型
       judgeFileType(url) {
         let type = 'other';
         let typeList = [
@@ -134,11 +134,11 @@
         });
         return type
       },
-      // TODO 获取预览图片链接
+      // 获取预览图片链接
       getImgUrl(item) {
         return `${location.origin}/H_roleplay-si/ds/download?url=${item.attacthment}`
       },
-      // TODO 放大图片预览
+      // 放大图片预览
       preview(item) {
         if (item.iconType === 'image') {
           let images = this.files.reduce((arr, image) => {
@@ -154,7 +154,7 @@
           });
         }
       },
-      // TODO 删除文件
+      // 删除文件
       deleteFile(item) {
         this.$vux.confirm.show({
           content: '确定删除？',
@@ -170,7 +170,7 @@
           },
         })
       },
-      // TODO 上传文件
+      // 上传文件
       upload(localId) {
         return uploadImage({
           localId,

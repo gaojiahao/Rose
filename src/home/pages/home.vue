@@ -123,7 +123,7 @@ export default {
         })
       })
     },
-    // TODO 选择单条记录
+    // 选择单条记录
     dropItemClick(item) {
       if(this.selItem.groupCode === item.groupCode) return;
       this.selItem = {...item};

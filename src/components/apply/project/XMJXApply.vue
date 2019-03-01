@@ -106,7 +106,7 @@
       }
     },
     methods: {
-      // TODO 提交
+      // 提交
       save () {
         let warn = '';
         let dataSet = [];
@@ -190,26 +190,26 @@
           }
         })
       },
-      // TODO 项目切换
+      // 项目切换
       selProject (val = '{}') {
         this.projectApproval = JSON.parse(val);
         findConclusion(this.projectApproval.PROJECT_NAME).then(({data = []}) => {
           this.projectConclusion = data;
         })
       },
-      // TODO 获取详情
+      // 获取详情
       getFormData () {
         return findProjectConclusion(this.transCode).then(({formData = {}}) => {
         })
       },
-      // TODO 使用千分符
+      // 使用千分符
       numberComma (val) {
         if (!val && val !== 0) {
           return '无';
         }
         return numberComma(val);
       },
-      // TODO 保存草稿数据
+      // 保存草稿数据
       hasDraftData () {
         // 是否选择订单
         if (!this.projectApproval.PROJECT_NAME) {
@@ -224,7 +224,7 @@
           }
         };
       },
-      // TODO 获取关联数据
+      // 获取关联数据
       getRelationData () {
         return findProjectApproval(this.relationKey).then(({formData = {},attachment = []}) => {
           let data = JSON.parse(JSON.stringify(formData.projectApproval));

@@ -51,13 +51,13 @@
       }
     },
     methods: {
-      // TODO 获取默认图片
+      // 获取默认图片
       getDefaultImg(gender) {
         this.userData.photo = gender === '男'
           ? require('assets/ava01.png')
           : require('assets/ava02.png')
       },
-      // TODO 获取详情
+      // 获取详情
       loadPage(transCode = '') {
         this.$loading.show();
         return getUserDetail(this.colId).then(({tableContent = []}) => {
@@ -89,7 +89,7 @@
           query: { name, colId: this.colId }
         })
       },
-      // TODO 获取应用详情
+      // 获取应用详情
       getAppDetail() {
         let {listId = ''} = this.$route.query;
         return getAppDetail(listId).then(([data = {}]) => {

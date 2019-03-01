@@ -121,7 +121,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
       }
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -129,12 +129,12 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.$emit('input', false);
         this.tmpItems = [];
       },
-      // TODO 匹配相同项的索引
+      // 匹配相同项的索引
       findIndex(arr, sItem) {
         return arr.findIndex(item => {
           return item.colId === sItem.colId
@@ -144,7 +144,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
         let flag = this.findIndex(this.tmpItems, sItem);
         return flag !== -1;
       },
-      // TODO 选择物料
+      // 选择物料
       selThis(sItem, sIndex) {
         let arr = this.tmpItems;
         let delIndex = this.findIndex(arr, sItem);
@@ -164,7 +164,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
         }
         this.btnText = this.tmpItems? `发起工单${this.workType}`: '关闭';
       },
-      // TODO 获取物料列表
+      // 获取物料列表
       getWorkOrderTask() {
         let filter = [];
         if (this.srhInpTx) {
@@ -186,7 +186,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
           this.taskWorkList = tableContent
         });
       },
-      // TODO 获取物料列表
+      // 获取物料列表
       getWorkCheckList() {
         let filter = [];
         if (this.srhInpTx) {
@@ -208,7 +208,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
           this.taskWorkList = tableContent
         });
       },
-       // TODO 获取物料列表
+       // 获取物料列表
       getWorkStartList() {
         let filter = [];
         if (this.srhInpTx) {
@@ -230,7 +230,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
           this.taskWorkList = tableContent
         });
       },
-      // TODO 搜索物料
+      // 搜索物料
       searchList({val = '', property = ''}) {
         this.srhInpTx = val;
         this.filterProperty = property;

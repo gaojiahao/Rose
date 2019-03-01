@@ -214,7 +214,7 @@
         this.$set(this.orderList[this.modifyKey], this.modifyIndex, matter);
         this.reBuildArr(matter);
       },
-      // TODO 显示物料修改的pop
+      // 显示物料修改的pop
       modifyMatter (item, index, key) {
         this.matter = JSON.parse(JSON.stringify(item));
         this.showMatterPop = true;
@@ -222,7 +222,7 @@
         this.modifyKey = key;
         this.modifyBomTdqty = [...item.boms]
       },
-      // TODO 更新修改后的物料信息
+      // 更新修改后的物料信息
       selConfirm (val) {
         let modMatter = JSON.parse(val);
         this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
@@ -246,7 +246,7 @@
           })
         })
       },
-      // TODO 选中物料项
+      // 选中物料项
       selOrder (val) {
         let sels = JSON.parse(val);
         let orderList = {};
@@ -283,7 +283,7 @@
         this.matterList = sels;
         this.orderList = orderList;
       },
-      // TODO 选择默认图片
+      // 选择默认图片
       getDefaultImg (item) {
         let url = require('assets/wl_default03.png');
         if (item) {
@@ -291,13 +291,13 @@
         }
         return url
       },
-      // TODO 匹配相同项的索引
+      // 匹配相同项的索引
       findIndex (arr, sItem) {
         return arr.findIndex(item => {
           return item.orderCode === sItem.orderCode && item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode
         });
       },
-      // TODO 选择要删除的物料
+      // 选择要删除的物料
       delClick (index, sItem, key) {
         let arr = this.selItems;
         let delIndex = this.findIndex(arr, sItem);
@@ -308,7 +308,7 @@
         }
         arr.push(sItem);
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon (sItem) {
         return this.findIndex(this.selItems, sItem) !== -1;
       },
@@ -369,7 +369,7 @@
         })
 
       },
-      // TODO 新增更多订单
+      // 新增更多订单
       addOrder () {
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
@@ -379,7 +379,7 @@
         }
         this.showOrderPop = !this.showOrderPop;
       },
-      // TODO 提价订单
+      // 提价订单
       submitOrder () {
         let warn = '';
         let dataSet = [];
@@ -562,7 +562,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 合并bom列表
+      // 合并bom列表
       mergeBomList () {
         // 对合计的bom进行去重合并
         let isEqual = (a, b) => a.inventoryCode === b.inventoryCode;
@@ -579,7 +579,7 @@
         }, []);
         this.UniqueBom = getNew(this.DuplicateBoms);
       },
-      // TODO 保存草稿数据
+      // 保存草稿数据
       hasDraftData () {
         // 是否选择订单
         if (!Object.values(this.orderList).length) {
@@ -593,7 +593,7 @@
           }
         };
       },
-      // TODO 获取关联数据
+      // 获取关联数据
       getRelationData () {
 
       },

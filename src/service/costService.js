@@ -44,7 +44,7 @@ export let getEmployeeBal = (data) => {
 }
 
 
-// TODO 获取资金列表(付供应商欠款)
+// 获取资金列表(付供应商欠款)
 export let getEmployeeReserveFunds = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getEmployeeReserveFunds',
@@ -55,7 +55,7 @@ export let getEmployeeReserveFunds = (data = {}) => {
   })
 };
 
-// TODO 获取采购信息(付供应商欠款)
+// 获取采购信息(付供应商欠款)
 export let getPaySupplierArrearsDataSet = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getPaySupplierArrearsDataSet',
@@ -66,7 +66,7 @@ export let getPaySupplierArrearsDataSet = (data = {}) => {
   })
 };
 
-// TODO 获取资金列表(付供应商定金)
+// 获取资金列表(付供应商定金)
 export let getSupplierToPayDeposit = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getSupplierToPayDeposit',
@@ -77,7 +77,7 @@ export let getSupplierToPayDeposit = (data = {}) => {
   })
 };
 
-// TODO 获取定金列表(付供应商定金)
+// 获取定金列表(付供应商定金)
 export let getPurchaseAgreementDeposit = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getPurchaseAgreementDeposit',
@@ -88,7 +88,7 @@ export let getPurchaseAgreementDeposit = (data = {}) => {
   })
 };
 
-// TODO 获取汇票列表(出让承兑汇票)
+// 获取汇票列表(出让承兑汇票)
 export let getInputDraft = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getInputDraft',
@@ -99,7 +99,7 @@ export let getInputDraft = (data = {}) => {
   })
 };
 
-// TODO 获取汇票列表(出兑现贴现承兑汇票)
+// 获取汇票列表(出兑现贴现承兑汇票)
 export let getCashDiscount = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getCashDiscount',
@@ -110,7 +110,7 @@ export let getCashDiscount = (data = {}) => {
   })
 };
 
-// TODO 获取资金账户列表(出兑现贴现承兑汇票)
+// 获取资金账户列表(出兑现贴现承兑汇票)
 export let getFundCashDiscount = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getFundCashDiscount',
@@ -121,7 +121,7 @@ export let getFundCashDiscount = (data = {}) => {
   })
 };
 
-// TODO 获取汇票列表(兑付承兑汇票)
+// 获取汇票列表(兑付承兑汇票)
 export let getDraftBalance = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getDraftBalance',
@@ -132,7 +132,7 @@ export let getDraftBalance = (data = {}) => {
   })
 };
 
-// TODO 获取资金账户列表(兑付承兑汇票)
+// 获取资金账户列表(兑付承兑汇票)
 export let getObjFundBalByType = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getObjFundBalByType',
@@ -144,7 +144,7 @@ export let getObjFundBalByType = (data = {}) => {
   })
 };
 
-// TODO 获取资金账户列表(兑付承兑汇票)
+// 获取资金账户列表(兑付承兑汇票)
 export let getComplexExpenseReimbursement = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getComplexExpenseReimbursement',

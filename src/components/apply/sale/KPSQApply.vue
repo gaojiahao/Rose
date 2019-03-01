@@ -103,23 +103,23 @@
           this.orderList = {}
         }  
       },
-      // TODO 选中联系人
+      // 选中联系人
       selContact(item) {
         this.contactInfo = {...item,}
       },
-      // TODO 显示物料修改的pop
+      // 显示物料修改的pop
       getMatterModify(item, index, key) {
         this.matter = JSON.parse(JSON.stringify(item));
         this.showMatterPop = true;
         this.modifyIndex = index;
         this.modifyKey = key;
       },
-      // TODO 更新修改后的物料信息
+      // 更新修改后的物料信息
       selConfirm(val) {
         let modMatter = JSON.parse(val);
         this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
       },
-      // TODO 选中物料项
+      // 选中物料项
       selMatter(val) {
         let sels = JSON.parse(val);
         let orderList = JSON.parse(JSON.stringify(this.orderList));
@@ -223,11 +223,11 @@
           }
         })
       },
-      // TODO 新增更多物料
+      // 新增更多物料
       addMatter() {
         this.showMaterielPop = !this.showMaterielPop;
       },
-      // TODO 提交
+      // 提交
       submitOrder() {
         /** 
          * @warn    提示文字
@@ -406,7 +406,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 保存草稿数据
+      // 保存草稿数据
       hasDraftData() {
         // 是否选择客户
         if (!Object.values(this.dealerInfo).length) {

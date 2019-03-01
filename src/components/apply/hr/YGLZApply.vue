@@ -102,7 +102,7 @@
           this.roleList.push(arr);
         })
       },
-      // TODO 提交
+      // 提交
       submitOrder() {
         let warn = '';
         let validateMap = [
@@ -170,7 +170,7 @@
           }
         });
       },
-      // TODO 是否保存草稿
+      // 是否保存草稿
       hasDraftData() {
         let formData = this.formData;
         if (formData.profileName || formData.idCard) {

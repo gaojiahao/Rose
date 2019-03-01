@@ -117,17 +117,17 @@
       }
     },
     computed: {
-      // TODO 是否为部门负责人
+      // 是否为部门负责人
       isApproval(){
         let {viewId = ''} = this.currentWL;
         return this.isMyTask && viewId === '7d18cfc2-475f-44c5-ae12-a723d6234253';
       },
-      // TODO 是否为会计复核
+      // 是否为会计复核
       isAccounting() {
         let {viewId = ''} = this.currentWL;
         return this.isMyTask && viewId === '69c3a187-1816-41cf-a9ec-899e9932940e';
       },
-      // TODO 是否为出纳
+      // 是否为出纳
       isCashier() {
         let {viewId = ''} = this.currentWL;
         return this.isMyTask && viewId === '8ea73083-fc91-49f2-97d6-e9923ac9b9e2';
@@ -200,7 +200,7 @@
           this.workFlowInfoHandler();
         })
       },
-      // TODO 同意的处理
+      // 同意的处理
       agreeHandler() {
         if (this.isApproval || this.isAccounting || this.isCashier) {
           if (this.isCashier && !this.cashInfo.fundCode) {
@@ -248,7 +248,7 @@
         }
         return false
       },
-      // TODO 计算抵扣后金额
+      // 计算抵扣后金额
       calcTax(item) {
         let {taxAmount = 0, noTaxAmount = 0} = item;
         if (!taxAmount) {
@@ -257,7 +257,7 @@
         }
         item.noTaxAmount = accSub(noTaxAmount, taxAmount);
       },
-      // TODO 计算本次报销与支付后余额
+      // 计算本次报销与支付后余额
       calcPayment(item) {
         let {thenAmntBal = 0, thenAlreadyAmnt = 0, thenTotalAmntBal = 0} = item;
         if (!thenTotalAmntBal) {
@@ -269,7 +269,7 @@
         item.differenceAmount = toFixed(accAdd(accSub(thenAmntBal, thenAlreadyAmnt), thenTotalAmntBal));
         this.cashInfo.tdAmountCopy1 = thenTotalAmntBal;
       },
-      // TODO 选中资金
+      // 选中资金
       selCash(item) {
         this.cashInfo = {
           ...this.cashInfo,

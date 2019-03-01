@@ -97,7 +97,7 @@
         }
         this.$router.push(queryObj);
       },
-      // TODO 获取默认图片
+      // 获取默认图片
       getDefaultImg(item) {
         let url = require('assets/wl_default03.png');
         if (item) {
@@ -105,7 +105,7 @@
         }
         return url
       },
-      // TODO 跳转到详情页
+      // 跳转到详情页
       goDetail(item, index) {
         if (this.clickVisited) {
           return
@@ -123,7 +123,7 @@
           });
         }, 200);
       },
-      // TODO 重置列表条件
+      // 重置列表条件
       resetCondition() {
         this.matterList = [];
         this.page = 1;
@@ -131,7 +131,7 @@
         this.$refs.bScroll.scrollTo(0, 0);
         this.$refs.bScroll.resetPullDown();
       },
-      // TODO tab点击
+      // tab点击
       tabClick(item, index) {
         // 全部传空
         this.activeTab = index ? item.name : '';
@@ -139,7 +139,7 @@
         this.resetCondition();
         this.getMatList();
       },
-      // TODO 获取tab
+      // 获取tab
       getDictByType() {
         return getDictByType('processing').then(({tableContent}) => {
           let [active = {}] = tableContent;
@@ -148,7 +148,7 @@
           this.matNature = [...tableContent];
         });
       },
-      // TODO 获取物料列表
+      // 获取物料列表
       getMatList(noReset = false) {
         let filter = [
           {
@@ -227,12 +227,12 @@
           this.resetScroll();
         });
       },
-      // TODO 重置下拉刷新、上拉加载的状态
+      // 重置下拉刷新、上拉加载的状态
       resetScroll() {
         this.$refs.bScroll.finishPullDown();
         this.$refs.bScroll.finishPullUp();
       },
-      // TODO 搜索物料
+      // 搜索物料
       searchMat({val = '', property = ''}) {
         this.srhInpTx = val;
         // this.activeTab = '';
@@ -240,12 +240,12 @@
         this.resetCondition();
         this.getMatList();
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getMatList();
       },
-      // TODO 下拉刷新
+      // 下拉刷新
       onPullingDown() {
         this.page = 1;
         this.getData(true)
@@ -271,7 +271,7 @@
         }
         await this.getMatList();
       },
-      // TODO 修改是否访问的状态
+      // 修改是否访问的状态
       changeVisitedStatus() {
         setTimeout(() => {
           let tmp = [...this.matterList];
@@ -281,14 +281,14 @@
           this.matterList = tmp;
         }, 200);
       },
-      // TODO 获取应用详情
+      // 获取应用详情
       getAppDetail() {
         return getAppDetail(this.listId).then(([data = {}]) => {
           let {action} = data;
           this.action = action;
         })
       },
-      // TODO 获取列表展示字段
+      // 获取列表展示字段
       getListViewById() {
         return getListViewById('eae9040e-bcb3-4ab9-bef6-639041b1d21b').then(([data = {}]) => {
           let content = JSON.parse(data.content || '{}');

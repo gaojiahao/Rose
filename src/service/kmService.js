@@ -1,7 +1,7 @@
 import $flyio from '../plugins/ajax';
 import errHandle from './errHandle'
 
-// TODO 获取list的分类
+// 获取list的分类
 export let getListClassfiy = (data = {}) => {
   return $flyio.ajax({
     // url: '/account-api/account/getEntryView',
@@ -12,7 +12,7 @@ export let getListClassfiy = (data = {}) => {
   });
 };
 
-// TODO 获取列表的字段
+// 获取列表的字段
 export let getView = (data = {}) => {
   return $flyio.ajax({
     url: '/account-api/account/getView',
@@ -22,7 +22,7 @@ export let getView = (data = {}) => {
   });
 };
 
-// TODO 获取列表数据
+// 获取列表数据
 export let getViewList = (data = {}) => {
   return $flyio.ajax({
     url: '/account-api/account/getView',
@@ -32,7 +32,7 @@ export let getViewList = (data = {}) => {
   });
 };
 
-// TODO 获取资产负债表数据
+// 获取资产负债表数据
 export let getOffBalance = () => {
   return $flyio.ajax({
     url: '/account-api/account/getOffBalanceForMobile',
@@ -40,7 +40,7 @@ export let getOffBalance = () => {
     return errHandle(e);
   });
 };
-// TODO 获取利润表数据
+// 获取利润表数据
 export let getProfit = () => {
   return $flyio.ajax({
     url: '/account-api/account/getProfitForMobile',

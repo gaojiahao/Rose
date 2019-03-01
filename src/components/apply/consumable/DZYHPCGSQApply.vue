@@ -104,7 +104,7 @@
       }
     },
     methods: {
-      // TODO 显示物料修改的pop
+      // 显示物料修改的pop
       getMatterModify(item, index, key) {
         this.consumables = JSON.parse(JSON.stringify(item));
         this.showMatterPop = true;
@@ -122,7 +122,7 @@
         }
         arr.push(index);
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem, index) {
         return this.selItems.includes(index);
       },
@@ -154,11 +154,11 @@
         let modMatter = JSON.parse(val);
         this.$set(this.consumableList, this.modifyIndex, modMatter);
       },
-      // TODO 点击增加更多物料
+      // 点击增加更多物料
       addMatter() {
         this.showMaterielPop = !this.showMaterielPop
       },
-      // TODO 选中物料项
+      // 选中物料项
       selMatter(val) {
         let sels = JSON.parse(val);
         sels.forEach(item => {
@@ -167,7 +167,7 @@
         });
         this.consumableList = [...this.consumableList, ...sels];
       },
-      // TODO 获取默认图片
+      // 获取默认图片
       getDefaultImg(item) {
         let url = require('assets/wl_default03.png');
         if (item) {
@@ -175,7 +175,7 @@
         }
         return url
       },
-      // TODO 提交
+      // 提交
       save() {
         /**
          * @warn 提示文字
@@ -257,7 +257,7 @@
           }
         });
       },
-      // TODO 获取详情
+      // 获取详情
       getFormData() {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
@@ -312,7 +312,7 @@
           this.$loading.hide();
         })
       },
-      // TODO 是否保存草稿
+      // 是否保存草稿
       hasDraftData() {
         if (!this.consumableList.length) {
           return false
@@ -324,7 +324,7 @@
           }
         };
       },
-      // TODO 检查本次申请和估计价格，并计算估计金额
+      // 检查本次申请和估计价格，并计算估计金额
       checkAmt(item) {
         let {tdQty, price} = item;
         tdQty = Math.abs(toFixed(tdQty));

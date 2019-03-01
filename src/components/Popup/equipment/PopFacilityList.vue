@@ -153,7 +153,7 @@
       }
     },
     methods: {
-      // TODO 获取默认图片
+      // 获取默认图片
       getDefaultImg(item) {
         let url = require('assets/wl_default03.png');
         if (item) {
@@ -161,7 +161,7 @@
         }
         return url
       },
-      // TODO 获取物料列表
+      // 获取物料列表
       getList() {
         let filter = [];
         if (this.srhInpTx) {
@@ -193,30 +193,30 @@
           this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
         });
       },
-      // TODO 搜索物料
+      // 搜索物料
       searchList({val = '', property = ''}) {
         this.srhInpTx = val;
         this.filterProperty = property;
         this.resetCondition();
         this.getList();
       },
-      // TODO 删除选中项
+      // 删除选中项
       delSelItem(dItem) {
         this.$refs.RPopup.delSelItem(dItem);
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getList();
       },
-      // TODO 共用的数据处理方法
-      // TODO 初始化条件
+      // 共用的数据处理方法
+      // 初始化条件
       resetCondition() {
         this.listData = [];
         this.page = 1;
         this.hasNext = true;
       },
-      // TODO 选择设施
+      // 选择设施
       selItem(sItem) {
         this.$emit('sel-matter', JSON.stringify(sItem));
         this.$emit('input', false)

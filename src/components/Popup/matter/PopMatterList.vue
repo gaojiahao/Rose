@@ -170,7 +170,7 @@
       }
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -187,15 +187,15 @@
         // 组件传值 传回给search组件 强制关闭下拉框
         this.$event.$emit('shut-down-filter', false);
       },
-      // TODO 匹配相同项的索引
+      // 匹配相同项的索引
       findIndex(arr, sItem) {
         return arr.findIndex(item => item.colId === sItem.colId);
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.findIndex(this.tmpItems, sItem) !== -1;
       },
-      // TODO 选择物料
+      // 选择物料
       selThis(sItem, sIndex) {
         // 校验库存
         if (this.isShowStock && sItem.qtyStockBal === 0) {
@@ -213,7 +213,7 @@
         }
         arr.push(sItem);
       },
-      // TODO 确定选择物料
+      // 确定选择物料
       confirmMater() {
         let sels = [];
         this.showPop = false;
@@ -222,7 +222,7 @@
         // 触发父组件选中事件
         this.$emit('sel-matter', JSON.stringify(this.selItems));
       },
-      // TODO 获取默认图片
+      // 获取默认图片
       getDefaultImg(item) {
         let url = require('assets/wl_default03.png');
         if (item) {
@@ -230,7 +230,7 @@
         }
         return url
       },
-      // TODO 获取物料列表
+      // 获取物料列表
       requestData() {
         let filter = [];
         //成品,商品,服务
@@ -256,14 +256,14 @@
           data
         }).then(this.dataHandler);
       },
-      // TODO 搜索物料
+      // 搜索物料
       searchList({val = '', property = ''}) {
         this.srhInpTx = val;
         this.filterProperty = property;
         this.resetCondition();
         this.requestData()
       },
-      // TODO 删除选中项
+      // 删除选中项
       delSelItem(dItem) {
         let delIndex = this.findIndex(this.selItems, dItem);
         if (delIndex !== -1) {
@@ -271,17 +271,17 @@
         }
         this.tmpItems = [...this.selItems];
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.requestData();
       },
-      // TODO 设置默认值
+      // 设置默认值
       setDefaultValue() {
         this.tmpItems = [...this.defaultValue];
         this.selItems = [...this.defaultValue];
       },
-      // TODO 共用的数据处理方法
+      // 共用的数据处理方法
       dataHandler({dataCount = 0, tableContent = []}) {
         tableContent.forEach(item => {
           item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
@@ -297,7 +297,7 @@
           this.$refs.bScroll.finishPullUp();
         })
       },
-      // TODO 初始化条件
+      // 初始化条件
       resetCondition() {
         this.matterList = [];
         this.page = 1;

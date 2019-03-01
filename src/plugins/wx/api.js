@@ -1,6 +1,6 @@
 import {mediaUpload} from 'service/commonService';
 
-// TODO 扫一扫
+// 扫一扫
 export const scanQRCode = (options = {}) => {
   return new Promise((resolve, reject) => {
     wx.scanQRCode({
@@ -58,7 +58,7 @@ export const shareContent = (shareInfo = {}) => {
   });
 };
 
-// TODO 选择图片
+// 选择图片
 export const chooseImage = ({options = {}}) => {
   return new Promise((resolve, reject) => {
     wx.chooseImage({
@@ -84,7 +84,7 @@ export const chooseImage = ({options = {}}) => {
   })
 };
 
-// TODO 上传图片
+// 上传图片
 export const uploadImage = ({options = {}, localId = '', biReferenceId = ''}) => {
   return new Promise((resolve, reject) => {
     wx.uploadImage({

@@ -51,7 +51,7 @@ import ApplyCommon from 'pageMixins/applyCommon'
 // 组件引入
 import RPicker from 'components/RPicker'
 import RDate from 'components/RDate'
-import PopMatterList from 'components/Popup/PopMatterList'
+import PopMatterList from 'components/Popup/matter/PopMatterList'
 import PopDealerList from 'components/Popup/PopDealerList'
 import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
