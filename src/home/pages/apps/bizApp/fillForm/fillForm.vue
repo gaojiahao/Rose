@@ -52,7 +52,7 @@ export default {
     if(transCode){
       this.transCode = transCode;
     }
-    this.currentComponent = require(`components/apply/${folder}/${fileName}Form.vue`).default;
+    this.currentComponent = require(`components/apply/${folder}/${fileName}Apply.vue`).default;
   },
   beforeRouteLeave(to, from, next) {
     if (this.$refs.fillPage.hasDraftData) {
