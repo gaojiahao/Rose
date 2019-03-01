@@ -7,7 +7,6 @@
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo" :dealer-params="dealerParams"
                          :defaultContact="contact"></pop-dealer-list>
-        <!-- <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part> -->
         <!-- 物料列表 -->
         <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :show-matter-pop="showMatterPop" :filter-list="filterList"
           :actions="actions" :btnInfo="btnInfo" :matter-list="matterList" :default-value="[]" 
@@ -48,26 +47,22 @@
 
 <script>
 // vux组件引入
-import {Popup, Group, Cell, numberComma, Datetime, XInput, XTextarea} from 'vux'
+import { XTextarea } from 'vux'
 // 请求 引入
-import {getSOList} from 'service/detailService'
-import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc, updateData} from 'service/commonService'
+import { getSOList } from 'service/detailService'
+import { updateData, saveAndStartWf, getBaseInfoData, 
+         saveAndCommitTask, getDictByType, submitAndCalc } from 'service/commonService'
 // mixins 引入
 import common from 'components/mixins/applyCommon'
 // 组件引入
-import RNumber from 'components/RNumber'
-import PopMatterList from 'components/Popup/PopMatterListTest'
 import PopDealerList from 'components/Popup/PopDealerList'
-import PopSingleSelect from 'components/Popup/PopSingleSelect'
-import PopMatter from 'components/apply/commonPart/MatterPop'
-import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
-import RPicker from 'components/RPicker'
+import OpButton from 'components/apply/commonPart/OpButton'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
-import OpButton from 'components/apply/commonPart/OpButton'
 // 方法引入
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
+
 const DRAFT_KEY = 'XSHT_DATA';
 export default {
   data() {
@@ -75,16 +70,6 @@ export default {
       listId: '525bee48-d2d4-11e8-b8ca-0279b2c6a380',
       showMatterPop: false,
       showMaterielPop: false, // 是否显示物料的popup
-      transMode: [], // 结算方式 数组
-      matterList: [], // 物料列表
-      logisticsTerm: [], // 物流条款 数组
-      numMap: {}, // 用于记录订单物料的数量和价格
-      contact: {},
-      formData: {},
-      dealerInfo: {
-        validUntil: '',
-        advancePaymentDueDate: '',
-      },
       filterList: [
         {
           name: '物料名称',
@@ -94,6 +79,13 @@ export default {
           value: 'inventoryCode',
         }
       ], 
+      numMap: {}, // 用于记录订单物料的数量和价格
+      contact: {},
+      formData: {},
+      dealerInfo: {},
+      transMode: [], // 结算方式 数组
+      matterList: [], // 物料列表
+      logisticsTerm: [], // 物流条款 数组
     }
   },
   computed: {
@@ -109,25 +101,22 @@ export default {
     },
   },
   components: {
-    XInput, XTextarea, Group, Cell, Popup, OpButton,
-    PopMatter, RNumber, PopMatterList, PopDealerList,
-    PopSingleSelect, Datetime, RPicker, PopBaseinfo, DealerOtherPart, ApplyMatterPart
+    XTextarea, 
+    OpButton, PopBaseinfo, PopDealerList, ApplyMatterPart
   },
   mixins: [common],
-  filters: {
-    numberComma,
-  },
   methods: {
     // 选中的客户
     selDealer(val) {
-      let sel = JSON.parse(val)[0];
-      this.dealerInfo = {
-        ...this.dealerInfo,
-        ...sel,
-      };
-      this.dealerInfo.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
-      this.dealerInfo.daysOfAccount= this.dealerInfo.pamentDays;
-      this.dealerInfo.drDealerLogisticsTerms = this.dealerInfo.dealerLogisticsTerms;
+      let [chosenDealer = {}] = JSON.parse(val);
+      // 此处为了校验和提交 重组部分数据
+      chosenDealer.daysOfAccount= chosenDealer.pamentDays;
+      chosenDealer.drDealerPaymentTerm = chosenDealer.paymentTerm;
+      chosenDealer.dealerName_dealerDebit = chosenDealer.dealerName;
+      chosenDealer.drDealerLogisticsTerms = chosenDealer.dealerLogisticsTerms;
+      
+      this.dealerInfo = chosenDealer;
+
       if(this.matterParams.data && this.matterParams.data.drDealerCode){
         this.matterParams.data.drDealerCode = this.dealerInfo.dealerCode;
         this.matterList = [];
@@ -181,6 +170,11 @@ export default {
     showSelIcon(sItem, index) {
       return this.selItems.includes(index);
     },
+    // 展开可删除状态
+    showDelete(){
+      this.matterModifyClass = ! this.matterModifyClass;
+      this.selItems = [];
+    },
     // 全选
     checkAll() {
       if (this.selItems.length === this.matterList.length) {
@@ -207,42 +201,21 @@ export default {
     },
     checkAmt(item, key, val) {
       item[key] = Math.abs(toFixed(val)); 
-      
     },
     // 提价订单
     submitOrder() {
-      let warn = '',
-          dataSet = [];
-      // 表单校验字段
-      let verifyField = [
-        /*
-         * key -> 第一层校验字段
-         * childKey -> 第二层校验字段 （非必填，如果只有一层，此处可以为空）
-        */ 
-        {
-          key: 'dealerInfo',
-          childKey: 'dealerName',
-          message: '请选择客户'
-        },      
-        {
-          key: 'matterList',
-          childKey: 'length',
-          message: '请选择物料'
-        }, 
-      ]
+      let warn = '', dataSet = [], 
+          dealerInfo = this.dealerInfo, 
+          dealerConfig = this.dealerConfig;
+      
+      // 校验 <往来部分> 必填字段
+      warn = this.verifyData(dealerConfig, dealerInfo);
+          
       if (!warn) {
-        // 校验 最外层表单必填项
-        verifyField.every( item => {
-          if(item.childKey && !this[item.key][item.childKey]) {
-            warn = item.message;
-            return false;
-          }
-          else if(!this[item.key]) {
-            warn = item.message;
-            return false;
-          }  
-          return true;
-        })
+        // 校验 是否已选择 <物料部分>
+        if(!this.matterList.length) warn = '请选择物料';
+        
+        // 动态组装 dataSet
         this.matterList.forEach(item => {
           let oItem = {};
           for(let sItem of this.submitMatterField){
@@ -253,7 +226,6 @@ export default {
             oItem[sItem.fieldCode] = item[sItem.fieldCode] != null ? item[sItem.fieldCode] : null
           }
           dataSet.push(oItem);
-          
         });
       }
       if (warn) {

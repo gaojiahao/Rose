@@ -31,11 +31,9 @@
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       </div>
     </div>
-    <!-- 底部确认栏 -->
-    <div class='btn-no-amt vux-1px-t' :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
+    <!-- <div class='btn-no-amt vux-1px-t' :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
       <div class="btn-item" @click="save">提交</div>
     </div>
-    <!-- 底部删除确认栏 -->
     <div class="count_mode vux-1px-t delete_mode" :class="{btn_hide : btnIsHide}" v-else>
       <div class='count_num all_checked' @click="checkAll">
         <x-icon type="ios-circle-outline" size="20" class='outline'
@@ -44,7 +42,11 @@
         全选
       </div>
       <div class='delete_btn' @click="deleteCheckd">删除</div>
-    </div>
+    </div> -->
+    <!-- 底部按钮 -->
+    <op-button :is-modify="matterModifyClass" :hide="btnIsHide" :td-amount="tdAmount" :tax-amount="taxAmount"
+               :all-check="selItems.length === matterList.length" @on-submit="submitOrder" @on-check-all="checkAll"
+               @on-delete="deleteCheckd"></op-button>
   </div>
 </template>
 
@@ -58,6 +60,7 @@ import { updateData, submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'se
 import ApplyCommon from 'pageMixins/applyCommon'
 // 组件引入
 import RPicker from 'components/RPicker'
+import OpButton from 'components/apply/commonPart/OpButton'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 
@@ -66,13 +69,11 @@ export default {
   mixins: [ApplyCommon],
   data() {
     return {
-      showPop: false,
       transCode: '',
-      formData: {
-        biId: '',
-        biComment: '',
-        biProcessStatus: ''
-      },
+      formData: {},
+      priceMap: {},
+      matterList: [], // 物料列表
+      showMaterielPop: false, // 是否显示物料的popup
       filterList: [
         {
           name: '物料名称',
@@ -82,14 +83,11 @@ export default {
           value: 'inventoryCode',
         }
       ],
-      priceMap: {},
-      matterList: [], // 物料列表
-      showMaterielPop: false, // 是否显示物料的popup
     }
   },
   components: {
     Icon, RPicker, XTextarea, 
-    PopBaseinfo, ApplyMatterPart
+    OpButton, PopBaseinfo, ApplyMatterPart
   },
   methods: {
     // 选择要删除的物料
@@ -136,11 +134,11 @@ export default {
         }
       })
     },
-    // TODO 点击增加更多物料
+    // 点击增加更多物料
     addMatter () {
       this.showMaterielPop = !this.showMaterielPop
     },
-    // TODO 选中物料项
+    // 选中物料项
     selMatter (val) {
       let sels = JSON.parse(val);
       let matterList = JSON.parse(JSON.stringify(this.matterList));
@@ -155,7 +153,7 @@ export default {
       this.priceMap = {};
       this.matterList = matterList;
     },
-    // TODO 获取默认图片
+    // 获取默认图片
     getDefaultImg (item) {
       let url = require('assets/wl_default03.png');
       if (item) {
@@ -163,8 +161,8 @@ export default {
       }
       return url
     },
-    // TODO 提交
-    save () {
+    // 提交
+    submitOrder () {
       let warn = '',
           dataSet = [];
       if(!this.matterList.length){
@@ -255,7 +253,7 @@ export default {
         }
       });
     },
-    // TODO 获取详情
+    // 获取详情
     getFormData () {
       return getSOList({
         formViewUniqueId: this.formViewUniqueId,
@@ -309,7 +307,7 @@ export default {
         this.$loading.hide();
       })
     },
-    // TODO 是否保存草稿
+    // 是否保存草稿
     hasDraftData () {
       if (!this.matterList.length) {
         return false

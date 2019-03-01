@@ -13,7 +13,7 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <matter-list :matter-list='matterList' @on-show-more="onShowMore"></matter-list>
+      <matter-list :order-list='orderList' :order-title="orderTitle" @on-show-more="onShowMore"></matter-list>
       <!-- 备注 -->
       <other-part :other-info="orderInfo" :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"
                   :attachment="attachment"></other-part>
@@ -79,6 +79,9 @@
             })
             return;
           }
+
+
+          let orderList = {};
           let {formData = {}, attachment = []} = data;
           let {order = {}, inPut = {}} = formData;
           // 获取合计
@@ -90,6 +93,10 @@
             val.inventoryPic = val.inventoryPic_transObjCode
               ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
+            if (!orderList[val.transMatchedCode]) {
+              orderList[val.transMatchedCode] = [];
+            }
+            orderList[val.transMatchedCode].push(val);
           }
 
           this.contactInfo = {
@@ -104,6 +111,8 @@
             county: contactInfo.county_dealerDebit, // 地区
             address: contactInfo.address_dealerDebit, // 详细地址
           };
+
+          this.orderList = orderList;
           this.matterList = dataSet;
           this.attachment = attachment;
           this.orderInfo = {

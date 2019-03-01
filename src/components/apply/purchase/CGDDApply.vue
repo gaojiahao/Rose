@@ -13,7 +13,7 @@
         <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
         <!-- 物料列表 -->
         <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :show-matter-pop="showMatterPop" :filter-list="filterList"
-          :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="matterList"
+          :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="[]"
           :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
           :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
           :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
@@ -28,7 +28,7 @@
     </div>
     <!-- 底部确认栏 -->
     <op-button :is-modify="matterModifyClass" :hide="btnIsHide" :td-amount="tdAmount" :tax-amount="taxAmount"
-              :all-check="selItems.length === matterList.length" @on-submit="submitOrder" @on-check-all="checkAll"
+              :all-check="checkList.length === matterList.length" @on-submit="submitOrder" @on-check-all="checkAll"
               @on-delete="deleteCheckd"></op-button>
   </div>
 </template>
@@ -60,22 +60,17 @@ export default {
   data () {
     return {
       taxRate: 0.16, // 税率
-      dealer: {}, // 往来信息
-      formData: { // 表单提交内容
-        creator: '',
-        modifer: '',
-        biId: '',
-        biComment: ''
-      },
-      dealerInfo: {},
-      contact: {},
-      orderList: {},
       showMaterielPop: false, // 是否显示物料的popup
-      showDealerPop: false, // 是否显示供应商的popup
+      dealer: {}, // 往来信息
+      contact: {},
+      selItems: {},
+      formData: {}, // 表单提交内容
+      orderList: {},
+      dealerInfo: {},
     }
   },
   computed: {
-    // TODO 将orderList转为数组
+    // 将orderList转为数组
     matterList() {
       let arr = [];
       for (let items of Object.values(this.orderList)) {
@@ -123,9 +118,17 @@ export default {
   methods: {
     // 选中的供应商
     selDealer (val) {
-      this.dealerInfo = JSON.parse(val)[0];
-      this.dealerInfo.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
-      this.dealerInfo.daysOfAccount= this.dealerInfo.pamentDays;
+      let [chosenDealer = {}] = JSON.parse(val);
+
+      // 为了提交时校验字段 此处重组部分数据
+      chosenDealer.daysOfAccount= chosenDealer.pamentDays;
+      chosenDealer.drDealerPaymentTerm = chosenDealer.paymentTerm;
+      chosenDealer.dealerName_dealerDebit = chosenDealer.dealerName;
+
+      // 选中赋值
+      this.dealerInfo = chosenDealer;
+
+      // 根据客户 重新匹配<物料列表>的请求参数
       if(this.matterParams.data && this.matterParams.data.dealerCode != null){
         this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
         this.orderList = {};
@@ -165,10 +168,10 @@ export default {
         }
       })
     },
-    // TODO 选中物料项
+    // 选中物料项
     selMatter (val) {
       let sels = JSON.parse(val);
-      let orderList = {};
+      let orderList = JSON.parse(JSON.stringify(this.orderList));
       let matCodes = [];
       sels.map(item => {
         let orderListKey = item.transCode ? item.transCode : 'noCode';
@@ -181,7 +184,6 @@ export default {
           else{
             item[key] = item[key] || item[this.dataIndexMap[key]];
           }
-
         }
         item.tdQty = item.tdQty || item.qtyBal;
         item.assistQty = toFixed(accDiv(item.tdQty, item.assMeasureScale))
@@ -193,17 +195,6 @@ export default {
           orderList[orderListKey] = [];
         }
         orderList[orderListKey].push(item);
-        // let defaultTime = item.processingStartDate ? dateFormat(item.processingStartDate, 'YYYY-MM-DD') : '';
-        // let defaultTdQty = item.qtyBal < item.qty ? item.qty : item.qtyBal;
-        // item.tdQty = item.tdQty || defaultTdQty;
-        // item.price = item.price || ''
-        // item.taxRate = item.taxRate || 0.16;
-        // item.shippingTime = dateFormat(item.shippingTime, 'YYYY-MM-DD');
-        // item.tdLeadTime = item.leadTime;
-        // item.processingStartDate = item.processingStartDate || defaultTime;
-        // item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
-        // item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
-        // item.assMeasureDescription =  item.assMeasureDescription || item.invSubUnitComment || null; // 辅助计量说明
       });
       this.dealerParams.data = {
         ...this.dealerParams.data,
@@ -220,56 +211,71 @@ export default {
         }
         return url
     },
-    // TODO 显示物料修改的pop
+    // 显示物料修改的pop
     getMatterModify(item, index, key) {
       this.matter = JSON.parse(JSON.stringify(item));
       this.showMatterPop = true;
       this.modifyIndex = index;
       this.modifyKey = key;
     },
-    // TODO 更新修改后的物料信息
+    // 更新修改后的物料信息
     selConfirm(val) {
       let modMatter = JSON.parse(val);
       this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
     },
-    // TODO 匹配相同项的索引
-    findIndex (arr, sItem) {
-      return arr.findIndex(item => item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode);
-    },
     // 选择要删除的物料
     delClick(sItem, index, key) {
-      let arr = this.selItems;
-      let delIndex = this.findIndex(arr, sItem);
-      /*if(sItem.transCode){
-        delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
+      let arr = this.selItems[key];
+      if(arr){
+        let delIndex = arr.findIndex(item => item === index);
+        if (delIndex !== -1) {
+          arr.splice(delIndex, 1);
+          if(!arr.length) delete this.selItems[key];
+          return;
+        }
+        arr.push(index);
       }
       else{
-        delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
-      }*/
-      //若存在重复的 则清除
-      if (delIndex !== -1) {
-        arr.splice(delIndex, 1);
-        return;
+        this.$set(this.selItems, key, [index])
       }
-      arr.push(sItem);
     },
-    // TODO 判断是否展示选中图标
-    showSelIcon(sItem) {
-      /*if(sItem.transCode){
-        return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode) !== -1;
+    // 删除的选中状态
+    showSelIcon(sItem, index) {
+      if(sItem.transCode) {
+        return this.selItems[sItem.transCode] && this.selItems[sItem.transCode].findIndex(item => item === index) !== -1;
       }
-      else{
-        return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
-      }*/
-      return this.findIndex(this.selItems, sItem) !== -1;
+      else {
+        return this.checkList.includes(index);
+      }
     },
     // 全选
     checkAll() {
-      if (this.selItems.length === this.matterList.length) {
-        this.selItems = [];
+      // 如果已全部选中 则清除所有选中状态
+      if (this.checkList.length === this.matterList.length) {
+        this.selItems = {};
         return
       }
-      this.selItems = JSON.parse(JSON.stringify(this.matterList));
+      // 针对物料列表中的数据进行处理
+      let selItems = {};
+      for(let key in this.orderList){
+        this.orderList[key].forEach((item, index) => {
+          // 存在交易号时 key等于交易号
+          if(item.transCode) {
+            if(!selItems[item.transCode]){
+              selItems[item.transCode] = [];
+            }
+            selItems[item.transCode].push(index)
+          }
+          // 不存在时 key为 'noCode'
+          else {
+            if(!selItems['noCode']) {
+              selItems['noCode'] = []
+            }
+            selItems['noCode'].push(index);
+          }
+        })
+      }
+      this.selItems = selItems;
     },
     // 删除选中的
     deleteCheckd() {
@@ -277,24 +283,46 @@ export default {
         content: '确认删除?',
         // 确定回调
         onConfirm: () => {
-          let orderList = {};
-          let selItems = this.selItems;
-          let remainder = this.matterList.filter((item, index) => this.findIndex(selItems, item) === -1); // 没被删除的
-          remainder.forEach(item => {
-            let orderListKey = item.transCode ? item.transCode : 'noCode';
-            if (!orderList[orderListKey]) {
-              orderList[orderListKey] = []
+          /** 
+           *  @selItems {String} 被选中删除的物料对象（当有交易号时 key为交易号 反之 key为noCode）
+           *  @checkList {Array} 被选中删除的物料数组 (存储被删除物料的下标)
+           *  @matterList {Array} 物料列表
+           */ 
+
+          // 被选中删除的物料
+          let selItems = this.selItems, checkList = this.checkList;
+          
+          for(let key in this.selItems) {
+            // 当没有对应的交易单号
+            if(key === 'noCode') {
+              let orderList = {};
+              let remainder = this.matterList.filter((item, index) => !checkList.includes(index));
+              remainder.forEach(item => {
+                if (!orderList[key]) {
+                  orderList[key] = []
+                }
+                orderList[key].push(item);
+              });
+              this.orderList = orderList;
             }
-            orderList[orderListKey].push(item);
-          });
-          this.orderList = orderList;
-          this.selItems = [];
+            // 当存在对应的交易单号
+            else {
+              // 将orderList中对应交易号的物料 按照selItems中的索引删除
+              let newIndexs = this.selItems[key].map((val, idx) => val - idx);              
+              newIndexs.forEach((sItem, sIndex) => {
+                this.orderList[key].splice(sItem, 1);
+              }) 
+              if(!this.orderList[key].length){
+                delete this.orderList[key]
+              }
+            }
+          }
+          this.selItems = {};
           this.matterModifyClass = false;
         }
       })
-
     },
-    // TODO 新增更多物料
+    // 新增更多物料
     addMatter () {
       this.showMaterielPop = !this.showMaterielPop;
     },
@@ -309,37 +337,26 @@ export default {
     },
     // 提价订单
     submitOrder () {
-      let warn = '';
-      let dataSet = [];
-      let validateMap = [
-        {
-          key: 'dealerInfo',
-          childKey: 'dealerCode',
-          message: '供应商信息'
-        },
-        {
-          key: 'dealerInfo',
-          childKey: 'drDealerPaymentTerm',
-          message: '结算方式'
-        },
-        {
-          key: 'matterList',
-          childKey: 'length',
-          message: '物料'
-        },
-      ];
-      validateMap.every(item => {
-        if (item.childKey && !this[item.key][item.childKey]) {
-          warn = `请选择${item.message}`;
-          return false
-        }
-        else if(!this[item.key]) {
-          warn = `请选择${item.message}`;
-          return false
-        }
-        return true
-      });
+      /** 
+       * @warn    提示文字
+       * @dateSet   提交数据
+       * 
+       * @dealerConfig  <往来部分> 配置
+       * @dealerInfo  <往来部分> 信息
+       * 
+       */ 
+      
+      let warn = '', dataSet = [], 
+          dealerInfo = this.dealerInfo, 
+          dealerConfig = this.dealerConfig;
+      
+      // 校验 <往来部分> 必填字段
+      warn = this.verifyData(dealerConfig, dealerInfo);
+
       if (!warn) {
+        // 校验 是否已选择 <物料部分>
+        if(!this.matterList.length) warn = '请选择物料';
+        
         // 校验
         for (let item of this.matterList) {
           let oItem = {};
@@ -514,7 +531,7 @@ export default {
         this.$loading.hide();
       })
     },
-    // TODO 是否保存草稿
+    // 是否保存草稿
     hasDraftData () {
       if (!this.matterList.length) {
         return false

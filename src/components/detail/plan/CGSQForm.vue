@@ -77,8 +77,7 @@ export default {
         // 获取合计
         let {dataSet} = formData.order;
         for (let item of dataSet) {
-          // item.tdAmount = accMul(item.tdQty,item.price)
-          this.count = accAdd(this.count,item.tdAmount)
+          this.count = accAdd(this.count,item.tdAmount);
           item.inventoryPic = item.inventoryPic_transObjCode
             ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
             : this.getDefaultImg();
@@ -88,19 +87,7 @@ export default {
           }
           orderList[item.transMatchedCode].push(item);
         }
-        // this.count = (this.count/100).toFixed(2);
         this.orderList = orderList;
-        // 获取合计
-        // let {dataSet} = data.formData.order;
-        // this.attachment = data.attachment;
-        // dataSet.forEach(item=>{
-        //   item.tdAmount = accMul(item.tdQty,item.price)
-        //   this.count = accAdd(this.count,item.tdAmount);
-        //   item.inventoryPic = item.inventoryPic_transObjCode
-        //     ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
-        //     : this.getDefaultImg();
-
-        // })
         this.orderInfo = formData;
         this.workFlowInfoHandler();
       })

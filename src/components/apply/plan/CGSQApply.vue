@@ -327,6 +327,9 @@ export default {
         warn = '请选择物料';
       }
       if (!warn) {
+        // 校验 是否已选择 <物料部分>
+        if(!this.matterList.length) warn = '请选择物料';
+        
         // 检验必填字段，组装要提交的dataSet
         for (let item of this.matterList) {
           let oItem = {};

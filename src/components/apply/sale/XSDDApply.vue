@@ -27,7 +27,7 @@
     </div>
     <!-- 底部按钮 -->
     <op-button :is-modify="matterModifyClass" :hide="btnIsHide" :td-amount="tdAmount" :tax-amount="taxAmount"
-               :all-check="selItems.length === matterList.length" @on-submit="submitOrder" @on-check-all="checkAll"
+               :all-check="checkList.length === matterList.length" @on-submit="submitOrder" @on-check-all="checkAll"
                @on-delete="deleteCheckd"></op-button>
   </div>
 </template>
@@ -68,6 +68,7 @@ export default {
       showMaterielPop: false, // 是否显示物料的popup
       numMap: {}, // 用于记录订单物料的数量和价格
       formData: {},
+      selItems: {},
       orderList: {},
       dealerInfo: {},
       modifyKey: null,
@@ -273,26 +274,57 @@ export default {
     },
     // 选择要删除的物料
     delClick(sItem, index, key) {
-      let arr = this.selItems;
-      let delIndex = arr.findIndex(item => item === index);
-      //若存在重复的 则清除
-      if (delIndex !== -1) {
-        arr.splice(delIndex, 1);
-        return;
+      let arr = this.selItems[key];
+      if(arr){
+        let delIndex = arr.findIndex(item => item === index);
+        if (delIndex !== -1) {
+          arr.splice(delIndex, 1);
+          if(!arr.length) delete this.selItems[key];
+          return;
+        }
+        arr.push(index);
       }
-      arr.push(index);
+      else{
+        this.$set(this.selItems, key, [index])
+      }
     },
-    // 判断是否展示选中图标
+    // 删除的选中状态
     showSelIcon(sItem, index) {
-      return this.selItems.includes(index);
+      if(sItem.transCode) {
+        return this.selItems[sItem.transCode] && this.selItems[sItem.transCode].findIndex(item => item === index) !== -1;
+      }
+      else {
+        return this.checkList.includes(index);
+      }
     },
     // 全选
     checkAll() {
-      if (this.selItems.length === this.matterList.length) {
-        this.selItems = [];
+      // 如果已全部选中 则清除所有选中状态
+      if (this.checkList.length === this.matterList.length) {
+        this.selItems = {};
         return
       }
-      this.selItems = this.matterList.map((item, index) => index);
+      // 针对物料列表中的数据进行处理
+      let selItems = {};
+      for(let key in this.orderList){
+        this.orderList[key].forEach((item, index) => {
+          // 存在交易号时 key等于交易号
+          if(item.transCode) {
+            if(!selItems[item.transCode]){
+              selItems[item.transCode] = [];
+            }
+            selItems[item.transCode].push(index)
+          }
+          // 不存在时 key为 'noCode'
+          else {
+            if(!selItems['noCode']) {
+              selItems['noCode'] = []
+            }
+            selItems['noCode'].push(index);
+          }
+        })
+      }
+      this.selItems = selItems;
     },
     // 删除选中的
     deleteCheckd() {
@@ -300,19 +332,41 @@ export default {
         content: '确认删除?',
         // 确定回调
         onConfirm: () => {
-          let orderList = {};
-          let selItems = this.selItems;
-          // 没被删除的
-          let remainder = this.matterList.filter((item, index) => !selItems.includes(index)); 
-          remainder.forEach(item => {
-            let orderListKey = item.transCode ? item.transCode : 'noCode';
-            if (!orderList[orderListKey]) {
-              orderList[orderListKey] = []
+          /** 
+           *  @selItems {String} 被选中删除的物料对象（当有交易号时 key为交易号 反之 key为noCode）
+           *  @checkList {Array} 被选中删除的物料数组 (存储被删除物料的下标)
+           *  @matterList {Array} 物料列表
+           */ 
+
+          // 被选中删除的物料
+          let selItems = this.selItems, checkList = this.checkList;
+          
+          for(let key in this.selItems) {
+            // 当没有对应的交易单号
+            if(key === 'noCode') {
+              let orderList = {};
+              let remainder = this.matterList.filter((item, index) => !checkList.includes(index));
+              remainder.forEach(item => {
+                if (!orderList[key]) {
+                  orderList[key] = []
+                }
+                orderList[key].push(item);
+              });
+              this.orderList = orderList;
             }
-            orderList[orderListKey].push(item);
-          });
-          this.orderList = orderList;
-          this.selItems = [];
+            // 当存在对应的交易单号
+            else {
+              // 将orderList中对应交易号的物料 按照selItems中的索引删除
+              let newIndexs = this.selItems[key].map((val, idx) => val - idx);              
+              newIndexs.forEach((sItem, sIndex) => {
+                this.orderList[key].splice(sItem, 1);
+              }) 
+              if(!this.orderList[key].length){
+                delete this.orderList[key]
+              }
+            }
+          }
+          this.selItems = {};
           this.matterModifyClass = false;
         }
       })
@@ -344,7 +398,6 @@ export default {
        */ 
       
       let warn = '', dataSet = [], 
-          isSubmitOk = this.isSubmitOk,
           dealerInfo = this.dealerInfo, 
           dealerConfig = this.dealerConfig;
       
@@ -354,9 +407,8 @@ export default {
       // 校验 <物料部分> 必填字段 同时动态组装dateSet
       if(!warn) {
         // 校验 是否已选择 <物料部分>
-        let [ matterPart = {} ] = this.submitMatterField;
-        if(!Object.keys(this.orderList).length) warn = `请选择${matterPart.text}`;
-
+        if(!this.matterList.length) warn = '请选择物料';
+        
         // 动态组装 dataSet
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
