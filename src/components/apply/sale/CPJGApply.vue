@@ -61,7 +61,6 @@ import RPicker from 'components/RPicker'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 
-// import { toFixed } from '@/plugins/calc'
 const DRAFT_KEY = 'CPJG_DATA';
 export default {
   mixins: [ApplyCommon],
@@ -107,6 +106,11 @@ export default {
     // 判断是否展示选中图标
     showSelIcon(sItem, index) {
       return this.selItems.includes(index);
+    },
+    // 点击编辑
+    showDelete(){
+      this.matterModifyClass = ! this.matterModifyClass;
+      this.selItems = [];
     },
     // 全选
     checkAll() {
@@ -177,8 +181,8 @@ export default {
             }
           });
           let mItem = {
-            comment: '',
             price: item.price,
+            comment: item.comment,
             qtyOnline: item.qtyOnline,
             qtyDownline: item.qtyDownline,
             transObjCode: item.inventoryCode,
@@ -331,4 +335,10 @@ export default {
 
 <style lang="scss" scoped>
 @import './../../scss/bizApply';
+.price {
+  font-size: .12rem;
+  & + .price {
+    margin-left: .06rem;
+  }
+}
 </style>
