@@ -13,7 +13,7 @@
     <div class="mater_list" v-if="Object.keys(orderList).length">
       <div class="each_mater" :class="{'vux-1px-t': oIndex}"
            v-for="(oItem, key, oIndex) in orderList" :key='key'>
-        <div class="order_code" v-if="key !== 'undefined'">
+        <div class="order_code" v-if="key">
           <span class="order_title">{{orderTitle}}：</span>
           <span class="order_num">{{key || '未查询到相关订单，请检查数据是否正确'}}</span>
         </div>

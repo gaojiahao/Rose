@@ -32,9 +32,7 @@ import common from 'components/mixins/detailCommon'
 // 组件 引入
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
-import PriceTotal from 'components/detail/commonPart/PriceTotal'
 import MatterList from 'components/detail/commonPart/MatterList'
-import MatterItem from 'components/detail/commonPart/MatterItem'
 //公共方法引入
 import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd'
 export default {
@@ -45,7 +43,7 @@ export default {
     }
   },
   components: {
-    workFlow, RAction,PriceTotal,MatterList,MatterItem
+    RAction, workFlow, MatterList
   },
   mixins: [common],
   methods: {

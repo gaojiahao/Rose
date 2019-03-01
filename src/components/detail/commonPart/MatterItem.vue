@@ -76,14 +76,14 @@
         }
         return url
       },
-      // TODO 点击查看更多
+      // 点击查看更多
       clickMore() {
         this.$emit('on-show-more', this.item);
       },
-      // TODO 判断是否没有数据
+      // 判断是否没有数据
       hasData(key) {
         let val = this.item[key];
-        return !!val || val === 0
+        return !!val
       },
     },
     filters: {
