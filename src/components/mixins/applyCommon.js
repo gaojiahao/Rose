@@ -631,15 +631,12 @@ export default {
             // 物料或者订单请求
             if(item.editorType === 'r2Selector') {
               if(item.text === '物料名称' || item.text === '物料编码'){
-                console.log('if-text:', item.text);
                 this.orderListTitle = '物料'
               }
               else if(item.text === '设施名称') {
-                console.log('else-if-text:', item.text);
                 this.orderListTitle = '设施'
               }
               else{
-                console.log('text:', item.text);
                 if(item.text.includes('编码')){
                   this.orderListTitle = item.text.slice(0, item.text.indexOf('编码')); 
                 }

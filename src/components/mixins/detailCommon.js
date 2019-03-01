@@ -42,7 +42,6 @@ export default {
       comment: '',//审批意见
       userName: '',
       transCode: '',
-      orderList: '',
       formViewUniqueId: '',
       isMine: false, // 是否为我创建
       isMyTask: false,
@@ -52,6 +51,7 @@ export default {
       cancelStatus1: false,
       showMatterDetail: false, // 是否展示物料详情弹窗
       action: {}, // 表单允许的操作
+      orderList: {},
       hasUpdate: {}, //
       orderInfo: {}, // 表单内容
       currentWL: {}, // 当前工作流
@@ -384,7 +384,6 @@ export default {
         this.currenrForm = data.viewType;
         let {config = [], dataSource = '[]', reconfig = {}} = data;
         console.log('config:', config);
-
         let ckConfig = [], rkConfig = [], dealerConfig = [], matterConfig = [], otherConfig = [], baseinfoExtConfig = [], fundConfig = [];
         let dealerFilter = [
           'dealerName_dealerDebit',
@@ -430,17 +429,17 @@ export default {
             });
           }
           if (!item.hiddenInRun && !item.isMultiple) {
-            if (item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt' || item.name === 'gys') {
+            if(item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt' || item.name === 'gys') {
               dealerConfig = [...dealerConfig, ...item.items]
             }
             // 出库信息
-            if (item.name === 'ck') {
+            if(item.name === 'ck') {
               // 处理 出库的仓库配置信息
               ckConfig = item.items;
               this.setWarehouseConfg(ckConfig, '出库');
             }
             // 入库信息
-            if (item.name === 'rk') {
+            if(item.name === 'rk') {
               // 处理 入库的仓库配置信息
               rkConfig = item.items;
               this.setWarehouseConfg(rkConfig, '入库');
@@ -453,11 +452,12 @@ export default {
               baseinfoExtConfig = item.items;
             }
             // 员工借款与备用金 往来的配置
-            if(item.name === 'order'){
+            if(item.name === 'order') {
               fundConfig = item.items
             }
-          } else if (!item.hiddenInRun && item.isMultiple){
-            if (item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
+          } 
+          else if (!item.hiddenInRun && item.isMultiple) {
+            if(item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
               // 如果为<Grid>组件 为了方便<PopMatterDetail>组件的判断 此处做数据处理
               if(item.r2GridXtype) {
                 item.items.forEach(each => {
@@ -480,19 +480,14 @@ export default {
           return arr;
         }, []);
         this.dealerConfig = dealerConfig;
-
         // 物料相关配置
         matterConfig = matterConfig.reduce((arr, item, index) => {
-          // 是否展示字段
-          let needShow = true;
           // 匹配 *映射表字段*
           let key = dataIndexMap[item.fieldCode];
-          // 根据*数据源* 查询映射表中存在字段 
+          // 根据 *数据源* 查询映射表中存在字段 
           let matchedCol = matterCols.find(col => col.k === key);
           // 判断是否存在映射关系，若有映射关系，则判断是否有该字段且判断字段是否隐藏，没有映射关系则直接展示
-          if(key) {
-            item.hidden ? needShow = false : needShow = true;
-          }
+          let needShow = key ? (matchedCol ? !item.hidden : false) : true;
           // 组合要提交的物料字段
           if (item.submitValue) {
             submitMatterField.push(item)
@@ -520,6 +515,7 @@ export default {
           listData = Object.values(this.orderList).reduce((arr, item) => {
             return [...arr, ...item]
           }, []);
+          // 当科目关系取消 *按单核销* 隐藏对应的交易号
           if (hideOrderTitle) {
             this.orderList = {
               undefined: listData,
@@ -584,14 +580,18 @@ export default {
         let matterComment = {};
         matterConfig.forEach(item => {
           item = {...item};
+
           item.value = numTypeList.includes(item.editorType) 
             ? numberComma(matter[item.fieldCode]) || '0' 
             : matter[item.fieldCode] || '无';
+
           if (item.editorType === 'r2Datefield') {
             dates.push(item);
-          } else if (item.fieldCode === 'comment') {
+          } 
+          else if (item.fieldCode === 'comment') {
             matterComment = item;
-          } else {
+          } 
+          else {
             others.push(item);
           }
         });
