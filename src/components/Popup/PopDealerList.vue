@@ -37,8 +37,8 @@
           <!-- 往来列表 -->
           <div class="mater_list" ref="dealer">
             <div class="dealer-list-wrapper">
-              <div class="each_dealer" :class="{selected: showSelIcon(item)}" v-for="(item, index) in dealerList"
-                   :key="index" @click.stop="selDealer(item,index)">
+              <div class="each_dealer" :class="{selected: showSelIcon(item, index)}" v-for="(item, index) in dealerList"
+                   :key="index" @click.stop="selDealer(item, index)">
                 <img class="dealer_img" :src="require('assets/default/company2.png')" alt="dealer_img">
                 <div class="dealer_main">
                   <div class="dealer_name">{{item.dealerName}}</div>
@@ -77,245 +77,246 @@
 </template>
 
 <script>
-  import {Icon, Popup, LoadMore, AlertModule, TransferDom} from 'vux'
-  import DSearch from 'components/search'
-  import dealerService from 'service/dealerService'
-  import {requestData} from 'service/commonService'
-  import BScroll from 'better-scroll'
-  import PopContactList from 'components/Popup/dealer/PopContactList'
+import {Icon, Popup, LoadMore, AlertModule, TransferDom} from 'vux'
+import DSearch from 'components/search'
+import dealerService from 'service/dealerService'
+import {requestData} from 'service/commonService'
+import BScroll from 'better-scroll'
+import PopContactList from 'components/Popup/dealer/PopContactList'
 
-  export default {
-    name: "PopDealerList",
-    props: {
-      // 往来名称，dealerLabelName会有多个参数，所以需要单独传值
-      dealerTitle: {
-        type: String,
-        default: '客户'
-      },
-      // 默认值
-      defaultValue: {
-        type: Object,
-        default() {
-          return {}
-        }
-      },
-      // 联系人
-      defaultContact: {
-        type: Object,
-        default() {
-          return {}
-        }
-      },
-      // 展示模式
-      mode: {
-        type: String,
-        default: '1'
-      },
-      required: {
-        type: Boolean,
-        default: false
-      },
-      // 是否不展示联系人
-      noContact: {
-        type: Boolean,
-        default: false
-      },
-      placeholder: {
-        type: String,
-        default: '请选择'
-      },
-      // 不记录选中的往来项
-      noRecord: {
-        type: Boolean,
-        default: false
-      },
-      dealerParams: {
-        type: Object,
-        default() {
-          return {}
-        }
+export default {
+  name: "PopDealerList",
+  props: {
+    // 往来名称，dealerLabelName会有多个参数，所以需要单独传值
+    dealerTitle: {
+      type: String,
+      default: '客户'
+    },
+    // 默认值
+    defaultValue: {
+      type: Object,
+      default() {
+        return {}
       }
     },
-    computed: {
-      noAddress() {
-        let {province = '', city = '', county = '', address = ''} = this.defaultValue;
-        return !province && !city && !county && !address;
+    // 联系人
+    defaultContact: {
+      type: Object,
+      default() {
+        return {}
       }
     },
-    directives: {TransferDom},
-    components: {
-      Icon, Popup, DSearch, LoadMore, PopContactList
+    // 展示模式
+    mode: {
+      type: String,
+      default: '1'
     },
-    data() {
-      return {
-        page: 1,
-        limit: 10,
-        hasNext: true,
-        showDealerPop: false,
-        srhInpTx: '',           // 搜索框内容
-        bScroll: null,
-        dealerInfo: {},         // 往来信息
-        contactInfo: {},        // 联系人信息
-        selItems: [],           // 哪些被选中了
-        dealerList: [],
+    required: {
+      type: Boolean,
+      default: false
+    },
+    // 是否不展示联系人
+    noContact: {
+      type: Boolean,
+      default: false
+    },
+    placeholder: {
+      type: String,
+      default: '请选择'
+    },
+    // 不记录选中的往来项
+    noRecord: {
+      type: Boolean,
+      default: false
+    },
+    dealerParams: {
+      type: Object,
+      default() {
+        return {}
       }
-    },
-    watch: {
-      defaultValue: {
-        handler() {
-          let defaultValue = this.defaultValue;
-          this.dealerInfo = Object.freeze({...defaultValue});
-          this.selItems = [{...defaultValue}]
-        },
-        immediate: true
-      },
-      defaultContact: {
-        handler() {
-          this.contactInfo = Object.freeze({...this.defaultContact});
-        },
-        immediate: true
-      },
-      dealerParams: {
-        handler() {
-          this.getDealer()
-        },
-        deep: true
-      }
-    },
-    methods: {
-      // 弹窗展示时调用
-      onShow() {
-        this.$nextTick(() => {
-          if (this.bScroll) {
-            this.bScroll.refresh();
-          }
-        })
-      },
-      // 弹窗隐藏时调用
-      onHide() {
-        this.showDealerPop = false;
-      },
-      // 判断是否展示选中图标
-      showSelIcon(sItem) {
-        return this.selItems.findIndex(item => item.dealerCode === sItem.dealerCode) !== -1;
-      },
-      // 选择往来
-      selDealer(sItem, sIndex) {
-        this.showDealerPop = false;
-        this.selItems = [sItem];
-        this.dealerInfo = Object.freeze({...sItem});
-        this.contactInfo = {};
-        if (!this.noRecord) {
-          sessionStorage.setItem('DEALERLIST_SELITEMS', JSON.stringify(this.selItems));
-        }
-        if (this.mode === '2') {
-          this.$emit('sel-dealer', {...this.dealerInfo});
-          return
-        }
-        this.$emit('sel-dealer', JSON.stringify(this.selItems));
-      },
-      // 选择联系人
-      selContact(item) {
-        this.$emit('sel-contact', item);
-      },
-      // 获取往来列表
-      getDealer() {
-        let filter = [];
-        if (this.srhInpTx) {
-          filter = [
-            ...filter,
-            {
-              operator: 'like',
-              value: this.srhInpTx,
-              property: 'dealerName',
-            },
-          ];
-        }
-        let data = {
-          limit: this.limit,
-          page: this.page,
-          start: (this.page - 1) * this.limit,
-          filter: JSON.stringify(filter),
-          ...this.dealerParams.data,
-        }
-        return requestData({
-          url: this.dealerParams.url,
-          data
-        }).then(({dataCount = 0, tableContent = []}) => {
-          let DEALERLIST_SELITEMS = JSON.parse(sessionStorage.getItem('DEALERLIST_SELITEMS')) || '';
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          tableContent.forEach(item => {
-            let {province = '', city = '', county = '', address = ''} = item;
-            item.dealerAddress = !province && !city && !county && !address ? '暂无联系地址' : `${address}`;
-          });
-          this.dealerList = this.page === 1 ? tableContent : [...this.dealerList, ...tableContent];
-          //获取缓存
-          if (DEALERLIST_SELITEMS) {
-            this.selItems = [...DEALERLIST_SELITEMS];
-            [this.dealerInfo = {}] = this.selItems;
-            this.$emit('sel-dealer', JSON.stringify(this.selItems));
-            sessionStorage.removeItem('DEALERLIST_SELITEMS');
-          }
-          this.$nextTick(() => {
-            this.bScroll.refresh();
-            if (!this.hasNext) {
-              return
-            }
-            this.bScroll.finishPullUp();
-          })
-        }).catch(e => {
-          AlertModule.show({
-            content: e.message,
-          })
-        })
+    }
+  },
+  computed: {
+    noAddress() {
+      let {province = '', city = '', county = '', address = ''} = this.defaultValue;
+      return !province && !city && !county && !address;
+    }
+  },
+  directives: {TransferDom},
+  components: {
+    Icon, Popup, DSearch, LoadMore, PopContactList
+  },
+  data() {
+    return {
+      page: 1,
+      limit: 10,
+      srhInpTx: '',           // 搜索框内容
+      selItems: [],           // 哪些被选中了
+      dealerList: [],
+      dealerInfo: {},         // 往来信息
+      contactInfo: {},        // 联系人信息
+      bScroll: null,
+      hasNext: true,
+      showDealerPop: false,
+    }
+  },
+  watch: {
+    // 默认往来（缓存等）
+    defaultValue: {
+      handler() {
+        if(JSON.stringify(this.defaultValue) === '{}') return;
 
+        let defaultValue = this.defaultValue;
+        this.dealerInfo = Object.freeze({...defaultValue});
+        this.selItems = [{...defaultValue}]
       },
-      // 搜索往来
-      searchList({val = ''}) {
-        this.srhInpTx = val;
-        this.dealerList = [];
-        this.page = 1;
-        this.hasNext = true;
+      immediate: true
+    },
+    // 默认联系人（缓存等）
+    defaultContact: {
+      handler() {
+        this.contactInfo = Object.freeze({...this.defaultContact});
+      },
+      immediate: true
+    },
+    dealerParams: {
+      handler() {
         this.getDealer();
       },
-      // 初始化滚动
-      initScroll() {
-        this.$nextTick(() => {
-          this.bScroll = new BScroll(this.$refs.dealer, {
-            click: true,
-            pullUpLoad: {
-              threshold: 20
-            },
-          });
-          // 绑定滚动加载事件
-          this.bScroll.on('pullingUp', () => {
-            if (!this.hasNext) {
-              return
-            }
-            this.page++;
-            this.getDealer();
-          });
-        })
-      },
-      //新增往来
-      add() {
-        let pickVal = this.dealerTitle;
-        this.$router.push({
-          path: '/adress/edit_ads',
-          query: {
-            add: 1,
-            pickVal: pickVal
-          }
-        })
-      },
-      itemClick() {
-        this.showDealerPop = true;
-      },
-    },
-    created() {
-      this.initScroll();
+      deep: true
     }
+  },
+  methods: {
+    // 弹窗展示时调用
+    onShow() {
+      this.$nextTick(() => {
+        if (this.bScroll) {
+          this.bScroll.refresh();
+        }
+      })
+    },
+    // 弹窗隐藏时调用
+    onHide() {
+      this.showDealerPop = false;
+    },
+    // 判断是否展示选中图标
+    showSelIcon(sItem) {
+      return this.selItems.findIndex(item => item.colId === sItem.colId) !== -1;
+    },
+    // 选择往来
+    selDealer(sItem, sIndex) {
+      this.showDealerPop = false;
+      this.selItems = [sItem];
+      this.dealerInfo = Object.freeze({...sItem});
+      this.contactInfo = {};
+      if (!this.noRecord) {
+        sessionStorage.setItem('DEALERLIST_SELITEMS', JSON.stringify(this.selItems));
+      }
+      if (this.mode === '2') {
+        this.$emit('sel-dealer', {...this.dealerInfo});
+        return
+      }
+      this.$emit('sel-dealer', JSON.stringify(this.selItems));
+    },
+    // 选择联系人
+    selContact(item) {
+      this.$emit('sel-contact', item);
+    },
+    // 获取往来列表
+    getDealer() {
+      // 存在搜索字段
+      let filter = [];
+      if (this.srhInpTx) {
+        filter = [
+          ...filter,
+          {
+            operator: 'like',
+            value: this.srhInpTx,
+            property: 'dealerName',
+          },
+        ];
+      }
+
+      // 请求参数
+      let data = {
+        page: this.page,
+        limit: this.limit,
+        filter: JSON.stringify(filter),          
+        start: (this.page - 1) * this.limit,
+        ...this.dealerParams.data,
+      }
+
+      // 发起请求
+      return requestData({ 
+          data, 
+          url: this.dealerParams.url 
+      })
+      .then(({dataCount = 0, tableContent = []}) => {
+        this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+        
+        tableContent.forEach(item => {
+          let {province = '', city = '', county = '', address = ''} = item;
+          item.dealerAddress = !province && !city && !county && !address ? '暂无联系地址' : `${address}`;
+        });
+        this.dealerList = this.page === 1 ? tableContent : [...this.dealerList, ...tableContent];
+        
+        this.$nextTick(() => {
+          this.bScroll.refresh();
+          if (!this.hasNext) {
+            return
+          }
+          this.bScroll.finishPullUp();
+        })
+      })
+
+    },
+    // 搜索往来
+    searchList({val = ''}) {
+      this.srhInpTx = val;
+      this.dealerList = [];
+      this.page = 1;
+      this.hasNext = true;
+      this.getDealer();
+    },
+    // 初始化滚动
+    initScroll() {
+      this.$nextTick(() => {
+        this.bScroll = new BScroll(this.$refs.dealer, {
+          click: true,
+          pullUpLoad: {
+            threshold: 20
+          },
+        });
+
+        // 绑定滚动加载事件
+        this.bScroll.on('pullingUp', () => {
+          if (!this.hasNext) {
+            return
+          }
+          this.page++;
+          this.getDealer();
+        });
+      })
+    },
+    //新增往来
+    add() {
+      let pickVal = this.dealerTitle;
+      this.$router.push({
+        path: '/adress/edit_ads',
+        query: {
+          add: 1,
+          pickVal: pickVal
+        }
+      })
+    },
+    itemClick() {
+      this.showDealerPop = true;
+    },
+  },
+  created() {
+    this.initScroll();
   }
+}
 </script>
 
 <style scoped lang="scss">

@@ -55,7 +55,7 @@
   import MSearch from 'components/search'
 
   export default {
-    name: "PopMatterListTest",
+    name: "PopMatterList",
     props: {
       show: {
         type: Boolean,
@@ -160,6 +160,7 @@
                 break;
               }
             }
+            console.log('是否可以请求物料:', paramsIsOk);
             if(paramsIsOk) this.requestData();
           }
           else {

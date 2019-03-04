@@ -93,14 +93,20 @@
     watch: {
       dealerInfo: {
         handler(oldVal, newVal) {
-          let oldId = oldVal.id || '',
-              newId = newVal.id || '';
+          let newId;
+          let oldId = oldVal.id || '';
+
           // 匹配当前选择的往来id 如果不一致则重新发起请求
-          if(oldId !== newId) {
+          if(newVal) {
+            newId = newVal.id || '';
+          } 
+          if(JSON.stringify(oldVal) !== '{}' && oldId !== newId) {
+            console.log('请求联系人');
             this.resetCondition();
             this.getContact();
           }
-        }
+        },
+        immediate: true
       },
       defaultValue: {
         handler() {

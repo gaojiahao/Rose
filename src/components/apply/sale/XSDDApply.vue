@@ -605,14 +605,10 @@ export default {
     let data = sessionStorage.getItem(DRAFT_KEY);
     if (data) {
       let draft = JSON.parse(data);
-      this.dealerInfo = draft.dealerInfo;
       this.formData = draft.formData;
-      this.contactInfo = draft.contactInfo;
       this.orderList = draft.orderList;
-      // 物料列表请求参数
-      if(this.matterParams.data && this.matterParams.data.dealerCode){
-        this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
-      }
+      this.dealerInfo = draft.dealerInfo;
+      this.contactInfo = draft.contactInfo;
       sessionStorage.removeItem(DRAFT_KEY);
     }
   }

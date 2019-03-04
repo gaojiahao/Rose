@@ -450,13 +450,13 @@
         box-sizing: border-box;
         height: calc(100% - .46rem);
         /deep/ .scroll-wrapper {
-          padding: 0 .15rem;
+          padding: .05rem .15rem 0;
         }
         // 列表项
         .pop-mater-list-item {
           position: relative;
           padding: .15rem;
-          margin-bottom: .2rem;
+          margin-bottom: .1rem;
           box-sizing: border-box;
           border-radius: .04rem;
           &.seleted {
@@ -465,7 +465,7 @@
           // 阴影
           &.box_sd {
             box-sizing: border-box;
-            box-shadow: 0 0 8px #e8e8e8;
+            box-shadow: 0 2px 10px 0 rgba(228, 228, 232, 0.5);
           }
           // 列表主体
           .pop-list-main {

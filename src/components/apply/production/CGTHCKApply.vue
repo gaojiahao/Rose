@@ -8,8 +8,7 @@
         <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo" :dealer-params="dealerParams"
                          dealerTitle="供应商" @sel-contact="selContact" :defaultContact="contactInfo"></pop-dealer-list>
         <!-- 结算方式 -->
-        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo"
-                           v-model="dealerInfo"></dealer-other-part>
+        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
         <!-- 仓库-->
         <pop-warehouse-list isRequired :default-value="warehouse" @sel-item="selWarehouse"
                             :default-store="warehouseStoreInfo" @get-store="getStore"
@@ -54,16 +53,17 @@ import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 // 公共方法
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
+import { setTimeout } from 'timers';
 
 const DRAFT_KEY = 'CGTHCK_DATA';
-
 export default {
   data() {
     return {
-      modifyKey: null,
-      modifyIndex: null,
-      showMatterPop: false,
-      showMaterielPop: false,
+      warehouse: {  // 选中仓库属性
+        warehouseType: '一般部门仓',
+        warehouseName: '原料',
+        warehouseCode: 'MA0001',
+      },  
       filterList: [
         {
           name: '物料名称',
@@ -76,18 +76,21 @@ export default {
           value: 'transCode',
         },
       ],
-      actions: [],
-      selItems: [],
-      numMap: {},
-      formData: {},
-      orderList: {},
-      warehouse: {},  // 选中仓库属性
-      dealerInfo: {},   // 供应商客户信息
-      contactInfo: {},
-      warehouseStoreInfo: {},   // 库位信息
       taskId: '',
       transCode: '',
       biReferenceId: '',
+      numMap: {},
+      formData: {},
+      orderList: {},
+      dealerInfo: {},   // 供应商客户信息
+      contactInfo: {},
+      warehouseStoreInfo: {},   // 库位信息
+      actions: [],
+      selItems: [],
+      modifyKey: null,
+      modifyIndex: null,
+      showMatterPop: false,
+      showMaterielPop: false,
     }
   },
   computed: {
@@ -396,7 +399,7 @@ export default {
               drDealerLabel: this.dealerInfo.dealerLabelName || '供应商', // 供应商页签
               drDealerPaymentTerm: this.dealerInfo.drDealerPaymentTerm,
               containerCodeOut: this.warehouse.warehouseCode, // 仓库编码
-              storehouseOutCode: this.warehouseStoreInfo.warehouseCode, // 仓库编码
+              storehouseOutCode: this.warehouseStoreInfo.warehouseCode, // 库位编码
               dataSet,
             }
           };
@@ -557,93 +560,31 @@ export default {
           orderList: this.orderList,
           warehouse: this.warehouse,
           contactInfo: this.contactInfo,
+          matterParams: this.matterParams,
           warehouseStoreInfo: this.warehouseStoreInfo,
         }
       };
-    },
-    // 获取关联数据
-    getRelationData() {
-      let {uniqueId} = this.$route.query;
-      return getSOList({
-        formViewUniqueId: uniqueId,
-        transCode: this.relationKey
-      }).then(data => {
-        let {success = true, formData = {}, attachment = []} = data;
-        // http200时提示报错信息
-        if (!success) {
-          this.$vux.alert.show({
-            content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
-          });
-          return;
-        }
-        // 获取合计
-        let {inPut} = formData;
-        let {dataSet = []} = inPut;
-        dataSet = dataSet.map(item => {
-          return {
-            ...item,
-            inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
-            inventoryName: item.inventoryName_transObjCode,
-            inventoryCode: item.inventoryCode_transObjCode,
-            specification: item.specification_transObjCode,
-            processing: item.tdProcessing || '商品',
-            measureUnit: item.measureUnit_transObjCode,
-            transCode: this.relationKey,
-            qtyBal: item.tdQty,
-            tdQty: '',
-
-          };
-        });
-        // 供应商信息
-        this.dealerInfo = {
-          creatorName: formData.dealerCreditContactPersonName, // 客户名
-          dealerName: outPut.dealerName_dealerCodeCredit, // 公司名
-          dealerMobilePhone: formData.dealerCreditContactInformation, // 手机
-          dealerCode: outPut.dealerCode_dealerCodeCredit, // 客户编码
-          dealerLabelName: outPut.crDealerLabel, // 关系标签
-          province: outPut.province_dealerCodeCredit, // 省份
-          city: outPut.city_dealerCodeCredit, // 城市
-          county: outPut.county_dealerCodeCredit, // 地区
-          address: outPut.address_dealerCodeCredit, // 详细地址
-        };
-        // 物料请求参数
-        this.matterParams = {
-          dealerCode: this.dealerInfo.dealerCode
-        };
-
-        this.orderList = {
-          [this.relationKey]: dataSet,
-        };
-        this.DealerPaymentTerm = formData.drDealerPaymentTerm || '现付';
-        this.$loading.hide();
-      })
     },
   },
   created() {
     let data = sessionStorage.getItem(DRAFT_KEY);
     if (data) {
       let draft = JSON.parse(data);
-      this.orderList = draft.orderList;
-      this.dealerInfo = draft.dealer;
-      this.contactInfo = draft.contactInfo;
-      this.warehouse = draft.warehouse;
-      this.warehouseStoreInfo = draft.warehouseStoreInfo;
       this.formData = draft.formData;
-      this.matterParams.data = {
-        // whCode: this.warehouse.warehouseCode,
-        dealerCode: this.dealerInfo.dealerCode,
-        // storehouseCode: this.warehouseStoreInfo.warehouseCode,
-      };
-      // 物料列表请求参数
-      // if(this.matterParams) {
-      //   console.log('code:', this.warehouse.warehouseCode);
-      //   console.log('dealerCode:', this.dealerInfo.dealerCode);
-      //   console.log('storehouseCode:', this.warehouseStoreInfo.warehouseCode);
-        
-      // }
-      sessionStorage.removeItem(DRAFT_KEY);
+      this.dealerInfo = draft.dealer;
+      this.orderList = draft.orderList;
+      this.warehouse = draft.warehouse;
+      this.contactInfo = draft.contactInfo;
+      this.warehouseStoreInfo = draft.warehouseStoreInfo;      
     }
   },
+  updated() {
+    let draft = JSON.parse(sessionStorage.getItem(DRAFT_KEY));
+    if(draft && this.matterParams.data) {
+      this.matterParams = draft.matterParams;
+      sessionStorage.removeItem(DRAFT_KEY);
+    }
+  }
 }
 </script>
 

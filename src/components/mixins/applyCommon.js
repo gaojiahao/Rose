@@ -160,10 +160,11 @@ export default {
               this.actions = createNode.actions && createNode.actions.split(',');
             }
           }
-          let [action = {}] = tableContent;
-          let {actions = '', isMyTask = 0, taskId} = action;
 
+          let [ action = {} ] = tableContent;
+          let { taskId } = action;
           this.taskId = taskId;
+
           resolve()
         })
       })
@@ -199,9 +200,11 @@ export default {
             title: '审批意见',
             onConfirm: (value) => {
               this.$HandleLoad.show();
+
               if (value) {
                 this.comment = value;
               }
+
               let submitData = {
                 taskId: this.taskId,
                 taskData: JSON.stringify({
@@ -225,7 +228,8 @@ export default {
                     }
                   }
                 });
-              }).catch(e => {
+              })
+              .catch(e => {
                 this.$HandleLoad.hide();
               })
             }
@@ -238,9 +242,11 @@ export default {
       getBaseInfoData().then(({handleORG, userRoleList, ...basicUserInfo}) => {
         this.handleORG = handleORG;
         this.userRoleList = userRoleList;
+
         // 默认取第一个值
         let [firstORG = {}] = handleORG,
             [firstRole = {}] = userRoleList;
+
         // 用户相关经办信息初始化,如果是保存草稿之后重新进入，则使用已经保存的值
         let defaultUserInfo = {};
         if(this.formData.handler){
@@ -265,6 +271,7 @@ export default {
             userCode: basicUserInfo.userCode, // 用户工号
           }
         }
+
         // 当请求数据的参数matterParams中有groupId
         if(this.matterParams.data && this.matterParams.data.groupId !== undefined){
           this.matterParams.data.groupId = firstORG.groupId
@@ -276,9 +283,6 @@ export default {
           modifer: defaultUserInfo.handler,
         };
         this.handlerDefault = defaultUserInfo;
-        // // 产品需求的经办人信息为使用组件，需单独请求组织和部门
-        // this.getGroupByUserId && this.getGroupByUserId();
-        // this.getRoleByUserId && this.getRoleByUserId();
         this.$loading.hide();
       })
     },
@@ -455,10 +459,12 @@ export default {
     // 将物料配置拆分成属性和可编辑部分
     splitConfig(editMatterPop, editMatterPopConfig){
       for(let [index, item] of Object.entries(editMatterPop)) {
-        //物料信息里面有数量
-        if(item.fieldCode === 'drDealerLabel' || item.fieldCode === 'tdQty' || item.fieldCode === 'qualityQty' || item.fieldCode === "qtyDownline"){
+        if(item.fieldCode === 'assMeasureUnit') {
+          editMatterPopConfig.editPart.push(item);
+        }
+        else if (item.fieldCode === 'drDealerLabel' || item.fieldCode === 'tdQty' || item.fieldCode === 'qualityQty' || item.fieldCode === "qtyDownline") {
           editMatterPopConfig.property = editMatterPop.slice(0, index);
-          editMatterPopConfig.editPart = editMatterPop.slice(index)
+          editMatterPopConfig.editPart = [...editMatterPopConfig.editPart, ...editMatterPop.slice(index)]
           break;
         }
       }
@@ -485,6 +491,7 @@ export default {
           let dataSource = JSON.parse(JSON.parse(data.dataSource)[0].dataSource.source);
           if(dataSource){
             matterCols = dataSource.cols;
+
             // 请求数据，组合要渲染的matterList配置
             let url = dataSource.url,
                 params = dataSource.params,
@@ -509,6 +516,7 @@ export default {
               requestParams.data = matterParams;
             }
             this.matterParams = requestParams;
+
             // 处理物料的配置
             let arr = [];
             for(let cItem of dataSource.cols) {
@@ -524,7 +532,7 @@ export default {
                 else if(cItem.k === 'transCode'){
                   if(cItem.v.includes('编码')){
                     this.orderListTitle = cItem.v.slice(0, cItem.v.indexOf('编码'));
-                    return ;
+                    continue;
                   }
                   this.orderListTitle = cItem.v;
                 }
@@ -547,14 +555,14 @@ export default {
           }
           // 处理表单配置 <非重复项渲染> 部分
           if(!item.hiddenInRun && !item.isMultiple) {
-            if(item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt' || item.name === 'gys') {
+            if(item.name === 'kh' || item.name === 'inPut' || item.name === 'gys') {
               dealerConfig = [...dealerConfig, ...item.items]
             }
             if(item.name === 'pb' || item.name === 'projectApproval' || item.name === 'projectPlanTask' || item.name === 'jobLog'){
               otherConfig = item.items;
             }
-            if(item.name === 'baseinfoExt'){
-              baseinfoExtConfig = item.items;
+            if(item.name === 'baseinfoExt'){              
+              baseinfoExtConfig = [...baseinfoExtConfig, ...item.items];
             }
             // 用于借款与备用金
             if(item.name === 'order'){
@@ -585,13 +593,16 @@ export default {
               this.dealerParams = this.handlerParams(item);
             }
             // 处理请求物流，结算方式的接口
-            if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
-              requestData(this.handlerParams(item)).then(data => {
-                this.$set(item, 'remoteData', data.tableContent)
-              })
+            if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {              
+              // 因为联系人已单独作为组件存在 此处不需提前请求 
+              if(item.fieldCode !== 'dealerDebitContactPersonName') {
+                requestData(this.handlerParams(item)).then(data => {
+                  this.$set(item, 'remoteData', data.tableContent)
+                })
+              }
             }
             // 处理 静态数据
-            else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
+            else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData') {
               let arr = [];
               for(let val of item.dataSource.data) {
                 arr.push({ name: val })
@@ -599,7 +610,7 @@ export default {
               this.$set(item, 'remoteData', arr)
             }
             // 过滤往来编码，关系便签，地址，联系人，电话
-            if(!dealerFilter.includes(item.fieldCode)){
+            if(!dealerFilter.includes(item.fieldCode)) {
               blankDealerConfig.push(item)
             }
           }
@@ -653,7 +664,7 @@ export default {
               if(keys.length){
                 let matterParams = {};
                 keys.forEach(item => {
-                  // 处理销售出库默认选中成品仓
+                  // 当存在默认仓库的时候 对物料请求参数进行赋值
                   if(item === 'whCode' && this.warehouse.warehouseCode) {
                     matterParams[item] = this.warehouse.warehouseCode;
                     return
@@ -666,7 +677,7 @@ export default {
               this.matterParams = requestParams
             }
             // 物料信息里有下拉选择的字段
-            else if(item.editorType === 'r2Combo') {
+            else if(item.editorType === 'r2Combo' && !item.readOnly) {
               let url = item.dataSource.data.url,
                   params = item.dataSource.data.params,
                   keys = Object.keys(params),
@@ -678,13 +689,14 @@ export default {
                 })
                 requestParams.data = data;
               }
-              requestData(requestParams).then(({tableContent = []}) => {
-                let arr = [];
-                tableContent.forEach(item => {
-                  arr.push(item.name)
-                })
-                item.remoteData = [arr];
-              })
+              console.log('物料相关requestParams:', requestParams.url);
+              // requestData(requestParams).then(({tableContent = []}) => {
+              //   let arr = [];
+              //   tableContent.forEach(item => {
+              //     arr.push(item.name)
+              //   })
+              //   item.remoteData = [arr];
+              // })
             }
           }
           else if(item.dataSource && item.dataSource.type === 'staticData') {
@@ -699,7 +711,7 @@ export default {
           }
           // 组合matterPop配置
           // matterPop需要隐藏的物料的字段
-          if(item.editorType === 'r2Selector'){
+          if(item.editorType === 'r2Selector') {
             let hiddenField = JSON.parse(JSON.stringify(item.dataSource.data.hFields));
             hiddenField.unshift('transCode','inventoryName', 'inventoryCode', 'specification','invName','matCode','facilityName', 'facilityCode', 'facilitySpecification')
             let matterPopField = JSON.parse(JSON.stringify(item.proertyContext.dataSourceCols));
@@ -719,7 +731,7 @@ export default {
             this.matterPopConfig = matterPopField;
           }
           // 没有映射表时，根据物料poplist中数据来去对应的字段的值
-          if(item.dataSource && item.dataSource.type === 'formData'){
+          if(item.dataSource && item.dataSource.type === 'formData') {
             if(typeof(item.dataSource.data.valueField) === 'string') {
               let arr = item.dataSource.data.valueField.replace(/\[|]/g, '').split(/\"/);
               let valueField = [];
@@ -734,11 +746,11 @@ export default {
             item.showFieldCode = item.dataSource.data.valueField[1];
           }
           // 当存在映射表时，根据映射表来取对应的值
-          if(Object.keys(this.dataIndexMap).length){
+          if(Object.keys(this.dataIndexMap).length) {
             item.showFieldCode = this.dataIndexMap[item.fieldCode];
           }
           // 组合物料编辑的matterPop的配置
-          if(!item.hidden){
+          if(!item.hidden) {
             if(item.valueField !== "transCode" && item.valueField !== 'inventoryName' && item.valueField !== 'facilityName' 
               && !item.fieldCode.includes('inventoryName') 
               && item.showFieldCode !== 'transCode' && item.showFieldCode !== 'facilityName' 
@@ -752,6 +764,7 @@ export default {
           this.splitConfig(editMatterPop, editMatterPopConfig);
         }
         this.matterEditConfig = editMatterPopConfig;
+
         // 处理其他信息的配置
         let other = [];
         otherConfig.forEach(item => {
@@ -759,8 +772,8 @@ export default {
             this.submitMatterField.push(item)
           }
           if(!item.hiddenInRun){
-            if((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo' || item.xtype === 'r2Selector') && item.dataSource && item.dataSource.type === 'remoteData'){
-              item.requestParams = this.handlerParams(item)
+            if((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo') && item.dataSource && item.dataSource.type === 'remoteData'){
+              item.requestParams = this.handlerParams(item);
               requestData(this.handlerParams(item)).then(data => {
                 if(data.tableContent){
                   data.tableContent.forEach(dItem => {
@@ -779,37 +792,48 @@ export default {
           }
         })
         this.otherConfig = other;
+
+        // 处理 baseInfoExt 相关配置
         let baseinfoExt = [];
         baseinfoExtConfig.forEach(item => {
-          if(item.submitValue){
+          if(item.submitValue) {
             this.submitMatterField.push(item)
           }
-          if(!item.hiddenInRun){
-            if((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo' || item.xtype === 'r2Selector') && item.dataSource && item.dataSource.type === 'remoteData'){
-              item.requestParams = this.handlerParams(item)
-              requestData(this.handlerParams(item)).then(data => {
-                if(data.tableContent){
-                  data.tableContent.forEach(dItem => {
-                    dItem.originValue = dItem.value;
-                    dItem.name = dItem[item.displayField]
-                    dItem.value = dItem[item.displayField];
-                  })
-                  this.$set(item, 'remoteData', data.tableContent)
-                }
-              })
+          if(!item.hiddenInRun) {
+            // 处理请求往来数据的接口
+            if(item.xtype === 'r2Selector' && item.dataSource && item.dataSource.type === 'remoteData' && item.fieldCode !== 'project') {
+              this.dealerParams = this.handlerParams(item);
             }
-            else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
+            // 处理 重复项 或者 其他单选类型 
+            if((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo') && item.dataSource && item.dataSource.type === 'remoteData') {
+              item.requestParams = this.handlerParams(item);
+              // 因为联系人已单独作为组件存在 此处不需提前请求 
+              if(item.fieldCode !== 'dealerDebitContactPersonName') {
+                  requestData(this.handlerParams(item)).then(data => {
+                  if(data.tableContent) {
+                    data.tableContent.forEach(dItem => {
+                      dItem.originValue = dItem.value;
+                      dItem.name = dItem[item.displayField]
+                      dItem.value = dItem[item.displayField];
+                    })
+                    this.$set(item, 'remoteData', data.tableContent)
+                  }
+                })
+              }
+            }
+            else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData') {
               this.$set(item, 'remoteData', item.dataSource.data)
             }
             baseinfoExt.push(item)
           }
         })
         this.baseinfoExtConfig = baseinfoExt;
-        let fund = [];
+
         // 用于借款与备用金中往来的配置
+        let fund = [];
         fundConfig.forEach(item => {
           // 没有映射表时，根据物料poplist中数据来去对应的字段的值
-          if(item.dataSource && item.dataSource.type === 'formData'){
+          if(item.dataSource && item.dataSource.type === 'formData') {
             if(typeof(item.dataSource.data.valueField) === 'string') {
               let arr = item.dataSource.data.valueField.replace(/\[|]/g, '').split(/\"/);
               let valueField = [];
@@ -823,14 +847,14 @@ export default {
             }
             item.showFieldCode = item.dataSource.data.valueField.length === 1 ? item.dataSource.data.valueField[0] : item.dataSource.data.valueField[1];
           }
-          if(item.submitValue){
+          if(item.submitValue) {
             this.submitMatterField.push(item)
           } 
-          if(!item.hiddenInRun){
-            if((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo' || item.xtype === 'r2Selector') && item.dataSource && item.dataSource.type === 'remoteData'){
+          if(!item.hiddenInRun) {
+            if((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo') && item.dataSource && item.dataSource.type === 'remoteData') {
               item.requestParams = this.handlerParams(item)
               requestData(this.handlerParams(item)).then(data => {
-                if(data.tableContent){
+                if(data.tableContent) {
                   data.tableContent.forEach(dItem => {
                     dItem.originValue = dItem.value;
                     dItem.name = dItem[item.displayField]
@@ -840,7 +864,7 @@ export default {
                 }
               })
             }
-            else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
+            else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData') {
               this.$set(item, 'remoteData', item.dataSource.data)
             }
             fund.push(item)
@@ -850,14 +874,14 @@ export default {
       })
     },
     // 处理配置中数据请求
-    handlerParams(item){
+    handlerParams(item) {
       let url = item.dataSource.data.url;
       let params = item.dataSource.data.params;
       let keys = Object.keys(params);
       let requestParams = {
         url,
       }
-      if(keys.length){
+      if(keys.length) {
         let data = {};
         keys.forEach(key => {
           data[key] = params[key].value;
@@ -869,10 +893,12 @@ export default {
   },
   created() {
     register(); // 注册wx-js-sdk
+    
     let { name, listId, transCode, isModify = false, relationKey } = this.$route.query;
     if(transCode) this.transCode = transCode;
     this.listId = listId;
     this.isModify = isModify;
+
     // 获取本地保存的当前的主体
     let data = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
     if(data) this.entity.dealerName = JSON.parse(data).entityId;
@@ -918,7 +944,7 @@ export default {
       })
     })
     //解决android键盘收起input没有失去焦点，底部按钮遮挡输入框
-    if(platfrom.isAndroid){
+    if(platfrom.isAndroid) {
       window.onresize= ()=>{
         if(this.clientHeight > document.documentElement.clientHeight) {
           //底部按钮隐藏
