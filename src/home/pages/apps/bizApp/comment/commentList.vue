@@ -97,7 +97,6 @@
         this.parentId = item.ID;
         this.placeholder = `回复${item.creatorName}:`;
         this.$refs.commentValue.focus();
-        console.log('bScroll:', this.$$refs.bScroll);
       },
       // 点赞成功
       onPraiseSuccess(item) {
@@ -108,6 +107,29 @@
       tagFilter(val) {
         return val.replace(/</g, '&lt;').replace(/>/g, '&gt;');
       },
+      // 转换原生表情
+      utf16toEntities(str) { 
+        // 检测utf16字符正则 
+        let patt = /[\ud800-\udbff][\udc00-\udfff]/g; 
+
+        str = str.replace(patt, function(char){ 
+            let H, L, code; 
+            if (char.length === 2) { 
+              // 取出高位 
+              H = char.charCodeAt(0); 
+              // 取出低位 
+              L = char.charCodeAt(1); 
+              // 转换算法 
+              code = (H - 0xD800) * 0x400 + 0x10000 + L - 0xDC00; 
+
+              return `&#${code};`; 
+            } 
+            else { 
+              return char; 
+            } 
+        }); 
+        return str; 
+      },      
       // 评论
       saveComment() {
         if (!this.comment) {
@@ -120,22 +142,24 @@
           });
           return
         }
-        //订单详情的评论
+
+        // 实例详情的评论
         let submitData = {
-          content: this.tagFilter(this.comment),// 标签过滤
+          type: "instance",
           parentId: this.parentId,
           relationKey: this.transCode,
-          type: "instance",
+          content: this.utf16toEntities(this.tagFilter(this.comment)),// 标签过滤
         };
-        //应用详情的评论
+        // 应用详情的评论
         if (this.listId) {
           submitData = {
-            content: this.tagFilter(this.comment),// 标签过滤
+            type: 'list',
             parentId: this.parentId,
             relationKey: this.listId,
-            type: 'list'
+            content: this.utf16toEntities(this.tagFilter(this.comment)),// 标签过滤
           };
         }
+
         return saveComment(submitData).then(({success = true, message = ''}) => {
           if (success) {
             this.comment = '';
