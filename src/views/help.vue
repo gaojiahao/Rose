@@ -157,23 +157,22 @@
         return total;
       },
       otherAclass() {
-        // return accDiv(this.Aclass, 1996);
-        return toFixed(accDiv(this.Aclass, 1996))
+        return toFixed(accDiv(this.Aclass, 1996), 3)
       },
       BclassTotal() {
         return accAdd(this.Bclass, this.BclassDown)
       },
       // B类产品套数线上
       BSet() {
-        // return toFixed(this.Bclass / 4000)
+        return toFixed(this.Bclass / 4000)
       },
       // B类产品套数线下
       BSetDown() {
-        // return toFixed(this.BclassDown / 5000)
+        return toFixed(this.BclassDown / 5000)
       },
       // B类产品套数合计
       BSetTotal() {
-        // return toFixed(accAdd(this.BSet, this.BSetDown))
+        return toFixed(accAdd(this.BSet, this.BSetDown))
       },
     },
     methods: {
@@ -342,7 +341,7 @@
         // 项目类产品
         for (let item of this.arr) {
           // 动态增加 月销量“套”合计
-          // newVar2 = toFixed(accAdd(newVar2, Number(item.num1)));
+          newVar2 = toFixed(accAdd(newVar2, Number(item.num1)));
           // 项目类产品
           jsonData.transDetailUncalc.push({
             id: this.guid(),
