@@ -101,7 +101,6 @@
             newId = newVal.id || '';
           } 
           if(JSON.stringify(oldVal) !== '{}' && oldId !== newId) {
-            console.log('请求联系人');
             this.resetCondition();
             this.getContact();
           }

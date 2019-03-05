@@ -57,6 +57,7 @@ import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 // 公共方法
 import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
 import { toFixed } from '@/plugins/calc'
+import { setTimeout } from 'timers';
 
 const DRAFT_KEY = 'XSCK_DATA';
 export default {
@@ -99,24 +100,29 @@ export default {
       get: function() {
         let arr = [];
         for (let items of Object.values(this.orderList)) {
-          for (let cItem of items) {
-            if(cItem.fieldCode === 'assMeasureUnit'){
-              let requestParams = {
-                url: cItem.dataSource.data.url,
-                data: {
-                  inventoryCode:  item.inventoryCode
+          for (let mItem of items) {
+            if(this.matterEditConfig.editPart) {
+              // 此处请求 辅助计量
+              for (let cItem of this.matterEditConfig.editPart) {
+                if(cItem.fieldCode === 'assMeasureUnit') {
+                  let requestParams = {
+                    url: cItem.dataSource.data.url,
+                    data: {
+                      inventoryCode:  mItem.inventoryCode
+                    }
+                  }
+                  requestData(requestParams).then(({tableContent = []}) => {
+                    tableContent.forEach(mItem => {
+                      mItem.name =  mItem.invSubUnitName;
+                      mItem.value =  mItem.invSubUnitName;
+                    })
+                    cItem.remoteData = tableContent
+                  })
+                  break;
                 }
               }
-              requestData(requestParams).then(({tableContent = []}) => {
-                tableContent.forEach(mItem => {
-                  mItem.name =  mItem.invSubUnitName;
-                  mItem.value =  mItem.invSubUnitName;
-                })
-                cItem.remoteData = tableContent
-              })
-              break
             }
-            arr.push(cItem);
+            arr.push(mItem);
           }
         }
         return arr;
@@ -125,31 +131,6 @@ export default {
     }
   },
   watch:{
-    matterList(list) {
-      for (let item of list) {
-        if(this.matterEditConfig.editPart) console.log('matterEditConfig:', this.matterEditConfig);
-        
-        // 请求物料辅助计量的数据
-        // for (let cItem of this.matterEditConfig.editPart) {
-        //   if(cItem.fieldCode === 'assMeasureUnit') {
-        //     let requestParams = {
-        //       url: cItem.dataSource.data.url,
-        //       data: {
-        //         inventoryCode:  item.inventoryCode
-        //       }
-        //     }
-        //     requestData(requestParams).then(({tableContent = []}) => {
-        //       tableContent.forEach(mItem => {
-        //         mItem.name =  mItem.invSubUnitName;
-        //         mItem.value =  mItem.invSubUnitName;
-        //       })
-        //       cItem.remoteData = tableContent
-        //     })
-        //     break;
-        //   }
-        // }
-      }
-    },
     orderListTitle(val) {
       if(val.includes('订单')){
         this.filterList = [
@@ -188,9 +169,10 @@ export default {
       let accountExpirationDate = pamentDays ? dateFormat(Date.now() + accMul(pamentDays, day), 'YYYY-MM-DD') : '';
       this.dealerInfo = {
         ...sel,
-        accountExpirationDate: accountExpirationDate,
         daysOfAccount: sel.pamentDays,
         drDealerPaymentTerm: sel.paymentTerm,
+        dealerName_dealerDebit: sel.dealerName,
+        accountExpirationDate: accountExpirationDate,
         drDealerLogisticsTerms: sel.dealerLogisticsTerms,
       };
       if(this.matterParams.data && this.matterParams.data.dealerCode != null) {
@@ -251,30 +233,8 @@ export default {
       let orderList = JSON.parse(JSON.stringify(this.orderList));
       sels.forEach(item => {
         let orderListKey = item.transCode ? item.transCode : 'noCode';
-
         // 初始化数据
         item.taxRate = this.taxRate;
-
-        // 请求物料辅助计量的数据
-        for(let cItem of this.matterEditConfig.editPart){
-          if(cItem.fieldCode === 'assMeasureUnit'){
-            let requestParams = {
-              url: cItem.dataSource.data.url,
-              data: {
-                inventoryCode:  item.inventoryCode
-              }
-            }
-            requestData(requestParams).then(({tableContent = []}) => {
-              tableContent.forEach(mItem => {
-                mItem.name =  mItem.invSubUnitName;
-                mItem.value =  mItem.invSubUnitName;
-              })
-              cItem.remoteData = tableContent
-            })
-            break
-          }
-        }
-
         // 格式化日期
         for(let key in this.dataIndexMap){
           if(key === 'promDeliTime'){
@@ -401,19 +361,20 @@ export default {
     },
     // 提价订单
     submitOrder() {
-      let warn = '';
-      let dataSet = [];
+      /** 
+       * @warn    提示文字
+       * @dateSet   提交数据
+       * 
+       * @dealerConfig  <往来部分> 配置
+       * @dealerInfo  <往来部分> 信息
+       * @validateMap <仓库 库位> 校验字段
+       * 
+       */ 
+      
+      let warn = '', dataSet = [], 
+          dealerInfo = this.dealerInfo, 
+          dealerConfig = this.dealerConfig;
       let validateMap = [
-        {
-          key: 'dealerInfo',
-          childKey: 'dealerCode',
-          message: '客户信息'
-        },
-        {
-          key: 'dealerInfo',
-          childKey: 'paymentTerm',
-          message: '结算方式'
-        },
         {
           key: 'warehouse',
           childKey: 'warehouseCode',
@@ -425,6 +386,10 @@ export default {
           message: '库位'
         }
       ];
+      
+      // 校验 <往来部分> 必填字段
+      warn = this.verifyData(dealerConfig, dealerInfo);
+
       if (!warn) {
         validateMap.every(item => {
           if (item.childKey && !this[item.key][item.childKey]) {
@@ -438,9 +403,11 @@ export default {
           return true
         });
       }
+
       if (!warn && !Object.keys(this.orderList).length) {
         warn = '请选择物料'
       }
+
       // 组装dataSet
       for (let items of Object.values(this.orderList)) {
         for (let item of items) {
@@ -455,13 +422,14 @@ export default {
           dataSet.push(oItem);
         }
       }
+
       if (warn) {
         this.$vux.alert.show({
           content: warn
         });
         return
       }
-      console.log(dataSet)
+
       this.$vux.confirm.show({
         content: '确认提交?',
         // 确定回调
@@ -692,11 +660,38 @@ export default {
     }
   },
   updated() {
+    // let matterList = this.matterList, 
+    //     matterEditConfig = this.matterEditConfig;
     let draft = JSON.parse(sessionStorage.getItem(DRAFT_KEY));
+
     if(draft && this.matterParams.data) {
       this.matterParams = draft.matterParams;
       sessionStorage.removeItem(DRAFT_KEY);
     }
+    // if(matterList.length && matterEditConfig.editPart) {
+    //   // 请求物料辅助计量的数据
+    //   for(let item of matterList) {
+    //     for(let cItem of matterEditConfig.editPart) {
+    //       if(cItem.fieldCode === 'assMeasureUnit') {          
+    //         let requestParams = {
+    //           url: cItem.dataSource.data.url,
+    //           data: {
+    //             inventoryCode:  item.inventoryCode
+    //           }
+    //         }
+    //         requestData(requestParams).then(({tableContent = []}) => {
+    //           tableContent.forEach(mItem => {
+    //             mItem.name =  mItem.invSubUnitName;
+    //             mItem.value =  mItem.invSubUnitName;
+    //           })
+    //           cItem.remoteData = tableContent
+    //         })
+    //         break;
+    //       }
+    //       break;
+    //     }
+    //   }
+    // }
   }
 }
 </script>

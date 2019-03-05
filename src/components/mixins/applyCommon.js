@@ -689,7 +689,7 @@ export default {
                 })
                 requestParams.data = data;
               }
-              console.log('物料相关requestParams:', requestParams.url);
+              // console.log('物料相关requestParams:', requestParams.url);
               // requestData(requestParams).then(({tableContent = []}) => {
               //   let arr = [];
               //   tableContent.forEach(item => {

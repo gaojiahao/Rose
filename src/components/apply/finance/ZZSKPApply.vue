@@ -13,11 +13,11 @@
         <other-config-part :other-config=otherConfig :other-info=otherInfo v-model="otherInfo"></other-config-part>
         <!-- 物料选择 -->
         <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :show-matter-pop="showMatterPop" :filter-list="filterList"
-          :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="[]"
-          :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
-          :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
-          :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
-          :chosen-matter="matter" :check-amt-fn="checkAmt" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
+                           :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="[]"
+                           :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
+                           :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
+                           :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
+                           :chosen-matter="matter" :check-amt-fn="checkAmt" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
         </apply-matter-part>
         <!-- 备注 -->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
@@ -29,7 +29,7 @@
     </div>
     <!-- 底部提交确认栏 -->
     <op-button :is-modify="matterModifyClass" :hide="btnIsHide" :td-amount="tdAmount" :tax-amount="taxAmount"
-               :all-check="selItems.length === matterList.length" @on-submit="submitOrder" @on-check-all="checkAll"
+               :all-check="checkList.length === matterList.length" @on-submit="submitOrder" @on-check-all="checkAll"
                @on-delete="deleteCheckd"></op-button>
   </div>
 </template>
@@ -154,26 +154,57 @@ export default {
     },
     // 选择要删除的物料
     delClick(sItem, index, key) {
-      let arr = this.selItems;
-      let delIndex = arr.findIndex(item => item === index);
-      //若存在重复的 则清除
-      if (delIndex !== -1) {
-        arr.splice(delIndex, 1);
-        return;
+      let arr = this.selItems[key];
+      if(arr){
+        let delIndex = arr.findIndex(item => item === index);
+        if (delIndex !== -1) {
+          arr.splice(delIndex, 1);
+          if(!arr.length) delete this.selItems[key];
+          return;
+        }
+        arr.push(index);
       }
-      arr.push(index);
+      else{
+        this.$set(this.selItems, key, [index])
+      }
     },
-    // 判断是否展示选中图标
+    // 删除的选中状态
     showSelIcon(sItem, index) {
-      return this.selItems.includes(index);
+      if(sItem.transCode) {
+        return this.selItems[sItem.transCode] && this.selItems[sItem.transCode].findIndex(item => item === index) !== -1;
+      }
+      else {
+        return this.checkList.includes(index);
+      }
     },
     // 全选
     checkAll() {
-      if (this.selItems.length === this.matterList.length) {
-        this.selItems = [];
+      // 如果已全部选中 则清除所有选中状态
+      if (this.checkList.length === this.matterList.length) {
+        this.selItems = {};
         return
       }
-      this.selItems = this.matterList.map((item, index) => index);
+      // 针对物料列表中的数据进行处理
+      let selItems = {};
+      for(let key in this.orderList){
+        this.orderList[key].forEach((item, index) => {
+          // 存在交易号时 key等于交易号
+          if(item.transCode) {
+            if(!selItems[item.transCode]){
+              selItems[item.transCode] = [];
+            }
+            selItems[item.transCode].push(index)
+          }
+          // 不存在时 key为 'noCode'
+          else {
+            if(!selItems['noCode']) {
+              selItems['noCode'] = []
+            }
+            selItems['noCode'].push(index);
+          }
+        })
+      }
+      this.selItems = selItems;
     },
     // 删除选中的
     deleteCheckd() {
@@ -181,19 +212,41 @@ export default {
         content: '确认删除?',
         // 确定回调
         onConfirm: () => {
-          let orderList = {};
-          let selItems = this.selItems;
-          // 根据选择下标 筛选出没被删除的 放回orderList
-          let remainder = this.matterList.filter((item, index) => !selItems.includes(index)); 
-          remainder.forEach(item => {
-            let orderListKey = item.transCode;
-            if (!orderList[orderListKey]) {
-              orderList[orderListKey] = []
+          /** 
+           *  @selItems {String} 被选中删除的物料对象（当有交易号时 key为交易号 反之 key为noCode）
+           *  @checkList {Array} 被选中删除的物料数组 (存储被删除物料的下标)
+           *  @matterList {Array} 物料列表
+           */ 
+
+          // 被选中删除的物料
+          let selItems = this.selItems, checkList = this.checkList;
+          
+          for(let key in this.selItems) {
+            // 当没有对应的交易单号
+            if(key === 'noCode') {
+              let orderList = {};
+              let remainder = this.matterList.filter((item, index) => !checkList.includes(index));
+              remainder.forEach(item => {
+                if (!orderList[key]) {
+                  orderList[key] = []
+                }
+                orderList[key].push(item);
+              });
+              this.orderList = orderList;
             }
-            orderList[orderListKey].push(item);
-          });
-          this.selItems = [];
-          this.orderList = orderList;
+            // 当存在对应的交易单号
+            else {
+              // 将orderList中对应交易号的物料 按照selItems中的索引删除
+              let newIndexs = this.selItems[key].map((val, idx) => val - idx);              
+              newIndexs.forEach((sItem, sIndex) => {
+                this.orderList[key].splice(sItem, 1);
+              }) 
+              if(!this.orderList[key].length){
+                delete this.orderList[key]
+              }
+            }
+          }
+          this.selItems = {};
           this.matterModifyClass = false;
         }
       })
@@ -209,7 +262,7 @@ export default {
        * @warn    提示文字
        * @dateSet   提交数据
        * 
-       * @dealerConfig  <往来部分> 配置
+       * @baseinfoExtConfig  <往来部分> 配置
        * @otherConfig   <其他部分> 配置
        * 
        * @otherInfo   <其他部分> 信息
@@ -221,10 +274,10 @@ export default {
           otherInfo = this.otherInfo,
           dealerInfo = this.dealerInfo, 
           otherConfig = this.otherConfig,
-          dealerConfig = this.dealerConfig;
+          baseinfoExtConfig = this.baseinfoExtConfig;
 
       // 校验 <往来部分> 必填字段
-      warn = this.verifyData(dealerConfig, dealerInfo);
+      warn = this.verifyData(baseinfoExtConfig, dealerInfo);
 
       // 校验 <其他部分> 必填字段
       if(!warn) warn = this.verifyData(otherConfig, otherInfo);
