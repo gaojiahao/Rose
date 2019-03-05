@@ -4,7 +4,7 @@ import errHandle from 'service/errHandle'
 
 import axios from 'axios';
 
-// TODO reject处理
+// reject处理
 let rejectError = (reject, message) => {
   errHandle(message);
   return Promise.reject({ success: false, message });

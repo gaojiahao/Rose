@@ -52,20 +52,20 @@
       }
     },
     methods: {
-      // TODO 地区切换
+      // 地区切换
       regionChange(val) {
         this.showButton = !!val[0]
         if (val[0]) {
           this.showMore = true
         }
       },
-      // TODO 银行切换
+      // 银行切换
       bankChange(val) {
       },
-      // TODO 部门切换
+      // 部门切换
       deptChange(val) {
       },
-      // TODO 队长切换
+      // 队长切换
       captionChange() {
       },
       goHome() {
@@ -90,11 +90,11 @@
       saveOption(data) {
         // optionService.saveOption()
       },
-      // TODO 获取输入参数
+      // 获取输入参数
       getOption() {
         // optionService.getOption()
       },
-      // TODO 获取地区
+      // 获取地区
       getRegion(params = {}) {
         return new Promise((resolve, reject) => {
           optionService.getRegion().then(data => {
@@ -107,7 +107,7 @@
           })
         })
       },
-      // TODO 获取银行
+      // 获取银行
       getBank(params = {}) {
         optionService.getBank().then(data => {
           let bank = data.tableContent.reduce((arr, item) => {
@@ -117,7 +117,7 @@
           this.$set(this.bankList, '0', bank)
         })
       },
-      // TODO 获取部门
+      // 获取部门
       getDept() {
         optionService.getDept().then(data => {
           let dept = data.tableContent.reduce((arr, item) => {
@@ -127,7 +127,7 @@
           this.$set(this.deptList, '0', dept)
         })
       },
-      // TODO 获取队长
+      // 获取队长
       getCaptain(params) {
         optionService.getCaptain(params).then(data => {
           let captain = data.tableContent.reduce((arr, item) => {
@@ -141,7 +141,7 @@
       focusCaptain() {
         this.hasSelected = false
       },
-      // TODO 搜索队长
+      // 搜索队长
       searchCaptain(val) {
         if (this.hasSelected) {
           return
@@ -152,13 +152,13 @@
           })
         }
       },
-      // TODO 选中队长
+      // 选中队长
       selectCaptain(item) {
         this.captain = item
         this.captainList = []
         this.hasSelected = true
       },
-      // TODO 清空队长列表
+      // 清空队长列表
       clearCaptain() {
         this.captainList = []
       },

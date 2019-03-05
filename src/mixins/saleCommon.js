@@ -286,7 +286,7 @@ export default {
         this.countyToday = [baseinfoExt.varchar24];
       }
     },
-    // TODO 项目类产品切换
+    // 项目类产品切换
     projectChange(item, index) {
       let matched = this.list.find(lItem => lItem.value === item.value[0]);
       console.log(matched);
@@ -298,19 +298,19 @@ export default {
         taxAmount: matched.taxAmount,
       });
     },
-    // TODO 校验金额
+    // 校验金额
     checkAmt(key = '') {
       this[key] = toFixed(Math.abs(Number(this[key])));
     },
-    // TODO 选中项目类产品
+    // 选中项目类产品
     selProject(sels) {
       this.arr = sels;
     },
-    // TODO 点击项目名称
+    // 点击项目名称
     clickProject() {
       this.showProjectPopup = true;
     },
-    // TODO 获取连长、团长
+    // 获取连长、团长
     getSuperior() {
       return saleRepotService.getSuperior().then(({tableContent = []}) => {
         let [companyCommander = {}, group = {}] = tableContent;
@@ -318,7 +318,7 @@ export default {
         this.member = group.nickname || ''; // 团长
       })
     },
-    // TODO 获取地区级联数据
+    // 获取地区级联数据
     getCascadeRegion(data = {}) {
       return optionService.getCascadeRegion(data).then(data => {
         data.forEach(item => {
@@ -328,13 +328,13 @@ export default {
         return data
       });
     },
-    // TODO 获取省份
+    // 获取省份
     getProvince() {
       return this.getCascadeRegion().then(data => {
         this.provinceList = data;
       })
     },
-    // TODO 获取城市
+    // 获取城市
     getCity() {
       let [value = ''] = this.areaToday;
       let matched = this.provinceList.find(item => item.value === value);
@@ -344,7 +344,7 @@ export default {
         this.cityTodayList = data;
       })
     },
-    // TODO 获取地区
+    // 获取地区
     getCounty() {
       let [value = ''] = this.cityToday;
       let matched = this.cityTodayList.find(item => item.value === value);
@@ -354,13 +354,13 @@ export default {
         this.countyTodayList = data;
       })
     },
-    // TODO 省份切换
+    // 省份切换
     provinceChange(val) {
       this.cityToday = [];
       this.countyToday = [];
       this.getCity();
     },
-    // TODO 城市切换
+    // 城市切换
     cityChange(val) {
       this.countyToday = [];
       this.getCounty();

@@ -163,7 +163,7 @@
       onChange(val) {
         // this.showTab = false
       },
-      // TODO 重置数据
+      // 重置数据
       resetData(key = 'reportData') {
         this[key] = {
           yesterdays: [],
@@ -173,7 +173,7 @@
           years: []
         }
       },
-      // TODO 组装数据，有日期过滤
+      // 组装数据，有日期过滤
       assembleData() {
         return new Promise((resolve, reject) => {
           this.showLoading = true;
@@ -248,23 +248,23 @@
           })
         })
       },
-      // TODO 获取项目列表
+      // 获取项目列表
       getProj() {
         let proj = JSON.parse(sessionStorage.getItem(PROJ_LIST));
         proj.shift();
         this.projList = proj
       },
-      // TODO 隐藏下拉框
+      // 隐藏下拉框
       hideDropList() {
         this.showDate = false;
         this.showProj = false;
       },
-      // TODO 点击本日、本周、本月、本年的页签
+      // 点击本日、本周、本月、本年的页签
       dateClick() {
         this.showDate = !this.showDate;
         this.showProj = false;
       },
-      // TODO 点击本日、本周、本月、本年的列表
+      // 点击本日、本周、本月、本年的列表
       dateItemClick(item) {
         this.showDate = false;
         if (item.value === this.dateSelected.value) {
@@ -277,12 +277,12 @@
           this.getReportSummary();
         }
       },
-      // TODO 点击项目页签
+      // 点击项目页签
       projClick() {
         this.showProj = !this.showProj;
         this.showDate = false;
       },
-      // TODO 点击项目列表
+      // 点击项目列表
       projItemClick(item, index) {
         this.showProj = false;
         if (item === this.objName) {
@@ -293,7 +293,7 @@
         this.assembleData();
         this.getTotal();
       },
-      // TODO 点击A类产品页签
+      // 点击A类产品页签
       aProjClick() {
         this.showProj = false;
         this.showDate = false;
@@ -302,7 +302,7 @@
         this.assembleData();
         this.getTotal();
       },
-      // TODO 返回上一页
+      // 返回上一页
       pagePrev() {
         if (this.page === 1) {
           return
@@ -313,7 +313,7 @@
           this.rankScroll.scrollTo(0, 0);
         });
       },
-      // TODO 进入下一页
+      // 进入下一页
       pageNext() {
         if (this.isDisabled) {
           return
@@ -324,7 +324,7 @@
           this.rankScroll.scrollTo(0, 0);
         });
       },
-      // TODO 获取合计，有日期过滤
+      // 获取合计，有日期过滤
       getTotal() {
         reportService.getTotalByDate(Object.assign(this.filterParams, this.getDate(this.dateSelected.value), {
           objName: this.objName
@@ -333,7 +333,7 @@
           this.getTotalText();
         })
       },
-      // TODO 生成合计栏文案
+      // 生成合计栏文案
       getTotalText() {
         let totalData = this.totalData || [];
         let total = {};
@@ -350,13 +350,13 @@
           this.totalText = `${total.quantity || 0}件/折合${toFixed(total.coverNum || 0) }套（共${total.number || 0}人）`;
         }
       },
-      // TODO 获取报数汇总
+      // 获取报数汇总
       getReportSummary() {
         reportService.getReportSummary(this.getDate(this.dateSelected.value)).then(data => {
           this.summaryText = `${data.punchCardNumber || 0}人（共${data.salesmanNumber || 0}人）`;
         })
       },
-      //  TODO 跳转到报数汇总页面
+      //  跳转到报数汇总页面
       goSummary() {
         // 存储时间选择
         sessionStorage.setItem(DATE_SELECTED, JSON.stringify(this.dateSelected));
@@ -369,7 +369,7 @@
       }
     },
     filters: {
-      // TODO 项目类产品名称过滤
+      // 项目类产品名称过滤
       nameFilter(val, vm) {
         if (val !== A_PROJ_NAME) {
           return val.length > 5 ? `${val.slice(0, 5)}...` : val;

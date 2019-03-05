@@ -27,7 +27,7 @@
       }
     },
     methods: {
-      // TODO 获取当前用户信息
+      // 获取当前用户信息
       getUser() {
         return tokenService.getUser().then(data => {
           this.userInfo = data;

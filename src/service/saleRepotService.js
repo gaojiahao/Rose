@@ -36,7 +36,7 @@ let saleReportService = {
       data: data,
     })
   },
-  // TODO 获取连长、团长
+  // 获取连长、团长
   getSuperior(data) {
     return $axios.ajax({
       url: '/ds/getSuperior',

@@ -38,7 +38,7 @@ let tokenService = {
       timestamp: +new Date()
     }));
   },
-  // TODO 检查是否登录
+  // 检查是否登录
   checkLogin(key = 'key') {
     let token = JSON.parse(window.sessionStorage.getItem(TOKEN_KEY)) || {};
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
@@ -56,9 +56,11 @@ let tokenService = {
     }
     return token[key]
   },
-  // TODO 开发时用于获取账号的登录信息
+  // 开发时用于获取账号的登录信息
   login(key) {
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
+    
+    // return this.pcLogin(key);  // 调试模式
     if (isQYWX) {
       return this.QYWXLogin(key);
     } else {
@@ -69,7 +71,7 @@ let tokenService = {
       }
     }
   },
-  // TODO PC端登录，默认返回token
+  // PC端登录，默认返回token
   pcLogin(key = 'token') {
     return new Promise((resolve, reject) => {
         let params = {
@@ -82,10 +84,17 @@ let tokenService = {
           data: {
             loginModel: 1,
             // password: '123456',
+            // userCode: '1486'
             // userCode: '1392',
             // userCode: '2236'
-            password: 'stark',
-            userCode: 'rfd9527'
+            // userCode: '3764'
+
+            // password: '18037921095',
+            // password: '1803792',
+            userCode: 'rfd9527',
+            password: 'stark'
+            // password: '1701',
+            // userCode: '1701'
           }
         };
         axios(params).then((res) => {
@@ -110,7 +119,7 @@ let tokenService = {
       }
     )
   },
-  // TODO 企业微信登录，默认返回token
+  // 企业微信登录，默认返回token
   QYWXLogin(key = 'token') {
     return new Promise((resolve, reject) => {
       let query = querystring.parse(location.search.slice(1));
@@ -136,7 +145,7 @@ let tokenService = {
       });
     })
   },
-  // TODO 获取用户信息
+  // 获取用户信息
   getUser() {
     return new Promise((resolve, reject) => {
       const USER_INFO = 'RFD_CURRENT_USER_INFO';
@@ -163,7 +172,7 @@ let tokenService = {
       })
     });
   },
-  // TODO 判断是否为总裁
+  // 判断是否为总裁
   isPresident() {
     return $axios.ajax({
       url: '/trans/getModelData?refresh=true&dsCode=getPresident'

@@ -170,7 +170,7 @@
         this.resetCondition();
         this.getList();
       },
-      // TODO 获取请求参数
+      // 获取请求参数
       getParams() {
         let filter = [];
         let sort = [
@@ -223,7 +223,7 @@
           })
         });
       },
-      // TODO 请求列表
+      // 请求列表
       getList() {
         switch (this.activeIndex) {
           case 0:
@@ -236,7 +236,7 @@
             break;
         }
       },
-      // TODO 重置列表条件
+      // 重置列表条件
       resetCondition() {
         switch (this.activeIndex) {
           case 0:
@@ -256,33 +256,33 @@
           this.$refs.bScroll.resetPullDown();
         })
       },
-      // TODO 搜索
+      // 搜索
       searchList({val = '', property = ''}) {
         this.searchVal = val;
         this.filterProperty = property;
         this.resetCondition();
         this.getList();
       },
-      // TODO 修改时间
+      // 修改时间
       changeDate(time) {
         this.timeText = `${time.startDate}~${time.endDate}`
         this.timeFilter = time;
         this.resetCondition();
         this.getList();
       },
-      // TODO 重置下拉刷新、上拉加载的状态
+      // 重置下拉刷新、上拉加载的状态
       resetScroll() {
         this.$nextTick(() => {
           this.$refs.bScroll.finishPullDown();
           this.$refs.bScroll.finishPullUp();
         })
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getList();
       },
-      // TODO 排序
+      // 排序
       sortByAmt() {
         this.sort = this.sort === 'asc' ? 'desc' : 'asc';
         this.resetCondition();

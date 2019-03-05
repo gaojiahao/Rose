@@ -117,7 +117,7 @@
   // mixin引入
   import saleCommon from 'mixins/saleCommon'
   // 方法引入
-  import {toFixed, accAdd, accMul} from 'plugins/calc'
+  import {toFixed, accAdd, accMul, accDiv} from 'plugins/calc'
 
   const BASIC_INFO_KEY = 'HELP_BASIC_INFO';
   const FORM_INFO_KEY = 'HELP_FORM_INFO';
@@ -157,22 +157,23 @@
         return total;
       },
       otherAclass() {
-        return toFixed(this.Aclass / 1996)
+        // return accDiv(this.Aclass, 1996);
+        return toFixed(accDiv(this.Aclass, 1996))
       },
       BclassTotal() {
         return accAdd(this.Bclass, this.BclassDown)
       },
       // B类产品套数线上
       BSet() {
-        return toFixed(this.Bclass / 4000)
+        // return toFixed(this.Bclass / 4000)
       },
       // B类产品套数线下
       BSetDown() {
-        return toFixed(this.BclassDown / 5000)
+        // return toFixed(this.BclassDown / 5000)
       },
       // B类产品套数合计
       BSetTotal() {
-        return toFixed(accAdd(this.BSet, this.BSetDown))
+        // return toFixed(accAdd(this.BSet, this.BSetDown))
       },
     },
     methods: {
@@ -341,7 +342,7 @@
         // 项目类产品
         for (let item of this.arr) {
           // 动态增加 月销量“套”合计
-          newVar2 = toFixed(accAdd(newVar2, Number(item.num1)));
+          // newVar2 = toFixed(accAdd(newVar2, Number(item.num1)));
           // 项目类产品
           jsonData.transDetailUncalc.push({
             id: this.guid(),
@@ -376,7 +377,7 @@
         this.recordBasic();
         this.$router.push({path: "/count"});
       },
-      // TODO 缓存所属的地区
+      // 缓存所属的地区
       recordBasic() {
         // 缓存 支援地区模块
         localStorage.setItem(
@@ -387,7 +388,7 @@
           })
         );
       },
-      // TODO 缓存表单信息
+      // 缓存表单信息
       recordForm() {
         localStorage.setItem(
           [FORM_INFO_KEY],

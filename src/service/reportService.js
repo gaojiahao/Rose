@@ -1,7 +1,7 @@
 import $axios from '../plugins/ajax'
 
 let reportService = {
-  // TODO 获取报告列表(旧)
+  // 获取报告列表(旧)
   getReport(data = {}) {
     return $axios.ajax({
       url: '/trans/getModelData',
@@ -11,7 +11,7 @@ let reportService = {
       }, data)
     });
   },
-  // TODO 获取合计(旧)
+  // 获取合计(旧)
   getTotal(data = {}) {
     return $axios.ajax({
       url: '/trans/getModelData',
@@ -21,7 +21,7 @@ let reportService = {
       }, data)
     });
   },
-  // TODO 获取列表,增加时间筛选
+  // 获取列表,增加时间筛选
   getReportByDate(data = {}) {
     return $axios.ajax({
       url: '/trans/getModelData',
@@ -40,7 +40,7 @@ let reportService = {
       }, data)
     });
   },
-  // TODO 获取报数汇总
+  // 获取报数汇总
   getReportSummary(data = {}) {
     return $axios.ajax({
       url: '/trans/getModelData',
@@ -50,7 +50,7 @@ let reportService = {
       }, data)
     });
   },
-  // TODO 获取未报数列表
+  // 获取未报数列表
   getUnreported(data = {}) {
     return $axios.ajax({
       url: '/trans/getModelData',

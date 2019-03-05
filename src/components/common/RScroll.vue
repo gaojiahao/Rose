@@ -60,7 +60,7 @@
       }
     },
     methods: {
-      // TODO 初始化滚动
+      // 初始化滚动
       _initScroll() {
         let options = {
           click: true,
@@ -108,19 +108,19 @@
           })
         })
       },
-      // TODO 刷新
+      // 刷新
       refresh() {
         this.bScroll && this.bScroll.refresh();
       },
-      // TODO 开启滚动
+      // 开启滚动
       enable() {
         this.bScroll && this.bScroll.enable();
       },
-      // TODO 禁用滚动
+      // 禁用滚动
       disable() {
         this.bScroll && this.bScroll.disable();
       },
-      // TODO 结束下拉刷新
+      // 结束下拉刷新
       finishPullDown() {
         return new Promise(resolve => {
           this.resetPullDown();
@@ -130,7 +130,7 @@
           resolve();
         })
       },
-      // TODO 结束上拉加载
+      // 结束上拉加载
       finishPullUp() {
         return new Promise(resolve => {
           this.bScroll.finishPullUp();
@@ -138,11 +138,11 @@
           resolve();
         })
       },
-      // TODO 滚动到指定位置
+      // 滚动到指定位置
       scrollTo({x = 0, y = 0}) {
         this.bScroll.scrollTo(x, y);
       },
-      // TODO 重置下拉刷新图标位置
+      // 重置下拉刷新图标位置
       resetPullDown() {
         if (this.pullDownTop !== -PULL_DOWN_REFRESH_HEIGHT) {
           this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;

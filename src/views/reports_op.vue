@@ -73,7 +73,7 @@
       }
     },
     methods: {
-      // TODO 获取地区
+      // 获取地区
       getRegion(params = {}) {
         return new Promise((resolve, reject) => {
           if (this.regionList.length > 0) {
@@ -90,7 +90,7 @@
           }
         })
       },
-      // TODO 获取银行
+      // 获取银行
       getBank(params = {}) {
         return new Promise((resolve, reject) => {
           if (this.bankList.length > 0) {
@@ -107,7 +107,7 @@
           }
         })
       },
-      // TODO 获取部门
+      // 获取部门
       getDept(params = {}) {
         return new Promise((resolve, reject) => {
           if (this.deptList.length > 0) {
@@ -124,7 +124,7 @@
           }
         })
       },
-      // TODO 获取项目列表
+      // 获取项目列表
       getProj() {
         return new Promise((resolve, reject) => {
           if (this.projList.length > 0) {
@@ -180,7 +180,7 @@
           this.showMore = false;
         }
       },
-      // TODO 跳转到过滤页
+      // 跳转到过滤页
       goRp() {
         let filterParams = {};
         this.pickerList.forEach((item, index) => {

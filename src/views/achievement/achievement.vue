@@ -64,7 +64,7 @@
         }
         return url
       },
-      // TODO 重置列表条件
+      // 重置列表条件
       resetCondition() {
         this.listData = [];
         this.page = 1;
@@ -74,14 +74,14 @@
           this.$refs.bScroll.resetPullDown();
         })
       },
-      // TODO 搜索
+      // 搜索
       searchList({val = '', property = ''}) {
         this.serachVal = val;
         this.filterProperty = property;
         this.resetCondition();
         this.getList();
       },
-      // TODO 查询列表
+      // 查询列表
       getList() {
         let filter = [
           {
@@ -117,22 +117,22 @@
           })
         })
       },
-      // TODO 重置下拉刷新、上拉加载的状态
+      // 重置下拉刷新、上拉加载的状态
       resetScroll() {
         // this.$refs.bScroll.finishPullDown();
         this.$refs.bScroll.finishPullUp();
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getList();
       },
-      // TODO 下拉刷新
+      // 下拉刷新
       onPullingDown() {
         this.page = 1;
         this.getList(true);
       },
-      // TODO 进入详情页
+      // 进入详情页
       goDetail(item) {
         sessionStorage.setItem('RFD_ACHIEVEMENT_DETAIL', JSON.stringify(item));
         this.$router.push({

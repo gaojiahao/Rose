@@ -27,14 +27,14 @@
       }
     },
     methods: {
-      // TODO 点击上一页
+      // 点击上一页
       pagePrev() {
         if (this.disabledPrev) {
           return;
         }
         this.$emit('pageprev');
       },
-      // TODO 点击下一页
+      // 点击下一页
       pageNext() {
         if (this.disabledNext) {
           return;

@@ -68,7 +68,7 @@
       },
     },
     methods: {
-      // TODO 获取数据列表
+      // 获取数据列表
       getUnreported() {
         this.showLoading = true;
         reportService.getUnreported(Object.assign({}, this.getDate(this.dateSelected), {
@@ -96,24 +96,24 @@
           this.summaryList = [];
         })
       },
-      // TODO 上一页处理
+      // 上一页处理
       pagePrev() {
         this.page--;
         this.getUnreported();
       },
-      // TODO 下一页处理
+      // 下一页处理
       pageNext() {
         this.page++;
         this.getUnreported();
       },
-      // TODO 日期切换
+      // 日期切换
       changeDate(item) {
         this.dateSelected = item.value;
         this.page = 1;
         // this.getReportSummary();
         this.getUnreported();
       },
-      // TODO 获取报数汇总
+      // 获取报数汇总
       getReportSummary() {
         reportService.getReportSummary(this.getDate(this.dateSelected)).then(data => {
           this.summaryText = `${data.punchCardNumber || 0}人（共${data.salesmanNumber || 0}人）`;

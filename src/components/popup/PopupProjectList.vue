@@ -88,7 +88,7 @@
       },
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -97,22 +97,22 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.tmpItems = [...this.selItems];
         this.$emit('input', false);
       },
-      // TODO 匹配相同项的索引
+      // 匹配相同项的索引
       findIndex(arr, sItem) {
         return arr.findIndex(item => {
           return item.value === sItem.value
         });
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.findIndex(this.tmpItems, sItem) !== -1;
       },
-      // TODO 选择物料
+      // 选择物料
       selThis(sItem, sIndex) {
         let arr = this.tmpItems;
         let delIndex = this.findIndex(arr, sItem);
@@ -123,7 +123,7 @@
         }
         arr.push(sItem);
       },
-      // TODO 确定选择物料
+      // 确定选择物料
       confirm() {
         let sels = [];
         this.showPop = false;
@@ -132,7 +132,7 @@
         // 触发父组件选中事件
         this.$emit('on-sel', JSON.parse(JSON.stringify(this.selItems)));
       },
-      // TODO 获取物料列表
+      // 获取物料列表
       getList() {
         let filter = [];
         //成品,商品,服务
@@ -176,7 +176,7 @@
           })
         });
       },
-      // TODO 搜索物料
+      // 搜索物料
       searchList({val = '', property = ''}) {
         this.srhInpTx = val;
         this.listData = [];
@@ -185,7 +185,7 @@
         this.$refs.bScroll.scrollTo(0, 0);
         this.getList();
       },
-      // TODO 删除选中项
+      // 删除选中项
       delSelItem(dItem) {
         let delIndex = this.findIndex(this.selItems, dItem);
         if (delIndex !== -1) {
@@ -193,12 +193,12 @@
         }
         this.tmpItems = [...this.selItems];
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getList();
       },
-      // TODO 设置默认值
+      // 设置默认值
       setDefaultValue() {
         this.tmpItems = [...this.defaultValue];
         this.selItems = [...this.defaultValue];

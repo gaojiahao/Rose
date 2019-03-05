@@ -2,7 +2,7 @@ import {numberPad} from 'vux'
 
 let dateMixin = {
   methods: {
-    // TODO 获取昨日、本日、本周、本月、本年的起始和结束日期
+    // 获取昨日、本日、本周、本月、本年的起始和结束日期
     getDate(type = '') {
       let now = new Date();
       let dayTime = 24 * 3600 * 1000; // 一天的毫秒数
