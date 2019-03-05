@@ -10,7 +10,7 @@
               <p class="code">往来编码：<span class="symbol"></span>{{dealer.dealerCode}}</p>
             </div>
           </div>
-          <span class="dealer_status vux-1px" :class="{'no_use' : dealer.dealerStatus !== '使用中'}">{{dealer.dealerStatus}}</span>
+          <span class="dealer_status vux-1px" :class="{'no_use' : baseinfo.status === '已删除'}">{{baseinfo.status}}</span>
         </div>
         <div class="baseinfo_address">
           <span class="icon-address"></span>
@@ -119,18 +119,25 @@ export default {
           item.show = true;
         })
         let {baseinfo = {}, dealer = {}} = formData;
-        switch (dealer.dealerStatus) {
-          case "1":
-            dealer.dealerStatus = '使用中';
+        // 表单状态 转换
+        switch(baseinfo.status) {
+          case -3 :
+            baseinfo.status = '已归档';
             break;
-          case '2':
-            dealer.dealerStatus = '未使用';
+          case -2 :
+            baseinfo.status = '已删除';
             break;
-          case '0':
-            dealer.dealerStatus = '草稿';
+          case -1 :
+            baseinfo.status = '已失效';
             break;
-          case '-1':
-            dealer.dealerStatus = '停用';
+          case 0 :
+            baseinfo.status = '草稿';
+            break;
+          case 1 :
+            baseinfo.status = '已生效';
+            break;
+          case 2 :
+            baseinfo.status = '进行中';
             break;
         }
         this.hasDefault = true;

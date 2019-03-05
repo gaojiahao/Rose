@@ -13,7 +13,7 @@
           </div>
           <div class="matter_detail">
             <span class="matter_item_title">规格：</span>
-            <span class="matter_item_value">{{item.specification_transObjCode || item.specification_outPutMatCode || item.facilitySpecification_facilityObjCode || '无'}}</span>
+            <span class="matter_item_value">{{item.specification_transObjCode || item.specification_outPutMatCode || item.facilitySpecification_facilityObjCode || item.assMeasureDescription || '无'}}</span>
           </div>
         </div>
         <div class="matter_info_item">
@@ -127,7 +127,7 @@
       &.flex-start {
         justify-content: flex-start;
         .matter_detail {
-          &:last-child {
+          & + .matter_detail {
             margin-left: .1rem;
           }
         }

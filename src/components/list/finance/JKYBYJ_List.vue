@@ -15,16 +15,16 @@
                         @click.native="goDetail(item, index)" :isHasCount="false">
           <template slot="cost_info" slot-scope="{mItem}">
             <div class="each_amount">
-              <span class="money">￥{{mItem.tdAmount | numberComma}}</span>
-              <span class="title">本次支付</span>
-            </div>
-            <div class="each_amount">
               <span class="money">￥{{mItem.tdAmountCopy1 | numberComma}}</span>
               <span class="title">申请金额</span>
             </div>
-            <div class="each_amount count">
+            <div class="each_amount">
               <span class="money">￥{{mItem.tdAmount | numberComma}}</span>
-              <span class="title">本次合计</span>
+              <span class="title">本次支付</span>
+            </div>
+            <div class="each_amount count">
+              <span class="money">￥{{mItem.differenceAmount | numberComma}}</span>
+              <span class="title">支付后余额</span>
             </div>
           </template>
         </finance-list-item>

@@ -41,7 +41,7 @@
 
 <script>
 // vux组件引入
-import {Icon, XInput, XTextarea, dateFormat, Cell} from 'vux'
+import {XTextarea, dateFormat} from 'vux'
 // 请求 引入
 import {getSOList} from 'service/detailService'
 import {submitAndCalc, saveAndStartWf, getDictByType, saveAndCommitTask, updateData} from 'service/commonService'
@@ -49,18 +49,13 @@ import {getPriceRange} from 'service/materService'
 // mixins 引入
 import ApplyCommon from 'pageMixins/applyCommon'
 // 组件引入
-import RPicker from 'components/RPicker'
-import RDate from 'components/RDate'
-import PopMatterList from 'components/Popup/matter/PopMatterList'
+import RNumber from 'components/RNumber'
+import UploadFile from 'components/upload/UploadFile'
 import PopDealerList from 'components/Popup/PopDealerList'
+import OpButton from 'components/apply/commonPart/OpButton'
+import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
-import PopSingleSelect from 'components/Popup/PopSingleSelect'
-import PopMatter from 'components/apply/commonPart/MatterPop'
-import UploadFile from 'components/upload/UploadFile'
-import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
-import RNumber from 'components/RNumber'
-import OpButton from 'components/apply/commonPart/OpButton'
 // 方法引入
 import {toFixed} from '@/plugins/calc'
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
@@ -70,18 +65,8 @@ const DRAFT_KEY = 'XSBJ_DATA';
 export default {
   data() {
     return {
+      taxRate: 0.16,
       listId: '58a607ce-fe93-4d26-a42e-a374f4662f1c',
-      matterList: [], // 物料列表
-      showMaterielPop: false, // 是否显示物料的popup
-      transCode: '',
-      dealerInfo: {},
-      transMode: [], // 结算方式 数组
-      logisticsTerm: [], // 物流条款 数组
-      formData: {
-        biComment: '',
-        drDealerLogisticsTerms: '', // 物流条款
-        validUntil: '', // 有效期
-      },
       filterList: [
         {
           name: '物料名称',
@@ -91,15 +76,20 @@ export default {
           value: 'inventoryCode',
         }
       ],
-      numMap: {},
-      taxRate: 0.16,
+      transCode: '',
+      formData: {},
+      dealerInfo: {},
       contactInfo: {},
+      transMode: [], // 结算方式 数组
+      matterList: [], // 物料列表
+      logisticsTerm: [], // 物流条款 数组
+      showMaterielPop: false, // 是否显示物料的popup
     }
   },
   components: {
-    Icon, XInput, RPicker, XTextarea, Cell, DealerOtherPart, ApplyMatterPart,
-    PopMatterList, PopDealerList, PopSingleSelect,
-    PopMatter, UploadFile, PopBaseinfo, RDate, RNumber, OpButton
+    XTextarea, RNumber, OpButton, 
+    UploadFile, PopBaseinfo, PopDealerList, 
+    DealerOtherPart, ApplyMatterPart
   },
   mixins: [ApplyCommon],
   methods: {
@@ -114,6 +104,11 @@ export default {
       return getDictByType('dealerLogisticsTerms').then(({tableContent}) => {
         this.logisticsTerm = tableContent;
       })
+    },
+    // 展开可删除状态
+    showDelete(){
+      this.matterModifyClass = ! this.matterModifyClass;
+      this.selItems = [];
     },
     // 选择要删除的物料
     delClick(sItem, index, key) {
@@ -454,7 +449,7 @@ export default {
     },
     // 校验单价
     checkAmt(item, key, val) {
-      console.log(item)
+      console.log('item:', item);
       let {standardPrice = 0, specialReservePrice = 0, price} = item;
       console.log('price:', price)
       if (price < specialReservePrice) {

@@ -10,7 +10,7 @@
               <p class="code">仓库编码：<span class="symbol"></span>{{warehouse.warehouseCode}}</p>
             </div>
           </div>
-          <span class="warehouse_status vux-1px" :class="{'no_use' : warehouse.warehouseStatus !== '使用中'}">{{warehouse.warehouseStatus}}</span>
+          <span class="warehouse_status vux-1px" :class="{'no_use' : baseinfo.status === '已删除'}">{{baseinfo.status}}</span>
         </div>
         <div class="baseinfo_address">
           <span class="icon-address"></span>
@@ -300,19 +300,25 @@ export default {
           item.show = true;
         })
         let {baseinfo = {}, warehouse = {}} = formData;
-        switch (warehouse.warehouseStatus) {
+        switch (baseinfo.status) {
           case 1:
-            warehouse.warehouseStatus = '使用中';
+            baseinfo.status = '已生效';
             break;
           case 2:
-            warehouse.warehouseStatus = '未使用';
+            baseinfo.status = '进行中';
             break;
           case 0:
-            warehouse.warehouseStatus = '草稿';
+            baseinfo.status = '草稿';
             break;
           case -1:
-            warehouse.warehouseStatus = '停用';
+            baseinfo.status = '已失效';
             break;
+          case -2:
+            baseinfo.status = '已删除';
+            break;
+          case -3:
+            baseinfo.status = '已归档';
+            break;          
         }
         this.hasDefault = true;
         this.baseinfo = baseinfo;  

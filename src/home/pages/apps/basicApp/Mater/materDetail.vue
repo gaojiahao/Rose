@@ -10,7 +10,7 @@
               <p class="code">物料编码：<span class="symbol"></span>{{inventory.inventoryCode}}</p>
             </div>
           </div>
-          <span class="inventory_status vux-1px" :class="{'no_use' : baseinfo.status === '草稿'}">{{baseinfo.status}}</span>
+          <span class="inventory_status vux-1px" :class="{'no_use' : baseinfo.status === '已删除'}">{{baseinfo.status}}</span>
         </div>
       </div>
       <div class="inventory_other has_margin">

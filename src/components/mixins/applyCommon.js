@@ -440,7 +440,7 @@ export default {
       let warn = '';
       for(let item of config) {
         if(!item.allowBlank && !info[item.fieldCode]) {
-          console.log('缺失字段: ',item.fieldCode);
+          console.error('缺失字段: ',item.fieldCode);
           warn = `${item.fieldLabel}不能为空`;
           break;
         }
@@ -459,7 +459,7 @@ export default {
     // 将物料配置拆分成属性和可编辑部分
     splitConfig(editMatterPop, editMatterPopConfig){
       for(let [index, item] of Object.entries(editMatterPop)) {
-        if(item.fieldCode === 'assMeasureUnit') {
+        if(item.fieldCode === 'assMeasureUnit' && !item.readOnly) {
           editMatterPopConfig.editPart.push(item);
         }
         else if (item.fieldCode === 'drDealerLabel' || item.fieldCode === 'tdQty' || item.fieldCode === 'qualityQty' || item.fieldCode === "qtyDownline") {
