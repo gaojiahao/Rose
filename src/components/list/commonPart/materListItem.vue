@@ -44,7 +44,7 @@
                 <div>
                   <p>编码: {{mItem.inventoryCode}}</p>
                   <p>
-                    <span>规格: {{mItem.specification_outPutMatCode || mItem.specification || '无'}}</span>
+                    <span>产品规格: {{mItem.specification_outPutMatCode || mItem.specification || '无'}}</span>
                     <span>单位: {{mItem.measureUnit_outPutMatCode || mItem.measureUnit || mItem.assMeasureUnit|| '无'}}</span>
                   </p>
                 </div>

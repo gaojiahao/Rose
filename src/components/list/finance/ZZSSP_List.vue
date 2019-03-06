@@ -16,62 +16,15 @@
     </div>
     <add-btn :action="action" :goEdit="goEdit"></add-btn>  
   </div>
-  </div>
 </template>
 
 <script>
   import listCommon from 'pageMixins/bizListCommon'
   export default {
-    data() {
-      return {
-        listStatus: [
-          {name: '全部', status: ''},
-          {name: '已生效', status: '已生效'},
-          {name: '进行中', status: '进行中'}
-        ],
-        listViewID: 2577,
-        filterList: [ // 过滤列表
-          {
-            name: '交易号',
-            value: 'transCode',
-          }, {
-            name: '经办人',
-            value: 'handlerName',
-          }, {
-            name: '客户名称',
-            value: 'dealerName_dealerCodeCredit',
-          },
-        ],
-      }
-    },
-    mixins: [listCommon],
-    methods: {
-
-    },
-    created() {
-
-    }
-
+    mixins: [listCommon]
   }
 </script>
 
 <style lang='scss' scoped>
   @import "./../../scss/bizList.scss";
-  .dealer_part{
-    width: 100%;
-    // color: #757575;
-    padding: 0 .1rem;
-    // font-size: .14rem;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    .dealer_name{
-      padding: .04rem 0;
-      font-weight: bold;
-
-      .iconfont{
-        // font-size: .14rem;
-        margin-right: .02rem;
-      }
-    }
-}
 </style>

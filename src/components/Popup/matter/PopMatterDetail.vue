@@ -18,8 +18,8 @@
                 <span class="matter_item_title">属性：</span>
                 <span class="matter_item_value">{{item.tdProcessing}}</span>
               </div>
-              <div class="matter_detail">
-                <span class="matter_item_title">规格：</span>
+              <div class="matter_detail" v-if="showSpec">
+                <span class="matter_item_title">产品规格：</span>
                 <span class="matter_item_value">{{item.specification_transObjCode || item.specification_outPutMatCode || item.facilitySpecification_facilityObjCode || item.assMeasureDescription || '无'}}</span>
               </div>
             </div>
@@ -119,6 +119,12 @@
       hasEditPart() {
         return !!this.editParts.length
       },
+      // 是否显示 产品规格
+      showSpec() {
+        let item = this.item;
+        let spec = item.specification_transObjCode || item.specification_outPutMatCode || item.facilitySpecification_facilityObjCode || item.assMeasureDescription ;
+        return !!spec;
+      }
     },
     watch: {
       show: {

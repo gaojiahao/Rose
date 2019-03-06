@@ -29,13 +29,11 @@
     data() {
       return {
         listStatus: [
-          // {name: '仪表视图', status: '仪表视图'},
           {name: '全部', status: ''},
           {name: '已生效', status: '已生效'},
           {name: '进行中', status: '进行中'}
         ],
         listViewID : 2596,
-        // listViewID: 2630,
         chartShow : false,
         hasNext: true,
         scrollOptions: {

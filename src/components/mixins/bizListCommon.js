@@ -38,7 +38,20 @@ export default {
         pullDownRefresh: true,
         pullUpLoad: true,
       },
-      listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
+      listStatus: [
+        { 
+          name: '全部', 
+          status: '' 
+        }, 
+        { 
+          name: '已生效', 
+          status: '已生效' 
+        }, 
+        { 
+          name: '进行中', 
+          status: '进行中'
+        }
+      ],
       activeIndex: 0,
       serachVal: '',
       listData: [],
