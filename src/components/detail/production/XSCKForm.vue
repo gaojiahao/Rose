@@ -137,7 +137,7 @@
           };
           // 动态获取 仓库字段信息
           for(let key in outPut) {
-            if(key.includes('warehouse') || key.includes('storehouse')) {
+            if(key.includes('warehouse') || key.includes('storehouse') || key.includes('containerCode')) {
               this.warehouse[key] = outPut[key];
             }
           }

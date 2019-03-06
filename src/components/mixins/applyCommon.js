@@ -689,14 +689,16 @@ export default {
                 })
                 requestParams.data = data;
               }
-              // console.log('物料相关requestParams:', requestParams.url);
-              // requestData(requestParams).then(({tableContent = []}) => {
-              //   let arr = [];
-              //   tableContent.forEach(item => {
-              //     arr.push(item.name)
-              //   })
-              //   item.remoteData = [arr];
-              // })
+              // 为避免重复请求 此处仅针对 *产品价格应用* 单独做初始化请求设置
+              if(item.fieldCode.includes('drDealerLabel')) {
+                requestData(requestParams).then(({tableContent = []}) => {
+                  let arr = [];
+                  tableContent.forEach(item => {
+                    arr.push(item.name)
+                  })
+                  item.remoteData = [arr];
+                })
+              }
             }
           }
           else if(item.dataSource && item.dataSource.type === 'staticData') {

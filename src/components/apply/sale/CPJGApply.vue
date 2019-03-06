@@ -31,18 +31,6 @@
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       </div>
     </div>
-    <!-- <div class='btn-no-amt vux-1px-t' :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
-      <div class="btn-item" @click="save">提交</div>
-    </div>
-    <div class="count_mode vux-1px-t delete_mode" :class="{btn_hide : btnIsHide}" v-else>
-      <div class='count_num all_checked' @click="checkAll">
-        <x-icon type="ios-circle-outline" size="20" class='outline'
-                v-show="selItems.length !== matterList.length"></x-icon>
-        <x-icon type="ios-checkmark" size="20" class="checked" v-show="selItems.length === matterList.length"></x-icon>
-        全选
-      </div>
-      <div class='delete_btn' @click="deleteCheckd">删除</div>
-    </div> -->
     <!-- 底部按钮 -->
     <op-button :is-modify="matterModifyClass" :hide="btnIsHide" :td-amount="tdAmount" :tax-amount="taxAmount"
                :all-check="selItems.length === matterList.length" @on-submit="submitOrder" @on-check-all="checkAll"

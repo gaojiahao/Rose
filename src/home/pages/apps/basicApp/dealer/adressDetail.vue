@@ -110,7 +110,7 @@ export default {
     findData() {
       return dealerService.getDealerInfo(this.transCode).then(({formData = {}, attachment = []}) => {
         this.formData = formData;
-        // console.log('dpc:', this.dealerDuplicateConfig);
+        // 此处判断 *重复项* 是否显示
         this.dealerDuplicateConfig.forEach(item => {
           if(this.formData[item.name] && !this.formData[item.name].length){
             item.show = false;
@@ -198,6 +198,7 @@ export default {
       })
       // 请求
       await getFormConfig(this.uniqueId).then(({config = []}) => {
+        console.log('config:', config);
         let dealerConfig = [], dealerDuplicateConfig = [];
         config.forEach(item => {
           if(!item.isMultiple) {
@@ -210,9 +211,8 @@ export default {
         //往来基本信息配置的处理
         dealerConfig.forEach(item =>{
           // 在渲染的配置中添加字段
-          if(item.fieldCode !== 'dealerCode' && item.fieldCode !== 'dealerName' && item.fieldCode !== 'dealerPic'
-            && item.fieldCode !== 'province' && item.fieldCode !== 'city' && item.fieldCode !== 'county'
-            && item.fieldCode !== 'address' && item.fieldCode !== 'dealerStatus' ){
+          if(item.fieldCode !== 'dealerCode' && item.fieldCode !== 'dealerName' 
+            && item.fieldCode !== 'dealerPic' && item.fieldCode !== 'dealerStatus' ){
             this.dealerConfig.push(item);
           }
           // 默认将税号,账期方式隐藏
