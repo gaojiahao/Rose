@@ -914,8 +914,6 @@ export default {
       this.getProcessStatus();  // 获取流程状态
       this.getAppDetail();
       this.initRequest && this.initRequest();   // 提交页面 不共用的数据 请求
-      this.getPaymentTerm && this.getPaymentTerm();   // 提交页面 结算方式 请求
-      this.getLogisticsTerms && this.getLogisticsTerms(); //提交页面 物流条款 请求
       if (transCode) {
         this.isResubmit = true;
         await this.getListId(transCode);

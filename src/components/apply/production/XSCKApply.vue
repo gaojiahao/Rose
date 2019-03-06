@@ -21,6 +21,9 @@
                            :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
                            :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
                            :chosen-matter="matter" :check-amt-fn="checkAmt" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
+          <template slot="rNumber" slot-scope="{item}">
+            <r-number :num="item.tdQty" :max="Number(item.locationStock)" v-model="item.tdQty"></r-number>
+          </template>
         </apply-matter-part>
         <!-- 项目 -->
         <pop-sodl-projectList :value="project" v-model="project"></pop-sodl-projectList>
@@ -47,6 +50,7 @@ import { commitTask, saveAndStartWf, saveAndCommitTask, submitAndCalc, requestDa
 // mixins 引入
 import applyCommon from 'components/mixins/applyCommon'
 // 组件引入
+import RNumber from 'components/RNumber'
 import PopDealerList from 'components/Popup/PopDealerList'
 import OpButton from 'components/apply/commonPart/OpButton'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
@@ -64,7 +68,8 @@ export default {
   name: 'ApplyXSCKForm',
   mixins: [applyCommon],
   components: {
-    XTextarea, OpButton, PopBaseinfo, PopDealerList, PopWarehouseList,
+    XTextarea, RNumber, OpButton, 
+    PopBaseinfo, PopDealerList, PopWarehouseList,
     ApplyMatterPart, PopSodlProjectList, DealerOtherPart
   },
   data() {
@@ -641,9 +646,13 @@ export default {
     },
     // 提交字段校验
     checkAmt(item, key, val) {
-      console.log('item:', item);
-      let { thenQtyStock } = item;
+      let { tdQty, locationStock } = item;
+
       item[key] = Math.abs(toFixed(val));
+      
+      if( tdQty > locationStock ) {
+        item.tdQty = locationStock;
+      }
     }
   },
   created() {

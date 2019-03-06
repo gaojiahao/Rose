@@ -12,11 +12,11 @@
       <div class="matter_more">
         <div class="each_info" v-for="(cItem, cIndex) in config" :key="cIndex">
           <span class="title">{{cItem.text}}:</span>
-          <span v-if="cItem.showFieldCode">
-            {{matter[cItem.showFieldCode] != null && matter[cItem.showFieldCode] !== "" ? matter[cItem.showFieldCode] : "无"}}
+          <span v-if="cItem.fieldCode && matter[cItem.fieldCode]">
+            {{matter[cItem.fieldCode] != null && matter[cItem.fieldCode] !== "" ? matter[cItem.fieldCode] : "无"}}
           </span>
           <span v-else>
-            {{matter[cItem.fieldCode] != null && matter[cItem.fieldCode] !== "" ? matter[cItem.fieldCode] : "无"}}
+            {{matter[cItem.showFieldCode] != null && matter[cItem.showFieldCode] !== "" ? matter[cItem.showFieldCode] : "无"}}
           </span>
         </div>
       </div>

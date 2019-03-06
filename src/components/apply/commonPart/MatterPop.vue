@@ -15,11 +15,11 @@
             <div class="matter_info">
               <div class="matter_info_item" v-for="(item, index) in config.property" :key="index">
                 <span class="matter_info_title">{{item.text}}: </span>
-                <span class="matter_info_value" v-if="item.showFieldCode">
-                  {{chosenMatter[item.showFieldCode] != null && chosenMatter[item.showFieldCode] !== ""  ?  chosenMatter[item.showFieldCode] : "无"}}
+                <span class="matter_info_value" v-if="item.fieldCode">
+                  {{chosenMatter[item.fieldCode] != null && chosenMatter[item.fieldCode] !== ""  ?  chosenMatter[item.fieldCode] : "无"}}
                 </span>
                 <span class="matter_info_value" v-else>
-                  {{chosenMatter[item.fieldCode] != null && chosenMatter[item.fieldCode] !== ""  ?  chosenMatter[item.fieldCode] : "无"}}
+                  {{chosenMatter[item.showFieldCode] != null && chosenMatter[item.showFieldCode] !== ""  ?  chosenMatter[item.showFieldCode] : "无"}}
                 </span>
               </div>
             </div>
@@ -55,7 +55,8 @@
                        @on-click-clear-icon="cleanAmt(chosenMatter)">
                 <template slot="label">
                   <span :class="{required: !eItem.allowBlank}">{{eItem.text}}</span>
-                  <span class="iconfont icon-tishi" v-show="chosenMatter.otherField && Object.keys(chosenMatter.otherField).length"
+                  <!-- 提示按钮 -->
+                  <span class="iconfont icon-tishi" v-if="chosenMatter.priceRange && chosenMatter.priceRange.length"
                         @click="showDialog = !showDialog"></span>
                 </template>
               </x-input>
@@ -88,30 +89,31 @@
       </div>
     </popup>
 
-    <x-dialog class="dialog-view" v-if="chosenMatter.otherField" v-model="showDialog" hide-on-blur>
+    <x-dialog class="dialog-view" v-model="showDialog" hide-on-blur>
       <div class="tip-top">
         <p class="header_content">温馨提示</p>
         <p class="header_btn_tips">订单折合包装比: {{chosenMatter.assMeasureScale}}</p>
       </div>
-      <div class="tip-main">
-        <div class="each_info_part">
-          <span class="package_num">订单数量上限: {{chosenMatter.qtyOnline * chosenMatter.assMeasureScale}}</span>
-          <span class="order_num">[折合包装数量: {{chosenMatter.qtyOnline}}]</span>
+      <div class="tip-main" v-for="(item, index) of chosenMatter.priceRange" :key="index">
+        <p class="serial-part" v-if="chosenMatter.priceRange.length > 1">阶梯{{index + 1}}</p>
+        <div class="each-info-part">
+          <span class="package_num">订单数量上限: {{item.qtyOnline * chosenMatter.assMeasureScale | numberComma}}</span>
+          <span class="order_num">[折合包装数量: {{item.qtyOnline | numberComma}}]</span>
         </div>
-        <div class="each_info_part">
-          <span class="package_num">订单数量下限: {{chosenMatter.qtyDownline * chosenMatter.assMeasureScale}}</span>
-          <span class="order_num">[折合包装数量: {{chosenMatter.qtyDownline}}]</span>
+        <div class="each-info-part">
+          <span class="package_num">订单数量下限: {{item.qtyDownline * chosenMatter.assMeasureScale | numberComma}}</span>
+          <span class="order_num">[折合包装数量: {{item.qtyDownline | numberComma}}]</span>
         </div>
-        <div class="other_info_part" v-if="chosenMatter.otherField.transCode">
-          <p class="other_tips">tips: 当您输入的订单数量在上述区间内，系统将会自动匹配<span class="inside_tips">销售协议{{chosenMatter.otherField.transCode}}</span>当中的价格，并自动计算其他属性。
-          </p>
+        <div class="each-info-part">
+          <span class="order_num">标准价格: ￥{{item.standardPrice | numberComma}}</span>
+          <span class="order_num">特批底价: ￥{{item.specialReservePrice | numberComma}}</span>
         </div>
-        <div class="other_info_part" v-else>
-          <p class="other_tips">tips: 当您输入的数量在上述区间内，系统将会自动显示其他信息，并自动计算。
-          </p>
-        </div>
-        <div class="btn_part" @click="showDialog = !showDialog">我已阅读</div>
       </div>
+      <div class="other-info-part">
+        <p class="other_tips">tips: 当您输入的数量在上述区间内，系统将会自动显示其他信息，并自动计算。
+        </p>
+      </div>
+      <div class="btn-part" @click="showDialog = !showDialog">我已阅读</div>
     </x-dialog>
   </div>
 </template>
@@ -452,37 +454,49 @@
       }
     }
     .tip-main {
-      .each_info_part {
+      width: 100%;
+      text-align: left;
+      padding: .1rem .15rem;
+      margin-bottom: .15rem;
+      box-sizing: border-box;
+      box-shadow: 0 2px 10px 0 rgba(232, 232, 232, 0.7);
+      .serial-part {
+        width: 100%;
+        font-size: .14rem;
+        font-weight: bold;
+        box-sizing: border-box;
+      }
+      .each-info-part {
         .package_num {
           color: #454545;
           font-size: .14rem;
         }
         .order_num {
           color: #757575;
-          font-size: .1rem;
+          font-size: .12rem;
         }
       }
-      .other_info_part {
-        width: 100%;
-        color: #696969;
-        padding: 0 .1rem;
-        font-size: .12rem;
-        text-align: initial;
-        margin: .2rem 0 .1rem;
-        box-sizing: border-box;
-        .other_tips {
-          .inside_tips {
-            color: #757575;
-            text-decoration: underline;
-          }
+    }
+    .other-info-part {
+      width: 100%;
+      color: #696969;
+      padding: 0 .1rem;
+      font-size: .12rem;
+      text-align: initial;
+      margin: .2rem 0 .1rem;
+      box-sizing: border-box;
+      .other_tips {
+        .inside_tips {
+          color: #757575;
+          text-decoration: underline;
         }
       }
-      .btn_part {
-        color: #FFF;
-        padding: .1rem 0;
-        font-weight: bold;
-        background: #3296FA;
-      }
+    }
+    .btn-part {
+      color: #FFF;
+      padding: .1rem 0;
+      font-weight: bold;
+      background: #3296FA;
     }
   }
 </style>

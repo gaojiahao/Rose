@@ -148,9 +148,10 @@ export default {
   methods: {
     // 选中的客户
     selDealer(val) {
+      let matterParams = this.matterParams;
       let [chosenDealer = {}] = JSON.parse(val);
-      if(chosenDealer.dealerCode !== this.dealerInfo.dealerCode){
 
+      if(chosenDealer.dealerCode !== this.dealerInfo.dealerCode){
         // 为了提交时校验字段 此处重组部分数据
         chosenDealer.daysOfAccount= chosenDealer.pamentDays;
         chosenDealer.drDealerPaymentTerm = chosenDealer.paymentTerm;
@@ -161,8 +162,15 @@ export default {
         this.dealerInfo = chosenDealer;
 
         // 根据客户 重新匹配<物料列表>的请求参数
-        if(this.matterParams.data && this.matterParams.data.dealerCode != null){
-          this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
+        if(this.matterParams.data) {
+          for(let key in matterParams.data) {
+            for(let sKey in this.dealerInfo) {
+              console.log('匹配:', key.indexOf(sKey));
+              // if(key.includes(sKey)) {
+              //   matterParams.data[key] = this.dealerInfo[sKey];
+              // }
+            }
+          }
           this.orderList = {};
         }
 

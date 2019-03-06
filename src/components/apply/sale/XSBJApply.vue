@@ -93,37 +93,25 @@ export default {
   },
   mixins: [ApplyCommon],
   methods: {
-    // 获取 结算方式
-    getPaymentTerm() {
-      return getDictByType('paymentTerm').then(({tableContent}) => {
-        this.transMode = tableContent;
-      })
-    },
-    // 获取 物流条款
-    getLogisticsTerms() {
-      return getDictByType('dealerLogisticsTerms').then(({tableContent}) => {
-        this.logisticsTerm = tableContent;
-      })
-    },
     // 展开可删除状态
     showDelete(){
       this.matterModifyClass = ! this.matterModifyClass;
       this.selItems = [];
     },
     // 选择要删除的物料
-    delClick(sItem, index, key) {
+    delClick(sItem, index) {
       let arr = this.selItems;
-      let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
-      // 若存在重复的 则清除
+      let delIndex = arr.findIndex(item => item === index);
+      //若存在重复的 则清除
       if (delIndex !== -1) {
         arr.splice(delIndex, 1);
         return;
       }
-      arr.push(sItem);
+      arr.push(index);
     },
     // 判断是否展示选中图标
     showSelIcon(sItem, index) {
-      return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
+      return this.selItems.includes(index);
     },
     // 全选
     checkAll() {
@@ -131,7 +119,7 @@ export default {
         this.selItems = [];
         return
       }
-      this.selItems = JSON.parse(JSON.stringify(this.matterList));
+      this.selItems = this.matterList.map((item, index) => index);
     },
     // 删除选中的
     deleteCheckd() {
@@ -139,12 +127,10 @@ export default {
         content: '确认删除?',
         // 确定回调
         onConfirm: () => {
-          this.selItems.forEach(item => {
-            let index = this.matterList.findIndex(item2 => item2.inventoryCode === item.inventoryCode);
-            if (index >= 0) {
-              this.matterList.splice(index, 1);
-            }
-          })
+          let selItems = this.selItems;
+          // 没被删除的
+          let remainder = this.matterList.filter((item, index) => !selItems.includes(index)); 
+          this.matterList = remainder;
           this.selItems = [];
           this.matterModifyClass = false;
         }
@@ -157,6 +143,10 @@ export default {
     // 选中往来项
     selDealer(val) {
       let [sels] = JSON.parse(val);
+      // 此处重组部分数据
+      sels.drDealerPaymentTerm = sels.paymentTerm;
+      sels.drDealerLogisticsTerms = sels.dealerLogisticsTerms;
+
       this.dealerInfo = sels;
     },
     selContact(val) {
@@ -275,11 +265,11 @@ export default {
             handlerEntity: this.entity.dealerName,
             dealerDebitContactPersonName: this.contactInfo.dealerName || '',
             dealerDebitContactInformation: this.contactInfo.dealerMobilePhone || '',
-            drDealerLogisticsTerms: this.dealerInfo.dealerLogisticsTerms,
+            drDealerLogisticsTerms: this.dealerInfo.drDealerLogisticsTerms,
             order: {
               dealerDebit: this.dealerInfo.dealerCode || '',
               drDealerLabel: this.dealerInfo.dealerLabelName,
-              drDealerPaymentTerm: this.dealerInfo.paymentTerm,
+              drDealerPaymentTerm: this.dealerInfo.drDealerPaymentTerm,
               validUntil: this.formData.validUntil,
               dataSet
             },
@@ -370,8 +360,8 @@ export default {
           city: order.city_dealerDebit || '', // 城市
           county: order.county_dealerDebit || '', // 地区
           address: order.address_dealerDebit || '', // 详细地址
-          paymentTerm: order.drDealerPaymentTerm,
-          dealerLogisticsTerms: formData.drDealerLogisticsTerms,
+          drDealerPaymentTerm: order.drDealerPaymentTerm,
+          drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
         };
         this.contactInfo = {
           dealerName: formData.dealerDebitContactPersonName,
@@ -419,46 +409,54 @@ export default {
     getPriceRange(item, index) {
       return getPriceRange({
         inventoryCode: item.inventoryCode,
-      }).then(({tableContent}) => {
-        let [data = {}] = tableContent;
-        let defaultKey = ['qtyOnline', 'qtyDownline']
-        // 动态添加字段
-        for(let key in data) {
-          // 针对已定义的字段进行赋值
-          if(defaultKey.includes(key)) {
-            item[key] = data[key]
-            delete data[key];
-          }
-          else if(!item.hasOwnProperty(key)){
-            this.$set(item, key, '');
-          }
-        }
-        item.otherField = {...data};
+      }).then(({ tableContent }) => {
+        item.priceRange = tableContent;
       })
     },
     // 校验数量
     checkQty(item) {
       let {qtyDownline = 0, qtyOnline = 0, tdQty} = item;
+
       if (tdQty < qtyDownline) {
         tdQty = qtyDownline;
       }
-      if (tdQty > qtyOnline) {
+      else if (tdQty > qtyOnline) {
         tdQty = qtyOnline;
       }
+
       item.tdQty = Math.abs(toFixed(tdQty));
     },
     // 校验单价
     checkAmt(item, key, val) {
-      console.log('item:', item);
-      let {standardPrice = 0, specialReservePrice = 0, price} = item;
-      console.log('price:', price)
-      if (price < specialReservePrice) {
-        price = specialReservePrice;
+      let { price, assistQty, priceRange } = item;
+      // 不允许存在负数
+      item[key] = Math.abs(toFixed(val));
+      // 如果存在数量区间
+      if(priceRange.length) {
+        for(let range of priceRange) {
+          if(assistQty >= range.qtyDownline && assistQty <= range.qtyOnline) {
+            this.$set(item, 'standardPrice', range.standardPrice);
+            this.$set(item, 'specialReservePrice', range.specialReservePrice);
+            break;
+          }
+          else {
+            this.$set(item, 'standardPrice', 0);
+            this.$set(item, 'specialReservePrice', 0);
+          }
+        }
       }
-      else if (price > standardPrice) {
-        price = standardPrice;
+      // 如果 标准价格 / 特批底价 存在
+      if(price && item.specialReservePrice !== '' && item.standardPrice) {
+        if(price > item.standardPrice || price < item.specialReservePrice) {
+          this.$vux.alert.show({
+            title: '温馨提示',
+            content: '您输入的价格有误，不可大于"标准价格"或是低于"特批底价"',
+            onHide: () => {
+              item.price = item.specialReservePrice;
+            }
+          })
+        }
       }
-      item.price = Math.abs(toFixed(price));
     },
     // 校验税率
     checkRate(item) {

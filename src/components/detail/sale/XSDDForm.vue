@@ -45,10 +45,10 @@
     data() {
       return {
         count: 0,          // 金额合计
-        orderInfo: {},      // 表单内容
         formViewUniqueId: '',
-        contactInfo: {}, // 客户、付款方式、物流条款的值
+        orderInfo: {},      // 表单内容
         orderList: {},
+        contactInfo: {}, // 客户、付款方式、物流条款的值
       }
     },
     computed: {
