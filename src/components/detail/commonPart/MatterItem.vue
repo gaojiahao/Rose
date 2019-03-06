@@ -7,7 +7,7 @@
           {{item.inventoryName_transObjCode || item.facilityName_facilityObjCode || '该物料未获取到名称，请检查物料信息。'}}
         </div>
         <div class="matter_info_item flex-start">
-          <div class="matter_detail">
+          <div class="matter_detail" v-if="item.tdProcessing">
             <span class="matter_item_title">属性：</span>
             <span class="matter_item_value">{{item.tdProcessing}}</span>
           </div>
