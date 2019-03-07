@@ -548,6 +548,7 @@ export default {
         this.dealerInfo = {
           creatorName: formData.dealerDebitContactPersonName, // 客户名
           dealerName: outPut.dealerName_dealerDebit, // 公司名
+          dealerName_dealerDebit: outPut.dealerName_dealerDebit,
           dealerMobilePhone: formData.dealerDebitContactInformation, // 手机
           dealerCode: outPut.dealerDebit, // 客户编码
           dealerLabelName: outPut.drDealerLabel, // 关系标签
@@ -669,38 +670,12 @@ export default {
     }
   },
   updated() {
-    // let matterList = this.matterList, 
-    //     matterEditConfig = this.matterEditConfig;
     let draft = JSON.parse(sessionStorage.getItem(DRAFT_KEY));
 
     if (draft && this.matterParams.data) {
       this.matterParams = draft.matterParams;
       sessionStorage.removeItem(DRAFT_KEY);
     }
-    // if (matterList.length && matterEditConfig.editPart) {
-    //   // 请求物料辅助计量的数据
-    //   for (let item of matterList) {
-    //     for (let cItem of matterEditConfig.editPart) {
-    //       if (cItem.fieldCode === 'assMeasureUnit') {          
-    //         let requestParams = {
-    //           url: cItem.dataSource.data.url,
-    //           data: {
-    //             inventoryCode:  item.inventoryCode
-    //           }
-    //         }
-    //         requestData(requestParams).then(({tableContent = []}) => {
-    //           tableContent.forEach(mItem => {
-    //             mItem.name =  mItem.invSubUnitName;
-    //             mItem.value =  mItem.invSubUnitName;
-    //           })
-    //           cItem.remoteData = tableContent
-    //         })
-    //         break;
-    //       }
-    //       break;
-    //     }
-    //   }
-    // }
   }
 }
 </script>
