@@ -439,9 +439,11 @@ export default {
     },
     // 计算物料相关值
     calcMatter(item) {
-      let taxRate = item.taxRate || 0,
-          price = Number(item.price) || 0;  // 此处单独针对price进行number处理 因为销售订单的业务需求      item.assistQty = toFixed(accDiv(tdQty, item.assMeasureScale));
-      
+      let tdQty = item.tdQty || 0,
+          taxRate = item.taxRate || 0,
+          price = Number(item.price) || 0;  // 此处单独针对price进行number处理 因为销售订单的业务需求      
+          
+      item.assistQty = toFixed(accDiv(tdQty, item.assMeasureScale));
       item.noTaxPrice = toFixed(accDiv(price, accAdd(1, taxRate)), 6);
       item.tdAmount = toFixed(accMul(price, item.assistQty));
       item.taxAmount = toFixed(accMul(item.assistQty, taxRate, item.noTaxPrice));
