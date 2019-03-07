@@ -139,7 +139,7 @@ export default {
             }
           }
         });
-        if(!Object.getOwnPropertyNames(listData).length) {
+        if (!Object.getOwnPropertyNames(listData).length) {
           this.currentItem.isNull = true;
           return;
         }

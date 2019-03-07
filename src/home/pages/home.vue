@@ -85,7 +85,7 @@ export default {
     // 设置默认图片
     getDefaultIcon(app){
       let url = require('assets/defaultApp.png');
-      if(app){
+      if (app){
         app.icon = url;
       }
       return url;
@@ -94,7 +94,7 @@ export default {
     getNews(){
       let newsNumber;
       return getMsgList().then( data => {
-        if(data.dataCount > 99){
+        if (data.dataCount > 99){
           newsNumber = '99+';
           return
         }
@@ -114,9 +114,9 @@ export default {
         }
         // 获取 公司主体列表
         data.sysGroupList && data.sysGroupList.forEach(item => {
-          if(item.groupType === 'C'){
+          if (item.groupType === 'C'){
             this.entityList.push(item);
-            if(item.groupCode === data.entityId){
+            if (item.groupCode === data.entityId){
               this.selItem = item;
             }
           }
@@ -125,14 +125,14 @@ export default {
     },
     // 选择单条记录
     dropItemClick(item) {
-      if(this.selItem.groupCode === item.groupCode) return;
+      if (this.selItem.groupCode === item.groupCode) return;
       this.selItem = {...item};
       this.userInfo.entityName = item.groupName.slice(0, 4);
       this.showDrop = false;
       this.$loading.show();
       homeService.changeEntity({entityId : item.groupCode}).then((data) => {
         let tokenInfo = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
-        if(tokenInfo){
+        if (tokenInfo){
           tokenInfo = JSON.parse(tokenInfo);
           tokenInfo.entityId = data.entityId;
           tokenInfo.token = data.token;
@@ -146,7 +146,7 @@ export default {
     $route:{
       handler(val){
         // 返回首页进行滑动刷新
-        if(val.name === 'HOME'){
+        if (val.name === 'HOME'){
           this.homeScroll.refresh();
         }
       }
@@ -160,21 +160,21 @@ export default {
       // 获取首页应用列表
       await homeService.getMeau().then( res => {
         let BUSobj = this.BUSobj;
-        for(let val of res){
+        for (let val of res){
           BUSobj[val.text] = [];
-          for(let item of val.children) {
+          for (let item of val.children) {
             // 基础对象应用 单独处理
-            if(basicMap[item.listId]){
+            if (basicMap[item.listId]){
               // 图片处理
               item.icon = item.icon 
                 ? `/dist/${item.icon}`
                 : ''
               this.BasicApps.push(item);
             }
-            if(item.packagePath) {
+            if (item.packagePath) {
               // 获取 应用类型ID 对应相应文件夹
               item.fileID = val.id;
-              if(item.icon) {
+              if (item.icon) {
                 item.icon.includes('download') 
                   // 用户自定义上传 应用icon
                   ? item.icon = `${location.origin}${item.icon}`
@@ -189,14 +189,14 @@ export default {
               BUSobj[val.text].push(item);
             }
             // 如果应用里面 存在分类
-            if(item.children) {
-              for(let childItem of item.children) {
-                if(childItem.packagePath) {
+            if (item.children) {
+              for (let childItem of item.children) {
+                if (childItem.packagePath) {
                   childItem.fileID = val.id;
                   childItem.icon = childItem.icon
                     ? `/dist/${childItem.icon}`
                     : this.getDefaultIcon();
-                  if(!BUSobj[val.text][item.text]) {
+                  if (!BUSobj[val.text][item.text]) {
                     this.$set(BUSobj[val.text], item.text, {childId: item.id, childName: item.text, childList: [childItem]})
                   }
                   else {
@@ -218,9 +218,9 @@ export default {
       // 获取 头像姓名
       let { name, avatar, position } = JSON.parse(sessionStorage.getItem('ROSE_LOGIN_TOKEN'));
       // 如果头像不存在则指定默认头像
-      if(!avatar){
+      if (!avatar){
         let url = this.userInfo.photo;
-        if(!this.userInfo.photo){
+        if (!this.userInfo.photo){
           url = require('assets/ava01.png');
         }
         avatar = url;

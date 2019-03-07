@@ -120,7 +120,7 @@
           let oldId = JSON.stringify(oldVal),
               newId = JSON.stringify(newVal);
           // 匹配当前选择的往来id 如果不一致则重新发起请求
-          if(newId !== oldId) {
+          if (newId !== oldId) {
             this.resetCondition();
             this.getObjWarehouseRel();
           }

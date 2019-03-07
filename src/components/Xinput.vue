@@ -30,7 +30,7 @@ export default {
     }
 
   },
-  data(){
+  data() {
     return{
       val : '',
       clearStatus: false,
@@ -40,20 +40,20 @@ export default {
     Icon
   },
   methods:{
-    getVal(e){
+    getVal(e) {
       this.val = e.target.value;
-      if(this.val.length>0){
+      if (this.val.length>0) {
         this.clearStatus = true;
       }
       this.$emit('input',this.val);
     },
-    clear(){
+    clear() {
       this.val = '';
       this.$emit('input',this.val);
       this.clearStatus = false;
     }
   },
-  created(){
+  created() {
     this.val = this.defaultValue;
   }
 

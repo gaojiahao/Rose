@@ -303,7 +303,7 @@
           view_49: '应用名称/实例编码/往来名称/银行/', 
           view_140: '应用名称/实例编码/往来编码/往来名称'
         };
-        if(viewList.hasOwnProperty(currentView)) return viewList[currentView];
+        if (viewList.hasOwnProperty(currentView)) return viewList[currentView];
       }
     },
     mixins: [listCommon],
@@ -317,7 +317,7 @@
       },
       // tab切换
       tabClick(val, index) {
-        if(index === this.activeIndex) {
+        if (index === this.activeIndex) {
           this.currentScroll.scrollTo(0, 0);
           return;
         }

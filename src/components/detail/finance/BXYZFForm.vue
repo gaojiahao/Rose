@@ -141,11 +141,11 @@
       isEditAdmout() {
         let isEdit = false;
         this.otherConfig.forEach(item => {
-          if(item.fieldCode === "tdAmountCopy1"){
+          if (item.fieldCode === "tdAmountCopy1"){
            isEdit = item.readOnly;
           }
         })
-        if(!isEdit){
+        if (!isEdit){
           this.cashInfo = {
             ...this.cashInfo,
             fundCode: this.cashInfo.fundCode || this.cashInfo.cashInCode,

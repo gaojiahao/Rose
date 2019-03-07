@@ -140,13 +140,13 @@ export default {
   methods: {
     // 排序
     sortClick(item, i) {
-      if(this.property === item.key){
+      if (this.property === item.key){
         // 排序转变
         this.sort = this.sort === 'ASC'
           ? 'DESC'
           : 'ASC'
       }
-      else{
+      else {
         // 默认为正序
         this.sort = 'ASC'
       }
@@ -171,16 +171,16 @@ export default {
     onHide() {
       let isRefreshList = false;
       // 时间过滤发生改变
-      if(this.timeFilter.startDate !== this.lastFilter.timeFilter.startDate || this.timeFilter.endDate !== this.lastFilter.timeFilter.endDate) {
+      if (this.timeFilter.startDate !== this.lastFilter.timeFilter.startDate || this.timeFilter.endDate !== this.lastFilter.timeFilter.endDate) {
         isRefreshList = true;
       }
       let str1 = JSON.stringify(this.fieldVlaue),
           str2 = JSON.stringify(this.lastFilter.otherFilter);
       // 其他过滤发生改变
-      if(str1 !== str2) {
+      if (str1 !== str2) {
         isRefreshList = true;
       }
-      if(isRefreshList) {
+      if (isRefreshList) {
         this.$emit('on-filter', {
           timeFilter: this.timeFilter,
           otherFilter: this.fieldVlaue
@@ -204,35 +204,35 @@ export default {
     },    
     // 匹配相同项的索引
     showSelIcon(sItem, key) {
-      if(this.fieldVlaue[key]){
+      if (this.fieldVlaue[key]){
         return this.fieldVlaue[key].value.findIndex(item => item === sItem) !== -1;
       }
     },
     // 选择流程状态
     selProcee(sItem, key) {
-      if(this.fieldVlaue[key]){
+      if (this.fieldVlaue[key]){
         let arr = this.fieldVlaue[key].value;
         let delIndex = arr.findIndex(item => item === sItem);
         // 若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
           //当值为空是，删除该过滤条件
-          if(!arr.length) {
+          if (!arr.length) {
             delete this.fieldVlaue[key]
           }
           return;
         }
         arr.push(sItem);
       }
-      else{
+      else {
         let obj = {};
-        if(key !== 'biProcessStatus' && key !== 'bugProcessStatus' && key !== 'processStatus'){
+        if (key !== 'biProcessStatus' && key !== 'bugProcessStatus' && key !== 'processStatus'){
           obj = {
             alias: this.filtersList[key].alias,
             value: [sItem]
           }
         }
-        else{
+        else {
           obj = {
             alias: this.statusList[key].alias,
             value: [sItem]
@@ -244,7 +244,7 @@ export default {
     // 选择 '今日' / '昨日' / '本周'
     pickSpecTime(key) {
       // 消除选中状态
-      if(this.SpecTimeKey === key) {
+      if (this.SpecTimeKey === key) {
         this.SpecTimeKey = '';
         this.timeFilter = Object.assign({}, this.$data.timeFilter, 
           this.$options.data().timeFilter
@@ -256,7 +256,7 @@ export default {
       this.tmpTimeFilter = Object.assign({}, this.$data.tmpTimeFilter, 
         this.$options.data().tmpTimeFilter
       );
-      if(key < 2) {
+      if (key < 2) {
         // 获取 今日 / 昨日
         let whichDay = ['toDay', 'preDate'];
         this.pickDate(whichDay[key]);
@@ -276,7 +276,7 @@ export default {
       }
     },
     pickDate(date = '', timePeriods = {}) {
-      if(date) {
+      if (date) {
         this.timeFilter.startDate = this.timeFilter.endDate = this[date];
       }
       else {
@@ -298,14 +298,14 @@ export default {
         },
         onConfirm: (val) => {
           // 当 '今日' / '昨日' 等按钮处于点亮 但用户想自定义时间 此处重置按钮
-          if(this.SpecTimeKey !== '') {
+          if (this.SpecTimeKey !== '') {
             this.SpecTimeKey = time.endDate = '';
           }
           // 用户先选择了截止日期 如果日期早于起始日期 则清除
-          if(time.endDate) {
+          if (time.endDate) {
             let endDate = new Date(Date.parse(time.endDate.replace(/-/g, "/"))),
                 startDate = new Date(Date.parse(val.replace(/-/g, "/")));
-            if(startDate - endDate > 0) {
+            if (startDate - endDate > 0) {
               time.endDate = tmpTime.endDate = '';
             }
           }
@@ -327,7 +327,7 @@ export default {
           time.endDate = tmpTime.endDate = '';
         },
         onConfirm: (val) => {
-          if(this.SpecTimeKey !== '') {
+          if (this.SpecTimeKey !== '') {
             this.SpecTimeKey = time.startDate = '';
           } 
           time.endDate = tmpTime.endDate = val;
@@ -339,7 +339,7 @@ export default {
       filterFields(this.listId).then(data=>{
         let formStatusList = ['进行中', '已生效', '草稿'];
         let filtersList = {}, statusList = {};
-        if(this.hasFormStatus){
+        if (this.hasFormStatus){
           filtersList = {
             biStatus: {
               alias: '表单状态',
@@ -349,16 +349,16 @@ export default {
             }
           }
         }
-        for(let key of Object.keys(data)){
+        for (let key of Object.keys(data)){
           let item = data[key];
-          if(key !== 'biProcessStatus' && key !== 'bugProcessStatus' && key !== 'processStatus'){
+          if (key !== 'biProcessStatus' && key !== 'bugProcessStatus' && key !== 'processStatus'){
             filtersList[key] = {
               ...item,
               showValue: item.value.slice(0,9),
               showAll: false,
             };
           }
-          else{
+          else {
             statusList[key] = {
               ...item,
               showValue: item.value.slice(0,9),

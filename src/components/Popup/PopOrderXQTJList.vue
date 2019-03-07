@@ -206,7 +206,7 @@
           return
         }
         // 加工入库需要对物料的库存进行校验
-        if(sItem.qtyBal && sItem.qtyStock <= 0){
+        if (sItem.qtyBal && sItem.qtyStock <= 0){
           this.$vux.alert.show({
             content: '当前库存为0，不可选择'
           });
@@ -251,7 +251,7 @@
             }];
         }
         let {relationKey = ''} = this.$route.query;
-        if(relationKey){
+        if (relationKey){
           filter = [
             {
               operator: 'eq',
@@ -270,7 +270,7 @@
           tableContent.forEach(item => {
             item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
           });
-          if(relationKey){
+          if (relationKey){
             this.selItems = [...tableContent];
             this.$emit('sel-matter', JSON.stringify(this.selItems));
           }

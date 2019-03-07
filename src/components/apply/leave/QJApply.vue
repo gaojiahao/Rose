@@ -107,17 +107,17 @@
 		            leaveStartTime = item.leaveStartTime,
                 leaveEndDate = item.leaveEndDate,
                 leaveEndTime = item.leaveEndTime;
-            if(leaveStartDate && leaveEndDate && leaveStartTime == null && leaveEndTime == null) {
+            if (leaveStartDate && leaveEndDate && leaveStartTime == null && leaveEndTime == null) {
               item.leaveDays = (new Date(leaveEndDate) - new Date(leaveStartDate))/(24*60*60*1000) + 1;
             }
-            else if(leaveStartDate && leaveStartTime && leaveEndDate && leaveEndTime) {
+            else if (leaveStartDate && leaveStartTime && leaveEndDate && leaveEndTime) {
               let dt = (new Date(leaveEndDate) - new Date(leaveStartDate))/(24*60*60*1000);
-              if(leaveStartTime ==  leaveEndTime ) {
+              if (leaveStartTime ==  leaveEndTime ) {
                 dt = dt + 0.5;
               }
-              else if(leaveStartTime == "上午" && leaveEndTime == "下午") {
+              else if (leaveStartTime == "上午" && leaveEndTime == "下午") {
                 dt = dt + 1;
-              }else if(leaveStartTime == "下午" && leaveEndTime == "上午") {
+              }else if (leaveStartTime == "下午" && leaveEndTime == "上午") {
                 dt;
               }
               item.leaveDays = dt
@@ -142,8 +142,8 @@
         let dataSet = [];
         for (let item of this.costList) {
           let oItem = {};
-          for(let sItem of this.submitMatterField){
-            if(!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode]){
+          for (let sItem of this.submitMatterField){
+            if (!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode]){
               warn = `${sItem.text}不为空`
               break;
             }
@@ -257,7 +257,7 @@
       },
       // 是否保存草稿
       hasDraftData() {
-        if(Object.values(this.costList[0]).length){
+        if (Object.values(this.costList[0]).length){
           return {
             [DRAFT_KEY]: {
               costList: this.costList,
@@ -271,12 +271,12 @@
       getDate(sItem, dItem){
         let startDate = '', endDate = '';
         // 当存在开始日期，选在结束日期时不能小于开始日期
-        if(dItem.fieldCode === 'leaveEndDate' && sItem.leaveStartDate){
+        if (dItem.fieldCode === 'leaveEndDate' && sItem.leaveStartDate){
           startDate = sItem.leaveStartDate;
           endDate = '';
         }
         // 当存在结束日期，选在开始日期时不能大于结束日期
-        else if(dItem.fieldCode === 'leaveStartDate' && sItem.leaveEndDate){
+        else if (dItem.fieldCode === 'leaveStartDate' && sItem.leaveEndDate){
           endDate = sItem.leaveEndDate;
           startDate = '';
         }
@@ -287,7 +287,7 @@
           startDate: startDate,
           endDate: endDate,
           onConfirm: (val)=> {
-            if(sItem[dItem.fieldCode] == null){
+            if (sItem[dItem.fieldCode] == null){
               this.$set(sItem, dItem.fieldCode, val)
               return
             }

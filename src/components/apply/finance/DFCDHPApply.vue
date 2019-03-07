@@ -126,10 +126,10 @@
         if (!warn && !this.orderList.length) {
           warn = '请选择汇票明细'
         }
-        if(!warn && !this.cashInfo.fundName){
+        if (!warn && !this.cashInfo.fundName){
           warn = '请选择资金账户'
         }
-        if(!warn && !this.cashInfo.tdAmount){
+        if (!warn && !this.cashInfo.tdAmount){
           warn = '请填写支付金额'
         }
         if (warn) {
@@ -293,8 +293,8 @@
       // 保留两位小数
       checkAmt(item) {
         let {tdAmount, thenAmntBal} = item;
-        if(tdAmount) {
-          if(tdAmount > thenAmntBal){
+        if (tdAmount) {
+          if (tdAmount > thenAmntBal){
             tdAmount = thenAmntBal;
           }
           item.tdAmount = Math.abs(toFixed(tdAmount));

@@ -206,7 +206,7 @@
             warn = '请输入报销金额';
             return false
           }
-          // if(!item.reson){
+          // if (!item.reson){
           //   warn = '请输入报销事由'
           //   return false
           // }

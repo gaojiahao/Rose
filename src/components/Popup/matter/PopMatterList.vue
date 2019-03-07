@@ -152,16 +152,16 @@
           let hasParamsData = Object.prototype.toString.call(val.data) === '[object Object]';
 
           //参数改变 重新请求接口； 请注意 若<参数为空> 则不会发起请求
-          if(hasParamsData) {
-            for(let item in val.data) {
-              if(!val.data[item]) {
+          if (hasParamsData) {
+            for (let item in val.data) {
+              if (!val.data[item]) {
                 paramsIsOk = false;
                 this.hasNext = false;
                 break;
               }
             }
             console.log('是否可以请求物料:', paramsIsOk);
-            if(paramsIsOk) this.requestData();
+            if (paramsIsOk) this.requestData();
           }
           else {
             this.requestData();

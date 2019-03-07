@@ -269,7 +269,7 @@
         this.group = this.selItems.handlerUnitName;
         this.role = this.selItems.handlerRoleName;
         // 重新提交时需要重新请求当前用户的经办组织,职位
-        if(this.$route.query.transCode){
+        if (this.$route.query.transCode){
           this.getNewHandleORG()
           this.getNewUserRole()
         }
@@ -302,7 +302,7 @@
       getNewHandleORG() {
         return getGroupByUserId(this.selItems.userId).then(({tableContent = []}) => {
            // 因有的用户没有经办组织，所以需要先清空当前的组织
-          if(this.isSetInitial) this.group = '';
+          if (this.isSetInitial) this.group = '';
           this.groupList = [];
           tableContent.forEach(item => {
             this.groupList.push({
@@ -322,7 +322,7 @@
       getNewUserRole() {
         return getRoleByUserId(this.selItems.userId).then(({tableContent = []}) => {
           // 因有的用户没有经办职位，所以需要先清空当前的职位
-          if(this.isSetInitial) this.role = '';
+          if (this.isSetInitial) this.role = '';
           this.roleList = [];
           tableContent.forEach(item => {
             this.roleList.push({

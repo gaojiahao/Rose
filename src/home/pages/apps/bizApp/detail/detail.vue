@@ -74,12 +74,12 @@ export default {
             type: 'instance',
             relationKey: this.transCode
           };
-      if(this.isConcern === 1) {
+      if (this.isConcern === 1) {
         operation = unsubscribeApp;
         delete data.type;
       }
       operation(data).then(({success = true, message = ''})=>{
-        if(success) {
+        if (success) {
           this.isConcern = message === '订阅成功！' ? 1 : 0;
           let tips = message === '订阅成功！' ? '关注成功' : '取消关注成功';
           this.$vux.toast.show({
@@ -126,7 +126,7 @@ export default {
   },
   activated() {
     let reload = this.$route.meta.reload;
-    if(reload) {
+    if (reload) {
       this.initPage();
       this.$route.meta.reload = false;
     }

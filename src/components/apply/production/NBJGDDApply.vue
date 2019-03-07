@@ -389,7 +389,7 @@
         // 检验，组装dataSet
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
-            if(!item.tdQty){
+            if (!item.tdQty){
               warn = '请填写减少数量'
               break
             }

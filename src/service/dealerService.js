@@ -2,33 +2,33 @@ import $flyio from '../plugins/ajax';
 
 const dealerService = {
     // 获取id
-    getId(id){
+    getId(id) {
         return $flyio.ajax({
             url: `/H_roleplay-si/ds/list/getListViewById?uniqueId=${id}`
         })
     },
     // 获取所有往来列表
-    getDealerList(id,data){
+    getDealerList(id,data) {
         return $flyio.ajax({
             url: `/H_roleplay-si/seconds/getReportInfoByListViewId/${id}`,
             data
         })
     },
     // 获取订单往来客户列表
-    getOrderDealerList(data){
+    getOrderDealerList(data) {
         return $flyio.ajax({
             url: '/H_roleplay-si/ds/getObjDealerByLabelName',
             data
         })
     },
     // 获取往来分类
-    getDealerClassfiy(){
+    getDealerClassfiy() {
         return $flyio.ajax({
             url: '/H_roleplay-si/ds/list/getListViews?listId=c0375170-d537-4f23-8ed0-a79cf75f5b04'
         })
     },
     // 获取往来关系标签
-    getDictByType(){
+    getDictByType() {
         return $flyio.ajax({
             url: '/H_roleplay-si/ds/getDictByType',
             data:{
@@ -40,7 +40,7 @@ const dealerService = {
         })
     },
     // 获取往来大类
-    getDictByValue(value){
+    getDictByValue(value) {
         return $flyio.ajax({
             url: '/H_roleplay-si/ds/getDictByValue',
             data:{
@@ -52,41 +52,41 @@ const dealerService = {
         })
     },
     // 保存往来
-    save(data){
+    save(data) {
         return $flyio.post({
             url: '/H_roleplay-si/dealer/save',
             data
         })
     },
     // 修改往来
-    update(data){
+    update(data) {
         return $flyio.post({
             url: '/H_roleplay-si/dealer/update',
             data
         })
     },
     // 查询往来信息
-    getDealerInfo(code){
+    getDealerInfo(code) {
         return $flyio.ajax({
             url: `/H_roleplay-si/dealer/findData?transCode=${code}`
         })
     },
     // 获取新增应用中的往来
-    getAppdealer(data){
+    getAppdealer(data) {
         return $flyio.ajax({
             url: '/H_roleplay-si/ds/getObjDealerByLabelName',
             data
         })
     },
     // 获取联系人
-    getContactList(data){
+    getContactList(data) {
         return $flyio.ajax({
             url: '/H_roleplay-si/ds/getObjDealerContact',
             data
         })
     },
     // 获取供应商列表(付供应商欠款)
-    getPaySupplierArrears(data = {}){
+    getPaySupplierArrears(data = {}) {
       return $flyio.ajax({
         url: '/H_roleplay-si/ds/getPaySupplierArrears',
         data: {

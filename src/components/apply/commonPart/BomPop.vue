@@ -122,7 +122,7 @@ export default {
     },
     //确认修改
     confirm(){
-      if(this.btnNext === '确认'){
+      if (this.btnNext === '确认'){
         this.$emit('bom-confirm',JSON.stringify(this.bomInfo))
       }
       this.showPop = false;
@@ -131,7 +131,7 @@ export default {
       this.$vux.confirm.prompt(item.specificLoss, {
         title: this.specificLossText,
         onConfirm: (val)=> {
-          if(val){
+          if (val){
             item.specificLoss = Math.abs(toFixed(val));
             let tdQty = accMul(this.bomInfo.tdQty, item.qty, (1 + item.specificLoss));
             item.tdQty = Math.abs(toFixed(tdQty));

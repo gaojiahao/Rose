@@ -144,7 +144,7 @@
       setDefaultValue() {
         this.selItems = [];
         this.defaultValue.forEach(item => {
-          if(item.transCode){
+          if (item.transCode){
             this.selItems.push(item)
           }
         })

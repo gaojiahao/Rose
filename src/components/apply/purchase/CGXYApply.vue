@@ -184,15 +184,15 @@ export default {
       
       if (!warn) {
         // 校验 是否已选择 <物料部分>
-        if(!this.matterList.length) warn = '请选择物料';
+        if (!this.matterList.length) warn = '请选择物料';
 
         // 动态组装 dataSet
         this.matterList.forEach(item => {
           let oItem = {};
-          for(let sItem of this.submitMatterField) {
+          for (let sItem of this.submitMatterField) {
             let val = item[sItem.fieldCode] || item[sItem.showFieldCode];
-            if(!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode] && !val) {
-              if(sItem.text) {
+            if (!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode] && !val) {
+              if (sItem.text) {
                 warn = `${sItem.text}不为空`;
               } 
               break;
@@ -260,7 +260,7 @@ export default {
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
           }
-          if(this.isModify) {
+          if (this.isModify) {
             operation = updateData;
           }
           this.saveData(operation, submitData);
@@ -344,8 +344,8 @@ export default {
     },
     // 将物料配置拆分成属性和可编辑部分
     splitConfig(editMatterPop, editMatterPopConfig){
-      for(let [index, item] of Object.entries(editMatterPop)) {
-        if(!item.readOnly) {
+      for (let [index, item] of Object.entries(editMatterPop)) {
+        if (!item.readOnly) {
           editMatterPopConfig.property = editMatterPop.slice(0, index);
           editMatterPopConfig.editPart = editMatterPop.slice(index);
           break;

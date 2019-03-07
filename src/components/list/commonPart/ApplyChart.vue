@@ -196,15 +196,15 @@ export default {
     // 时间筛选确定
     confirm(){
       // 两个时间都选择了
-      if(this.timeFilter.startDate !== '请选择' && this.timeFilter.EndDate !== '请选择'){
+      if (this.timeFilter.startDate !== '请选择' && this.timeFilter.EndDate !== '请选择'){
         this.defaultTips = `${this.timeFilter.startDate} ~ ${this.timeFilter.EndDate}`;
       }
       // 只选择了截止时间
-      else if(this.timeFilter.EndDate !== '请选择'){
+      else if (this.timeFilter.EndDate !== '请选择'){
         this.defaultTips = `截止至 ${this.timeFilter.EndDate}`;
       }
       // 只选择了起始日期
-      else if(this.timeFilter.startDate !== '请选择'){
+      else if (this.timeFilter.startDate !== '请选择'){
         this.defaultTips = `${this.timeFilter.startDate} ~ ${this.toDay} [今日]`;
       } 
       // 都没选择
@@ -230,7 +230,7 @@ export default {
           // 业务员业绩排名
           this.staffRank = staffRank;
           // 修改数据
-          for(let item of dealerPie){
+          for (let item of dealerPie){
             let obj = {
               value: item.total,
               name: item.dealerName

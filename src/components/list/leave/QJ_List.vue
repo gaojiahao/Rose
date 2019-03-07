@@ -125,9 +125,9 @@
           ];
         }
         // 过滤
-        if(Object.keys(this.otherFilter).length){
+        if (Object.keys(this.otherFilter).length){
           let keyArr = Object.keys(this.otherFilter);
-          for(let key in this.otherFilter){
+          for (let key in this.otherFilter){
             let obj = {
               property: key,
               operator: 'in'
@@ -141,7 +141,7 @@
 
         }
         // 时间过滤
-        if(this.timeFilter.startDate || this.timeFilter.endDate) {
+        if (this.timeFilter.startDate || this.timeFilter.endDate) {
           let obj = {
             property: "modTime",
             operator: "date",

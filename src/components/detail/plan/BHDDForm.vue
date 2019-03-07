@@ -66,7 +66,7 @@ export default {
       }).then(data => {
         this.submitInfo  = JSON.parse(JSON.stringify(data));
         // http200时提示报错信息
-        if(data.success === false){
+        if (data.success === false){
           this.$vux.alert.show({
             content: '抱歉，数据有误，暂无法查看',
               onHide:()=>{
@@ -78,7 +78,7 @@ export default {
         this.attachment = data.attachment;
         // 获取合计
         let { dataSet } = data.formData.order;
-        for(let val of dataSet){
+        for (let val of dataSet){
           val.inventoryPic = val.inventoryPic_transObjCode
             ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
             : this.getDefaultImg();

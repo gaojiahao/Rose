@@ -25,7 +25,7 @@ export default {
     methods:{
         changeTip(index){
             this.activeIndex = index;
-            if(index === 0){
+            if (index === 0){
                  this.option  = {
                     title : { //标题
                         // text: '某站点用户访问来源',
@@ -74,7 +74,7 @@ export default {
                     ]
                 }
             }
-            else if(index === 1){
+            else if (index === 1){
                  this.option = {
                     title: {
                         text: '一天用电量分布',
@@ -160,7 +160,7 @@ export default {
                     ]
                 };
             }
-            else if(index === 2){
+            else if (index === 2){
                 this.option = {
                     title: {
                         text: '动态数据',
@@ -273,7 +273,7 @@ export default {
             this.showPie()
         },
         showPie(){
-            if(this.chart){
+            if (this.chart){
                 this.chart.clear();
             }
             this.chart = echarts.init(document.getElementById('main'));

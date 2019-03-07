@@ -129,7 +129,7 @@
         getEmployeeBal(JSON.stringify(filter)).then(({tableContent = []}) => {
           let [data = {}] = tableContent;
           this.fundConfig.forEach(item => {
-            if((item.displayField && item.displayField !== 'text') || item.showFieldCode){
+            if ((item.displayField && item.displayField !== 'text') || item.showFieldCode){
               this.$set(this.dealerInfo, item.fieldCode, data[item.displayField] || data[item.showFieldCode])
             }
           })
@@ -145,8 +145,8 @@
         let warn = '';
         let dataSet = [];
         let oItem = {};
-        for(let sItem of this.submitMatterField){
-          if(!sItem.hiddenInRun && !sItem.allowBlank && !this.dealerInfo[sItem.fieldCode]){
+        for (let sItem of this.submitMatterField){
+          if (!sItem.hiddenInRun && !sItem.allowBlank && !this.dealerInfo[sItem.fieldCode]){
             warn = `${sItem.fieldLabel}不为空`
             break;
           }
@@ -228,7 +228,7 @@
             if (this.biReferenceId) {
               submitData.biReferenceId = this.biReferenceId
             }
-            if(this.isModify) {
+            if (this.isModify) {
               operation = updateData;
             }
             this.saveData(operation, submitData);

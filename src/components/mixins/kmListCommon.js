@@ -91,11 +91,11 @@ export default {
     //显示流水详情
     async getFlow(item) {
       // console.log('item:', item);
-      if(this.activeTab.includes('现金流分类')) return; // ‘现金流分类识别’不需要点击事件
+      if (this.activeTab.includes('现金流分类')) return; // ‘现金流分类识别’不需要点击事件
       this.flowData = [];
       this.flowPage = 1;
       //工作流锁定余额标不查询流水
-      if(item.qtyLocked >= 0) return;
+      if (item.qtyLocked >= 0) return;
       this.flowTitle = item;
       this.$HandleLoad.show();
       let row = {};
@@ -176,7 +176,7 @@ export default {
         this.hasNext = total > (this.page - 1) * this.limit + data.length;
         data.forEach( item => {
           item.status = false;
-          if(item.cashInOrOut) {
+          if (item.cashInOrOut) {
             switch (item.cashInOrOut) {
               case '流入':
                 item.flowIconClass = 'iconfont icon-shangjiantou';
@@ -196,7 +196,7 @@ export default {
           }
 
           // 物料图标 初始化
-          if(item.inventoryPic) {
+          if (item.inventoryPic) {
             item.inventoryPic = `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400`;
           }
           else {
@@ -212,8 +212,8 @@ export default {
         }
         // 判断最近有无新增数据
         let text = '';
-        if(noReset && this.activeIndex === 0){
-          if(this.total){
+        if (noReset && this.activeIndex === 0){
+          if (this.total){
             text = total - this.total === 0 ? '暂无新数据' : text = `新增${total-this.total}条数据`;
             this.$vux.toast.show({
               text: text,
@@ -225,7 +225,7 @@ export default {
           }
         }
         //列表总数据缓存
-        if(this.activeIndex === 0 && this.page === 1){
+        if (this.activeIndex === 0 && this.page === 1){
           sessionStorage.setItem(this.applyCode, total);
         }
         this.$loading.hide();
@@ -268,7 +268,7 @@ export default {
     },
     async getData(noReset) {
       await this.getSession();
-      if(noReset) {
+      if (noReset) {
         await this.getList(true).then(() => {
             this.$nextTick(() => {
               this.$refs.bScroll.finishPullDown().then(() => {

@@ -158,19 +158,19 @@ export default {
     warehouseType: {
       handler(val){
         this.typeSub = this.typeToSubMap[val] || 'noMatched';
-        for(let item of this.warehouseConfig){
-          if(item.fieldCode === this.typeSub) {
+        for (let item of this.warehouseConfig){
+          if (item.fieldCode === this.typeSub) {
             item.hiddenInRun = false;
             // 将当前员工编码, 组织编码等找到对应的名称
-            for(let dItem of item.remoteData){
-              if(dItem[item.valueField] === this.warehouse[item.fieldCode]) {
+            for (let dItem of item.remoteData){
+              if (dItem[item.valueField] === this.warehouse[item.fieldCode]) {
                 this.$set(this.warehouse, item.displayField, dItem[item.displayField])
                 break;
               }
             }
           }
-          else{
-            if(item.fieldCode === 'staffDealerCode' || item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
+          else {
+            if (item.fieldCode === 'staffDealerCode' || item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
               || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
                 item.hiddenInRun = true
               }
@@ -178,15 +178,15 @@ export default {
           }
 
         }
-        if(this.warehouseType === '库位'){
+        if (this.warehouseType === '库位'){
           delete this.warehouseDuplicateData.warehouseRel
         }
-        else if(this.warehouseType !== '库位' && !this.warehouseDuplicateData.warehouseRel){
+        else if (this.warehouseType !== '库位' && !this.warehouseDuplicateData.warehouseRel){
           this.$set(this.warehouseDuplicateData, 'warehouseRel', [])
         }
         // 当仓库类型为库位时，隐藏库位信息
-        for(let item of this.warehouseDuplicateConfig){
-          if(item.title === '库位'){
+        for (let item of this.warehouseDuplicateConfig){
+          if (item.title === '库位'){
             item.hiddenInRun = this.warehouseType === '库位' ? true : false;
             break
           }
@@ -201,13 +201,13 @@ export default {
           return
         }
         val && val.forEach(item => {
-          if(item.childWarehouseName) {
-            for(let cItem of this.warehouseDuplicateConfig) {
-              if(cItem.name === 'warehouseRel') {
-                for(let sItem of cItem.items) {
-                  if(sItem.fieldCode === 'childWarehouseName') {
-                    for(let dItem of sItem.remoteData) {
-                      if(dItem.warehosueName === item.childWarehouseName) {
+          if (item.childWarehouseName) {
+            for (let cItem of this.warehouseDuplicateConfig) {
+              if (cItem.name === 'warehouseRel') {
+                for (let sItem of cItem.items) {
+                  if (sItem.fieldCode === 'childWarehouseName') {
+                    for (let dItem of sItem.remoteData) {
+                      if (dItem.warehosueName === item.childWarehouseName) {
                         item.childWarehouseCode = dItem.warehouseCode;
                         break
                       }
@@ -227,26 +227,26 @@ export default {
     // 监听仓储条件的变化 重新请求温度区间数据
     warehouseCondtions: {
       handler(val) {
-        if(val) {
+        if (val) {
           let parentId;
           let config = this.warehouseConfig;
           let { warehouseCondtions } = this.warehouse;
 
           // 根据渲染配置进行处理
-          for(let item of config) {
+          for (let item of config) {
             setTimeout(() => {
               // 当默认状态选中时 取parentId作为请求参数
-              if(item.fieldCode === 'warehouseCondtions') {
-                if(item.remoteData.length) {
-                  for(let each of item.remoteData) {
-                    if(each.name === warehouseCondtions) {
+              if (item.fieldCode === 'warehouseCondtions') {
+                if (item.remoteData.length) {
+                  for (let each of item.remoteData) {
+                    if (each.name === warehouseCondtions) {
                       parentId = each.id;
                       break;
                     }
                   }
                 }
               }
-              if(item.fieldCode === 'warehouseTemperatureRange') {
+              if (item.fieldCode === 'warehouseTemperatureRange') {
                 item.requestParams.data.parentId = parentId;
                 // 请求温度区间
                 requestData(item.requestParams).then(({tableContent = []}) => {
@@ -276,7 +276,7 @@ export default {
     findData() {
       return getwarehouseInfo(this.transCode).then(({formData = {}, attachment = []}) => {
         this.warehouseDuplicateConfig.forEach(key => {
-          if(formData[key.name].length){
+          if (formData[key.name].length){
             this.warehouseDuplicateData[key.name] = formData[key.name];
           }
         })
@@ -318,10 +318,10 @@ export default {
       this.AccountAddress = names;
     },
     getAddress() {
-      if(this.AccountAddress.length > 0) {
+      if (this.AccountAddress.length > 0) {
         this.warehouse.warehouseProvince = this.AccountAddress[0];
         this.warehouse.warehouseDistrict = this.AccountAddress[2];
-        if(this.AccountAddress[1] === '市辖区') {
+        if (this.AccountAddress[1] === '市辖区') {
           this.warehouse.warehouseCity = '';
           return
         };
@@ -329,8 +329,8 @@ export default {
       }
     },
     onChange(item, val) {
-      for(let cItem of item.remoteData){
-        if(cItem[item.displayField] === val) {
+      for (let cItem of item.remoteData){
+        if (cItem[item.displayField] === val) {
           this.$set(this.warehouse, item.fieldCode, cItem[item.valueField])
           break;
         }
@@ -361,7 +361,7 @@ export default {
               this.warehouse.warehouseStatus = -1;
               break;
           }
-          if(this.warehouse.status){
+          if (this.warehouse.status){
             delete this.warehouse.status;
           }
           let operation = save;
@@ -377,7 +377,7 @@ export default {
           }
           // 在提交数组中添加重复项字段
           this.warehouseDuplicateConfig.length && this.warehouseDuplicateConfig.forEach(item => {
-            if(this.warehouseDuplicateData[item.name] && this.warehouseDuplicateData[item.name].length){
+            if (this.warehouseDuplicateData[item.name] && this.warehouseDuplicateData[item.name].length){
               submitData.formData[item.name] = this.warehouseDuplicateData[item.name]
             }
           })
@@ -426,16 +426,16 @@ export default {
         return true
       });
       // 校验重复项
-      if(!warn && Object.keys(this.warehouseDuplicateData).length) {
+      if (!warn && Object.keys(this.warehouseDuplicateData).length) {
         Object.keys(this.warehouseDuplicateData).forEach(item => {
-          if(this.warehouseDuplicateData[item].length <= 0){
+          if (this.warehouseDuplicateData[item].length <= 0){
             return false
           }
           this.warehouseDuplicateConfig.forEach(dItem => {
-            if(dItem.name === item) {
+            if (dItem.name === item) {
               dItem.items.forEach(cItem => {               
                 this.warehouseDuplicateData[item].forEach(sItem => {
-                  if(!cItem.allowBlank && !sItem[cItem.fieldCode]) {
+                  if (!cItem.allowBlank && !sItem[cItem.fieldCode]) {
                     warn  = `${cItem.text}不能为空`;
                     return false
                   }
@@ -465,7 +465,7 @@ export default {
       let requestParams = {
         url,
       }
-      if(keys.length) {
+      if (keys.length) {
         let data = {};
         keys.forEach(key => {
           data[key] = params[key].type === 'text' ? params[key].value : '';
@@ -474,19 +474,19 @@ export default {
       }
       sItem.requestParams = requestParams;
       requestData(requestParams).then((data) => {
-        if(data.tableContent){
+        if (data.tableContent){
           data.tableContent.forEach(item => {
             item.name = item[sItem.displayField];
             item.value = item[sItem.displayField];
           })
-          if(sItem.fieldCode === 'warehouseType') {
-            if(!this.$route.query.transCode) {
+          if (sItem.fieldCode === 'warehouseType') {
+            if (!this.$route.query.transCode) {
               this.warehouse.warehouseType  = this.$route.query.warehouseType ? this.$route.query.warehouseType : '';
             }
           }
           this.$set(sItem, 'remoteData', data.tableContent)
         }
-        else{
+        else {
           data.forEach(item => {
             item.name = item[sItem.displayField];
             item.value = item[sItem.displayField];
@@ -498,11 +498,11 @@ export default {
     async getFormViewsInfo() {
       // 根据listId 请求表单的uniqueId
       await getFormViews(this.listId).then(data => {
-        for(let item of data) {
-          if(this.transCode && item.viewType === 'revise') {
+        for (let item of data) {
+          if (this.transCode && item.viewType === 'revise') {
             this.uniqueId = item.uniqueId;
           }
-          else if(!this.transCode && item.viewType === 'submit') {
+          else if (!this.transCode && item.viewType === 'submit') {
             this.uniqueId = item.uniqueId;
           }
         }
@@ -512,11 +512,11 @@ export default {
         console.log('config:', config);
         let warehouseConfig = [], warehouseMultipleConfig = [];
         config.forEach(item => {
-          if(!item.isMultiple) {
+          if (!item.isMultiple) {
             warehouseConfig = JSON.parse(JSON.stringify(item.items));
           }
-          else{             
-            if(!item.hiddenInRun && item.xtype !== 'r2Fileupload') {
+          else {             
+            if (!item.hiddenInRun && item.xtype !== 'r2Fileupload') {
               warehouseMultipleConfig.push(JSON.parse(JSON.stringify(item)))
             }
           }
@@ -524,25 +524,25 @@ export default {
         // 仓库基本信息配置的处理
         warehouseConfig.forEach(item => {
           //下拉框的数据请求
-          if(item.fieldCode !== 'warehouseProvince' && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'){
-            if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
+          if (item.fieldCode !== 'warehouseProvince' && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'){
+            if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
               this.handlerParams(item)
             }
-            else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
+            else if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
               this.$set(item, 'remoteData', item.dataSource.data)
             }
           }
           // 在渲染的配置中添加字段
-          if(item.fieldCode !== 'warehousePic'
+          if (item.fieldCode !== 'warehousePic'
             && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict') {
             this.warehouseConfig.push(item);
           }
           // 默认显示员工，（渠道商，组织等隐藏）
-          if(item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
+          if (item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
             || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode') {
             item.hiddenInRun = true
           }
-          else if(item.fieldCode === 'staffDealerCode') {
+          else if (item.fieldCode === 'staffDealerCode') {
             item.hiddenInRun = false
           }           
         })
@@ -555,8 +555,8 @@ export default {
           }
           let arr = [];
           item.items.forEach((sItem, sIndex) => {
-            if(!sItem.hidden) {
-              if((sItem.editorType === 'r2Combo' || sItem.editorType === 'r2Selector') && sItem.dataSource && sItem.dataSource.type === 'remoteData') {
+            if (!sItem.hidden) {
+              if ((sItem.editorType === 'r2Combo' || sItem.editorType === 'r2Selector') && sItem.dataSource && sItem.dataSource.type === 'remoteData') {
                 this.handlerParams(sItem)
               }
               arr.push(sItem);
@@ -564,12 +564,12 @@ export default {
           })
           item.items = arr;
           this.$set(this.warehouseDuplicateData, item.name, [])
-          if(this.warehouseType === '库位' && item.title === '库位') {
+          if (this.warehouseType === '库位' && item.title === '库位') {
             item.hiddenInRun = true;
           }
         })
         this.warehouseDuplicateConfig = warehouseMultipleConfig;
-        if(!this.transCode) this.$loading.hide()
+        if (!this.transCode) this.$loading.hide()
       })
     }
   },
@@ -613,7 +613,7 @@ export default {
   beforeRouteEnter (to, from, next) {
     // 修改title
     to.meta.title = '新增仓库';
-    if(to.query.transCode){
+    if (to.query.transCode){
       to.meta.title = '编辑仓库';
     }
     next();

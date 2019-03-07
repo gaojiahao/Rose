@@ -106,10 +106,10 @@ export default {
         let arr = [];
         for (let items of Object.values(this.orderList)) {
           for (let mItem of items) {
-            if(this.matterEditConfig.editPart) {
+            if (this.matterEditConfig.editPart) {
               // 此处请求 辅助计量
               for (let cItem of this.matterEditConfig.editPart) {
-                if(cItem.fieldCode === 'assMeasureUnit') {
+                if (cItem.fieldCode === 'assMeasureUnit') {
                   let requestParams = {
                     url: cItem.dataSource.data.url,
                     data: {
@@ -137,7 +137,7 @@ export default {
   },
   watch:{
     orderListTitle(val) {
-      if(val.includes('订单')){
+      if (val.includes('订单')) {
         this.filterList = [
           {
             name: '物料名称',
@@ -152,7 +152,7 @@ export default {
           }
         ]
       }
-      else{
+      else {
          this.filterList = [
           {
             name: '物料名称',
@@ -180,7 +180,7 @@ export default {
         accountExpirationDate: accountExpirationDate,
         drDealerLogisticsTerms: sel.dealerLogisticsTerms,
       };
-      if(this.matterParams.data && this.matterParams.data.dealerCode != null) {
+      if (this.matterParams.data && this.matterParams.data.dealerCode != null) {
         this.matterParams.data.dealerCode = this.dealerInfo.dealerCode
         this.matterList = [];
         this.orderList = {};
@@ -192,17 +192,17 @@ export default {
     // 选中仓库
     selWarehouse(val) {
       this.warehouse = JSON.parse(val);
-      if(this.matterParams.data && this.matterParams.data.whCode != null) {
+      if (this.matterParams.data && this.matterParams.data.whCode != null) {
         this.matterParams.data.whCode = this.warehouse.warehouseCode;
         this.matterList = [];
         this.orderList = {};
       }
     },
     // 选择的库位
-    getStore(val){
+    getStore(val) {
       console.log(val)
       this.warehouseStoreInfo = {...val};
-      if(this.matterParams.data && this.matterParams.data.storehouseCode != null) {
+      if (this.matterParams.data && this.matterParams.data.storehouseCode != null) {
         this.matterParams.data.storehouseCode = this.warehouseStoreInfo.warehouseCode;
         this.matterList = [];
         this.orderList = {};
@@ -241,11 +241,11 @@ export default {
         // 初始化数据
         item.taxRate = this.taxRate;
         // 格式化日期
-        for(let key in this.dataIndexMap){
-          if(key === 'promDeliTime'){
+        for (let key in this.dataIndexMap) {
+          if (key === 'promDeliTime') {
             item[key] = dateFormat(item[this.dataIndexMap[key]], 'YYYY-MM-DD') || "";
           }
-          else{
+          else {
             item[key] = item[key] || item[this.dataIndexMap[key]];
           }
         }
@@ -268,22 +268,22 @@ export default {
     // 选择要删除的物料
     delClick(sItem, index, key) {
       let arr = this.selItems[key];
-      if(arr){
+      if (arr) {
         let delIndex = arr.findIndex(item => item === index);
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
-          if(!arr.length) delete this.selItems[key];
+          if (!arr.length) delete this.selItems[key];
           return;
         }
         arr.push(index);
       }
-      else{
+      else {
         this.$set(this.selItems, key, [index])
       }
     },
     // 删除的选中状态
     showSelIcon(sItem, index) {
-      if(sItem.transCode) {
+      if (sItem.transCode) {
         return this.selItems[sItem.transCode] && this.selItems[sItem.transCode].findIndex(item => item === index) !== -1;
       }
       else {
@@ -299,18 +299,18 @@ export default {
       }
       // 针对物料列表中的数据进行处理
       let selItems = {};
-      for(let key in this.orderList){
+      for (let key in this.orderList) {
         this.orderList[key].forEach((item, index) => {
           // 存在交易号时 key等于交易号
-          if(item.transCode) {
-            if(!selItems[item.transCode]){
+          if (item.transCode) {
+            if (!selItems[item.transCode]) {
               selItems[item.transCode] = [];
             }
             selItems[item.transCode].push(index)
           }
           // 不存在时 key为 'noCode'
           else {
-            if(!selItems['noCode']) {
+            if (!selItems['noCode']) {
               selItems['noCode'] = []
             }
             selItems['noCode'].push(index);
@@ -334,9 +334,9 @@ export default {
           // 被选中删除的物料
           let selItems = this.selItems, checkList = this.checkList;
           
-          for(let key in this.selItems) {
+          for (let key in this.selItems) {
             // 当没有对应的交易单号
-            if(key === 'noCode') {
+            if (key === 'noCode') {
               let orderList = {};
               let remainder = this.matterList.filter((item, index) => !checkList.includes(index));
               remainder.forEach(item => {
@@ -354,7 +354,7 @@ export default {
               newIndexs.forEach((sItem, sIndex) => {
                 this.orderList[key].splice(sItem, 1);
               }) 
-              if(!this.orderList[key].length){
+              if (!this.orderList[key].length) {
                 delete this.orderList[key]
               }
             }
@@ -401,7 +401,7 @@ export default {
             warn = `请选择${item.message}`;
             return false
           }
-          else if(!this[item.key]) {
+          else if (!this[item.key]) {
             warn = `请选择${item.message}`;
             return false
           }
@@ -417,8 +417,8 @@ export default {
       for (let items of Object.values(this.orderList)) {
         for (let item of items) {
           let oItem = {};
-          for(let sItem of this.submitMatterField){
-            if(!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode]){
+          for (let sItem of this.submitMatterField) {
+            if (!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode]) {
               warn = `${sItem.text}不为空`
               break;
             }
@@ -499,7 +499,7 @@ export default {
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
           }
-          if(this.isModify) {
+          if (this.isModify) {
             operation = updateData;
           }
           this.saveData(operation, submitData);
@@ -587,14 +587,14 @@ export default {
           warehouseDistrict: outPut.warehouseDistrict_storehouseOutCode,
           warehouseAddress: outPut.warehouseAddress_storehouseOutCode,
         };
-        if(this.matterParams.data){
-          if(this.matterParams.data.whCode != null) {
+        if (this.matterParams.data) {
+          if (this.matterParams.data.whCode != null) {
             this.matterParams.data.whCode = this.warehouse.warehouseCode
           }
-          if(this.matterParams.data.dealerCode != null) {
+          if (this.matterParams.data.dealerCode != null) {
             this.matterParams.data.dealerCode = this.dealerInfo.dealerCode
           }
-          if(this.matterParams.data.storehouseCode != null){
+          if (this.matterParams.data.storehouseCode != null) {
             this.matterParams.data.storehouseCode = this.warehouseStoreInfo.warehouseCode;
           }
         }
@@ -650,7 +650,7 @@ export default {
 
       item[key] = Math.abs(toFixed(val));
       
-      if( tdQty > locationStock ) {
+      if ( tdQty > locationStock ) {
         item.tdQty = locationStock;
       }
     }
@@ -673,15 +673,15 @@ export default {
     //     matterEditConfig = this.matterEditConfig;
     let draft = JSON.parse(sessionStorage.getItem(DRAFT_KEY));
 
-    if(draft && this.matterParams.data) {
+    if (draft && this.matterParams.data) {
       this.matterParams = draft.matterParams;
       sessionStorage.removeItem(DRAFT_KEY);
     }
-    // if(matterList.length && matterEditConfig.editPart) {
+    // if (matterList.length && matterEditConfig.editPart) {
     //   // 请求物料辅助计量的数据
-    //   for(let item of matterList) {
-    //     for(let cItem of matterEditConfig.editPart) {
-    //       if(cItem.fieldCode === 'assMeasureUnit') {          
+    //   for (let item of matterList) {
+    //     for (let cItem of matterEditConfig.editPart) {
+    //       if (cItem.fieldCode === 'assMeasureUnit') {          
     //         let requestParams = {
     //           url: cItem.dataSource.data.url,
     //           data: {

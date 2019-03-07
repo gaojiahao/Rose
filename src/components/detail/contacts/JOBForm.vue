@@ -96,7 +96,7 @@
     created() {
       this.$loading.show()
       let query = this.$route.query;
-      if(query.id){
+      if (query.id){
         this.jobId = query.id;
           this.findData()
       }

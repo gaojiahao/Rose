@@ -112,7 +112,7 @@ export default {
         this.formData = formData;
         // 此处判断 *重复项* 是否显示
         this.dealerDuplicateConfig.forEach(item => {
-          if(this.formData[item.name] && !this.formData[item.name].length){
+          if (this.formData[item.name] && !this.formData[item.name].length){
             item.show = false;
             return
           }
@@ -147,19 +147,19 @@ export default {
         if (this.dealer.dealerPic) {
           this.MatPic = `/H_roleplay-si/ds/download?url=${this.dealer.dealerPic}&width=400&height=400`;
         }
-        else{
+        else {
           this.getDefaultImg()
         }
         let [imgFileObj = {}] = attachment.filter(item => {
           return item.attacthment === this.dealer.dealerPic
         });
-        for(let cItem of this.dealerConfig) {
+        for (let cItem of this.dealerConfig) {
           // 主体类型为机构， 税号显示
-          if(cItem.fieldCode === 'taxNo'){
+          if (cItem.fieldCode === 'taxNo'){
             cItem.hiddenInRun = this.dealer.mianTypes === '机构' ? false : true
           }
           // 默认结算方式为后支付，默认账期方式显示
-          else if(cItem.fieldCode === 'wayOfPayment') {
+          else if (cItem.fieldCode === 'wayOfPayment') {
             cItem.hiddenInRun = this.dealer.paymentTerm === '后支付' ? false : true
             break
           }
@@ -189,8 +189,8 @@ export default {
     async getFormViewInfo() {
       // 请求表单uniqueId
       await getFormViews(this.listId).then(data => {
-        for(let item of data){
-          if(item.viewType === 'view'){
+        for (let item of data){
+          if (item.viewType === 'view'){
             this.uniqueId = item.uniqueId;
             break;
           }
@@ -201,22 +201,22 @@ export default {
         console.log('config:', config);
         let dealerConfig = [], dealerDuplicateConfig = [];
         config.forEach(item => {
-          if(!item.isMultiple) {
+          if (!item.isMultiple) {
             dealerConfig = JSON.parse(JSON.stringify(item.items));
           }
-          else{
+          else {
             dealerDuplicateConfig.push(JSON.parse(JSON.stringify(item)))
           }
         })
         //往来基本信息配置的处理
         dealerConfig.forEach(item =>{
           // 在渲染的配置中添加字段
-          if(item.fieldCode !== 'dealerCode' && item.fieldCode !== 'dealerName' 
+          if (item.fieldCode !== 'dealerCode' && item.fieldCode !== 'dealerName' 
             && item.fieldCode !== 'dealerPic' && item.fieldCode !== 'dealerStatus' ){
             this.dealerConfig.push(item);
           }
           // 默认将税号,账期方式隐藏
-          if(item.fieldCode === 'taxNo' || item.fieldCode === 'wayOfPayment'){
+          if (item.fieldCode === 'taxNo' || item.fieldCode === 'wayOfPayment'){
             item.hiddenInRun = true
           }
         })
@@ -228,7 +228,7 @@ export default {
   created() {
     this.$loading.show()
     let query = this.$route.query;
-    if(query.transCode){
+    if (query.transCode){
       this.transCode = query.transCode;
       (async() => {
         await this.getFormViewInfo();

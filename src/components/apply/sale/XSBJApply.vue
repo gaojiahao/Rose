@@ -94,7 +94,7 @@ export default {
   mixins: [ApplyCommon],
   methods: {
     // 展开可删除状态
-    showDelete(){
+    showDelete() {
       this.matterModifyClass = ! this.matterModifyClass;
       this.selItems = [];
     },
@@ -307,7 +307,7 @@ export default {
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
           }
-          if(this.isModify) {
+          if (this.isModify) {
             operation = updateData;
           }
           this.saveData(operation, submitData);
@@ -432,9 +432,9 @@ export default {
       // 不允许存在负数
       item[key] = Math.abs(toFixed(val));
       // 如果存在数量区间
-      if(priceRange.length) {
-        for(let range of priceRange) {
-          if(assistQty >= range.qtyDownline && assistQty <= range.qtyOnline) {
+      if (priceRange.length) {
+        for (let range of priceRange) {
+          if (assistQty >= range.qtyDownline && assistQty <= range.qtyOnline) {
             this.$set(item, 'standardPrice', range.standardPrice);
             this.$set(item, 'specialReservePrice', range.specialReservePrice);
             break;
@@ -446,8 +446,8 @@ export default {
         }
       }
       // 如果 标准价格 / 特批底价 存在
-      if(price && item.specialReservePrice !== '' && item.standardPrice) {
-        if(price > item.standardPrice || price < item.specialReservePrice) {
+      if (price && item.specialReservePrice !== '' && item.standardPrice) {
+        if (price > item.standardPrice || price < item.specialReservePrice) {
           this.$vux.alert.show({
             title: '温馨提示',
             content: '您输入的价格有误，不可大于"标准价格"或是低于"特批底价"',

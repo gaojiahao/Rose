@@ -172,7 +172,7 @@ export default {
       // 数量
       if (tdQty) {
         item.tdQty = Math.abs(toFixed(tdQty));
-        if(tdQty > qtyBal){
+        if (tdQty > qtyBal){
           item.tdQty = qtyBal;
         }
       }
@@ -310,7 +310,7 @@ export default {
       // 组装dataSet
       for (let items of Object.values(this.orderList)) {
         for (let item of items) {
-          if(!item.tdQty){
+          if (!item.tdQty){
             warn = '请填写数量'
             break
           }

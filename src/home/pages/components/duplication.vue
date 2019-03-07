@@ -104,7 +104,7 @@ export default {
     duplicateData: {
       handler(val){
         let defaultData = JSON.stringify(this.defaultValue), currentData = JSON.stringify(val);
-        if(currentData !== defaultData){
+        if (currentData !== defaultData){
           this.$emit('input', val)
         }
       },
@@ -116,7 +116,7 @@ export default {
     addMoreUnit(item) {
       let obj = {};
       item.items.forEach(item => {
-        if(!item.hidden){
+        if (!item.hidden){
           obj[item.fieldCode] = ''
         }
       })
@@ -140,23 +140,23 @@ export default {
     // 选择省市区
     onChange(val, index, dItem, sItem){
       // 选择省，更新市，区数据
-      if(dItem.fieldCode === 'deliveryProvince'){
-        for(let item of this.duplicateConfig[index].items) {
+      if (dItem.fieldCode === 'deliveryProvince'){
+        for (let item of this.duplicateConfig[index].items) {
           // 根据省，重新请求市的数据
-          if(item.fieldCode === 'deliveryCity') {
-            if(item.requestParams.data.provinceName !== undefined){
+          if (item.fieldCode === 'deliveryCity') {
+            if (item.requestParams.data.provinceName !== undefined){
               item.requestParams.data.provinceName = val;
             }
             requestData(item.requestParams).then(data => {
-              if(data.tableContent){
-                if(data.tableContent.length){
+              if (data.tableContent){
+                if (data.tableContent.length){
                   data.tableContent.forEach(dItem => {
                     dItem.name = dItem[item.displayField];
                     dItem.value = dItem[item.displayField]
                   })
                   sItem.deliveryCity = data.tableContent[0].name;
                 }
-                else{
+                else {
                   sItem.deliveryCity = ''
                 }
                 item.remoteData = data.tableContent  
@@ -166,22 +166,22 @@ export default {
           }
         }
       }
-      else if(dItem.fieldCode === 'deliveryCity'){
-        for(let item of this.duplicateConfig[index].items) {
+      else if (dItem.fieldCode === 'deliveryCity'){
+        for (let item of this.duplicateConfig[index].items) {
           // 根据市，重新请求区的数据
-          if(item.fieldCode === 'deliveryCounty') {
+          if (item.fieldCode === 'deliveryCounty') {
             item.requestParams.data.cityName = val;
             item.requestParams.data.provinceName = sItem.deliveryProvince;
             requestData(item.requestParams).then(data => {
-              if(data.tableContent){
-                if(data.tableContent.length){
+              if (data.tableContent){
+                if (data.tableContent.length){
                   data.tableContent.forEach(dItem => {
                     dItem.name = dItem[item.displayField];
                     dItem.value = dItem[item.displayField];
                   })
                   sItem.deliveryCounty = data.tableContent[0].name;
                 }
-                else{
+                else {
                   sItem.deliveryCounty = ''
                 }
                 item.remoteData = data.tableContent  

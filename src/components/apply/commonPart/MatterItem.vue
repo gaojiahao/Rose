@@ -31,7 +31,7 @@ export default {
   name: "MatterItem",
   filters: {
     percent(val) {
-      if(!val && val !== 0) {
+      if (!val && val !== 0) {
         return '无'
       }
       let budget = accMul(val, 100);
@@ -71,7 +71,7 @@ export default {
   computed: {
     showEdit () {
       // 存在 价格、数量 输入
-      if(this.matter.price || this.matter.tdQty){
+      if (this.matter.price || this.matter.tdQty) {
         return this.matter.price || this.matter.tdQty
       }
     },

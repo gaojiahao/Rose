@@ -136,9 +136,9 @@ export default {
               contentHeight = this.$refs.bScroll.$refs.scrollWrapper.offsetHeight,
               scrollHeight = contentHeight - containerHeight;
           // 当滑动内容大于容器高度,可滑动
-          if(contentHeight > containerHeight) {
+          if (contentHeight > containerHeight) {
             // 当前内容滑动的高度大于可滑动的高度
-            if(this.scrollHeight > scrollHeight) {
+            if (this.scrollHeight > scrollHeight) {
               this.scrollHeight = scrollHeight;
             }
             this.$refs.bScroll.scrollTo(0, -this.scrollHeight);
@@ -152,7 +152,7 @@ export default {
     },
     getUserDefault(item){
       let url = require('assets/ava01.png');
-      if(item){
+      if (item){
         item.photo = url;
       }
       return url;
@@ -168,11 +168,11 @@ export default {
       this.popupShow = true;
       this.scrollHeight = 0;
       this.$nextTick(() => {
-        if(mIndex === 0) {
+        if (mIndex === 0) {
           return 
         }
         this.$refs.eachComment.forEach((item, index) => {
-          if(index < mIndex){
+          if (index < mIndex){
             this.scrollHeight += item.offsetHeight;
           }
         })
@@ -188,18 +188,18 @@ export default {
       }).then(({dataCount = 0, tableContent = []}) =>{
         this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
         tableContent.forEach(item => {
-          if(item.achievement.includes('<') && !item.achievement.includes('img')) {
+          if (item.achievement.includes('<') && !item.achievement.includes('img')) {
             item.modifyAchievement = item.achievement.replace(/<\/?[^>]*>/g, ""); 
             item.modifyAchievement = item.modifyAchievement.replace(/\s+/g, "</br>")
           }
-          else{
+          else {
             item.modifyAchievement = item.achievement;
           }
-          if(item.chance.includes('<') && !item.chance.includes('img')) {
+          if (item.chance.includes('<') && !item.chance.includes('img')) {
             item.modifyChance = item.chance.replace(/<\/?[^>]*>/g, ""); 
             item.modifyChance = item.modifyChance.replace(/\s+/g, "</br>")
           }
-          else{
+          else {
             item.modifyChance = item.chance; 
           }
         })
@@ -226,7 +226,7 @@ export default {
   },
   created(){
     let { listId } = this.$route.params;
-    if(listId){
+    if (listId){
       // this.$loading.show();
       this.listId = listId;
       this.getAdminComment();

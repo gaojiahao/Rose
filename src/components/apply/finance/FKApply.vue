@@ -311,12 +311,12 @@
       hasDraftData () {
         let isSave = false;
         this.CostList.forEach(item=>{
-          if(item.cashName){
+          if (item.cashName){
             isSave = true;
             return false;
           }
         })
-        if(!isSave){
+        if (!isSave){
           return false;
         }
         return {

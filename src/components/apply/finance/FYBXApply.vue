@@ -114,7 +114,7 @@
         handler(val) {
           let count = 0;
           val.forEach(item => {
-            if(item.tdAmount){
+            if (item.tdAmount){
               count = accAdd(count, item.tdAmount)  
             } 
           })
@@ -125,10 +125,10 @@
       // 此处监听 经办组织id
       departId: {
         handler(newVal, oldVal){
-          if(this.matterParams.data && this.matterParams.data.groupId != null){
+          if (this.matterParams.data && this.matterParams.data.groupId != null){
             this.matterParams.data.groupId = newVal;
           }
-          if(oldVal){
+          if (oldVal){
             this.costList = [{}]
           }
         }     
@@ -151,7 +151,7 @@
       getCost(item, index) {
         this.showCostPop = true;
         this.costIndex = index;
-        if(!item.costName_expCode){
+        if (!item.costName_expCode){
           this.selectedCost = [];
           return
         }
@@ -180,8 +180,8 @@
         let dataSet = [];
         for (let item of this.costList) {
           let oItem = {};
-          for(let sItem of this.submitMatterField){
-            if(!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode]){
+          for (let sItem of this.submitMatterField){
+            if (!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode]){
               warn = `${sItem.text}不为空`
               break;
             }
@@ -289,7 +289,7 @@
               costType: item.costType_expCode, // 费用类型
             })
           })
-          if(this.matterParams.data && this.matterParams.data.groupId != null) {
+          if (this.matterParams.data && this.matterParams.data.groupId != null) {
             this.matterParams.data.groupId = this.formData.handlerUnit;
           }
           this.biReferenceId = formData.biReferenceId;
@@ -298,7 +298,7 @@
       },
       // 是否保存草稿
       hasDraftData() {
-        if(Object.values(this.costList[0]).length){
+        if (Object.values(this.costList[0]).length){
           return {
             [DRAFT_KEY]: {
               costList: this.costList,
@@ -314,7 +314,7 @@
           confirmText: '确认',
           cancelText: '取消',
           onConfirm: (val)=> {
-            if(sItem[dItem.fieldCode] == null){
+            if (sItem[dItem.fieldCode] == null){
               this.$set(sItem, dItem.fieldCode, val)
               return
             }

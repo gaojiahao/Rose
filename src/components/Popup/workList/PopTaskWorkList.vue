@@ -132,13 +132,13 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
             flag = true;
             return false;
           }
-          else if(!item.orderCode && sItem.matCode === item.matCode && sItem.transCode === item.transCode) {
+          else if (!item.orderCode && sItem.matCode === item.matCode && sItem.transCode === item.transCode) {
             flag = true;
             return false;
           }
           return true;
         });
-        if(flag){
+        if (flag){
           this.btnText = `发起工单${this.workType}`
         }
         return flag;
@@ -148,13 +148,13 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
         let arr = this.selItems;
         let delIndex = arr.findIndex(item => item.transCode === sItem.transCode && item.matCode === sItem.matCode);
         // 工单任务验收选中的检验
-        if(sItem.orderCode){
+        if (sItem.orderCode){
           delIndex = arr.findIndex(item => item.transCode === sItem.transCode && item.matCode === sItem.matCode && item.orderCode === sItem.orderCode);
         }
         // 若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
-          if(!arr.length){
+          if (!arr.length){
              this.btnText = '关闭'
           }
           return;
@@ -190,7 +190,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
         this.getWorkOrderTask();
       },
       btnHandle(){
-        if(this.btnText !== '关闭'){
+        if (this.btnText !== '关闭'){
           this.$emit('sel-task',this.selItems)          
         }
         this.showPop = false;

@@ -78,12 +78,12 @@ export default {
     },
     // 监测公司名称是否存在
     checkGroupName(){
-      if(!this.newCompanyInfo.groupName){
+      if (!this.newCompanyInfo.groupName){
         return 
       }
       checkValue('groupName', this.newCompanyInfo.groupName).then(({ result }) => {
         this.isNameExist = false;
-        if(result){
+        if (result){
           this.isNameExist = true;
           this.$vux.alert.show({
             content: '【公司名称】已存在，请替换别的名称'
@@ -93,12 +93,12 @@ export default {
     },
     // 监测公司简称是否存在
     checkShortName(){
-      if(!this.newCompanyInfo.groupShortName){
+      if (!this.newCompanyInfo.groupShortName){
         return 
       }
       checkValue('groupShortName', this.newCompanyInfo.groupShortName).then(({ result }) => {
         this.isShortNameExist = false;
-        if(result){
+        if (result){
           this.isShortNameExist = true;
           this.$vux.alert.show({
             content: '【公司简称】已存在，请替换别的简称'
@@ -111,7 +111,7 @@ export default {
       // 保存接口 或 编辑接口
       let RequestMethod = !this.groupId ? save : update;
       let newCompanyInfo = [];
-      if(RequestMethod === save){
+      if (RequestMethod === save){
         newCompanyInfo = [{...this.newCompanyInfo}];
       }
       else {
@@ -142,7 +142,7 @@ export default {
               break;
           }
           RequestMethod(newCompanyInfo).then(data => {
-            if(data[0] && data[0].groupId || data.success){
+            if (data[0] && data[0].groupId || data.success){
               this.$emit('change', true);
               this.$vux.alert.show({
                 content: data.success ? '修改成功': '提交成功',
@@ -150,7 +150,7 @@ export default {
                   this.$router.go(-1);
                 }
               })
-            }else{
+            }else {
               this.$vux.alert.show({
                 content:data.message
               })
@@ -174,10 +174,10 @@ export default {
           message: '【公司类型】',
         },
       ];
-      if(this.isNameExist){
+      if (this.isNameExist){
         warn = '【公司名称】已存在，请替换别的名称'
       }
-      else if(this.isShortNameExist){
+      else if (this.isShortNameExist){
         warn = '【公司简称】已存在，请替换别的简称'
       }
       !warn && validateMap.every(item => {
@@ -199,7 +199,7 @@ export default {
     // 编辑时 获取表单数据
     CompanyInfo(){
       return CompanyInfo(this.groupId).then( data => {
-        for(let item of data){
+        for (let item of data){
           switch (item.status){
             case 1:
               item.status = '使用中';
@@ -223,7 +223,7 @@ export default {
     this.$loading.show();
     let {groupId = ''} = this.$route.query;
     this.groupId = groupId;
-    if(groupId){
+    if (groupId){
       this.CompanyInfo();
     }
     this.$loading.hide();

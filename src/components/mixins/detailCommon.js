@@ -138,7 +138,7 @@ export default {
       return getListById({uniqueId: this.listId}).then(data => {
         let config = data[0];
         // 当前表单状态为已生效，表单类型包含修改，当前表单状态不为修改，操作按钮包含修改时
-        if(this.formStatus === '已生效' && this.currenrForm !== 'revise' && this.hasReviseView && config.action.update){
+        if (this.formStatus === '已生效' && this.currenrForm !== 'revise' && this.hasReviseView && config.action.update){
           this.actions.push('update')
         }
       })
@@ -147,7 +147,7 @@ export default {
     getFormViews(){
       return getFormViews(this.listId).then(data => {
         data.forEach(item => {
-          if(item.viewType === 'revise') {
+          if (item.viewType === 'revise') {
             this.hasReviseView = true;
             return false;
           }
@@ -429,37 +429,37 @@ export default {
             });
           }
           if (!item.hiddenInRun && !item.isMultiple) {
-            if(item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt' || item.name === 'gys') {
+            if (item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt' || item.name === 'gys') {
               dealerConfig = [...dealerConfig, ...item.items]
             }
             // 出库信息
-            if(item.name === 'ck') {
+            if (item.name === 'ck') {
               // 处理 出库的仓库配置信息
               ckConfig = item.items;
               this.setWarehouseConfg(ckConfig, '出库');
             }
             // 入库信息
-            if(item.name === 'rk') {
+            if (item.name === 'rk') {
               // 处理 入库的仓库配置信息
               rkConfig = item.items;
               this.setWarehouseConfg(rkConfig, '入库');
             }
-            if(item.name === 'pb' || item.name === 'outPut' || item.name === 'projectApproval' || item.name === 'jobLog' || item.name === 'projectPlanTask'){
+            if (item.name === 'pb' || item.name === 'outPut' || item.name === 'projectApproval' || item.name === 'jobLog' || item.name === 'projectPlanTask'){
               otherConfig = item.items;
             }
             // baseInfoExt的配置 目前用于费用报销中的项目
-            if(item.name === 'baseinfoExt') {
+            if (item.name === 'baseinfoExt') {
               baseinfoExtConfig = item.items;
             }
             // 员工借款与备用金 往来的配置
-            if(item.name === 'order') {
+            if (item.name === 'order') {
               fundConfig = item.items
             }
           } 
           else if (!item.hiddenInRun && item.isMultiple) {
-            if(item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
+            if (item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
               // 如果为<Grid>组件 为了方便<PopMatterDetail>组件的判断 此处做数据处理
-              if(item.r2GridXtype) {
+              if (item.r2GridXtype) {
                 item.items.forEach(each => {
                   each['r2GridXtype'] = item.r2GridXtype;
                 })
@@ -497,12 +497,12 @@ export default {
             this.orderTitle = item.text;
             hideOrderTitle = hasDataIndexMap && !(key && matchedCol && !matchedCol.h);
           }
-          if(matterCols.length){
+          if (matterCols.length){
             if (!item.hidden && !matterFilter.includes(item.fieldCode) && needShow) {
               arr.push(item);
             }
           }
-          else{
+          else {
             if (!item.hidden && !matterFilter.includes(item.fieldCode)) {
               arr.push(item);
             }

@@ -140,7 +140,7 @@ export default {
     getList() {
       let value = '';
       this.filtersData.forEach((item, index) => {
-        if(index === this.filtersData.length - 1){
+        if (index === this.filtersData.length - 1){
           value += item;
           return
         }

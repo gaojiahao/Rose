@@ -103,7 +103,7 @@ export default {
     EditLogPop(){
       this.pickerStatus = true;
       this.scopeType = [];
-      if(this.submitData.scope){
+      if (this.submitData.scope){
         let arr = this.submitData.scope.split(',');
         arr.forEach(item=>{
           let obj = {
@@ -135,7 +135,7 @@ export default {
       this.pickerStatus = false;
       this.submitData.scope = '';
       this.scopeType.forEach(item=>{
-        if(this.submitData.scope.length){
+        if (this.submitData.scope.length){
           this.submitData.scope += ','+item.name;
           return
         }
@@ -179,7 +179,7 @@ export default {
         return
       }
       saveLog({...this.submitData,listId : this.listId}).then((data)=>{
-        if(data.success){
+        if (data.success){
           this.submitSuccess = true;
           this.$vux.alert.show({
             content: '提交成功',
@@ -203,12 +203,12 @@ export default {
   },
   mounted(){
     //解决android键盘收起input没有失去焦点，底部按钮遮挡输入框
-    if(platfrom.isAndroid){
+    if (platfrom.isAndroid){
       window.onresize= ()=>{
-        if(this.clientHeight>document.documentElement.clientHeight) {
+        if (this.clientHeight>document.documentElement.clientHeight) {
           //底部按钮隐藏
           this.btnIsHide  = true;
-        }else{
+        }else {
           this.btnIsHide = false;
         }
       }

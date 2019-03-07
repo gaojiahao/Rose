@@ -87,7 +87,7 @@ export default {
   },
   watch:{
     orderListTitle(val) {
-      if(!val.includes('物料')){
+      if (!val.includes('物料')){
         this.filterList = [
           {
             name: '物料名称',
@@ -102,7 +102,7 @@ export default {
           }
         ]
       }
-      else{
+      else {
          this.filterList = [
           {
             name: '物料名称',
@@ -129,7 +129,7 @@ export default {
       this.dealerInfo = chosenDealer;
 
       // 根据客户 重新匹配<物料列表>的请求参数
-      if(this.matterParams.data && this.matterParams.data.dealerCode != null){
+      if (this.matterParams.data && this.matterParams.data.dealerCode != null){
         this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
         this.orderList = {};
       }
@@ -161,7 +161,7 @@ export default {
         ]
       }
       getPriceFromProcurementContract(params).then(({data = {}}) =>{
-        if(Object.keys(data).length){
+        if (Object.keys(data).length){
           // 有值则不修改
           !item.price && item.price !== 0 && this.$set(item, 'price', Object.values(data)[0].price);
           !item.taxRate && item.taxRate !== 0 && this.$set(item, 'taxRate', Object.values(data)[0].taxRate)
@@ -176,19 +176,19 @@ export default {
       sels.map(item => {
         let orderListKey = item.transCode ? item.transCode : 'noCode';
         matCodes.push(item.inventoryCode);
-        for(let key in this.dataIndexMap){
+        for (let key in this.dataIndexMap){
           // 格式化日期
-          if(key === 'promDeliTime' || key === 'shippingTime'){
+          if (key === 'promDeliTime' || key === 'shippingTime'){
             item[key] = dateFormat(item[this.dataIndexMap[key]], 'YYYY-MM-DD') || "";
           }
-          else{
+          else {
             item[key] = item[key] || item[this.dataIndexMap[key]];
           }
         }
         item.tdQty = item.tdQty || item.qtyBal;
         item.assistQty = toFixed(accDiv(item.tdQty, item.assMeasureScale))
         // 根据往来，物料编码获取物料的单价和税率
-        if(this.dealerInfo.dealerCode){
+        if (this.dealerInfo.dealerCode){
           this.getPrice(item)
         }
         if (!orderList[orderListKey]) {
@@ -226,22 +226,22 @@ export default {
     // 选择要删除的物料
     delClick(sItem, index, key) {
       let arr = this.selItems[key];
-      if(arr){
+      if (arr){
         let delIndex = arr.findIndex(item => item === index);
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
-          if(!arr.length) delete this.selItems[key];
+          if (!arr.length) delete this.selItems[key];
           return;
         }
         arr.push(index);
       }
-      else{
+      else {
         this.$set(this.selItems, key, [index])
       }
     },
     // 删除的选中状态
     showSelIcon(sItem, index) {
-      if(sItem.transCode) {
+      if (sItem.transCode) {
         return this.selItems[sItem.transCode] && this.selItems[sItem.transCode].findIndex(item => item === index) !== -1;
       }
       else {
@@ -257,18 +257,18 @@ export default {
       }
       // 针对物料列表中的数据进行处理
       let selItems = {};
-      for(let key in this.orderList){
+      for (let key in this.orderList){
         this.orderList[key].forEach((item, index) => {
           // 存在交易号时 key等于交易号
-          if(item.transCode) {
-            if(!selItems[item.transCode]){
+          if (item.transCode) {
+            if (!selItems[item.transCode]){
               selItems[item.transCode] = [];
             }
             selItems[item.transCode].push(index)
           }
           // 不存在时 key为 'noCode'
           else {
-            if(!selItems['noCode']) {
+            if (!selItems['noCode']) {
               selItems['noCode'] = []
             }
             selItems['noCode'].push(index);
@@ -292,9 +292,9 @@ export default {
           // 被选中删除的物料
           let selItems = this.selItems, checkList = this.checkList;
           
-          for(let key in this.selItems) {
+          for (let key in this.selItems) {
             // 当没有对应的交易单号
-            if(key === 'noCode') {
+            if (key === 'noCode') {
               let orderList = {};
               let remainder = this.matterList.filter((item, index) => !checkList.includes(index));
               remainder.forEach(item => {
@@ -312,7 +312,7 @@ export default {
               newIndexs.forEach((sItem, sIndex) => {
                 this.orderList[key].splice(sItem, 1);
               }) 
-              if(!this.orderList[key].length){
+              if (!this.orderList[key].length){
                 delete this.orderList[key]
               }
             }
@@ -329,8 +329,8 @@ export default {
     // 校验数字
     checkAmt(item, key, val) {
       item[key] = Math.abs(toFixed(val));
-      if(key === 'tdQty'){
-        if(val > item.thenQtyBal){
+      if (key === 'tdQty'){
+        if (val > item.thenQtyBal){
           item[key] = item.thenQtyBal;
         }
       }
@@ -355,13 +355,13 @@ export default {
 
       if (!warn) {
         // 校验 是否已选择 <物料部分>
-        if(!this.matterList.length) warn = '请选择物料';
+        if (!this.matterList.length) warn = '请选择物料';
         
         // 校验
         for (let item of this.matterList) {
           let oItem = {};
-          for(let sItem of this.submitMatterField){
-            if(!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode]){
+          for (let sItem of this.submitMatterField){
+            if (!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode]){
               warn = `${sItem.text}不为空`
               break;
             }
@@ -437,7 +437,7 @@ export default {
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
           }
-          if(this.isModify) {
+          if (this.isModify) {
             operation = updateData;
           }
           this.saveData(operation,submitData);
@@ -473,14 +473,14 @@ export default {
             moq: item.moq_transObjCode,
             leadTime: item.leadTime_transObjCode,
           }
-          if(item.transCode){
+          if (item.transCode){
             if (!orderList[item.transCode]) {
               orderList[item.transCode] = [];
             }
             orderList[item.transCode].push(item);
           }
           else {
-            if(!orderList['noCode']) {
+            if (!orderList['noCode']) {
               orderList['noCode'] = []
             }
             orderList['noCode'].push(item);

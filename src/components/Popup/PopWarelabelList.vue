@@ -79,7 +79,7 @@
       // 判断是否展示选中图标
       showSelIcon(sItem) {
         let flag = false;
-        if(sItem.name === this.defaultValue){
+        if (sItem.name === this.defaultValue){
           flag = true;
         }
         return flag;

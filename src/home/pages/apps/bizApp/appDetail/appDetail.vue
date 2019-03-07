@@ -79,7 +79,7 @@ export default {
     // 设置默认图片
     getDefaultIcon(app){
       let url = require('assets/defaultApp.png');
-      if(app){
+      if (app){
         app.icon = url;
       }
       return url;
@@ -102,14 +102,14 @@ export default {
   },
   created(){
     let { listId } = this.$route.params;
-    if(listId){
+    if (listId){
       this.$loading.show();
       this.listId = listId;
       (async()=>{
         await this.getCurrentUser();
         await this.getAppInfo().then(data=>{
           let userId = JSON.stringify(this.currentUserId);
-          if(this.appInfo.administratorId.length && userId === this.appInfo.administratorId){
+          if (this.appInfo.administratorId.length && userId === this.appInfo.administratorId){
             this.isAppAdmin = true;
           }
         })

@@ -96,8 +96,8 @@ export default {
       handler(val) {
         // 为避免触发重复请求 此处设置监听
         let Parmsdata = val.data, isRequest = false;
-        for(let [key, item] of Object.entries(Parmsdata)) {
-          if(item) {
+        for (let [key, item] of Object.entries(Parmsdata)) {
+          if (item) {
             isRequest = true
           }
           else {

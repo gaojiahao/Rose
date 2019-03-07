@@ -97,10 +97,10 @@
           let oldId = oldVal.id || '';
 
           // 匹配当前选择的往来id 如果不一致则重新发起请求
-          if(newVal) {
+          if (newVal) {
             newId = newVal.id || '';
           } 
-          if(JSON.stringify(oldVal) !== '{}' && oldId !== newId) {
+          if (JSON.stringify(oldVal) !== '{}' && oldId !== newId) {
             this.resetCondition();
             this.getContact();
           }

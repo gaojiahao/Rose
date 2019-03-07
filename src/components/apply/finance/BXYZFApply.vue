@@ -169,7 +169,7 @@
     },
     watch: {
       creatorName(newVal, oldVal) {
-        if(oldVal){
+        if (oldVal){
           this.costList = [{}]
         }
         this.getEmployeeBal()
@@ -178,7 +178,7 @@
         handler(val) {
           let total = 0;
           val.forEach(item => {
-            if(item.tdAmount){
+            if (item.tdAmount){
               item.taxAmount = 0;
               item.noTaxAmount = toFixed(accSub(item.tdAmount, item.taxAmount))
               total = accAdd(total, item.tdAmount)
@@ -208,10 +208,10 @@
       // 此处监听 经办组织id
       departId: {
         handler(newVal, oldVal){
-          if(this.matterParams.data && this.matterParams.data.groupId != null){
+          if (this.matterParams.data && this.matterParams.data.groupId != null){
             this.matterParams.data.groupId = newVal;
           }
-          if(oldVal){
+          if (oldVal){
             this.costList = [{}]
           }
         }     
@@ -219,11 +219,11 @@
       project: {
         handler(val) {
           // 修改项目名称，获取对应的项目类型
-          if(val.project) {
-            for(let item of this.baseinfoExtConfig) {
-             if(item.fieldCode === 'project'){
-               for(let dItem of item.remoteData){
-                 if(dItem.name === val.project){
+          if (val.project) {
+            for (let item of this.baseinfoExtConfig) {
+             if (item.fieldCode === 'project'){
+               for (let dItem of item.remoteData){
+                 if (dItem.name === val.project){
                    this.project.projectType_project = dItem.PROJECT_TYPE;
                    break
                  }
@@ -269,7 +269,7 @@
       getCost(item, index) {
         this.showCostPop = true;
         this.costIndex = index;
-        if(!item.costName_expCode){
+        if (!item.costName_expCode){
           this.selectedCost = [];
           return
         }
@@ -302,8 +302,8 @@
         let dataSet = [];
         for (let item of this.costList) {
           let oItem = {};
-          for(let sItem of this.submitMatterField){
-            if(!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode]){
+          for (let sItem of this.submitMatterField){
+            if (!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode]){
               warn = `${sItem.text}不为空`
               break;
             }
@@ -377,7 +377,7 @@
             if (this.biReferenceId) {
               submitData.biReferenceId = this.biReferenceId
             }
-            if(this.isModify) {
+            if (this.isModify) {
               operation = updateData;
             }
             this.saveData(operation, submitData);
@@ -451,7 +451,7 @@
               costType: item.costType_expCode, // 费用类型
             })
           })
-          if(this.matterParams.data && this.matterParams.data.groupId != null) {
+          if (this.matterParams.data && this.matterParams.data.groupId != null) {
             this.matterParams.data.groupId = this.formData.handlerUnit;
           }
           this.project = {
@@ -481,7 +481,7 @@
           confirmText: '确认',
           cancelText: '取消',
           onConfirm: (val)=> {
-            if(sItem[dItem.fieldCode] == null){
+            if (sItem[dItem.fieldCode] == null){
               this.$set(sItem, dItem.fieldCode, val)
               return
             }

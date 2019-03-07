@@ -121,11 +121,11 @@
           }
         }
         let warn = '';
-        if(!this.dealerInfo.dealerCode){
+        if (!this.dealerInfo.dealerCode){
           warn = '请选择客户'
         }
         !warn && this.otherConfig.every(item => {
-          if(!item.allowBlank && (!this.formData[item.fieldCode] || !this.formData[item.fieldCode].length)) {
+          if (!item.allowBlank && (!this.formData[item.fieldCode] || !this.formData[item.fieldCode].length)) {
               warn = `${item.fieldLabel}不能为空`;
               return false;
           }

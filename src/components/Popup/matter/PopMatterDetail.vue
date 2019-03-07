@@ -147,7 +147,7 @@
           let readOnlyParts = [];
           others.forEach(item => {
             // 当Grid组件只读为false时 各个字段的readOnly才能启用
-            if(item.r2GridXtype && !item.r2GridXtype.readOnly) {
+            if (item.r2GridXtype && !item.r2GridXtype.readOnly) {
               item.readOnly ? readOnlyParts.push(item) : editParts.push(item);
               return;
             }

@@ -300,7 +300,7 @@
         // 组装dataSet
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
-            if(!item.tdQty){
+            if (!item.tdQty){
               warn = '请填写减少数量'
               break;
             }
@@ -459,7 +459,7 @@
     },
     created() {
       let data = sessionStorage.getItem(DRAFT_KEY);
-      if(data){
+      if (data){
         this.orderList = JSON.parse(data).orderList;
         this.formData = JSON.parse(data).formData;
         sessionStorage.removeItem(DRAFT_KEY);

@@ -263,9 +263,9 @@ export default {
         ];
       }
       // 过滤
-      if(Object.keys(this.otherFilter).length){
+      if (Object.keys(this.otherFilter).length){
         let keyArr = Object.keys(this.otherFilter);
-        for(let key in this.otherFilter){
+        for (let key in this.otherFilter){
           let obj = {
             property: key,
             operator: 'in'
@@ -279,7 +279,7 @@ export default {
 
       }
       // 时间过滤
-      if(this.timeFilter.startDate || this.timeFilter.endDate) {
+      if (this.timeFilter.startDate || this.timeFilter.endDate) {
         let obj = {
           property: "modTime",
           operator: "date",
@@ -422,7 +422,7 @@ export default {
     onFilter (val) {
       this.serachVal = '';
       this.$refs.search.clearVal();
-      if(!this.sort.length){
+      if (!this.sort.length){
         this.sort = [
           {
             property: 'modTime',
@@ -465,7 +465,7 @@ export default {
     let { folder, fileName } = this.$route.params,
         { name, listId, transCode } = this.$route.query;
     // 当路由当中包含transCode
-    if(transCode) {
+    if (transCode) {
       isMyflow({transCode}).then(({tableContent}) => {
         let path = '';
         if (tableContent.length > 0) {
@@ -495,7 +495,7 @@ export default {
       * 第一次进入页面成功之后 隐藏动画
       * 如果是从推送打开 则不关闭动画
       */
-      if(!transCode) {
+      if (!transCode) {
         this.$loading.hide();
       }
       wx.ready(() => {

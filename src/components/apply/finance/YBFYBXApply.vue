@@ -142,7 +142,7 @@
       checkAmt(item){
         let {tdAmount,taxRate} = item;
         // 金额,税率
-        if(taxRate){
+        if (taxRate){
           item.taxRate = Math.abs(toFixed(taxRate))
         }
         if (tdAmount) {
@@ -326,12 +326,12 @@
       hasDraftData () {
         let isSave = false;
         this.CostList.forEach(item=>{
-          if(item.exptName){
+          if (item.exptName){
             isSave = true;
             return false;
           }
         })
-        if(!isSave){
+        if (!isSave){
           return false;
         }
         return {

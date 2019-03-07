@@ -208,7 +208,7 @@
       // 选中出库仓库
       selWarehouseOut(val) {
         this.warehouse = JSON.parse(val);
-        if(this.matterParams.data.whCode != null){
+        if (this.matterParams.data.whCode != null){
           this.matterParams.data.whCode = this.warehouse.warehouseCode;
           this.matterList = [];
         }

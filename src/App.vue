@@ -24,7 +24,7 @@
   import { Badge } from 'vux'
   export default {
     name: 'app',
-    data(){
+    data() {
       return{
         tablist: [
 					{title: '应用', path: '/home', icon: 'icon-1'},
@@ -36,16 +36,16 @@
     components:{
       Badge
     },
-    created(){
+    created() {
       this.$event.$on('badgeNum', (val) => {
         this.newsNumber = val;
       })
     },
-    updated(){
+    updated() {
       // 安卓的输入框会挡住input输入的解决办法
-      if(platfrom.isAndroid){
+      if (platfrom.isAndroid) {
         window.addEventListener("resize", function() {
-          if(document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA") {
+          if (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA") {
             setTimeout(() => {
               document.activeElement.scrollIntoViewIfNeeded();
             }, 0);

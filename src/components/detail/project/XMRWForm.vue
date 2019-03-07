@@ -143,13 +143,13 @@ export default {
       })
     },
     checkHour(val){
-      if(val < 0) {
+      if (val < 0) {
         this.taskLog.logDeclarationHours = Math.abs(val)
       }
     },
     save(){
       let warn = '';
-      if(!this.taskLog.logTitle){
+      if (!this.taskLog.logTitle){
         warn = '请输入标题'
       }
       if (warn) {

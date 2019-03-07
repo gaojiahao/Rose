@@ -199,10 +199,10 @@ export default {
     inventoryProcessing(val) {
       if (this.hasDefault) return;
       let TypeParentId = '', value = '';
-      for(let item of this.matterConfig) {
-        if(item.fieldCode === 'processing') {
-          for(let sItem of item.remoteData) {
-            if(sItem.name === val){
+      for (let item of this.matterConfig) {
+        if (item.fieldCode === 'processing') {
+          for (let sItem of item.remoteData) {
+            if (sItem.name === val){
               this.processId = sItem.dictCode;
               TypeParentId = sItem.id;
               value = sItem.type;
@@ -211,35 +211,35 @@ export default {
           }
         }
         // 重新请求获取方式的数据
-        if(item.fieldCode === 'multipleAccess') {
+        if (item.fieldCode === 'multipleAccess') {
           item.requestParams.data.sType = this.inventory.processing;
           requestData(item.requestParams).then(({tableContent = []}) => {
-            if(tableContent.length){
+            if (tableContent.length){
               tableContent.forEach(dItem => {
                 dItem.name = dItem.sName;
                 dItem.value = dItem.sName;
               })
               this.$set(this.inventory, 'multipleAccess', tableContent[0].name)
             }
-            else{
+            else {
               this.inventory.multipleAccess = '';
             }
             item.remoteData = tableContent;
           })
         }
         // 重新请求物料大类的数据
-        if(item.fieldCode === 'inventoryType') {
+        if (item.fieldCode === 'inventoryType') {
           Object.keys(item.requestParams.data).forEach(key => {
-            if(key === 'parentId') {
+            if (key === 'parentId') {
               item.requestParams.data[key] = TypeParentId
             }
-            else if(key === 'value') {
+            else if (key === 'value') {
               item.requestParams.data[key] = value
             }
           })
           requestData(item.requestParams).then(data => {
-            if(data.tableContent != null) {
-              if(data.tableContent.length){
+            if (data.tableContent != null) {
+              if (data.tableContent.length){
                 data.tableContent.forEach(dItem => {
                   dItem.originValue = dItem.value;
                   dItem.value = dItem.name;
@@ -251,8 +251,8 @@ export default {
               }
               item.remoteData = data.tableContent;
             }
-            else{
-              if(data.length){
+            else {
+              if (data.length){
                 data.forEach(dItem => {
                   dItem.originValue = dItem.value;
                   dItem.value = dItem.name;
@@ -278,10 +278,10 @@ export default {
         return;
       }
       let subTypeParentId = '', value = '' ;
-      for(let item of this.matterConfig) {
-        if(item.fieldCode === 'inventoryType'){
-          for(let sItem of item.remoteData) {
-            if(sItem.name === val){
+      for (let item of this.matterConfig) {
+        if (item.fieldCode === 'inventoryType'){
+          for (let sItem of item.remoteData) {
+            if (sItem.name === val){
               this.typeId = sItem.dictCode;
 
               subTypeParentId = sItem.id;
@@ -291,18 +291,18 @@ export default {
           }
         }
         // 重新请求物料子类的数据
-        if(item.fieldCode === 'inventorySubclass') {
+        if (item.fieldCode === 'inventorySubclass') {
           Object.keys(item.requestParams.data).forEach(key => {
-            if(key === 'parentId') {
+            if (key === 'parentId') {
               item.requestParams.data[key] = subTypeParentId
             }
-            else if(key === 'value') {
+            else if (key === 'value') {
               item.requestParams.data[key] = value
             }
           })
           requestData(item.requestParams).then(data => {
-            if(data.tableContent != null) {
-              if(data.tableContent.length){
+            if (data.tableContent != null) {
+              if (data.tableContent.length){
                 data.tableContent.forEach(dItem => {
                   dItem.originValue = dItem.value;
                   dItem.value = dItem.name;
@@ -314,8 +314,8 @@ export default {
               }
               item.remoteData = data.tableContent;
             }
-            else{
-              if(data.length){
+            else {
+              if (data.length){
                 data.forEach(dItem => {
                   dItem.originValue = dItem.value;
                   dItem.value = dItem.name;
@@ -338,10 +338,10 @@ export default {
         this.subclassId = '';
         return;
       }
-      for(let item of this.matterConfig) {
-        if(item.fieldCode === 'inventorySubclass'){
-          for(let sItem of item.remoteData) {
-            if(sItem.name === val){
+      for (let item of this.matterConfig) {
+        if (item.fieldCode === 'inventorySubclass'){
+          for (let sItem of item.remoteData) {
+            if (sItem.name === val){
               this.subclassId = sItem.dictCode;
               break;
             }
@@ -355,9 +355,9 @@ export default {
     // 监听辅助计量，重新计算包装规格
     MoreUnit: {
       handler(val){
-        if(val && val.length){
+        if (val && val.length){
           val.forEach(item => {
-            if(this.inventory.measureUnit && item.invSubUnitName && item.invSubUnitMulti){
+            if (this.inventory.measureUnit && item.invSubUnitName && item.invSubUnitMulti){
               item.comment = `${item.invSubUnitMulti}${this.inventory.measureUnit}/${item.invSubUnitName}`;
               return
             }
@@ -431,17 +431,17 @@ export default {
         return true;
       });
       // 校验重复项
-      if(!warn && Object.keys(this.matterDuplicateData).length){
+      if (!warn && Object.keys(this.matterDuplicateData).length){
         Object.keys(this.matterDuplicateData).forEach(item => {
-          if(this.matterDuplicateData[item].length <= 0){
+          if (this.matterDuplicateData[item].length <= 0){
             return false
           }
           this.matterDuplicateConfig.forEach(dItem => {
-            if(dItem.name === item){
+            if (dItem.name === item){
               dItem.items.forEach(cItem => {
-                if(!cItem.hidden){
+                if (!cItem.hidden){
                   this.matterDuplicateData[item].forEach(sItem => {
-                    if(!cItem.allowBlank && !sItem[cItem.fieldCode]){
+                    if (!cItem.allowBlank && !sItem[cItem.fieldCode]){
                       warn  = `${cItem.text}不能为空`;
                       return false
                     }
@@ -468,7 +468,7 @@ export default {
         },
       };
       this.matterDuplicateConfig.forEach(item => {
-        if(this.matterDuplicateData[item.name].length){
+        if (this.matterDuplicateData[item.name].length){
           formData[item.name] = this.matterDuplicateData[item.name]
         }
       })
@@ -515,7 +515,7 @@ export default {
     findData() {
       return findData(this.transCode).then(({formData = {}, attachment = []}) => {
         this.matterDuplicateConfig.forEach(key => {
-          if(formData[key.name].length){
+          if (formData[key.name].length){
             this.matterDuplicateData[key.name] = formData[key.name];
           }
         })
@@ -595,7 +595,7 @@ export default {
       let requestParams = {
         url,
       }
-      if(keys.length){
+      if (keys.length){
         let data = {};
         keys.forEach(key => {
           data[key] = params[key].type === 'text' ? params[key].value : '';
@@ -604,19 +604,19 @@ export default {
       }
       item.requestParams = requestParams;
       requestData(requestParams).then(data => {
-        if(data.tableContent){
+        if (data.tableContent){
           data.tableContent.forEach(dItem => {
             dItem.value = dItem[item.displayField];
             dItem.name = dItem[item.displayField];
           })
-          if(item.fieldCode === 'processing'){
-            if(!this.$route.query.transCode){
+          if (item.fieldCode === 'processing'){
+            if (!this.$route.query.transCode){
               this.inventory.processing  = this.$route.query.matterType ? this.$route.query.matterType : '';
             }
           }
           this.$set(item, 'remoteData', data.tableContent)
         }
-        else{
+        else {
           data.forEach(dItem => {
             dItem.value = dItem[item.displayField];
             dItem.name = dItem[item.displayField];
@@ -629,11 +629,11 @@ export default {
     async getFormViewsInfo(){
       // 根据listId 请求表单的 uniqueId
       await getFormViews(this.listId).then(data => {
-        for(let item of data){
-          if(this.transCode && item.viewType === 'revise'){
+        for (let item of data){
+          if (this.transCode && item.viewType === 'revise'){
             this.uniqueId = item.uniqueId;
           }
-          else if(!this.transCode && item.viewType === 'submit'){
+          else if (!this.transCode && item.viewType === 'submit'){
             this.uniqueId = item.uniqueId;
           }
         }
@@ -643,27 +643,27 @@ export default {
         // console.log(config);
         let matterConfig = [], matterDuplicateConfig = [];
         config.forEach(item => {
-          if(!item.isMultiple) {
+          if (!item.isMultiple) {
             matterConfig = JSON.parse(JSON.stringify(item.items));
           }
-          else{
-            if(!item.hiddenInRun && item.xtype !== 'r2Fileupload' && item.name === 'invMoreUnit'){
+          else {
+            if (!item.hiddenInRun && item.xtype !== 'r2Fileupload' && item.name === 'invMoreUnit'){
               matterDuplicateConfig.push(JSON.parse(JSON.stringify(item)))
             }
           }
         })
         // 物料基本信息配置的处理
         matterConfig.forEach(item =>{
-          if(!item.hiddenInRun){
+          if (!item.hiddenInRun){
             //下拉框的数据请求
-            if((item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.dataSource && item.dataSource.type === 'remoteData' ) {
+            if ((item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.dataSource && item.dataSource.type === 'remoteData' ) {
               this.handlerParams(item)
             }
-            else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
+            else if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
               this.$set(item, 'remoteData', item.dataSource.data)
             }
             // 在渲染的配置中添加字段
-            if(item.fieldCode !== 'inventoryPic'){
+            if (item.fieldCode !== 'inventoryPic'){
               this.matterConfig.push(item);
             }
           }
@@ -685,8 +685,8 @@ export default {
           }
           let arr = []
           item.items.forEach((sItem, sIndex) => {
-            if(!sItem.hidden){
-              if(sItem.editorType === 'r2Combo' && sItem.dataSource && sItem.dataSource.type === 'remoteData') {
+            if (!sItem.hidden){
+              if (sItem.editorType === 'r2Combo' && sItem.dataSource && sItem.dataSource.type === 'remoteData') {
                 this.handlerParams(sItem)
               }
               arr.push(sItem)
@@ -696,7 +696,7 @@ export default {
           this.$set(this.matterDuplicateData, item.name, [])
         })
         this.matterDuplicateConfig = matterDuplicateConfig;
-        if(!this.transCode) this.$loading.hide();
+        if (!this.transCode) this.$loading.hide();
       })
 
     },

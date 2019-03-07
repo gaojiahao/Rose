@@ -178,11 +178,11 @@
       isEditAdmout() {
         let isEdit = false;
         this.otherConfig.forEach(item => {
-          if(item.fieldCode === "tdAmount"){
+          if (item.fieldCode === "tdAmount"){
            isEdit = item.readOnly;
           }
         })
-        if(!isEdit){
+        if (!isEdit){
           this.cashInfo = {
             ...this.cashInfo,
             fundCode: this.cashInfo.fundCode || this.cashInfo.cashInCode,
@@ -201,7 +201,7 @@
     methods: {
       checkAmt() {
         let { tdAmount } = this.cashInfo;
-        if(tdAmount) this.cashInfo.tdAmount =  Math.abs(toFixed(tdAmount));
+        if (tdAmount) this.cashInfo.tdAmount =  Math.abs(toFixed(tdAmount));
       },
       // 获取详情
       getOrderList(transCode = '') {

@@ -117,7 +117,7 @@ export default {
       
       this.dealerInfo = chosenDealer;
 
-      if(this.matterParams.data && this.matterParams.data.drDealerCode){
+      if (this.matterParams.data && this.matterParams.data.drDealerCode){
         this.matterParams.data.drDealerCode = this.dealerInfo.dealerCode;
         this.matterList = [];
       }
@@ -131,7 +131,7 @@ export default {
       let matterList = JSON.parse(JSON.stringify(this.matterList))
       sels.map(item => {
         this.submitMatterField.forEach(sItem => {
-          if(sItem.fieldCode !== 'price' && sItem.showFieldCode){
+          if (sItem.fieldCode !== 'price' && sItem.showFieldCode){
             item[sItem.fieldCode] = item[sItem.fieldCode] || item[sItem.showFieldCode] 
           }
         })
@@ -213,13 +213,13 @@ export default {
           
       if (!warn) {
         // 校验 是否已选择 <物料部分>
-        if(!this.matterList.length) warn = '请选择物料';
+        if (!this.matterList.length) warn = '请选择物料';
         
         // 动态组装 dataSet
         this.matterList.forEach(item => {
           let oItem = {};
-          for(let sItem of this.submitMatterField){
-            if(!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode]){
+          for (let sItem of this.submitMatterField){
+            if (!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode]){
               warn = `${sItem.text}不为空`
               break;
             }
@@ -285,7 +285,7 @@ export default {
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
           }
-          if(this.isModify) {
+          if (this.isModify) {
             operation = updateData;
           }
           this.saveData(operation, submitData);
@@ -352,7 +352,7 @@ export default {
           dealerMobilePhone: formData.dealerDebitContactInformation,//电话
         };
         // 物料列表请求参数
-        if(this.matterParams.data && this.matterParams.data.dealerCode != null){
+        if (this.matterParams.data && this.matterParams.data.dealerCode != null){
           this.matterParams = {
             ...this.matterParams,
             drDealerCode: this.dealerInfo.dealerCode,

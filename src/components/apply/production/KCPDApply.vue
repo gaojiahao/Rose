@@ -177,7 +177,7 @@ export default {
         onConfirm: () => {
           this.selItems.forEach(item=>{
             let index = this.matterList.findIndex(item2=>item2.inventoryCode === item.inventoryCode);
-            if(index >= 0){
+            if (index >= 0){
               this.matterList.splice(index,1);
             }
           })
@@ -194,7 +194,7 @@ export default {
     // 选中入库仓库
     selWarehouseIn (val) {
       this.warehouse = JSON.parse(val);
-      if(this.matterParams.data.whCode != null) {
+      if (this.matterParams.data.whCode != null) {
         this.matterParams.data.whCode = this.warehouse.warehouseCode;
         this.matterList = [];
       }
@@ -250,7 +250,7 @@ export default {
         warn = '请选择物料';
       }
       this.matterList.every(item => {
-        if(!item.tdQty){
+        if (!item.tdQty){
           warn = '请填写盘点数量'
           return false
         }
@@ -329,7 +329,7 @@ export default {
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
           }
-          if(this.isModify) {
+          if (this.isModify) {
             operation = updateData;
           }
           this.saveData(operation, submitData);

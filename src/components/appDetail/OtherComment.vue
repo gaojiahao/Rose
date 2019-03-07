@@ -88,7 +88,7 @@ export default {
   methods:{
     getUserDefault(item){
       let url = require('assets/ava01.png');
-      if(item){
+      if (item){
         item.photo = url;
       }
       return url;
@@ -103,7 +103,7 @@ export default {
       }).then(({dataCount = 0, tableContent = []}) =>{
         tableContent.forEach(item=>{
           this.checkImgSuffix(item)
-          if(item.praises.length){
+          if (item.praises.length){
             item.isPraise = false;
             return
           }
@@ -150,12 +150,12 @@ export default {
         'pcd','dxf','ufo','eps', 
         'ai','raw','WMF','webp'
       ]
-      for(let val of item.commentAttachments) {
+      for (let val of item.commentAttachments) {
         // 获取后缀名
         let index = val.name.lastIndexOf('.'),
             Imgsuffix = val.name.substr(index + 1);
         // 校验后缀名
-        if(suffixList.includes(Imgsuffix)) {
+        if (suffixList.includes(Imgsuffix)) {
           val.isImg = true;
         }
       }
@@ -198,7 +198,7 @@ export default {
   created(){
     register();
     let { listId } = this.$route.params;
-    if(listId){
+    if (listId){
       this.listId = listId;
       this.getCommetList();
     }

@@ -204,7 +204,7 @@
       // 监听用于根据（生产日期+保质期天数）计算有效期
       chosenMatter: {
         handler(val) {
-          if(val.productionDate && val.keepingDays){
+          if (val.productionDate && val.keepingDays) {
             let productionDate = new Date(val.productionDate).getTime(),
             day = 24 * 3600 * 1000;
            val.validUntil = productionDate ? dateFormat(productionDate + accMul(val.keepingDays, day), 'YYYY-MM-DD') : '';
@@ -280,7 +280,7 @@
       },
       // 根据传进来的对象 定义参数的值
       defineObjVal(currentData, newObj, newVal) {
-        for(let key in newObj) {
+        for (let key in newObj) {
           this.$set(currentData, key, newVal[key]);
         }
       },

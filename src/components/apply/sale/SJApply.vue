@@ -247,7 +247,7 @@
             if (this.biReferenceId) {
               submitData.biReferenceId = this.biReferenceId
             }
-            if(this.isModify) {
+            if (this.isModify) {
               operation = updateData;
             }
             this.saveData(operation, submitData);

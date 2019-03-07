@@ -251,7 +251,7 @@
         this.dealerInfo = {
           ...sel,
         };
-        if(this.matterParams.data.dealerCode != null) {
+        if (this.matterParams.data.dealerCode != null) {
           this.matterParams.data.dealerCode = this.dealerInfo.dealerCode
           this.matterList = [];
           this.orderList = {};

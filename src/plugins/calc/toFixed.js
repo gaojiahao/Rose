@@ -22,7 +22,7 @@ export default (val, length = 2) => {
       dec = `${'0'.repeat(length - dec.length)}${dec}`; 
     }
     // 当情况为 X.995 ~ X.999 这种情况的时候 如果强制保留两位 num则需要累加
-    if(dec >= 100 && length === 2) {
+    if (dec >= 100 && length === 2) {
       let [ moreNum = '' ] = dec.split('');
       num = accAdd(num, moreNum);
       dec = dec.substr(1);

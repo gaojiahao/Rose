@@ -150,7 +150,7 @@ export default {
     // 选择的库位
     getStore(val) {
       this.warehouseStoreInfo = {...val};
-      if(this.matterParams.data && this.matterParams.data.storehouseCode != null) {
+      if (this.matterParams.data && this.matterParams.data.storehouseCode != null) {
         this.matterParams.data.storehouseCode = this.warehouseStoreInfo.warehouseCode;
         this.matterList = [];
         this.orderList = {};
@@ -221,22 +221,22 @@ export default {
     // 选择要删除的物料
     delClick(sItem, index, key) {
       let arr = this.selItems[key];
-      if(arr){
+      if (arr){
         let delIndex = arr.findIndex(item => item === index);
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
-          if(!arr.length) delete this.selItems[key];
+          if (!arr.length) delete this.selItems[key];
           return;
         }
         arr.push(index);
       }
-      else{
+      else {
         this.$set(this.selItems, key, [index])
       }
     },
     // 删除的选中状态
     showSelIcon(sItem, index) {
-      if(sItem.transCode) {
+      if (sItem.transCode) {
         return this.selItems[sItem.transCode] && this.selItems[sItem.transCode].findIndex(item => item === index) !== -1;
       }
       else {
@@ -252,18 +252,18 @@ export default {
       }
       // 针对物料列表中的数据进行处理
       let selItems = {};
-      for(let key in this.orderList){
+      for (let key in this.orderList){
         this.orderList[key].forEach((item, index) => {
           // 存在交易号时 key等于交易号
-          if(item.transCode) {
-            if(!selItems[item.transCode]){
+          if (item.transCode) {
+            if (!selItems[item.transCode]){
               selItems[item.transCode] = [];
             }
             selItems[item.transCode].push(index)
           }
           // 不存在时 key为 'noCode'
           else {
-            if(!selItems['noCode']) {
+            if (!selItems['noCode']) {
               selItems['noCode'] = []
             }
             selItems['noCode'].push(index);
@@ -287,9 +287,9 @@ export default {
           // 被选中删除的物料
           let selItems = this.selItems, checkList = this.checkList;
           
-          for(let key in this.selItems) {
+          for (let key in this.selItems) {
             // 当没有对应的交易单号
-            if(key === 'noCode') {
+            if (key === 'noCode') {
               let orderList = {};
               let remainder = this.matterList.filter((item, index) => !checkList.includes(index));
               remainder.forEach(item => {
@@ -307,7 +307,7 @@ export default {
               newIndexs.forEach((sItem, sIndex) => {
                 this.orderList[key].splice(sItem, 1);
               }) 
-              if(!this.orderList[key].length){
+              if (!this.orderList[key].length){
                 delete this.orderList[key]
               }
             }
@@ -371,7 +371,7 @@ export default {
           for (let sItem of submitMatterField) {
             let val = item[sItem.fieldCode] || item[sItem.displayField] || item[sItem.showFieldCode];
             if (!sItem.hidden && !sItem.allowBlank && !val) {
-              if(sItem.text) warn = `${sItem.text}不为空`;
+              if (sItem.text) warn = `${sItem.text}不为空`;
               break;
             }
             oItem[sItem.fieldCode] = val !== null
@@ -448,7 +448,7 @@ export default {
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
           }
-          if(this.isModify) {
+          if (this.isModify) {
             operation = updateData;
           }
           this.saveData(operation, submitData);
@@ -652,7 +652,7 @@ export default {
   },
   updated() {
     let draft = JSON.parse(sessionStorage.getItem(DRAFT_KEY));
-    if(draft && this.matterParams.data) {
+    if (draft && this.matterParams.data) {
       this.matterParams = draft.matterParams;
       sessionStorage.removeItem(DRAFT_KEY);
     }

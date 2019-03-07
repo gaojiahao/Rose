@@ -96,8 +96,8 @@
       },
       // 动态获取 仓库信息
       setWarehouseInfo(data) {
-        for(let key in data) {
-          if(key.includes('warehouse') || key.includes('storehouse') || key.includes('containerCode')) {
+        for (let key in data) {
+          if (key.includes('warehouse') || key.includes('storehouse') || key.includes('containerCode')) {
             this.warehouse[key] = data[key];
           }
         }

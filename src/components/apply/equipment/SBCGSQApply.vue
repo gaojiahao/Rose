@@ -259,10 +259,10 @@
         let warn = '';
         let dataSet = [];
         // 校验
-        if(!this.matterList.length){
+        if (!this.matterList.length){
           warn = '请选择设备'
         }
-        else{
+        else {
           this.matterList.every(item => {
             if (!item.price) {
               warn = '单价不能为空';

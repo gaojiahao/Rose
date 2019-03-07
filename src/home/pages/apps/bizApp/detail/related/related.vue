@@ -61,7 +61,7 @@
             if (Apps[item.listId]) {
               //判断是否存在关联并创建关系
               item.isrelated = false;
-              if(relatedKey[this.taskType] && relatedKey[this.taskType][item.listId]){
+              if (relatedKey[this.taskType] && relatedKey[this.taskType][item.listId]){
                 item.isrelated = true;
               }
               let defaultFilter = item.content.map(cItem => {
@@ -134,7 +134,7 @@
       this.$loading.show();
       this.listId = this.$route.params.listId;
       this.transCode = this.$route.query.transCode;
-      if(this.transCode){
+      if (this.transCode){
         this.taskType = this.transCode.split('_')[0]
       }      
       (async () => {

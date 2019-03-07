@@ -114,7 +114,7 @@ export default {
         limit: this.limit,
         page: this.page
       }).then(({dataCount = 0, tableContent = []}) =>{
-        if(this.page === 1){
+        if (this.page === 1){
           this.latestLog = tableContent[0];
         }
         this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
@@ -148,7 +148,7 @@ export default {
   },
   created(){
     let { listId } = this.$route.params;
-    if(listId){
+    if (listId){
       // this.$loading.show();
       this.listId = listId;
       this.getChangeList();

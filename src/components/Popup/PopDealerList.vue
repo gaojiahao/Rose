@@ -164,7 +164,7 @@ export default {
     // 默认往来（缓存等）
     defaultValue: {
       handler() {
-        if(JSON.stringify(this.defaultValue) === '{}') return;
+        if (JSON.stringify(this.defaultValue) === '{}') return;
 
         let defaultValue = this.defaultValue;
         this.dealerInfo = Object.freeze({...defaultValue});

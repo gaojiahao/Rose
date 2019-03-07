@@ -155,7 +155,7 @@ export default {
         }
 
         this.matterDuplicateConfig.forEach(item => {
-          if(this.formData[item.name] && !this.formData[item.name].length){
+          if (this.formData[item.name] && !this.formData[item.name].length){
             item.show = false;
             return
           }
@@ -204,8 +204,8 @@ export default {
     async getFormViewsInfo() {
       // 根据listId 请求 uniqueId
       await getFormViews(this.listId).then(data => {
-        for(let item of data){
-          if(item.viewType === 'view'){
+        for (let item of data){
+          if (item.viewType === 'view'){
             this.uniqueId = item.uniqueId
             break;
           }
@@ -216,20 +216,20 @@ export default {
         console.log(config);
         let matterConfig = [], matterDuplicateConfig = [];
         config.forEach(item => {
-          if(!item.isMultiple) {
+          if (!item.isMultiple) {
             matterConfig = JSON.parse(JSON.stringify(item.items));
           }
-          else{
-            if(!item.hiddenInRun && item.xtype !== 'r2Fileupload' && item.name === 'invMoreUnit'){
+          else {
+            if (!item.hiddenInRun && item.xtype !== 'r2Fileupload' && item.name === 'invMoreUnit'){
               matterDuplicateConfig.push(JSON.parse(JSON.stringify(item)))
             }
           }
         })
         // 仓库基本信息配置的处理
         matterConfig.forEach(item =>{
-          if(!item.hiddenInRun){
+          if (!item.hiddenInRun){
             // 在渲染的配置中添加字段
-            if(item.fieldCode !== 'inventoryCode' && item.fieldCode !== 'inventoryName' && item.fieldCode !== 'inventoryPic'
+            if (item.fieldCode !== 'inventoryCode' && item.fieldCode !== 'inventoryName' && item.fieldCode !== 'inventoryPic'
               && item.fieldCode !== 'inventoryStatus'){
               this.matterConfig.push(item);
             }
@@ -252,7 +252,7 @@ export default {
           } 
           let arr = [];
           item.items.forEach(sItem =>{
-            if(!sItem.hidden){
+            if (!sItem.hidden){
               arr.push(sItem)
             }
           })

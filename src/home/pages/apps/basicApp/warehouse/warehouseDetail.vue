@@ -174,14 +174,14 @@ export default {
     warehouseType: {
       handler(val){
         this.typeSub = this.typeToSubMap[val] || 'noMatched';
-        for(let item of this.warehouseConfig){
-          if(item.fieldCode === this.typeSub) {
+        for (let item of this.warehouseConfig){
+          if (item.fieldCode === this.typeSub) {
             // 将当前员工编码, 组织编码等找到对应的名称
-            if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
+            if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
               let requestParams = this.handlerParams(item);
               requestData(requestParams).then(({tableContent = []}) => {
-                for(let dItem of tableContent){
-                  if(dItem[item.valueField] === this.warehouse[item.fieldCode]) {
+                for (let dItem of tableContent){
+                  if (dItem[item.valueField] === this.warehouse[item.fieldCode]) {
                     this.$set(this.warehouse, item.displayField, dItem[item.displayField])
                     break;
                   }
@@ -216,7 +216,7 @@ export default {
       let requestParams = {
         url,
       }
-      if(keys.length) {
+      if (keys.length) {
         let data = {};
         keys.forEach(key => {
           data[key] = params[key].type === 'text' ? params[key].value : '';
@@ -229,8 +229,8 @@ export default {
     async getFormViewInfo() {
       // 获取表单uniqueId
       await getFormViews(this.listId).then(data => {
-        for(let item of data){
-          if(item.viewType === 'view'){
+        for (let item of data){
+          if (item.viewType === 'view'){
             this.viewId = item.uniqueId
             break;
           }
@@ -240,11 +240,11 @@ export default {
       await getFormConfig(this.viewId).then(({config = []}) => {
         let warehouseConfig = [], warehouseMultipleConfig = [];
         config.forEach(item => {
-          if(!item.isMultiple) {
+          if (!item.isMultiple) {
             warehouseConfig = JSON.parse(JSON.stringify(item.items));
           }
-          else{
-            if(!item.hiddenInRun && item.xtype !== 'r2Fileupload'){
+          else {
+            if (!item.hiddenInRun && item.xtype !== 'r2Fileupload'){
               warehouseMultipleConfig.push(JSON.parse(JSON.stringify(item)))
             }
           }
@@ -252,9 +252,9 @@ export default {
         // 仓库基本信息配置的处理
         warehouseConfig.forEach(item =>{
           // 默认显示员工，（渠道商，组织等隐藏）
-          if(!item.hiddenInRun){
+          if (!item.hiddenInRun){
             // 在渲染的配置中添加字段
-            if(item.fieldCode !== 'warehouseCode' && item.fieldCode !== 'warehouseName' && item.fieldCode !== 'warehousePic'
+            if (item.fieldCode !== 'warehouseCode' && item.fieldCode !== 'warehouseName' && item.fieldCode !== 'warehousePic'
               && item.fieldCode !== 'warehouseProvince' && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'
               && item.fieldCode !== 'warehouseAddress' && item.fieldCode !== 'warehouseStatus'){
               this.warehouseConfig.push(item);
@@ -269,7 +269,7 @@ export default {
           }
           let arr = [];
           item.items.forEach(sItem =>{
-            if(!sItem.hidden){
+            if (!sItem.hidden){
               arr.push(sItem)
             }
           })
@@ -281,8 +281,8 @@ export default {
     // 获取组织并将id转换成对应的中文名
     // getDepart() {
     //   return getDepartMentWage().then(({ tableContent }) => {
-    //     for(let item of tableContent) {
-    //       if(item['GROUP_CODE'] === this.warehouse['groupCode']) {
+    //     for (let item of tableContent) {
+    //       if (item['GROUP_CODE'] === this.warehouse['groupCode']) {
     //         this.$set(this.warehouse, 'groupCode', item.GROUP_NAME)
     //       }
     //     }
@@ -293,7 +293,7 @@ export default {
       await getwarehouseInfo(this.transCode).then(({formData = {}, attachment = []}) => {
         this.formData = formData;
         this.warehouseDuplicateConfig.forEach(item => {
-          if(this.formData[item.name] && !this.formData[item.name].length){
+          if (this.formData[item.name] && !this.formData[item.name].length){
             item.show = false;
             return
           }
@@ -324,12 +324,12 @@ export default {
         this.baseinfo = baseinfo;  
         this.warehouse = warehouse;      
         this.typeSub = this.typeToSubMap[this.warehouse.warehouseType]
-        for(let item of this.warehouseConfig){
-          if(item.fieldCode === this.typeSub){
+        for (let item of this.warehouseConfig){
+          if (item.fieldCode === this.typeSub){
             item.hiddenInRun = false;
           }
-          else{
-            if(item.fieldCode === 'staffDealerCode' || item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
+          else {
+            if (item.fieldCode === 'staffDealerCode' || item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
               || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
                 item.hiddenInRun = true
               }

@@ -218,7 +218,7 @@ export default {
   },
   methods: {
     getOrder(){
-      if(!this.warehouse.warehouseCode){
+      if (!this.warehouse.warehouseCode){
         this.$vux.alert.show({
           content: '请选择在制仓库'
         })
@@ -242,10 +242,10 @@ export default {
     },
     // 处理选择器，根据不同字段调用不同组件
     getSeletor(fieldCode, index) {
-      if(fieldCode === 'dealerName_dealerDebit'){
+      if (fieldCode === 'dealerName_dealerDebit'){
         this.showManager(index)
       }
-      else if(fieldCode === 'facilityName_facilityObjCode'){
+      else if (fieldCode === 'facilityName_facilityObjCode'){
         this.showFacility(index)
       }
     },
@@ -283,7 +283,7 @@ export default {
       let {tdQty, thenQtyBal, numberWorkers} = item;
       item.tdQty = Math.abs(toFixed(tdQty))
       if (tdQty) {
-        if(tdQty > thenQtyBal) {
+        if (tdQty > thenQtyBal) {
           item.tdQty = thenQtyBal;
         }
         // 重新计算bom
@@ -292,7 +292,7 @@ export default {
           bom.tdQty = Math.abs(toFixed(tdQty))
         })
       }
-      if(numberWorkers) {
+      if (numberWorkers) {
         item.numberWorkers = Math.round(numberWorkers);
       }
     },
@@ -338,10 +338,10 @@ export default {
         // 动态组装 dataSet
         for (let item of this.workInfo) {
           let oItem = {};
-          for(let sItem of this.submitMatterField){
+          for (let sItem of this.submitMatterField){
             let val = item[sItem.fieldCode] || item[sItem.displayField] || item[sItem.showFieldCode];
-            if(!sItem.hidden && !sItem.allowBlank && !val){
-              if(sItem.text) warn = `${sItem.text}不为空`;
+            if (!sItem.hidden && !sItem.allowBlank && !val){
+              if (sItem.text) warn = `${sItem.text}不为空`;
               break;
             }
             oItem[sItem.fieldCode] = val !== undefined ? val : null;
@@ -418,7 +418,7 @@ export default {
             operation = saveAndCommitTask;
             submitData.biReferenceId = this.biReferenceId;
           }
-          if(!this.processCode.length){ // 无工作流
+          if (!this.processCode.length){ // 无工作流
             operation = submitAndCalc;
             delete submitData.wfPara;
             delete submitData.biReferenceId;
@@ -426,7 +426,7 @@ export default {
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
           }
-          if(this.isModify) {
+          if (this.isModify) {
             operation = updateData;
           }
           this.saveData(operation, submitData);

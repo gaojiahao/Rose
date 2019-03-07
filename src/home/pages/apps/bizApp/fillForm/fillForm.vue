@@ -40,7 +40,7 @@ export default {
   beforeRouteEnter (to, from, next) {
     let { name } = to.query;
     to.meta.title = `新增${name}`;
-    if(to.query.id || to.query.groupId || to.query.colId || to.query.transCode){
+    if (to.query.id || to.query.groupId || to.query.colId || to.query.transCode){
       to.meta.title = `编辑${name}`;
     }
     next();
@@ -49,7 +49,7 @@ export default {
     this.$loading.show();
     let { transCode } = this.$route.query,
         { folder, fileName } = this.$route.params;
-    if(transCode){
+    if (transCode){
       this.transCode = transCode;
     }
     this.currentComponent = require(`components/apply/${folder}/${fileName}Apply.vue`).default;
@@ -63,16 +63,16 @@ export default {
     // 新建物料，修改列表页的meta值
     if (this.submitSuccess && (to.name === 'LIST' || to.name === 'MSGLIST')) {
       to.meta.reload = true;
-      if(keys){
+      if (keys){
         sessionStorage.removeItem(keys)
       }
     }
     //删除缓存的往来信息
-    if(to.name === "LIST"){
+    if (to.name === "LIST"){
       sessionStorage.removeItem('DEALERLIST_SELITEMS');
     }
     //离开数据保存为草稿
-    if(to.name === "LIST" && keys && !this.transCode && !this.submitSuccess){
+    if (to.name === "LIST" && keys && !this.transCode && !this.submitSuccess){
       this.$vux.confirm.show({
         content:'即将离开，是否保存数据？',
         onConfirm : ()=>{

@@ -58,7 +58,7 @@ let tokenService = {
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; 
 
     // 根据环境不同 调用不同的登录接口
-    if(nowUrl.includes('192.168.3.') || nowUrl.includes('localhost')) {
+    if (nowUrl.includes('192.168.3.') || nowUrl.includes('localhost')) {
       console.log('当前为测试环境');
       return this.pcLogin();
     }

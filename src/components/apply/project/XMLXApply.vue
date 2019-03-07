@@ -102,18 +102,18 @@
       // 监听大类变化，修改子类
       projectType: {
         handler(newVal, oldVal){
-          if(oldVal && newVal){
+          if (oldVal && newVal){
             let type = ''; // 当前项目大类对应的类型，请求子类的参数
-            for(let item of this.otherConfig){
-              if(item.fieldCode === 'projectType'){
-                for(let dItem of item.remoteData){
-                  if(dItem.name === newVal){
+            for (let item of this.otherConfig){
+              if (item.fieldCode === 'projectType'){
+                for (let dItem of item.remoteData){
+                  if (dItem.name === newVal){
                     type = dItem.originValue;
                     break;
                   }
                 }
               }
-              if(item.fieldCode === 'projectSubclass'){
+              if (item.fieldCode === 'projectSubclass'){
                 let requestParams = {
                   url: item.dataSource.data.url,
                   data: {
@@ -121,10 +121,10 @@
                   }
                 }
                 requestData(requestParams).then(({tableContent = []}) =>{
-                  if(this.ProjectApproval.projectSubclass != null) {
+                  if (this.ProjectApproval.projectSubclass != null) {
                     this.ProjectApproval.projectSubclass = tableContent[0].name
                   }
-                  else{
+                  else {
                     this.$set(this.ProjectApproval, 'projectSubclass', tableContent[0].name)
                   }
                   tableContent.forEach(dItem =>{
@@ -146,12 +146,12 @@
       getDate(sItem, dItem){
         let startDate = '', endDate = '';
         // 当存在开始日期，选在结束日期时不能小于开始日期
-        if(dItem.fieldCode === 'expectEndDate' && sItem.expectStartDate){
+        if (dItem.fieldCode === 'expectEndDate' && sItem.expectStartDate){
           startDate = sItem.expectStartDate;
           endDate = '';
         }
         // 当存在结束日期，选在开始日期时不能大于结束日期
-        else if(dItem.fieldCode === 'expectStartDate' && sItem.expectEndDate){
+        else if (dItem.fieldCode === 'expectStartDate' && sItem.expectEndDate){
           endDate = sItem.expectEndDate;
           startDate = '';
         }
@@ -161,7 +161,7 @@
           startDate: startDate,
           endDate: endDate,
           onConfirm: (val)=> {
-            if(sItem[dItem.fieldCode] == null){
+            if (sItem[dItem.fieldCode] == null){
               this.$set(sItem, dItem.fieldCode, val)
               return
             }
@@ -190,7 +190,7 @@
           onConfirm: () => {
             this.$HandleLoad.show();
             let operation = saveProjectApproval;
-            if(this.isModify){
+            if (this.isModify){
               operation = update;
             }
             let submitData = {

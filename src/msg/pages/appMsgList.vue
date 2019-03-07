@@ -217,10 +217,10 @@ export default {
       leave2 = date - (hours*3600) ,       //计算小时数后剩余的毫秒数
       minutes = Math.floor(leave2/(60)),
       backTime;
-      if(hours > 0){
+      if (hours > 0){
         backTime = `${hours}小时前`;
       }
-      else{
+      else {
          backTime = minutes === 0 ? '1分钟前' :`${minutes}分钟前`;
       }
       return hours < 24 ? backTime : `${val.crtTime.split(' ')[0]}`;
@@ -244,7 +244,7 @@ export default {
       });
       this.listData = tmp;
     },200);
-    if(reload){
+    if (reload){
       this.$loading.show();
       this.reloadData();
       this.$route.meta.reload = false;
@@ -255,7 +255,7 @@ export default {
     next();
   },
   beforeRouteLeave (to, from, next) {
-    if(to.name === 'MSGHOME'){
+    if (to.name === 'MSGHOME'){
       from.meta.reload = true;
     }
     next();

@@ -185,16 +185,16 @@ export default {
        * 
        */
       let warn = '', dataSet = [];
-      if(!this.consumableList.length){
+      if (!this.consumableList.length){
         warn = '请选择物料'
       }
       // 动态组装 dataSet
       for (let item of this.consumableList) {
         let oItem = {};
-        for(let sItem of this.submitMatterField){
+        for (let sItem of this.submitMatterField){
           let val = item[sItem.fieldCode] || item[sItem.displayField] || item[sItem.showFieldCode];
-          if(!sItem.hidden && !sItem.allowBlank && !val && val !== undefined){
-            if(sItem.text) warn = `${sItem.text}不为空`;
+          if (!sItem.hidden && !sItem.allowBlank && !val && val !== undefined){
+            if (sItem.text) warn = `${sItem.text}不为空`;
             break;
           }
           oItem[sItem.fieldCode] = val !== null ? val : null;

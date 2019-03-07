@@ -99,7 +99,7 @@ export default {
   computed: {
     total() {
       let {count, totalAmount, budgetIncome_project} = this.item;
-      if(budgetIncome_project) {
+      if (budgetIncome_project) {
         return budgetIncome_project
       }
       else if (count != null) {

@@ -94,7 +94,7 @@ export default {
         this.verifyPayments(val);
 
         // 是否已修改数据 若修改则传值回父组件
-        if(currentDealer !== parentDealer){
+        if (currentDealer !== parentDealer){
           this.$emit('input', val)
         } 
       },
@@ -105,7 +105,7 @@ export default {
   methods: {
     checkAmt(item) {
       let {tdAmountCopy1} = item;
-      if(tdAmountCopy1) {
+      if (tdAmountCopy1) {
         item.tdAmountCopy1 = Math.abs(toFixed(tdAmountCopy1));
       }
     },
@@ -125,16 +125,16 @@ export default {
       let { drDealerPaymentTerm, crDealerPaymentTerm } = val;  
       this.config.forEach(item => {
         // 根据结算方式 判断 <预付款> 和 <预付到期日> 是否显示  
-        if(item.fieldCode === 'tdAmountCopy1' || item.fieldCode.includes('paymentDueDate')){
-          if(drDealerPaymentTerm && drDealerPaymentTerm.includes('预收')) {
+        if (item.fieldCode === 'tdAmountCopy1' || item.fieldCode.includes('paymentDueDate')){
+          if (drDealerPaymentTerm && drDealerPaymentTerm.includes('预收')) {
             item.hiddenInRun = false;
             return;
           }
           item.hiddenInRun = true
         }
         // 根据结算方式 判断 <账期> 是否显示  
-        if(item.fieldCode.includes('pamentDays')) {
-          if(crDealerPaymentTerm && crDealerPaymentTerm.includes('账期')) {
+        if (item.fieldCode.includes('pamentDays')) {
+          if (crDealerPaymentTerm && crDealerPaymentTerm.includes('账期')) {
             item.hiddenInRun = false;
             return;
           }

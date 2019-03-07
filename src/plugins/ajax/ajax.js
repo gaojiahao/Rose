@@ -20,7 +20,7 @@ fly.interceptors.request.use((request) => {
   // 检验 token是否存在
   let token = tokenService.checkLogin();
   // token 存在则赋值在header当中
-  if(token) {
+  if (token) {
     request.headers.Authorization = token;
   }
   else {
@@ -45,7 +45,7 @@ fly.interceptors.request.use((request) => {
 fly.interceptors.response.use(
   function (response) {
     let { success = true, message = '请求异常' } = response.data;
-    if(success) {
+    if (success) {
       return response;
     }
     else {
@@ -55,7 +55,7 @@ fly.interceptors.response.use(
   function (error) {
     console.log('error:', error);
     // 响应拦截 报错标识
-    if(error.status === 401) {
+    if (error.status === 401) {
       this.lock();
       return tokenService.login()
       .then((token) => {
@@ -69,8 +69,8 @@ fly.interceptors.response.use(
         })
       })
     }
-    else if(error.status === 1) {
-      if(error.message.includes('timeout')) {
+    else if (error.status === 1) {
+      if (error.message.includes('timeout')) {
         rejectError('reject', '不好意思，网络似乎出了点问题，请稍后再试')
       }
     }

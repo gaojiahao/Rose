@@ -89,7 +89,7 @@ export default {
       handler(val) {
         let currentInfo = JSON.stringify(val), 
             parentInfo = JSON.stringify(this.otherInfo);
-        if(currentInfo !== parentInfo) {
+        if (currentInfo !== parentInfo) {
           this.$emit('input', val)
         }
       },

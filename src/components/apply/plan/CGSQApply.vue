@@ -115,7 +115,7 @@ export default {
   watch: {
     matterList: {
       handler(list) {
-        for(let item of list) {
+        for (let item of list) {
           /**
            * 此处计算下单截止日
            * @shippingTime 下单截止日
@@ -124,10 +124,10 @@ export default {
            * 算法：下单截止日 =  “到货截止日期” 减去 “采购提前期”（如果有周末则要减去周末）
            *  
            * */
-          if(!item.tdLeadTime){
+          if (!item.tdLeadTime){
             item.shippingTime = item.promDeliTime
           }
-          else if(!item.promDeliTime){
+          else if (!item.promDeliTime){
             item.shippingTime = ''
           }
           else {
@@ -136,7 +136,7 @@ export default {
             item.shippingTime = dateFormat(dateCount(preShippingTime, promDeliTime), 'YYYY-MM-DD');
           } 
           // 因包装数量要为整数，先根据当前的申请数量计算包装数量，如有小数向上取整后，再反算本次申请数量
-          if(JSON.stringify(item.assistQty).includes('.')){
+          if (JSON.stringify(item.assistQty).includes('.')){
             item.assistQty = Math.ceil(item.assistQty);
             item.tdQty = accMul(item.assistQty, item.assMeasureScale)
           }
@@ -153,12 +153,12 @@ export default {
       let orderList = JSON.parse(JSON.stringify(this.orderList));
       sels.map(item => {
         let orderListKey = item.transCode ? item.transCode : 'noCode';
-        for(let key in this.dataIndexMap) {
+        for (let key in this.dataIndexMap) {
           // 格式化日期
-          if(key === 'promDeliTime' || key === 'shippingTime') {
+          if (key === 'promDeliTime' || key === 'shippingTime') {
             item[key] = dateFormat(item[this.dataIndexMap[key]], 'YYYY-MM-DD') || "";
           }
-          else{
+          else {
             item[key] = item[key] || item[this.dataIndexMap[key]];
           }
         }
@@ -189,7 +189,7 @@ export default {
     checkAmt(item, key, val) {
       item[key] = Math.abs(toFixed(val)); 
       let min = Math.max(item.thenQtyBal, item.moq)
-      if(key === 'tdQty'){
+      if (key === 'tdQty'){
         // 因包装数量要为整数，先根据当前的申请数量计算包装数量，如有小数向上取整后，再反算本次申请数量
         item.assistQty = Math.ceil(item.assistQty);
         item.tdQty = accMul(item.assistQty, item.assMeasureScale)
@@ -211,22 +211,22 @@ export default {
     // 选择要删除的物料
     delClick(sItem, index, key) {
       let arr = this.selItems[key];
-      if(arr){
+      if (arr){
         let delIndex = arr.findIndex(item => item === index);
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
-          if(!arr.length) delete this.selItems[key];
+          if (!arr.length) delete this.selItems[key];
           return;
         }
         arr.push(index);
       }
-      else{
+      else {
         this.$set(this.selItems, key, [index])
       }
     },
     // 删除的选中状态
     showSelIcon(sItem, index) {
-      if(sItem.transCode) {
+      if (sItem.transCode) {
         return this.selItems[sItem.transCode] && this.selItems[sItem.transCode].findIndex(item => item === index) !== -1;
       }
       else {
@@ -242,18 +242,18 @@ export default {
       }
       // 针对物料列表中的数据进行处理
       let selItems = {};
-      for(let key in this.orderList){
+      for (let key in this.orderList){
         this.orderList[key].forEach((item, index) => {
           // 存在交易号时 key等于交易号
-          if(item.transCode) {
-            if(!selItems[item.transCode]){
+          if (item.transCode) {
+            if (!selItems[item.transCode]){
               selItems[item.transCode] = [];
             }
             selItems[item.transCode].push(index)
           }
           // 不存在时 key为 'noCode'
           else {
-            if(!selItems['noCode']) {
+            if (!selItems['noCode']) {
               selItems['noCode'] = []
             }
             selItems['noCode'].push(index);
@@ -277,9 +277,9 @@ export default {
           // 被选中删除的物料
           let selItems = this.selItems, checkList = this.checkList;
           
-          for(let key in this.selItems) {
+          for (let key in this.selItems) {
             // 当没有对应的交易单号
-            if(key === 'noCode') {
+            if (key === 'noCode') {
               let orderList = {};
               let remainder = this.matterList.filter((item, index) => !checkList.includes(index));
               remainder.forEach(item => {
@@ -297,7 +297,7 @@ export default {
               newIndexs.forEach((sItem, sIndex) => {
                 this.orderList[key].splice(sItem, 1);
               }) 
-              if(!this.orderList[key].length){
+              if (!this.orderList[key].length){
                 delete this.orderList[key]
               }
             }
@@ -320,13 +320,13 @@ export default {
       }
       if (!warn) {
         // 校验 是否已选择 <物料部分>
-        if(!this.matterList.length) warn = '请选择物料';
+        if (!this.matterList.length) warn = '请选择物料';
         
         // 检验必填字段，组装要提交的dataSet
         for (let item of this.matterList) {
           let oItem = {};
-          for(let sItem of this.submitMatterField){
-            if(!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode]){
+          for (let sItem of this.submitMatterField){
+            if (!sItem.hidden && !sItem.allowBlank && !item[sItem.fieldCode]){
               warn = `${sItem.text}不为空`
               break;
             }

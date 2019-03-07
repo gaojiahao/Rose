@@ -244,7 +244,7 @@ export default {
     matterList: {
       // 计算数据长度
       handler(data) {
-        if(Object.prototype.toString.call(data) === '[object Object]') {
+        if (Object.prototype.toString.call(data) === '[object Object]') {
           this.DataLength = Object.keys(data).length;
         }
         else {

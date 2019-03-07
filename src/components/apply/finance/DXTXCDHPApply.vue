@@ -183,7 +183,7 @@
             return !warn
           });
         }
-        if(!warn && !this.cashInfo.fundName){
+        if (!warn && !this.cashInfo.fundName){
           warn = '请选择资金账户'
         }
         if (warn) {
@@ -320,7 +320,7 @@
         });
         this.orderList = val;
         this.orderList.forEach(item => {
-          if(!item.discount){
+          if (!item.discount){
             item.discount = 0;
           }
           item.thenAmntBal = Number(accSub(item.tdAmount, item.discount))

@@ -97,7 +97,7 @@ export default {
       let dealerConfig = this.dealerConfig;
       let [ dealerInfo = {} ] = JSON.parse(val);
       // 重新选择客户之后 初始化 <物料列表>
-      if(this.matterParams.data && this.matterParams.data.dealerCode !== null){
+      if (this.matterParams.data && this.matterParams.data.dealerCode !== null){
         this.orderList = {};
         this.matterParams.data.dealerCode = dealerInfo.dealerCode;
       }
@@ -157,22 +157,22 @@ export default {
     // 选择要删除的物料
     delClick(sItem, index, key) {
       let arr = this.selItems[key];
-      if(arr){
+      if (arr){
         let delIndex = arr.findIndex(item => item === index);
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
-          if(!arr.length) delete this.selItems[key];
+          if (!arr.length) delete this.selItems[key];
           return;
         }
         arr.push(index);
       }
-      else{
+      else {
         this.$set(this.selItems, key, [index])
       }
     },
     // 删除的选中状态
     showSelIcon(sItem, index) {
-      if(sItem.transCode) {
+      if (sItem.transCode) {
         return this.selItems[sItem.transCode] && this.selItems[sItem.transCode].findIndex(item => item === index) !== -1;
       }
       else {
@@ -188,18 +188,18 @@ export default {
       }
       // 针对物料列表中的数据进行处理
       let selItems = {};
-      for(let key in this.orderList){
+      for (let key in this.orderList){
         this.orderList[key].forEach((item, index) => {
           // 存在交易号时 key等于交易号
-          if(item.transCode) {
-            if(!selItems[item.transCode]){
+          if (item.transCode) {
+            if (!selItems[item.transCode]){
               selItems[item.transCode] = [];
             }
             selItems[item.transCode].push(index)
           }
           // 不存在时 key为 'noCode'
           else {
-            if(!selItems['noCode']) {
+            if (!selItems['noCode']) {
               selItems['noCode'] = []
             }
             selItems['noCode'].push(index);
@@ -223,9 +223,9 @@ export default {
           // 被选中删除的物料
           let selItems = this.selItems, checkList = this.checkList;
           
-          for(let key in this.selItems) {
+          for (let key in this.selItems) {
             // 当没有对应的交易单号
-            if(key === 'noCode') {
+            if (key === 'noCode') {
               let orderList = {};
               let remainder = this.matterList.filter((item, index) => !checkList.includes(index));
               remainder.forEach(item => {
@@ -243,7 +243,7 @@ export default {
               newIndexs.forEach((sItem, sIndex) => {
                 this.orderList[key].splice(sItem, 1);
               }) 
-              if(!this.orderList[key].length){
+              if (!this.orderList[key].length){
                 delete this.orderList[key]
               }
             }
@@ -281,23 +281,23 @@ export default {
       warn = this.verifyData(baseinfoExtConfig, dealerInfo);
 
       // 校验 <其他部分> 必填字段
-      if(!warn) warn = this.verifyData(otherConfig, otherInfo);
+      if (!warn) warn = this.verifyData(otherConfig, otherInfo);
 
       // 校验 <物料部分> 必填字段 同时动态组装dateSet
-      if(!warn) {
+      if (!warn) {
         // 校验 是否已选择 <物料部分>
         let [ matterPart = {} ] = this.submitMatterField;
-        if(!Object.keys(this.orderList).length) warn = `请选择${matterPart.text}`;
+        if (!Object.keys(this.orderList).length) warn = `请选择${matterPart.text}`;
 
         // 动态组装 dataSet
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
             let oItem = {};
-            for(let sItem of this.submitMatterField){
+            for (let sItem of this.submitMatterField){
               // 校验 <物料必填> 字段
               let val = item[sItem.fieldCode] || item[sItem.displayField] || item[sItem.showFieldCode];
-              if(!sItem.hidden && !sItem.allowBlank && !val && val !== undefined){
-                if(sItem.text) warn = `${sItem.text}不为空`;
+              if (!sItem.hidden && !sItem.allowBlank && !val && val !== undefined){
+                if (sItem.text) warn = `${sItem.text}不为空`;
                 break;
               }
               oItem[sItem.fieldCode] = val !== null ? val : null;
@@ -306,7 +306,7 @@ export default {
           }
         }
       }
-      if(warn) {
+      if (warn) {
         this.$vux.alert.show({
           content: warn,
         });
@@ -372,7 +372,7 @@ export default {
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
           }
-          if(this.isModify) {
+          if (this.isModify) {
             operation = updateData;
           }
           this.saveData(operation, submitData);
@@ -452,9 +452,9 @@ export default {
         this.orderList = orderList;
 
         // 获取 发票相关信息
-        for(let each of otherConfig) {
-          for(let key in formData) {
-            if(each.fieldCode === key) {
+        for (let each of otherConfig) {
+          for (let key in formData) {
+            if (each.fieldCode === key) {
               this.$set(this.otherInfo, key, formData[key])
             }
           }
@@ -484,7 +484,7 @@ export default {
   },
   updated() {
     // *重新提交*页面 不需要清除缓存
-    if(this.transCode) return;
+    if (this.transCode) return;
     // 若存在缓存 此处对页面进行赋值
     let draft = JSON.parse(sessionStorage.getItem('ZZSSP_DATA'));
     if (draft && this.matterParams.data) {

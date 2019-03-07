@@ -161,22 +161,22 @@ export default {
   },
   watch: {
     dealerLabelName(val) {
-      if(val) {
+      if (val) {
         // 根据往来类型绝的哪个重复项显示
         let dealerLabelName = this.dealer.dealerLabelName;
         this.dealerDuplicateConfig.forEach(item => {
           // 当关系标签包含客户，供应商，加工商，渠道商，服务商时，省市区显示
-          if(item.name === 'deliveryAddresses') {
+          if (item.name === 'deliveryAddresses') {
             item.hiddenInRun = false;
-            if(!dealerLabelName || (!dealerLabelName.includes('客户') && !dealerLabelName.includes('供应商') && !dealerLabelName.includes('加工商') 
+            if (!dealerLabelName || (!dealerLabelName.includes('客户') && !dealerLabelName.includes('供应商') && !dealerLabelName.includes('加工商') 
               && !dealerLabelName.includes('渠道商') && !dealerLabelName.includes('服务商'))) {
               item.hiddenInRun = true
             }
           }
           // 当关系标签包含生产商,经销供应商 证件显示
-          if(item.name === 'dealerCertificateRel') {
+          if (item.name === 'dealerCertificateRel') {
             item.hiddenInRun = false;
-            if(!dealerLabelName || (!dealerLabelName.includes('生产商') && !dealerLabelName.includes('经销供应商'))) {
+            if (!dealerLabelName || (!dealerLabelName.includes('生产商') && !dealerLabelName.includes('经销供应商'))) {
               item.hiddenInRun = true
             }
           } 
@@ -184,10 +184,10 @@ export default {
       }
     },
     mianTypes(val) {
-      if(val){
-        for(let item of this.dealerConfig) {
+      if (val){
+        for (let item of this.dealerConfig) {
           // 主题类型为机构时，税号显示
-          if(item.fieldCode === 'taxNo') {
+          if (item.fieldCode === 'taxNo') {
             item.hiddenInRun = val === '机构' ? false : true;
             break
           }
@@ -195,18 +195,18 @@ export default {
       } 
     },
     country(val) {
-      if(val) {
+      if (val) {
         let hasDefault = this.hasDefault;
-        for(let item of this.dealerConfig) {
+        for (let item of this.dealerConfig) {
           // 当前字段为【省】，将【国家或地区】的值赋值给请求【省】的参数中, 并设置【市】的默认值
-          if(item.fieldCode === 'province') {
+          if (item.fieldCode === 'province') {
             item.requestParams.data.countryName = val;
             requestData(item.requestParams).then(({tableContent = []}) => {
               tableContent.length && tableContent.forEach(dItem => {
                 dItem.name = dItem[item.displayField];
                 dItem.value = dItem[item.displayField];
               })
-              if(!hasDefault) {
+              if (!hasDefault) {
                 let province = tableContent.length ? tableContent[0].name : '';
                 this.$set(this.dealer, 'province', province)
               } 
@@ -218,11 +218,11 @@ export default {
       }
     },
     province(val) {
-      if(val) {
+      if (val) {
         let hasDefault = this.hasDefault;
-        for(let item of this.dealerConfig) {
+        for (let item of this.dealerConfig) {
           // 当前字段为【市】，将【省】的值赋值给请求【市】的参数中, 并设置【市】的默认值
-          if(item.fieldCode === 'city') {
+          if (item.fieldCode === 'city') {
             item.requestParams.data.countryName = this.dealer.country;
             item.requestParams.data.provinceName = this.dealer.province;
             requestData(item.requestParams).then(({tableContent = []}) => {
@@ -230,7 +230,7 @@ export default {
                 dItem.name = dItem[item.displayField];
                 dItem.value = dItem[item.displayField];
               })
-              if(!hasDefault) {
+              if (!hasDefault) {
                 let city = tableContent.length ? tableContent[0].name : '';
                 this.$set(this.dealer, 'city', city)
               } 
@@ -242,11 +242,11 @@ export default {
       }
     },
     city(val) {
-      if(val) {
+      if (val) {
         let hasDefault = this.hasDefault;
-        for(let item of this.dealerConfig) { 
+        for (let item of this.dealerConfig) { 
           // 当前字段为【区】，将【市区】的值赋值给请求【区】的参数中, 并设置【区】的默认值
-          if(item.fieldCode === 'county') {
+          if (item.fieldCode === 'county') {
             item.requestParams.data.countryName = this.dealer.country;
             item.requestParams.data.provinceName = this.dealer.province;
             item.requestParams.data.cityName = this.dealer.city;
@@ -255,7 +255,7 @@ export default {
                 dItem.name = dItem[item.displayField];
                 dItem.value = dItem[item.displayField];
               })
-              if(!hasDefault) {
+              if (!hasDefault) {
                 let county = tableContent.length ? tableContent[0].name : '';
                 this.$set(this.dealer, 'county', county)
               }
@@ -267,28 +267,28 @@ export default {
       }
     },
     paymentTerm(val) {
-      if(val) {
+      if (val) {
         let paramsValue = '',
             config = this.dealerConfig,
             { paymentTerm } = this.dealer,
             hasDefault = this.hasDefault;
-        for(let item of config) {
+        for (let item of config) {
           setTimeout(() => {
-            if(item.fieldCode === 'paymentTerm') {
+            if (item.fieldCode === 'paymentTerm') {
               // 循环结算方式的数据, 匹配到当前结算方式的value, 该值作为请求账期方式的参数
-              if(item.remoteData && item.remoteData.length) {
-                for(let dItem of item.remoteData) {
-                  if(dItem.name === paymentTerm) {
+              if (item.remoteData && item.remoteData.length) {
+                for (let dItem of item.remoteData) {
+                  if (dItem.name === paymentTerm) {
                     paramsValue = dItem.OriginValue;
                     break;
                   }
                 }
               }
             }
-            if(item.fieldCode === 'wayOfPayment') {
+            if (item.fieldCode === 'wayOfPayment') {
               item.hiddenInRun = paymentTerm === '后支付' ? false : true;
               // 账期方式显示, 重新请求数据
-              if(!item.hiddenInRun) {
+              if (!item.hiddenInRun) {
                 item.requestParams.data.value = paramsValue;
                 requestData(item.requestParams).then(({tableContent = []}) =>{
                   tableContent.length && tableContent.forEach(sItem => {
@@ -297,7 +297,7 @@ export default {
                     sItem.value = sItem[item.displayField];
                   })
                   // 页面为提交时, 赋初始值
-                  if(!hasDefault) {
+                  if (!hasDefault) {
                     let wayOfPayment = tableContent.length ? tableContent[0].name : '';
                     this.$set(this.dealer, 'wayOfPayment', wayOfPayment)
                   }
@@ -356,7 +356,7 @@ export default {
       this.pickerStatus = true;
       this.dealerType = [];
       let arr = this.dealer.dealerLabelName.split(',');
-      if(this.dealer.dealerLabelName.length){
+      if (this.dealer.dealerLabelName.length){
         arr.forEach(item=>{
           let obj = {
             name :item
@@ -396,7 +396,7 @@ export default {
       this.pickerStatus = false;
       this.dealer.dealerLabelName = '';
       this.dealerType.forEach(item=>{
-        if(this.dealer.dealerLabelName.length){
+        if (this.dealer.dealerLabelName.length){
           this.dealer.dealerLabelName += ','+item.name;
           return
         }
@@ -405,23 +405,23 @@ export default {
     },
     // 校验字段
     check(item, sItem){
-      if(item.fieldCode === 'dealerPhone') {
+      if (item.fieldCode === 'dealerPhone') {
         item.warn = this.checkPhone()
       }
-      else if(item.fieldCode === 'dealerMobilePhone') {
+      else if (item.fieldCode === 'dealerMobilePhone') {
         item.warn = this.checkMobile()
       }
-      else if(item.fieldCode === 'dealerMail') {
+      else if (item.fieldCode === 'dealerMail') {
         item.warn = this.checkEmail()
       }
     },
     //校验固定电话号
     checkPhone(){
       let reg = /^0\d{2,3}-\d{7,8}$/;
-      if(this.dealer.dealerPhone.length>0 && !reg.test(this.dealer.dealerPhone)){
+      if (this.dealer.dealerPhone.length>0 && !reg.test(this.dealer.dealerPhone)){
         this.PhoneWarn = true;
       }
-      else{
+      else {
         this.PhoneWarn = false;
       }
       return this.PhoneWarn;
@@ -429,10 +429,10 @@ export default {
     //校验手机号
     checkMobile(){
       let reg = /^[1][3,4,5,7,8][0-9]{9}$/;
-      if(this.dealer.dealerMobilePhone.length>0 && !reg.test(this.dealer.dealerMobilePhone)){
+      if (this.dealer.dealerMobilePhone.length>0 && !reg.test(this.dealer.dealerMobilePhone)){
         this.MobileWarn = true;
       }
-      else{
+      else {
         this.MobileWarn = false;
       }
       return this.MobileWarn
@@ -440,10 +440,10 @@ export default {
     //校验邮箱
     checkEmail(){
       let reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
-      if(this.dealer.dealerMail.length>0 && !reg.test(this.dealer.dealerMail)){
+      if (this.dealer.dealerMail.length>0 && !reg.test(this.dealer.dealerMail)){
         this.EmailWarn = true;
       }
-      else{
+      else {
         this.EmailWarn = false;
       }
       return this.EmailWarn
@@ -451,10 +451,10 @@ export default {
     // 校验邮政编码
     checkCode(item){
       let reg =  /^[1-9][0-9]{5}$/;
-      if(item.postalCode.length>0 && !reg.test(item.postalCode)){
+      if (item.postalCode.length>0 && !reg.test(item.postalCode)){
         this.codeWarn = true;
       }
-      else{
+      else {
         this.codeWarn = false;
       }
       return this.codeWarn
@@ -464,7 +464,7 @@ export default {
     findData() {
       return dealerService.getDealerInfo(this.transCode).then(({formData = {}, attachment = []}) => {
         this.dealerDuplicateConfig.forEach(item => {
-          if(formData[item.name].length){
+          if (formData[item.name].length){
             this.dealerDuplicateData[item.name] = formData[item.name];
           }
         })
@@ -490,7 +490,7 @@ export default {
           this.picShow = true;
           this.MatPic = `/H_roleplay-si/ds/download?url=${this.dealer.dealerPic}&width=400&height=400`;
         }
-        else{
+        else {
           this.picShow = true;
           this.getDefaultImg()
         }
@@ -510,10 +510,10 @@ export default {
       this.AccountAddress = names;
     },
     getAddress(){
-      if(this.AccountAddress.length>0){
+      if (this.AccountAddress.length>0){
         this.dealer.province = this.AccountAddress[0];
         this.dealer.county = this.AccountAddress[2]
-        if(this.AccountAddress[1] === '市辖区'){
+        if (this.AccountAddress[1] === '市辖区'){
           this.dealer.city = '';
           return
         };
@@ -522,8 +522,8 @@ export default {
     },
     //提交
     submit(){
-      for(let key in this.dealer){
-        if(typeof(this.dealer[key]) === 'string' && this.dealer[key].indexOf(' ')>=0){
+      for (let key in this.dealer){
+        if (typeof(this.dealer[key]) === 'string' && this.dealer[key].indexOf(' ')>=0){
           this.dealer[key] = this.dealer[key].replace(/\s/g,'');
         }
       }
@@ -545,7 +545,7 @@ export default {
               this.dealer.dealerStatus = '-1';
               break;
           }
-          if(this.dealer.status){
+          if (this.dealer.status){
             delete this.dealer.status
           }
           let submitData = {
@@ -556,13 +556,13 @@ export default {
             }
           };
           this.dealerDuplicateConfig.forEach(item => {
-            if(this.dealerDuplicateData[item.name].length){
+            if (this.dealerDuplicateData[item.name].length){
               submitData.formData[item.name] = this.dealerDuplicateData[item.name]
             }
           })
-          if(this.transCode){
+          if (this.transCode){
             dealerService.update(submitData).then( data => {
-              if(data.success){
+              if (data.success){
                 this.submitSuccess = true;
                 this.$vux.alert.show({
                   content: '修改成功',
@@ -571,7 +571,7 @@ export default {
                   }
                 })
               }
-              else{
+              else {
                 this.$vux.alert.show({
                   content: data.message
                 })
@@ -579,14 +579,14 @@ export default {
 
             })
           }
-          else{
+          else {
             dealerService.save(submitData).then(data=>{
-              if(data.success){
+              if (data.success){
                 this.submitSuccess  = true;
                 this.$vux.alert.show({
                   content:'提交成功',
                   onHide:()=>{
-                    if(this.$route.query.add === 1){
+                    if (this.$route.query.add === 1){
                       let dealer = [this.dealer];
                       sessionStorage.setItem('DEALERLIST_SELITEMS',JSON.stringify(dealer));
                     }                    
@@ -594,7 +594,7 @@ export default {
                   }
                 })
               }
-              else{
+              else {
                 this.$vux.alert.show({
                   content:data.message
                 })
@@ -608,27 +608,27 @@ export default {
     save() {
       if (!this.disabledSubmit) {
         let warn = '';
-        for(let item of this.dealerConfig){
-          if(!item.allowBlank && !this.dealer[item.fieldCode]){
+        for (let item of this.dealerConfig){
+          if (!item.allowBlank && !this.dealer[item.fieldCode]){
             warn = `${item.fieldLabel}不能为空`
             break
           }
-          if(item.submitValue){
+          if (item.submitValue){
             this.dealer[item.fieldCode] = this.dealer[item.fieldCode] || ''
           }
         }
         // 校验重复项
-        if(!warn && Object.keys(this.dealerDuplicateData).length){
+        if (!warn && Object.keys(this.dealerDuplicateData).length){
           Object.keys(this.dealerDuplicateData).forEach(item => {
-            if(this.dealerDuplicateData[item].length <= 0){
+            if (this.dealerDuplicateData[item].length <= 0){
               return false
             }
             this.dealerDuplicateConfig.forEach(dItem => {
-              if(dItem.name === item){
+              if (dItem.name === item){
                 dItem.items.forEach(cItem => {
-                  if(!cItem.hidden){
+                  if (!cItem.hidden){
                     this.dealerDuplicateData[item].forEach(sItem => {
-                      if(!cItem.allowBlank && !sItem[cItem.fieldCode]){
+                      if (!cItem.allowBlank && !sItem[cItem.fieldCode]){
                         warn  = `${cItem.text}不能为空`;
                         return false
                       }
@@ -657,11 +657,11 @@ export default {
         url,
       }
       let paramsIsOk = true;
-      if(keys.length){
+      if (keys.length){
         let data = {};
         keys.forEach(key => {
           data[key] = params[key].type === 'text' ? params[key].value : '';
-          if(!data[key]){
+          if (!data[key]){
             paramsIsOk = false;
           }
         })
@@ -670,9 +670,9 @@ export default {
       sItem.requestParams = requestParams;
       
       // 判断当请求参数都有值,才发起请求
-      if(paramsIsOk){
+      if (paramsIsOk){
         requestData(requestParams).then((data) => {
-          if(data.tableContent){
+          if (data.tableContent){
             data.tableContent.forEach(item => {
               item.OriginValue = item.value;
               item.name = item[sItem.displayField];
@@ -680,7 +680,7 @@ export default {
             })
             this.$set(sItem, 'remoteData', data.tableContent)
           }
-          else{
+          else {
             data.forEach(item => {
               item.name = item[sItem.displayField];
               item.value = item[sItem.displayField];
@@ -695,11 +695,11 @@ export default {
     async getFormViewsInfo(){
       // 根据listId 请求表单的 uniqueId
       await getFormViews(this.listId).then(data => {
-        for(let item of data){
-          if(this.transCode && item.viewType === 'revise'){
+        for (let item of data){
+          if (this.transCode && item.viewType === 'revise'){
             this.uniqueId = item.uniqueId;
           }
-          else if(!this.transCode && item.viewType === 'submit'){
+          else if (!this.transCode && item.viewType === 'submit'){
             this.uniqueId = item.uniqueId;
           }
         }
@@ -709,39 +709,39 @@ export default {
         // console.log(config);
         let dealerConfig = [], dealerDuplicateConfig = [];
         config.forEach(item => {
-          if(!item.isMultiple) {
+          if (!item.isMultiple) {
             dealerConfig = JSON.parse(JSON.stringify(item.items));
           }
-          else{
-            if(item.xtype !== 'r2Fileupload'){
+          else {
+            if (item.xtype !== 'r2Fileupload'){
               dealerDuplicateConfig.push(JSON.parse(JSON.stringify(item)))
             }
           }
         })
         // 仓库基本信息配置的处理
         dealerConfig.forEach(item =>{
-          if(!item.hiddenInRun){
+          if (!item.hiddenInRun){
             //下拉框的数据请求
-            if(item.fieldCode !=='dealerLabelName'){
-              if((item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.dataSource && item.dataSource.type === 'remoteData' ) {
+            if (item.fieldCode !=='dealerLabelName'){
+              if ((item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.dataSource && item.dataSource.type === 'remoteData' ) {
                 this.handlerParams(item)
                 // 有默认值，在dealer中添加默认值
-                if(item.defaultValue && item.defaultValue.type === 'staticData' && item.defaultValue.data && item.defaultValue.data.length){
+                if (item.defaultValue && item.defaultValue.type === 'staticData' && item.defaultValue.data && item.defaultValue.data.length){
                   this.$set(this.dealer, item.fieldCode, item.defaultValue.data[0])
                   // this.dealer[item.fieldCode] = item.defaultValue.data[0]
                 }
               }
-              else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
+              else if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
                 this.$set(item, 'remoteData', item.dataSource.data)
               }
             }
           }
           // 在渲染的配置中添加字段
-          if(item.fieldCode !== 'dealerPic'){
+          if (item.fieldCode !== 'dealerPic'){
             this.dealerConfig.push(item);
           }
           // 默认将税号隐藏
-          if(item.fieldCode === 'taxNo' || item.fieldCode === 'wayOfPayment'){
+          if (item.fieldCode === 'taxNo' || item.fieldCode === 'wayOfPayment'){
             item.hiddenInRun = true
           }
         })
@@ -759,9 +759,9 @@ export default {
           }
           let arr = []
           item.items.forEach((sItem, sIndex) => {
-            if(!sItem.hidden){
+            if (!sItem.hidden){
               // 数据请求
-              if(sItem.editorType === 'r2Combo' && sItem.dataSource && sItem.dataSource.type === 'remoteData') {
+              if (sItem.editorType === 'r2Combo' && sItem.dataSource && sItem.dataSource.type === 'remoteData') {
                 this.handlerParams(sItem)
               }
               arr.push(sItem)
@@ -771,14 +771,14 @@ export default {
           this.$set(this.dealerDuplicateData, item.name, [])
         })
         this.dealerDuplicateConfig = dealerDuplicateConfig;
-        if(!this.transCode) this.$loading.hide()
+        if (!this.transCode) this.$loading.hide()
       })
     }
   },
   created() {
     this.$loading.show();
     let query = this.$route.query;
-    if(query.transCode){
+    if (query.transCode){
       this.transCode = query.transCode;
       (async () => {
         await this.getFormViewsInfo()
@@ -793,11 +793,11 @@ export default {
     this.getFormViewsInfo();
     this.getDealer().then(data => {
       let [defaultSelect = {}] = data;
-      if(this.$route.query.pickVal){
+      if (this.$route.query.pickVal){
         this.dealer.dealerLabelName = this.$route.query.pickVal;
         this.pickerStatus = false;
       }
-      else{//新增往来，默认选中地址栏中的往来类型
+      else {//新增往来，默认选中地址栏中的往来类型
         this.dealer.dealerLabelName = this.$route.query.dealerType ? this.$route.query.dealerType : '';           
       }
     });
@@ -812,7 +812,7 @@ export default {
   },
   mounted() {
     this.$nextTick(() =>{
-      if(this.$refs.bScroll){
+      if (this.$refs.bScroll){
         this.$refs.bScroll.refresh()
       }
     })
@@ -821,7 +821,7 @@ export default {
   beforeRouteEnter (to, from, next) {
     // 修改title
     to.meta.title = '新增往来'
-    if(to.query.transCode){
+    if (to.query.transCode){
       to.meta.title = '编辑往来';
     }
     next()

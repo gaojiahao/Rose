@@ -200,7 +200,7 @@
         if (!this.workInfo.transCode) {
           warn = '请选择工序'
         }
-        if(!this.defaultManager.dealerCode) {
+        if (!this.defaultManager.dealerCode) {
           warn = '验收者不能为空'
         }
         if (!warn && !this.warehouse.warehouseCode) {
@@ -313,7 +313,7 @@
             if (this.biReferenceId) {
               submitData.biReferenceId = this.biReferenceId
             }
-            if(this.isModify){ // 修改
+            if (this.isModify){ // 修改
               operation = updateData;
             }
             this.saveData(operation, submitData);

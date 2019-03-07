@@ -110,18 +110,18 @@
       // 监听大类变化，根据子类
       bugType: {
         handler(val){
-          if(val){
+          if (val){
             let type = '';
-            for(let item of this.otherConfig){
-              if(item.fieldCode === 'bugType'){
-                for(let dItem of item.remoteData){
-                  if(dItem.name === val){
+            for (let item of this.otherConfig){
+              if (item.fieldCode === 'bugType'){
+                for (let dItem of item.remoteData){
+                  if (dItem.name === val){
                     type = dItem.type;
                     break;
                   }
                 }
               }
-              if(item.fieldCode === 'bugSubclass'){
+              if (item.fieldCode === 'bugSubclass'){
                 let requestParams = {
                   url: item.dataSource.data.url,
                   data: {
@@ -129,10 +129,10 @@
                   }
                 }
                 requestData(requestParams).then(({tableContent = []}) =>{
-                  if(this.formData.bugSubclass != null) {
+                  if (this.formData.bugSubclass != null) {
                     this.formData.bugSubclass = tableContent[0].name
                   }
-                  else{
+                  else {
                     this.$set(this.formData, 'bugSubclass', tableContent[0].name)
                   }
                   tableContent.forEach(dItem =>{
@@ -163,7 +163,7 @@
           confirmText: '确认',
           cancelText: '取消',
           onConfirm: (val)=> {
-            if(sItem[dItem.fieldCode] == null){
+            if (sItem[dItem.fieldCode] == null){
               this.$set(sItem, dItem.fieldCode, val)
               return
             }
@@ -180,7 +180,7 @@
         }
         let warn = '';
         this.submitMatterField.every(item => {
-          if(!item.hidden && !item.allowBlank && !this.formData[item.fieldCode]){
+          if (!item.hidden && !item.allowBlank && !this.formData[item.fieldCode]){
             warn = `${item.fieldLabel}不能为空`;
             return false;
           }
@@ -207,7 +207,7 @@
                 ...formData,
               }),
             };
-            if(this.biReferenceId){
+            if (this.biReferenceId){
               submitData.biReferenceId = this.biReferenceId
             }
             if (this.transCode) {

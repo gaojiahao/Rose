@@ -71,7 +71,7 @@
         setTimeout(() => {
           this.srhInpTx = e.target.value;
           // 提交页面输入框内容为空时 按钮会变成“返回” 此时让列表重新请求数据
-          if(this.isFill && !this.srhInpTx) {
+          if (this.isFill && !this.srhInpTx) {
             this.$emit("search", {
               val: this.srhInpTx,
               property: this.property,
@@ -107,7 +107,7 @@
         this.$refs.searchInp.focus();
       },
       // 过滤时清除搜索
-      clearVal(){
+      clearVal() {
         this.srhInpTx = ''
       }
     }

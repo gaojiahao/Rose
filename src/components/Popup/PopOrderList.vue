@@ -245,16 +245,16 @@
           ...this.params,
         }
         //物料订单
-        if(this.isMaterOrder){
+        if (this.isMaterOrder){
           requestMethods = getMaterOrderList;
           submitData = {};
         }
         //加工物料
-        if(this.isMaterProccing){
+        if (this.isMaterProccing){
           requestMethods = getNBJGLLOrderList;
         }
         let {relationKey=''} = this.$route.query;
-        if(relationKey){
+        if (relationKey){
           filter = [{          
               operator: 'eq',
               value: relationKey,
@@ -272,7 +272,7 @@
           tableContent.forEach(item => {
             item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
           });
-          if(relationKey){
+          if (relationKey){
             this.selItems = [...tableContent];
             this.$emit('sel-matter', JSON.stringify(this.selItems));
           }

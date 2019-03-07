@@ -55,8 +55,8 @@ export default {
   methods: {
     //提交
     submit(){
-      for(let key in this.jobInfo){
-        if(typeof(this.jobInfo[key]) === 'string' && this.jobInfo[key].indexOf(' ')>=0){
+      for (let key in this.jobInfo){
+        if (typeof(this.jobInfo[key]) === 'string' && this.jobInfo[key].indexOf(' ')>=0){
           this.jobInfo[key] = this.jobInfo[key].replace(/\s/g,'');
         }
       }
@@ -104,10 +104,10 @@ export default {
             type : this.jobInfo.changeType,
             status : this.jobInfo.changeStatus
           };
-          if(this.jobId){//修改
+          if (this.jobId){//修改
             submitData.id = this.jobId;
             update(submitData).then( data => {
-              if(data.success){
+              if (data.success){
                 this.$emit('change', true);
                 this.$vux.alert.show({
                   content: '修改成功',
@@ -116,7 +116,7 @@ export default {
                   }
                 })
               }
-              else{
+              else {
                 this.$vux.alert.show({
                   content: data.message
                 })
@@ -124,9 +124,9 @@ export default {
 
             })
           }
-          else{//新增
+          else {//新增
             save(submitData).then(data=>{
-              if(data.id){
+              if (data.id){
                 this.$emit('change', true);
                 this.$vux.alert.show({
                   content:'提交成功',
@@ -136,7 +136,7 @@ export default {
 
                 })
               }
-              else{
+              else {
                 this.$vux.alert.show({
                   content:data.message
                 })
@@ -222,7 +222,7 @@ export default {
     this.$loading.show();
     let { query } = this.$route;
     this.listId = query.listId;
-    if(query.id){
+    if (query.id){
       this.jobId = query.id;
       this.findData().then(()=>{
         this.$loading.hide();
@@ -230,7 +230,7 @@ export default {
       return  
     }
     // 列表的tab栏如果处于被选中状态 此时点击*新增* 职位类型默认为tab选中值
-    if(query.jobType) {
+    if (query.jobType) {
       this.jobInfo.type = query.jobType;
     }
     this.$loading.hide();

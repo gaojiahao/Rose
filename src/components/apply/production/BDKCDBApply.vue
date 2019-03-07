@@ -172,7 +172,7 @@ export default {
         onConfirm: () => {
           this.selItems.forEach(item=>{
               let index = this.matterList.findIndex(item2=>item2.inventoryCode === item.inventoryCode);
-              if(index >= 0){
+              if (index >= 0){
                 this.matterList.splice(index,1);
               }
             })
@@ -189,7 +189,7 @@ export default {
     // 选中出库仓库
     selWarehouseOut (val) {
       this.warehouse = JSON.parse(val);
-      if(this.matterParams.data.whCode != null) {
+      if (this.matterParams.data.whCode != null) {
         this.matterParams.data.whCode = this.warehouse.warehouseCode;
         this.matterList = [];
       }
@@ -328,7 +328,7 @@ export default {
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
           }
-          if(this.isModify) {
+          if (this.isModify) {
             operation = updateData;
           }
           this.saveData(operation, submitData);

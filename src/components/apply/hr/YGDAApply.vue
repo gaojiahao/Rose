@@ -100,7 +100,7 @@
       //校验手机号
       checkMobile(){
         let reg = /^[1][3,4,5,7,8][0-9]{9}$/;
-        if(this.formData.profileContact && !reg.test(this.formData.profileContact)){
+        if (this.formData.profileContact && !reg.test(this.formData.profileContact)){
           this.MobileWarn = true;
           return
         }
@@ -109,7 +109,7 @@
       // 校验身份证
       checkIdCard(){
         let reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
-        if(this.formData.idCard && !reg.test(this.formData.idCard)){
+        if (this.formData.idCard && !reg.test(this.formData.idCard)){
           this.idCardWarn = true;
           return
         }

@@ -104,13 +104,13 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
       },
       workType: {
         handler(val){
-          if(val === '验收'){
+          if (val === '验收'){
             this.filterList.push({
               name: '启动单号',
               value: 'transCode'
             })
           }
-          else if(val === '派工'){
+          else if (val === '派工'){
             this.filterList.push({
               name: '加工订单号',
               value: 'transCode'
@@ -151,15 +151,15 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
         // 若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
-          if(!arr.length){
+          if (!arr.length){
              this.btnText = '关闭'
           }
           return;
         }
-        if(this.workType !== '派工'){
+        if (this.workType !== '派工'){
           this.tmpItems = [sItem]
         }
-        else{
+        else {
           arr.push(sItem);
         }
         this.btnText = this.tmpItems? `发起工单${this.workType}`: '关闭';
@@ -239,7 +239,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
         this.requestMethods();
       },
       btnHandle(){
-        if(this.btnText !== '关闭'){
+        if (this.btnText !== '关闭'){
           this.$emit('sel-task',this.tmpItems)          
         }
         this.showPop = false;

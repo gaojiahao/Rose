@@ -133,8 +133,8 @@
             address: inPut.address_dealerCodeCredit, // 详细地址
           };
           // 动态获取 仓库字段信息
-          for(let key in inPut) {
-            if(key.includes('warehouse') || key.includes('storehouse') || key.includes('containerCode')) {
+          for (let key in inPut) {
+            if (key.includes('warehouse') || key.includes('storehouse') || key.includes('containerCode')) {
               this.warehouse[key] = inPut[key];
             }
           }

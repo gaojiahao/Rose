@@ -60,7 +60,7 @@ export default {
       this.$route.meta.reload = false;
     }
     this.$nextTick(() => {
-      if(listPage) {
+      if (listPage) {
         listPage.changeVisitedStatus && listPage.changeVisitedStatus();
         listPage.$refs.bScroll && listPage.$refs.bScroll.refresh();
       }
@@ -69,11 +69,11 @@ export default {
   beforeRouteEnter (to, from, next) {
     let { name, transCode } = to.query;
     // 合规财务报表的title不需要重定义
-    if(name.includes('合规')){
+    if (name.includes('合规')){
       to.meta.title = name;
       next();
     }
-    else if(transCode) {
+    else if (transCode) {
       to.meta.title = '加载中...';
     }
     else {
@@ -83,7 +83,7 @@ export default {
   },  
   beforeRouteLeave (to, from, next) {
     let { path } = to;
-    if(path === '/home'){
+    if (path === '/home'){
       this.$loading.hide();
       this.currentComponent = null;
       from.meta.reload = true;

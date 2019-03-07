@@ -1,11 +1,11 @@
-(function computedWidth(){
+(function computedWidth() {
 
     let screenWidth = document.documentElement.clientWidth,
         width = 375;    //iPhone6的手机尺寸
-    if ( screenWidth >= width ){
+    if ( screenWidth >= width ) {
         document.documentElement.style.fontSize = '100px'
     }
-    else{
+    else {
        let fontsize = ( screenWidth / width )*100 + 'px';
        document.documentElement.style.fontSize = fontsize
     }

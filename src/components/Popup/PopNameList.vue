@@ -213,7 +213,7 @@
     },
     created() {
       this.selItems = JSON.parse(JSON.stringify(this.defaultValue));
-      if(this.$route.query.relationKey){
+      if (this.$route.query.relationKey){
         this.isChoice = false;
       }
       this.getDealer();

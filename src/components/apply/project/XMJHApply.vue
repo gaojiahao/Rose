@@ -333,7 +333,7 @@
         sessionStorage.removeItem(DRAFT_KEY);
         return
       }
-      if(!this.transCode && !this.relationKey){
+      if (!this.transCode && !this.relationKey){
         this.projectPlan.push(JSON.parse(plan));
       }      
     },

@@ -153,13 +153,13 @@ export default {
     submitOrder () {
       let warn = '',
           dataSet = [];
-      if(!this.matterList.length){
+      if (!this.matterList.length){
         warn = '请选择物料'
       }
       if (!warn) {
         this.matterList.every(item => {
           this.matterEditConfig.editPart.every(vItem => {
-            if(!vItem.hiddenInRun && !vItem.allowBlank) {
+            if (!vItem.hiddenInRun && !vItem.allowBlank) {
               if ((Array.isArray(item[vItem.fieldCode]) && !item[vItem.fieldCode].length) || !item[vItem.fieldCode]) {
                 warn = `${vItem.text}不能为空`;
               }
@@ -234,7 +234,7 @@ export default {
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
           }
-          if(this.isModify) {
+          if (this.isModify) {
             operation = updateData;
           }
           this.saveData(operation, submitData);

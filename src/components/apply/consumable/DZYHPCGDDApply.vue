@@ -147,14 +147,14 @@ export default {
         item.tdQty = item.qtyBal || '';
         item.taxRate = 0.16;
         // 如果有销售合同号
-        if(item.transCode){
+        if (item.transCode){
           if (!orderList[orderListKey]) {
             orderList[orderListKey] = [];
           }
           orderList[orderListKey].push(item);
         }
         else {
-          if(!orderList['noCode']) {
+          if (!orderList['noCode']) {
             orderList['noCode'] = []
           }
           orderList['noCode'].push(item);
@@ -189,17 +189,17 @@ export default {
     },
     // 选择要删除的物料
     delClick(sItem, index, key) {
-      if(this.selItems[key]){
+      if (this.selItems[key]){
         let arr = this.selItems[key];
         let delIndex = arr.findIndex(item => item === index);
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
-          if(!arr.length) delete this.selItems[key]
+          if (!arr.length) delete this.selItems[key]
           return;
         }
         arr.push(index);
       }
-      else{
+      else {
         this.$set(this.selItems, key, [index])
       }
     },
@@ -211,14 +211,14 @@ export default {
     // 全选
     checkAll() {
       // 要删除的物料数量等于当前物料数量
-      if(this.checkList.length === this.consumableList.length){
+      if (this.checkList.length === this.consumableList.length){
         this.selItems = {};
         return
       }
       let obj = {};
-      for(let key in this.orderList){
+      for (let key in this.orderList){
         this.orderList[key].forEach((item, index) => {
-          if(!obj[item.transCode]){
+          if (!obj[item.transCode]){
             obj[item.transCode] = [];
           }
           obj[item.transCode].push(index)
@@ -232,12 +232,12 @@ export default {
         content: '确认删除?',
         // 确定回调
         onConfirm: () => {
-          for(let key in this.selItems){
+          for (let key in this.selItems){
             let newIndexs = this.selItems[key].map((val, idx) => {return val - idx});
             // 将orderList中对应交易号的物料列表按照selItems中的索引删除
             newIndexs.forEach((sItem, sIndex) => {
               this.orderList[key].splice(sItem, 1)
-              if(!this.orderList[key].length){
+              if (!this.orderList[key].length){
                 delete this.orderList[key]
               }  
             }) 
@@ -271,19 +271,19 @@ export default {
       warn = this.verifyData(baseinfoExtConfig, dealerInfo);
 
       // 校验 <物料部分> 必填字段 同时动态组装dateSet
-      if(!warn) {
+      if (!warn) {
         // 校验 是否已选择 <物料部分>
         let [ matterPart = {} ] = this.submitMatterField;
-        if(!Object.keys(this.orderList).length) warn = `请选择${matterPart.text}`;
+        if (!Object.keys(this.orderList).length) warn = `请选择${matterPart.text}`;
 
         // 动态组装 dataSet
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
             let oItem = {};
-            for(let sItem of this.submitMatterField){
+            for (let sItem of this.submitMatterField){
               let val = item[sItem.fieldCode] || item[sItem.displayField] || item[sItem.showFieldCode];
-              if(!sItem.hidden && !sItem.allowBlank && !val && val !== undefined){
-                if(sItem.text) warn = `${sItem.text}不为空`;
+              if (!sItem.hidden && !sItem.allowBlank && !val && val !== undefined){
+                if (sItem.text) warn = `${sItem.text}不为空`;
                 break;
               }
               oItem[sItem.fieldCode] = val !== undefined ? val : '';

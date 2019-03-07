@@ -133,7 +133,7 @@
           onConfirm: () => {
             this.$HandleLoad.show();
             let operation = saveJobLog;
-            if(this.$route.query.transCode){
+            if (this.$route.query.transCode){
               operation = update;
             }
             let submitData = {

@@ -77,7 +77,7 @@ export default {
     },
     loadPage() {
       let {groupId = ''} = this.$route.query;
-      if(!groupId){
+      if (!groupId){
         this.$vux.alert.show({
           content: '抱歉，有误，请尝试刷新之后再次进入'
         });

@@ -173,7 +173,7 @@
           confirmText: '确认',
           cancelText: '取消',
           onConfirm: (val)=> {
-            if(sItem[dItem.fieldCode] == null){
+            if (sItem[dItem.fieldCode] == null){
               this.$set(sItem, dItem.fieldCode, val)
               return
             }
@@ -217,7 +217,7 @@
       },
       // 项目切换
       projectChange (item, val) {
-        if(item.fieldCode === 'projectName') {
+        if (item.fieldCode === 'projectName') {
           let matched = item.remoteData.find(dItem => dItem.projectName === val);
           this.projectTask = {
             ...this.projectTask,
@@ -289,7 +289,7 @@
         if (val) {
           this.projectTask.actualTime = Math.abs(toFixed(val, 1));
         }
-        if(this.projectTask.operatingRate && this.projectTask.actualTime){
+        if (this.projectTask.operatingRate && this.projectTask.actualTime){
           this.projectTask.actualtHomeworkCost = accMul(this.projectTask.operatingRate, this.projectTask.actualTime)
         }
       },
@@ -317,7 +317,7 @@
     },
     created () {
       let data = sessionStorage.getItem(DRAFT_KEY);
-      if(data){
+      if (data){
         let draft = JSON.parse(data);
         this.projectTask = draft.projectTask;
         this.getTaskList();
