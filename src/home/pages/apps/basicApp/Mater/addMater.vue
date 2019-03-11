@@ -63,40 +63,37 @@
   </div>
 </template>
 <script>
+// 请求引入
+import { save, update, findData } from 'service/materService'
+import { requestData, getFormConfig, getFormViews, getBaseInfoDataBase } from 'service/commonService'
+// 组件引入
+import RScroll from 'components/RScroll'
 import RPicker from 'components/basicPicker';
 import UploadImage from 'components/UploadImage'
-import RScroll from 'components/RScroll'
+import duplicateComponent from '../../../components/duplication'
 import PopTechnicsList from 'components/popup/matter/PopTechnicsList'
 import PopProcedureList from 'components/popup/matter/PopProcedureList'
-import PopDealerList from 'components/Popup/PopDealerList'
-import duplicateComponent from '../../../components/duplication'
+// mixins引入
 import common from 'mixins/common'
-import {save, update,findData,} from 'service/materService';
-import {getBaseInfoDataBase, getDictByType, getDictByValue, getFormConfig, requestData, getFormViews} from 'service/commonService';
-import {toFixed} from '@/plugins/calc'
+// 插件引入
+import { toFixed } from '@/plugins/calc'
 
 export default {
   data() {
     return {
+      inventoryStatus: '使用中', // 物料状态
       listId: '78a798f8-0f3a-4646-aa8b-d5bb1fada28c',
+      scrollOptions: { 
+        click: true 
+      },
       MatPic: '', // 图片地址
       typeId: '',   // 大类转换id
+      uniqueId: '',
+      transCode: '',
       processId: '',  // 属性转换id
       subclassId: '',   // 子类转换id
       biReferenceId: '',
-      picShow: false, // 是否展示图片
-      baseinfo: {
-        handler: '', // 经办人ID
-        handlerName: '', // 经办人
-        handlerArea: '', // 所属区域ID
-        handlerAreaName: '', // 所属区域
-        handlerUnit: '', // 经办组织ID
-        handlerUnitName: '', // 经办部门
-        handlerRole: '', // 经办角色ID
-        handlerRoleName: '', // 经办角色
-        activeTime: '', // 业务发生时间
-        comment: '' // 注释
-      },
+      baseinfo: {},
       inventory: {
         inventoryCode: '', // 物料编码
         inventoryName: '', // 物料名称
@@ -119,26 +116,20 @@ export default {
         procedureCode: '', // 工序编码
         moq: '', // 起订量
       },
-      transCode: '',
-      hasDefault: false, // 判断是否为回写
       imgFileObj: {}, // 上传的图片对象
-      imgFile: null,
-      codeReadOnly: false, // 物料编码是否只读
-      submitSuccess: false, // 是否提交成功
-      inventoryStatus: '使用中', // 物料状态
-      scrollOptions: {
-        click: true
-      },
+      matterDuplicateData: {}, // 物料重复项数据,
       matterConfig: [], // 物料基本信息配置
       matterDuplicateConfig: [], // 物料重复项的配置
-      matterDuplicateData: {}, // 物料重复项数据,
-      uniqueId: ''
+      imgFile: null,
+      picShow: false, // 是否展示图片
+      codeReadOnly: false, // 物料编码是否只读
+      submitSuccess: false, // 是否提交成功
     }
   },
   mixins: [common],
   components: {
-    RPicker, UploadImage, RScroll,  PopTechnicsList, PopProcedureList, PopDealerList,
-    duplicateComponent
+    RPicker, UploadImage, RScroll,  
+    PopTechnicsList, PopProcedureList, duplicateComponent
   },
   computed: {
     // 临保天数
@@ -190,100 +181,98 @@ export default {
     inventoryCode() {
       return `M${this.processId}${this.typeId}${this.subclassId}`
     },
+    // 辅助计量
     MoreUnit() {
       return this.matterDuplicateData.invMoreUnit;
     }
   },
   watch: {
-    // 当物料属性改变时，重新请求获取方式，物料大类的数据，赋初始值
+    // 根据物料属性 动态请求 物料大类 / 物料小类
     inventoryProcessing(val) {
-      if (this.hasDefault) return;
+      console.log('val:', val);
       let TypeParentId = '', value = '';
       for (let item of this.matterConfig) {
-        if (item.fieldCode === 'processing') {
-          for (let sItem of item.remoteData) {
-            if (sItem.name === val){
-              this.processId = sItem.dictCode;
-              TypeParentId = sItem.id;
-              value = sItem.type;
-              break
+          if (item.fieldCode === 'processing') {
+            for (let sItem of item.remoteData) {
+              if (sItem.name === val) {
+                this.processId = sItem.dictCode;
+                TypeParentId = sItem.id;
+                value = sItem.type;
+                break
+              }
             }
           }
-        }
-        // 重新请求获取方式的数据
-        if (item.fieldCode === 'multipleAccess') {
-          item.requestParams.data.sType = this.inventory.processing;
-          requestData(item.requestParams).then(({tableContent = []}) => {
-            if (tableContent.length){
-              tableContent.forEach(dItem => {
-                dItem.name = dItem.sName;
-                dItem.value = dItem.sName;
-              })
-              this.$set(this.inventory, 'multipleAccess', tableContent[0].name)
-            }
-            else {
-              this.inventory.multipleAccess = '';
-            }
-            item.remoteData = tableContent;
-          })
-        }
-        // 重新请求物料大类的数据
-        if (item.fieldCode === 'inventoryType') {
-          Object.keys(item.requestParams.data).forEach(key => {
-            if (key === 'parentId') {
-              item.requestParams.data[key] = TypeParentId
-            }
-            else if (key === 'value') {
-              item.requestParams.data[key] = value
-            }
-          })
-          requestData(item.requestParams).then(data => {
-            if (data.tableContent != null) {
-              if (data.tableContent.length){
-                data.tableContent.forEach(dItem => {
-                  dItem.originValue = dItem.value;
-                  dItem.value = dItem.name;
+          // 请求 *获取方式* 数据
+          if (item.fieldCode === 'multipleAccess') {
+            item.requestParams.data.sType = this.inventory.processing;
+            requestData(item.requestParams).then(({tableContent = []}) => {
+              if (tableContent.length) {
+                tableContent.forEach(dItem => {
+                  dItem.name = dItem.sName;
+                  dItem.value = dItem.sName;
                 })
-                this.inventory.inventoryType = data.tableContent[0].name;
+                this.$set(this.inventory, 'multipleAccess', tableContent[0].name)
               }
               else {
-                this.inventory.inventoryType = '';
+                this.inventory.multipleAccess = '';
               }
-              item.remoteData = data.tableContent;
-            }
-            else {
-              if (data.length){
-                data.forEach(dItem => {
-                  dItem.originValue = dItem.value;
-                  dItem.value = dItem.name;
-                })
-                this.inventory.inventoryType = data[0].name;
+              item.remoteData = tableContent;
+            })
+          }
+          // 请求 *物料大类* 的数据
+          if (item.fieldCode === 'inventoryType') {
+            Object.keys(item.requestParams.data).forEach(key => {
+              if (key === 'parentId') {
+                item.requestParams.data[key] = TypeParentId
+              }
+              else if (key === 'value') {
+                item.requestParams.data[key] = value
+              }
+            })
+            requestData(item.requestParams).then(data => {
+              if (data.tableContent != null) {
+                if (data.tableContent.length) {
+                  data.tableContent.forEach(dItem => {
+                    dItem.originValue = dItem.value;
+                    dItem.value = dItem.name;
+                  })
+                  this.inventory.inventoryType = data.tableContent[0].name;
+                }
+                else {
+                  this.inventory.inventoryType = '';
+                }
+                item.remoteData = data.tableContent;
               }
               else {
-                this.inventory.inventoryType = '';
+                if (data.length) {
+                  data.forEach(dItem => {
+                    dItem.originValue = dItem.value;
+                    dItem.value = dItem.name;
+                  })
+                  this.inventory.inventoryType = data[0].name;
+                }
+                else {
+                  this.inventory.inventoryType = '';
+                }
+                item.remoteData = data;
               }
-              item.remoteData = data;
-            }
-          })
-          break;
-        }
+            })
+          }
+        break;
       }
     },
     // 监听物料大类变化，改变物料子类的数据
     inventoryType(val) {
-      console.log('val:', val);
-      if (this.hasDefault) return;
       if (!val) {
         this.typeId = '';
         return;
       }
       let subTypeParentId = '', value = '' ;
       for (let item of this.matterConfig) {
-        if (item.fieldCode === 'inventoryType'){
+        if (item.fieldCode === 'inventoryType') {
           for (let sItem of item.remoteData) {
-            if (sItem.name === val){
+            if (sItem.name === val) {
               this.typeId = sItem.dictCode;
-
               subTypeParentId = sItem.id;
               value = sItem.type;
               break;
@@ -302,7 +291,7 @@ export default {
           })
           requestData(item.requestParams).then(data => {
             if (data.tableContent != null) {
-              if (data.tableContent.length){
+              if (data.tableContent.length) {
                 data.tableContent.forEach(dItem => {
                   dItem.originValue = dItem.value;
                   dItem.value = dItem.name;
@@ -315,7 +304,7 @@ export default {
               item.remoteData = data.tableContent;
             }
             else {
-              if (data.length){
+              if (data.length) {
                 data.forEach(dItem => {
                   dItem.originValue = dItem.value;
                   dItem.value = dItem.name;
@@ -332,16 +321,16 @@ export default {
         }
       }
     },
+    // 监听 物料子类
     inventorySubclass(val) {
-      if (this.hasDefault) return;
       if (!val) {
         this.subclassId = '';
         return;
       }
       for (let item of this.matterConfig) {
-        if (item.fieldCode === 'inventorySubclass'){
+        if (item.fieldCode === 'inventorySubclass') {
           for (let sItem of item.remoteData) {
-            if (sItem.name === val){
+            if (sItem.name === val) {
               this.subclassId = sItem.dictCode;
               break;
             }
@@ -349,19 +338,19 @@ export default {
         }
       }
     },
+    // 监听 物料编码
     inventoryCode(val) {
       this.inventory.inventoryCode = val;
     },
     // 监听辅助计量，重新计算包装规格
     MoreUnit: {
-      handler(val){
-        if (val && val.length){
+      handler(val) {
+        if (val && val.length) {
           val.forEach(item => {
-            if (this.inventory.measureUnit && item.invSubUnitName && item.invSubUnitMulti){
+            if (this.inventory.measureUnit && item.invSubUnitName && item.invSubUnitMulti) {
               item.comment = `${item.invSubUnitMulti}${this.inventory.measureUnit}/${item.invSubUnitName}`;
               return
             }
-            
           })
         }
       },
@@ -371,7 +360,6 @@ export default {
   methods: {
     // 上传图片成功触发
     onUpload(val) {
-      console.log(val);
       this.inventory.inventoryPic = val.src;
     },
     checkAmt(item) {
@@ -400,6 +388,7 @@ export default {
         measureUnit: '主计量单位',
       };
       for (let key in this.inventory) {
+        // 此处去除输入框内的空格
         if (typeof(this.inventory[key]) === 'string' && this.inventory[key].indexOf(' ') >= 0) {
           this.inventory[key] = this.inventory[key].replace(/\s/g, '');
         }
@@ -431,17 +420,17 @@ export default {
         return true;
       });
       // 校验重复项
-      if (!warn && Object.keys(this.matterDuplicateData).length){
+      if (!warn && Object.keys(this.matterDuplicateData).length) {
         Object.keys(this.matterDuplicateData).forEach(item => {
-          if (this.matterDuplicateData[item].length <= 0){
+          if (this.matterDuplicateData[item].length <= 0) {
             return false
           }
           this.matterDuplicateConfig.forEach(dItem => {
-            if (dItem.name === item){
+            if (dItem.name === item) {
               dItem.items.forEach(cItem => {
-                if (!cItem.hidden){
+                if (!cItem.hidden) {
                   this.matterDuplicateData[item].forEach(sItem => {
-                    if (!cItem.allowBlank && !sItem[cItem.fieldCode]){
+                    if (!cItem.allowBlank && !sItem[cItem.fieldCode]) {
                       warn  = `${cItem.text}不能为空`;
                       return false
                     }
@@ -468,20 +457,18 @@ export default {
         },
       };
       this.matterDuplicateConfig.forEach(item => {
-        if (this.matterDuplicateData[item.name].length){
+        if (this.matterDuplicateData[item.name].length) {
           formData[item.name] = this.matterDuplicateData[item.name]
         }
       })
       let submitData = {
         listId: this.listId,
-        // biReferenceId: this.biReferenceId,
         formData: formData,
       };
       // 修改
       if (this.transCode) {
         operation = update;
       }
-      console.log(submitData)
 
       this.$vux.confirm.show({
         content: '确认提交?',
@@ -514,32 +501,16 @@ export default {
     // 查询物料详情
     findData() {
       return findData(this.transCode).then(({formData = {}, attachment = []}) => {
+        let { baseinfo = {}, inventory = {} } = formData;
+        // 物料重复项 数据赋值
         this.matterDuplicateConfig.forEach(key => {
-          if (formData[key.name].length){
+          if (formData[key.name].length) {
             this.matterDuplicateData[key.name] = formData[key.name];
           }
         })
-        let {baseinfo = {}, inventory = {}} = formData;
-        this.hasDefault = true;
-        switch (inventory.inventoryStatus) {
-          case 1:
-            this.inventoryStatus = '使用中';
-            break;
-          case 2:
-            this.inventoryStatus = '未使用';
-            break;
-          case 0:
-            this.inventoryStatus = '草稿';
-            break;
-          case -1:
-            this.inventoryStatus = '停用';
-            break;
-        }
-        console.log(inventory)
         this.baseinfo = {...this.baseinfo, ...baseinfo,};
         this.inventory = {...this.inventory, ...inventory,};
-        let TypeParentId = '', typeValue = '', subTypeParentId = '', subValue = '';
-        // this.biReferenceId = this.inventory.referenceId;
+        // 图片处理
         if (this.inventory.inventoryPic) {
           this.picShow = true;
           this.MatPic = `/H_roleplay-si/ds/download?url=${this.inventory.inventoryPic}&width=400&height=400`;
@@ -589,87 +560,98 @@ export default {
     },
     // 处理配置中的接口请求
     handlerParams(item) {
-      let url = item.dataSource.data.url;
-      let params = item.dataSource.data.params;
-      let keys = Object.keys(params);
-      let requestParams = {
-        url,
-      }
-      if (keys.length){
+      // 判断 <请求参数> 是否全部都已就位
+      let paramsIsOk = true;
+      // 数据源等基本信息
+      let url = item.dataSource.data.url,
+          params = item.dataSource.data.params;
+      let keys = Object.keys(params),
+          requestParams = {
+            url,
+          };
+      if (keys.length) {
         let data = {};
-        keys.forEach(key => {
+        for (let key of keys) {
           data[key] = params[key].type === 'text' ? params[key].value : '';
-        })
+          if (data.hasOwnProperty(key) && !data[key]) {
+            paramsIsOk = false;
+            break;
+          }
+        }
         requestParams.data = data;
-      }
-      item.requestParams = requestParams;
-      requestData(requestParams).then(data => {
-        if (data.tableContent){
-          data.tableContent.forEach(dItem => {
-            dItem.value = dItem[item.displayField];
-            dItem.name = dItem[item.displayField];
-          })
-          if (item.fieldCode === 'processing'){
-            if (!this.$route.query.transCode){
-              this.inventory.processing  = this.$route.query.matterType ? this.$route.query.matterType : '';
+        item.requestParams = requestParams;
+        // 默认状态下 请求参数就位 才会发起相应请求
+        if (paramsIsOk) {
+          requestData(requestParams).then(data => {
+            if (data.tableContent) {
+              data.tableContent.forEach(dItem => {
+                dItem.value = dItem[item.displayField];
+                dItem.name = dItem[item.displayField];
+              })
+              this.$set(item, 'remoteData', data.tableContent)
             }
-          }
-          this.$set(item, 'remoteData', data.tableContent)
-        }
-        else {
-          data.forEach(dItem => {
-            dItem.value = dItem[item.displayField];
-            dItem.name = dItem[item.displayField];
+            else {
+              data.forEach(dItem => {
+                dItem.value = dItem[item.displayField];
+                dItem.name = dItem[item.displayField];
+              })
+              this.$set(item, 'remoteData', data)
+            }
           })
-          this.$set(item, 'remoteData', data)
         }
-        
-      })
+      }
     },
-    async getFormViewsInfo(){
-      // 根据listId 请求表单的 uniqueId
+    async getFormViewsInfo() {
+      // 根据 listId 请求表单的 uniqueId
       await getFormViews(this.listId).then(data => {
-        for (let item of data){
-          if (this.transCode && item.viewType === 'revise'){
+        for (let item of data) {
+          if (this.transCode && item.viewType === 'revise') {
             this.uniqueId = item.uniqueId;
           }
-          else if (!this.transCode && item.viewType === 'submit'){
+          else if (!this.transCode && item.viewType === 'submit') {
             this.uniqueId = item.uniqueId;
           }
         }
       })
-      // 根据uniqueId 请求表单的配置
+      // 根据 uniqueId 请求表单的配置
       await getFormConfig(this.uniqueId).then(({config = []}) => {
-        // console.log(config);
         let matterConfig = [], matterDuplicateConfig = [];
+        // 配置拆分成 基本信息 / 重复项
         config.forEach(item => {
           if (!item.isMultiple) {
             matterConfig = JSON.parse(JSON.stringify(item.items));
           }
           else {
-            if (!item.hiddenInRun && item.xtype !== 'r2Fileupload' && item.name === 'invMoreUnit'){
+            if (!item.hiddenInRun && item.xtype !== 'r2Fileupload' && item.name === 'invMoreUnit') {
               matterDuplicateConfig.push(JSON.parse(JSON.stringify(item)))
             }
           }
         })
-        // 物料基本信息配置的处理
+        // 处理 物料 *基本信息* 配置 
         matterConfig.forEach(item =>{
-          if (!item.hiddenInRun){
+          if (!item.hiddenInRun) {
             //下拉框的数据请求
             if ((item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.dataSource && item.dataSource.type === 'remoteData' ) {
               this.handlerParams(item)
             }
-            else if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
+            else if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData') {
               this.$set(item, 'remoteData', item.dataSource.data)
             }
             // 在渲染的配置中添加字段
-            if (item.fieldCode !== 'inventoryPic'){
+            if (item.fieldCode !== 'inventoryPic') {
               this.matterConfig.push(item);
+            }
+            // 如果用户是从某个tab状态点进来 则属性默认为选中的tab状态栏
+            if (item.fieldCode === 'processing') {
+              if (this.$route.query.matterType) {
+                this.inventory.processing  = this.$route.query.matterType;
+              }
             }
           }
         })
+        // 处理 物料 *重复项* 配置
         matterDuplicateConfig.forEach(item => {
-          switch(item.name){
+          switch(item.name) {
             case 'invMoreUnit':
               item.title = '辅助计量';
               break;
@@ -683,12 +665,10 @@ export default {
               item.title = '供应商';
               break;
           }
+
           let arr = []
           item.items.forEach((sItem, sIndex) => {
-            if (!sItem.hidden){
-              if (sItem.editorType === 'r2Combo' && sItem.dataSource && sItem.dataSource.type === 'remoteData') {
-                this.handlerParams(sItem)
-              }
+            if (!sItem.hidden) {
               arr.push(sItem)
             }
           })
@@ -721,7 +701,6 @@ export default {
         await this.findData().then(() =>{
           this.$loading.hide()
         });
-        this.hasDefault = false;
         this.codeReadOnly = true;
       })();
       return

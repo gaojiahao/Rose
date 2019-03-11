@@ -1,9 +1,9 @@
 <template>
   <div class="each-cell" :class="{'vux-1px-b' : showBottomBorder, 'when-is-right' : textRight}">
-    <span class="cell-name">{{ cellTitle }}: </span>
-    <span class="cell-content">
+    <p class="cell-name">{{ cellTitle }}</p>
+    <p class="cell-content">
       <span class="symbol" v-if="showSymbol">￥</span>{{ cellContent || '无' }}
-    </span>
+    </p>
   </div>
 </template>
 
@@ -31,23 +31,24 @@ export default {
 
 <style lang='scss' scoped>
 .each-cell {
+  display: flex;
   font-size: .14rem;
   padding: .15rem 0;
   line-height: .2rem;
+  align-items: flex-start;
   .cell-name {
-    color: #696969;
-    margin-right: .04rem;
+    color: #999;
+    margin-right: .1rem;
   }
   .cell-content {
     color: #333;
+    word-break: break-all;
   }
   &.vux-1px-b:after {
     border-color: #e8e8e8;
   }
 }
 .when-is-right {
-  display: flex;
-  align-items: center;
   .cell-content {
     flex: 1;
     text-align: right;

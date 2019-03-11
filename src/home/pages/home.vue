@@ -53,7 +53,7 @@ import basicApp from 'components/home/basicApp'        // 基础应用
 // 插件引入
 import Bscroll from 'better-scroll'
 export default {
-  data(){
+  data() {
     return{
       BUSobj: {},
       userInfo:{},            // 用户信息
@@ -68,33 +68,33 @@ export default {
   components:{ busApp, basicApp },
   methods:{
     // 基础应用
-    goBasic(item){
+    goBasic(item) {
       this.$router.push({path: `${basicMap[item]}`})
     },
     // 前往列表
-    goList(folder, fileName, name, listId){
+    goList(folder, fileName, name, listId) {
       // console.log('fileName:', fileName); 
       this.$router.push({
         path: `/list/${folder}/${fileName}`, 
         query: { name, listId }
       })
     },
-    goAppDetail(listId){
+    goAppDetail(listId) {
       this.$router.push({path: `/appDetail/${listId}`})
     },
     // 设置默认图片
-    getDefaultIcon(app){
+    getDefaultIcon(app) {
       let url = require('assets/defaultApp.png');
-      if (app){
+      if (app) {
         app.icon = url;
       }
       return url;
     },
     //获取代办数量
-    getNews(){
+    getNews() {
       let newsNumber;
       return getMsgList().then( data => {
-        if (data.dataCount > 99){
+        if (data.dataCount > 99) {
           newsNumber = '99+';
           return
         }
@@ -103,7 +103,8 @@ export default {
       })
     },
     //获取当前用户信息
-    getCurrentUser(){
+    getCurrentUser() {
+      console.log('home的currentUser');
       return homeService.currentUser().then(data =>{
         this.userInfo = {
           photo: data.photo,                      // 头像
@@ -114,9 +115,9 @@ export default {
         }
         // 获取 公司主体列表
         data.sysGroupList && data.sysGroupList.forEach(item => {
-          if (item.groupType === 'C'){
+          if (item.groupType === 'C') {
             this.entityList.push(item);
-            if (item.groupCode === data.entityId){
+            if (item.groupCode === data.entityId) {
               this.selItem = item;
             }
           }
@@ -127,12 +128,11 @@ export default {
     dropItemClick(item) {
       if (this.selItem.groupCode === item.groupCode) return;
       this.selItem = {...item};
-      this.userInfo.entityName = item.groupName.slice(0, 4);
       this.showDrop = false;
       this.$loading.show();
       homeService.changeEntity({entityId : item.groupCode}).then((data) => {
         let tokenInfo = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
-        if (tokenInfo){
+        if (tokenInfo) {
           tokenInfo = JSON.parse(tokenInfo);
           tokenInfo.entityId = data.entityId;
           tokenInfo.token = data.token;
@@ -144,15 +144,15 @@ export default {
   },
   watch:{
     $route:{
-      handler(val){
+      handler(val) {
         // 返回首页进行滑动刷新
-        if (val.name === 'HOME'){
+        if (val.name === 'HOME') {
           this.homeScroll.refresh();
         }
       }
     }
   },
-  created(){
+  created() {
     this.$loading.show();
     (async() => {
       //获取当前用户
@@ -160,11 +160,11 @@ export default {
       // 获取首页应用列表
       await homeService.getMeau().then( res => {
         let BUSobj = this.BUSobj;
-        for (let val of res){
+        for (let val of res) {
           BUSobj[val.text] = [];
           for (let item of val.children) {
             // 基础对象应用 单独处理
-            if (basicMap[item.listId]){
+            if (basicMap[item.listId]) {
               // 图片处理
               item.icon = item.icon 
                 ? `/dist/${item.icon}`
@@ -218,9 +218,9 @@ export default {
       // 获取 头像姓名
       let { name, avatar, position } = JSON.parse(sessionStorage.getItem('ROSE_LOGIN_TOKEN'));
       // 如果头像不存在则指定默认头像
-      if (!avatar){
+      if (!avatar) {
         let url = this.userInfo.photo;
-        if (!this.userInfo.photo){
+        if (!this.userInfo.photo) {
           url = require('assets/ava01.png');
         }
         avatar = url;
@@ -234,7 +234,7 @@ export default {
       await this.getNews();
     })()
   },
-  mounted(){
+  mounted() {
     this.homeScroll = new Bscroll(this.$refs.home,{
       click:true
     })

@@ -10,7 +10,7 @@
     </div>
     <template v-else-if="duplicateData[item.name] &&duplicateData[item.name].length">
       <div class="duplicate-item" :class="{'has_border' : sIndex > 0}" v-for="(sItem, sIndex) in duplicateData[item.name]" :key="sIndex">
-        <div v-for="(dItem,dIndex) in item.items" :key="dIndex" :class="{'vux-1px-b': dIndex < item.items.length-1}">
+        <div v-for="(dItem, dIndex) in item.items" :key="dIndex" :class="{'vux-1px-b': dIndex < item.items.length-1}">
           <!-- 可编辑的字段 -->
           <template v-if="!dItem.readOnly">
             <!-- 下拉框 -->
@@ -112,12 +112,65 @@ export default {
     }
   },
   methods: {
+    // 处理配置中的接口请求
+    handlerParams(item) {
+      // 判断 <请求参数> 是否全部都已就位
+      let paramsIsOk = true;
+      // 数据源等基本信息
+      let url = item.dataSource.data.url,
+          params = item.dataSource.data.params;
+      let keys = Object.keys(params),
+          requestParams = {
+            url,
+          };
+      if (keys.length){
+        let data = {};
+        for (let key of keys) {
+          data[key] = params[key].type === 'text' ? params[key].value : '';
+          if (data.hasOwnProperty(key) && !data[key]) {
+            paramsIsOk = false;
+            break;
+          }
+        }
+        requestParams.data = data;
+        item.requestParams = requestParams;
+        // 默认状态下 请求参数就位 才会发起相应请求
+        if (paramsIsOk) {
+          requestData(requestParams).then(data => {
+            if (data.tableContent){
+              data.tableContent.forEach(dItem => {
+                dItem.value = dItem[item.displayField];
+                dItem.name = dItem[item.displayField];
+              })
+              if (item.fieldCode === 'processing'){
+                if (!this.$route.query.transCode){
+                  this.inventory.processing  = this.$route.query.matterType ? this.$route.query.matterType : '';
+                }
+              }
+              this.$set(item, 'remoteData', data.tableContent)
+            }
+            else {
+              data.forEach(dItem => {
+                dItem.value = dItem[item.displayField];
+                dItem.name = dItem[item.displayField];
+              })
+              this.$set(item, 'remoteData', data)
+            }
+          })
+        }
+      }
+    },
     // 新增重复项
     addMoreUnit(item) {
       let obj = {};
-      item.items.forEach(item => {
-        if (!item.hidden){
-          obj[item.fieldCode] = ''
+      item.items.forEach(sItem => {
+        if (!sItem.hidden){
+          if (this.duplicateData[item.name].length < 1) {
+            if (sItem.editorType === 'r2Combo' && sItem.dataSource && sItem.dataSource.type === 'remoteData') {
+              this.handlerParams(sItem)
+            }
+          }
+          obj[sItem.fieldCode] = '';
         }
       })
       this.duplicateData[item.name].push(obj);

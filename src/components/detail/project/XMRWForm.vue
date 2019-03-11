@@ -1,35 +1,11 @@
 <template>
   <div class="detail_wrapper xmrw-detail-container">
     <div class="basicPart">
-      <!-- <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
-        <span>其他应用里存在与本条相关联的数据，快去看看</span>
-        <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
-      </div> -->
+
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="orderInfo" :order-info="orderInfo"></basic-info>
       <!-- 项目任务信息 -->
-      <div class="form_content">
-        <div class="main_content">
-          <div class="vux-1px-b" v-for="(item, index) in otherConfig" :key="index">
-            <template v-if="item.id.includes('Datefield')">
-              <div class="each_info">
-                <label>{{item.fieldLabel}}</label>
-                <span class="field_value">{{projectTask[item.fieldCode] || '无' | timeSplit}}</span>
-              </div>
-            </template>
-            <template v-else>
-              <div class="each_info">
-                <label>{{item.fieldLabel}}</label>
-                <span class="field_value">{{projectTask[item.fieldCode] || '无'}}</span>
-              </div>
-            </template> 
-          </div>
-          <div class="each_info">
-            <label>备注</label>
-            <span class="field_value">{{orderInfo.comment || "无"}}</span>
-          </div>
-        </div>
-      </div>
+      <only-word :config="otherConfig" :info="projectTask"></only-word>
       <!-- 任务日志 -->
       <div class="form_content">
         <div class="main_content task_log">
@@ -66,18 +42,19 @@
 
 <script>
 // vux组件引入
-import { Cell, Group, dateFormat,XTextarea } from 'vux'
+import { Cell, Group, dateFormat, XTextarea } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { findProjectTask, saveJobLog } from 'service/projectService'
 import { getBaseInfoData} from 'service/commonService'
-
+import { findProjectTask, saveJobLog } from 'service/projectService'
 // mixins 引入
-import detailCommon from 'components/mixins/detailCommon'
 import common from '@/mixins/common'
+import detailCommon from 'components/mixins/detailCommon'
 // 组件 引入
 import RPicker from 'components/RPicker'
 import RAction from 'components/RAction'
+import onlyWord from 'components/detail/commonPart/form-part/onlyWord'
+
 export default {
   data() {
     return {
@@ -94,11 +71,8 @@ export default {
   },
   mixins: [detailCommon, common],
   components: {
-    Group,
-    Cell,
-    RPicker,
-    XTextarea,
-    RAction
+    Cell, Group, RAction, 
+    RPicker, onlyWord, XTextarea,
   },
   filters: {
     timeSplit(val) {
@@ -123,8 +97,6 @@ export default {
         this.projectTask = {
           ...formData.projectPlanTask,
           ...formData.projectApproval,
-          // deadline: this.changeDate(projectTask.deadline),
-          // actualCompleteTime: this.changeDate(projectTask.actualCompleteTime),
         };
         this.orderInfo = {
           ...formData.baseinfo,
@@ -224,7 +196,7 @@ export default {
     },
   },
   created() {
-    this.getBaseInfoData()
+    // this.getBaseInfoData()
   }
 }
 </script>
@@ -233,11 +205,13 @@ export default {
   @import './../../scss/bizDetail';
 
   .xmrw-detail-container {
-    .main_content{
+    .main_content{ 
       font-size: .14rem;
-      &.task_log{
-        margin-bottom: 0;
-        .log_title{
+      padding: 0 .15rem;
+      box-sizing: border-box;
+      &.task_log {
+        margin-bottom: unset;
+        .log_title {
           display: block;
           font-size: 16px;
           padding: .1rem 0;

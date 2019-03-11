@@ -121,6 +121,7 @@ export default {
     },
     // 获取当前用户
     getCurrentUser() {
+      console.log('detail的currentUser')
       return currentUser().then(({userId, nickname, userCode}) => {
         this.userId = `${userId}`;
         this.userName = `${nickname}-${userCode}`;

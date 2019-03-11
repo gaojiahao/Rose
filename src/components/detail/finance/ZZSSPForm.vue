@@ -1,10 +1,6 @@
 <template>
   <div class="detail_wrapper">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
-      <!-- <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
-        <span>其他应用里存在与本条相关联的数据，快去看看</span>
-        <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
-      </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 往来联系部分-->
@@ -35,12 +31,11 @@ import {dateFormat} from 'vux'
 import {getSOList} from 'service/detailService'
 // mixins 引入
 import detailCommon from 'components/mixins/detailCommon'
-// 组件引入
 // 组件 引入
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
-import onlyWord from 'components/detail/commonPart/form-part/onlyWord'
 import contactPart from 'components/detail/commonPart/ContactPart'
+import onlyWord from 'components/detail/commonPart/form-part/onlyWord'
 //公共方法引入
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'

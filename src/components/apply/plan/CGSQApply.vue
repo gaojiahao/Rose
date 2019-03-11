@@ -40,7 +40,7 @@
 import { XTextarea, dateFormat } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { getBaseInfoData, saveAndStartWf, saveAndCommitTask, submitAndCalc } from 'service/commonService'
+import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
 // mixins 引入
 import common from 'components/mixins/applyCommon'
 // 组件 引入

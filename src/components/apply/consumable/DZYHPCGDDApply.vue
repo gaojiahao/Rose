@@ -36,7 +36,7 @@
 import {XTextarea, dateFormat} from 'vux'
 // 请求 引入
 import {getSOList} from 'service/detailService'
-import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc} from 'service/commonService'
+import {saveAndStartWf, saveAndCommitTask, submitAndCalc} from 'service/commonService'
 // mixins 引入
 import common from 'components/mixins/applyCommon'
 // 组件引入

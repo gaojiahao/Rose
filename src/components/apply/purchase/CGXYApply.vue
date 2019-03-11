@@ -39,18 +39,18 @@
 
 <script>
 // vux插件引入
-import {XTextarea, dateFormat} from 'vux'
+import { XTextarea, dateFormat } from 'vux'
 // 请求 引入
-import {getSOList} from 'service/detailService'
-import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc, updateData} from 'service/commonService'
+import { getSOList} from 'service/detailService'
+import { updateData, submitAndCalc, saveAndCommitTask } from 'service/commonService'
 // mixins 引入
 import common from 'components/mixins/applyCommon'
 // 组件引入
 import PopDealerList from 'components/Popup/PopDealerList'
-import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
-import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
-import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 import OpButton from 'components/apply/commonPart/OpButton'
+import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
+import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
+import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 // 方法引入
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'

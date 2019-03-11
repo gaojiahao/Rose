@@ -1,4 +1,4 @@
-import {numberPad, dateFormat} from 'vux'
+import { dateFormat } from 'vux'
 import platfrom from '@/plugins/platform/index'
 export default {
   data() {

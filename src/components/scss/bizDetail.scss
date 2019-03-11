@@ -1,6 +1,6 @@
 
-.vux-1px-t:before,
 .vux-1px-b:after,
+.vux-1px-t:before,
 .vux-1px-t:before,
 .vux-1px-tb:before,
 .vux-1px-tb:after {
@@ -45,27 +45,27 @@
 
     .each_property {
       min-height: .5rem;
-      padding: 0.05rem 0.08rem;
       position: relative;
+      padding: .05rem .08rem;
       label {
-        color: #6d6d6d;
-        font-size: 0.12rem;
+        height: .2rem;
         display: block;
-        height:0.2rem;
-        line-height: 0.2rem;
+        color: #6d6d6d;
+        font-size: .12rem;
+        line-height: .2rem;
       }
-      .required{
+      .required {
         color:#3296FA;
         font-weight: bold;
       }
       //校验错误提示按钮
-      .warn{
+      .warn {
+        top: .27rem;
+        right: .08rem;
         position: absolute;
-        right: 0.08rem;
-        top: 0.27rem;
       }
-      .weui-icon-warn{
-        font-size:0.18rem;
+      .weui-icon-warn {
+        font-size:.18rem;
       }
       .property_val {
         width:100%;
@@ -74,38 +74,38 @@
         line-height: .24rem;
       }
       //只读
-      .readonly{
+      .readonly {
         color:#999;
       }
       .picker {
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
         .mater_nature {
-          font-size: 0.16rem;
-          line-height: 0.2rem;
+          font-size: .16rem;
+          line-height: .2rem;
         }
         .iconfont {
-          font-size: 0.24rem;
+          font-size: .24rem;
         }
       }
-      .vux-cell-box{
-        position: absolute;
-        left:0;
-        top:0;
-        padding: 0.05rem 0.08rem;
-        width:100%;
-        box-sizing: border-box;
+      .vux-cell-box {
+        top: 0;
+        left: 0;
+        width: 100%;
         color: #6d6d6d;
-        font-size: 0.12rem;
-        label{
-          height:0.58rem;
+        font-size: .12rem;
+        position: absolute;
+        padding: .05rem .08rem;
+        box-sizing: border-box;
+        label {
+          height: .58rem;
         }
-        .vux-cell-primary{
+        .vux-cell-primary {
           display: none;
         }
-        &:not(:first-child):before{
-          border:none;
+        &:not(:first-child):before {
+          border: none;
         }
 
       }
@@ -127,16 +127,16 @@
     width: 2.8rem;
     color: #fff;
     height: .44rem;
-    line-height: .44rem;
     position: absolute;
     text-align: center;
-    background: #5077aa;
+    line-height: .44rem;
     border-radius: .4rem;
-    transform: translate(-50%, -50%);
+    background: #5077aa;
     box-shadow: 0 2px 5px #5077aa;
+    transform: translate(-50%, -50%);
   }
   .disabled{
-    background:#c7c7c7;
+    background: #c7c7c7;
     box-shadow: 0 2px 5px #c7c7c7;
   }
 }
@@ -151,7 +151,6 @@
   }
   .mater_baseinfo {
     display: flex;
-    // align-items: flex-end;
     .mater_property {
       flex: 2;
     }
@@ -162,47 +161,45 @@
         width: 100%;
         height: 100%;
         position: relative;
-        // z-index: 99;
         label {
           display: block;
           width: 100%;
           height: 100%;
         }
         .upload {
+          top: 0;
+          left: 0;
           width: 100%;
           height: 100%;
-          position: absolute;
-          left: 0;
-          top: 0;
           z-index: -999;
+          position: absolute;
           span {
             display: block;
             text-align: center;
           }
           .iconfont {
-            font-size: 0.24rem;
-            margin-top: 0.24rem;
+            font-size: .24rem;
+            margin-top: .24rem;
           }
         }
 
       }
       .pic {
+        border: 0;
         width: 1.2rem;
         height: 1.2rem;
-        border: 0;
       }
     }
   }
   .each_property {
-    // min-height: .5rem;
-    padding: .05rem .08rem;
     position: relative;
+    padding: .05rem .08rem;
     label {
-      color: #6d6d6d;
-      font-size: 0.12rem;
+      height: .2rem;
       display: block;
-      height:0.2rem;
-      line-height: 0.2rem;
+      color: #6d6d6d;
+      font-size: .12rem;
+      line-height: .2rem;
     }
     .property_val {
       display: block;
@@ -211,33 +208,33 @@
     }
     .picker {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       .mater_nature {
-        font-size: 0.16rem;
-        line-height: 0.2rem;
+        font-size: .16rem;
+        line-height: .2rem;
       }
       .iconfont {
-        font-size: 0.24rem;
+        font-size: .24rem;
       }
     }
-    .vux-cell-box{
-      position: absolute;
-      left:0;
-      top:0;
-      padding: 0.05rem 0.08rem;
-      width:100%;
-      box-sizing: border-box;
+    .vux-cell-box {
+      top: 0;
+      left: 0;
+      width: 100%;
       color: #6d6d6d;
-      font-size: 0.12rem;
-      label{
-        height:0.58rem;
+      font-size: .12rem;
+      position: absolute;
+      padding: .05rem .08rem;
+      box-sizing: border-box;
+      label {
+        height: .58rem;
       }
-      .vux-cell-primary{
+      .vux-cell-primary {
         display: none;
       }
-      &:not(:first-child):before{
-        border:none;
+      &:not(:first-child):before {
+        border: none;
       }
 
     }
@@ -256,8 +253,8 @@
     width: 100%;
     display: flex;
     height: .4rem;
-    font-size: .14rem;
     color: #EA9843;
+    font-size: .14rem;
     padding: 0 .16rem;
     line-height: .4rem;
     align-items: center;
@@ -272,9 +269,9 @@
 }
 .l_size_name {
   color: #111;
+  font-weight: 400;
   padding: .06rem 0;
   font-size: .22rem;
-  font-weight: 400;
 }
 .m_size_name {
   font-size: .18rem;
@@ -320,8 +317,8 @@
     box-sizing: border-box;
     // 每个物料
     .each_mater {
-      padding: .04rem 0 0;
       position: relative;
+      padding: .04rem 0 0;
       box-sizing: border-box;
       .each_mater_wrapper {
         width: 100%;
@@ -347,9 +344,8 @@
             // 每个物料的索引
             .whiNum {
               color: #fff;
-
-              padding: 0 .02rem;
               font-size: .1rem;
+              padding: 0 .02rem;
               display: inline-block;
               background: #ea5455;
               vertical-align: middle;
@@ -367,10 +363,9 @@
               font-size: 0;
               // 物料编码
               .mater_code {
-
                 margin-right: .06rem;
-                .title,
-                .num {
+                .num,
+                .title {
                   font-size: .1rem;
                   padding: .01rem .04rem;
                 }
@@ -447,10 +442,9 @@
               color: #ea5455;
               font-weight: bold;
               font-size: .14rem;
-              line-height: 0.2rem;
+              line-height: .2rem;
               margin-top: .04rem;
               display: inline-block;
-
               .num {
                 font-size: .1rem;
                 color: #757575;
@@ -468,8 +462,8 @@
                   font-size: .14rem;
                 }
                 .content {
-                  font-size: .18rem;
                   color: #5077aa;
+                  font-size: .18rem;
                 }
               }
               // 报销事由
@@ -512,8 +506,8 @@
   }
   .form_title {
     color: #111;
-    background: #fff;
     font-size: .16rem;
+    background: #fff;
     padding: .06rem .1rem;
     .title {
       font-weight: bold;
@@ -524,8 +518,8 @@
 .form_content {
   position: relative;
   margin: .1rem .1rem 0;
-  &.has_margin{
-    margin-top:0.1rem;
+  &.has_margin {
+    margin-top: .1rem;
   }
   .form_title {
     color: #111;
@@ -538,18 +532,16 @@
 
   }
   .main_content {
-    background: #fff;
     padding: 0 .1rem;
+    background: #fff;
     margin-bottom: .1rem;
   }
   .each_info {
+    color: #333;
+    display: flex;
     padding: .17rem 0;
     font-size: .14rem;
-    color: #333;
-    line-height: .14rem;
-    display: flex;
     justify-content: space-between;
-    line-height: .16rem;
     label {
       color: #999;
       margin-right: .08rem;
@@ -618,18 +610,15 @@
       .title {
         font-weight: bold;
       }
-      .content {
-
-      }
     }
   }
 }
 // 仓库公共
 .warehouse_part {
-  margin-bottom: .1rem;
-  padding: 0 .1rem;
   width: 100%;
+  padding: 0 .1rem;
   background: #fff;
+  margin-bottom: .1rem;
   box-sizing: border-box;
 }
 // 审批操作
@@ -685,9 +674,9 @@
   }
   // 表单编码
   .work_code {
+    color: #fff;
     display: inline-block;
     background: #455d7a;
-    color: #fff;
   }
   // 进行中 编码 {
   .doing_code {

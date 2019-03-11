@@ -27,12 +27,12 @@
               <div class="instance_project_detail">
                 <div class="project_detail_top">
                   <div class="project_name">{{item.projectName_projectApprovalId}}</div>
-                  <!-- <div class="project_detail_amt">
+                  <div class="project_detail_amt">
                     <div class="amt">
-                      <span class="symbol">￥</span>{{item.budgetIncome_project | numberComma}}
+                      <span class="symbol">￥</span>{{item.budgetIncome_projectApprovalId | numberComma}}
                     </div>
                     <div class="text">收入</div>
-                  </div> -->
+                  </div>
                 </div>
                 <div class="project_detail_bottom">
                   <div>
@@ -42,10 +42,9 @@
                     </div>
                     <div class="project_detail_item">
                       <span class="project_detail_title">经理电话：</span>
-                      <span class="project_detail_value">{{item.dealerMobilePhone_dealerDebit || '无'}}</span>
+                      <span class="project_detail_value">{{item.phoneNumber_projectApprovalId || '无'}}</span>
                     </div>
                   </div>
-                  <!-- <div class="project_profit">利润率：<span class="value">{{item.budgetProfitMargin_project | percent}}</span></div> -->
                 </div>
               </div>
             </div>

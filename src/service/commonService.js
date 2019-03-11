@@ -106,6 +106,7 @@ export let getBaseInfoData = () => {
     let {nickname, userId, userCode} = await $flyio.ajax({
       url: '/H_roleplay-si/userInfo/currentUser',
     }).then(data => {
+      console.log('我被调用了')
       return data
     })
     // 经办组织
