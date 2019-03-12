@@ -242,7 +242,6 @@ export let getProcess = (listId = '') => {
 
 // 获取员工、客户、加工商、渠道商
 export let getObjDealerByLabelName = (data = {}) => {
-  console.log('我被调用了');
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getObjDealerByLabelName',
     data: {

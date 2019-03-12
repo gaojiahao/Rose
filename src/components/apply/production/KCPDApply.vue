@@ -65,7 +65,7 @@
         </div>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
-          <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
+          <x-textarea v-model="formData.biComment" placeholder="请输入"></x-textarea>
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
         <!--物料编辑pop-->

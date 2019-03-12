@@ -47,7 +47,7 @@
         </div>
         <!-- 备注 -->
         <div class="comment">         
-          <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
+          <x-textarea v-model="formData.biComment" placeholder="请输入"></x-textarea>
         </div>
       </div>
     </div>

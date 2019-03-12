@@ -19,7 +19,7 @@
                            :chosen-matter="matter" :check-amt-fn="checkAmt" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
         </apply-matter-part>
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
-          <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
+          <x-textarea v-model="formData.biComment" placeholder="请输入"></x-textarea>
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       </div>
