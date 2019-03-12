@@ -56,28 +56,31 @@ export let getAppExampleDetails = (data = {}) => {
     })
 }
 // 获取相关实例应用的视图
-export let getListView = (data = {})=> {
+export let getListView = (data = {}) => {
     return $flyio.ajax({
         url:'/H_roleplay-si/ds/list/getListViews',
         data
     })
 }
-
-export let getListById = (data = {})=> {
+// 获取任务日志列表
+export let findAllJobLog = (data = {}) => {
+    return $flyio.ajax({
+        url: '/H_roleplay-si/jobLog/findAllJobLog',
+        pageIndex: 1,
+        pageSize: 1000,
+        data
+    })
+}
+export let getListById = (data = {}) => {
     return $flyio.ajax({
         url:'/H_roleplay-si/ds/list/getListById',
         data
     })
 }
-export let getFromStatus = (data ={})=> {
+export let getFromStatus = (data ={}) => {
     return $flyio.ajax({
         url:'/H_roleplay-si/ds/getFromStatusByTransCode',
         data
     })
 }
-export default{
-    isMyflow,
-    getSOList,
-    currentUser,
-    getWorkFlow,
-}
+export default{}

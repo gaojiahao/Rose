@@ -1,41 +1,54 @@
 <template>
   <div class="detail_wrapper xmrw-detail-container">
-    <div class="basicPart">
-
-      <!-- 经办信息 （订单、主体等） -->
-      <basic-info :work-flow-info="orderInfo" :order-info="orderInfo"></basic-info>
-      <!-- 项目任务信息 -->
-      <only-word :config="otherConfig" :info="projectTask"></only-word>
-      <!-- 任务日志 -->
-      <div class="form_content">
-        <div class="main_content task_log">
-          <span class="log_title vux-1px-b">任务日志</span>
-          <div class="each_info vux-1px-b">
-            <label class="required">标题</label>
-            <input type='text' v-model="taskLog.logTitle" placeholder="请输入" class='field_value' @focus="getFocus($event)"/>
+    <div class="basicPart swiper-container task-form">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="related_tips" @click="goSumbitTask">
+            <span>有新的任务日志需要提交？</span>
+            <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
           </div>
-          <div class="each_info vux-1px-b" @click="getDate">
-            <label class="required">日期</label>
-            <div class='picker'>
-              <span class='mater_nature'>{{taskLog.taskDate || "请选择"}}</span>
-              <span class='icon-right'></span>
+          <!-- 经办信息 （订单、主体等） -->
+          <basic-info :work-flow-info="orderInfo" :order-info="orderInfo"></basic-info>
+          <!-- 项目任务信息 -->
+          <only-word :config="otherConfig" :info="projectTask"></only-word>
+          <!-- 备注 -->
+          <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
+          <!-- 审批操作 -->
+          <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                    :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
+        </div>
+        <div class="swiper-slide">
+          <!-- 任务日志 -->
+          <div class="form_content">
+            <div class="main_content task_log">
+              <span class="log_title vux-1px-b">任务日志</span>
+              <div class="each_info vux-1px-b">
+                <label class="required">标题</label>
+                <input type='text' v-model="taskLog.logTitle" placeholder="请输入" class='field_value' @focus="getFocus($event)"/>
+              </div>
+              <div class="each_info vux-1px-b" @click="getDate">
+                <label class="required">日期</label>
+                <div class='picker'>
+                  <span class='mater_nature'>{{taskLog.taskDate || "请选择"}}</span>
+                  <span class='icon-right'></span>
+                </div>
+              </div>
+              <div class="each_info vux-1px-b">
+                <label class="required">申报工时</label>
+                <input type='number' v-model.number="taskLog.logDeclarationHours" placeholder="请输入" class='field_value' @focus="getFocus($event)" 
+                      @blur="checkHour(taskLog.logDeclarationHours)"/>
+              </div>
+              <x-textarea class="vux-1px-b" title="备注" v-model="taskLog.biComment" placeholder="请输入"></x-textarea>
             </div>
+            <div class="handle">
+              <span class="btn_item" @click="save">日志提交</span>
+            </div>
+            
           </div>
-          <div class="each_info vux-1px-b">
-            <label class="required">申报工时</label>
-            <input type='number' v-model.number="taskLog.logDeclarationHours" placeholder="请输入" class='field_value' @focus="getFocus($event)" 
-                  @blur="checkHour(taskLog.logDeclarationHours)"/>
-          </div>
-          <x-textarea class="vux-1px-b" title="备注" v-model="taskLog.biComment" placeholder="请输入"></x-textarea>
+          <!-- 日志历史提交记录 -->
         </div>
-        <div class="handle">
-          <span class="btn_item" @click="save">提交</span>
-        </div>
-        
       </div>
-      <!-- 审批操作 -->
-      <r-action :code="transCode" :task-id="taskId" :actions="actions"
-                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
+
     </div>
   </div>
 </template>
@@ -44,8 +57,8 @@
 // vux组件引入
 import { Cell, Group, dateFormat, XTextarea } from 'vux'
 // 请求 引入
-import { getSOList } from 'service/detailService'
-import { getBaseInfoData} from 'service/commonService'
+import { getSOList, findAllJobLog } from 'service/detailService'
+import { getBaseInfoData } from 'service/commonService'
 import { findProjectTask, saveJobLog } from 'service/projectService'
 // mixins 引入
 import common from '@/mixins/common'
@@ -58,15 +71,13 @@ import onlyWord from 'components/detail/commonPart/form-part/onlyWord'
 export default {
   data() {
     return {
-      projectTask: {},
-      comment: {},
       taskLog: {
-        logTitle: '',
-        logDeclarationHours: 1,
-        taskDate: dateFormat(new Date().getTime(), 'YYYY-MM-DD'),
-        biComment: ''
+        taskDate: dateFormat(new Date().getTime(), 'YYYY-MM-DD'), // 默认日期为 今天
       },
-      defaultUserInfo: {}
+      comment: {},
+      projectTask: {},
+      defaultUserInfo: {},
+      pageSwiper: null
     }
   },
   mixins: [detailCommon, common],
@@ -136,7 +147,7 @@ export default {
         onConfirm: () => {
           this.$HandleLoad.show();
           let submitData = {
-            listId: this.listId,
+            listId: '2750a13d-295d-4776-9673-290c51bfc568', // 任务日志listId
             formData: {
               comment: {
                 biComment: this.taskLog.biComment,
@@ -148,7 +159,6 @@ export default {
                 handlerEntity: this.orderInfo.handlerEntity,
                 creator: this.defaultUserInfo.handler,                          
                 modifer: this.defaultUserInfo.handler,
-                
               },
               jobLog: {
                 ...this.taskLog,
@@ -194,9 +204,30 @@ export default {
           }
       })
     },
+    // swiper切换至 任务日志
+    goSumbitTask() {
+      this.pageSwiper.slideTo(1);
+    },
+    // 请求 任务列表
+    findAllJobLog() {
+      return findAllJobLog(this.transCode).then( data => {
+        console.log('data:', data);
+      })
+    },
+    // 初始化swiper
+    initSwiper() {
+      this.$nextTick(() => {
+        this.pageSwiper = new this.Swiper('.task-form', {
+          touchAngle: 30,
+          iOSEdgeSwipeDetection: false
+        });
+      })
+    }
   },
   created() {
-    // this.getBaseInfoData()
+    this.getBaseInfoData();
+    this.initSwiper();
+    this.findAllJobLog();
   }
 }
 </script>

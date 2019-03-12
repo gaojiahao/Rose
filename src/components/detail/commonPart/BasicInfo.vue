@@ -49,12 +49,6 @@
             <span class="basic_detail_value">{{orderInfo.modTime | dateFormat }}</span>
           </div>
         </div>
-        <!-- <div class="basic_detail_wrapper">
-          <div class="basic_detail_item">
-            <span class="basic_detail_title">修改时间:</span>
-            <span class="basic_detail_value">{{orderInfo.modTime | dateFormat }}</span>
-          </div>
-        </div> -->
       </div>
     </div>
     <div class="project-container vux-1px-t" v-if="projectInfo.projectName">
@@ -74,8 +68,8 @@
 </template>
 
 <script>
-  import {dateFormat} from 'vux'
-  import {fail} from 'assert';
+  import { dateFormat } from 'vux'
+  import { fail } from 'assert';
 
   export default {
     name: "BasicInfo",
@@ -109,9 +103,7 @@
         }
       }
     },
-    filters: {
-      dateFormat
-    }
+    filters: { dateFormat }
   }
 </script>
 
@@ -129,13 +121,13 @@
       box-sizing: border-box;
       .basic_header {
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
       }
       .basic_title {
-        line-height: .16rem;
         font-size: 16px;
         font-weight: 600;
+        line-height: .16rem;
         &:before {
           left: -.15rem;
           width: .08rem;
@@ -143,31 +135,31 @@
         }
       }
       .basic_process_status {
-        padding: .04rem .06rem;
-        line-height: .12rem;
-        border: 1px solid;
-        border-radius: .04rem;
         color: #FB880B;
         font-size: .1rem;
+        border: 1px solid;
+        line-height: .12rem;
+        border-radius: .04rem;
+        padding: .04rem .06rem;
       }
 
       .basic_top {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: .1rem;
         padding: .05rem;
+        font-size: .12rem;
+        margin-top: .1rem;
+        align-items: center;
         line-height: .12rem;
         background-color: #f7f7f7;
-        font-size: .12rem;
+        justify-content: space-between;
       }
       .basic_code_title {
         color: #999;
       }
       .basic_detail {
         margin-top: .2rem;
-        line-height: .14rem;
         font-size: .14rem;
+        line-height: .14rem;
       }
       .basic_detail_wrapper {
         display: flex;
@@ -177,14 +169,10 @@
         }
       }
       .basic_detail_item {
-        // flex: 2;
         display: flex;
         & + .basic_detail_item {
           margin-left: .2rem;
         }
-        // &:last-child {
-        //   // flex: 3;
-        // }
       }
       .basic_detail_title {
         color: #999;
@@ -201,28 +189,28 @@
         border-color: #e8e8e8;
       }
       .project_title {
-        line-height: .16rem;
         font-size: .16rem;
+        line-height: .16rem;
       }
       .project_item {
         display: flex;
-        align-items: center;
-        margin-top: .14rem;
-        line-height: .14rem;
         font-size: .14rem;
+        margin-top: .14rem;
+        align-items: center;
+        line-height: .14rem;
         & + .project_item {
           margin-top: .1rem;
         }
       }
       .icon {
-        display: inline-block;
         width: .16rem;
         height: .16rem;
+        display: inline-block;
         background-size: 100%;
       }
       .project_item_title {
-        margin-left: .08rem;
         color: #999;
+        margin-left: .08rem;
       }
       .project_item_value {
         margin-left: .05rem;

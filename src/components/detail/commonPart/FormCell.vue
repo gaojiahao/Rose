@@ -2,12 +2,13 @@
   <div class="each-cell" :class="{'vux-1px-b' : showBottomBorder, 'when-is-right' : textRight}">
     <p class="cell-name">{{ cellTitle }}</p>
     <p class="cell-content">
-      <span class="symbol" v-if="showSymbol">￥</span>{{ cellContent || '无' }}
+      <span class="symbol" v-if="showSymbol">￥</span>{{ newContent || '无' }}
     </p>
   </div>
 </template>
 
 <script>
+import { numberComma } from 'vux'
 export default {
   name: 'FormCell',
   props:{
@@ -24,6 +25,19 @@ export default {
     showSymbol: {                   // 展示'￥'符号
       type: Boolean,
       default: false
+    },
+    isNumberComma: {                 // 显示千分符
+      type: Boolean,
+      default: false
+    }
+  },
+  computed: {
+    newContent() {
+      let newContent = this.cellContent;
+      if (this.isNumberComma) {
+        return numberComma(newContent);
+      }
+      return newContent;
     }
   }
 }

@@ -121,7 +121,6 @@ export default {
     },
     // 获取当前用户
     getCurrentUser() {
-      console.log('detail的currentUser')
       return currentUser().then(({userId, nickname, userCode}) => {
         this.userId = `${userId}`;
         this.userName = `${nickname}-${userCode}`;
@@ -287,7 +286,7 @@ export default {
       })
     },
     async loadPage() {
-      let {transCode, name} = this.$route.query;
+      let { transCode } = this.$route.query;
       if (!transCode) {
         this.$vux.alert.show({
           content: '抱歉，交易号有误，请尝试刷新之后再次进入'
@@ -296,35 +295,28 @@ export default {
       }
       this.transCode = transCode;
       this.$loading.show();
-      //查询当前用户的userId
-      await this.getCurrentUser();
-      // this.getAppDetail();
+      /**
+       * getBaseInfoData 接口一般用于提交页面   
+       * 由于“项目任务”在详情页面 可进行“任务日志”的提交 此处是为防止重复请求
+       */
+      if (!this.getBaseInfoData) {
+        await this.getCurrentUser();  //查询 当前用户基本信息
+      }
       await this.getListId();
       await this.getFlowAndActions();
-      //获取与当前订单相关的实例
-      // await this.getAppExampleDetails();
-      // 获取表单表单详情
-      await this.getOrderList(transCode);
+      await this.getOrderList(transCode);   // 获取表单表单详情
       await this.getFromStatus();
       await this.getFormConfig();
       await this.getFormViews();
       await this.getAction();
       await this.getCommentList();
-      await this.isSubscribeByRelationKey()
+      await this.isSubscribeByRelationKey();
+
       this.$loading.hide();
+
       // 触发父组件的scroll刷新
       this.$emit('refresh-scroll');
-      wx.ready(() => {
-        // 分享
-        let shareInfo = {
-          title: `点击查看${name}详情`,
-          desc: `点击查看${name}详情，哈哈哈哈`,
-          imgUrl: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=888178039,2627708353&fm=26&gp=0.jpg'
-          // imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542258659397&di=ce722db1d3d4d79259a2b6cd4de9879b&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01851855f282cf6ac7251df8d15ea0.png%401280w_1l_2o_100sh.png'
-          // imgUrl: `http://${document.domain}/dist/resources/images/icon/goods-sales-contract.jpg`
-        }
-        shareContent(shareInfo);
-      })
+
     },
     // 获取应用详情
     getAppDetail() {

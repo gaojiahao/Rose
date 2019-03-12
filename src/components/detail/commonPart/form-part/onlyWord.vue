@@ -4,7 +4,9 @@
     <!-- <header class="word-header vux-1px-l">{{title}}</header> -->
     <div class="word-main">
       <form-cell v-for="(item, index) in config" :key="index" v-show="!item.hiddenInRun"
-                 textRight :cellTitle="item.fieldLabel" :cellContent="info[item.fieldCode]"></form-cell>  
+                 :cellTitle="item.fieldLabel" :isNumberComma="item.xtype === 'r2Permilfield'"
+                 :cellContent="info[item.fieldCode]" textRight>
+      </form-cell>  
     </div> 
   </div>
 </template>

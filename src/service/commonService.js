@@ -133,11 +133,11 @@ export let getBaseInfoData = () => {
       return { tableContent }
     })
     resolve({
-      handleORG,
-      userRoleList,
-      userId,
-      nickname,
-      userCode,
+      handleORG,    // 组织
+      userRoleList, // 职位
+      userId,       // id
+      nickname,     // 姓名
+      userCode,     // 工号
     })
   });
 };
