@@ -165,7 +165,7 @@ export default {
           }
         }
         this.imgFileObj = imgFileObj;
-      }).catch(e=>{
+      }).catch(e=> {
         this.$loading.hide();
         this.$vux.alert.show({
           content:e.message
@@ -209,7 +209,7 @@ export default {
           }
         })
         //往来基本信息配置的处理
-        dealerConfig.forEach(item =>{
+        dealerConfig.forEach(item => {
           // 在渲染的配置中添加字段
           if (item.fieldCode !== 'dealerCode' && item.fieldCode !== 'dealerName' 
             && item.fieldCode !== 'dealerPic' && item.fieldCode !== 'dealerStatus' ){

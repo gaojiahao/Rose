@@ -231,11 +231,11 @@
       reBuildArr (matter) {
         let BomArr = matter.boms;
         //修改数量时，bom数量加上修改后减去修改前的差值
-        this.modifyBomTdqty.forEach(item=>{
-          BomArr.forEach(BItem=>{
+        this.modifyBomTdqty.forEach(item=> {
+          BomArr.forEach(BItem=> {
             if (BItem.inventoryCode === item.inventoryCode) {
               BItem.newTdqty = accSub(BItem.tdQty, item.tdQty);
-              this.UniqueBom.forEach(AItem=>{
+              this.UniqueBom.forEach(AItem=> {
                 if (BItem.inventoryCode === AItem.inventoryCode) {
                   AItem.tdQty = accAdd( AItem.tdQty, BItem.newTdqty);
                   return false
@@ -348,9 +348,9 @@
               })
             });
             // 删除bom
-            this.selItems.forEach(item=>{
-              item.boms.forEach(BItem=>{
-                this.UniqueBom.forEach((Aitem, index)=>{
+            this.selItems.forEach(item=> {
+              item.boms.forEach(BItem=> {
+                this.UniqueBom.forEach((Aitem, index) => {
                   if (BItem.inventoryCode === AItem.inventoryCode) {
                     let tdQty = accSub(AItem.tdQty,BItem.tdQty)
                     AItem.tdQty = toFixed(tdQty);

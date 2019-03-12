@@ -90,7 +90,7 @@ export let getAdminCommentList = (data={}) => {
 };
 
 // 提交日志
-export let saveLog = (data={}) =>{
+export let saveLog = (data={}) => {
   return $flyio.ajax({
     type: 'POST',
     contentType: 'application/x-www-form-urlencoded',
@@ -100,7 +100,7 @@ export let saveLog = (data={}) =>{
 }
 
 // 提交管理员自评
-export let saveAssessment = (data={}) =>{
+export let saveAssessment = (data={}) => {
   return $flyio.post({
     url: '/H_roleplay-si/app/saveAssessment',
     data

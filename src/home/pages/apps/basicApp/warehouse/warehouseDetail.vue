@@ -250,7 +250,7 @@ export default {
           }
         })
         // 仓库基本信息配置的处理
-        warehouseConfig.forEach(item =>{
+        warehouseConfig.forEach(item => {
           // 默认显示员工，（渠道商，组织等隐藏）
           if (!item.hiddenInRun){
             // 在渲染的配置中添加字段
@@ -268,7 +268,7 @@ export default {
               break;
           }
           let arr = [];
-          item.items.forEach(sItem =>{
+          item.items.forEach(sItem => {
             if (!sItem.hidden){
               arr.push(sItem)
             }

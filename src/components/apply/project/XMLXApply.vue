@@ -120,14 +120,14 @@
                     value: type
                   }
                 }
-                requestData(requestParams).then(({tableContent = []}) =>{
+                requestData(requestParams).then(({tableContent = []}) => {
                   if (this.ProjectApproval.projectSubclass != null) {
                     this.ProjectApproval.projectSubclass = tableContent[0].name
                   }
                   else {
                     this.$set(this.ProjectApproval, 'projectSubclass', tableContent[0].name)
                   }
-                  tableContent.forEach(dItem =>{
+                  tableContent.forEach(dItem => {
                     dItem.originValue = dItem.value;
                     dItem.name = dItem[item.displayField]
                     dItem.value = dItem[item.displayField];

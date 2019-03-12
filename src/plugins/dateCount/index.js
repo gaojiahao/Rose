@@ -18,7 +18,6 @@ export default (sDay, eDay) => {
     sDay = new Date(sDay); 
   }
   eDay.setDate(eDay.getDate() - parseInt(diffDay + weekEnds)); 
-  // console.log('eDay:', eDay);
   // 计算出的日期为星期日
   if (eDay.getDay() === 0) {
     eDay = new Date(eDay.getTime() - 2*24*60*60*1000)

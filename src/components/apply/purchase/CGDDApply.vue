@@ -166,7 +166,7 @@ export default {
           }
         ]
       }
-      getPriceFromProcurementContract(params).then(({data = {}}) =>{
+      getPriceFromProcurementContract(params).then(({data = {}}) => {
         if (Object.keys(data).length){
           // 有值则不修改
           !item.price && item.price !== 0 && this.$set(item, 'price', Object.values(data)[0].price);
@@ -455,7 +455,7 @@ export default {
       await getSOList({
         formViewUniqueId: this.uniqueId,
         transCode: this.transCode
-      }).then( (data)=>{
+      }).then( (data) => {
         this.listId = data.listId;
         this.biComment = data.biComment;
         this.biReferenceId = data.biReferenceId;
@@ -464,7 +464,7 @@ export default {
         this.attachment = data.attachment;
         let orderList = {}, dataSet = [];
         let matCodes = [];
-        dataSet = order.dataSet.map(item=>{
+        dataSet = order.dataSet.map(item=> {
           matCodes.push(item.inventoryCode_transObjCode);
           item = {
             ...item,

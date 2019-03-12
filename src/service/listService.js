@@ -25,7 +25,7 @@ export let getSalesOrderList = (data = {}) => {
   })
 };
 //获取弹出框的物料订单列表
-export let getMaterOrderList = (data = {})=>{
+export let getMaterOrderList = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getInvRequirePlan',
     data:{
@@ -42,7 +42,7 @@ export let getBusinessList = (data = {}) => {
   })
 };
 //获取内部加工领料订单
-export let getNBJGLLOrderList = ( data = {})=>{
+export let getNBJGLLOrderList = ( data = {}) => {
   return $flyio.ajax({
     url:'/H_roleplay-si/ds/getProcessingPicking',
     data

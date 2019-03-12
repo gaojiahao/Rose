@@ -73,7 +73,6 @@ export default {
     },
     // 前往列表
     goList(folder, fileName, name, listId) {
-      // console.log('fileName:', fileName); 
       this.$router.push({
         path: `/list/${folder}/${fileName}`, 
         query: { name, listId }
@@ -104,8 +103,7 @@ export default {
     },
     //获取当前用户信息
     getCurrentUser() {
-      console.log('home的currentUser');
-      return homeService.currentUser().then(data =>{
+      return homeService.currentUser().then(data => {
         this.userInfo = {
           photo: data.photo,                      // 头像
           mobile: data.mobile,                    // 手机号

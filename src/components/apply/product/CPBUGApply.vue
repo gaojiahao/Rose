@@ -128,14 +128,14 @@
                     value: type
                   }
                 }
-                requestData(requestParams).then(({tableContent = []}) =>{
+                requestData(requestParams).then(({tableContent = []}) => {
                   if (this.formData.bugSubclass != null) {
                     this.formData.bugSubclass = tableContent[0].name
                   }
                   else {
                     this.$set(this.formData, 'bugSubclass', tableContent[0].name)
                   }
-                  tableContent.forEach(dItem =>{
+                  tableContent.forEach(dItem => {
                     dItem.originValue = dItem.value;
                     dItem.name = dItem[item.displayField]
                     dItem.value = dItem[item.displayField];

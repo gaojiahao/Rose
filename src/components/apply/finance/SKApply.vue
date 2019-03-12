@@ -310,7 +310,7 @@
       // 保存草稿数据
       hasDraftData () {
         let isSave = false;
-        this.CostList.forEach(item=>{
+        this.CostList.forEach(item=> {
           if (item.cashName){
             isSave = true;
             return false;

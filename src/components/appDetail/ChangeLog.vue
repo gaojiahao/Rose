@@ -113,7 +113,7 @@ export default {
         listId: this.listId,
         limit: this.limit,
         page: this.page
-      }).then(({dataCount = 0, tableContent = []}) =>{
+      }).then(({dataCount = 0, tableContent = []}) => {
         if (this.page === 1){
           this.latestLog = tableContent[0];
         }

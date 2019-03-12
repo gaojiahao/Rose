@@ -324,9 +324,9 @@
       },
       //获取分类标签
       getTypeLabel () {
-        getDictByType('categoryLabels').then(({tableContent=[]})=>{
+        getDictByType('categoryLabels').then(({tableContent=[]}) => {
           let arr = []
-          tableContent.forEach(item=>{
+          tableContent.forEach(item=> {
             arr.push(item.name)
           })
           this.currentType.push(arr);

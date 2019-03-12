@@ -207,7 +207,6 @@
           data.filter = JSON.stringify(filter);
         }
         return getList(this.id, data).then(({dataCount = 0, tableContent = []}) => {
-          // console.log(this.total);
           //判断最近有无新增数据
           let text = '';
           if (noReset && this.activeIndex === 0) {

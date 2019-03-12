@@ -125,7 +125,7 @@ export default {
             })
           }
           else {//新增
-            save(submitData).then(data=>{
+            save(submitData).then(data=> {
               if (data.id){
                 this.$emit('change', true);
                 this.$vux.alert.show({
@@ -213,7 +213,7 @@ export default {
         })
         this.jobInfo = tableContent[0];
         this.$loading.hide();
-      }).catch(e=>{
+      }).catch(e=> {
         this.$loading.hide();
       });
     },
@@ -224,7 +224,7 @@ export default {
     this.listId = query.listId;
     if (query.id){
       this.jobId = query.id;
-      this.findData().then(()=>{
+      this.findData().then(() => {
         this.$loading.hide();
       }); 
       return  

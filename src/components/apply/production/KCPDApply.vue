@@ -175,7 +175,7 @@ export default {
         content: '确认删除?',
         // 确定回调
         onConfirm: () => {
-          this.selItems.forEach(item=>{
+          this.selItems.forEach(item=> {
             let index = this.matterList.findIndex(item2=>item2.inventoryCode === item.inventoryCode);
             if (index >= 0){
               this.matterList.splice(index,1);

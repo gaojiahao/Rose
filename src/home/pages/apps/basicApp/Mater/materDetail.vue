@@ -226,7 +226,7 @@ export default {
           }
         })
         // 仓库基本信息配置的处理
-        matterConfig.forEach(item =>{
+        matterConfig.forEach(item => {
           if (!item.hiddenInRun){
             // 在渲染的配置中添加字段
             if (item.fieldCode !== 'inventoryCode' && item.fieldCode !== 'inventoryName' && item.fieldCode !== 'inventoryPic'
@@ -251,7 +251,7 @@ export default {
               break;
           } 
           let arr = [];
-          item.items.forEach(sItem =>{
+          item.items.forEach(sItem => {
             if (!sItem.hidden){
               arr.push(sItem)
             }

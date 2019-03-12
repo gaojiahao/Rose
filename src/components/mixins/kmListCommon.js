@@ -80,7 +80,7 @@ export default {
       return getListClassfiy({
         account_code: this.uniqueId,
         device_type : 'phone'
-      }).then(({data = []})=>{
+      }).then(({data = []}) => {
         let [first = {}] = data;
         this.listView = data;
         this.activeTab = first.view_name;
@@ -90,7 +90,6 @@ export default {
     },
     //显示流水详情
     async getFlow(item) {
-      // console.log('item:', item);
       if (this.activeTab.includes('现金流分类')) return; // ‘现金流分类识别’不需要点击事件
       this.flowData = [];
       this.flowPage = 1;
@@ -99,7 +98,7 @@ export default {
       this.flowTitle = item;
       this.$HandleLoad.show();
       let row = {};
-      this.listField.forEach(item1=>{
+      this.listField.forEach(item1=> {
         row[item1.field] = item[item1.field];
 
       })
@@ -109,7 +108,7 @@ export default {
         row :JSON.stringify(row)
       }
       //流水列表字段
-      await getView({ ...this.requestData, view_scope: 'model' }).then( data =>{
+      await getView({ ...this.requestData, view_scope: 'model' }).then( data => {
         this.flowField = data.model;
       }).catch( err => {
         // 关闭笼罩层

@@ -80,7 +80,7 @@ export default {
         if (data.success === false) {
           this.$vux.alert.show({
             content: '抱歉，数据有误，暂无法查看',
-              onHide:()=>{
+              onHide:() => {
               this.$router.back();
             }
           });

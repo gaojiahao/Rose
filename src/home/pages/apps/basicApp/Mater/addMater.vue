@@ -628,7 +628,7 @@ export default {
           }
         })
         // 处理 物料 *基本信息* 配置 
-        matterConfig.forEach(item =>{
+        matterConfig.forEach(item => {
           if (!item.hiddenInRun) {
             //下拉框的数据请求
             if ((item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.dataSource && item.dataSource.type === 'remoteData' ) {
@@ -698,7 +698,7 @@ export default {
     if (transCode) {
       (async () => {
         await this.getFormViewsInfo()
-        await this.findData().then(() =>{
+        await this.findData().then(() => {
           this.$loading.hide()
         });
         this.codeReadOnly = true;

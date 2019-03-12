@@ -100,8 +100,8 @@ export default {
         limit: 10,
         page: 1,
         total: 0
-      }).then(({dataCount = 0, tableContent = []}) =>{
-        tableContent.forEach(item=>{
+      }).then(({dataCount = 0, tableContent = []}) => {
+        tableContent.forEach(item=> {
           this.checkImgSuffix(item)
           if (item.praises.length){
             item.isPraise = false;

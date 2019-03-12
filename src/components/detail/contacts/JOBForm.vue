@@ -85,7 +85,7 @@
           })
           this.jobInfo = tableContent[0];
           this.$loading.hide();
-        }).catch(e=>{
+        }).catch(e=> {
           this.$loading.hide();
           this.$vux.alert.show({
             content:e.message

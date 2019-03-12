@@ -589,7 +589,7 @@ export default {
       this.isClearData = false;
       (async () => {
         await this.getFormViewsInfo()
-        await this.findData().then(() =>{
+        await this.findData().then(() => {
           this.$loading.hide()
         })
         this.hasDefault = false;

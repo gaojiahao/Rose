@@ -78,7 +78,7 @@ export default {
         operation = unsubscribeApp;
         delete data.type;
       }
-      operation(data).then(({success = true, message = ''})=>{
+      operation(data).then(({success = true, message = ''}) => {
         if (success) {
           this.isConcern = message === '订阅成功！' ? 1 : 0;
           let tips = message === '订阅成功！' ? '关注成功' : '取消关注成功';

@@ -106,7 +106,6 @@ export let getBaseInfoData = () => {
     let {nickname, userId, userCode} = await $flyio.ajax({
       url: '/H_roleplay-si/userInfo/currentUser',
     }).then(data => {
-      console.log('我被调用了')
       return data
     })
     // 经办组织
@@ -257,13 +256,13 @@ export let getObjDealerByLabelName = (data = {}) => {
 };
 
 // 获取所有的经办人
-export let listUsers = (data = {}) =>{
+export let listUsers = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/listUsers',
     data
   })
 }
-export let getGroupByUserId = (userId = '') =>{
+export let getGroupByUserId = (userId = '') => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getGroupByUserId',
     data: {
@@ -274,7 +273,7 @@ export let getGroupByUserId = (userId = '') =>{
     }
   })
 }
-export let getRoleByUserId = (userId = '') =>{
+export let getRoleByUserId = (userId = '') => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getRoleByUserId',
     data: {
@@ -308,7 +307,7 @@ export let transferTask = (data = {}) => {
   })
 };
 // 获取数量上线和下线
-export let getPriceFromSalesContractAndPrice = (data = {}) =>{
+export let getPriceFromSalesContractAndPrice = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/formAPI/getPriceFromSalesContractAndPrice',
     data: {
@@ -318,7 +317,7 @@ export let getPriceFromSalesContractAndPrice = (data = {}) =>{
   })
 }
 // 获取物料的物料的单价和税率（目前用于原料采购订单）
-export let getPriceFromProcurementContract = (data = {}) =>{
+export let getPriceFromProcurementContract = (data = {}) => {
   return $flyio.ajax({
     type: 'POST',
     contentType: 'application/json',

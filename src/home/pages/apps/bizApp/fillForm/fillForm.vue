@@ -75,11 +75,11 @@ export default {
     if (to.name === "LIST" && keys && !this.transCode && !this.submitSuccess){
       this.$vux.confirm.show({
         content:'即将离开，是否保存数据？',
-        onConfirm : ()=>{
+        onConfirm : () => {
           sessionStorage.setItem(keys,JSON.stringify(this.saveData[keys]));
           next();
         },
-        onCancel : ()=>{
+        onCancel : () => {
           sessionStorage.removeItem(keys);
           next();
         }

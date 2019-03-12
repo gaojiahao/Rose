@@ -290,7 +290,7 @@ export default {
               // 账期方式显示, 重新请求数据
               if (!item.hiddenInRun) {
                 item.requestParams.data.value = paramsValue;
-                requestData(item.requestParams).then(({tableContent = []}) =>{
+                requestData(item.requestParams).then(({tableContent = []}) => {
                   tableContent.length && tableContent.forEach(sItem => {
                     sItem.OriginValue = sItem.value;
                     sItem.name = sItem[item.displayField];
@@ -335,7 +335,7 @@ export default {
     //获取往来类型
     getDealer(){
       //获取往来关系标签
-      return dealerService.getDictByType().then(data=>{
+      return dealerService.getDictByType().then(data=> {
         let {tableContent} = data;
         tableContent && tableContent.forEach(item => {
           item.selected = false;
@@ -345,7 +345,7 @@ export default {
           this.$refs.bScroll.refresh();
         })
         return tableContent
-      }).catch(e=>{
+      }).catch(e=> {
         this.$vux.alert.show({
           content: e.message,
         })
@@ -357,7 +357,7 @@ export default {
       this.dealerType = [];
       let arr = this.dealer.dealerLabelName.split(',');
       if (this.dealer.dealerLabelName.length){
-        arr.forEach(item=>{
+        arr.forEach(item=> {
           let obj = {
             name :item
           }
@@ -395,7 +395,7 @@ export default {
     cfmMater(){
       this.pickerStatus = false;
       this.dealer.dealerLabelName = '';
-      this.dealerType.forEach(item=>{
+      this.dealerType.forEach(item=> {
         if (this.dealer.dealerLabelName.length){
           this.dealer.dealerLabelName += ','+item.name;
           return
@@ -580,12 +580,12 @@ export default {
             })
           }
           else {
-            dealerService.save(submitData).then(data=>{
+            dealerService.save(submitData).then(data=> {
               if (data.success){
                 this.submitSuccess  = true;
                 this.$vux.alert.show({
                   content:'提交成功',
-                  onHide:()=>{
+                  onHide:() => {
                     if (this.$route.query.add === 1){
                       let dealer = [this.dealer];
                       sessionStorage.setItem('DEALERLIST_SELITEMS',JSON.stringify(dealer));
@@ -706,7 +706,6 @@ export default {
       })
       // 根据uniqueId 请求表单的配置
       await getFormConfig(this.uniqueId).then(({config = []}) => {
-        // console.log(config);
         let dealerConfig = [], dealerDuplicateConfig = [];
         config.forEach(item => {
           if (!item.isMultiple) {
@@ -719,7 +718,7 @@ export default {
           }
         })
         // 仓库基本信息配置的处理
-        dealerConfig.forEach(item =>{
+        dealerConfig.forEach(item => {
           if (!item.hiddenInRun){
             //下拉框的数据请求
             if (item.fieldCode !=='dealerLabelName'){
@@ -782,7 +781,7 @@ export default {
       this.transCode = query.transCode;
       (async () => {
         await this.getFormViewsInfo()
-        await this.findData().then(() =>{
+        await this.findData().then(() => {
           this.$loading.hide()
         });
         this.getDealer()
@@ -811,7 +810,7 @@ export default {
     })    
   },
   mounted() {
-    this.$nextTick(() =>{
+    this.$nextTick(() => {
       if (this.$refs.bScroll){
         this.$refs.bScroll.refresh()
       }

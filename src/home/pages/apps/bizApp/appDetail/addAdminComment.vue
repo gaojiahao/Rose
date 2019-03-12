@@ -92,7 +92,7 @@ export default {
         date: `${this.submitData.date}-1`,
         listId: this.listId,
       }
-      saveAssessment(submitData).then((data)=>{
+      saveAssessment(submitData).then((data) => {
         if (data.success){
           this.submitSuccess = true;
           this.$vux.alert.show({
@@ -115,7 +115,7 @@ export default {
   mounted(){
     //解决android键盘收起input没有失去焦点，底部按钮遮挡输入框
     if (platfrom.isAndroid){
-      window.onresize= ()=>{
+      window.onresize= () => {
         if (this.clientHeight > document.documentElement.clientHeight) {
           //底部按钮隐藏
             this.btnIsHide  = true;

@@ -107,11 +107,6 @@ export default {
           this.$set(this.other, dItem.fieldCode, val)
         },
       })
-    },
-    test() {
-      // let [multiText] = this.$refs.multiText;
-      // console.log(this.$refs.multiText);
-      // multiText.style.height = `${multiText.scrollHeight}px`
     }
   }
 }

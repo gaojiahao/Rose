@@ -185,7 +185,7 @@ export default {
         limit: this.limit,
         page: this.page,
         sort : JSON.stringify([{property: 'crtTime',direction: 'DESC'}])
-      }).then(({dataCount = 0, tableContent = []}) =>{
+      }).then(({dataCount = 0, tableContent = []}) => {
         this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
         tableContent.forEach(item => {
           if (item.achievement.includes('<') && !item.achievement.includes('img')) {

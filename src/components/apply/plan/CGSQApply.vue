@@ -395,7 +395,7 @@ export default {
       await getSOList({
         formViewUniqueId: this.uniqueId,
         transCode: this.transCode
-      }).then( (data)=>{
+      }).then( (data) => {
         this.listId = data.listId;
         this.biReferenceId = data.biReferenceId;
         this.attachment = data.attachment;

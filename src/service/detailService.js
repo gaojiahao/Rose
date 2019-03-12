@@ -18,7 +18,7 @@ export let isMyflow = (data = {}) => {
     })
 }
 //获取listId
-export let getListId = (transCode = '')=>{
+export let getListId = (transCode = '') => {
     return $flyio.ajax({
         url:`/H_roleplay-si/ds/list/getFormByTransCode?transCode=${transCode}`,
 
@@ -49,7 +49,7 @@ export let getSaleQuotePrice = (data = {}) => {
   })
 };
 // 获取相关实例分类
-export let getAppExampleDetails = (data = {})=>{
+export let getAppExampleDetails = (data = {}) => {
     return $flyio.ajax({
         url:'/H_roleplay-si/trans/getAppExampleDetails',
         data

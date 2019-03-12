@@ -201,7 +201,7 @@ export default {
       this.$vux.confirm.show({
         title: '温馨提示',
         content: '即将进入修改页面，确认吗？',
-        onConfirm: () =>{
+        onConfirm: () => {
           this.$router.replace({
             path: `/fillform/${folder}/${fileName}`,
             query: {

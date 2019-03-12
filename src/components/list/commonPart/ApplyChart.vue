@@ -67,7 +67,7 @@ require('echarts/lib/component/tooltip');
 require('echarts/lib/component/title');
 require('echarts/lib/component/legend');
 //处理图标上字符串过长换行
-let handle = (params, symbol, num)=>{
+let handle = (params, symbol, num) => {
   let newParamsName = "";// 最终拼接成的字符串 
   var paramsNameNumber = params.length;// 实际标签的个数 
   var provideNumber = num;// 每行能显示的字的个数 
@@ -125,7 +125,7 @@ export default {
           textStyle: {                  // 文字样式
             fontSize: 12
           },
-          formatter:(params)=>{
+          formatter:(params) => {
             return `${params.data.name}<br/>销售额: ￥${numberComma(params.value)} (${params.percent}%)`
           },
         },
@@ -184,7 +184,7 @@ export default {
         confirmText: '确定',
         value: this.timeFilter.EndDate,
         endDate: this.toDay,
-        onConfirm:(val)=>{
+        onConfirm:(val) => {
           this.timeFilter.EndDate = val;
         },
       })

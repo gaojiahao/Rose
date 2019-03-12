@@ -71,7 +71,7 @@ export let getBomWorkCheck = ({transCode = '', inventoryCode = ''}) => {
   })
 };
 // 获取工单可派工列表
-export let getTaskWorkList = (data = {})=>{
+export let getTaskWorkList = (data = {}) => {
   return $flyio.ajax({
     url: '/account-api/account/getView',
     data: {

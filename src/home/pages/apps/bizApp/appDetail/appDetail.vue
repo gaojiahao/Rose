@@ -95,7 +95,7 @@ export default {
     },
     //获取当前用户信息
     getCurrentUser(){
-      return homeService.currentUser().then( data=>{
+      return homeService.currentUser().then( data=> {
         this.currentUserId = data.userId;
       })
     },
@@ -105,16 +105,16 @@ export default {
     if (listId){
       this.$loading.show();
       this.listId = listId;
-      (async()=>{
+      (async() => {
         await this.getCurrentUser();
-        await this.getAppInfo().then(data=>{
+        await this.getAppInfo().then(data=> {
           let userId = JSON.stringify(this.currentUserId);
           if (this.appInfo.administratorId.length && userId === this.appInfo.administratorId){
             this.isAppAdmin = true;
           }
         })
       })()
-      setTimeout(()=>{
+      setTimeout(() => {
         this.$loading.hide();
       }, 500)
     }

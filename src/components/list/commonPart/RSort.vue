@@ -336,7 +336,7 @@ export default {
     },
     // 请求过滤字段
     getFilterFields(){
-      filterFields(this.listId).then(data=>{
+      filterFields(this.listId).then(data=> {
         let formStatusList = ['进行中', '已生效', '草稿'];
         let filtersList = {}, statusList = {};
         if (this.hasFormStatus){

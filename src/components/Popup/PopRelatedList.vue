@@ -107,9 +107,9 @@ export default {
   watch: {
     filtersData:{
       handler(val){
-        (async()=>{
+        (async() => {
           await this.getListView();
-          await this.getList().then(()=>{
+          await this.getList().then(() => {
             this.$HandleLoad.hide();
             this.showPop = true;
           });
@@ -132,7 +132,7 @@ export default {
     },
     // 获取相关实例应用的视图
     getListView(){
-      return getListView({listId : this.idInfo.listId}).then(data=>{
+      return getListView({listId : this.idInfo.listId}).then(data=> {
         this.viewId = data[0].id
       })
     },

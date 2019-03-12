@@ -28,7 +28,7 @@ Vue.config.productionTip = false
 // 此处声明空实例 用于非父子组件之间传值
 Vue.prototype.$event = new Vue();
 
-router.afterEach( route =>{
+router.afterEach( route => {
   document.title = route.meta.title || '';
 })
 

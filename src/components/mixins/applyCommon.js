@@ -963,7 +963,7 @@ export default {
     })
     //解决android键盘收起input没有失去焦点，底部按钮遮挡输入框
     if (platfrom.isAndroid) {
-      window.onresize= ()=>{
+      window.onresize= () => {
         if (this.clientHeight > document.documentElement.clientHeight) {
           //底部按钮隐藏
             this.btnIsHide  = true;
