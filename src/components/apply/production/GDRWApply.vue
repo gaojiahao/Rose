@@ -129,6 +129,7 @@
         </pop-work-facility-list>
         <!--备注-->
         <div class='comment vux-1px-t'>
+          <p class="commit-label vux-1px-b">备注栏</p>
           <x-textarea v-model="formData.biComment" placeholder="请输入"></x-textarea>
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>

@@ -315,23 +315,21 @@
   color: #333;
   margin: .1rem 0;
   font-size: .14rem;
-  padding: 0 .15rem;
+  padding: 0 .15rem .18rem;
   background: #fff;
   box-sizing: border-box;
   font-family: -apple-system-font, "Helvetica Neue", sans-serif, Microsoft YaHei, Arial, Helvetica, sans-serif;
   .commit-label {
     color: #333;
-    padding: .1rem 0;
+    padding: .18rem 0;
     font-size: .14rem;
+    margin-bottom: .1rem;
   }
   .weui-cell {
     padding: 0;
     &:before {
       display: none;
     }
-    .weui-textarea {
-      padding: .1rem 0;
-    }  
   }
 }
 .no_margin {

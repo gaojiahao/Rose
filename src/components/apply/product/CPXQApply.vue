@@ -44,6 +44,7 @@
         </div>
         <!--备注-->
         <div class='comment'>
+          <p class="commit-label vux-1px-b">备注栏</p>
           <x-textarea v-model="formData.biComment" placeholder="请输入"></x-textarea>
         </div>
         <upload-file :default-value="attachment" @on-upload="onUploadFile" :biReferenceId="biReferenceId" :contain-style="uploadStyle"></upload-file>

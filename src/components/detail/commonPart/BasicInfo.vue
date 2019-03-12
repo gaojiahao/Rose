@@ -15,6 +15,12 @@
       <div class="basic_detail">
         <div class="basic_detail_wrapper">
           <div class="basic_detail_item">
+            <span class="basic_detail_title">经办主体:</span>
+            <span class="basic_detail_value">{{orderInfo.handlerEntityName}}</span>
+          </div>
+        </div>
+        <div class="basic_detail_wrapper">
+          <div class="basic_detail_item">
             <span class="basic_detail_title">经办人:</span>
             <span class="basic_detail_value">{{orderInfo.handlerName}}</span>
           </div>
@@ -33,18 +39,22 @@
             <span class="basic_detail_value">{{orderInfo.handlerRoleName}}</span>
           </div>
         </div>
-        <div class="basic_detail_wrapper handler_entity">
+        <div class="basic_detail_wrapper spec_part">
           <div class="basic_detail_item">
-            <span class="basic_detail_title">经办主体:</span>
-            <span class="basic_detail_value">{{orderInfo.handlerEntityName}}</span>
+            <span class="basic_detail_title">修改者:</span>
+            <span class="basic_detail_value">{{orderInfo.modiferName}}</span>
           </div>
-        </div>
-        <div class="basic_detail_wrapper">
           <div class="basic_detail_item">
             <span class="basic_detail_title">修改时间:</span>
             <span class="basic_detail_value">{{orderInfo.modTime | dateFormat }}</span>
           </div>
         </div>
+        <!-- <div class="basic_detail_wrapper">
+          <div class="basic_detail_item">
+            <span class="basic_detail_title">修改时间:</span>
+            <span class="basic_detail_value">{{orderInfo.modTime | dateFormat }}</span>
+          </div>
+        </div> -->
       </div>
     </div>
     <div class="project-container vux-1px-t" v-if="projectInfo.projectName">
@@ -155,23 +165,26 @@
         color: #999;
       }
       .basic_detail {
-        margin-top: .24rem;
+        margin-top: .2rem;
         line-height: .14rem;
         font-size: .14rem;
       }
       .basic_detail_wrapper {
         display: flex;
-        margin-top: .12rem;
-        &.handler_entity {
-          margin-top: .16rem;
+        margin-top: .1rem;
+        &.spec_part {
+          margin-top: .2rem;
         }
       }
       .basic_detail_item {
-        flex: 2;
+        // flex: 2;
         display: flex;
-        &:last-child {
-          flex: 3;
+        & + .basic_detail_item {
+          margin-left: .2rem;
         }
+        // &:last-child {
+        //   // flex: 3;
+        // }
       }
       .basic_detail_title {
         color: #999;

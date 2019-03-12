@@ -62,6 +62,7 @@
         <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost'
                        :cost-params="matterParams" ref="matter"></pop-cost-list>
         <div class='comment'>
+          <p class="commit-label vux-1px-b">备注栏</p>
           <x-textarea v-model="formData.biComment" placeholder="请输入"></x-textarea>
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
