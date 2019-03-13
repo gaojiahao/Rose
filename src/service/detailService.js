@@ -63,12 +63,14 @@ export let getListView = (data = {}) => {
     })
 }
 // 获取任务日志列表
-export let findAllJobLog = (data = {}) => {
+export let findAllJobLog = (transCode = '') => {
     return $flyio.ajax({
         url: '/H_roleplay-si/jobLog/findAllJobLog',
-        pageIndex: 1,
-        pageSize: 1000,
-        data
+        data: {
+            pageIndex: 1,
+            pageSize: 1000,
+            transCode
+        }
     })
 }
 export let getListById = (data = {}) => {

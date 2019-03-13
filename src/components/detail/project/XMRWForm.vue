@@ -46,6 +46,29 @@
             
           </div>
           <!-- 日志历史提交记录 -->
+          <div class="log-list">
+            <p class="log_title">提交记录</p>
+            <div class="each_log vux-1px-t" v-for="(item, index) in logList" :key="index">
+               <div class="log_man_avater">
+                 <img :src=item.photo>
+               </div>
+              <div class="log_main">
+                <div class="basic_info">
+                  <div>
+                    <p class="user_name">{{item.handlerName}}</p>
+                    <p class="submit_time">{{item.taskDate}}</p>
+                  </div>
+                  <div>
+                    <p class="man_hour">工时: {{item.logDeclarationHours}}小时</p>
+                  </div>
+                </div>
+                <div class="main_info">
+                  <p class="each_log_title">{{item.logTitle}}</p>
+                  <p class="each_log_comment">备注: {{item.comment}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -77,6 +100,7 @@ export default {
       comment: {},
       projectTask: {},
       defaultUserInfo: {},
+      logList: [],
       pageSwiper: null
     }
   },
@@ -176,6 +200,7 @@ export default {
             this.$vux.alert.show({
               content: message,
               onHide: () => {
+                this.findAllJobLog();
                 this.taskLog = {
                   logTitle: '',
                   logDeclarationHours: 1,
@@ -210,8 +235,8 @@ export default {
     },
     // 请求 任务列表
     findAllJobLog() {
-      return findAllJobLog(this.transCode).then( data => {
-        console.log('data:', data);
+      return findAllJobLog(this.transCode).then(({ tableContent }) => {
+        this.logList = tableContent;
       })
     },
     // 初始化swiper
@@ -219,7 +244,7 @@ export default {
       this.$nextTick(() => {
         this.pageSwiper = new this.Swiper('.task-form', {
           touchAngle: 30,
-          iOSEdgeSwipeDetection: false
+          iOSEdgeSwipeDetection: true
         });
       })
     }
@@ -227,7 +252,7 @@ export default {
   created() {
     this.getBaseInfoData();
     this.initSwiper();
-    this.findAllJobLog();
+    this.findAllJobLog();  
   }
 }
 </script>
@@ -236,7 +261,7 @@ export default {
   @import './../../scss/bizDetail';
 
   .xmrw-detail-container {
-    .main_content{ 
+    .main_content { 
       font-size: .14rem;
       padding: 0 .15rem;
       box-sizing: border-box;
@@ -273,17 +298,17 @@ export default {
         
       }
     }
-    .each_info{
+    .each_info {
       input {
         outline: none;
         border: none;
       }
-      .required{
+      .required {
         color: #3296FA;
         font-weight: bold;
       }
     }
-    .handle{
+    .handle {
       display: flex;
       justify-content: flex-end;
       width: 100%;
@@ -301,6 +326,67 @@ export default {
         color: #fff;
         background-color: #3296FA;
         border-radius: .04rem;
+      }
+    }
+    .log-list {
+      @extend .form_content;
+      padding: 0 .15rem;
+      background: #FFF;
+      .log_title {
+        display: block;
+        font-size: 16px;
+        padding: .1rem 0;
+        line-height: 16px;
+        font-weight: bold;      
+      }
+      .each_log {
+        display: flex;
+        padding: .15rem 0;
+        .log_man_avater {
+          width: .4rem;
+          height: .4rem;
+          img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 50%;
+          }
+        }
+        .log_main {
+          flex: 1;
+          margin-left: .06rem;
+          .basic_info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .user_name {
+              color: #696969;
+              font-size: .14rem;  
+              line-height: .14rem;
+            }
+            .submit_time {
+              color: #ccc;
+              font-size: .12rem;            
+              margin-top: .05rem;
+              line-height: .12rem;
+            }
+            .man_hour {
+              @extend .user_name;
+              font-size: .12rem;
+            }
+          }
+          .main_info {
+            .each_log_title {
+              color: #696969;
+              font-size: .14rem;
+              font-weight: bold;
+              padding: .1rem 0 .04rem;
+            }
+            .each_log_comment {
+              color: #999;
+              font-size: .12rem;
+            }
+          }
+        }
       }
     }
   }

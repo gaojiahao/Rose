@@ -67,9 +67,6 @@
             </div>
           </div>
         </div>
-
-        <!--<just-word-item :item="item" v-for="(item, index) in listData" :key="index"
-                        noCount @click.native="goDetail(item, index)"></just-word-item>-->
       </r-scroll>
     </div>
     <add-btn :action="action" :goEdit="goEdit"></add-btn>
