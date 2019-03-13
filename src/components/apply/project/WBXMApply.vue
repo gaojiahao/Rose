@@ -26,7 +26,8 @@
               <!-- 输入框（数字） -->
               <div class='each_property ' v-if="item.xtype === 'r2Numberfield' || item.xtype === 'r2Permilfield'">
                 <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
-                <input type='number' v-model.number="ProjectApproval[item.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
+                <input type='number' v-model.number="ProjectApproval[item.fieldCode]" placeholder="请输入" class='property_val' 
+                       @focus="getFocus($event)" @blur="checkAmt(ProjectApproval, item.fieldCode, ProjectApproval[item.fieldCode])"/>
               </div>
               <!-- 日期 -->
               <div class='each_property' v-if="item.xtype === 'r2Datefield'" @click="getDate(ProjectApproval,item)">
@@ -115,23 +116,20 @@
                 }
               }
               requestData(requestParams).then(({tableContent = []}) => {
-                if (this.ProjectApproval.projectSubclass != null) {
+                this.ProjectApproval.projectSubclass = '';
+                if (tableContent.length) {
                   this.ProjectApproval.projectSubclass = tableContent[0].name
+                  tableContent.forEach(dItem => {
+                    dItem.originValue = dItem.value;
+                    dItem.name = dItem[item.displayField]
+                    dItem.value = dItem[item.displayField];
+                  })
                 }
-                else {
-                  this.$set(this.ProjectApproval, 'projectSubclass', tableContent[0].name)
-                }
-                tableContent.forEach(dItem => {
-                  dItem.originValue = dItem.value;
-                  dItem.name = dItem[item.displayField]
-                  dItem.value = dItem[item.displayField];
-                })
                 item.remoteData = tableContent;
               })
             }
           }
         }
-        
       }
     },
     methods: {
@@ -163,7 +161,7 @@
         })
       }, 
       // 提交
-      save () {
+      save() {
         /**
          * @warn 提示文字
          * 
@@ -206,14 +204,14 @@
         });
       },
       // 选中项目经理
-      selManager (val) {
+      selManager(val) {
         let sel = JSON.parse(val);
         this.$set(this.ProjectApproval, 'projectManagerName', sel.dealerName)
         this.$set(this.ProjectApproval, 'phoneNumber', sel.dealerMobilePhone)
         this.$set(this.ProjectApproval, 'projectManager', sel.dealerCode)
       },
       // 获取显示数据
-      getFormData () {
+      getFormData() {
         return findProjectApproval(this.transCode).then(({formData = {}}) => {
           this.defaultManager = {
             dealerName: formData.projectApproval.projectManagerName,
@@ -251,7 +249,7 @@
         })
       },
       // 保存草稿数据
-      hasDraftData () {
+      hasDraftData() {
         // 是否选择项目经理
         if (!this.ProjectApproval.projectName && !this.ProjectApproval.projectType &&  !this.ProjectApproval.projectManagerName) {
           return false
@@ -263,8 +261,12 @@
           }
         };
       },
+      // 校验数字
+      checkAmt(item, key, val) {
+        item[key] = Math.abs(toFixed(val));
+      }
     },
-    created () {
+    created() {
       let { listId } = this.$route.query,
           data = sessionStorage.getItem(DRAFT_KEY);
 

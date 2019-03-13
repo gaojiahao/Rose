@@ -26,7 +26,8 @@
               <!-- 输入框（数字） -->
               <div class='each_property ' v-if="item.xtype === 'r2Numberfield' || item.xtype === 'r2Permilfield'">
                 <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
-                <input type='number' v-model.number="ProjectApproval[item.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
+                <input type='number' v-model.number="ProjectApproval[item.fieldCode]" placeholder="请输入" class='property_val' 
+                       @focus="getFocus($event)" @blur="checkAmt(ProjectApproval, item.fieldCode, ProjectApproval[item.fieldCode])"/>
               </div>
               <!-- 日期 -->
               <div class='each_property' v-if="item.xtype === 'r2Datefield'" @click="getDate(ProjectApproval,item)">
@@ -269,6 +270,10 @@
           }
         };
       },
+      // 校验数字
+      checkAmt(item, key, val) {
+        item[key] = Math.abs(toFixed(val));
+      }
     },
     created () {
       let data = sessionStorage.getItem(DRAFT_KEY);
