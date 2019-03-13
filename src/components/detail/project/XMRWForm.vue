@@ -46,7 +46,7 @@
             
           </div>
           <!-- 日志历史提交记录 -->
-          <div class="log-list">
+          <div class="log-list" v-if="logList.length">
             <p class="log_title">提交记录</p>
             <div class="each_log vux-1px-t" v-for="(item, index) in logList" :key="index">
                <div class="log_man_avater">
@@ -64,7 +64,7 @@
                 </div>
                 <div class="main_info">
                   <p class="each_log_title">{{item.logTitle}}</p>
-                  <p class="each_log_comment">备注: {{item.comment}}</p>
+                  <p class="each_log_comment">备注: {{item.comment || '无'}}</p>
                 </div>
               </div>
             </div>
@@ -159,6 +159,9 @@ export default {
       if (!this.taskLog.logTitle){
         warn = '请输入标题'
       }
+      if (!this.taskLog.logDeclarationHours){
+        warn = '请输入申报工时'
+      }
       if (warn) {
         this.$vux.alert.show({
           content: warn
@@ -174,7 +177,7 @@ export default {
             listId: '2750a13d-295d-4776-9673-290c51bfc568', // 任务日志listId
             formData: {
               comment: {
-                biComment: this.taskLog.biComment,
+                biComment: this.taskLog.biComment || '',
               },
               baseinfo: {
                 ...this.defaultUserInfo,
@@ -225,7 +228,7 @@ export default {
             handlerUnitName: handleORG[0].groupName,  // 用户组织名称
             handlerRole: userRoleList[0].roleId || '',  // 用户职位id
             handlerRoleName: userRoleList[0].roleName || '',  // 用户职位名称
-            userCode: basicUserInfo.userCode, // 用户工号
+            // userCode: basicUserInfo.userCode, // 用户工号
           }
       })
     },
