@@ -24,7 +24,7 @@
                 <input type='text' v-model="ProjectApproval[item.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
               </div>
               <!-- 输入框（数字） -->
-              <div class='each_property ' v-if="item.xtype === 'r2Numberfield'">
+              <div class='each_property ' v-if="item.xtype === 'r2Numberfield' || item.xtype === 'r2Permilfield'">
                 <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
                 <input type='number' v-model.number="ProjectApproval[item.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
               </div>
@@ -103,43 +103,40 @@
       // 监听大类变化，修改子类
       projectType: {
         handler(newVal, oldVal){
-          if (oldVal && newVal){
-            let type = ''; // 当前项目大类对应的类型，请求子类的参数
-            for (let item of this.otherConfig){
-              if (item.fieldCode === 'projectType'){
-                for (let dItem of item.remoteData){
-                  if (dItem.name === newVal){
-                    type = dItem.originValue;
-                    break;
-                  }
+          let type = ''; // 当前项目大类对应的类型，请求子类的参数
+          for (let item of this.otherConfig){
+            if (item.fieldCode === 'projectType'){
+              for (let dItem of item.remoteData){
+                if (dItem.name === newVal){
+                  type = dItem.originValue;
+                  break;
                 }
               }
-              if (item.fieldCode === 'projectSubclass'){
-                let requestParams = {
-                  url: item.dataSource.data.url,
-                  data: {
-                    value: type
-                  }
+            }
+            if (item.fieldCode === 'projectSubclass'){
+              let requestParams = {
+                url: item.dataSource.data.url,
+                data: {
+                  value: type
                 }
-                requestData(requestParams).then(({tableContent = []}) => {
-                  if (this.ProjectApproval.projectSubclass != null) {
-                    this.ProjectApproval.projectSubclass = tableContent[0].name
-                  }
-                  else {
-                    this.$set(this.ProjectApproval, 'projectSubclass', tableContent[0].name)
-                  }
-                  tableContent.forEach(dItem => {
-                    dItem.originValue = dItem.value;
-                    dItem.name = dItem[item.displayField]
-                    dItem.value = dItem[item.displayField];
-                  })
-                  item.remoteData = tableContent;
+              }
+              requestData(requestParams).then(({tableContent = []}) => {
+                if (this.ProjectApproval.projectSubclass != null) {
+                  this.ProjectApproval.projectSubclass = tableContent[0].name
+                }
+                else {
+                  this.$set(this.ProjectApproval, 'projectSubclass', tableContent[0].name)
+                }
+                tableContent.forEach(dItem => {
+                  dItem.originValue = dItem.value;
+                  dItem.name = dItem[item.displayField]
+                  dItem.value = dItem[item.displayField];
                 })
-              }
+                item.remoteData = tableContent;
+              })
             }
           }
         }
-        
       }
     },
     methods: {
@@ -198,7 +195,7 @@
               listId: this.listId,
               formData: {
                 comment: {
-                  biComment: this.formData.biComment,
+                  biComment: this.formData.biComment || '',
                 },
                 baseinfo: {
                   id: '',

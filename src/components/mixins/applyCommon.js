@@ -67,7 +67,7 @@ export default {
       userRoleList: [],                           // 经办职位
       currentStage: [],                           // 流程状态
       matterPopConfig: [],                        // 物料列表pop配置
-      baseinfoExtConfig: [],                   // baseinfoExt配置
+      baseinfoExtConfig: [],                      // baseinfoExt配置
       fundConfig: [],
       submitMatterField: [],                      // 物料要提交的字段
       modifyIndex: null,                          // 选中编辑物料的pop
@@ -572,19 +572,21 @@ export default {
           }
           // 处理表单配置 <非重复项渲染> 部分
           if (!item.hiddenInRun && !item.isMultiple) {
+            // 往来段落 配置
             if (item.name === 'kh' || item.name === 'inPut' || item.name === 'gys') {
               dealerConfig = [...dealerConfig, ...item.items]
             }
+            // 既不是 “往来段落” 也不是 “物料段路”
             if (item.name === 'pb' || item.name === 'projectApproval' || item.name === 'projectPlanTask' || item.name === 'jobLog') {
               otherConfig = item.items;
             }
+            // 请注意 此处也有可能会存放 往来相关 配置
             if (item.name === 'baseinfoExt') {              
               baseinfoExtConfig = [...baseinfoExtConfig, ...item.items];
             }
             // 用于借款与备用金
             if (item.name === 'order') {
               fundConfig = item.items
-
             }
           }
           // 处理表单配置 <重复项渲染> 部分
@@ -597,13 +599,26 @@ export default {
             }
           }
         })
+
+        // 由于往来组件已经单独定义 此处需要过滤部分字段
+        let dealerFilter = [
+              'dealerDebit', 
+              'drDealerLabel', 
+              'crDealerLabel', 
+              'dealerCodeCredit', 
+              'address_dealerDebit', 
+              'dealerName_dealerDebit',
+              'address_dealerCodeCredit', 
+              'dealerDebitContactPersonName',
+              'dealerDebitContactInformation',
+              'dealerCreditContactPersonName', 
+              'dealerCreditContactInformation'
+        ];
         // 处理往来配置里面的接口请求
-        let blankDealerConfig = [],
-            dealerFilter = [
-              'dealerDebit', 'drDealerLabel', 'address_dealerDebit', 'dealerDebitContactPersonName' ,'dealerDebitContactInformation',
-              'dealerCodeCredit', 'crDealerLabel', 'address_dealerCodeCredit', 'dealerCreditContactPersonName', 'dealerCreditContactInformation'
-            ];
+        let blankDealerConfig = [];
+        // 组合 往来部分 配置
         dealerConfig.forEach(item => {
+          // 非隐藏字段
           if (!item.hiddenInRun) {
             // 处理请求往来数据的接口
             if (item.xtype === 'r2Selector' && item.dataSource && item.dataSource.type === 'remoteData' && item.fieldCode !== 'project') {
@@ -626,17 +641,18 @@ export default {
               }
               this.$set(item, 'remoteData', arr)
             }
-            // 过滤往来编码，关系便签，地址，联系人，电话
+            // 过滤 已定义的往来字段
             if (!dealerFilter.includes(item.fieldCode)) {
               blankDealerConfig.push(item)
             }
           }
+          // 包含判断条件的字段
           if (item.hiddenInRun && item.r2Bind && item.r2Bind.hidden) {
             blankDealerConfig.push(item);
           }
-
         })
         this.dealerConfig = blankDealerConfig;
+
         // 处理物料配置
         let editMatterPopConfig = {
           property: [],
@@ -815,9 +831,11 @@ export default {
         // 处理 baseInfoExt 相关配置
         let baseinfoExt = [];
         baseinfoExtConfig.forEach(item => {
+          // 处理提交字段
           if (item.submitValue) {
             this.submitMatterField.push(item)
           }
+          // 非隐藏字段
           if (!item.hiddenInRun) {
             // 处理请求往来数据的接口
             if (item.xtype === 'r2Selector' && item.dataSource && item.dataSource.type === 'remoteData' && item.fieldCode !== 'project') {
@@ -840,10 +858,18 @@ export default {
                 })
               }
             }
+            // 存在静态数据
             else if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData') {
               this.$set(item, 'remoteData', item.dataSource.data)
             }
-            baseinfoExt.push(item)
+            // 过滤 已定义的往来字段
+            if (!dealerFilter.includes(item.fieldCode)) {
+              baseinfoExt.push(item);
+            }   
+          }
+          // 包含判断条件的字段
+          if (item.hiddenInRun && item.r2Bind && item.r2Bind.hidden) {
+            blankDealerConfig.push(item);
           }
         })
         this.baseinfoExtConfig = baseinfoExt;

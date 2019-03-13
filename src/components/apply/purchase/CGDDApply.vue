@@ -13,11 +13,11 @@
         <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
         <!-- 物料列表 -->
         <apply-matter-part v-model="showMaterielPop" :show-materiel-pop="showMaterielPop" :show-matter-pop="showMatterPop" :filter-list="filterList"
-          :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="[]"
-          :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
-          :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
-          :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
-          :chosen-matter="matter" :check-amt-fn="checkAmt" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
+                           :actions="actions" :btnInfo="btnInfo" :matter-list="orderList" :default-value="[]"
+                           :matter-pop-config="matterPopConfig" :matter-edit-config="matterEditConfig" :order-list-title="orderListTitle" :matter-params="matterParams"
+                           :add-matter-fn="addMatter" :sel-matter-fn="selMatter" :sel-items="selItems" :matter-modify-class="matterModifyClass"
+                           :stop-order-fn="stopOrder" :get-matter-modify-fn="getMatterModify" :show-delete-fn="showDelete" :show-sel-icon-fn="showSelIcon" :del-click-fn="delClick"
+                           :chosen-matter="matter" :check-amt-fn="checkAmt" :sel-confirm-fn="selConfirm" :btn-is-hide="btnIsHide" @show-down-modify-pop="shutDownModify">
         </apply-matter-part>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
@@ -29,8 +29,8 @@
     </div>
     <!-- 底部确认栏 -->
     <op-button :is-modify="matterModifyClass" :hide="btnIsHide" :td-amount="tdAmount" :tax-amount="taxAmount"
-              :all-check="checkList.length === matterList.length" @on-submit="submitOrder" @on-check-all="checkAll"
-              @on-delete="deleteCheckd"></op-button>
+               :all-check="checkList.length === matterList.length" @on-submit="submitOrder" @on-check-all="checkAll"
+               @on-delete="deleteCheckd"></op-button>
   </div>
 </template>
 
@@ -514,18 +514,19 @@ export default {
         }
         // 供应商信息展示
         this.dealerInfo = {
-          dealerCode: inPut.dataSet[0].dealerDebit,
-          dealerSubclass: inPut.dataSet[0].drAccountSub,
-          dealerName: inPut.dataSet[0].dealerName_dealerDebit,
-          province: inPut.dataSet[0].province_dealerDebit,
-          city: inPut.dataSet[0].city_dealerDebit,
-          county: inPut.dataSet[0].county_dealerDebit,
-          address: inPut.dataSet[0].address_dealerDebit,
-          drDealerPaymentTerm: order.drDealerPaymentTerm,
           daysOfAccount: order.daysOfAccount,
-          dealerLabelName: inPut.dataSet[0].drDealerLabel,
+          city: inPut.dataSet[0].city_dealerDebit,
+          dealerCode: inPut.dataSet[0].dealerDebit,
+          county: inPut.dataSet[0].county_dealerDebit,
           tdAmountCopy1: inPut.dataSet[0].tdAmountCopy1,
-          prepaymentDueDate: inPut.dataSet[0].prepaymentDueDate
+          address: inPut.dataSet[0].address_dealerDebit,
+          dealerSubclass: inPut.dataSet[0].drAccountSub,
+          drDealerPaymentTerm: order.drDealerPaymentTerm,
+          province: inPut.dataSet[0].province_dealerDebit,
+          dealerLabelName: inPut.dataSet[0].drDealerLabel,
+          dealerName: inPut.dataSet[0].dealerName_dealerDebit,
+          prepaymentDueDate: inPut.dataSet[0].prepaymentDueDate,
+          dealerName_dealerDebit: inPut.dataSet[0].dealerName_dealerDebit
         }
         this.contact = {
           dealerName: formData.dealerDebitContactPersonName,
@@ -557,10 +558,10 @@ export default {
   created () {
     let data = sessionStorage.getItem(DRAFT_KEY);
     if (data) {
+      this.contact = JSON.parse(data).contact;
+      this.formData = JSON.parse(data).formData;
       this.orderList = JSON.parse(data).orderList;
       this.dealerInfo = JSON.parse(data).dealerInfo;
-      this.formData = JSON.parse(data).formData;
-      this.contact = JSON.parse(data).contact;
       sessionStorage.removeItem(DRAFT_KEY);
     }
 

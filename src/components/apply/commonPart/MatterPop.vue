@@ -15,11 +15,12 @@
             <div class="matter_info">
               <div class="matter_info_item" v-for="(item, index) in config.property" :key="index">
                 <span class="matter_info_title">{{item.text}}: </span>
-                <span class="matter_info_value" v-if="item.fieldCode">
-                  {{chosenMatter[item.fieldCode] != null && chosenMatter[item.fieldCode] !== ""  ?  chosenMatter[item.fieldCode] : "无"}}
-                </span>
-                <span class="matter_info_value" v-else>
-                  {{chosenMatter[item.showFieldCode] != null && chosenMatter[item.showFieldCode] !== ""  ?  chosenMatter[item.showFieldCode] : "无"}}
+                <span class="matter_info_value">
+                  {{
+                    chosenMatter[item.fieldCode] 
+                      ? chosenMatter[item.fieldCode] 
+                      : (chosenMatter[item.showFieldCode] ? chosenMatter[item.showFieldCode] : '无')
+                  }}
                 </span>
               </div>
             </div>

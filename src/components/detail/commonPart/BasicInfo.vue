@@ -31,7 +31,7 @@
         </div>
         <div class="basic_detail_wrapper">
           <div class="basic_detail_item">
-            <span class="basic_detail_title">创建人:</span>
+            <span class="basic_detail_title">创建者:</span>
             <span class="basic_detail_value">{{orderInfo.creatorName}}</span>
           </div>
           <div class="basic_detail_item">

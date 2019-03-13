@@ -6,17 +6,18 @@
     <div class="mater_main">
       <!-- 物料名称 -->
       <div class="mater_name">
-        {{matter.inventoryName || matter.invName || matter.facilityName}}
+        {{matter.inventoryName || matter.invName || matter.facilityName || matter.inventoryName_transObjCode}}
         <span class="icon-matter-bianji" @click.stop="modifyMatter" v-if="!showDelete"></span>
       </div>
       <div class="matter_more">
         <div class="each_info" v-for="(cItem, cIndex) in config" :key="cIndex">
           <span class="title">{{cItem.text}}:</span>
-          <span v-if="cItem.fieldCode && matter[cItem.fieldCode]">
-            {{matter[cItem.fieldCode] != null && matter[cItem.fieldCode] !== "" ? matter[cItem.fieldCode] : "无"}}
-          </span>
-          <span v-else>
-            {{matter[cItem.showFieldCode] != null && matter[cItem.showFieldCode] !== "" ? matter[cItem.showFieldCode] : "无"}}
+          <span class="matter_info_value">
+            {{
+              matter[cItem.fieldCode] 
+                ? matter[cItem.fieldCode] 
+                : (matter[cItem.showFieldCode] ? matter[cItem.showFieldCode] : '无')
+            }}
           </span>
         </div>
       </div>

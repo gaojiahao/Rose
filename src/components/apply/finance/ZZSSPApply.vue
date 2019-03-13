@@ -7,7 +7,7 @@
         <!-- 用户地址和基本信息-->
         <pop-dealer-list :defaultValue="dealerInfo" :default-contact="contactInfo" dealerTitle="供应商"
                          :dealer-params="dealerParams" @sel-dealer="selDealer" @sel-contact="selContact"></pop-dealer-list>
-        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
+        <dealer-other-part :dealer-config="baseinfoExtConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
         <!-- 发票信息 -->
         <other-config-part :other-config=otherConfig :other-info=otherInfo v-model="otherInfo"></other-config-part>
         <!-- 物料列表 -->
@@ -421,7 +421,9 @@ export default {
           dealerLabelName: formData.order.crDealerLabel,
           county: formData.order.county_dealerCodeCredit,
           address: formData.order.address_dealerCodeCredit,
+          dealerCodeCredit: formData.order.dealerCodeCredit,
           province: formData.order.province_dealerCodeCredit,
+          dealerName: formData.order.dealerName_dealerCodeCredit,
           dealerName: formData.order.dealerName_dealerCodeCredit,
           expectedPaymentDate: formData.order.expectedPaymentDate,
           crDealerPaymentTerm: formData.order.crDealerPaymentTerm,

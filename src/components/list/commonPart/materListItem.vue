@@ -1,6 +1,6 @@
 <template>
   <div class="mater-list-item" :class="{visited: item.visited}">
-    <!-- 往来，流畅状态-->
+    <!-- 往来 流程状态-->
     <div class="dealer-part" v-show="item.dealerName">
       <div class="order_dealer">
         <span class="icon-dealer"></span>
@@ -49,14 +49,10 @@
                   </p>
                 </div>
                 <div class="matter_num_part">
-                  <p class="mater_count" v-if="!noQty && mItem.assistQty != null">
-                    <span class="symbol">x</span>{{mItem.assistQty | toFixed}}
-                  </p>
-                  <p class="mater_count" v-if="!noQty && mItem.assistQty == null">
-                    <span class="symbol">x</span>{{ mItem.tdQty | toFixed}}
+                  <p class="mater_count" v-if="!noQty">
+                    <span class="symbol">x</span>{{mItem.assistQty || mItem.tdQty | toFixed}}
                   </p>
                 </div>
-
               </div>
               <div class="matter_price_part" v-if="!noPrice">
                 <span class="symbol">￥</span>{{mItem.price | toFixed}}
@@ -113,78 +109,77 @@
     <div class="tips-part" v-show="item.itemCount > 3">
       <span>查看全部 {{item.itemCount}} 条信息</span>
     </div>
-
   </div>
 </template>
 
 <script>
-  import {numberComma, dateFormat} from 'vux'
-  import {toFixed} from '@/plugins/calc'
+import {numberComma, dateFormat} from 'vux'
+import {toFixed} from '@/plugins/calc'
 
-  export default {
-    name: "materListItem",
-    props: {
-      item: {
-        type: Object,
-        default() {
-          return {}
-        }
-      },
-      // 不展示合计
-      noCount: {
-        type: Boolean,
-        default: false
-      },
-      // 不展示金额
-      noPrice: {
-        type: Boolean,
-        default: false
-      },
-      // 不展示数量
-      noQty: {
-        type: Boolean,
-        default: false
-      },
-      isDealer: {
-        type: Boolean,
-        default: true
-      },
-      // 工序是否存在多个组长,若是存在则不显示dealer
-      isMoreDealer: {
-        type: Boolean,
-        default: false
+export default {
+  name: "materListItem",
+  props: {
+    item: {
+      type: Object,
+      default() {
+        return {}
       }
     },
-    filters: {
-      toFixed,
-      dateFormat,
-      numberComma
+    // 不展示合计
+    noCount: {
+      type: Boolean,
+      default: false
     },
-    computed: {
-      // 订单编码是否在底部
-      istransCodeBottom(){
-        return this.item.dealerName && (this.item.warehouseName_containerCode || this.item.warehouseName_containerCodeOut)
-      },
-      //是否有仓库
-      isWarehouse(){
-        return this.item.warehouseName_containerCode || this.item.warehouseName_containerCodeOut
-      },
-      // 不存在往来和仓库,流程状态放在商品合计栏
-      isDealerWarehouse(){
-        return !this.item.dealerName && !(this.item.warehouseName_containerCode || this.item.warehouseName_containerCodeOut)
-      },
+    // 不展示金额
+    noPrice: {
+      type: Boolean,
+      default: false
     },
-    methods: {
-      // 获取默认图片
-      getDefaultImg(item) {
-        let url = require('assets/wl_default03.png');
-        if (item) {
-          item.inventoryPic = url;
-        }
-        return url
-      },
+    // 不展示数量
+    noQty: {
+      type: Boolean,
+      default: false
+    },
+    isDealer: {
+      type: Boolean,
+      default: true
+    },
+    // 工序是否存在多个组长,若是存在则不显示dealer
+    isMoreDealer: {
+      type: Boolean,
+      default: false
     }
+  },
+  filters: {
+    toFixed,
+    dateFormat,
+    numberComma
+  },
+  computed: {
+    // 订单编码是否在底部
+    istransCodeBottom(){
+      return this.item.dealerName && (this.item.warehouseName_containerCode || this.item.warehouseName_containerCodeOut)
+    },
+    //是否有仓库
+    isWarehouse(){
+      return this.item.warehouseName_containerCode || this.item.warehouseName_containerCodeOut
+    },
+    // 不存在往来和仓库,流程状态放在商品合计栏
+    isDealerWarehouse(){
+      return !this.item.dealerName && !(this.item.warehouseName_containerCode || this.item.warehouseName_containerCodeOut)
+    },
+  },
+  methods: {
+    // 获取默认图片
+    getDefaultImg(item) {
+      let url = require('assets/wl_default03.png');
+      if (item) {
+        item.inventoryPic = url;
+      }
+      return url
+    },
   }
+}
 </script>
 
 <style scoped lang="scss">
