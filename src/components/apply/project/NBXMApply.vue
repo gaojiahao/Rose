@@ -122,17 +122,15 @@
                 }
               }
               requestData(requestParams).then(({tableContent = []}) => {
-                if (this.ProjectApproval.projectSubclass != null) {
+                this.ProjectApproval.projectSubclass = '';
+                if (tableContent.length) {
                   this.ProjectApproval.projectSubclass = tableContent[0].name
+                  tableContent.forEach(dItem => {
+                    dItem.originValue = dItem.value;
+                    dItem.name = dItem[item.displayField]
+                    dItem.value = dItem[item.displayField];
+                  })
                 }
-                else {
-                  this.$set(this.ProjectApproval, 'projectSubclass', tableContent[0].name)
-                }
-                tableContent.forEach(dItem => {
-                  dItem.originValue = dItem.value;
-                  dItem.name = dItem[item.displayField]
-                  dItem.value = dItem[item.displayField];
-                })
                 item.remoteData = tableContent;
               })
             }
