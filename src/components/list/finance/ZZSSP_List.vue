@@ -19,12 +19,12 @@
 </template>
 
 <script>
-  import listCommon from 'pageMixins/bizListCommon'
+  import listCommon from 'mixins/bizListCommon'
   export default {
     mixins: [listCommon]
   }
 </script>
 
 <style lang='scss' scoped>
-  @import "./../../scss/bizList.scss";
+  @import "~scss/biz-app/bizList.scss";
 </style>

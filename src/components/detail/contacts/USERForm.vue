@@ -36,7 +36,7 @@
   // 请求 引入
   import {getUserDetail} from 'service/Directorys/userService'
   import {getAppDetail} from 'service/app-basic/appSettingService'
-  import FormCell from 'components/detail/commonPart/FormCell'
+  import FormCell from 'components/detail/commonPart/form-part/FormCell'
 
   export default {
     name: "USERForm",
@@ -110,7 +110,7 @@
 </script>
 
 <style scoped lang="scss">
-@import './../../scss/bizDetail';
+@import '~scss/biz-app/bizDetail';
 .user-detail-container {
   .user-info-container {
     display: flex;

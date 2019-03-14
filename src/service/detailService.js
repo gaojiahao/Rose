@@ -1,4 +1,4 @@
-import $flyio from '../plugins/ajax';
+import $flyio from 'plugins/ajax';
 
 // 工作流
 export let getWorkFlow = (data = {}) => {

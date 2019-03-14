@@ -27,10 +27,10 @@
   // 请求 引入
   import {getSOList,} from 'service/detailService'
   // mixins 引入
-  import detailCommon from 'components/mixins/detailCommon'
+  import detailCommon from 'mixins/detailCommon'
   // 组件引入
-  import RAction from 'components/RAction'
-  import workFlow from 'components/workFlow'
+  import RAction from 'components/public/RAction'
+  import workFlow from 'components/public/workFlow'
   import PopWarehouseList from 'components/Popup/PopWarehouseList'
   import WarehouseContent from 'components/detail/commonPart/WarehouseContent'
   import MatterList from 'components/detail/commonPart/MatterList'
@@ -122,7 +122,7 @@
   }
 </script>
 <style lang='scss' scoped>
-  @import '../../scss/bizDetail';
+  @import '~scss/biz-app/bizDetail';
 
   .mater_other {
     .mater_left {

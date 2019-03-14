@@ -45,7 +45,7 @@
   // 请求 引入
   import {findProjectConclusion} from 'service/projectService'
   // mixins 引入
-  import detailCommon from 'components/mixins/detailCommon'
+  import detailCommon from 'mixins/detailCommon'
 
   export default {
     data() {
@@ -93,7 +93,7 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizDetail';
+  @import '~scss/biz-app/bizDetail';
 
   .xmjx-detail-container {
     .project-amt {

@@ -34,17 +34,17 @@
    dateFormat, XTextarea, 
   } from 'vux'
   // 请求 引入
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask, updateData} from 'service/commonService'
+  import {submitAndCalc, saveAndStartWf, saveAndCommitTask, updateData} from 'service/common/commonService'
   import {getSOList} from 'service/detailService'
   // mixins 引入
-  import ApplyCommon from 'pageMixins/applyCommon'
+  import ApplyCommon from 'mixins/applyCommon'
   // 组件引入
-  import RNumber from 'components/RNumber'
+  import RNumber from 'components/public/RNumber'
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import OpButton from 'components/apply/commonPart/OpButton'
   // 方法引入
-  import {accAdd, accMul, accDiv, accSub} from '@/home/pages/maps/decimalsAdd'
+  import {accAdd, accMul, accDiv, accSub} from 'plugins/calc/decimalsAdd'
   import { toFixed } from '@/plugins/calc'
   import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
   const DRAFT_KEY = 'KPSQ_DATA';
@@ -439,7 +439,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
   .mater_more {
     color: #757575;
     font-size: 0.1rem;

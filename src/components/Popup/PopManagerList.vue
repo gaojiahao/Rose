@@ -52,9 +52,9 @@
 
 <script>
   import {Icon, Popup, TransferDom, LoadMore} from 'vux'
-  import {getObjDealerByLabelName} from 'service/commonService'
-  import RScroll from 'components/RScroll'
-  import DSearch from 'components/search'
+  import {getObjDealerByLabelName} from 'service/common/commonService'
+  import RScroll from 'plugins/scroll/RScroll'
+  import DSearch from 'components/search/search'
 
   export default {
     name: "PopManagerList",

@@ -45,7 +45,7 @@
   // 接口引入
   import {getCompany} from 'service/Directorys/companyService'
   // mixin引入
-  import listCommon from 'pageMixins/bizListCommon'
+  import listCommon from 'mixins/bizListCommon'
 
   export default {
     mixins: [listCommon],
@@ -178,7 +178,7 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizList';
+  @import '~scss/biz-app/bizList';
   @import '~@/scss/color';
 
   %ellipsis {

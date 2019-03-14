@@ -34,8 +34,8 @@
 
 <script>
 // 组件引入
-import RPicker from 'components/RPicker'
-import UploadImage from 'components/UploadImage'
+import RPicker from 'components/public/RPicker'
+import UploadImage from 'components/upload/UploadImage'
 import common from 'mixins/common';
 // 请求引入
 import { save, update, checkValue, CompanyInfo } from 'service/Directorys/companyService' 
@@ -232,7 +232,7 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-@import './../../scss/bizApply';
+@import '~scss/biz-app/bizApply';
 .childPage{
   width: 100%;
   height: 100%;

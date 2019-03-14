@@ -54,8 +54,8 @@
 <script>
   import {Icon, Popup, LoadMore, dateFormat} from 'vux'
   import {getWorkStartList} from 'service/Product/gdService'
-  import RScroll from 'components/RScroll'
-  import MSearch from 'components/search'
+  import RScroll from 'plugins/scroll/RScroll'
+  import MSearch from 'components/search/search'
 
   export default {
     name: "PopWorkStartList",

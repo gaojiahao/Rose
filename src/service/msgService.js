@@ -1,4 +1,4 @@
-import $flyio from '../plugins/ajax';
+import $flyio from 'plugins/ajax';
 
 
 // 消息代办列表

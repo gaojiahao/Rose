@@ -75,10 +75,10 @@
 
 <script>
   import {Icon, Popup, LoadMore, AlertModule, TransferDom} from 'vux'
-  import DSearch from 'components/search'
+  import DSearch from 'components/search/search'
   import BScroll from 'better-scroll'
   import {getProjectApproval} from 'service/projectService'
-  import RScroll from 'components/RScroll'
+  import RScroll from 'plugins/scroll/RScroll'
 
   export default {
     name: "PopNameList",

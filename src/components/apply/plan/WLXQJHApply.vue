@@ -163,19 +163,19 @@
   // 请求 引入
   import {getSOList} from 'service/detailService'
   import {getJGRKBom} from 'service/materService'
-  import {saveAndStartWf, saveAndCommitTask, submitAndCalc} from 'service/commonService'
+  import {saveAndStartWf, saveAndCommitTask, submitAndCalc} from 'service/common/commonService'
   // mixins 引入
-  import applyCommon from 'components/mixins/applyCommon'
+  import applyCommon from 'mixins/applyCommon'
   // 组件引入
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import PopOrderList from 'components/Popup/PopOrderList'
-  import FormCell from 'components/detail/commonPart/FormCell'
+  import FormCell from 'components/detail/commonPart/form-part/FormCell'
   import BomList from 'components/detail/commonPart/BomList'
   import BomPop from 'components/apply/commonPart/BomPop'
-  import RPicker from 'components/RPicker'
+  import RPicker from 'components/public/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 公共方法
-  import {accMul, accAdd, accSub} from '@/home/pages/maps/decimalsAdd'
+  import {accMul, accAdd, accSub} from 'plugins/calc/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
 
   const DRAFT_KEY = 'WLXQJH_DATA';
@@ -749,7 +749,7 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
 
   .nbjgdd-apply-container {
     .basicPart {

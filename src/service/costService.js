@@ -1,4 +1,4 @@
-import $flyio from '../plugins/ajax';
+import $flyio from 'plugins/ajax';
 
 //获取费用
 export let getCost = (data = {}) => {

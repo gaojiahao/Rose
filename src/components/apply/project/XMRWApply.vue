@@ -82,14 +82,14 @@
     getProjectPlanProjectName, findProjectPlan
   } from 'service/projectService'
   // mixins 引入
-  import ApplyCommon from 'pageMixins/applyCommon'
+  import ApplyCommon from 'mixins/applyCommon'
   // 组件引入
-  import RPicker from 'components/basicPicker'
+  import RPicker from 'components/public/basicPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopUserList from 'components/Popup/PopUserList'
   // 方法引入
   import { toFixed } from '@/plugins/calc'
-  import {accMul} from '@/home/pages/maps/decimalsAdd'
+  import {accMul} from 'plugins/calc/decimalsAdd'
 
   const DRAFT_KEY = 'XMRW_DATA';
   export default {
@@ -329,7 +329,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
   .no_count {
     height: calc(100% - .8rem);
   }

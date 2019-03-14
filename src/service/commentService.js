@@ -1,5 +1,5 @@
 /* 评论相关接口 */
-import $flyio from '../plugins/ajax';
+import $flyio from 'plugins/ajax';
 
 // 获取评论列表(PC)
 export let getPCCommentList = (data = {}) => {

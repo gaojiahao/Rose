@@ -55,9 +55,9 @@
 
 <script>
   import {getOffBalance, getProfit} from 'service/kmService'
-  import RScroll from 'components/RScroll'
+  import RScroll from 'plugins/scroll/RScroll'
   import {toFixed} from '@/plugins/calc'
-  import {accAdd} from "@/home/pages/maps/decimalsAdd";
+  import {accAdd} from "plugins/calc/decimalsAdd";
   import {numberComma} from 'vux'
 
   export default {

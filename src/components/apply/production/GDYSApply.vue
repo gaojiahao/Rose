@@ -99,11 +99,11 @@
     TransferDom,  numberComma,  XTextarea
   } from 'vux'
   // 请求 引入
-  import { saveAndStartWf, saveAndCommitTask, submitAndCalc, updateData } from 'service/commonService'
+  import { saveAndStartWf, saveAndCommitTask, submitAndCalc, updateData } from 'service/common/commonService'
   import { getBomWorkCheck } from 'service/Product/gdService'
   import { getSOList } from 'service/detailService'
   // mixins 引入
-  import Applycommon from 'components/mixins/applyCommon'
+  import Applycommon from 'mixins/applyCommon'
   // 组件引入
   import PopManagerList from 'components/Popup/workList/PopManagerList'
   import PopWarehouseList from 'components/Popup/PopWarehouseList'
@@ -113,7 +113,7 @@
   /* 引入微信相关 */
   import { scanQRCode } from 'plugins/wx/api'
   import { toFixed } from '@/plugins/calc'
-  import { accMul } from '@/home/pages/maps/decimalsAdd'
+  import { accMul } from 'plugins/calc/decimalsAdd'
 
   const DRAFT_KEY = 'GDYS_DATA';
   export default {
@@ -471,7 +471,7 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
   @import '~@/scss/color';
 
   .gdrw-apply-container {

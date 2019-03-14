@@ -22,7 +22,7 @@
 // 请求引入
 import { save, update, getJobList } from 'service/Directorys/jobService';
 // 自定义组件引入
-import RPicker from 'components/RPicker';
+import RPicker from 'components/public/RPicker';
 // mixin引入
 import common from 'mixins/common';
 export default {
@@ -239,7 +239,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import './../../scss/bizApply';
+@import '~scss/biz-app/bizApply';
 </style>
 
 

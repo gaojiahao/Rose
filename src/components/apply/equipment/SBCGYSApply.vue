@@ -132,20 +132,20 @@
     commitTask,
     getDictByType,
     submitAndCalc
-  } from 'service/commonService'
+  } from 'service/common/commonService'
   // mixins 引入
-  import applyCommon from 'components/mixins/applyCommon'
+  import applyCommon from 'mixins/applyCommon'
   // 组件引入
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopFacilityList from 'components/Popup/equipment/PopFacilityList'
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import PopMatterList from 'components/Popup/matter/PopMatterList'
   import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
-  import RNumber from 'components/RNumber'
-  import RPicker from 'components/RPicker'
+  import RNumber from 'components/public/RNumber'
+  import RPicker from 'components/public/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 公共方法
-  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
+  import {accAdd, accMul} from 'plugins/calc/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
 
   const DRAFT_KEY = 'SBCGYS_DATA';
@@ -670,7 +670,7 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
 
   .pages {
     /deep/ .vux-no-group-title {

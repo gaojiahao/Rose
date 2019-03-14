@@ -1,4 +1,4 @@
-import $flyio from '../plugins/ajax';
+import $flyio from 'plugins/ajax';
 
 // 获取企业微信config参数
 export let getJsApiSignature = (url = '') => {

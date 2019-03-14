@@ -45,9 +45,9 @@ import {
   saveAndStartWf, 
   saveAndCommitTask, 
   getPriceFromProcurementContract
-} from 'service/commonService'
+} from 'service/common/commonService'
 // mixins 引入
-import common from 'components/mixins/applyCommon'
+import common from 'mixins/applyCommon'
 // 组件引入
 import PopDealerList from 'components/Popup/PopDealerList'
 import OpButton from 'components/apply/commonPart/OpButton'
@@ -55,7 +55,7 @@ import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
 import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 // 方法引入
-import { accAdd, accMul, accDiv } from '@/home/pages/maps/decimalsAdd'
+import { accAdd, accMul, accDiv } from 'plugins/calc/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
 const DRAFT_KEY = 'CGDD_DATA';
 
@@ -570,7 +570,7 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-@import './../../scss/bizApply';
+@import '~scss/biz-app/bizApply';
 .pages {
   /deep/ .vux-no-group-title{
     margin-top: 0;

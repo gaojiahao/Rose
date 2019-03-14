@@ -50,14 +50,14 @@
 
 <script>
   import {Icon, Popup, LoadMore, AlertModule, numberComma} from 'vux'
-  import DSearch from 'components/search'
+  import DSearch from 'components/search/search'
   import {
     getPaySupplierArrears,
     getDepositToPaySuppliers,
     getSaleAcceptanceBill,
     getObjDealerBalByLabelName
   } from 'service/dealerService'
-  import RScroll from 'components/RScroll'
+  import RScroll from 'plugins/scroll/RScroll'
 
   export default {
     name: "PopDealerList",

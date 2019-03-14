@@ -41,15 +41,15 @@
 import { XTextarea, dateFormat } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
+import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/common/commonService'
 // mixins 引入
-import common from 'components/mixins/applyCommon'
+import common from 'mixins/applyCommon'
 // 组件 引入
 import OpButton from 'components/apply/commonPart/OpButton'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 // 方法 引入
-import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
+import { accAdd, accMul } from 'plugins/calc/decimalsAdd'
 import { toFixed } from '@/plugins/calc'
 import dateCount from '@/plugins/dateCount'
 const DRAFT_KEY = 'CGSQ_DATA';
@@ -472,7 +472,7 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-@import './../../scss/bizApply';
+@import '~scss/biz-app/bizApply';
 
 .pages {
   /deep/ .vux-no-group-title{

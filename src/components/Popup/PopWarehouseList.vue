@@ -78,8 +78,8 @@
 <script>
   import {Icon, Popup, TransferDom, LoadMore} from 'vux'
   import {getWarehouse, getWareHouseType} from 'service/listService'
-  import RScroll from 'components/RScroll'
-  import DSearch from 'components/search'
+  import RScroll from 'plugins/scroll/RScroll'
+  import DSearch from 'components/search/search'
   import PopWarehouseStoreList from 'components/Popup/PopWarehouseStoreList'
 
   export default {

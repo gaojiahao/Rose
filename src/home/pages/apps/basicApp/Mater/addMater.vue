@@ -65,12 +65,12 @@
 <script>
 // 请求引入
 import { save, update, findData } from 'service/materService'
-import { requestData, getFormConfig, getFormViews, getBaseInfoDataBase } from 'service/commonService'
+import { requestData, getFormConfig, getFormViews, getBaseInfoDataBase } from 'service/common/commonService'
 // 组件引入
-import RScroll from 'components/RScroll'
-import RPicker from 'components/basicPicker';
-import UploadImage from 'components/UploadImage'
-import duplicateComponent from '../../../components/duplication'
+import RScroll from 'plugins/scroll/RScroll'
+import RPicker from 'components/public/basicPicker';
+import UploadImage from 'components/upload/UploadImage'
+import duplicateComponent from 'homePage/components/basis-object/duplication'
 import PopTechnicsList from 'components/popup/matter/PopTechnicsList'
 import PopProcedureList from 'components/popup/matter/PopProcedureList'
 // mixins引入
@@ -720,7 +720,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '../../../scss/basicApp.scss';
+@import '~homePage/scss/basicApp.scss';
   .matter-page {
     background: #f6f6f6;
   }

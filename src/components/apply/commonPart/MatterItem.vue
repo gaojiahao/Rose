@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { accMul } from '@/home/pages/maps/decimalsAdd'
+import { accMul } from 'plugins/calc/decimalsAdd'
 export default {
   name: "MatterItem",
   filters: {

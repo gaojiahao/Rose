@@ -47,11 +47,11 @@ import { dateFormat, XTextarea } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 import { getObjInvMoreUnitByInvCode } from 'service/materService'
-import { updateData, submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
+import { updateData, submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/common/commonService'
 // mixins 引入
-import applyCommon from 'components/mixins/applyCommon'
+import applyCommon from 'mixins/applyCommon'
 // 组件引入
-import RNumber from 'components/RNumber'
+import RNumber from 'components/public/RNumber'
 import OpButton from 'components/apply/commonPart/OpButton'
 import PopDealerList from 'components/Popup/PopDealerList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
@@ -60,7 +60,7 @@ import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
 import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 // 公共方法
 import {toFixed} from '@/plugins/calc'
-import {accAdd, accMul, accDiv, accSub} from '@/home/pages/maps/decimalsAdd'
+import {accAdd, accMul, accDiv, accSub} from 'plugins/calc/decimalsAdd'
 
 const DRAFT_KEY = 'CGRK_DATA';
 
@@ -653,5 +653,5 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
 </style>

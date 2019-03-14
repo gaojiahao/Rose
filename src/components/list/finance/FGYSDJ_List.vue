@@ -64,10 +64,10 @@
 </template>
 
 <script>
-  import listCommon from 'pageMixins/bizListCommon'
+  import listCommon from 'mixins/bizListCommon'
   // 第三方插件引入
   import {toFixed} from '@/plugins/calc'
-  import {accAdd} from '@/home/pages/maps/decimalsAdd'
+  import {accAdd} from 'plugins/calc/decimalsAdd'
 
   export default {
     data() {
@@ -112,7 +112,7 @@
 </script>
 
 <style lang='scss' scoped>
-  @import "./../../scss/bizList.scss";
+  @import "~scss/biz-app/bizList.scss";
   @import '~@/scss/color';
 
   .instance-item-wrapper {

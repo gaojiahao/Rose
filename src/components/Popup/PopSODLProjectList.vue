@@ -43,8 +43,8 @@
 <script>
   import {Icon, Popup,} from 'vux'
   import {getSalesOutStockProject} from 'service/projectService'
-  import RScroll from 'components/RScroll'
-  import MSearch from 'components/search'
+  import RScroll from 'plugins/scroll/RScroll'
+  import MSearch from 'components/search/search'
 
   export default {
     name: "PopSODLProjectList",

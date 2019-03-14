@@ -38,18 +38,18 @@
 import { dateFormat, numberComma, XTextarea } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { saveAndStartWf, saveAndCommitTask, submitAndCalc, getPriceFromSalesContractAndPrice, updateData} from 'service/commonService'
+import { saveAndStartWf, saveAndCommitTask, submitAndCalc, getPriceFromSalesContractAndPrice, updateData} from 'service/common/commonService'
 // mixins 引入
-import common from 'components/mixins/applyCommon'
+import common from 'mixins/applyCommon'
 // 组件引入
-import RNumber from 'components/RNumber'
+import RNumber from 'components/public/RNumber'
 import PopDealerList from 'components/Popup/PopDealerList'
 import OpButton from 'components/apply/commonPart/OpButton'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
 import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 // 方法引入
-import { accMul, accSub  } from '@/home/pages/maps/decimalsAdd'
+import { accMul, accSub  } from 'plugins/calc/decimalsAdd'
 import { toFixed } from '@/plugins/calc'
 const DRAFT_KEY = 'XSDD_DATA';
 export default {
@@ -617,7 +617,7 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
   .no_margin {
     margin-top: 0;
   }

@@ -84,9 +84,9 @@
 // vux组件引入
 import { Popup, TransferDom, dateFormat } from 'vux'
 // 组件引入
-import RScroll from 'components/RScroll'
+import RScroll from 'plugins/scroll/RScroll'
 // 请求引入
-import { getProcessStatus } from 'service/commonService'
+import { getProcessStatus } from 'service/common/commonService'
 import { filterFields } from 'service/listService'
 export default {
   name: "RSort",

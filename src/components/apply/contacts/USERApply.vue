@@ -46,12 +46,12 @@
 
 <script>
   import {Picker, Popup, Group} from 'vux';
-  import RPicker from 'components/RPicker';
+  import RPicker from 'components/public/RPicker';
   import common from 'mixins/common';
   import {validateCode, addUser, updateUser, getUserDetail} from 'service/Directorys/userService';
-  import UploadImage from 'components/UploadImage'
+  import UploadImage from 'components/upload/UploadImage'
   import PopCompanyList from 'components/Popup/PopCompanyList'
-  import RScroll from 'components/RScroll'
+  import RScroll from 'plugins/scroll/RScroll'
 
   export default {
     name: 'ApplyUserForm',
@@ -324,7 +324,7 @@
 </script>
 
 <style lang="scss" scoped>
-@import './../../scss/bizApply';
+@import '~scss/biz-app/bizApply';
 .childPage{
   width: 100%;
   height: 100%;

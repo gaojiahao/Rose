@@ -16,12 +16,6 @@ import FILLFORM from '../pages/apps/bizApp/fillForm/fillForm'
 import DETAIL from '../pages/apps/bizApp/detail/detail'
 import WORKFLOWFULL from '../pages/apps/bizApp/detail/workFlowFull'
 import RELATED from '../pages/apps/bizApp/detail/related/related'
-// ------- >科目应用 <-------
-
-// ------- >仪表视图 <-------
-import DASHBOARD from '../pages/apps/bizApp/dashboard/dashboard'
-
-//
 import COMMENTLIST from '@/home/pages/apps/bizApp/comment/commentList'
 
 //应用详情
@@ -37,12 +31,6 @@ export default [
     name: 'COMMENTLIST',
     component: COMMENTLIST,
     meta: { title: '评论' }
-  },
-  {
-    path: '/dashboard',
-    name: 'DASHBOARD',
-    component: DASHBOARD,
-    meta: { title: '仪表视图' }
   },
   {
     path:'/related/:listId',

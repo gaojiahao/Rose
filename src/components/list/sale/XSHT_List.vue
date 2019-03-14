@@ -21,25 +21,24 @@
 </template>
 
 <script>
-  import listCommon from 'pageMixins/bizListCommon'
-  import ApplyChart from 'components/list/commonPart/ApplyChart'
-  export default {
-    data() {
-      return {
-        hasNext: true,
-        scrollOptions: {
-          click: true,
-          pullDownRefresh: true,
-          pullUpLoad: true,
-        },
-      }
-    },
-    mixins: [listCommon]
-  }
+import listCommon from 'mixins/bizListCommon'
+export default {
+  data() {
+    return {
+      hasNext: true,
+      scrollOptions: {
+        click: true,
+        pullDownRefresh: true,
+        pullUpLoad: true,
+      },
+    }
+  },
+  mixins: [listCommon]
+}
 </script>
 
 <style lang='scss' scoped>
-  @import "./../../scss/bizList";
+  @import "~scss/biz-app/bizList";
   .dashboard {
     height: calc(100% - 1rem);
   }

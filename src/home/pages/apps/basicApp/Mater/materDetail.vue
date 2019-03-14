@@ -57,8 +57,8 @@
 import { AlertModule, dateFormat } from 'vux';
 import { findData } from 'service/materService'
 import { getAppDetail } from 'service/app-basic/appSettingService'
-import { getFormConfig, getFormViews } from 'service/commonService'
-import RScroll from 'components/RScroll'
+import { getFormConfig, getFormViews } from 'service/common/commonService'
+import RScroll from 'plugins/scroll/RScroll'
 import { callbackify } from 'util';
 export default {
   name: 'materDetail',

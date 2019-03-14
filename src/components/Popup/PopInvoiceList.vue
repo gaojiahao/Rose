@@ -28,8 +28,8 @@
 <script>
   import {Icon, Popup, LoadMore} from 'vux'
   import {getVATBilling, getVATReceipt, getManyVATBilling, getManyVATReceipt} from 'service/invoiceService'
-  import RScroll from 'components/RScroll'
-  import MSearch from 'components/search'
+  import RScroll from 'plugins/scroll/RScroll'
+  import MSearch from 'components/search/search'
   import {sep} from 'path';
 
   export default {

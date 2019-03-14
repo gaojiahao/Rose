@@ -62,8 +62,8 @@
 <script>
   import {Icon, Popup, TransferDom} from 'vux'
   import {getObjWarehouseRel} from 'service/listService'
-  import RScroll from 'components/RScroll'
-  import DSearch from 'components/search'
+  import RScroll from 'plugins/scroll/RScroll'
+  import DSearch from 'components/search/search'
 
   export default {
     name: "PopWarehouseStoreList",

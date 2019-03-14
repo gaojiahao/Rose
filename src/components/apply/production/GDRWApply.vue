@@ -151,22 +151,22 @@ import { Popup, TransferDom, Group,
         XInput, XTextarea } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { saveAndStartWf, saveAndCommitTask, submitAndCalc, updateData } from 'service/commonService'
+import { saveAndStartWf, saveAndCommitTask, submitAndCalc, updateData } from 'service/common/commonService'
 import { getTaskBom } from 'service/materService'
 // mixins 引入
-import Applycommon from 'components/mixins/applyCommon'
+import Applycommon from 'mixins/applyCommon'
 // 组件引入
 import PopManagerList from 'components/Popup/workList/PopManagerList'
 import PopWorkList from 'components/Popup/workList/PopWorkList'
 import PopWorkFacilityList from 'components/Popup/workList/PopWorkFacilityList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
-import RPicker from 'components/RPicker'
+import RPicker from 'components/public/RPicker'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 
 /* 引入微信相关 */
 import { scanQRCode } from 'plugins/wx/api'
 // 公共方法
-import { accMul, accAdd, accSub } from '@/home/pages/maps/decimalsAdd'
+import { accMul, accAdd, accSub } from 'plugins/calc/decimalsAdd'
 import { toFixed } from '@/plugins/calc'
 const DRAFT_KEY = 'GDRW_DATA';
 
@@ -568,7 +568,7 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
   @import '~@/scss/color';
   .vux-1px-b:after {
     border-color: #e8e8e8;

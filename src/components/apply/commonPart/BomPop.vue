@@ -51,10 +51,10 @@
 // vux组件引入
 import {Popup, TransferDom,Group,Cell,XInput,} from 'vux'
 //组件引入
-import RScroll from 'components/RScroll'
+import RScroll from 'plugins/scroll/RScroll'
 import {toFixed} from '@/plugins/calc'
 // 公共方法
-import {accMul} from '@/home/pages/maps/decimalsAdd'
+import {accMul} from 'plugins/calc/decimalsAdd'
 export default {
   name:'Bom',
   props: {

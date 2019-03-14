@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import listCommon from 'pageMixins/bizListCommon'
+import listCommon from 'mixins/bizListCommon'
 import PopTaskWorkList from 'components/Popup/workList/PopAssignmentTaskWorkList'
 export default {
   data() {
@@ -59,5 +59,5 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizList';
+  @import '~scss/biz-app/bizList';
 </style>

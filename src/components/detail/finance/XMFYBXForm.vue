@@ -50,14 +50,14 @@ import { dateFormat } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 // mixins 引入
-import detailCommon from 'components/mixins/detailCommon'
+import detailCommon from 'mixins/detailCommon'
 // 组件引入
 // 组件 引入
-import RAction from 'components/RAction'
-import workFlow from 'components/workFlow'
+import RAction from 'components/public/RAction'
+import workFlow from 'components/public/workFlow'
 import ProjectPart from 'components/detail/commonPart/Project'
 //公共方法引入
-import {accAdd} from '@/home/pages/maps/decimalsAdd'
+import {accAdd} from 'plugins/calc/decimalsAdd'
 export default {
   data() {
     return {
@@ -102,7 +102,7 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizDetail';
+  @import '~scss/biz-app/bizDetail';
   .form_part .form_title .iconfont {
     font-size: .14rem;
     margin-right: .04rem;

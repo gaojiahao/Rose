@@ -1,4 +1,4 @@
-import $flyio from '../plugins/ajax';
+import $flyio from 'plugins/ajax';
 
 // 获取设施列表(设备采购申请)
 export let getObjFacilityByType = (data = {}) => {

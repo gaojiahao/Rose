@@ -78,23 +78,23 @@
     XInput, XTextarea
   } from 'vux'
   // 请求 引入
-  import { saveAndStartWf, saveAndCommitTask, submitAndCalc, updateData } from 'service/commonService'
+  import { saveAndStartWf, saveAndCommitTask, submitAndCalc, updateData } from 'service/common/commonService'
   import { getBomWorkStart } from 'service/Product/gdService'
   import { getSOList } from 'service/detailService'
   // mixins 引入
-  import Applycommon from 'components/mixins/applyCommon'
+  import Applycommon from 'mixins/applyCommon'
   // 组件引入
   import PopManagerList from 'components/Popup/PopManagerList'
   import PopWorkStartList from 'components/Popup/workList/PopWorkStartList'
   import PopFacilityList from 'components/Popup/workList/PopFacilityList'
-  import RPicker from 'components/RPicker'
+  import RPicker from 'components/public/RPicker'
   import BomList from 'components/detail/commonPart/BomList'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   /* 引入微信相关 */
   import { scanQRCode } from 'plugins/wx/api'
   /* 方法引入 */
   import { toFixed } from '@/plugins/calc'
-  import { accMul } from '@/home/pages/maps/decimalsAdd'
+  import { accMul } from 'plugins/calc/decimalsAdd'
 
   const DRAFT_KEY = 'GDRWQD_DATA';
   export default {
@@ -381,7 +381,7 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
   @import '~@/scss/color';
 
   .gdrwqd-apply-container {

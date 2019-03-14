@@ -20,12 +20,12 @@ import {Cell, Group, numberComma} from 'vux'
 // 请求 引入
 import {findProjectApproval} from 'service/projectService'
 // 组件 引入
-import RAction from 'components/RAction'
+import RAction from 'components/public/RAction'
 import onlyWord from 'components/detail/commonPart/form-part/onlyWord'
 // mixins 引入
-import detailCommon from 'components/mixins/detailCommon'
+import detailCommon from 'mixins/detailCommon'
 // 插件引入
-import {accMul} from '@/home/pages/maps/decimalsAdd'
+import {accMul} from 'plugins/calc/decimalsAdd'
 
 export default {
   data() {
@@ -78,5 +78,5 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizDetail';
+  @import '~scss/biz-app/bizDetail';
 </style>

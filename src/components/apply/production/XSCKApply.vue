@@ -47,11 +47,11 @@
 import { XTextarea, dateFormat } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { commitTask, saveAndStartWf, saveAndCommitTask, submitAndCalc, requestData, updateData } from 'service/commonService'
+import { commitTask, saveAndStartWf, saveAndCommitTask, submitAndCalc, requestData, updateData } from 'service/common/commonService'
 // mixins 引入
-import applyCommon from 'components/mixins/applyCommon'
+import applyCommon from 'mixins/applyCommon'
 // 组件引入
-import RNumber from 'components/RNumber'
+import RNumber from 'components/public/RNumber'
 import PopDealerList from 'components/Popup/PopDealerList'
 import OpButton from 'components/apply/commonPart/OpButton'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
@@ -60,7 +60,7 @@ import PopSodlProjectList from 'components/Popup/PopSODLProjectList'
 import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
 import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 // 公共方法
-import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
+import { accAdd, accMul } from 'plugins/calc/decimalsAdd'
 import { toFixed } from '@/plugins/calc'
 import { setTimeout } from 'timers';
 
@@ -682,5 +682,5 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
 </style>

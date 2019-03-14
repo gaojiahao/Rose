@@ -67,14 +67,14 @@
   // 请求 引入
   import {saveProjectPlan, findProjectPlan, getProjectBotTask} from 'service/projectService'
   // mixins 引入
-  import ApplyCommon from 'pageMixins/applyCommon'
+  import ApplyCommon from 'mixins/applyCommon'
   // 组件引入
   import PopNameList from 'components/Popup/PopNameList'
-  import RPicker from 'components/RPicker'
+  import RPicker from 'components/public/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
   import {toFixed} from '@/plugins/calc'
-  import {accMul} from '@/home/pages/maps/decimalsAdd'
+  import {accMul} from 'plugins/calc/decimalsAdd'
 
   const DRAFT_KEY = 'XMJH_DATA';
 
@@ -341,7 +341,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
 
   .xmjh-apply-container {
     /deep/ .weui-cells {

@@ -20,7 +20,7 @@
 </template>
 
 <script>
-  import listCommon from 'pageMixins/bizListCommon'
+  import listCommon from 'mixins/bizListCommon'
   import financeListItem from 'components/list/commonPart/financeListItem'
   export default {
     data() {
@@ -57,5 +57,5 @@
 </script>
 
 <style lang='scss' scoped>
-  @import "./../../scss/bizList.scss";
+  @import "~scss/biz-app/bizList.scss";
 </style>

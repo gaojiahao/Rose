@@ -30,16 +30,16 @@
   // 请求 引入
   import {getSOList} from 'service/detailService'
   // mixins 引入
-  import detailCommon from 'components/mixins/detailCommon'
+  import detailCommon from 'mixins/detailCommon'
   import common from 'mixins/common'
   //公共方法引入
-  import {accMul,accAdd} from '@/home/pages/maps/decimalsAdd'
+  import {accMul,accAdd} from 'plugins/calc/decimalsAdd'
   // 组件 引入
-  import RAction from 'components/RAction'
-  import workFlow from 'components/workFlow'
+  import RAction from 'components/public/RAction'
+  import workFlow from 'components/public/workFlow'
   import MatterItem from 'components/detail/commonPart/MatterItem'
   import BomList from 'components/detail/commonPart/BomList'
-  import FormCell from 'components/detail/commonPart/FormCell'
+  import FormCell from 'components/detail/commonPart/form-part/FormCell'
   import BomPop from 'components/apply/commonPart/BomPop'
   import WarehouseContent from 'components/detail/commonPart/WarehouseContent'
   export default {
@@ -172,7 +172,7 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizDetail';
+  @import '~scss/biz-app/bizDetail';
 
   .nbjdgg-detail-container {
     // 加工订单号

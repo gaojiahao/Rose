@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import FormCell from 'components/detail/commonPart/FormCell'
+import FormCell from 'components/detail/commonPart/form-part/FormCell'
 export default {
   name: 'only-word',
   components: { FormCell },

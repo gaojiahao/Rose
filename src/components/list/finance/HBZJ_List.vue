@@ -168,7 +168,6 @@
           </div>
         </div>
       </div>
-
       <!-- 展开状态 -->
       <div v-transfer-dom>
         <popup v-model="flowShow" position="bottom" height="80%">
@@ -264,7 +263,7 @@
 </template>
 
 <script>
-  import listCommon from 'pageMixins/kmListCommon'
+  import listCommon from 'mixins/kmListCommon'
   import {getListClassfiy, getViewList} from 'service/kmService'
   import {toFixed} from '@/plugins/calc'
 
@@ -496,7 +495,7 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/SUB/subList';
+  @import '~scss/subject/subList';
 
   .HBZJ_total {
     .number_incre {

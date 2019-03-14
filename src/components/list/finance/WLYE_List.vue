@@ -240,8 +240,8 @@
 </template>
 
 <script>
-import TabItem from 'components/tab'
-import listCommon from 'pageMixins/kmListCommon'
+import TabItem from 'components/public/sub-tab'
+import listCommon from 'mixins/kmListCommon'
 import { toFixed } from '@/plugins/calc'
 export default {
   data() {
@@ -263,7 +263,7 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/SUB/subList';
+  @import '~scss/subject/subList';
   .list_wrapper {
     height: calc(100% - 1rem);
   }

@@ -48,7 +48,7 @@
 <script>
 // vux插件引入
 import {TransferDom, Popup, Group, Icon, XButton,dateFormat} from 'vux'
-import RScroll from 'components/RScroll'
+import RScroll from 'plugins/scroll/RScroll'
 //请求 引入
 import {saveLog} from 'service/app-basic/appSettingService'
 //方法引入

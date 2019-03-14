@@ -40,9 +40,9 @@
 import { XTextarea, dateFormat } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { submitAndCalc, saveAndStartWf, saveAndCommitTask, updateData } from 'service/commonService'
+import { submitAndCalc, saveAndStartWf, saveAndCommitTask, updateData } from 'service/common/commonService'
 // mixins 引入
-import ApplyCommon from 'pageMixins/applyCommon'
+import ApplyCommon from 'mixins/applyCommon'
 // 组件引入
 import OpButton from 'components/apply/commonPart/OpButton'
 import PopDealerList from 'components/Popup/PopDealerList'
@@ -52,7 +52,7 @@ import OtherConfigPart from 'components/apply/commonPart/otherConfigPart'
 import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
 // 方法引入
 import { toFixed } from '@/plugins/calc'
-import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
+import { accAdd, accMul } from 'plugins/calc/decimalsAdd'
 
 const DRAFT_KEY = 'ZZSKP_DATA';
 export default {
@@ -496,5 +496,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
 </style>

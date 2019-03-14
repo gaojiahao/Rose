@@ -61,7 +61,7 @@
 // 接口引入
 import { CompanyInfo } from 'service/Directorys/companyService'
 // mixins 引入
-import detailCommon from 'components/mixins/detailCommon'
+import detailCommon from 'mixins/detailCommon'
 export default {
   data(){
     return{
@@ -97,5 +97,5 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-@import './../../scss/bizDetail';
+@import '~scss/biz-app/bizDetail';
 </style>

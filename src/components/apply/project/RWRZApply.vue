@@ -73,16 +73,16 @@
   } from 'vux'
   // 请求 引入
   import { jobLog, saveJobLog } from 'service/projectService'
-  import { getDictByType, getDictByValue, requestData, update} from 'service/commonService'
+  import { getDictByType, getDictByValue, requestData, update} from 'service/common/commonService'
   // mixins 引入
-  import ApplyCommon from 'pageMixins/applyCommon'
+  import ApplyCommon from 'mixins/applyCommon'
   import common from '@/mixins/common'
   // 组件 引入
-  import RPicker from 'components/basicPicker'
+  import RPicker from 'components/public/basicPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopJobList from 'components/Popup/PopJobList'
   import OpButton from 'components/apply/commonPart/OpButton'
-  import { accMul, accAdd, accSub } from '@/home/pages/maps/decimalsAdd'
+  import { accMul, accAdd, accSub } from 'plugins/calc/decimalsAdd'
   import { toFixed } from '@/plugins/calc'
   const DRAFT_KEY = 'XMLX_DATA';
   export default {
@@ -247,7 +247,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
   .materiel_list {
     background: #fff;
     padding: 0 .15rem;

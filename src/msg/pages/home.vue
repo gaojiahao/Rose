@@ -35,10 +35,10 @@ import {Badge} from 'vux'
 // 请求 引入
 import {getMsgList, getNotice, getNoticeByPraise} from 'service/msgService'
 // 组件 引入
-import RScroll from 'components/RScroll'
+import RScroll from 'plugins/scroll/RScroll'
 import RTab from 'components/list/commonPart/RTab'
-import TodoItem from 'components/msg/TodoItem'
-import CommentItem from 'components/msg/CommentItem'
+import TodoItem from 'msgPage/components/TodoItem'
+import CommentItem from 'msgPage/components/CommentItem'
 /* 引入微信相关 */
 import {register} from 'plugins/wx'
 

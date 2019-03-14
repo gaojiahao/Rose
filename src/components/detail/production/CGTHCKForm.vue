@@ -27,20 +27,20 @@
 // 请求 引入
 import { getSOList } from 'service/detailService'
 // mixins 引入
-import detailCommon from 'components/mixins/detailCommon'
+import detailCommon from 'mixins/detailCommon'
 //公共方法引入
-import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd'
+import {accAdd,accMul} from 'plugins/calc/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
 // 组件 引入
-import RAction from 'components/RAction'
-import workFlow from 'components/workFlow'
+import RAction from 'components/public/RAction'
+import workFlow from 'components/public/workFlow'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import contactPart from 'components/detail/commonPart/ContactPart'
 import PriceTotal from 'components/detail/commonPart/PriceTotal'
 import WarehouseContent from 'components/detail/commonPart/WarehouseContent'
 import ProjectPart from 'components/detail/commonPart/Project'
 import MatterItem from 'components/detail/commonPart/MatterItem'
-import FormCell from 'components/detail/commonPart/FormCell'
+import FormCell from 'components/detail/commonPart/form-part/FormCell'
 export default {
   data() {
     return {
@@ -149,5 +149,5 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizDetail';
+  @import '~scss/biz-app/bizDetail';
 </style>

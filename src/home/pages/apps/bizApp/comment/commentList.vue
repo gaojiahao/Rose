@@ -22,9 +22,9 @@
 
 <script>
   import {getCommentList, getPCCommentList, getReply, saveComment} from 'service/commentService'
-  import RScroll from 'components/RScroll'
-  import CommentItem from 'components/comment/CommentItem'
-  import REmotion from 'components/comment/REmotion'
+  import RScroll from 'plugins/scroll/RScroll'
+  import CommentItem from 'homePage/components/comment-related/CommentItem'
+  import REmotion from 'homePage/components/comment-related/REmotion'
   /* 引入微信相关 */
   import {register} from 'plugins/wx'
 

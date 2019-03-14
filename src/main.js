@@ -6,8 +6,8 @@ import VueRouter from 'vue-router'
 import adapation from './common/adapation'
 import Swiper from './common/swiper-4.2.2.min.js'
 import { AlertPlugin, ConfirmPlugin, ToastPlugin, TransferDom, DatetimePlugin  } from 'vux'
-import Loading from 'components/loading/pageLoad/loading'
-import HandleLoad from 'components/loading/handleLoad/handleLoading'
+import Loading from 'plugins/loading/pageLoad/loading'
+import HandleLoad from 'plugins/loading/handleLoad/handleLoading'
 
 Vue.use(Loading)
 Vue.use(VueRouter)

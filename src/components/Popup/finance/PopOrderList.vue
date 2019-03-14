@@ -49,8 +49,8 @@
 <script>
   import {Icon, Popup} from 'vux'
   import {getPaySupplierArrearsDataSet} from 'service/costService'
-  import RScroll from 'components/RScroll'
-  import MSearch from 'components/search'
+  import RScroll from 'plugins/scroll/RScroll'
+  import MSearch from 'components/search/search'
 
   export default {
     name: "PopOrderList",

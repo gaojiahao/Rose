@@ -127,10 +127,10 @@
     numberComma, dateFormat
   } from 'vux'
   //组件引入
-  import RScroll from 'components/RScroll'
-  import RPicker from 'components/basicPicker'
+  import RScroll from 'plugins/scroll/RScroll'
+  import RPicker from 'components/public/basicPicker'
   import {toFixed} from '@/plugins/calc'
-  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
+  import {accAdd, accMul} from 'plugins/calc/decimalsAdd'
 
   export default {
     name: 'MatterPop',

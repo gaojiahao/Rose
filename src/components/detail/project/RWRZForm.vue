@@ -49,9 +49,9 @@
   // 请求 引入
   import {jobLog} from 'service/projectService'
   // mixins 引入
-  import detailCommon from 'components/mixins/detailCommon'
-  import {accMul} from '@/home/pages/maps/decimalsAdd'
-  import RAction from 'components/RAction'
+  import detailCommon from 'mixins/detailCommon'
+  import {accMul} from 'plugins/calc/decimalsAdd'
+  import RAction from 'components/public/RAction'
 
   export default {
     data() {
@@ -108,5 +108,5 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizDetail';
+  @import '~scss/biz-app/bizDetail';
 </style>

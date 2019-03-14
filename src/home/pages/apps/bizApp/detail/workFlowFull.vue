@@ -31,7 +31,7 @@
 <script>
   import {getWorkFlow, currentUser} from 'service/detailService'
   import {dateFormat} from 'vux'
-  import RScroll from 'components/RScroll'
+  import RScroll from 'plugins/scroll/RScroll'
 
   export default {
     name: "WorkFlowFull",

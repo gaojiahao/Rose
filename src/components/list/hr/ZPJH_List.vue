@@ -54,8 +54,8 @@
 
 <script>
   import {getAllUsers} from 'service/Directorys/userService'
-  import {getList} from 'service/commonService'
-  import listCommon from 'pageMixins/bizListCommon'
+  import {getList} from 'service/common/commonService'
+  import listCommon from 'mixins/bizListCommon'
   // 映射表引入
   import Apps from '@/home/pages/apps/bizApp/maps/Apps'
 
@@ -119,7 +119,7 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizList';
+  @import '~scss/biz-app/bizList';
   .cpxq-list-container {
     .list_wrapper {
       height: calc(100% - 1.64rem);

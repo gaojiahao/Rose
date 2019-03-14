@@ -81,14 +81,14 @@
 import { Cell, Group, dateFormat, XTextarea } from 'vux'
 // 请求 引入
 import { getSOList, findAllJobLog } from 'service/detailService'
-import { getBaseInfoData } from 'service/commonService'
+import { getBaseInfoData } from 'service/common/commonService'
 import { findProjectTask, saveJobLog } from 'service/projectService'
 // mixins 引入
 import common from '@/mixins/common'
-import detailCommon from 'components/mixins/detailCommon'
+import detailCommon from 'mixins/detailCommon'
 // 组件 引入
-import RPicker from 'components/RPicker'
-import RAction from 'components/RAction'
+import RPicker from 'components/public/RPicker'
+import RAction from 'components/public/RAction'
 import onlyWord from 'components/detail/commonPart/form-part/onlyWord'
 
 export default {
@@ -261,7 +261,7 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizDetail';
+  @import '~scss/biz-app/bizDetail';
 
   .xmrw-detail-container {
     .main_content { 

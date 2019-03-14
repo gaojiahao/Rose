@@ -375,8 +375,8 @@
 </template>
 
 <script>
-  import listCommon from 'pageMixins/kmListCommon'
-  import TabItem from 'components/tab'
+  import listCommon from 'mixins/kmListCommon'
+  import TabItem from 'components/public/sub-tab'
   export default {
     data() {
       return {
@@ -395,7 +395,7 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/SUB/subList';
+  @import '~scss/subject/subList';
   .classification-item-wrapper {
     color: #333;
     margin: .1rem;

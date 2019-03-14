@@ -67,7 +67,7 @@
 
 <script>
   import {getProjectPlanList} from 'service/projectService'
-  import listCommon from 'pageMixins/bizListCommon'
+  import listCommon from 'mixins/bizListCommon'
 
   export default {
     data() {

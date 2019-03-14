@@ -44,9 +44,9 @@
 
 <script>
   import {Icon, Popup,} from 'vux'
-  import {getObjDealerByLabelName} from 'service/commonService'
-  import RScroll from 'components/RScroll'
-  import MSearch from 'components/search'
+  import {getObjDealerByLabelName} from 'service/common/commonService'
+  import RScroll from 'plugins/scroll/RScroll'
+  import MSearch from 'components/search/search'
 
   export default {
     name: "PopEntityList",

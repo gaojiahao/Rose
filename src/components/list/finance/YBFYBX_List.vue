@@ -14,7 +14,7 @@
         <just-word-item :item="item" v-for="(item, index) in listData" :key="index" 
                         @click.native="goDetail(item, index)">
           <template slot="list-item" slot-scope="{item}">
-            <div v-for="(sitem, index) in item.detailItem">
+            <div v-for="(sitem, index) in item.detailItem" :key="index">
               <div class="content_part">{{sItem.costName_expCode}}</div>
               <div class="other_info_part">
                 <p class="info_with_comment">费用类型: {{sItem.costType_expCode || '暂无'}}</p>
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-  import listCommon from 'pageMixins/bizListCommon'
+  import listCommon from 'mixins/bizListCommon'
   export default {
     data() {
       return {
@@ -63,5 +63,5 @@
 </script>
 
 <style lang='scss' scoped>
-  @import "./../../scss/bizList.scss";
+  @import "~scss/biz-app/bizList.scss";
 </style>

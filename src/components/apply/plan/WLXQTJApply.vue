@@ -118,11 +118,11 @@
   } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {saveAndStartWf, saveAndCommitTask, submitAndCalc} from 'service/commonService'
+  import {saveAndStartWf, saveAndCommitTask, submitAndCalc} from 'service/common/commonService'
   // mixins 引入
-  import applyCommon from 'components/mixins/applyCommon'
+  import applyCommon from 'mixins/applyCommon'
   // 组件引入
-  import RPicker from 'components/RPicker'
+  import RPicker from 'components/public/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import PopOrderXqtjList from 'components/Popup/PopOrderXQTJList'
@@ -470,7 +470,7 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
 
   .wlxqtj-apply-container {
     .basicPart {

@@ -69,10 +69,10 @@
 </template>
 
 <script>
-  import {getList} from 'service/commonService'
-  import listCommon from 'pageMixins/bizListCommon'
+  import {getList} from 'service/common/commonService'
+  import listCommon from 'mixins/bizListCommon'
   // 方法引入
-  import {accMul} from '@/home/pages/maps/decimalsAdd'
+  import {accMul} from 'plugins/calc/decimalsAdd'
 
   export default {
     data() {

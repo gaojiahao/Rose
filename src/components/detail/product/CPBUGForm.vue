@@ -36,10 +36,10 @@ import {dateFormat} from 'vux'
 // 请求 引入
 import {getSOList} from 'service/detailService'
 // mixins 引入
-import detailCommon from 'components/mixins/detailCommon'
+import detailCommon from 'mixins/detailCommon'
 // 组件 引入
-import workFlow from 'components/workFlow'
-import RAction from 'components/RAction'
+import workFlow from 'components/public/workFlow'
+import RAction from 'components/public/RAction'
 import contactPart from 'components/detail/commonPart/ContactPart'
 import MatterList from 'components/detail/commonPart/MatterList'
 export default {
@@ -110,5 +110,5 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizDetail';
+  @import '~scss/biz-app/bizDetail';
 </style>

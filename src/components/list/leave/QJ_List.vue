@@ -60,11 +60,11 @@
 
 <script>
   import {getAllUsers} from 'service/Directorys/userService'
-  import {getList} from 'service/commonService'
+  import {getList} from 'service/common/commonService'
   import { getLeaveDetailItem } from 'service/listService'
-  import listCommon from 'pageMixins/bizListCommon'
+  import listCommon from 'mixins/bizListCommon'
   import { dateFormat } from 'vux'
-  import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
+  import { accAdd, accMul } from 'plugins/calc/decimalsAdd'
   // 映射表引入
   import Apps from '@/home/pages/apps/bizApp/maps/Apps'
 
@@ -210,7 +210,7 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizList';
+  @import '~scss/biz-app/bizList';
   .instance-item-wrapper {
     color: #333;
     padding: .15rem;

@@ -48,8 +48,8 @@
 
 <script>
   import {Popup, TransferDom} from 'vux'
-  import DSearch from 'components/search'
-  import RScroll from 'components/RScroll'
+  import DSearch from 'components/search/search'
+  import RScroll from 'plugins/scroll/RScroll'
   import dealerService from 'service/dealerService'
 
   export default {

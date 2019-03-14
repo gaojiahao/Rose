@@ -87,9 +87,9 @@
 
 <script>
   import {Icon, Popup} from 'vux'
-  import RScroll from 'components/RScroll'
+  import RScroll from 'plugins/scroll/RScroll'
   import {getSalesOrderList,getMaterOrderList,getNBJGLLOrderList} from 'service/listService'
-  import RSearch from 'components/search'
+  import RSearch from 'components/search/search'
 
   export default {
     name: "PopOrderList",

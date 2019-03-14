@@ -28,8 +28,8 @@
 
 <script>
   import {Icon, Popup} from 'vux'
-  import RScroll from 'components/RScroll'
-  import RSearch from 'components/search'
+  import RScroll from 'plugins/scroll/RScroll'
+  import RSearch from 'components/search/search'
 
   export default {
     name: "RPopup",

@@ -12,9 +12,6 @@
 
 <script>
 import platfrom from '@/plugins/platform'
-// 引入映射表
-import Apps from '@/home/pages/maps/businessApp'
-import AppsFile from '@/home/pages/maps/businessFile'
 export default {
   data(){
     return {

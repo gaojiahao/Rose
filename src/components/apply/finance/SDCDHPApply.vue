@@ -85,17 +85,17 @@
   } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
+  import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/common/commonService'
   import {findProjectApproval} from 'service/projectService'
   // mixins 引入
-  import ApplyCommon from 'pageMixins/applyCommon'
+  import ApplyCommon from 'mixins/applyCommon'
   // 组件引入
   import PopDealerList from 'components/Popup/finance/PopDealerList'
   import PopMoneyOrderList from 'components/Popup/finance/PopMoneyOrderList'
-  import RPicker from 'components/RPicker'
+  import RPicker from 'components/public/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
-  import {accAdd, accSub} from '@/home/pages/maps/decimalsAdd'
+  import {accAdd, accSub} from 'plugins/calc/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
 
   const DRAFT_KEY = 'SDCDHP_DATA';
@@ -363,7 +363,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import './../../scss/bizApply.scss';
+  @import '~scss/biz-app/bizApply.scss';
 
   .fgysqk-apply-container {
     .amt-dealer {

@@ -38,9 +38,9 @@ import { dateFormat, XTextarea } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 import { getObjInvMoreUnitByInvCode} from 'service/materService'
-import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
+import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/common/commonService'
 // mixins 引入
-import applyCommon from 'components/mixins/applyCommon'
+import applyCommon from 'mixins/applyCommon'
 // 组件引入
 import PopDealerList from 'components/Popup/PopDealerList'
 import OpButton from 'components/apply/commonPart/OpButton'
@@ -48,7 +48,7 @@ import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
 import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 // 公共方法
-import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
+import { accAdd, accMul } from 'plugins/calc/decimalsAdd'
 import { toFixed } from '@/plugins/calc'
 
 const DRAFT_KEY = 'DZYHPCGYSYZF_DATA';
@@ -564,7 +564,7 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
 
   .pages {
     /deep/ .vux-no-group-title {

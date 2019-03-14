@@ -58,15 +58,10 @@
 
 <script>
 import {Icon, Popup,dateFormat} from 'vux'
-import {getList} from 'service/commonService'
+import {getList} from 'service/common/commonService'
 import {getListView} from 'service/detailService'
-import RScroll from 'components/RScroll'
-import MSearch from 'components/search'
-// 引入映射表
-// import Apps from '@/home/pages/apps/bizApp/maps/Apps'
-// 引入映射表 (不可移除)
-import Apps from '@/home/pages/maps/businessApp'
-import AppsFile from '@/home/pages/maps/businessFile'
+import RScroll from 'plugins/scroll/RScroll'
+import MSearch from 'components/search/search'
 export default {
   name: "RelatedList",
   props: {

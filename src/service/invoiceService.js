@@ -1,4 +1,4 @@
-import $flyio from '../plugins/ajax';
+import $flyio from 'plugins/ajax';
 import errHandle from './errHandle'
 
 // 获取list的分类

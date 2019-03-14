@@ -60,8 +60,8 @@
   import {Tab, Icon, TabItem, dateFormat} from 'vux'
   import dealerService from 'service/dealerService'
   import {getAppDetail} from 'service/app-basic/appSettingService'
-  import searchIcon from 'components/search'
-  import RScroll from 'components/RScroll'
+  import searchIcon from 'components/search/search'
+  import RScroll from 'plugins/scroll/RScroll'
   import addBtn from 'components/list/commonPart/addBtn'
 
   export default {

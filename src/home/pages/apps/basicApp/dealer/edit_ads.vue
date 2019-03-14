@@ -80,13 +80,13 @@
 </template>
 <script>
 import { TransferDom, Picker, Popup, Group,XAddress, ChinaAddressV4Data, Icon, XInput, Datetime } from 'vux';
-import { getBaseInfoDataBase,getDictByType, getFormConfig, requestData, getFormViews } from 'service/commonService';
+import { getBaseInfoDataBase,getDictByType, getFormConfig, requestData, getFormViews } from 'service/common/commonService';
 import dealerService from 'service/dealerService'
-import RPicker from 'components/basicPicker';
+import RPicker from 'components/public/basicPicker';
 import common from 'mixins/common'
-import RScroll from 'components/RScroll'
-import UploadImage from 'components/UploadImage'
-import duplicateComponent from '../../../components/duplication'
+import RScroll from 'plugins/scroll/RScroll'
+import UploadImage from 'components/upload/UploadImage'
+import duplicateComponent from 'homePage/components/basis-object/duplication'
 
 export default {
   data() {
@@ -836,7 +836,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-  @import '../../../scss/basicApp.scss';
+  @import '~homePage/scss/basicApp.scss';
   .dealer-page{
     background: #f6f6f6;
   }

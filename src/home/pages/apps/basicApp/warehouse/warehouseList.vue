@@ -60,10 +60,10 @@
 
 <script>
   import {Tab, TabItem, dateFormat} from 'vux'
-  import {getList, getDictByType} from 'service/commonService'
+  import {getList, getDictByType} from 'service/common/commonService'
   import {getAppDetail} from 'service/app-basic/appSettingService'
-  import searchIcon from 'components/search'
-  import RScroll from 'components/RScroll'
+  import searchIcon from 'components/search/search'
+  import RScroll from 'plugins/scroll/RScroll'
   import addBtn from 'components/list/commonPart/addBtn'
 
   export default {

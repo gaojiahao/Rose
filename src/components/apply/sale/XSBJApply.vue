@@ -45,12 +45,12 @@
 import {XTextarea, dateFormat} from 'vux'
 // 请求 引入
 import {getSOList} from 'service/detailService'
-import {submitAndCalc, saveAndStartWf, getDictByType, saveAndCommitTask, updateData} from 'service/commonService'
+import {submitAndCalc, saveAndStartWf, getDictByType, saveAndCommitTask, updateData} from 'service/common/commonService'
 import {getPriceRange} from 'service/materService'
 // mixins 引入
-import ApplyCommon from 'pageMixins/applyCommon'
+import ApplyCommon from 'mixins/applyCommon'
 // 组件引入
-import RNumber from 'components/RNumber'
+import RNumber from 'components/public/RNumber'
 import UploadFile from 'components/upload/UploadFile'
 import PopDealerList from 'components/Popup/PopDealerList'
 import OpButton from 'components/apply/commonPart/OpButton'
@@ -59,7 +59,7 @@ import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
 // 方法引入
 import {toFixed} from '@/plugins/calc'
-import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
+import {accAdd, accMul} from 'plugins/calc/decimalsAdd'
 
 const DRAFT_KEY = 'XSBJ_DATA';
 
@@ -478,5 +478,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
 </style>

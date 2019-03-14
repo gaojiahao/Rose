@@ -104,7 +104,7 @@
   }
 </script>
 <style lang="scss" scoped>
-@import './../../scss/bizDetail';
+@import '~scss/biz-app/bizDetail';
 </style>
 
 

@@ -5,7 +5,7 @@ import Fly from 'flyio/dist/npm/fly'
 import tokenService from '../../service/tokenService'
 // 弹窗插件引入
 import { AlertModule } from 'vux'
-import errHandle from 'service/errHandle'
+import errHandle from 'plugins/errHandle'
 
 let qs = require('querystring');
 

@@ -1,4 +1,4 @@
-import $flyio from '../plugins/ajax'
+import $flyio from 'plugins/ajax'
 
 let getTaskService = {
   // 返回待处理列表

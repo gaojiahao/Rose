@@ -49,11 +49,11 @@
   // 请求 引入
   import {getSOList} from 'service/detailService'
   import {getAllGroup, getAllRoleInfo} from 'service/hr/employeeService'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask, getDictByType} from 'service/commonService'
+  import {submitAndCalc, saveAndStartWf, saveAndCommitTask, getDictByType} from 'service/common/commonService'
   // mixins 引入
-  import common from 'components/mixins/applyCommon'
+  import common from 'mixins/applyCommon'
   // 组件引入
-  import RPicker from 'components/RPicker'
+  import RPicker from 'components/public/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopSalesmanList from 'components/Popup/PopSalesmanList'
   // 方法引入
@@ -196,7 +196,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import './../../scss/bizApply.scss';
+  @import '~scss/biz-app/bizApply.scss';
 
   .materiel_list .mater_list .each_mater {
     padding: unset;

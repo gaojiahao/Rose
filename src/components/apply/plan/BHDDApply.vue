@@ -99,16 +99,16 @@
   import {Group, XInput, XTextarea, Datetime} from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, submitAndCalc} from 'service/commonService'
+  import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, submitAndCalc} from 'service/common/commonService'
   // mixins 引入
-  import common from 'components/mixins/applyCommon'
+  import common from 'mixins/applyCommon'
   // 组件引入
   import PopMatterList from 'components/Popup/matter/PopMatterList'
   import PopMatter from 'components/apply/commonPart/MatterPop'
-  import RPicker from 'components/RPicker'
+  import RPicker from 'components/public/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
-  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
+  import {accAdd, accMul} from 'plugins/calc/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
 
   const DRAFT_KEY = 'BHDD_DATA';
@@ -374,7 +374,7 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
 
   .mater_other {
     .current_num {

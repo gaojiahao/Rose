@@ -44,11 +44,11 @@
 import { Icon, XTextarea, dateFormat } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { updateData, submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
+import { updateData, submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/common/commonService'
 // mixins 引入
-import ApplyCommon from 'pageMixins/applyCommon'
+import ApplyCommon from 'mixins/applyCommon'
 // 组件引入
-import RPicker from 'components/RPicker'
+import RPicker from 'components/public/RPicker'
 import OpButton from 'components/apply/commonPart/OpButton'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
@@ -321,7 +321,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import './../../scss/bizApply';
+@import '~scss/biz-app/bizApply';
 .price {
   font-size: .12rem;
   & + .price {

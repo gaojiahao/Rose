@@ -49,7 +49,7 @@ import {Cell, Group } from 'vux'
 // 请求 引入
 import {findProjectPlan} from 'service/projectService'
 // mixins 引入
-import detailCommon from 'components/mixins/detailCommon'
+import detailCommon from 'mixins/detailCommon'
 export default {
   data() {
     return {
@@ -89,6 +89,6 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizDetail';
+  @import '~scss/biz-app/bizDetail';
 </style>
 

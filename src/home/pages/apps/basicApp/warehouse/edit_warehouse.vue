@@ -66,15 +66,15 @@
 </template>
 <script>
 import {TransferDom, Picker, Popup, Group, XAddress, ChinaAddressV4Data, Icon, Cell, Datetime} from 'vux';
-import {getBaseInfoDataBase, getFormConfig, requestData, getFormViews} from 'service/commonService';
+import {getBaseInfoDataBase, getFormConfig, requestData, getFormViews} from 'service/common/commonService';
 import {save, update, getwarehouseInfo, getDepartMentWage} from 'service/warehouseService'
-import {getDictByType, getObjDealerByLabelName} from 'service/commonService'
-import RPicker from 'components/basicPicker';
-import RScroll from 'components/RScroll'
+import {getDictByType, getObjDealerByLabelName} from 'service/common/commonService'
+import RPicker from 'components/public/basicPicker';
+import RScroll from 'plugins/scroll/RScroll'
 import common from 'mixins/common'
-import UploadImage from 'components/UploadImage'
+import UploadImage from 'components/upload/UploadImage'
 import PopWarelabeList from 'components/Popup/PopWarelabelList'
-import duplicateComponent from '../../../components/duplication'
+import duplicateComponent from 'homePage/components/basis-object/duplication'
 import { setTimeout } from 'timers';
 export default {
   data() {
@@ -621,7 +621,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '../../../scss/basicApp.scss';
+@import '~homePage/scss/basicApp.scss';
   .warehouse-page{
     background-color: #F6F6F6;
   }

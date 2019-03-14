@@ -37,7 +37,7 @@
 </template>
 
 <script>
-  import listCommon from 'pageMixins/bizListCommon'
+  import listCommon from 'mixins/bizListCommon'
   import {getJobList} from 'service//Directorys/jobService'
 
   export default {
@@ -205,7 +205,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import "./../../scss/bizList.scss";
+  @import "~scss/biz-app/bizList.scss";
   @import '~@/scss/color';
 
   /* 没有新增 */

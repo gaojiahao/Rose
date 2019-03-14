@@ -72,7 +72,7 @@
 
 <script>
   import {XInput, numberComma, Popup} from 'vux'
-  import RScroll from 'components/RScroll'
+  import RScroll from 'plugins/scroll/RScroll'
   import {toFixed} from '@/plugins/calc'
 
   export default {

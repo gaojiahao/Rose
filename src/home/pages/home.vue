@@ -45,11 +45,9 @@ import homeService from 'service/homeservice'
 import { getMsgList } from 'service/msgService'
 // 映射表引入
 import basicMap from './maps/basic'
-import Apps from './maps/businessApp'
-import AppsFile from './maps/businessFile'
 // 组件引入
-import busApp from 'components/home/busAppList'        // 业务应用
-import basicApp from 'components/home/basicApp'        // 基础应用
+import busApp from 'homePage/components/home-related/busAppList'        // 业务应用
+import basicApp from 'homePage/components/home-related/basicApp'        // 基础应用
 // 插件引入
 import Bscroll from 'better-scroll'
 export default {

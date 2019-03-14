@@ -48,8 +48,8 @@
 <script>
   import {Icon, Popup, TransferDom, LoadMore} from 'vux'
   import { getObjFacility} from 'service/Product/gdService'
-  import RScroll from 'components/RScroll'
-  import DSearch from 'components/search'
+  import RScroll from 'plugins/scroll/RScroll'
+  import DSearch from 'components/search/search'
 
   export default {
     name: "PopCompanyList",

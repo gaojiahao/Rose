@@ -23,15 +23,15 @@
 <script>
 // 请求 引入
 import { isMyflow, getSOList, getWorkFlow, getListId } from 'service/detailService'
-import { commitTask, saveAndCommitTask } from 'service/commonService'
+import { commitTask, saveAndCommitTask } from 'service/common/commonService'
 // mixins 引入
-import common from 'components/mixins/detailCommon'
+import common from 'mixins/detailCommon'
 // 组件 引入
-import RAction from 'components/RAction'
-import workFlow from 'components/workFlow'
+import RAction from 'components/public/RAction'
+import workFlow from 'components/public/workFlow'
 import MatterList from 'components/detail/commonPart/MatterList'
 //公共方法引入
-import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd'
+import {accAdd,accMul} from 'plugins/calc/decimalsAdd'
 export default {
   data() {
     return {
@@ -95,5 +95,5 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizDetail';
+  @import '~scss/biz-app/bizDetail';
 </style>

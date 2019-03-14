@@ -62,15 +62,15 @@
     XInput, XTextarea
   } from 'vux'
   // 请求 引入
-  import { saveAndStartWf, saveAndCommitTask, submitAndCalc } from 'service/commonService'
+  import { saveAndStartWf, saveAndCommitTask, submitAndCalc } from 'service/common/commonService'
   // mixins 引入
-  import Applycommon from 'components/mixins/applyCommon'
+  import Applycommon from 'mixins/applyCommon'
   // 组件引入
   import PopManagerList from 'components/Popup/PopManagerList'
   import PopWorkList from 'components/Popup/workList/PopWorkList'
   import PopWorkGdbllList from 'components/Popup/workList/PopWorkGDBLLList'
   import PopProjectList from 'components/Popup/PopProjectList'
-  import RPicker from 'components/RPicker'
+  import RPicker from 'components/public/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 
   const DRAFT_KEY = 'GDBLL_DATA';
@@ -225,7 +225,7 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
   @import '~@/scss/color';
 
   .gdrw-apply-container {

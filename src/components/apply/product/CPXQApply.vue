@@ -57,7 +57,7 @@
 <script>
   // vux 引入
   import { Group, Popup, XInput, XTextarea, Datetime } from 'vux'
-  import RPicker from 'components/basicPicker'
+  import RPicker from 'components/public/basicPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopDealerList from 'components/Popup/PopDealerList'
   import OpButton from 'components/apply/commonPart/OpButton'
@@ -68,10 +68,10 @@
     saveAndStartWf,
     saveAndCommitTask,
     requestData
-  } from 'service/commonService'
+  } from 'service/common/commonService'
   import { getSOList } from 'service/detailService'
   // mixins 引入
-  import ApplyCommon from 'pageMixins/applyCommon'
+  import ApplyCommon from 'mixins/applyCommon'
   const DRAFT_KEY = 'CPXQ_DATA';
   export default {
     name: 'ApplyCPXQForm',
@@ -295,7 +295,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import './../../scss/bizApply.scss';
+  @import '~scss/biz-app/bizApply.scss';
   .materiel_list {
     background: #fff;
     padding: 0 .15rem;

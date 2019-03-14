@@ -87,11 +87,11 @@
   } from 'vux'
   // 请求 引入
   import { getSOList } from 'service/detailService'
-  import { submitAndCalc, saveAndStartWf, saveAndCommitTask, getDictByType, updateData } from 'service/commonService'
+  import { submitAndCalc, saveAndStartWf, saveAndCommitTask, getDictByType, updateData } from 'service/common/commonService'
   // mixins 引入
-  import common from 'components/mixins/applyCommon'
+  import common from 'mixins/applyCommon'
   // 组件引入
-  import RPicker from 'components/RPicker'
+  import RPicker from 'components/public/RPicker'
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopSalesmanList from 'components/Popup/PopSalesmanList'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
@@ -364,7 +364,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import './../../scss/bizApply.scss';
+  @import '~scss/biz-app/bizApply.scss';
   .materiel_list .mater_list .each_mater {
     padding: unset;
   }

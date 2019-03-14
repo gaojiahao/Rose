@@ -47,9 +47,9 @@
 <script>
 import { Icon, Popup, LoadMore } from 'vux'
 import { getObjFacility, getWorkOrderTask , getTaskWorkList } from 'service/Product/gdService'
-import RScroll from 'components/RScroll'
-import MSearch from 'components/search'
-import {accAdd} from '@/home/pages/maps/decimalsAdd'
+import RScroll from 'plugins/scroll/RScroll'
+import MSearch from 'components/search/search'
+import {accAdd} from 'plugins/calc/decimalsAdd'
   export default {
     name: "work-list-pop",
     props: {

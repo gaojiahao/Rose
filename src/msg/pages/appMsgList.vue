@@ -60,8 +60,8 @@ import { isMyflow } from 'service/detailService'
 import { getAllMsgList } from 'service/msgService'
 import { getWorkFlow } from 'service/detailService'
 // 组件引入
-import search from 'components/search'
-import RScroll from 'components/RScroll'
+import search from 'components/search/search'
+import RScroll from 'plugins/scroll/RScroll'
 
 export default {
   data(){

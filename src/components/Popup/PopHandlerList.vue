@@ -34,10 +34,10 @@
 // vux 引入
 import {Popup, TransferDom, LoadMore} from 'vux'
 // 请求 引入
-import {listUsers, requestData} from 'service/commonService'
+import {listUsers, requestData} from 'service/common/commonService'
 // 组件 引入
-import RScroll from 'components/RScroll'
-import DSearch from 'components/search'
+import RScroll from 'plugins/scroll/RScroll'
+import DSearch from 'components/search/search'
 export default {
   name: 'handlerPop',
   props: {

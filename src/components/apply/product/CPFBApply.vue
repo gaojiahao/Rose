@@ -57,7 +57,7 @@
 <script>
   // vux 引入
   import { Group, XInput, XTextarea, PopupPicker } from 'vux'
-  import RPicker from 'components/RPicker';
+  import RPicker from 'components/public/RPicker';
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopDealerList from 'components/Popup/PopDealerList'
   // 请求 引入
@@ -67,10 +67,10 @@
     saveAndStartWf,
     saveAndCommitTask,
     getDictByType,
-  } from 'service/commonService'
+  } from 'service/common/commonService'
   import {getSOList} from 'service/detailService'
   // mixins 引入
-  import ApplyCommon from 'pageMixins/applyCommon'
+  import ApplyCommon from 'mixins/applyCommon'
   const DRAFT_KEY = 'CPFB_DATA';
   export default {
     name: 'ApplyCPFBForm',
@@ -272,7 +272,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import './../../scss/bizApply.scss';
+  @import '~scss/biz-app/bizApply.scss';
   .materiel_list .mater_list .each_mater {
     padding: unset;
   }

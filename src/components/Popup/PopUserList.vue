@@ -29,9 +29,9 @@
 
 <script>
   import {Icon, Popup} from 'vux'
-  import {getUserList} from 'service/commonService'
-  import RScroll from 'components/RScroll'
-  import RSearch from 'components/search'
+  import {getUserList} from 'service/common/commonService'
+  import RScroll from 'plugins/scroll/RScroll'
+  import RSearch from 'components/search/search'
 
   export default {
     name: "PopUserList",

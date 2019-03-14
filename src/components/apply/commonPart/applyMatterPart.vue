@@ -85,7 +85,7 @@
 
 <script>
 // 组件引入
-import RNumber from 'components/RNumber'
+import RNumber from 'components/public/RNumber'
 import PopMatter from 'components/apply/commonPart/MatterPop'
 import PopMatterList from 'components/Popup/matter/PopMatterList'
 import MatterItem from 'components/apply/commonPart/MatterItem'

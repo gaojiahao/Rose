@@ -34,13 +34,13 @@
   // 请求 引入
   import {getSOList} from 'service/detailService'
   // mixins 引入
-  import detailCommon from 'components/mixins/detailCommon'
+  import detailCommon from 'mixins/detailCommon'
   // 组件引入
-  import RAction from 'components/RAction'
-  import workFlow from 'components/workFlow'
+  import RAction from 'components/public/RAction'
+  import workFlow from 'components/public/workFlow'
   import contactPart from 'components/detail/commonPart/ContactPart'
   //公共方法引入
-  import {accAdd, accSub} from '@/home/pages/maps/decimalsAdd'
+  import {accAdd, accSub} from 'plugins/calc/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
 
   export default {
@@ -85,7 +85,7 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizDetail';
+  @import '~scss/biz-app/bizDetail';
   .comment{
     margin: .1rem;
     padding: 0 .1rem;

@@ -117,20 +117,20 @@
   import {Popup, TransferDom, Group, Cell, numberComma, Datetime, XInput, XTextarea} from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc} from 'service/commonService'
+  import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc} from 'service/common/commonService'
   // mixins 引入
-  import common from 'components/mixins/applyCommon'
+  import common from 'mixins/applyCommon'
   // 组件引入
-  import RNumber from 'components/RNumber'
+  import RNumber from 'components/public/RNumber'
   import PopMatterList from 'components/Popup/matter/PopMatterList'
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
   import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
   import PopMatter from 'components/apply/commonPart/MatterPop'
-  import RPicker from 'components/RPicker'
+  import RPicker from 'components/public/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
-  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
+  import {accAdd, accMul} from 'plugins/calc/decimalsAdd'
 
   const DRAFT_KEY = 'XSDDYC_DATA';
 
@@ -460,7 +460,7 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
 
   .vux-1px-b:after,
   .vux-1px-t:before {

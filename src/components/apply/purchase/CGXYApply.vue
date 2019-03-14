@@ -43,9 +43,9 @@
 import { XTextarea, dateFormat } from 'vux'
 // 请求 引入
 import { getSOList} from 'service/detailService'
-import { updateData, submitAndCalc, saveAndCommitTask } from 'service/commonService'
+import { updateData, submitAndCalc, saveAndCommitTask } from 'service/common/commonService'
 // mixins 引入
-import common from 'components/mixins/applyCommon'
+import common from 'mixins/applyCommon'
 // 组件引入
 import PopDealerList from 'components/Popup/PopDealerList'
 import OpButton from 'components/apply/commonPart/OpButton'
@@ -53,7 +53,7 @@ import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
 import ApplyMatterPart from 'components/apply/commonPart/applyMatterPart'
 // 方法引入
-import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
+import {accAdd, accMul} from 'plugins/calc/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
 const DRAFT_KEY = 'CGXY_DATA';
 
@@ -371,6 +371,6 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizApply';
+  @import '~scss/biz-app/bizApply';
 </style>
 

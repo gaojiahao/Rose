@@ -68,9 +68,9 @@
 <script>
 import { dateFormat } from 'vux'
 import dealerService from 'service/dealerService'
-import { getFormConfig, getFormViews } from 'service/commonService'
-import RScroll from 'components/RScroll'
-import FormCell from 'components/detail/commonPart/FormCell'
+import { getFormConfig, getFormViews } from 'service/common/commonService'
+import RScroll from 'plugins/scroll/RScroll'
+import FormCell from 'components/detail/commonPart/form-part/FormCell'
 export default {
   filters: {
     dateFormat,

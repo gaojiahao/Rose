@@ -9,8 +9,6 @@
 // export const agentid = '1000036'; // 企业应用的id
 // export const redirect_uri = 'http%3A%2F%2Fcpacn2012.3322.org%3A1174%2FHermes%2Fhome'; // 首页路径
 
-
-
 // 172 Roletask （开发自用）
 // export const corpid = 'ww3c1aa17c16e380b7'; // 企业id
 // export const secret = 'E7XH-mR0hJ5R27xFpIxAu8a6isDolgwpcPD3WN3ZIBs'; // 应用凭证

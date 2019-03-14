@@ -74,8 +74,8 @@
 </template>
 
 <script>
-  import {getList} from 'service/commonService'
-  import listCommon from 'pageMixins/bizListCommon'
+  import {getList} from 'service/common/commonService'
+  import listCommon from 'mixins/bizListCommon'
 
   export default {
     data() {

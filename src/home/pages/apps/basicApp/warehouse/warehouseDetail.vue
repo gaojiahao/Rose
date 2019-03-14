@@ -69,8 +69,8 @@
 <script>
 import { dateFormat } from 'vux'
 import {getwarehouseInfo, getDepartMentWage} from 'service/warehouseService'
-import {getObjDealerByLabelName, getFormConfig, requestData, getFormViews} from 'service/commonService'
-import RScroll from 'components/RScroll'
+import {getObjDealerByLabelName, getFormConfig, requestData, getFormViews} from 'service/common/commonService'
+import RScroll from 'plugins/scroll/RScroll'
 export default {
   filters: {
     dateFormat,

@@ -34,10 +34,10 @@ import {dateFormat} from 'vux'
 import {getAppDetail} from 'service/app-basic/appSettingService'
 import homeService from 'service/homeservice'
 //组件引入
-import RScroll from 'components/RScroll'
-import ChangeLog from 'components/appDetail/ChangeLog'
-import AdminComment from 'components/appDetail/AdminComment'
-import OtherComment from 'components/appDetail/OtherComment'
+import RScroll from 'plugins/scroll/RScroll'
+import ChangeLog from 'homePage/components/app-detail/ChangeLog'
+import AdminComment from 'homePage/components/app-detail/AdminComment'
+import OtherComment from 'homePage/components/app-detail/OtherComment'
 export default {
   data(){
     return {

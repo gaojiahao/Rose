@@ -64,18 +64,18 @@
   import { XTextarea, numberComma, dateFormat} from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask, getDictByType, updateData} from 'service/commonService'
+  import {submitAndCalc, saveAndStartWf, saveAndCommitTask, getDictByType, updateData} from 'service/common/commonService'
   import {getEmployeeBal} from 'service/costService'
   // mixins 引入
-  import common from 'components/mixins/applyCommon'
+  import common from 'mixins/applyCommon'
   // 组件引入
-  import RPicker from 'components/basicPicker'
+  import RPicker from 'components/public/basicPicker'
   import PopFundList from 'components/Popup/PopFundList'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import OpButton from 'components/apply/commonPart/OpButton'
   // 方法引入
   import {toFixed} from '@/plugins/calc'
-  import {accAdd} from '@/home/pages/maps/decimalsAdd'
+  import {accAdd} from 'plugins/calc/decimalsAdd'
 
   const DRAFT_KEY = 'JKYBYJ_DATA';
 
@@ -341,7 +341,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import './../../scss/bizApply.scss';
+  @import '~scss/biz-app/bizApply.scss';
   /* .btn-no-amt .btn-item.stop{
     flex: 0.5;
   } */
