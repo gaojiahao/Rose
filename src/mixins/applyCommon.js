@@ -61,23 +61,23 @@ export default {
       selItems: [],                               // 选中的要删除的物料
       handleORG: [],                              // 经办组织
       filterList: [],                             // 筛选字段清单
-      attachment : [],
+      fundConfig: [],                             // 借款与备用金 配置
+      attachment : [],                            // 附件
       otherConfig: [],                            // 表单 <其他部分> 配置 （非往来、物料等部分都放置于此）
       dealerConfig: [],                           // 表单 <往来> 配置
       userRoleList: [],                           // 经办职位
       currentStage: [],                           // 流程状态
       matterPopConfig: [],                        // 物料列表pop配置
       baseinfoExtConfig: [],                      // baseinfoExt配置
-      fundConfig: [],
       submitMatterField: [],                      // 物料要提交的字段
       modifyIndex: null,                          // 选中编辑物料的pop
-      fillBscroll: null,
+      fillBscroll: null,                          // 页面滑动 实例
       isModify: false,                            // 是否为修改页面
-      btnIsHide : false,
-      isResubmit: false,
+      btnIsHide : false,                          // 底部按钮是否显示
+      isResubmit: false,                          // 是否为重新提交
       showMatterPop :false,                       // 编辑物料的pop
-      showMaterielPop: false,
-      matterModifyClass : false,
+      showMaterielPop: false,                     // 是否显示物料列表的pop
+      matterModifyClass : false,                  // 删除状态
     }
   },
   components: {
