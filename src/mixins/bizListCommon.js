@@ -84,7 +84,7 @@ export default {
   components: {
     Tab, Icon, TabItem,
     RSort, RTab, RScroll, searchIcon,
-    addBtn, justWordItem, materListItem
+    addBtn, materListItem
   },
   methods: {
     goDetail (item, index) {
