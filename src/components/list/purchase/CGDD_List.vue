@@ -21,16 +21,6 @@
 <script>
   import listCommon from 'mixins/bizListCommon'
   export default {
-    data() {
-      return {
-        listStatus: [
-          {name: '全部', status: ''},
-          {name: '已生效', status: '已生效'},
-          {name: '进行中', status: '进行中'}
-        ],
-        listViewID: 2538,
-      }
-    },
     mixins: [listCommon]
   }
 </script>

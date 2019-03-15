@@ -602,17 +602,17 @@ export default {
 
         // 由于往来组件已经单独定义 此处需要过滤部分字段
         let dealerFilter = [
-              'dealerDebit', 
-              'drDealerLabel', 
-              'crDealerLabel', 
-              'dealerCodeCredit', 
-              'address_dealerDebit', 
-              'dealerName_dealerDebit',
-              'address_dealerCodeCredit', 
-              'dealerDebitContactPersonName',
-              'dealerDebitContactInformation',
-              'dealerCreditContactPersonName', 
-              'dealerCreditContactInformation'
+          'dealerDebit', 
+          'drDealerLabel', 
+          'crDealerLabel', 
+          'dealerCodeCredit', 
+          'address_dealerDebit', 
+          'dealerName_dealerDebit',
+          'address_dealerCodeCredit', 
+          'dealerDebitContactPersonName',
+          'dealerDebitContactInformation',
+          'dealerCreditContactPersonName', 
+          'dealerCreditContactInformation'
         ];
         // 处理往来配置里面的接口请求
         let blankDealerConfig = [];
@@ -968,17 +968,6 @@ export default {
         this.relationKey = relationKey;
         this.getRelationData();
       }
-      // 调用 wx-js-sdk
-      wx.ready(() => {
-        // 分享
-        let shareInfo = {
-          title: `创建新的${name}`,
-          desc: `点击创建新的${name}订单`,
-          imgUrl: 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2952407151,1992384149&fm=26&gp=0.jpg'
-          // imgUrl: `http://${document.domain}/dist/resources/images/icon/goods-sales-contract.png`
-        }
-        shareContent(shareInfo);
-      })
     })()
   },
   mounted() {

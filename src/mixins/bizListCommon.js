@@ -1,22 +1,21 @@
-// vux组件引入
-import { Tab, Icon, TabItem, numberComma, dateFormat } from 'vux'
-// 公共请求引入
+// vux 引入
+import { dateFormat, numberComma } from 'vux'
+// 请求 引入
 import { isMyflow } from 'service/detailService'
-import {getAppDetail} from 'service/app-basic/appSettingService'
+import { getAppDetail } from 'service/app-basic/appSettingService'
 import { getSellOrderList } from 'service/listService'
-// 公共组装引入
+// 组件 引入
 import RScroll from 'plugins/scroll/RScroll'
 import searchIcon from 'components/search/search'
-import RSort from 'components/list/commonPart/RSort'
 import RTab from 'components/list/commonPart/RTab'
-import addBtn from 'components/list/commonPart/addBtn'    // 不包含物料的列表组件
-import materListItem from 'components/list/commonPart/materListItem'  // 包含物料的列表组件
-// 第三方插件引入
+import RSort from 'components/list/commonPart/RSort'
+import addBtn from 'components/list/commonPart/addBtn'
+import materListItem from 'components/list/commonPart/materListItem'
+// 插件 引入
 import { toFixed } from '@/plugins/calc'
 import { accAdd, accMul } from 'plugins/calc/decimalsAdd'
-/* 引入微信相关 */
+// 微信 JS-SDK
 import { register } from 'plugins/wx'
-import { shareContent } from 'plugins/wx/api'
 export default {
   props: {
     refreshRequest: {
@@ -27,36 +26,15 @@ export default {
   data () {
     return {
       page: 1,
+      count: 0,
       limit: 20,
       hasNext: true,
+      activeIndex: 0,
       scrollOptions: {
         click: true,
-        pullDownRefresh: true,
         pullUpLoad: true,
+        pullDownRefresh: true,
       },
-      listStatus: [
-        { 
-          name: '全部', 
-          status: '' 
-        }, 
-        { 
-          name: '已生效', 
-          status: '已生效' 
-        }, 
-        { 
-          name: '进行中', 
-          status: '进行中'
-        }
-      ],
-      activeIndex: 0,
-      serachVal: '',
-      listData: [],
-      activeTab: '',
-      count: 0,
-      total: null, //列表数据总量
-      applyCode: '',
-      clickVisited: false, // 判断是否点击过其它列表项
-      filterProperty: '', // 过滤的key
       filterList: [ // 过滤列表
         {
           name: '交易号',
@@ -72,6 +50,13 @@ export default {
           value: 'dealerName_dealerDebit',
         },
       ],
+      serachVal: '',
+      activeTab: '',
+      listData: [],
+      total: null, //列表数据总量
+      applyCode: '',
+      clickVisited: false, // 判断是否点击过其它列表项
+      filterProperty: '', // 过滤的key
       sort: [],
       timeFilter: {
         startDate: '',
@@ -82,9 +67,8 @@ export default {
     }
   },
   components: {
-    Tab, Icon, TabItem,
-    RSort, RTab, RScroll, searchIcon,
-    addBtn, materListItem
+    RTab, RSort, RScroll, 
+    addBtn, searchIcon, materListItem
   },
   methods: {
     goDetail (item, index) {

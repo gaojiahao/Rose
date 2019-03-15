@@ -1,78 +1,84 @@
-import { isMyflow, getListById, getListId, getWorkFlow, currentUser, getFromStatus, getAppExampleDetails } from 'service/detailService'
+// 请求 引入
+import { 
+  isMyflow, 
+  getListId, 
+  getListById, 
+  getWorkFlow, 
+  currentUser, 
+  getFromStatus, 
+  getAppExampleDetails 
+} from 'service/detailService'
 import { isSubscribeByRelationKey } from 'service/commentService'
 import { getAppDetail, getPCCommentList } from 'service/app-basic/appSettingService'
-import { saveAndCommitTask, getFormConfig, getFormViews } from 'service/common/commonService'
+import { getFormViews, getFormConfig, saveAndCommitTask } from 'service/common/commonService'
+// vux 引入
 import { numberComma } from 'vux'
-// 组件引入
+// 组件 引入
 import BasicInfo from 'components/detail/commonPart/BasicInfo'
-import FormCell from 'components/detail/commonPart/form-part/FormCell'
-import UploadFile from 'components/upload/UploadFile'
-import MatterList from 'components/detail/commonPart/MatterList'
-import PopMatterDetail from 'components/Popup/matter/PopMatterDetail'
-import PriceTotal from 'components/detail/commonPart/PriceTotal'
 import OtherPart from 'components/detail/commonPart/OtherPart'
-//公共方法引入
-import { accAdd } from 'plugins/calc/decimalsAdd'
+import MatterList from 'components/detail/commonPart/MatterList'
+import PriceTotal from 'components/detail/commonPart/PriceTotal'
+import PopMatterDetail from 'components/Popup/matter/PopMatterDetail'
+import FormCell from 'components/detail/commonPart/form-part/FormCell'
+// 插件 引入
 import { toFixed } from '@/plugins/calc'
 import platfrom from '@/plugins/platform/index'
-/* 引入微信相关 */
+import { accAdd } from 'plugins/calc/decimalsAdd'
+// 企业微信 JS-SDK 引入
 import { register } from 'plugins/wx'
-import { shareContent } from 'plugins/wx/api'
 
 export default {
   components: {
-    FormCell, BasicInfo, UploadFile, MatterList, PopMatterDetail, PriceTotal, OtherPart,
+    FormCell, OtherPart, BasicInfo, 
+    MatterList, PriceTotal, PopMatterDetail, 
   },
   data() {
     return {
-      clientHeight: document.documentElement.clientHeight,
+      matterDetailIndex: 0,
       orderTitle: '所属订单', // 物料交易号名称
+      clientHeight: document.documentElement.clientHeight,
       uploadStyle: { //附件容器样式
         width: '100%',
-        padding: '0.06rem 0.08rem'
+        padding: '.06rem .08rem'
       },
       uploadTitleStyle: {
-        fontSize: '0.16rem',
+        color: '#111',
+        fontSize: '.16rem',
         fontWeight: 'bold',
-        color: '#111'
       },
       taskId: '',
       listId: '',
       userId: '',
-      comment: '',//审批意见
+      comment: '',                        // 审批意见
       userName: '',
       transCode: '',
-      formViewUniqueId: '',
-      isMine: false, // 是否为我创建
-      isMyTask: false,
-      noOperation: true, // 是否审批过
-      cancelStatus: false,
-      HasValRealted: false, //相关实例是否有值为0
-      cancelStatus1: false,
-      showMatterDetail: false, // 是否展示物料详情弹窗
-      action: {}, // 表单允许的操作
-      orderList: {},
-      hasUpdate: {}, //
-      orderInfo: {}, // 表单内容
-      currentWL: {}, // 当前工作流
-      matterDetail: {}, // 选中物料的详细信息
-      matterDetailIndex: 0,
+      formStatus: '',                     // 当前表单的状态
+      currenrForm: '',                    // 当前表单类型
       matterDetailKey: '',
-      workFlowInfo: {},
-      fullWL: [], // 完整工作流
-      actions: [],
-      attachment: [],
-      matterList: [],
-      dealerConfig: [],
-      matterConfig: [], // 用于存放非物料的重复项配置
-      otherConfig: [], // 用于存放非往来，仓库的单一项配置
-      baseinfoExtConfig: [],
-      fundConfig: [],
-      btnIsHide: false,
-      submitMatterField: [], // 审批时要提交的物料字段
-      hasReviseView: false, // 当前应用表单状态是否含有修改
-      currenrForm: '', //当前表单类型
-      formStatus: '', // 当前表单的状态
+      formViewUniqueId: '',
+      action: {},                         // 表单允许的操作
+      orderList: {},                      // 按订单划分的物料列表
+      orderInfo: {},                      // 表单内容
+      currentWL: {},                      // 当前工作流
+      matterDetail: {},                   // 选中物料的详细信息
+      workFlowInfo: {},                   // 工作流 相关信息
+      fullWL: [],                         // 完整工作流
+      actions: [],                        // 审批动作（修改、提交、拒绝等）
+      attachment: [],                     // 附件
+      matterList: [],                     // 物料列表
+      fundConfig: [],                     // 借款与备用金 相关配置
+      otherConfig: [],                    // 用于存放非往来，仓库的单一项配置
+      dealerConfig: [],                   // 往来 相关配置
+      matterConfig: [],                   // 物料相关配置
+      baseinfoExtConfig: [],              // baseinfoExt相关配置（此处可能会存放*往来相关配置*）
+      submitMatterField: [],              // 审批时要提交的物料字段
+      isMine: false,                      // 是否 为我创建
+      isMyTask: false,                    // 是否 为我的审批节点
+      btnIsHide: false,                   // 针对Android端优化 是否显示底部按钮
+      noOperation: true,                  // 是否审批过
+      hasReviseView: false,               // 当前表单是否可以修改
+      HasValRealted: false,               // 相关实例是否有值为0
+      showMatterDetail: false,            // 是否展示物料详情弹窗
     }
   },
   computed: {
@@ -97,10 +103,7 @@ export default {
       return total;
     },
   },
-  filters: {
-    numberComma,
-    toFixed,
-  },
+  filters: { toFixed, numberComma },
   methods: {
     //跳转到相关实例
     getSwiper() {
@@ -134,29 +137,28 @@ export default {
       });
     },
     // 获取当前应用是否有修改按钮
-    getAction(){
-      return getListById({uniqueId: this.listId}).then(data => {
-        let config = data[0];
-        // 当前表单状态为已生效，表单类型包含修改，当前表单状态不为修改，操作按钮包含修改时
-        if (this.formStatus === '已生效' && this.currenrForm !== 'revise' && this.hasReviseView && config.action.update){
+    getAction() {
+      return getListById({ uniqueId: this.listId }).then(data => {
+        let [ config = {} ] = data;
+        // 判断 审批动作是否应该包含 *修改*
+        if (this.formStatus === '已生效' && this.currenrForm !== 'revise' && this.hasReviseView && config.action.update) {
           this.actions.push('update')
         }
       })
     },
-    // 获取当前应用所有表单类型
-    getFormViews(){
+    // 获取 当前应用所有表单视图
+    getFormViews() {
       return getFormViews(this.listId).then(data => {
-        data.forEach(item => {
+        for (let item of data) {
           if (item.viewType === 'revise') {
             this.hasReviseView = true;
-            return false;
+            break;
           }
-        })
-
+        }
       })
     },
-    // 获取当前表单的状态
-    getFromStatus(){
+    // 获取 当前表单的状态
+    getFromStatus() {
       return getFromStatus({transCode: this.transCode}).then(({tableContent = []}) => {
         this.formStatus = tableContent[0].status;
       })
@@ -263,7 +265,7 @@ export default {
       }).then(data => {
         let relatedApply = data.relevantItems;
         relatedApply.forEach(item => {
-          let {folder, fileName} = this.$route.params;
+          let { fileName } = this.$route.params;
           if (fileName) {
             this.HasValRealted = true;
           }
@@ -374,34 +376,51 @@ export default {
     // 请求配置
     getFormConfig() {
       return getFormConfig(this.formViewUniqueId).then(data => {
+        // 获取当前表单状态
         this.currenrForm = data.viewType;
+        
         let {config = [], dataSource = '[]', reconfig = {}} = data;
+
         console.log('config:', config);
-        let ckConfig = [], rkConfig = [], dealerConfig = [], matterConfig = [], otherConfig = [], baseinfoExtConfig = [], fundConfig = [];
+
+        // 声明相关变量
+        let [ 
+          ckConfig,             // 出库 相关配置
+          rkConfig,             // 入库 相关配置
+          fundConfig,           // 借款与备用金 相关配置
+          otherConfig,          // 既不是<往来> 也不是<物料> 统一放置在这里 
+          dealerConfig,         // 往来 相关配置
+          matterConfig,         // 物料 相关配置
+          baseinfoExtConfig     // baseinfoExt相关配置 此处在某些应用也有可能是<往来>的配置
+        ] = [ [], [], [], [], [], [], [],];
+
+        // 由于往来组件已经单独定义 此处需要过滤部分字段
         let dealerFilter = [
-          'dealerName_dealerDebit',
+          'project',
           'drDealerLabel',
+          'crDealerLabel',
+          'dealerCodeCredit',
+          'projectType_project',
           'address_dealerDebit',
+          'dealerName_dealerDebit',
+          'address_dealerCodeCredit',
+          'dealerName_dealerCodeCredit',
           'dealerDebitContactPersonName',
           'dealerDebitContactInformation',
-          'project',
-          'projectType_project',
-          'dealerName_dealerCodeCredit',
-          'dealerCodeCredit',
-          'crDealerLabel',
-          'address_dealerCodeCredit',
           'dealerCreditContactPersonName',
           'dealerCreditContactInformation',
         ];
+        // 由于物料组件已经单独定义 此处需要过滤部分字段
         let matterFilter = [
-          'inventoryName_transObjCode',
           'transObjCode',
           'tdProcessing',
+          'outPutMatCode',
+          'inventoryName_transObjCode',
           'specification_transObjCode',
           'inventoryName_outPutMatCode',
-          'outPutMatCode',
           'specification_outPutMatCode',
         ];
+
         let orderInfo = this.orderInfo;
         let [matterData = {}] = JSON.parse(dataSource);
         let matterSource = matterData.dataSource && JSON.parse(matterData.dataSource.source) || {};
@@ -422,6 +441,7 @@ export default {
             });
           }
           if (!item.hiddenInRun && !item.isMultiple) {
+            // 往来 相关配置
             if (item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt' || item.name === 'gys') {
               dealerConfig = [...dealerConfig, ...item.items]
             }
@@ -437,10 +457,14 @@ export default {
               rkConfig = item.items;
               this.setWarehouseConfg(rkConfig, '入库');
             }
-            if (item.name === 'pb' || item.name === 'outPut' || item.name === 'projectApproval' || item.name === 'jobLog' || item.name === 'projectPlanTask'){
+            // 既不是<往来> 也不是<物料> 相关配置
+            if (item.name === 'pb' || item.name === 'outPut' || item.name === 'projectApproval' || item.name === 'jobLog' || item.name === 'projectPlanTask') {
               otherConfig = item.items;
             }
-            // baseInfoExt的配置 目前用于费用报销中的项目
+            /**
+             * baseInfoExt的配置 目前用于费用报销中的项目
+             * 注意 此处针对baseinfoExtConfig的处理与<applyCommon.js>相比 因为业务原因所以略有不同 
+             */
             if (item.name === 'baseinfoExt') {
               baseinfoExtConfig = item.items;
             }
@@ -463,7 +487,9 @@ export default {
             }
           }
         });
+        // 判断往来是否展示 预收款 和 预收到期日
         this.judgeDealerConfig && this.judgeDealerConfig(dealerConfig);
+
         // 处理<往来配置>里面的渲染字段
         dealerConfig = dealerConfig.reduce((arr, item) => {
           if (!item.hiddenInRun && !dealerFilter.includes(item.fieldCode)) {
@@ -473,6 +499,7 @@ export default {
           return arr;
         }, []);
         this.dealerConfig = dealerConfig;
+
         // 物料相关配置
         matterConfig = matterConfig.reduce((arr, item, index) => {
           // 匹配 *映射表字段*
@@ -490,7 +517,7 @@ export default {
             this.orderTitle = item.text;
             hideOrderTitle = hasDataIndexMap && !(key && matchedCol && !matchedCol.h);
           }
-          if (matterCols.length){
+          if (matterCols.length) {
             if (!item.hidden && !matterFilter.includes(item.fieldCode) && needShow) {
               arr.push(item);
             }
@@ -504,6 +531,7 @@ export default {
         }, []);
         this.matterConfig = matterConfig;
         this.submitMatterField = submitMatterField;
+
         if (Object.values(this.orderList).length) {
           listData = Object.values(this.orderList).reduce((arr, item) => {
             return [...arr, ...item]
@@ -530,7 +558,8 @@ export default {
           return arr
         }, []);
         this.otherConfig = otherConfig;
-
+        
+        // 此处针对 baseinfoExtConfig 做简单处理
         baseinfoExtConfig = baseinfoExtConfig.reduce((arr, item, index) => {
           if (!item.hiddenInRun) {
             arr.push(item);
@@ -552,8 +581,9 @@ export default {
     setWarehouseConfg(config = [], type = '') {
       let info = { warehouseAction: type, config: []} ;
       for (let item of config) {
+        console.log('item:', item);
         if (!item.hiddenInRun) {
-          item.fieldValue = this.warehouse[item.fieldCode]
+          item.fieldValue = this.warehouse[item.fieldCode] || '';
           info.config.push(item);
         }
       }
