@@ -20,40 +20,25 @@
 </template>
 
 <script>
-  import listCommon from 'mixins/bizListCommon'
-  import financeListItem from 'components/list/commonPart/financeListItem'
-  export default {
-    data() {
-      return {
-        listStatus: [
-          {name: '全部', status: ''},
-          {name: '已生效', status: '已生效'},
-          {name: '进行中', status: '进行中'}
-        ],
-        listViewID: 2482,
-        filterList: [ // 过滤列表
-          {
-            name: '交易号',
-            value: 'transCode',
-          }, {
-            name: '经办人',
-            value: 'handlerName',
-          }
-        ],
-      }
-    },
-    components: {
-      financeListItem
-    },
-    mixins: [listCommon],
-    methods: {
-
-    },
-    created() {
-
+import listCommon from 'mixins/bizListCommon'
+import financeListItem from 'components/list/commonPart/financeListItem'
+export default {
+  mixins: [listCommon],
+  components: { financeListItem },
+  data() {
+    return {
+      filterList: [ // 过滤列表
+        {
+          name: '交易号',
+          value: 'transCode',
+        }, {
+          name: '经办人',
+          value: 'handlerName',
+        }
+      ],
     }
-
-  }
+  },
+}
 </script>
 
 <style lang='scss' scoped>

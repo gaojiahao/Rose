@@ -23,16 +23,6 @@
 <script>
 import listCommon from 'mixins/bizListCommon'
 export default {
-  data() {
-    return {
-      hasNext: true,
-      scrollOptions: {
-        click: true,
-        pullDownRefresh: true,
-        pullUpLoad: true,
-      },
-    }
-  },
   mixins: [listCommon]
 }
 </script>

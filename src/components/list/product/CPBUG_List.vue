@@ -47,65 +47,23 @@
 </template>
 
 <script>
-  import {getAllUsers} from 'service/Directorys/userService'
-  import {getList} from 'service/common/commonService'
-  import listCommon from 'mixins/bizListCommon'
-  // 映射表引入
-  import Apps from '@/home/pages/apps/bizApp/maps/Apps'
-
-  export default {
-    name: 'CPBUG_List',
-    data() {
-      return {
-        listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
-        filterList: [ // 过滤列表
-          {
-            name: '经办人',
-            value: 'handlerName',
-          },{
-            name: '交易号',
-            value: 'transCode',
-          },
-        ],
-        listViewID: 2336
-      }
-    },
-    mixins: [listCommon],
-    methods: {
-      // 页面跳转
-      pathChange(item, index, path) {
-        if (this.clickVisited) {
-          return
-        }
-        // 交易号、应用名称等
-        let { transCode } = item,
-            { name } = this.$route.query,
-            { folder, fileName } = this.$route.params;
-        // 高亮 点击过的数据
-        this.clickVisited = true;
-        item.visited = true;
-        this.$set(this.listData, index, {...item});
-        // 新的路由地址
-        let newPath = `${path}/${folder}/${fileName}`;
-        // 等待动画结束后跳转
-        setTimeout(() => {
-          this.clickVisited = false;
-          this.$router.push({
-            path: newPath,
-            query: { name, transCode }
-          })
-        }, 200)
-      },
-      // 跳转到详情
-      goDetail(item, index) {
-        this.pathChange(item, index, `/detail`);
-      },
-      // 跳转到编辑
-      goUserEdit(item, index) {
-        this.pathChange(item, index, `/fillform`);
-      },
+import listCommon from 'mixins/bizListCommon'
+export default {
+  mixins: [listCommon],
+  data() {
+    return {
+      filterList: [ // 过滤列表
+        {
+          name: '经办人',
+          value: 'handlerName',
+        },{
+          name: '交易号',
+          value: 'transCode',
+        },
+      ],
     }
-  }
+  },
+}
 </script>
 
 <style lang='scss' scoped>

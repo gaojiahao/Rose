@@ -1,10 +1,14 @@
-import { CellFormPreview, Group, Cell,Tab, Icon, TabItem, TransferDom, Popup,dateFormat,numberComma } from 'vux'
-import { getListClassfiy, getView, getViewList } from 'service/kmService'
+// vux 引入
+import { Popup, dateFormat, numberComma, TransferDom } from 'vux'
+// 请求 引入
+import { getView, getViewList, getListClassfiy } from 'service/kmService'
+// 组件引入
 import searchIcon from 'components/search/search'
+// 插件 引入
 import RScroll from 'plugins/scroll/RScroll'
 
-
 export default {
+  components: { Popup, RScroll, searchIcon },
   data() {
     return {
       // 列表scroll参数
@@ -42,11 +46,6 @@ export default {
     }
   },
   directives: { TransferDom },
-  components: {
-    Tab, Icon, Cell,
-    Group, Popup, RScroll,
-    TabItem, searchIcon, CellFormPreview
-  },
   filters: { dateFormat, numberComma },
   methods: {
     // 重置列表条件

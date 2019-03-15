@@ -16,19 +16,14 @@
       </r-scroll>
     </div>
     <add-btn :action="action" :goEdit="goEdit"></add-btn>    
-    <!-- <pop-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" :params="requestParams" :getListMethod="'getWorkStartList'"
-                        :work-type="'启动'" ref="taskWork"></pop-task-work-list> -->
   </div>
 </template>
 
 <script>
 import listCommon from 'mixins/bizListCommon'
-import PopTaskWorkList from 'components/Popup/workList/PopAssignmentTaskWorkList'
 export default {
   data() {
     return {
-      listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
-      listViewID: 2395,
       filterList: [ // 过滤列表
         {
           name: '交易号',
@@ -41,20 +36,9 @@ export default {
           value: 'inventoryName_transObjCode',
         },
       ],
-      popShow: false,
-      requestParams:{
-        calc_rel_code: 8851,
-        view_id: 'view_113',
-      }
     }
   },
-  components: {
-    PopTaskWorkList
-  },
-  mixins: [listCommon],
-  methods:{
-
-  }
+  mixins: [listCommon]
 }
 </script>
 

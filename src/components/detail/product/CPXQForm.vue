@@ -56,7 +56,8 @@ export default {
   },
   mixins: [detailCommon],
   components: {
-    workFlow, RAction, contactPart, MatterList
+    RAction, workFlow, 
+    contactPart, MatterList
   },
   methods: {
     //选择默认图片

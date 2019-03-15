@@ -5,11 +5,6 @@
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search='searchList' ref="search"></searchIcon>
         <div class="filter_part">
-          <!--<tab :line-width='2' default-color='#757575' active-color='#2c2727'>
-            <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
-                      @on-item-click="tabClick(item, index)">{{item.name}}
-            </tab-item>
-          </tab>-->
           <r-sort @on-sort="onSortList" @on-filter="onFilter" :list-id="listId" ref="sort"></r-sort>
         </div>
       </div>
@@ -24,37 +19,29 @@
 </template>
 
 <script>
-  import listCommon from 'mixins/bizListCommon'
-
-  export default {
-    data() {
-      return {
-        listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
-        listViewID: 2239,
-        filterList: [ // 过滤列表
-          {
-            name: '交易号',
-            value: 'transCode',
-          }, {
-            name: '经办人',
-            value: 'handlerName',
-          }, {
-            name: '物料名称',
-            value: 'inventoryName_outPutMatCode',
-          }, {
-            name: '往来名称',
-            value: 'dealerName_dealerDebit',
-          },
-        ],
-      }
-    },
-    mixins: [listCommon],
-    methods: {
-
-    },
-    created() {
+import listCommon from 'mixins/bizListCommon'
+export default {
+  data() {
+    return {
+      filterList: [ // 过滤列表
+        {
+          name: '交易号',
+          value: 'transCode',
+        }, {
+          name: '经办人',
+          value: 'handlerName',
+        }, {
+          name: '物料名称',
+          value: 'inventoryName_outPutMatCode',
+        }, {
+          name: '往来名称',
+          value: 'dealerName_dealerDebit',
+        },
+      ],
     }
-  }
+  },
+  mixins: [listCommon]
+}
 </script>
 
 <style lang='scss' scoped>

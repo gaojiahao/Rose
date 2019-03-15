@@ -16,18 +16,14 @@
       </r-scroll>
     </div>
     <add-btn :action="action" :goEdit="goEdit"></add-btn>    
-    <!-- <pop-assignment-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" ref="taskWork"></pop-assignment-task-work-list> -->
   </div>
 </template>
 
 <script>
 import listCommon from 'mixins/bizListCommon'
-import PopAssignmentTaskWorkList from 'components/Popup/workList/PopAssignmentTaskWorkList'
 export default {
   data() {
     return {
-      listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
-      listViewID: 2363,
       filterList: [ // 过滤列表
         {
           name: '交易号',
@@ -40,40 +36,9 @@ export default {
           value: 'inventoryName_transObjCode',
         },
       ],
-      popShow: false,
     }
   },
-  components: {
-    PopAssignmentTaskWorkList
-  },
-  mixins: [listCommon],
-  methods: {
-    // goEdit(){
-    //   this.popShow = true;
-    // },
-    // selTask(val){
-    //   let arr = [];
-    //   val.forEach(item => {
-    //     // arr.push({
-    //     //   inventoryCode: item.matCode,
-    //     //   transCode: item.transCode
-    //     // })
-    //     arr.push(item.colId)
-    //   })
-    //   let { name, listId } = this.$route.query,
-    //       { folder, fileName } = this.$route.params;
-    //   this.$router.push({
-    //     path: `/fillform/${folder}/${fileName}`,
-    //     query: {
-    //       name,
-    //       // childId,
-    //       // orderTransCode: arr,
-    //       listId,
-    //       orderId: JSON.stringify(arr),
-    //     }
-    //   })
-    // }
-  }
+  mixins: [listCommon]
 }
 </script>
 

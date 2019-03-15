@@ -60,13 +60,6 @@
   export default {
     data() {
       return {
-        listStatus: [
-          {name: '全部', status: ''},
-          {name: '已生效', status: '已生效'},
-          {name: '进行中', status: '进行中'}
-        ],
-        listViewID: 2244,
-        biStatus: '',
         filterList: [ // 过滤列表
           {
             name: '交易号',
@@ -82,8 +75,7 @@
         ],
       }
     },
-    mixins: [listCommon],
-    methods: {}
+    mixins: [listCommon]
   }
 </script>
 

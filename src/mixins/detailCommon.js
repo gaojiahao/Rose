@@ -14,6 +14,7 @@ import { getFormViews, getFormConfig, saveAndCommitTask } from 'service/common/c
 // vux 引入
 import { numberComma } from 'vux'
 // 组件 引入
+import UploadFile from 'components/upload/UploadFile'
 import BasicInfo from 'components/detail/commonPart/BasicInfo'
 import OtherPart from 'components/detail/commonPart/OtherPart'
 import MatterList from 'components/detail/commonPart/MatterList'
@@ -29,7 +30,7 @@ import { register } from 'plugins/wx'
 
 export default {
   components: {
-    FormCell, OtherPart, BasicInfo, 
+    FormCell, OtherPart, BasicInfo, UploadFile,
     MatterList, PriceTotal, PopMatterDetail, 
   },
   data() {

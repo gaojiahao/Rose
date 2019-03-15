@@ -375,23 +375,19 @@
 </template>
 
 <script>
-  import listCommon from 'mixins/kmListCommon'
-  import TabItem from 'components/public/sub-tab'
-  export default {
-    data() {
-      return {
-        uniqueId : 1400,
-        showContent : false,
-        filterArr: [
-            {"operator":"like","value":"","property":"warehouseName"}
-        ],
-      }
-    },
-    components:{
-      TabItem
-    },
-    mixins: [listCommon]
-  }
+import listCommon from 'mixins/kmListCommon'
+import TabItem from 'components/public/sub-tab'
+export default {
+  data() {
+    return {
+      uniqueId : 1400,
+    }
+  },
+  components:{
+    TabItem
+  },
+  mixins: [listCommon]
+}
 </script>
 
 <style lang='scss' scoped>
