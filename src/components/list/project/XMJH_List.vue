@@ -66,58 +66,33 @@
 </template>
 
 <script>
-  import {getProjectPlanList} from 'service/projectService'
-  import listCommon from 'mixins/bizListCommon'
-
-  export default {
-    data() {
-      return {
-        listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
-        listViewID: 2325,
-        filterList: [ // 过滤列表
-          {
-            name: '交易号',
-            value: 'transCode',
-          }, {
-            name: '经办人',
-            value: 'handlerName',
-          }, {
-            name: '项目名称',
-            value: 'projectName',
-          },
-        ],
-      }
-    },
-    mixins: [listCommon],
-    methods: {
-      goDetail(item, index) {
-        if (this.clickVisited) {
-          return
-        }
-        // 交易号、应用名称等
-        let {transCode} = item,
-          {name} = this.$route.query,
-          {folder, fileName} = this.$route.params;
-        // 高亮 点击过的数据
-        this.clickVisited = true;
-        item.visited = true;
-        this.$set(this.listData, index, {...item});
-        // 等待动画结束后跳转
-        setTimeout(() => {
-          this.clickVisited = false;
-          this.$router.push({
-            path: `/detail/${folder}/${fileName}`,
-            query: {name, transCode}
-          })
-        }, 200)
-      },
-      // 返回任务icon
-      getTaskIcon(index) {
-        let icons = ['icon-task', 'icon-task2', 'icon-task3'];
-        return icons[index % 3]
-      },
+import listCommon from 'mixins/bizListCommon'
+export default {
+  data() {
+    return {
+      filterList: [ // 过滤列表
+        {
+          name: '交易号',
+          value: 'transCode',
+        }, {
+          name: '经办人',
+          value: 'handlerName',
+        }, {
+          name: '项目名称',
+          value: 'projectName',
+        },
+      ],
     }
+  },
+  mixins: [listCommon],
+  methods: {
+    // 返回任务icon
+    getTaskIcon(index) {
+      let icons = ['icon-task', 'icon-task2', 'icon-task3'];
+      return icons[index % 3]
+    },
   }
+}
 </script>
 
 <style lang='scss' scoped>

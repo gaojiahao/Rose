@@ -63,71 +63,45 @@
             </div>
           </div>
         </div>
-
-        <!--<just-word-item :item="item" v-for="(item, index) in listData" :key="index"
-                        noCount @click.native="goDetail(item, index)"></just-word-item>-->
       </r-scroll>
     </div>
     <add-btn :action="action" :goEdit="goEdit"></add-btn>
   </div>
 </template>
 
-<script>
-  import {getList} from 'service/common/commonService'
-  import listCommon from 'mixins/bizListCommon'
+</template>
 
-  export default {
-    data() {
-      return {
-        listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
-        filterList: [ // 过滤列表
-          {
-            name: '交易号',
-            value: 'transCode',
-          }, {
-            name: '经办人',
-            value: 'handlerName',
-          }, {
-            name: '任务类型',
-            value: 'taskType',
-          }, {
-            name: '项目名称',
-            value: 'projectName_project',
-          },
-        ],
-        listViewID: 2326,
-      }
-    },
-    mixins: [listCommon],
-    methods: {
-      goDetail(item, index) {
-        if (this.clickVisited) {
-          return
-        }
-        // 交易号、应用名称等
-        let {transCode} = item,
-          {name, listId} = this.$route.query,
-          {folder, fileName} = this.$route.params;
-        // 高亮 点击过的数据
-        this.clickVisited = true;
-        item.visited = true;
-        this.$set(this.listData, index, {...item});
-        // 等待动画结束后跳转
-        setTimeout(() => {
-          this.clickVisited = false;
-          this.$router.push({
-            path: `/detail/${folder}/${fileName}`,
-            query: {name, transCode, listId}
-          })
-        }, 200)
-      },
-      // 返回任务icon
-      getTaskIcon(index) {
-        let icons = ['icon-task', 'icon-task2', 'icon-task3'];
-        return icons[index % 3]
-      },
+<script>
+import listCommon from 'mixins/bizListCommon'
+export default {
+  data() {
+    return {
+      filterList: [ // 过滤列表
+        {
+          name: '交易号',
+          value: 'transCode',
+        }, {
+          name: '经办人',
+          value: 'handlerName',
+        }, {
+          name: '任务类型',
+          value: 'taskType',
+        }, {
+          name: '项目名称',
+          value: 'projectName_project',
+        },
+      ],
+    }
+  },
+  mixins: [listCommon],
+  methods: {
+    // 返回任务icon
+    getTaskIcon(index) {
+      let icons = ['icon-task', 'icon-task2', 'icon-task3'];
+      return icons[index % 3]
     }
   }
+}
 </script>
 
 <style lang='scss' scoped>

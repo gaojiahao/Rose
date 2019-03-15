@@ -69,65 +69,26 @@
 </template>
 
 <script>
-  import {getList} from 'service/common/commonService'
-  import listCommon from 'mixins/bizListCommon'
-  // 方法引入
-  import {accMul} from 'plugins/calc/decimalsAdd'
-
-  export default {
-    data() {
-      return {
-        listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
-        filterList: [ // 过滤列表
-          {
-            name: '交易号',
-            value: 'transCode',
-          }, {
-            name: '经办人',
-            value: 'handlerName',
-          }, {
-            name: '项目名称',
-            value: 'projectName_projectApprovalId',
-          },
-        ],
-        listViewID: 2301,
-      }
-    },
-    mixins: [listCommon],
-    filters: {
-      // 转为百分比
-      percent(val) {
-        if (!val && val !== 0) {
-          return '无';
-        }
-        let budget = accMul(val,100);
-        return `${budget}%`;
-      },
-    },
-    methods: {
-      goDetail(item, index) {
-        if (this.clickVisited) {
-          return
-        }
-        // 交易号、应用名称等
-        let {transCode} = item,
-          {name, listId} = this.$route.query,
-          {folder, fileName} = this.$route.params;
-        // 高亮 点击过的数据
-        this.clickVisited = true;
-        item.visited = true;
-        this.$set(this.listData, index, {...item});
-        // 等待动画结束后跳转
-        setTimeout(() => {
-          this.clickVisited = false;
-          this.$router.push({
-            path: `/detail/${folder}/${fileName}`,
-            query: {name, transCode, listId}
-          })
-        }, 200)
-      },
+import listCommon from 'mixins/bizListCommon'
+export default {
+  data() {
+    return {
+      filterList: [ // 过滤列表
+        {
+          name: '交易号',
+          value: 'transCode',
+        }, {
+          name: '经办人',
+          value: 'handlerName',
+        }, {
+          name: '项目名称',
+          value: 'projectName_projectApprovalId',
+        },
+      ],
     }
-  }
+  },
+  mixins: [listCommon],
+}
 </script>
 
 <style lang='scss' scoped>
