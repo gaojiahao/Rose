@@ -48,161 +48,161 @@
 </template>
 
 <script>
-  import {getAllUsers} from 'service/Directorys/userService'
-  import listCommon from 'mixins/bizListCommon'
+// vux 引入
+import { Tab, TabItem } from 'vux'
+// 接口 引入
+import { getAllUsers } from 'service/Directorys/userService'
+// mixins 引入
+import listCommon from 'mixins/bizListCommon'
 
-  export default {
-    name: 'USER_List',
-    data() {
-      return {
-        listStatus: [
-          {name: '全部', status: ''},
-          {name: '使用中', status: 1},
-          {name: '未使用', status: 2},
-          {name: '停用', status: -1},
-        ],
-        filterList: [ // 过滤列表
-          {
-            name: '工号',
-            value: 'userCode',
-          }, {
-            name: '姓名',
-            value: 'nickname',
-          },
-        ],
+export default {
+  mixins: [listCommon],
+  components: { Tab, TabItem },
+  data() {
+    return {
+      listStatus: [
+        { name: '全部', status: '' },
+        { name: '使用中', status: 1 },
+        { name: '未使用', status: 2 },
+        { name: '停用', status: -1 },
+      ],
+      filterList: [ // 过滤列表
+        {
+          name: '工号',
+          value: 'userCode',
+        }, {
+          name: '姓名',
+          value: 'nickname',
+        },
+      ],
+    }
+  },
+  methods: {
+    // 获取默认图片
+    getDefaultImg(item, gender) {
+      let url = gender === 1
+        ? require('assets/ava01.png')
+        : require('assets/ava02.png');
+      if (item) {
+        item.photo = url;
       }
+      return url;
     },
-    mixins: [listCommon],
-    methods: {
-      // 获取默认图片
-      getDefaultImg(item, gender) {
-        let url = gender === 1
-          ? require('assets/ava01.png')
-          : require('assets/ava02.png');
-        if (item) {
-          item.photo = url;
-        }
-        return url;
-      },
-      // 页面跳转
-      pathChange(item, index, path) {
-        if (this.clickVisited) {
-          return
-        }
-        // 交易号、应用名称等
-        let {colId} = item,
-            {name, listId} = this.$route.query,
-            {folder, fileName} = this.$route.params;
-        // 新的路由地址
-        let newPath = `${path}/${folder}/${fileName}`;
-        // 高亮 点击过的数据
-        this.clickVisited = true;
-        item.visited = true;
-        this.$set(this.listData, index, {...item});
-        // 等待动画结束后跳转
-        setTimeout(() => {
-          this.clickVisited = false;
-          this.$router.push({
-            path: newPath,
-            query: {
-              name, 
-              colId,
-              listId
-            }
+    // 页面跳转
+    pathChange(item, index, path) {
+      if (this.clickVisited) {
+        return
+      }
+      // 交易号、应用名称等
+      let {colId} = item,
+          {name, listId} = this.$route.query,
+          {folder, fileName} = this.$route.params;
+      // 新的路由地址
+      let newPath = `${path}/${folder}/${fileName}`;
+      // 高亮 点击过的数据
+      this.clickVisited = true;
+      item.visited = true;
+      this.$set(this.listData, index, {...item});
+      // 等待动画结束后跳转
+      setTimeout(() => {
+        this.clickVisited = false;
+        this.$router.push({
+          path: newPath,
+          query: {
+            name, 
+            colId,
+            listId
+          }
+        })
+      }, 200)
+    },
+    // 跳转到详情
+    goDetail(item, index) {
+      this.pathChange(item, index, `/detail`);
+    },
+    // 获取用户列表
+    getList(noReset = false) {
+      let filter = [];
+      if (this.activeTab) {
+        filter.push({
+          operator: 'in',
+          value: this.activeTab,
+          property: 'status'
+        })
+      }
+      if (this.serachVal) {
+        filter = [
+          ...filter,
+          {
+            operator: 'like',
+            value: this.serachVal,
+            property: this.filterProperty,
+          },
+        ];
+      }
+      return getAllUsers({
+        limit: this.limit,
+        page: this.page,
+        start: (this.page - 1) * this.limit,
+        filter: JSON.stringify(filter)
+      }).then(({dataCount = 0, tableContent = []}) => {
+        this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+        tableContent.forEach(item => {
+          let genders = ['女', '男'];
+          let status = ['', '使用中', '未使用', '草稿'];
+          let userTypes = ['临时账户', '长期有效'];
+          item.genderText = genders[item.gender] || '未知';
+          item.status = status[item.status] || '停用';
+          item.userTypeText = userTypes[item.userType];
+          this.setStatus(item);
+          // 如没有头像 则指定默认头像
+          if (!item.photo) {
+            item.photo = this.getDefaultImg('', item.gender);
+          }
+        });
+        this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
+        if (!noReset) {
+          this.$nextTick(() => {
+            this.resetScroll();
           })
-        }, 200)
-      },
-      // 跳转到详情
-      goDetail(item, index) {
-        this.pathChange(item, index, `/detail`);
-      },
-      // // 跳转到编辑
-      // goUserEdit(item, index) {
-      //   this.pathChange(item, index, `/fillform`);
-      // },
-      // 获取用户列表
-      getList(noReset = false) {
-        let filter = [];
-        if (this.activeTab) {
-          filter.push({
-            operator: 'in',
-            value: this.activeTab,
-            property: 'status'
-          })
         }
-        if (this.serachVal) {
-          filter = [
-            ...filter,
-            {
-              operator: 'like',
-              value: this.serachVal,
-              property: this.filterProperty,
-            },
-          ];
-        }
-        return getAllUsers({
-          limit: this.limit,
-          page: this.page,
-          start: (this.page - 1) * this.limit,
-          filter: JSON.stringify(filter)
-        }).then(({dataCount = 0, tableContent = []}) => {
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          tableContent.forEach(item => {
-            let genders = ['女', '男'];
-            let status = ['', '使用中', '未使用', '草稿'];
-            let userTypes = ['临时账户', '长期有效'];
-            item.genderText = genders[item.gender] || '未知';
-            item.status = status[item.status] || '停用';
-            item.userTypeText = userTypes[item.userType];
-            this.setStatus(item);
-            // 如没有头像 则指定默认头像
-            if (!item.photo) {
-              item.photo = this.getDefaultImg('', item.gender);
-            }
-          });
-          this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
-          if (!noReset) {
-            this.$nextTick(() => {
-              this.resetScroll();
+        //判断最近有无新增数据
+        let text = '';
+        if (noReset && this.activeIndex === 0) {
+          if (this.total) {
+            text = dataCount - this.total === 0
+              ? '暂无新数据'
+              : text = `新增${dataCount - this.total}条数据`;
+            this.$vux.toast.show({
+              text: text,
+              position: 'top',
+              width: '50%',
+              type: "text",
+              time: 700
             })
           }
-          //判断最近有无新增数据
-          let text = '';
-          if (noReset && this.activeIndex === 0) {
-            if (this.total) {
-              text = dataCount - this.total === 0
-                ? '暂无新数据'
-                : text = `新增${dataCount - this.total}条数据`;
-              this.$vux.toast.show({
-                text: text,
-                position: 'top',
-                width: '50%',
-                type: "text",
-                time: 700
-              })
-            }
-          }
-          //列表总数据缓存
-          if (this.activeIndex === 0 && this.page === 1) {
-            sessionStorage.setItem(this.applyCode, dataCount);
-          }
-          this.$loading.hide();
-        }).catch(e => {
-          this.resetScroll();
-        })
-      },
-      // 设置状态的class
-      setStatus(item) {
-        switch (item.status) {
-          case '使用中':
-            item.statusClass = 'duty_done_c';
-            break;
-          default:
-            item.statusClass = 'duty_fall_c';
         }
-      },
-    }
+        //列表总数据缓存
+        if (this.activeIndex === 0 && this.page === 1) {
+          sessionStorage.setItem(this.applyCode, dataCount);
+        }
+        this.$loading.hide();
+      }).catch(e => {
+        this.resetScroll();
+      })
+    },
+    // 设置状态的class
+    setStatus(item) {
+      switch (item.status) {
+        case '使用中':
+          item.statusClass = 'duty_done_c';
+          break;
+        default:
+          item.statusClass = 'duty_fall_c';
+      }
+    },
   }
+}
 </script>
 
 <style lang='scss' scoped>

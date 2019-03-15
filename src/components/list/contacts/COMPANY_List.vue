@@ -42,139 +42,138 @@
 </template>
 
 <script>
-  // 接口引入
-  import {getCompany} from 'service/Directorys/companyService'
-  // mixin引入
-  import listCommon from 'mixins/bizListCommon'
+// vux 引入
+import { Tab, TabItem } from 'vux'
+// 接口 引入
+import {getCompany} from 'service/Directorys/companyService'
+// mixins 引入
+import listCommon from 'mixins/bizListCommon'
 
-  export default {
-    mixins: [listCommon],
-    data() {
-      return {
-        listStatus: [{name: '全部', status: ''}, {name: '使用中', status: '1'}, {name: '未使用', status: '2'}, {
-          name: '停用',
-          status: '-1'
-        }],
-        // 过滤列表
-        filterList: [
+export default {
+  mixins: [listCommon],
+  components: { Tab, TabItem },
+  data() {
+    return {
+      listStatus: [
+        { name: '全部', status: '' }, 
+        { name: '使用中', status: '1' }, 
+        { name: '未使用', status: '2' }, 
+        { name: '停用', status: '-1'}
+      ],
+      filterList: [
+        {
+          name: '公司名称',
+          value: 'groupName',
+        }, {
+          name: '公司简称',
+          value: 'groupShortName',
+        }
+      ],
+    }
+  },
+  methods: {
+    // tab切换
+    tabClick(item, index) {
+      this.activeIndex = index;
+      this.activeTab = item.status;
+      this.resetCondition();
+      this.getList();
+    },
+    RouterChange(item, index, path) {
+      if (this.clickVisited) {
+        return
+      }
+      // 交易号、应用名称等
+      let {groupId} = item,
+        {name} = this.$route.query;
+      // 高亮 点击过的数据
+      this.clickVisited = true;
+      item.visited = true;
+      this.$set(this.listData, index, {...item});
+      // 等待动画结束后跳转
+      setTimeout(() => {
+        this.clickVisited = false;
+        this.$router.push({
+          path, query: {name, groupId}
+        })
+      }, 200)
+    },
+    // 前往详情
+    goDetail(item, index) {
+      let {folder, fileName} = this.$route.params;
+      this.RouterChange(item, index, `/detail/${folder}/${fileName}`);
+    },
+    getList(noReset = false) {
+      let filter = [];
+      // 按时间排序
+      let sort = [{
+        property: "crtTime",
+        direction: "DESC"
+      }]
+      if (this.activeTab) {
+        filter = [{
+          operator: "in",     //模糊查询like，精确查询eq
+          property: "status",
+          value: this.activeTab
+        }]
+      }
+      if (this.serachVal) {
+        filter = [
+          ...filter,
           {
-            name: '公司名称',
-            value: 'groupName',
-          }, {
-            name: '公司简称',
-            value: 'groupShortName',
-          }
-        ],
+            operator: "like",
+            value: this.serachVal,
+            property: this.filterProperty,
+          },
+        ];
+      }
+      return getCompany({
+        limit: this.limit,
+        page: this.page,
+        start: (this.page - 1) * this.limit,
+        sort: JSON.stringify(sort),
+        filter: JSON.stringify(filter)
+      }).then(({dataCount = 0, tableContent = []}) => {
+        this.$emit('input', false);
+        tableContent.forEach(item => {
+          let status = ['', '使用中', '未使用', '草稿'];
+          item.status = status[item.status] || '停用';
+          this.setStatus(item);
+          item.groupPic = item.groupPic ? item.groupPic : this.getDefaultImg();
+        });
+        this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+        this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
+        if (!noReset) {
+          this.$nextTick(() => {
+            this.resetScroll();
+          })
+        }
+        this.$loading.hide();
+      }).catch(e => {
+        this.resetScroll();
+      })
+    },
+    // 设置状态的class
+    setStatus(item) {
+      switch (item.status) {
+        case '使用中':
+          item.statusClass = 'duty_done_c';
+          break;
+        default:
+          item.statusClass = 'duty_fall_c';
       }
     },
-    methods: {
-      // tab切换
-      tabClick(item, index) {
-        this.activeIndex = index;
-        this.activeTab = item.status;
-        this.resetCondition();
-        this.getList();
-      },
-      RouterChange(item, index, path) {
-        if (this.clickVisited) {
-          return
-        }
-        // 交易号、应用名称等
-        let {groupId} = item,
-          {name} = this.$route.query;
-        // 高亮 点击过的数据
-        this.clickVisited = true;
-        item.visited = true;
-        this.$set(this.listData, index, {...item});
-        // 等待动画结束后跳转
-        setTimeout(() => {
-          this.clickVisited = false;
-          this.$router.push({
-            path, query: {name, groupId}
-          })
-        }, 200)
-      },
-      // 编辑
-      // EditCompany(item, index) {
-      //   let {folder, fileName} = this.$route.params;
-      //   this.RouterChange(item, index, `/fillForm/${folder}/${fileName}`);
-      // },
-      // 前往详情
-      goDetail(item, index) {
-        let {folder, fileName} = this.$route.params;
-        this.RouterChange(item, index, `/detail/${folder}/${fileName}`);
-      },
-      getList(noReset = false) {
-        let filter = [];
-        // 按时间排序
-        let sort = [{
-          property: "crtTime",
-          direction: "DESC"
-        }]
-        if (this.activeTab) {
-          filter = [{
-            operator: "in",     //模糊查询like，精确查询eq
-            property: "status",
-            value: this.activeTab
-          }]
-        }
-        if (this.serachVal) {
-          filter = [
-            ...filter,
-            {
-              operator: "like",
-              value: this.serachVal,
-              property: this.filterProperty,
-            },
-          ];
-        }
-        return getCompany({
-          limit: this.limit,
-          page: this.page,
-          start: (this.page - 1) * this.limit,
-          sort: JSON.stringify(sort),
-          filter: JSON.stringify(filter)
-        }).then(({dataCount = 0, tableContent = []}) => {
-          this.$emit('input', false);
-          tableContent.forEach(item => {
-            let status = ['', '使用中', '未使用', '草稿'];
-            item.status = status[item.status] || '停用';
-            this.setStatus(item);
-            item.groupPic = item.groupPic ? item.groupPic : this.getDefaultImg();
-          });
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
-          if (!noReset) {
-            this.$nextTick(() => {
-              this.resetScroll();
-            })
-          }
-          this.$loading.hide();
-        }).catch(e => {
-          this.resetScroll();
-        })
-      },
-      // 设置状态的class
-      setStatus(item) {
-        switch (item.status) {
-          case '使用中':
-            item.statusClass = 'duty_done_c';
-            break;
-          default:
-            item.statusClass = 'duty_fall_c';
-        }
-      },
-      // 获取默认图片
-      getDefaultImg(item) {
-        let url = require('assets/default/company.png');
-        if (item) {
-          item.groupPic = url;
-        }
-        return url
-      },
-    }
-
+    // 获取默认图片
+    getDefaultImg(item) {
+      let url = require('assets/default/company.png');
+      if (item) {
+        item.groupPic = url;
+      }
+      return url
+    },
   }
+
+}
 </script>
 
 <style lang='scss' scoped>
