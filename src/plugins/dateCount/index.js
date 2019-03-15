@@ -7,6 +7,7 @@ export default (sDay, eDay) => {
   if (parseInt(diffDay) === 0) {
     return parseInt(diffDay);
   }
+
   // 周末天数
   let weekEnds = 0; 
   for (let i = 0; i < diffDay; i++) { 
@@ -18,14 +19,17 @@ export default (sDay, eDay) => {
     sDay = new Date(sDay); 
   }
   eDay.setDate(eDay.getDate() - parseInt(diffDay + weekEnds)); 
+
   // 计算出的日期为星期日
   if (eDay.getDay() === 0) {
     eDay = new Date(eDay.getTime() - 2*24*60*60*1000)
   }
+
   // 计算出的日期为星期六
   else if (eDay.getDay() === 6) {
     eDay = new Date(eDay.getTime() - 24*60*60*1000)
   }
+  
   return eDay;
 }
 

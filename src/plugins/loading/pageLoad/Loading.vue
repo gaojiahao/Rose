@@ -20,20 +20,20 @@
 
 <style scoped lang="scss">
   .loadding { //加载动画
-    position: absolute;
-    left: 0;
     top: 0;
+    left: 0;
     bottom: 0;
     width: 100%;
     height: 100%;
+    position: absolute;
     background: #fff;
     z-index: 100;
     .vux-spinner {
       top: 50%;
       left: 50%;
-      position: absolute;
       fill: #366CAC;
       stroke: #366CAC;
+      position: absolute;
       transform: translate(-50%, -50%);
     }
   }

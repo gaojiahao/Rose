@@ -1,14 +1,17 @@
 import loading from './handleLoading.vue'
 
-let instance = null; // 检测实例是否创建的标志位
-let HandleLoad = {};
+let [ instance, HandleLoad ] = [ null, {} ];
+
 HandleLoad.install = (Vue) => {
   if (!instance) {
-    const Loading = Vue.extend(loading); // 扩展vue实例，引入loading
-    instance = new Loading().$mount(); // 创建loading实例并挂载
+    // 扩展vue实例，引入loading
+    const Loading = Vue.extend(loading); 
+    // 创建loading实例并挂载
+    instance = new Loading().$mount(); 
     document.body.appendChild(instance.$el)
   }
-  Vue.prototype.$HandleLoad = { // $loading即是你后期调用的名称
+  // $HandleLoad 即是你后期调用的名称
+  Vue.prototype.$HandleLoad = { 
     show() {
       instance.show = true;
     },
@@ -17,4 +20,5 @@ HandleLoad.install = (Vue) => {
     }
   }
 }
+
 export default HandleLoad

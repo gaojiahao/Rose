@@ -1,4 +1,4 @@
-
+// 两个数字相加
 export function accAdd(arg1, arg2) {
     var r1, r2, m, c;
     try {
@@ -57,7 +57,8 @@ export function accMul(...args) {
   }
   return total / Math.pow(10, m);
 }
-//两个数字相减
+
+// 两个数字相减
 export function accSub(arg1, arg2) {
     var r1, r2, m, n;
     try {
@@ -80,6 +81,7 @@ export function accSub(arg1, arg2) {
     n = (r1 >= r2) ? r1 : r2;
     return ((arg1 * m - arg2 * m) / m).toFixed(2);
 }
+
 // 两个数字相除
 export function accDiv(arg1, arg2) {
     if (isNaN(arg1)) {
