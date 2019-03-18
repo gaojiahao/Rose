@@ -8,7 +8,7 @@
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !workList.length" @on-pulling-up="onPullingUp"
                    ref="bScroll">
-          <div class="each-work box_sd" v-for="(item, index) in workList" :key='index'
+          <div class="each-work box_sd vux-1px" :class="{'seleted' : showSelIcon(item)}" v-for="(item, index) in workList" :key='index'
                @click.stop="selThis(item, index)">
             <div class="work-main">
               <div class="work_top" v-show="item.transCode">
@@ -41,8 +41,6 @@
               </div>
 
             </div>
-            <!-- icon -->
-            <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
           </div>
         </r-scroll>
       </div>
@@ -56,12 +54,15 @@
 </template>
 
 <script>
-import { Icon, Popup, LoadMore, dateFormat } from 'vux'
-import { getObjFacility, getWorkOrderTask  } from 'service/Product/gdService'
+// vux 引入
+import { Popup, dateFormat } from 'vux'
+// 请求 引入
+import { getWorkOrderTask } from 'service/Product/gdService'
+// 组件 引入
 import RScroll from 'plugins/scroll/RScroll'
 import MSearch from 'components/search/search'
   export default {
-    name: "work-list-pop",
+    name: "PopWorkList",
     props: {
       show: {
         type: Boolean,
@@ -75,22 +76,12 @@ import MSearch from 'components/search/search'
         }
       },
     },
-    components: {
-      Icon, Popup, LoadMore, RScroll, MSearch
-    },
-    filters: {
-      dateFormat
-    },
+    components: { Popup, RScroll, MSearch },
+    filters: { dateFormat },
     data() {
       return {
-        showPop: false,
-        srhInpTx: '', // 搜索框内容
-        selItems: [], // 哪些被选中了
-        tmpItems: [],
-        workList: [],
-        limit: 10,
         page: 1,
-        hasNext: true,
+        limit: 10,
         scrollOptions: {
           click: true,
           pullUpLoad: true,
@@ -108,7 +99,13 @@ import MSearch from 'components/search/search'
             value: 'procedureName'
           }
         ],
-        filterProperty: ''
+        srhInpTx: '',           // 搜索框内容
+        filterProperty: '',
+        selItems: [],           // 哪些被选中了
+        tmpItems: [],
+        workList: [],
+        hasNext: true,
+        showPop: false,
       }
     },
     watch: {
@@ -123,7 +120,6 @@ import MSearch from 'components/search/search'
           this.setDefaultValue();
         }
       },
-
     },
     methods: {
       // 弹窗展示时调用
@@ -240,7 +236,6 @@ import MSearch from 'components/search/search'
   .trade_pop_part {
     background: #fff;
     .trade_pop {
-      
       height: 100%;
       // 顶部
       .title {
@@ -262,8 +257,8 @@ import MSearch from 'components/search/search'
             border: none;
             color: #2D2D2D;
             font-size: .16rem;
-            padding: 0 .3rem 0 .4rem;
             background: #F3F1F2;
+            padding: 0 .3rem 0 .4rem;
             border-top-left-radius: .3rem;
             border-bottom-left-radius: .3rem;
           }
@@ -289,9 +284,9 @@ import MSearch from 'components/search/search'
           .clear_icon {
             top: 50%;
             right: 14%;
+            z-index: 100;
             width: .3rem;
             height: .3rem;
-            z-index: 100;
             display: block;
             font-size: .12rem;
             line-height: .3rem;
@@ -313,9 +308,6 @@ import MSearch from 'components/search/search'
         display: inline-block;
         padding: .04rem .2rem;
       }
-      .vux-1px:before {
-        border-radius: 40px;
-      }
       // 物料列表
       .mater_list {
         width: 100%;
@@ -324,7 +316,7 @@ import MSearch from 'components/search/search'
         height: calc(100% - .38rem);
         /* 使用深度作用选择器进行样式覆盖 */
         /deep/ .scroll-wrapper {
-          padding: .14rem .04rem 0 .3rem;
+          padding: .18rem .15rem 0;
         }
         // 每个物料
         .each-work {
@@ -332,6 +324,14 @@ import MSearch from 'components/search/search'
           position: relative;
           margin-bottom: .2rem;
           box-sizing: border-box;
+          &.vux-1px:before {
+            border-color: #FFF;
+          }
+          &.seleted {
+            &.vux-1px:before {
+              border-color: #3296FA;
+            }
+          }
           .work_top {
             font-size: 0;
             .code_name,
@@ -380,8 +380,7 @@ import MSearch from 'components/search/search'
           }
           // 阴影
           &.box_sd {
-            box-sizing: border-box;
-            box-shadow: 0 0 8px #e8e8e8;
+            box-shadow: 0 2px 10px 0 rgba(228, 228, 232, 0.5);
           }
           // 选择icon
           .selIcon,
@@ -396,7 +395,6 @@ import MSearch from 'components/search/search'
           }
         }
       }
-
     }
     // 底部栏
     .count_mode {

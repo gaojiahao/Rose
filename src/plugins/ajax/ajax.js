@@ -71,7 +71,7 @@ fly.interceptors.response.use(
     }
     else if (error.status === 1) {
       if (error.message.includes('timeout')) {
-        rejectError('reject', '不好意思，网络似乎出了点问题，请稍后再试')
+        return rejectError('reject', '不好意思，网络似乎出了点问题，请稍后再试')
       }
     }
     rejectError('reject', error.response.data.message) 

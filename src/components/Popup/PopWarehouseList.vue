@@ -454,11 +454,11 @@
         }
         // 列表项
         .pop-mater-list-item {
-          position: relative;
           padding: .15rem;
-          margin-bottom: .1rem;
-          box-sizing: border-box;
+          position: relative;
+          margin-bottom: .15rem;
           border-radius: .04rem;
+          box-sizing: border-box;
           &.seleted {
             border: 1px solid #3296FA;
           }

@@ -2,7 +2,6 @@
   <div class="pages gdrw-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <!-- <div class="scan" @click="scanQRCode">扫一扫 {{scanResult}}</div> -->
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList" :showStatus="false"></pop-baseinfo>
         <pop-warehouse-list title="在制仓库" :default-value="warehouse" @sel-item="selWarehouse" :default-store="warehouseStoreInfo" 
@@ -17,7 +16,6 @@
             </div>
           </div>
           <template v-else>
-
             <div class="order-detail" :class="{'has_top' : index > 0}" v-for="(item, index) in workInfo"
                  :key="index">
               <div class="work_info vux-1px-b">
@@ -42,7 +40,7 @@
                   <span>{{item.technicsName || "无"}}</span>
                 </div>
               </div>
-              <div class="edit_part" v-for="(dItem,dIndex) in matterEditConfig.editPart" :key="dIndex" >
+              <div class="edit_part" v-for="(dItem, dIndex) in matterEditConfig.editPart" :key="dIndex" >
                 <!-- 可编辑的字段 -->
                 <template v-if="!dItem.readOnly">
                   <!-- 下拉框 -->
@@ -74,7 +72,7 @@
                   </div>
                 </template>
                 <!--不可编辑的字段 -->
-                <template  v-else>
+                <template v-else>
                   <div class='each_property readOnly'>
                     <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
                     <span class='property_val'>{{item[dItem.fieldCode]}}</span>
@@ -88,27 +86,6 @@
                   <span class='icon-right'></span>
                 </div>
               </div>
-              <!-- <x-input text-align='right' placeholder='请填写' type='number' @on-blur="checkAmt(item, index)"
-                       @on-focus="getFocus($event)" v-model.number='item.tdQty'>
-                <template slot="label">
-                  <span class="required">派工数量</span>
-                </template>
-              </x-input>
-              <datetime v-model='item.promDeliTime'>
-                <template slot="title">
-                  <span class='required'>要求完工日期</span>
-                </template>
-              </datetime>
-              <cell v-model="item.dealerName_dealerDebit" isLink @click.native="showManager(index)">
-                <template slot="title">
-                  <span class='required'>组长</span>
-                </template>
-              </cell>
-              <x-input title="工人数量" text-align='right' placeholder='请填写' type='number' @on-blur="checkAmt(item, index)"
-                       @on-focus="getFocus($event)" v-model.number='item.numberWorkers'>
-              </x-input>
-              <cell v-model="item.facilityName_facilityObjCode" title="设施" isLink @click.native="showFacility(index)">
-              </cell> -->
             </div>
             <div></div>
           </template>
@@ -140,62 +117,42 @@
       <div class="btn-item stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</div>
       <div class="btn-item" @click="submitOrder">提交</div>
     </div>
-
   </div>
 </template>
 
 <script>
 // vux组件引入
-import { Popup, TransferDom, Group,
-        Cell, numberComma, Datetime,
-        XInput, XTextarea } from 'vux'
+import { Popup, Datetime, XTextarea, numberComma, TransferDom } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { saveAndStartWf, saveAndCommitTask, submitAndCalc, updateData } from 'service/common/commonService'
 import { getTaskBom } from 'service/materService'
+import { updateData, submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/common/commonService'
 // mixins 引入
 import Applycommon from 'mixins/applyCommon'
-// 组件引入
-import PopManagerList from 'components/Popup/workList/PopManagerList'
+// 组件 引入
 import PopWorkList from 'components/Popup/workList/PopWorkList'
-import PopWorkFacilityList from 'components/Popup/workList/PopWorkFacilityList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
-import RPicker from 'components/public/RPicker'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
-
-/* 引入微信相关 */
-import { scanQRCode } from 'plugins/wx/api'
-// 公共方法
-import { accMul, accAdd, accSub } from 'plugins/calc/decimalsAdd'
+import PopManagerList from 'components/Popup/workList/PopManagerList'
+import PopWorkFacilityList from 'components/Popup/workList/PopWorkFacilityList'
+// 插件 引入
+import { accMul } from 'plugins/calc/decimalsAdd'
 import { toFixed } from '@/plugins/calc'
 const DRAFT_KEY = 'GDRW_DATA';
 
 export default {
-  directives: {
-    TransferDom
-  },
+  directives: { TransferDom },
   components: {
-    Popup, PopWorkList,
-    Group, Cell, Datetime,
-    XInput, XTextarea, PopManagerList,
-    RPicker, PopWorkFacilityList, PopWarehouseList, PopBaseinfo
+    Popup, Datetime, XTextarea,
+    PopBaseinfo, PopWorkList, PopManagerList,
+    PopWarehouseList, PopWorkFacilityList
   },
   data() {
     return {
-      listId: '2372f734-93c1-11e8-85db-005056a136d0',
-      showWorkPop: false, // 是否显示物料的popup
-      showManagerPop: false,
-      showFacilityPop: false, // 是否显示设备的popup
       formData: {
         biComment: '', // 备注
         biProcessStatus:'', // 流程状态
       },
-      workInfo: [], // 工序信息
-      defaultManager:[],
-      defaultFacility: [],
-      scanResult: '',
-      warehouse: {}, // 选中仓库属性
-      warehouseStoreInfo: {},
       filter: [ // bom请求参数
         {
           operator: "in",
@@ -208,9 +165,24 @@ export default {
           value: ''
         }
       ],
-      filterParams: [{property: 'warehouseType', operator: 'eq', value: '加工车间仓'}],
+      filterParams: [
+        {
+          property: 'warehouseType', 
+          operator: 'eq', 
+          value: '加工车间仓'
+        }
+      ],
+      scanResult: '',
+      warehouse: {},              // 仓库信息
+      warehouseStoreInfo: {},     // 库位信息
+      workInfo: [],               // 工序信息
+      defaultManager:[],          // 
+      defaultFacility: [],
+      showWorkPop: false, // 是否显示物料的popup
       managerIndex: null,
       facilityIndex: null,
+      showManagerPop: false,
+      showFacilityPop: false, // 是否显示设备的popup
     }
   },
   mixins: [Applycommon],
@@ -300,15 +272,6 @@ export default {
     // 选中仓库
     selWarehouse(val) {
       this.warehouse = JSON.parse(val);
-      // this.filter[0].value = this.warehouse.warehouseCode;
-      // this.workInfo.forEach((item, index) => {
-      //   this.filter[1].value = item.inventoryCode;
-      //   // 获取bom
-      //   this.getTaskBom(index).then(data => {
-      //     item.boms = data
-      //     this.$set(this.workInfo, index, {...item})
-      //   })
-      // })
     },
     addMore() {
       this.showWorkPop = !this.showWorkPop;
@@ -432,12 +395,6 @@ export default {
           }
           this.saveData(operation, submitData);
         }
-      })
-    },
-    // 启用企业微信扫一扫
-    scanQRCode() {
-      scanQRCode().then(({result = ''}) => {
-        this.scanResult = result;
       })
     },
     // 判断是否有弹窗需要关闭

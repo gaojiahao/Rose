@@ -55,12 +55,12 @@ export default {
     return{
       BUSobj: {},
       userInfo:{},            // 用户信息
+      selItem : {},           // 选中的主体内容
       BusApps: [],            // 业务应用
       BasicApps : [],         // 基础对象
-      homeScroll : null,
-      entityList : [] ,       //主体列表
-      showDrop :false,
-      selItem : {}
+      entityList : [],        // 主体列表
+      showDrop :false,        // 是否显示主体下拉选择
+      homeScroll : null,      // 滑动实例
     }
   },
   components:{ busApp, basicApp },
@@ -132,7 +132,7 @@ export default {
           tokenInfo = JSON.parse(tokenInfo);
           tokenInfo.entityId = data.entityId;
           tokenInfo.token = data.token;
-          sessionStorage.setItem('ROSE_LOGIN_TOKEN',JSON.stringify(tokenInfo));
+          sessionStorage.setItem('ROSE_LOGIN_TOKEN', JSON.stringify(tokenInfo));
           location.reload();
         }
       })
@@ -159,7 +159,7 @@ export default {
         for (let val of res) {
           BUSobj[val.text] = [];
           for (let item of val.children) {
-            // 基础对象应用 单独处理
+            // 基础对象应用需 根据映射表 单独处理
             if (basicMap[item.listId]) {
               // 图片处理
               item.icon = item.icon 
@@ -167,9 +167,11 @@ export default {
                 : ''
               this.BasicApps.push(item);
             }
+            // 处理 业务应用
             if (item.packagePath) {
               // 获取 应用类型ID 对应相应文件夹
               item.fileID = val.id;
+              // 处理 应用图标
               if (item.icon) {
                 item.icon.includes('download') 
                   // 用户自定义上传 应用icon

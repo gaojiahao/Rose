@@ -300,7 +300,7 @@ export default {
       this.$loading.show();
       /**
        * getBaseInfoData 接口一般用于提交页面   
-       * 由于“项目任务”在详情页面 可进行“任务日志”的提交 此处是为防止重复请求
+       * 由于“项目任务(XMRW)”在详情页面 可进行“任务日志”的提交 此处是为防止重复请求
        */
       if (!this.getBaseInfoData) {
         await this.getCurrentUser();  //查询 当前用户基本信息
@@ -393,7 +393,7 @@ export default {
           dealerConfig,         // 往来 相关配置
           matterConfig,         // 物料 相关配置
           baseinfoExtConfig     // baseinfoExt相关配置 此处在某些应用也有可能是<往来>的配置
-        ] = [ [], [], [], [], [], [], [],];
+        ] = [ [], [], [], [], [], [], [] ];
 
         // 由于往来组件已经单独定义 此处需要过滤部分字段
         let dealerFilter = [
