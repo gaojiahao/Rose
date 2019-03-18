@@ -87,11 +87,6 @@
         }
       },
     },
-    data() {
-      return {
-        showMore: false,
-      }
-    },
     computed: {
       projectInfo() {
         let {outPut = {}, inPut = {}} = this.orderInfo;
@@ -103,7 +98,12 @@
         }
       }
     },
-    filters: { dateFormat }
+    filters: { dateFormat },
+    data() {
+      return {
+        showMore: false,
+      }
+    }
   }
 </script>
 

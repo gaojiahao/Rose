@@ -1,4 +1,5 @@
 <template>
+  <!-- 基于config 动态渲染表单内容  -->
   <div class="only-word">
     <!-- 头部预留 -->
     <!-- <header class="word-header vux-1px-l">{{title}}</header> -->

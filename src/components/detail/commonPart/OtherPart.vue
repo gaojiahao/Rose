@@ -1,6 +1,9 @@
 <template>
+  <!-- 详情页底部组件 (金额汇总、备注、附件等) -->
   <div class="other-part-container">
+    <!-- 金额汇总（金额、税金、价税小计） -->
     <price-total :amt="amt" :tax-amt="taxAmt" :count="count" v-if="count"></price-total>
+    <!-- 备注 -->
     <div class="comment-container" v-if="showComment">
       <span class="comment_title">备注：</span>
       <span class="comment_value">{{otherInfo.biComment || '无'}}</span>

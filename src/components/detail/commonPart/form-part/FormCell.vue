@@ -1,4 +1,5 @@
 <template>
+  <!-- 表单控件（仅用于详情页的 文字、数字 展示） -->
   <div class="each-cell" :class="{'vux-1px-b' : showBottomBorder, 'when-is-right' : textRight}">
     <p class="cell-name">{{ cellTitle }}</p>
     <p class="cell-content">
@@ -33,6 +34,7 @@ export default {
   },
   computed: {
     newContent() {
+      // 根据 isNumberComma 来判断表单内容是否需要千分符处理
       let newContent = this.cellContent;
       if (this.isNumberComma) {
         return numberComma(newContent);

@@ -1,4 +1,5 @@
 <template>
+  <!-- 基于config 动态渲染仓库相关信息 -->
   <div class="warehouse-container">
     <header class="warehouse-header">
       <div class="warehouse_title vux-1px-l">仓库信息</div>

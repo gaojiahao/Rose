@@ -1,4 +1,5 @@
 <template>
+  <!-- bom列表 -->
   <div class="bom-container" v-if="boms && boms.length">
     <div class="title vux-1px-b">bom</div>
     <div class="each-bom-part" :class="{'vux-1px-b' : bIndex<boms.length-1}" v-for="(bom, bIndex) in boms" :key="bIndex">

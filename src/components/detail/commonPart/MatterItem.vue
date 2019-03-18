@@ -1,4 +1,5 @@
 <template>
+  <!-- 单个物料 (嵌套于matterList中) -->
   <div class="matter-item-container">
     <div class="matter-main">
       <img class="matter_img" :src="item.inventoryPic" alt="mater_img" @error="getMatterDefault(item)">

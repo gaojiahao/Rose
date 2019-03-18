@@ -582,7 +582,6 @@ export default {
     setWarehouseConfg(config = [], type = '') {
       let info = { warehouseAction: type, config: []} ;
       for (let item of config) {
-        console.log('item:', item);
         if (!item.hiddenInRun) {
           item.fieldValue = this.warehouse[item.fieldCode] || '';
           info.config.push(item);
