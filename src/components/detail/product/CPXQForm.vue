@@ -8,20 +8,11 @@
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
-      <div class="form_content">
-        <div class="main_content">
-          <div class="vux-1px-b" v-for="(item, index) in otherConfig" :key="index">
-            <div class="each_info">
-              <label>{{item.fieldLabel}}</label>
-              <span class="field_value">{{orderInfo[item.fieldCode]}}</span>
-            </div>
-          </div>
-          <div class="each_info">
-            <label>备注</label>
-            <span class="field_value">{{orderInfo.biComment || "无"}}</span>
-          </div>
-        </div>
-      </div>
+      <!-- 需求信息 -->
+      <only-word :config="otherConfig" :info="orderInfo"></only-word>
+      <!-- 备注 -->
+      <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
+      <!-- 附件 -->
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
@@ -40,8 +31,9 @@ import detailCommon from 'mixins/detailCommon'
 // 组件 引入
 import workFlow from 'components/public/workFlow'
 import RAction from 'components/public/RAction'
-import contactPart from 'components/detail/commonPart/ContactPart'
 import MatterList from 'components/detail/commonPart/MatterList'
+import contactPart from 'components/detail/commonPart/ContactPart'
+import onlyWord from 'components/detail/commonPart/form-part/onlyWord'
 export default {
   data() {
     return {
@@ -56,7 +48,7 @@ export default {
   },
   mixins: [detailCommon],
   components: {
-    RAction, workFlow, 
+    RAction, workFlow, onlyWord,
     contactPart, MatterList
   },
   methods: {

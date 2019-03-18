@@ -57,6 +57,7 @@ export default {
     margin-right: .1rem;
   }
   .cell-content {
+    flex: 1;
     color: #333;
     word-break: break-all;
   }

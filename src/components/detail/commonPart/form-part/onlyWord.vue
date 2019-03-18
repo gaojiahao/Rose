@@ -6,7 +6,7 @@
     <div class="word-main">
       <form-cell v-for="(item, index) in config" :key="index" v-show="!item.hiddenInRun"
                  :cellTitle="item.fieldLabel" :isNumberComma="item.xtype === 'r2Permilfield'"
-                 :cellContent="info[item.fieldCode]" textRight>
+                 :cellContent="info[item.fieldCode]" :textRight="info[item.fieldCode].length < 20">
       </form-cell>  
     </div> 
   </div>
