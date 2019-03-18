@@ -1,4 +1,5 @@
 <template>
+  <!-- 基于动态渲染 主要是渲染 既不是往来相关 也不是物料相关的内容 -->
   <div class="config-other-part" v-if="otherConfig.length">
     <div v-for="(item, index) in otherConfig" :key="index">
       <!-- 结算方式, 物流条款 -->

@@ -1,4 +1,5 @@
 <template>
+  <!-- 经办信息相关信息选择器（经办 人/主体/组织/流程状态） -->
   <div class="baseinfo_wrapper">
     <div class="baseinfo_content">
       <div class="each_info vux-1px-b" @click="showPop = true">

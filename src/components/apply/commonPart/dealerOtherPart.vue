@@ -1,4 +1,5 @@
 <template>
+  <!-- 往来 其他相关配置（基于动态渲染） -->
   <div class="dealer-other-part" v-if="config.length">
     <div :class="{'vux-1px-b': index > 0}" v-for="(item, index) in config" :key="index"  v-show="!item.hiddenInRun">
       <!-- 结算方式, 物流条款 -->

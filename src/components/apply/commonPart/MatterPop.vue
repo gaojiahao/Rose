@@ -1,4 +1,5 @@
 <template>
+  <!-- 单个物料的编辑器 -->
   <div v-transfer-dom>
     <popup v-model="show" height="80%" @on-show="onShow" @on-hide="onHide">
       <div class="popup-top">

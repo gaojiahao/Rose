@@ -118,7 +118,7 @@
         tmpItems: [], // 临时存储
         matterList: [], // 物料列表
         limit: 100, // 每页条数
-        page: 1., // 当前页码
+        page: 1, // 当前页码
         hasNext: true, // 是否有下一页
         scrollOptions: { // 滚动配置
           click: true,

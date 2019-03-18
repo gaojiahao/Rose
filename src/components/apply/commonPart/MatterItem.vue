@@ -1,4 +1,5 @@
 <template>
+  <!-- 单个物料的展示信息 -->
   <div class="matter-item">
     <div class="mater_img">
       <img :src="matter.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">

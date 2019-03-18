@@ -1,86 +1,87 @@
 <template>
-    <div class="materiel-list">
-      <!-- 没有选择物料 -->
-      <template v-if="!DataLength">
-        <div class="no-matter" @click="showPop = !showPop">
-          <div class="title">{{orderListTitle ? orderListTitle : '物料'}}列表</div>
-          <div class="seleted_icon">
-            请选择<span class="icon-right"></span>
-          </div>
+  <!-- 物料相关组件集合（物料选择器、物料编辑器、物料删除等） -->
+  <div class="materiel-list">
+    <!-- 没有选择物料 -->
+    <template v-if="!DataLength">
+      <div class="no-matter" @click="showPop = !showPop">
+        <div class="title">{{orderListTitle ? orderListTitle : '物料'}}列表</div>
+        <div class="seleted_icon">
+          请选择<span class="icon-right"></span>
         </div>
-      </template>
-      <!-- 已经选择了物料 -->
-      <template v-else>
-        <div class="has-matter" @click="showDeleteFn">
-          <div class="title">{{orderListTitle ? orderListTitle : '物料'}}列表</div>
-          <div class='edit' v-if='!matterModifyClass'>编辑</div>
-          <div class='edit' v-else>完成</div>
-        </div>
-        <div class="mater-list">
-          <!-- 当传入的matterList是对象时 -->
-          <template v-if="listIsObj">
-            <div class="each_mater" :class="{'vux-1px-t' : index > 0}"
-                  v-for="(oItem, key, index) in matterList" :key="key">
-              <div class="order_code" v-if='oItem.length && key !==  "noCode"'>
-                {{orderListTitle}}：{{key}}
-              </div>
-              <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                <matter-item :item="item" @on-modify="getMatterModifyFn(item, index, key)" :show-delete="matterModifyClass"
-                              @click.native="delClickFn(item, index, key)" :config="matterEditConfig.property">
-                  <template slot="info" slot-scope="{item}">
-                    <slot name="info" :item="item">
-                      <div class='mater_other' v-if="item.price && item.tdQty">
-                        <div class='mater_price'>
-                          <span class="symbol" v-show="!isNaN(item.price)">￥</span>{{item.price}}
-                        </div>
-                        <slot name="rNumber" :item="item">
-                          <r-number :num="item.tdQty" :max="item[maxField]" v-model="item.tdQty"></r-number>
-                        </slot>
-                      </div>
-                    </slot>
-                  </template>
-                </matter-item>
-                <div class='delete_icon' @click="delClickFn(item, index, key)" v-if='matterModifyClass'>
-                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIconFn(item, index)"></x-icon>
-                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIconFn(item, index)"></x-icon>
-                </div>
-              </div>
+      </div>
+    </template>
+    <!-- 已经选择了物料 -->
+    <template v-else>
+      <div class="has-matter" @click="showDeleteFn">
+        <div class="title">{{orderListTitle ? orderListTitle : '物料'}}列表</div>
+        <div class='edit' v-if='!matterModifyClass'>编辑</div>
+        <div class='edit' v-else>完成</div>
+      </div>
+      <div class="mater-list">
+        <!-- 当传入的matterList是对象时 -->
+        <template v-if="listIsObj">
+          <div class="each_mater" :class="{'vux-1px-t' : index > 0}"
+                v-for="(oItem, key, index) in matterList" :key="key">
+            <div class="order_code" v-if='oItem.length && key !==  "noCode"'>
+              {{orderListTitle}}：{{key}}
             </div>
-          </template>
-          <!-- 当传入的matterList是数组时 -->
-          <template v-else>
-            <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < DataLength - 1 }"
-                v-for="(item, index) in matterList" :key='index'>
-              <matter-item :item="item" @on-modify="getMatterModifyFn(item, index)" :show-delete="matterModifyClass"
-                            @click.native="delClickFn(item, index)" :config="matterEditConfig.property">
+            <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
+              <matter-item :item="item" @on-modify="getMatterModifyFn(item, index, key)" :show-delete="matterModifyClass"
+                            @click.native="delClickFn(item, index, key)" :config="matterEditConfig.property">
                 <template slot="info" slot-scope="{item}">
-                  <slot name="info" :item="item"></slot>
+                  <slot name="info" :item="item">
+                    <div class='mater_other' v-if="item.price && item.tdQty">
+                      <div class='mater_price'>
+                        <span class="symbol" v-show="!isNaN(item.price)">￥</span>{{item.price}}
+                      </div>
+                      <slot name="rNumber" :item="item">
+                        <r-number :num="item.tdQty" :max="item[maxField]" v-model="item.tdQty"></r-number>
+                      </slot>
+                    </div>
+                  </slot>
                 </template>
               </matter-item>
-              <div class='delete_icon' @click="delClickFn(item, index)" v-if='matterModifyClass'>
+              <div class='delete_icon' @click="delClickFn(item, index, key)" v-if='matterModifyClass'>
                 <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIconFn(item, index)"></x-icon>
                 <x-icon type="ios-circle-outline" size="20" v-show="!showSelIconFn(item, index)"></x-icon>
               </div>
             </div>
-          </template>
-        </div>
-      </template>
-      <!-- 新增更多 按钮 -->
-      <div :class="[isSubmitAgain ? 'resubmit-part' : 'sumbit-part']" v-if="DataLength && !matterModifyClass">
-        <div class="add_more" v-if="DataLength" @click="addMatterFn">
-          <span class="icon-add"></span>
-          <span class="add_text">新增更多物料</span>
-        </div>
-        <span class="add_more stop" v-if="this.actions.includes('stop')" @click="stopOrderFn">终止提交</span>
+          </div>
+        </template>
+        <!-- 当传入的matterList是数组时 -->
+        <template v-else>
+          <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < DataLength - 1 }"
+              v-for="(item, index) in matterList" :key='index'>
+            <matter-item :item="item" @on-modify="getMatterModifyFn(item, index)" :show-delete="matterModifyClass"
+                          @click.native="delClickFn(item, index)" :config="matterEditConfig.property">
+              <template slot="info" slot-scope="{item}">
+                <slot name="info" :item="item"></slot>
+              </template>
+            </matter-item>
+            <div class='delete_icon' @click="delClickFn(item, index)" v-if='matterModifyClass'>
+              <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIconFn(item, index)"></x-icon>
+              <x-icon type="ios-circle-outline" size="20" v-show="!showSelIconFn(item, index)"></x-icon>
+            </div>
+          </div>
+        </template>
       </div>
-      <!-- 物料popup -->
-      <pop-matter-list  :show="showPop" v-model="showPop" @shut-down-outsidePop="closePop" @sel-matter="selMatterFn" :config="matterPopConfig"
-                        :order-title="orderListTitle" :filter-list="filterList" :matter-params="matterParams" :default-value="defaultValue" ref="matter"></pop-matter-list>
-      <!-- 物料编辑 -->
-      <pop-matter :chosen-matter='chosenMatter' :show-pop="showModifyPop" @sel-confirm='selConfirmFn' @show-down-modify="closeModify"
-                  v-model='showModifyPop' :btn-is-hide="btnIsHide" :config="matterEditConfig" :check-amt="checkAmtFn">
-      </pop-matter>
+    </template>
+    <!-- 新增更多 按钮 -->
+    <div :class="[isSubmitAgain ? 'resubmit-part' : 'sumbit-part']" v-if="DataLength && !matterModifyClass">
+      <div class="add_more" v-if="DataLength" @click="addMatterFn">
+        <span class="icon-add"></span>
+        <span class="add_text">新增更多物料</span>
+      </div>
+      <span class="add_more stop" v-if="this.actions.includes('stop')" @click="stopOrderFn">终止提交</span>
     </div>
+    <!-- 物料popup -->
+    <pop-matter-list  :show="showPop" v-model="showPop" @shut-down-outsidePop="closePop" @sel-matter="selMatterFn" :config="matterPopConfig"
+                      :order-title="orderListTitle" :filter-list="filterList" :matter-params="matterParams" :default-value="defaultValue" ref="matter"></pop-matter-list>
+    <!-- 物料编辑 -->
+    <pop-matter :chosen-matter='chosenMatter' :show-pop="showModifyPop" @sel-confirm='selConfirmFn' @show-down-modify="closeModify"
+                v-model='showModifyPop' :btn-is-hide="btnIsHide" :config="matterEditConfig" :check-amt="checkAmtFn">
+    </pop-matter>
+  </div>
 </template>
 
 <script>
@@ -92,39 +93,46 @@ import MatterItem from 'components/apply/commonPart/MatterItem'
 export default {
   name: 'apply-matter-part',
   props: {
+    // 数字校验方法（根据每个应用的业务情况不同，建议单独撰写一份）
     checkAmtFn: {
       type: Function
     },
+    // 用户的权限（新增、修改、删除等）
     actions: {
       type: Array,
       default() {
         return []
       }
     },
+    // 同actions一致
     btnInfo: {
       type: Object,
       default() {
         return {}
       }
     },
+    // 物料选择器 默认值
     defaultValue: {
       type: Array,
       default() {
         return []
       }
     },
+    // 物料选择器 动态渲染配置
     matterPopConfig: {
       type: Array,
       default() {
         return []
       }
     },
+    // 物料编辑器 动态渲染配置
     matterEditConfig: {
       type: Object,
       default() {
         return {}
       }
     },
+    // 物料选择器 相关请求配置
     matterParams: {
       type: Object,
       default() {
@@ -138,6 +146,7 @@ export default {
         return {}
       }
     },
+    // 物料修改器 —— 确认按钮
     selConfirmFn: {
       type: Function,
       required: true
@@ -154,6 +163,7 @@ export default {
       type: Function,
       required: true
     },
+    // 终止提交
     stopOrderFn: {
       type: Function
     },
