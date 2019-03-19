@@ -5,8 +5,8 @@
     <!-- <header class="word-header vux-1px-l">{{title}}</header> -->
     <div class="word-main">
       <form-cell v-for="(item, index) in config" :key="index" v-show="!item.hiddenInRun"
-                 :cellTitle="item.fieldLabel" :isNumberComma="item.xtype === 'r2Permilfield'"
-                 :cellContent="info[item.fieldCode]" :textRight="info[item.fieldCode].length < 20">
+                 :cellTitle="item.fieldLabel || item.text" :isNumberComma="item.xtype === 'r2Permilfield'"
+                 :cellContent="info[item.fieldCode]" :textRight="toString(info[item.fieldCode]).length < 20">
       </form-cell>  
     </div> 
   </div>
