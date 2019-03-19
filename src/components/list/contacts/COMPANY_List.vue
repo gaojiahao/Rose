@@ -85,7 +85,7 @@ export default {
       }
       // 交易号、应用名称等
       let {groupId} = item,
-        {name} = this.$route.query;
+          {name, listId} = this.$route.query;
       // 高亮 点击过的数据
       this.clickVisited = true;
       item.visited = true;
@@ -94,7 +94,12 @@ export default {
       setTimeout(() => {
         this.clickVisited = false;
         this.$router.push({
-          path, query: {name, groupId}
+          path, 
+          query: {
+            name, 
+            listId,
+            groupId
+          }
         })
       }, 200)
     },

@@ -33,80 +33,80 @@
 </template>
 
 <script>
-  // 请求 引入
-  import {getUserDetail} from 'service/Directorys/userService'
-  import {getAppDetail} from 'service/app-basic/appSettingService'
-  import FormCell from 'components/detail/commonPart/form-part/FormCell'
+// 请求 引入
+import {getUserDetail} from 'service/Directorys/userService'
+import {getAppDetail} from 'service/app-basic/appSettingService'
+import FormCell from 'components/detail/commonPart/form-part/FormCell'
 
-  export default {
-    name: "USERForm",
-    components: {
-      FormCell,
-    },
-    data() {
-      return {
-        colId: '',
-        userData: {},
-        action: {}, // 表单允许的操作
-      }
-    },
-    methods: {
-      // 获取默认图片
-      getDefaultImg(gender) {
-        this.userData.photo = gender === '男'
-          ? require('assets/ava01.png')
-          : require('assets/ava02.png')
-      },
-      // 获取详情
-      loadPage(transCode = '') {
-        this.$loading.show();
-        return getUserDetail(this.colId).then(({tableContent = []}) => {
-          let [data = {}] = tableContent;
-          let genders = ['女', '男'],
-              userTypes = ['临时账户', '长期有效'],
-              typeClass = ['shortTerm', 'longTerm'],
-              status = ['', '使用中', '未使用', '草稿'],
-              statusClass = ['', 'inUse', 'unUse'];
-          // 性别、状态等
-          data.gender = genders[data.gender] || '未知';
-          data.statusClass = statusClass[data.status];
-          data.status = status[data.status] || '停用';
-          data.typeClass = typeClass[data.userType];
-          data.userType = userTypes[data.userType];
-          this.userData = data;
-          if (!data.photo) {
-            this.getDefaultImg(data.gender);
-          }
-          this.$loading.hide();
-        })
-      },
-      // 编辑
-      goEdit(){
-        let { name } = this.$route.query,
-            { folder, fileName } = this.$route.params;
-        this.$router.push({
-          path: `/fillForm/${folder}/${fileName}`,
-          query: { name, colId: this.colId }
-        })
-      },
-      // 获取应用详情
-      getAppDetail() {
-        let {listId = ''} = this.$route.query;
-        return getAppDetail(listId).then(([data = {}]) => {
-          let {action} = data;
-          this.action = action;
-        })
-      },
-    },
-    created() {
-      (async () => {
-        let {colId = ''} = this.$route.query;
-        this.colId = colId;
-        await this.getAppDetail();
-        this.loadPage();
-      })()
+export default {
+  name: "USERForm",
+  components: {
+    FormCell,
+  },
+  data() {
+    return {
+      colId: '',
+      userData: {},
+      action: {}, // 表单允许的操作
     }
+  },
+  methods: {
+    // 获取默认图片
+    getDefaultImg(gender) {
+      this.userData.photo = gender === '男'
+        ? require('assets/ava01.png')
+        : require('assets/ava02.png')
+    },
+    // 获取详情
+    loadPage(transCode = '') {
+      this.$loading.show();
+      return getUserDetail(this.colId).then(({tableContent = []}) => {
+        let [data = {}] = tableContent;
+        let genders = ['女', '男'],
+            userTypes = ['临时账户', '长期有效'],
+            typeClass = ['shortTerm', 'longTerm'],
+            status = ['', '使用中', '未使用', '草稿'],
+            statusClass = ['', 'inUse', 'unUse'];
+        // 性别、状态等
+        data.gender = genders[data.gender] || '未知';
+        data.statusClass = statusClass[data.status];
+        data.status = status[data.status] || '停用';
+        data.typeClass = typeClass[data.userType];
+        data.userType = userTypes[data.userType];
+        this.userData = data;
+        if (!data.photo) {
+          this.getDefaultImg(data.gender);
+        }
+        this.$loading.hide();
+      })
+    },
+    // 编辑
+    goEdit(){
+      let { name } = this.$route.query,
+          { folder, fileName } = this.$route.params;
+      this.$router.push({
+        path: `/fillForm/${folder}/${fileName}`,
+        query: { name, colId: this.colId }
+      })
+    },
+    // 获取应用详情
+    getAppDetail() {
+      let {listId = ''} = this.$route.query;
+      return getAppDetail(listId).then(([data = {}]) => {
+        let {action} = data;
+        this.action = action;
+      })
+    },
+  },
+  created() {
+    (async () => {
+      let {colId = ''} = this.$route.query;
+      this.colId = colId;
+      await this.getAppDetail();
+      this.loadPage();
+    })()
   }
+}
 </script>
 
 <style scoped lang="scss">

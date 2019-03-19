@@ -48,10 +48,13 @@ export default {
       jobInfo: {                    // 职位信息
         status: 1,
         hourCost: 0.1,
+        id: '',
+        name: '',
         type: '',
         rank: '',
         rankPass: '',
         function: '',
+        describe: '',
         functionType: ''           
       },                  
       rankList: [],                 // 职级
@@ -94,7 +97,7 @@ export default {
 
       this.getDropList(requestType, childArr, childKey);
     },
-    // 提交
+    // 提交相关
     submit() {
       for (let key in this.jobInfo) {
         if (typeof(this.jobInfo[key]) === 'string' && this.jobInfo[key].indexOf(' ')>=0) {
@@ -105,87 +108,26 @@ export default {
         content: '确认提交?',
         // 确定回调
         onConfirm: () => {
-          //转化职位类型
-          // switch (this.jobInfo.type) {
-          //   case '营销类':
-          //     this.jobInfo.changeType = 'Y';
-          //     break;
-          //   case '专业类':
-          //     this.jobInfo.changeType = 'Z';
-          //     break;
-          //   case '技术类':
-          //     this.jobInfo.changeType = 'J';
-          //     break;
-          //   case '操作类':
-          //     this.jobInfo.changeType = 'C';
-          //     break;
-          //   case '管理类':
-          //     this.jobInfo.changeType = 'M';
-          //     break;
-            
-          // }
-          //转化职位状态
-          // switch (this.jobInfo.status) {
-          //   case '使用中':
-          //     this.jobInfo.changeStatus = 1;
-          //     break;
-          //   case '未使用':
-          //     this.jobInfo.changeStatus = 2;
-          //     break;
-          //   case '草稿':
-          //     this.jobInfo.changeStatus = 3;
-          //     break;
-          //   case '停用':
-          //     this.jobInfo.changeStatus = -1;
-          //     break;
-          // }
           let submitData = {
             ...this.jobInfo
           };
-          //修改
-          if (this.jobId) {
-            submitData.id = this.jobId;
-            update(submitData).then( data => {
-              if (data.success) {
-                this.$emit('change', true);
-                this.$vux.alert.show({
-                  content: '修改成功',
-                  onHide: () => {
-                    this.$router.go(-1);
-                  }
-                })
-              }
-              else {
-                this.$vux.alert.show({
-                  content: data.message
-                })
-              }
-            })
-          }
-          // 新增
-          else {
-            save(submitData).then(data=> {
-              if (data.id) {
-                this.$emit('change', true);
-                this.$vux.alert.show({
-                  content:'提交成功',
-                  onHide: () => {
-                    this.$router.go(-1);
-                  }
-
-                })
-              }
-              else {
-                this.$vux.alert.show({
-                  content:data.message
-                })
-              }
-            })
-          }
+          // 保存接口 或 编辑接口
+          let RequestMethod = this.jobId ? update : save;
+          RequestMethod(submitData).then( data => {
+            if (data.id || data.success) {
+              this.$emit('change', true);
+              this.$vux.alert.show({
+                content: data.success ? '修改成功': '提交成功',
+                onHide: () => {
+                  this.$router.go(-1);
+                }
+              })
+            }
+          })
         }
       })
     },
-    // 
+    // 提交
     save() {     
       let warn = '';
       let validateMap = [
@@ -227,47 +169,22 @@ export default {
     // 职位信息
     findData() {
       return getJobList({
-        filter: JSON.stringify([{operator:"eq",value:this.jobId,property:"id"}])
+        filter: JSON.stringify([{
+          operator:"eq",
+          value:this.jobId,
+          property:"id"
+        }])
       }).then(({tableContent = []}) => {
-        tableContent.forEach(item => {
-          switch (item.type) {
-            case 'Y':
-              item.type = '营销类';
-              break;
-            case 'Z':
-              item.type = '专业类';
-              break;
-            case 'J':
-              item.type = '技术类';
-              break;
-            case 'C':
-              item.type = '操作类';
-              break;
-            case 'M':
-              item.type = '管理类';
-              break;
-              
+        let [ requestInfo ] = tableContent;
+        for (let each in this.jobInfo) {
+          for (let key in requestInfo) {
+            if (each === key) {
+              this.jobInfo[each] = requestInfo[key];
+            }
           }
-          switch (item.status) {
-            case 1:
-              item.status = '使用中';
-              break;
-            case 2:
-              item.status = '未使用';
-              break;
-            case 3:
-              item.status = '草稿';
-              break;
-            case -1:
-              item.status = '停用';
-              break;
-          }
-        })
-        this.jobInfo = tableContent[0];
+        }
         this.$loading.hide();
-      }).catch(e=> {
-        this.$loading.hide();
-      });
+      })
     },
     // 获取 下拉框数据
     getDropList(type, arrName, key) {
@@ -293,9 +210,7 @@ export default {
     this.listId = query.listId;
     if (query.id) {
       this.jobId = query.id;
-      this.findData().then(() => {
-        this.$loading.hide();
-      }); 
+      this.findData();
       return  
     }
     // 列表的tab栏如果处于被选中状态 此时点击*新增* 职位类型默认为tab选中值

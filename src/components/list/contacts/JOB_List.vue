@@ -147,7 +147,7 @@ export default {
         return
       }
       // 交易号、应用名称等
-      let {name} = this.$route.query,
+      let {name, listId} = this.$route.query,
           {folder, fileName} = this.$route.params;
       // 高亮点击的列表
       this.clickVisited = true;
@@ -159,7 +159,11 @@ export default {
         this.clickVisited = false;
         this.$router.push({
           path: newPath,
-          query: {name, id: item.id}
+          query: {
+            name, 
+            listId,
+            id: item.id
+          }
         });
       }, 200);
     },
