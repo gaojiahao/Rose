@@ -415,13 +415,13 @@ export default {
             dealerCreditContactInformation: this.contactInfo.dealerMobilePhone || '', // 联系人手机
             containerInWarehouseManager: this.warehouse.containerInWarehouseManager || null,
             inPut: {
-              dealerCodeCredit: this.dealerInfo.dealerCode, // 供应商编码
-              crDealerLabel: this.dealerInfo.dealerLabelName || '供应商', // 供应商页签
-              crDealerPaymentTerm: this.dealerInfo.crDealerPaymentTerm,
-              daysOfAccount: this.dealerInfo.daysOfAccount, // 账期天数
-              accountExpirationDate: this.dealerInfo.accountExpirationDate, // 账期到期日
               containerCode: this.warehouse.warehouseCode, // 仓库编码
+              dealerCodeCredit: this.dealerInfo.dealerCode, // 供应商编码
+              daysOfAccount: this.dealerInfo.daysOfAccount, // 账期天数
+              crDealerLabel: this.dealerInfo.dealerLabelName || '供应商', // 供应商页签
               storehouseInCode: this.warehouseStoreInfo.warehouseCode, // 库位编码
+              crDealerPaymentTerm: this.dealerInfo.crDealerPaymentTerm,
+              accountExpirationDate: this.dealerInfo.accountExpirationDate, // 账期到期日
               dataSet
             }
           };
@@ -504,18 +504,19 @@ export default {
         }
         // 供应商信息
         this.dealerInfo = {
-          creatorName: formData.dealerCreditContactPersonName, // 客户名
-          dealerName: inPut.dealerName_dealerCodeCredit, // 公司名
-          dealerMobilePhone: formData.dealerCreditContactInformation, // 手机
-          dealerCode: inPut.dealerCode_dealerCodeCredit, // 客户编码
-          dealerLabelName: inPut.crDealerLabel, // 关系标签
-          province: inPut.province_dealerCodeCredit, // 省份
           city: inPut.city_dealerCodeCredit, // 城市
+          daysOfAccount: inPut.daysOfAccount,
+          dealerLabelName: inPut.crDealerLabel, // 关系标签
           county: inPut.county_dealerCodeCredit, // 地区
           address: inPut.address_dealerCodeCredit, // 详细地址
-          accountExpirationDate: inPut.accountExpirationDate,
+          province: inPut.province_dealerCodeCredit, // 省份
+          dealerName: inPut.dealerName_dealerCodeCredit, // 公司名
+          dealerCode: inPut.dealerCode_dealerCodeCredit, // 客户编码
           crDealerPaymentTerm: inPut.crDealerPaymentTerm,
-          daysOfAccount: inPut.daysOfAccount,
+          accountExpirationDate: inPut.accountExpirationDate,
+          creatorName: formData.dealerCreditContactPersonName, // 客户名
+          dealerMobilePhone: formData.dealerCreditContactInformation, // 手机
+          dealerName_dealerCodeCredit: inPut.dealerName_dealerCodeCredit,
         };
         this.contactInfo = {
           dealerName: formData.dealerCreditContactPersonName,
@@ -526,20 +527,20 @@ export default {
           warehouseCode: inPut.containerCode,
           warehouseName: inPut.warehouseName_containerCode,
           warehouseType: inPut.warehouseType_containerCode,
-          warehouseProvince: inPut.warehouseProvince_containerCode,
           warehouseCity: inPut.warehouseCity_containerCode,
-          warehouseDistrict: inPut.warehouseDistrict_containerCode,
           warehouseAddress: inPut.warehouseAddress_containerCode,
+          warehouseProvince: inPut.warehouseProvince_containerCode,
+          warehouseDistrict: inPut.warehouseDistrict_containerCode,
           containerInWarehouseManager: inPut.containerInWarehouseManager,
         };
         this.warehouseStoreInfo = {
           warehouseCode: inPut.storehouseInCode,
           warehouseName: inPut.warehouseName_storehouseInCode,
           warehouseType: inPut.warehouseType_storehouseInCode,
-          warehouseProvince: inPut.warehouseProvince_storehouseInCode,
           warehouseCity: inPut.warehouseCity_storehouseInCode,
-          warehouseDistrict: inPut.warehouseDistrict_storehouseInCode,
           warehouseAddress: inPut.warehouseAddress_storehouseInCode,
+          warehouseProvince: inPut.warehouseProvince_storehouseInCode,
+          warehouseDistrict: inPut.warehouseDistrict_storehouseInCode,
         };
         // 物料请求参数
         this.matterParams.data = {
@@ -549,19 +550,19 @@ export default {
           handler: formData.handler,
           handlerName: formData.handlerName,
           handlerUnit: formData.handlerUnit,
-          handlerUnitName: formData.handlerUnitName,
           handlerRole: formData.handlerRole,
+          handlerUnitName: formData.handlerUnitName,
           handlerRoleName: formData.handlerRoleName,
         };
         // 基本信息
         this.formData = {
           ...this.formData,
           ...this.handlerDefault,
-          biComment: formData.biComment,
           biId: formData.biId,
-          biProcessStatus: formData.biProcessStatus,
           creator: formData.creator,
           modifer: formData.modifer,
+          biComment: formData.biComment,
+          biProcessStatus: formData.biProcessStatus,
         }
         this.biReferenceId = formData.biReferenceId;
         this.orderList = orderList;

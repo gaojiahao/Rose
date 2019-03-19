@@ -8,7 +8,7 @@
         <!-- 用户地址和基本信息-->
         <pop-dealer-list :defaultValue="dealerInfo" :default-contact="contactInfo"
                          @sel-dealer="selDealer" @sel-contact="selContact" :dealer-params="dealerParams"></pop-dealer-list>
-        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
+        <dealer-other-part :dealer-config="baseinfoExtConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
         <!-- 其他信息部分 -->
         <other-config-part :other-config=otherConfig :other-info=otherInfo v-model="otherInfo"></other-config-part>
         <!-- 物料选择 -->
@@ -351,6 +351,7 @@ export default {
                 dataSet,
                 dealerCodeCredit: this.dealerInfo.dealerCode,
                 crDealerLabel: this.dealerInfo.dealerLabelName,
+                expectedCollectionDate: this.dealerInfo.expectedCollectionDate
               },
             }),
             wfPara: JSON.stringify(wfPara)
@@ -420,6 +421,7 @@ export default {
           address: formData.order.address_dealerCodeCredit,
           province: formData.order.province_dealerCodeCredit,
           dealerName: formData.order.dealerName_dealerCodeCredit,
+          expectedCollectionDate: formData.order.expectedCollectionDate,
           dealerMobilePhone: formData.dealerMobilePhone_dealerCodeCredit,
           dealerName_dealerCodeCredit: formData.order.dealerName_dealerCodeCredit,
         }
@@ -471,8 +473,8 @@ export default {
           invoice: {
             dealer: this.dealerInfo,
             otherInfo: this.otherInfo,
-            contactInfo: this.contactInfo,
             orderList: this.orderList,
+            contactInfo: this.contactInfo,
           }
         }
       };

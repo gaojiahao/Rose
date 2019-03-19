@@ -96,19 +96,20 @@ export default {
   watch: {
     // 监听大类变化，根据子类
     bigType: {
-      handler(val){
-        if (val){
+      handler(val) {
+        if (val) {
           let type = '';
-          for (let item of this.otherConfig){
-            if (item.fieldCode === 'demandType'){
-              for (let dItem of item.remoteData){
-                if (dItem.name === val){
+          for (let item of this.otherConfig) {
+            if (item.fieldCode === 'demandType') {
+              for (let dItem of item.remoteData) {
+                if (dItem.name === val) {
                   type = dItem.type;
                   break;
                 }
               }
             }
-            if (item.fieldCode === 'demandSubclass'){
+            if (item.fieldCode === 'demandSubclass') {
+              console.log('item:', item);
               let requestParams = {
                 url: item.dataSource.data.url,
                 data: {
@@ -147,12 +148,12 @@ export default {
       this.formData.launchDealerCode = this.dealerInfo.dealerCode;
     },  
     // 选择日期
-    getDate(sItem, dItem){
+    getDate(sItem, dItem) {
       this.$vux.datetime.show({
         confirmText: '确认',
         cancelText: '取消',
         onConfirm: (val)=> {
-          if (sItem[dItem.fieldCode] == null){
+          if (sItem[dItem.fieldCode] == null) {
             this.$set(sItem, dItem.fieldCode, val)
             return
           }
@@ -168,11 +169,11 @@ export default {
         }
       }
       let warn = '';
-      if (Object.keys(this.dealerParams).length && !this.dealerInfo.dealerCode){
+      if (Object.keys(this.dealerParams).length && !this.dealerInfo.dealerCode) {
         warn = '请选择客户'
       }
       !warn && this.submitMatterField.every(item => {
-        if (!item.hidden && !item.allowBlank && !this.formData[item.fieldCode]){
+        if (!item.hidden && !item.allowBlank && !this.formData[item.fieldCode]) {
           warn = `${item.fieldLabel}不能为空`;
           return false;
         }
