@@ -19,31 +19,31 @@
               <span class="instance_status" :class="item.statusClass">{{item.biStatus}}</span>
             </div>
             <div class="instance-project-container">
-              <div class="project_name" :class="{'time-to-wrap': item.logTitle.length > 15}">标题：{{item.logTitle}}</div>
+              <div class="project_name" :class="{'time-to-wrap': item.projectName_projectApprovalId.length > 15}">项目名称: {{item.projectName_projectApprovalId}}</div>
               <div class="project_manager">
-                <span class="project_manager_title">标准工时：</span>
-                <span class="project_manager_value">{{item.logDeclarationHours || 0}}</span>
+                <span class="project_manager_title">项目经理: </span>
+                <span class="project_manager_value">{{item.dealerName_dealerDebit}}</span>
               </div>
             </div>
             <div class="instance-task-container">
               <div class="instance_task_item" v-for="(task, tIndex) in item.detailItem" :key="tIndex">
                 <i class="icon" :class="[getTaskIcon(tIndex)]"></i>
                 <div class="task-detail">
-                  <div class="task_name" v-show="task.taskName">{{task.taskName}}</div>
+                  <div class="task_name">{{task.logTitle}}</div>
                   <div class="task_info">
                     <div class="task_info_item">
-                      <span class="task_info_title">预算成本：</span>
-                      <span class="task_info_amt">￥{{task.budgetCapital_project || 0 | numberComma}}</span>
+                      <span class="task_info_title">预算成本: </span>
+                      <span class="task_info_amt">{{task.hourlyCost || 0 | numberComma}}</span>
                     </div>
                     <div class="task_info_item">
-                      <span class="task_info_title">周期天数：</span>
-                      <span class="task_info_day">{{task.planCycleDays || 0}}天</span>
+                      <span class="task_info_title">申报工时: </span>
+                      <span class="task_info_day">{{task.logDeclarationHours || 0}}天</span>
                     </div>
                   </div>
                   <div class="task_info">
                     <div class="task_info_item">
-                      <span class="task_info_title">日期</span>
-                      <span class="task_info_day">{{task.expectEndDate_project | dateFormat('YYYY-MM-DD') || '无'}}</span>
+                      <span class="task_info_title">日期: </span>
+                      <span class="task_info_day">{{task.taskDate | dateFormat('YYYY-MM-DD') || '无'}}</span>
                     </div>
                   </div>
                 </div>
@@ -54,11 +54,11 @@
             <div class="instance-bottom-wrapper">
               <div class="instance_bottom_item instance_handler">
                 <i class="icon icon-handler"></i>
-                <span>经办人：{{item.handlerName}}</span>
+                <span>经办人: {{item.handlerName}}</span>
               </div>
               <div class="instance_bottom_item instance_mod_time">
                 <i class="icon icon-mod-time"></i>
-                <span>修改时间：{{item.modTime | dateFormat('YYYY-MM-DD HH:mm')}}</span>
+                <span>修改时间: {{item.modTime | dateFormat('YYYY-MM-DD HH:mm')}}</span>
               </div>
             </div>
           </div>
@@ -84,12 +84,9 @@ export default {
           name: '经办人',
           value: 'handlerName',
         }, {
-          name: '任务类型',
-          value: 'taskType',
-        }, {
-          name: '项目名称',
-          value: 'projectName_project',
-        },
+          name: '任务标题',
+          value: 'logTitle',
+        }
       ],
     }
   },
