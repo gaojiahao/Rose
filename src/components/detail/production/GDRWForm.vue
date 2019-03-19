@@ -1,38 +1,19 @@
 <template>
   <div class="detail_wrapper task_container">
     <div class="basicPart" v-if='orderInfo'>
-
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
+      <!-- 仓库信息 -->
       <warehouse-content :warehouse-config="warehouseConfig"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
-      <div class="form_content">
-        <div class="main_content" :class="{'no_bottom': index === workInfo.length-1}" v-for="(item, index) in workInfo" :key="index">
-          <div class="vux-1px-b" v-for="(cItem, cIndex) in matterConfig" :key="cIndex">
-            <template v-if="cItem.editorType === 'r2Datefield'">
-              <div class="each_info">
-                <label>{{cItem.text}}</label>
-                <span class="field_value">{{item[cItem.fieldCode] | timeSplit}}</span>
-              </div>
-            </template>
-            <template v-else>
-              <div class="each_info">
-                <label>{{cItem.text}}</label>
-                <span class="field_value">{{item[cItem.fieldCode]}}</span>
-              </div>
-            </template> 
-          </div>
-        </div>
-        <div class="main_content">
-          <div class="each_info">
-            <label>备注</label>
-            <span class="field_value">{{orderInfo.biComment || '无'}}</span>
-          </div>
-        </div>
+      <!-- 工单相关信息 -->
+      <div class="main-content" :class="{'no_bottom': index === workInfo.length-1}" 
+           v-for="(item, index) in workInfo" :key="index">
+        <only-word :config="matterConfig" :info="item"></only-word>
       </div>
-      <other-part :other-info="orderInfo" :attachment="attachment" :showComment='false'></other-part>
+      <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -42,7 +23,7 @@
 
 <script>
 // vux组件引入
-import { Cell, Group,dateFormat } from 'vux'
+import { dateFormat } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 // mixins 引入
@@ -52,9 +33,8 @@ import { toFixed } from '@/plugins/calc'
 import RAction from 'components/public/RAction'
 import workFlow from 'components/public/workFlow'
 import contactPart from 'components/detail/commonPart/ContactPart'
+import onlyWord from 'components/detail/commonPart/form-part/onlyWord'
 import WarehouseContent from 'components/detail/commonPart/WarehouseContent'
-import BomList from 'components/detail/commonPart/BomList'
-
 
 export default {
   data() {
@@ -62,13 +42,13 @@ export default {
       workInfo: [],       // 工单内容
       orderInfo: {},      // 表单内容
       warehouse : {},     //仓库信息
-      bomList: [],        //bom信息
       warehouseConfig: []
     }
   },
   mixins: [detailCommon],
   components: {
-    Cell, Group, RAction, workFlow, contactPart,WarehouseContent,BomList
+    RAction, onlyWord, workFlow, 
+    contactPart, WarehouseContent
   },
   filters: {
     timeSplit(val) {
@@ -120,7 +100,7 @@ export default {
 
 <style lang='scss' scoped>
   @import '~scss/biz-app/bizDetail';
-  .main_content {
+  .main-content {
     &.no_bottom {
       margin-bottom: 0;
     }

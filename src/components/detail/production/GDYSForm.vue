@@ -1,7 +1,6 @@
 <template>
   <div class="detail_wrapper xsbj-detail-container">
     <div class="basicPart" v-if='orderInfo'>
-
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 仓库信息 -->
@@ -9,30 +8,9 @@
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
-      <div class="form_content">
-        <div class="main_content no_bottom">
-          <div class="vux-1px-b" v-for="(cItem, cIndex) in fundConfig" :key="cIndex">
-            <template v-if="cItem.editorType === 'r2Datefield'">
-              <div class="each_info">
-                <label>{{cItem.fieldLabel}}</label>
-                <span class="field_value">{{workInfo[cItem.fieldCode] | timeSplit}}</span>
-              </div>
-            </template>
-            <template v-else>
-              <div class="each_info">
-                <label>{{cItem.fieldLabel}}</label>
-                <span class="field_value">{{workInfo[cItem.fieldCode]}}</span>
-              </div>
-            </template> 
-          </div>
-        </div>
-        <div class="main_content">
-          <div class="each_info">
-            <label>备注</label>
-            <span class="field_value">{{orderInfo.biComment || '无'}}</span>
-          </div>
-        </div>
-      </div>
+      <!-- 工单相关信息 -->
+      <only-word :config="fundConfig" :info="workInfo"></only-word>
+      <!-- bom列表 -->
       <div class="bom_list" v-show="bomList.length">
         <bom-list :boms="bomList">
           <template slot-scope="{bom}" slot="specification">
@@ -49,6 +27,9 @@
           </template>
         </bom-list>
       </div>
+      <!-- 备注 -->
+      <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
+      <!-- 附件 -->
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
@@ -58,8 +39,6 @@
 </template>
 
 <script>
-// vux组件引入
-import { Cell, Group,dateFormat } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 // mixins 引入
@@ -68,8 +47,9 @@ import detailCommon from 'mixins/detailCommon'
 import { toFixed } from '@/plugins/calc'
 import RAction from 'components/public/RAction'
 import workFlow from 'components/public/workFlow'
-import contactPart from 'components/detail/commonPart/ContactPart'
 import BomList from 'components/detail/commonPart/BomList'
+import contactPart from 'components/detail/commonPart/ContactPart'
+import onlyWord from 'components/detail/commonPart/form-part/onlyWord'
 import WarehouseContent from 'components/detail/commonPart/WarehouseContent'
 
 export default {
@@ -84,8 +64,8 @@ export default {
   },
   mixins: [detailCommon],
   components: {
-    Cell, Group, RAction, workFlow, contactPart,
-    BomList, WarehouseContent,
+    RAction, workFlow, BomList,
+    onlyWord, contactPart, WarehouseContent,
   },
   filters: {
     timeSplit(val) {
@@ -154,7 +134,7 @@ export default {
     .bom_list{
       position: relative;
       background: #FFF;
-      padding: .06rem .08rem;
+      padding: .06rem .15rem;
       margin:0.1rem;
     }
     .comment-part {

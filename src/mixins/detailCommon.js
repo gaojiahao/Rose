@@ -482,6 +482,16 @@ export default {
                   each['r2GridXtype'] = item.r2GridXtype;
                 })
               }
+              /** 
+               * 针对 <工单应用> 加上判断标识
+               * 根据 isBomGrid判断标识 matterConfig不用过滤 matterFilter 包含的字段
+               * 至此 <only-word> 组件可以正常渲染所有字段
+               */ 
+              if (item.xtype === 'r2BomGridWTSK') {
+                item.items.forEach(each => {
+                  each['isBomGrid'] = true;
+                })
+              }
               matterConfig = item.items;
               dataIndexMap = item.dataIndexMap || {};
               hasDataIndexMap = !!Object.keys(dataIndexMap).length;
@@ -524,8 +534,13 @@ export default {
             }
           }
           else {
-            if (!item.hidden && !matterFilter.includes(item.fieldCode)) {
-              arr.push(item);
+            if (!item.hidden) {
+              // 根据 isBomGrid判断标识 matterConfig不用过滤 matterFilter 包含的字段
+              item.isBomGrid 
+                ? arr.push(item) 
+                : !matterFilter.includes(item.fieldCode) 
+                    ? arr.push(item) 
+                    : '';
             }
           }          
           return arr

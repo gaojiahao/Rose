@@ -58,7 +58,7 @@ export let getBomWorkStart = (code) => {
 };
 
 // 获取工单验收物料Bom
-export let getBomWorkCheck = ({transCode = '', inventoryCode = ''}) => {
+export let getBomWorkCheck = ({ transCode = '', inventoryCode = '' }) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getBomWorkOrderCheck',
     data: {
