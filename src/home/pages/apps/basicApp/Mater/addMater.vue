@@ -18,7 +18,7 @@
           <template v-else-if="item.xtype === 'r2Numberfield'">
             <div class='each_property vux-1px-t'>
               <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
-              <input type='number' class='property_val' placeholder="请输入" v-model.numer="inventory[item.fieldCode]" @focus="getFocus($event)"/>
+              <input type='number' class='property_val' placeholder="请输入" v-model.number="inventory[item.fieldCode]" @focus="getFocus($event)"/>
             </div>
           </template>
           <!-- 输入框（文字） -->

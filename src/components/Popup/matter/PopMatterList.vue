@@ -182,7 +182,7 @@
       },
       // 弹窗隐藏时调用
       onHide() {
-        this.tmpItems = [...this.selItems];
+        this.tmpItems = [];
         this.$emit('input', false);
         this.$emit('shut-down-outsidePop', false);
         // 组件传值 传回给search组件 强制关闭下拉框

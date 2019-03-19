@@ -383,6 +383,7 @@ export default {
         let {config = [], dataSource = '[]', reconfig = {}} = data;
 
         console.log('config:', config);
+        console.log('二次配置-reconfig:', reconfig);
 
         // 声明相关变量
         let [ 

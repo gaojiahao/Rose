@@ -191,7 +191,7 @@
         font-weight: 500;
       }
       .required {
-        color: #5077aa;
+        color: #3296FA;
         font-weight: bold;
       }
       .r_arrow {
@@ -237,7 +237,7 @@
       display: none;
     }
     .required {
-      color: #5077aa;
+      color: #3296FA;
       font-weight: bold;
     }
     .picker {

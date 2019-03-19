@@ -90,9 +90,7 @@ export default {
     XTextarea,
     PopBaseinfo, ApplyMatterPart, OpButton
   },
-  filters: {
-    dateFormat
-  },
+  filters: { dateFormat },
   computed: {
     // 订单物料总数量
     totalNum() {
@@ -126,14 +124,15 @@ export default {
            *  
            * */
           if (!item.tdLeadTime){
-            item.shippingTime = item.promDeliTime
+            item.shippingTime = item.promDeliTime;
           }
           else if (!item.promDeliTime){
-            item.shippingTime = ''
+            item.shippingTime = '';
           }
           else {
             let promDeliTime = new Date(Date.parse(item.promDeliTime.replace(/-/g, "/")));
-            let preShippingTime = new Date(promDeliTime.getTime() - (item.tdLeadTime)*24*60*60*1000);
+            let preShippingTime = new Date(promDeliTime.getTime() - (item.tdLeadTime) *24*60*60*1000);
+            
             item.shippingTime = dateFormat(dateCount(preShippingTime, promDeliTime), 'YYYY-MM-DD');
           } 
           // 因包装数量要为整数，先根据当前的申请数量计算包装数量，如有小数向上取整后，再反算本次申请数量
