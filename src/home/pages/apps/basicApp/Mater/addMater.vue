@@ -186,17 +186,13 @@ export default {
     // 监听 物料属性
     'inventory.processing'(val) {
       let [ value, config, inventory, typeParentId ] = [ '', this.matterConfig, this.inventory, '' ];
-      let aa = false;
       setTimeout(() => {
         for (let item of config) {
           // 物料属性 
           if (item.fieldCode === 'processing') {
-            console.log('remoteData:', item.remoteData);
             if (item.remoteData) {
               for (let each of item.remoteData) {
                 if (each.name === val) {
-                  aa = true;
-                  console.log('aa-01:', aa);
                   // 根据 dictCode 拼接成 物料编码
                   this.processId = each.dictCode;
                   // *获取方式* 请求参数
@@ -218,29 +214,25 @@ export default {
               this.handleRequest(requestArr);
             });
           }
-          if (aa) {
-            // 获取 物料大类
-            if (item.fieldCode === 'inventoryType') {
-              Object.keys(item.requestParams.data).forEach(key => {
-                console.log('typeParentId:', typeParentId);
-                if (key === 'parentId') {
-                  item.requestParams.data[key] = typeParentId
-                }
-                else if (key === 'value') {
-                  item.requestParams.data[key] = value
-                }
-              })
-              requestData(item.requestParams).then(({ tableContent }) => {
-                const requestArr = ['inventoryType', 'name', item, tableContent];
-                // 处理数据
-                this.handleRequest(requestArr);
-              })
-            }
+          // 获取 物料大类
+          if (item.fieldCode === 'inventoryType') {
+            Object.keys(item.requestParams.data).forEach(key => {
+              if (key === 'parentId') {
+                item.requestParams.data[key] = typeParentId
+              }
+              else if (key === 'value') {
+                item.requestParams.data[key] = value
+              }
+            })
+            requestData(item.requestParams).then(({ tableContent }) => {
+              const requestArr = ['inventoryType', 'name', item, tableContent];
+              // 处理数据
+              this.handleRequest(requestArr);
+            })
           }
           // 获取 物料大类
           if (item.fieldCode === 'inventoryType') {
             Object.keys(item.requestParams.data).forEach(key => {
-              console.log('typeParentId:', typeParentId);
               if (key === 'parentId') {
                 item.requestParams.data[key] = typeParentId
               }
@@ -286,7 +278,6 @@ export default {
           // 请求 物料子类
           if (item.fieldCode === 'inventorySubclass') {
             Object.keys(item.requestParams.data).forEach(key => {
-              console.log('subTypeParentId:', subTypeParentId);
               if (subTypeParentId || value) {
                 if (key === 'parentId') {
                   item.requestParams.data[key] = subTypeParentId

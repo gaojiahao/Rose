@@ -158,7 +158,7 @@
                 },
                 contactInfo = {
                   dealerDebitContactPersonName: this.contactInfo.dealerName, // 往来联系人 名称
-                  dealerDebitContactInformation: this.contactInfo.dealerMobilePhone // 往来联系人 信息 (不敢相信PC这里存的是电话)
+                  dealerDebitContactInformation: this.contactInfo.dealerMobilePhone // 往来联系人 信息 
                 },
                 operation = this.processCode.length ? saveAndStartWf : submitAndCalc;
 
