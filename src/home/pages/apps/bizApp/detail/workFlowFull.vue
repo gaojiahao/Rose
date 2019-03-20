@@ -68,7 +68,6 @@
       },
       // 获取当前用户信息
       getCurrentUser() {
-        console.log('工作流的CurrentUser')
         return currentUser().then(data => {
           this.currentUser = data;
         })

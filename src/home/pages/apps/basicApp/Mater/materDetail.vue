@@ -1,6 +1,7 @@
 <template>
   <div class="childPage" :class="{'no-edit': !action.update}">
     <r-scroll class="main_content" ref="bScroll">
+      <!-- 物料基本信息 -->
       <div class="inventory_baseinfo has_margin">
         <div class="baseInfo_top">
           <div class="baseinfo_part">
@@ -13,13 +14,16 @@
           <span class="inventory_status vux-1px" :class="{'no_use' : baseinfo.status === '已删除'}">{{baseinfo.status}}</span>
         </div>
       </div>
+      <!-- 单一项 -->
       <div class="inventory_other has_margin">
-        <div class="each_property" :class="{'vux-1px-b': index < matterConfig.length-1 }" v-for="(item, index) in matterConfig" :key="index">
+        <div class="each_property" :class="{'vux-1px-b': index < matterConfig.length - 1 }" 
+             v-for="(item, index) in matterConfig" :key="index" v-show="item.xtype !== 'r2Spacer'">
           <label>{{item.fieldLabel}}:</label>
           <div class='property_val'>{{inventory[item.fieldCode] || "无"}}</div>
         </div>
       </div>
-      <div class="common_style d_main" v-for="(cItem, cIndex) in matterDuplicateConfig" :key="`${cIndex}${cItem.name}`" v-if="cItem.show">
+      <!-- 重复项 -->
+      <div class="common_style d_main" v-for="(cItem, cIndex) in matterDuplicateConfig" :key="`${cIndex}${cItem.name}`" v-show="cItem.show">
         <div class='content' v-for="(item, index) in formData[cItem.name]" :key="index">
           <div class="each_property vux-1px-b"  v-for="(sItem, sIndex) in cItem.items" :key="sIndex">
             <label>{{sItem.text}}:</label>
@@ -27,6 +31,7 @@
           </div>
         </div>
       </div>
+      <!-- 经办信息等 -->
       <div class="creator">
         <div class='each_property vux-1px-b'>
           <label>创建者:</label>

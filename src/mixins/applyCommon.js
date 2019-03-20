@@ -26,7 +26,6 @@ import platfrom from '@/plugins/platform/index'
 import {accAdd, accMul, accSub, accDiv} from 'plugins/calc/decimalsAdd'
 // 微信JS-SDK引入
 import { register } from 'plugins/wx'
-import { shareContent } from 'plugins/wx/api'
 
 export default {
   data() {

@@ -313,6 +313,7 @@ export default {
       await this.getFormViews();
       await this.getAction();
       await this.getCommentList();
+      await this.getAppExampleDetails();
       await this.isSubscribeByRelationKey();
 
       this.$loading.hide();

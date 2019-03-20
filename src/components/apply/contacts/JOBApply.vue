@@ -176,6 +176,7 @@ export default {
         }])
       }).then(({tableContent = []}) => {
         let [ requestInfo ] = tableContent;
+        // 获取 职位相关信息
         for (let each in this.jobInfo) {
           for (let key in requestInfo) {
             if (each === key) {

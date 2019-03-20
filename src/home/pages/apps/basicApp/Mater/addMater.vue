@@ -47,7 +47,7 @@
                       v-model="inventoryStatus" :required="!item.allowBlank" ></r-picker>
           </template>
         </template>
-        <template v-else>
+        <template v-else-if="item.xtype !== 'r2Spacer'">
           <div class='each_property readonly vux-1px-t'>
             <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
             <input type='text' disabled class='property_val' v-model="inventory[item.fieldCode]"/>
@@ -65,65 +65,66 @@
 <script>
 // 请求引入
 import { save, update, findData } from 'service/materService'
-import { requestData, getFormConfig, getFormViews, getBaseInfoDataBase } from 'service/common/commonService'
+import { requestData, getFormViews, getFormConfig, getBaseInfoDataBase } from 'service/common/commonService'
 // 组件引入
 import RScroll from 'plugins/scroll/RScroll'
 import RPicker from 'components/public/basicPicker';
 import UploadImage from 'components/upload/UploadImage'
-import duplicateComponent from 'homePage/components/basis-object/duplication'
 import PopTechnicsList from 'components/popup/matter/PopTechnicsList'
 import PopProcedureList from 'components/popup/matter/PopProcedureList'
+import duplicateComponent from 'homePage/components/basis-object/duplication'
 // mixins引入
 import common from 'mixins/common'
 // 插件引入
 import { toFixed } from '@/plugins/calc'
+import { setTimeout } from 'timers';
 
 export default {
   data() {
     return {
-      inventoryStatus: '使用中', // 物料状态
+      inventoryStatus: '使用中',         // 物料状态
       listId: '78a798f8-0f3a-4646-aa8b-d5bb1fada28c',
       scrollOptions: { 
         click: true 
       },
-      MatPic: '', // 图片地址
-      typeId: '',   // 大类转换id
+      inventory: {
+        safeStock: 0,                   // 安全库存
+        keepingDays: 1,                 // 保质期天数
+        nearKeepingDays: 1,             // 临保天数
+        moq: '',                        // 起订量
+        comment: '',                    // 物料说明
+        leadTime: '',                   // 加工/采购提前期
+        material: '',                   // 主材质
+        processing: '',                 // 加工属性
+        measureUnit: '',                // 单位
+        inventoryPic: '',               // 物料图片
+        technicsCode: '',               // 工艺路线
+        procedureName: '',              // 工序名称
+        procedureCode: '',              // 工序编码
+        specification: '',              // 型号规格
+        inventoryCode: '',              // 物料编码
+        inventoryName: '',              // 物料名称
+        inventoryType: '',              // 物料大类
+        multipleAccess: '',             // 获取方式
+        inventoryColor: '',             // 颜色
+        inventoryStatus: '',            // 物料状态
+        inventorySubclass: '',          // 物料子类
+      },
+      MatPic: '',                       // 图片地址
+      typeId: '',                       // 大类转换id
       uniqueId: '',
       transCode: '',
-      processId: '',  // 属性转换id
-      subclassId: '',   // 子类转换id
+      processId: '',                    // 属性转换id
+      subclassId: '',                   // 子类转换id
       biReferenceId: '',
       baseinfo: {},
-      inventory: {
-        inventoryCode: '', // 物料编码
-        inventoryName: '', // 物料名称
-        processing: '', // 加工属性
-        inventoryType: '', // 物料大类
-        inventorySubclass: '', // 物料子类
-        measureUnit: '', // 单位
-        specification: '', // 型号规格
-        material: '', // 主材质
-        inventoryColor: '', // 颜色
-        keepingDays: 1, // 保质期天数
-        safeStock: 0, // 安全库存
-        nearKeepingDays: 1, // 临保天数
-        inventoryStatus: '', // 物料状态
-        inventoryPic: '',
-        comment: '', // 物料说明
-        technicsCode: '', //工艺路线
-        leadTime: '', // 加工/采购提前期
-        procedureName: '', // 工序名称
-        procedureCode: '', // 工序编码
-        moq: '', // 起订量
-      },
-      imgFileObj: {}, // 上传的图片对象
-      matterDuplicateData: {}, // 物料重复项数据,
-      matterConfig: [], // 物料基本信息配置
-      matterDuplicateConfig: [], // 物料重复项的配置
-      imgFile: null,
-      picShow: false, // 是否展示图片
-      codeReadOnly: false, // 物料编码是否只读
-      submitSuccess: false, // 是否提交成功
+      imgFileObj: {},                   // 上传的图片对象
+      matterDuplicateData: {},          // 物料重复项数据,
+      matterConfig: [],                 // 物料基本信息配置
+      matterDuplicateConfig: [],        // 物料重复项的配置
+      picShow: false,                   // 是否展示图片
+      codeReadOnly: false,              // 物料编码是否只读
+      submitSuccess: false,             // 是否提交成功
     }
   },
   mixins: [common],
@@ -140,210 +141,195 @@ export default {
       }
       if (kDay >= 365) {
         return 45
-      } else if (kDay >= 183) {
+      } 
+      else if (kDay >= 183) {
         return 20;
-      } else if (kDay >= 90) {
+      } 
+      else if (kDay >= 90) {
         return 15;
-      } else if (kDay >= 30) {
+      } 
+      else if (kDay >= 30) {
         return 10;
-      } else if (kDay >= 10) {
+      } 
+      else if (kDay >= 10) {
         return 2;
-      } else {
+      } 
+      else {
         return 1;
       }
     },
     // 加工/采购提前期标题
     leadTimeTitle() {
       let processing = this.inventory.processing;
-      let pur = ['原料', '商品']; // 采购
-      let mac = ['半成品', '成品', '模具']; // 加工
+      let pur = ['原料', '商品'];                     // 采购
+      let mac = ['半成品', '成品', '模具'];            // 加工
       if (pur.includes(processing)) {
         return '采购提前期'
-      } else if (mac.includes(processing)) {
+      } 
+      else if (mac.includes(processing)) {
         return '加工提前期'
-      } else {
+      } 
+      else {
         return ''
       }
     },
-    // 物料属性
-    inventoryProcessing() {
-      return this.inventory.processing;
-    },
-    // 物料大类
-    inventoryType() {
-      return this.inventory.inventoryType;
-    },
-    // 物料小类
-    inventorySubclass() {
-      return this.inventory.inventorySubclass;
-    },
-    // 物料编码
+    // 拼接 物料编码
     inventoryCode() {
       return `M${this.processId}${this.typeId}${this.subclassId}`
     },
-    // 辅助计量
-    MoreUnit() {
-      return this.matterDuplicateData.invMoreUnit;
-    }
   },
   watch: {
-    // 根据物料属性 动态请求 物料大类 / 物料小类
-    inventoryProcessing(val) {
-      console.log('val:', val);
-      let TypeParentId = '', value = '';
-      for (let item of this.matterConfig) {
+    // 临保天数
+    nearKeepingDays(val) {
+      this.inventory.nearKeepingDays = val;
+    },
+    // 监听 物料属性
+    'inventory.processing'(val) {
+      let [ value, config, inventory, typeParentId ] = [ '', this.matterConfig, this.inventory, '' ];
+      let aa = false;
+      setTimeout(() => {
+        for (let item of config) {
+          // 物料属性 
           if (item.fieldCode === 'processing') {
-            for (let sItem of item.remoteData) {
-              if (sItem.name === val) {
-                this.processId = sItem.dictCode;
-                TypeParentId = sItem.id;
-                value = sItem.type;
-                break
+            console.log('remoteData:', item.remoteData);
+            if (item.remoteData) {
+              for (let each of item.remoteData) {
+                if (each.name === val) {
+                  aa = true;
+                  console.log('aa-01:', aa);
+                  // 根据 dictCode 拼接成 物料编码
+                  this.processId = each.dictCode;
+                  // *获取方式* 请求参数
+                  value = each.value;
+                  // *物料大类* 请求参数
+                  typeParentId = each.id;
+                  
+                  break;
+                }
               }
             }
           }
-          // 请求 *获取方式* 数据
+          // 获取 获取方式
           if (item.fieldCode === 'multipleAccess') {
-            item.requestParams.data.sType = this.inventory.processing;
-            requestData(item.requestParams).then(({tableContent = []}) => {
-              if (tableContent.length) {
-                tableContent.forEach(dItem => {
-                  dItem.name = dItem.sName;
-                  dItem.value = dItem.sName;
-                })
-                this.$set(this.inventory, 'multipleAccess', tableContent[0].name)
-              }
-              else {
-                this.inventory.multipleAccess = '';
-              }
-              item.remoteData = tableContent;
-            })
+            item.requestParams.data.sType = val;
+            requestData(item.requestParams).then(({ tableContent }) => {
+              const requestArr = ['multipleAccess', 'sName', item, tableContent];
+              // 处理数据
+              this.handleRequest(requestArr);
+            });
           }
-          // 请求 *物料大类* 的数据
+          if (aa) {
+            // 获取 物料大类
+            if (item.fieldCode === 'inventoryType') {
+              Object.keys(item.requestParams.data).forEach(key => {
+                console.log('typeParentId:', typeParentId);
+                if (key === 'parentId') {
+                  item.requestParams.data[key] = typeParentId
+                }
+                else if (key === 'value') {
+                  item.requestParams.data[key] = value
+                }
+              })
+              requestData(item.requestParams).then(({ tableContent }) => {
+                const requestArr = ['inventoryType', 'name', item, tableContent];
+                // 处理数据
+                this.handleRequest(requestArr);
+              })
+            }
+          }
+          // 获取 物料大类
           if (item.fieldCode === 'inventoryType') {
             Object.keys(item.requestParams.data).forEach(key => {
+              console.log('typeParentId:', typeParentId);
               if (key === 'parentId') {
-                item.requestParams.data[key] = TypeParentId
+                item.requestParams.data[key] = typeParentId
               }
               else if (key === 'value') {
                 item.requestParams.data[key] = value
               }
             })
-            requestData(item.requestParams).then(data => {
-              if (data.tableContent != null) {
-                if (data.tableContent.length) {
-                  data.tableContent.forEach(dItem => {
-                    dItem.originValue = dItem.value;
-                    dItem.value = dItem.name;
-                  })
-                  this.inventory.inventoryType = data.tableContent[0].name;
-                }
-                else {
-                  this.inventory.inventoryType = '';
-                }
-                item.remoteData = data.tableContent;
-              }
-              else {
-                if (data.length) {
-                  data.forEach(dItem => {
-                    dItem.originValue = dItem.value;
-                    dItem.value = dItem.name;
-                  })
-                  this.inventory.inventoryType = data[0].name;
-                }
-                else {
-                  this.inventory.inventoryType = '';
-                }
-                item.remoteData = data;
-              }
+            requestData(item.requestParams).then(({ tableContent }) => {
+              const requestArr = ['inventoryType', 'name', item, tableContent];
+              // 处理数据
+              this.handleRequest(requestArr);
             })
           }
-        break;
-      }
+        }
+      }, 0)
     },
-    // 监听物料大类变化，改变物料子类的数据
-    inventoryType(val) {
+    // 监听 物料大类
+    'inventory.inventoryType'(val) {
       if (!val) {
+        // typeId为物料编码的组成之一 若物料大类不存在 则需要清空
         this.typeId = '';
         return;
       }
-      let subTypeParentId = '', value = '' ;
-      for (let item of this.matterConfig) {
-        if (item.fieldCode === 'inventoryType') {
-          for (let sItem of item.remoteData) {
-            if (sItem.name === val) {
-              this.typeId = sItem.dictCode;
-              subTypeParentId = sItem.id;
-              value = sItem.type;
-              break;
+      let [ value, config, inventory, subTypeParentId ] = [ '', this.matterConfig, this.inventory, '' ];
+      setTimeout(() => {
+        for (let item of config) {
+          // 物料大类 
+          if (item.fieldCode === 'inventoryType') {
+            if (item.remoteData) {
+              for (let each of item.remoteData) {
+                if (each.name === val) {
+                  // 根据 dictCode 拼接成 物料编码
+                  this.typeId = each.dictCode;
+                  // *物料子类* 请求参数 (value / subTypeParentId 二者选其一)
+                  value = each.value;
+                  subTypeParentId = each.id;
+                  
+                  break;
+                }
+              }
             }
           }
+          // 请求 物料子类
+          if (item.fieldCode === 'inventorySubclass') {
+            Object.keys(item.requestParams.data).forEach(key => {
+              console.log('subTypeParentId:', subTypeParentId);
+              if (subTypeParentId || value) {
+                if (key === 'parentId') {
+                  item.requestParams.data[key] = subTypeParentId
+                }
+                else if (key === 'value') {
+                  item.requestParams.data[key] = value
+                }
+              }
+            })
+            requestData(item.requestParams).then(({ tableContent }) => {
+              const requestArr = ['inventorySubclass', 'name', item, tableContent];
+              // 处理数据
+              this.handleRequest(requestArr);
+            })
+          }
         }
-        // 重新请求物料子类的数据
-        if (item.fieldCode === 'inventorySubclass') {
-          Object.keys(item.requestParams.data).forEach(key => {
-            if (key === 'parentId') {
-              item.requestParams.data[key] = subTypeParentId
-            }
-            else if (key === 'value') {
-              item.requestParams.data[key] = value
-            }
-          })
-          requestData(item.requestParams).then(data => {
-            if (data.tableContent != null) {
-              if (data.tableContent.length) {
-                data.tableContent.forEach(dItem => {
-                  dItem.originValue = dItem.value;
-                  dItem.value = dItem.name;
-                })
-                this.inventory.inventorySubclass = data.tableContent[0].name;
-              }
-              else {
-                this.inventory.inventorySubclass = '';
-              }
-              item.remoteData = data.tableContent;
-            }
-            else {
-              if (data.length) {
-                data.forEach(dItem => {
-                  dItem.originValue = dItem.value;
-                  dItem.value = dItem.name;
-                })
-                this.inventory.inventorySubclass = data[0].name;
-              }
-              else {
-                this.inventory.inventorySubclass = '';
-              }
-              item.remoteData = data;
-            }
-          })
-          break
-        }
-      }
+      }, 0)
     },
     // 监听 物料子类
-    inventorySubclass(val) {
+    'inventory.inventorySubclass'(val) {
       if (!val) {
         this.subclassId = '';
         return;
       }
-      for (let item of this.matterConfig) {
-        if (item.fieldCode === 'inventorySubclass') {
-          for (let sItem of item.remoteData) {
-            if (sItem.name === val) {
-              this.subclassId = sItem.dictCode;
-              break;
+      setTimeout(() => {
+        for (let item of this.matterConfig) {
+          if (item.fieldCode === 'inventorySubclass') {
+            for (let sItem of item.remoteData) {
+              if (sItem.name === val) {
+                this.subclassId = sItem.dictCode;
+                break;
+              }
             }
           }
         }
-      }
-    },
+      }, 0)
+    },    
     // 监听 物料编码
     inventoryCode(val) {
       this.inventory.inventoryCode = val;
     },
     // 监听辅助计量，重新计算包装规格
-    MoreUnit: {
+    'matterDuplicateData.invMoreUnit': {
       handler(val) {
         if (val && val.length) {
           val.forEach(item => {
@@ -355,9 +341,33 @@ export default {
         }
       },
       deep: true
-    }
+    },  
   },
   methods: {
+    // 处理 级联关系 数据
+    handleRequest(args) {
+      const [ [ key, ckey, item, tableContent ] , inventory ] = [ args, this.inventory];
+      
+      if (!tableContent.length) {
+        inventory[key] = '';
+        this.$set(item, 'remoteData', []);
+        return;
+      }
+
+      const remoteData = tableContent.reduce((arr, cItem) => {
+        arr.push({
+          ...cItem,
+          name: cItem[ckey],
+          value: cItem[ckey],
+        }) 
+        return arr;
+      }, []);
+
+      // 设置 默认值
+      inventory[key] = remoteData[0].name;
+      // 赋值
+      this.$set(item, 'remoteData', remoteData);
+    },
     // 上传图片成功触发
     onUpload(val) {
       this.inventory.inventoryPic = val.src;
