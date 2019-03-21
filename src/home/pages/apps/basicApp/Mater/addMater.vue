@@ -70,8 +70,8 @@ import { requestData, getFormViews, getFormConfig, getBaseInfoDataBase } from 's
 import RScroll from 'plugins/scroll/RScroll'
 import RPicker from 'components/public/basicPicker';
 import UploadImage from 'components/upload/UploadImage'
-import PopTechnicsList from 'components/popup/matter/PopTechnicsList'
-import PopProcedureList from 'components/popup/matter/PopProcedureList'
+import PopTechnicsList from 'components/Popup/matter/PopTechnicsList'
+import PopProcedureList from 'components/Popup/matter/PopProcedureList'
 import duplicateComponent from 'homePage/components/basis-object/duplication'
 // mixins引入
 import common from 'mixins/common'
