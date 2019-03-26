@@ -3,7 +3,9 @@
     <div class="basicPart" ref="fill">
       <div class="wrapper">
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
-                      :handle-org-list="handleORG" :user-role-list="userRoleList" :showStatus="false"></pop-baseinfo>
+          :handle-org-list="handleORG" :user-role-list="userRoleList" 
+          :processStatus="formData.processStatus" v-model="formData.processStatus" 
+          :status-data="currentStage"></pop-baseinfo>
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo" :dealer-params="dealerParams"
                          :defaultContact="contactInfo" v-if="Object.keys(dealerParams).length"></pop-dealer-list>
         <div class="materiel_list">
@@ -76,6 +78,8 @@ export default {
         demandTitle: '', // 标题
         demandDescribe: '', // 描述
         biComment: '', // 备注
+        biProcessStatus: '',
+        processStatus: ''
       },
       biReferenceId: '',
       dealerInfo: {},
@@ -98,22 +102,22 @@ export default {
     bigType: {
       handler(val) {
         if (val) {
-          let type = '';
+          let parentId = '';
+          //console.log(val);
           for (let item of this.otherConfig) {
             if (item.fieldCode === 'demandType') {
               for (let dItem of item.remoteData) {
                 if (dItem.name === val) {
-                  type = dItem.type;
+                  parentId = dItem.id;
                   break;
                 }
               }
             }
             if (item.fieldCode === 'demandSubclass') {
-              console.log('item:', item);
               let requestParams = {
                 url: item.dataSource.data.url,
                 data: {
-                  value: type
+                  parentId : parentId
                 }
               }
               requestData(requestParams).then(({tableContent = []}) => {
@@ -128,13 +132,13 @@ export default {
                   dItem.name = dItem[item.displayField]
                   dItem.value = dItem[item.displayField];
                 })
+                //console.log(tableContent);
                 item.remoteData = tableContent;
               })
             }
           }
         }
-      }
-      
+      } 
     }
   },
   methods: {
@@ -163,6 +167,7 @@ export default {
     },    
     // 提交/修改
     save () {
+      this.formData.biProcessStatus = this.formData.processStatus;
       for (let key in this.formData) {
         if (typeof(this.formData[key]) === 'string' && this.formData[key].indexOf(' ') >= 0) {
           this.formData[key] = this.formData[key].replace(/\s/g, '');
@@ -237,7 +242,7 @@ export default {
         this.attachment = data.attachment
         this.biReferenceId = biReferenceId;
         this.handlerDefault = {
-          handle: formData.handler,
+          handler: formData.handler,
           handlerName: formData.handlerName,
           handlerRole: formData.handlerRole,
           handlerRoleName: formData.handlerRoleName,
@@ -258,6 +263,7 @@ export default {
           dealerName: formData.dealerDebitContactPersonName,
           dealerMobilePhone: formData.dealerDebitContactInformation,
         }
+        this.biReferenceId = formData.biReferenceId;
         this.$loading.hide();
       })
     },
