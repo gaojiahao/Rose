@@ -103,7 +103,6 @@ export default {
       handler(val) {
         if (val) {
           let parentId = '';
-          //console.log(val);
           for (let item of this.otherConfig) {
             if (item.fieldCode === 'demandType') {
               for (let dItem of item.remoteData) {
