@@ -210,7 +210,6 @@ export default {
           let submitData = {
             biComment: '',
             listId: this.listId,
-            biReferenceId: this.biReferenceId,
             formData: JSON.stringify({
               handlerEntity: this.entity.dealerName,
               ...formData,
@@ -220,6 +219,7 @@ export default {
           };
           if (this.transCode) {
             operation = updateData;
+            submitData.biReferenceId = this.biReferenceId;
           }
           this.saveData(operation, submitData);
         }
