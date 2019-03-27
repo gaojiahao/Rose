@@ -3,20 +3,20 @@
   <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
-        <div class="title">
-          <!-- 搜索栏 -->
-          <r-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></r-search>
-        </div>
+        <r-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></r-search>
         <!-- 物料列表 -->
         <r-scroll class="order-list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
           <div class="order-item" v-for="(item, index) in listData" :key='index'
                @click.stop="selThis(item, index)">
-            <div class="order-code">{{item.transCode}}</div>
+            <div class="order-code">
+              <span class="order-title">交易号</span>
+              <span class="order-num">{{item.transCode}}</span>
+            </div>
             <div class="order-top">
               <span class="order-top-item" v-if="item.orderCode">订单号: {{item.orderCode}}</span>
               <span class="order-top-item" v-if="item.warehouseName">仓库: {{item.warehouseName}}</span>
-            </div>            
+            </div>
             <div class="order-matter">
               <div class="mater_img">
                 <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
@@ -50,18 +50,19 @@
                     <!-- 物料分类 -->
                     <div class="mater_classify">
                       <span class="type">属性: {{item.processing}}</span>
-                      <span class="father">大类: {{item.inventoryType}}</span>
-                      <span class="child">子类: {{item.inventorySubclass}}</span>
+                      <span class="father">大类: {{item.inventoryType || "无"}}</span>
+                      <span class="child">子类: {{item.inventorySubclass || "无"}}</span>
                     </div>
                     <!-- 物料材质等 -->
                     <div class="mater_material">
-                      <span class="unit">单位: {{item.measureUnit}}</span>
-                      <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
-                      <span class="spec">材质: {{item.material || '无'}}</span>
+                      <!-- <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
+                      <span class="spec">材质: {{item.material || '无'}}</span> -->
+                      <slot name="qtyBal" :item="item">
+                      </slot>
                     </div>
-                    <div>
-                      <span>余额: {{item.qtyBal}}</span>
-                    </div>
+                    <slot name="qtyStock" :item="item">
+                      <div class="mater-balance">余额: {{item.qtyBal}}{{item.measureUnit}}</div>
+                    </slot>
                   </div>
                 </div>
               </div>
@@ -83,13 +84,13 @@
 
 <script>
   import {Icon, Popup} from 'vux'
-  import RScroll from 'components/RScroll'
+  import RScroll from 'plugins/scroll/RScroll'
   import {getSalesOrderList} from 'service/listService'
   import {getXQTJList} from 'service/materService'
-  import RSearch from 'components/search'
+  import RSearch from 'components/search/search'
 
   export default {
-    name: "PopOrderList",
+    name: "PopOrderXQTJList",
     props: {
       show: {
         type: Boolean,
@@ -104,7 +105,13 @@
       listMethod: {
         type: String,
         default: 'getDemandAdjustment'
-      }
+      },
+      params: {
+        type: Object,
+        default() {
+          return {}
+        }
+      },
     },
     components: {
       Icon, Popup, RScroll, RSearch,
@@ -116,7 +123,7 @@
         selItems: [], // 哪些被选中了
         tmpItems: [],
         listData: [],
-        limit: 10,
+        limit: 100,
         page: 1.,
         hasNext: true,
         scrollOptions: {
@@ -149,9 +156,14 @@
           this.setDefaultValue();
         }
       },
+      params: {
+        handler() {
+          this.getList();
+        }
+      },
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -159,16 +171,32 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.tmpItems = [...this.selItems];
         this.$emit('input', false);
+        // 组件传值 传回给search组件 强制关闭下拉框
+        this.$event.$emit('shut-down-filter', false);
       },
-      // TODO 判断是否展示选中图标
+      // 匹配相同项的索引
+      findIndex(arr, sItem) {
+        return arr.findIndex(item => {
+          let isSameOrderCode = true;
+          let isSameColId = true;
+          if (item.orderCode) {
+            isSameOrderCode = item.orderCode === sItem.orderCode;
+          }
+          if (item.colId) {
+            isSameColId = item.colId === sItem.colId;
+          }
+          return isSameOrderCode && isSameColId && item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode
+        });
+      },
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.tmpItems.findIndex(item => item.colId === sItem.colId) !== -1;
+        return this.findIndex(this.tmpItems, sItem) !== -1;
       },
-      // TODO 选择物料
+      // 选择物料
       selThis(sItem, sIndex) {
         let validateMap = ['getInProcessingOrder', 'getInProcessingStorage'];
         if (validateMap.includes(this.listMethod) && !sItem.orderCode) {
@@ -177,8 +205,15 @@
           });
           return
         }
+        // 加工入库需要对物料的库存进行校验
+        if (sItem.qtyBal && sItem.qtyStock <= 0){
+          this.$vux.alert.show({
+            content: '当前库存为0，不可选择'
+          });
+          return
+        }
         let arr = this.tmpItems;
-        let delIndex = arr.findIndex(item => item.colId === sItem.colId);
+        let delIndex = this.findIndex(arr, sItem);
         // 若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
@@ -186,7 +221,7 @@
         }
         arr.push(sItem);
       },
-      // TODO 确定选择订单
+      // 确定选择订单
       selConfirm() {
         let sels = [];
         // 返回上层
@@ -196,15 +231,15 @@
         this.selItems = [...this.tmpItems];
         this.$emit('sel-matter', JSON.stringify(this.selItems));
       },
-      // TODO 获取默认图片
+      // 获取默认图片
       getDefaultImg(item) {
-        let url = require('assets/wl_default02.png');
+        let url = require('assets/wl_default03.png');
         if (item) {
           item.inventoryPic = url;
         }
         return url
       },
-      // TODO 获取订单列表
+      // 获取订单列表
       getList() {
         let filter = [];
         if (this.srhInpTx) {
@@ -215,15 +250,30 @@
               property: this.filterProperty,
             }];
         }
+        let {relationKey = ''} = this.$route.query;
+        if (relationKey){
+          filter = [
+            {
+              operator: 'eq',
+              value: relationKey,
+              property: 'transCode'
+            }
+          ]
+        }
         return getXQTJList({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
+          ...this.params,
         }, this.listMethod).then(({dataCount = 0, tableContent = []}) => {
           tableContent.forEach(item => {
             item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
           });
+          if (relationKey){
+            this.selItems = [...tableContent];
+            this.$emit('sel-matter', JSON.stringify(this.selItems));
+          }
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
           this.$nextTick(() => {
@@ -231,45 +281,45 @@
           })
         });
       },
-      // TODO 重置列表条件
+      // 重置列表条件
       resetCondition() {
         this.listData = [];
         this.page = 1;
         this.hasNext = true;
         this.$refs.bScroll.scrollTo(0, 0);
       },
-      // TODO 搜索订单
+      // 搜索订单
       searchList({val = '', property = ''}) {
         this.srhInpTx = val;
         this.filterProperty = property;
         this.resetCondition();
         this.getList();
       },
-      // TODO 清空搜索条件
+      // 清空搜索条件
       clearList() {
         this.srhInpTx = '';
         this.resetCondition();
         this.getList();
       },
-      // TODO 删除选中项
+      // 删除选中项
       delSelItem(dItem) {
-        let delIndex = this.selItems.findIndex(item => item.transCode === dItem.transCode && item.inventoryCode === dItem.inventoryCode);
+        let delIndex = this.findIndex(this.selItems, dItem);
         if (delIndex !== -1) {
           this.selItems.splice(delIndex, 1);
         }
         this.tmpItems = [...this.selItems];
       },
-      // TODO 清空选择项
+      // 清空选择项
       clearSel() {
         this.selItems = [];
         this.tmpItems = [];
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getList();
       },
-      // TODO 设置默认值
+      // 设置默认值
       setDefaultValue() {
         let tmp = [];
         for (let items of Object.values(this.defaultValue)) {
@@ -292,10 +342,11 @@
   .trade_pop_part {
     background: #fff;
     .trade_pop {
-      padding: 0 .08rem;
+      
       height: calc(100% - .44rem);
       // 顶部
       .title {
+        height: 100%;
         font-size: .2rem;
         position: relative;
         padding-top: 0.08rem;
@@ -392,8 +443,19 @@
           box-shadow: 0 0 8px #e8e8e8;
           box-sizing: border-box;
           .order-code {
-            font-size: .14rem;
-            font-weight: bold;
+            display: flex;
+            color: #fff;
+            font-size: .12rem;
+            span {
+              display: inline-block;
+              padding: 0 .04rem;
+            }
+            .order-title {
+              background: #455d7a;
+            }
+            .order-num {
+              background: #c93d1b;
+            }
           }
           .order-matter {
             display: flex;
@@ -502,7 +564,14 @@
                     margin-right: .06rem;
                   }
                 }
+                // 余额
+                .mater-balance {
+                  font-size: .14rem;
+                  font-weight: bold;
+                  color: #454545;
+                }
               }
+
             }
           }
           // 下划线

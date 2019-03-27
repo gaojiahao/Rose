@@ -1,17 +1,17 @@
 <template>
   <!-- 金额明细 -->
-  <div class="price_detail" :class="{'only-count': onlyCount}">
-    <div class="price_list" v-if="!noTaxAmt">
-      <div class='title'>税金</div>
+  <div class="price_detail">
+    <div class="price_list" v-if="taxAmt>0">
+      <div class='title'>税金：</div>
       <div class="num"><span class="symbol">￥</span>{{taxAmt | toFixed | numberComma(3)}}</div>
     </div>
-    <div class="price_list" v-if="!noAmt">
-      <div class='title'>金额</div>
+    <div class="price_list" v-if="amt>0">
+      <div class='title'>金额：</div>
       <div class="num"><span class="symbol">￥</span>{{amt | toFixed | numberComma(3)}}</div>
     </div>
     <!-- 金额合计栏 -->
-    <div class="price_count vux-1px-t" v-if="!noCount">
-      <span class='title'>合计:</span>
+    <div class="price_list" v-if="!noCount">
+      <span class='title'>价税小计：</span>
       <span class="num"><span class="symbol">￥</span>{{count | toFixed | numberComma(3)}}</span>
     </div>
   </div>
@@ -55,11 +55,6 @@
         default: 0
       },
     },
-    computed:{
-      onlyCount(){
-        return this.noAmt && this.noTaxAmt
-      }
-    },
     filters: {
       numberComma,
       toFixed,
@@ -69,51 +64,30 @@
 
 <style scoped lang="scss">
   .price_detail {
+    padding: 0 .15rem;
     width: 100%;
-    margin-top: .1rem;
     background: #FFF;
-    padding: .04rem .1rem;
+    overflow: hidden;
     box-sizing: border-box;
-    &.only-count {
-      .vux-1px-t:before {
-        display: none;
-      }
-      .price_count {
-        text-align: left;
-      }
-    }
     .price_list {
       display: flex;
-      margin: .06rem 0;
-      justify-content: space-between;
-      .title,
-      .num {
-        font-weight: bold;
-        font-size: .14rem;
+      margin-top: .15rem;
+      line-height: .12rem;
+      font-size: .12rem;
+      & + .price_list {
+        margin-top: .12rem;
       }
-    }
-    // 合计
-    .price_count {
-      width: 100%;
-      font-size: .14rem;
-      text-align: right;
-      padding: .04rem 0;
-      .title {
-        color: #111;
-        font-weight: bold;
-        font-size: .14rem;
+      .title{
+        color: #999;
       }
-      .num {
-        color: #ea5455;
+      .num{
+        color: #696969;
         font-weight: bold;
-        font-size: .18rem;
       }
     }
     .symbol {
       font-size: .12rem;
-    }
-    .vux-1px-t:before {
-      border-color: #e8e8e8;
+      font-weight: 300;
     }
   }
 </style>

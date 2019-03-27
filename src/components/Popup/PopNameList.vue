@@ -1,9 +1,9 @@
 <template>
   <div class="pop-name-list-container" @click="itemClick">
     <template v-if="!selItems.PROJECT_NAME">
-      <div class="title required">项目计划</div>
+      <div class="title required">项目名称</div>
       <div class="mode">请选择项目</div>
-      <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+      <i class="iconfont icon-youjiantou r_arrow"></i>
     </template>
     <template v-else>
       <div class="user_info">
@@ -15,27 +15,32 @@
         <div class="cp_manager">
           {{selItems.PROJECT_MANAGER}}<span class="symbol"> [项目经理]</span>
         </div>
+        <div class="cp_name">
+          <template v-if="selItems.PROJECT_TYPE">
+            {{selItems.PROJECT_TYPE}}<span class="symbol"> [项目大类]</span>
+          </template>
+          <template v-if="selItems.PROJECT_SUBCLASS">
+            {{selItems.PROJECT_SUBCLASS}}<span class="symbol"> [项目子类]</span>
+          </template>
+        </div>
         <p class="cp_name" v-if="selItems.COMMENT">
           {{selItems.COMMENT}}<span class="symbol"> [项目说明]</span>
         </p>
-        <p class="cp_ads">预期开始日期：{{selItems.EXPECT_START_DATE}}</p>
-        <p class="cp_ads">预期截止日期：{{selItems.EXPECT_END_DATE}}</p>
+        <p class="cp_ads">预期开始日期: {{selItems.EXPECT_START_DATE | handlerDate}}</p>
+        <p class="cp_ads">预期截止日期: {{selItems.EXPECT_END_DATE | handlerDate}}</p>
       </div>
-      <x-icon class="r_arrow" type="ios-arrow-right" size="30"></x-icon>
+      <x-icon class="r_arrow" type="ios-arrow-right" size="30" v-show="isChoice"></x-icon>
     </template>
     <!-- 项目计划popup -->
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
-          <div class="title">
-            <!-- 搜索栏 -->
-            <d-search @search='searchList' @turn-off="onHide" :isFill='true'></d-search>
-          </div>
+          <d-search @search="searchList" @turn-off="onHide" :isFill="true"></d-search>
           <!-- 项目计划列表 -->
           <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !dealerList.length" @on-pulling-up="onPullingUp" ref="bScroll">
             <div class="each_mater box_sd" v-for="(item, index) in dealerList" :key='index'
-                 @click.stop="selThis(item,index)">
+                 @click.stop="selThis(item, index)">
               <div class="mater_main ">
                 <div class="mater_info">
                   <!-- 项目名称 -->
@@ -52,8 +57,8 @@
                       {{item.COMMENT}}<span class="symbol"> [项目说明]</span>
                     </div>
                     <div class="mater_time">
-                      <div>预期开始日期：{{item.EXPECT_START_DATE}}</div>
-                      <div>预期截止日期：{{item.EXPECT_END_DATE}}</div>
+                      <div>预期开始日期: {{item.EXPECT_START_DATE | handlerDate}}</div>
+                      <div>预期截止日期: {{item.EXPECT_END_DATE | handlerDate}}</div>
                     </div>
                   </div>
                 </div>
@@ -70,14 +75,21 @@
 
 <script>
   import {Icon, Popup, LoadMore, AlertModule, TransferDom} from 'vux'
-  import DSearch from 'components/search'
+  import DSearch from 'components/search/search'
   import BScroll from 'better-scroll'
   import {getProjectApproval} from 'service/projectService'
-  import RScroll from 'components/RScroll'
+  import RScroll from 'plugins/scroll/RScroll'
 
   export default {
     name: "PopNameList",
-    props: {},
+    props: {
+      defaultValue: {
+        type: Object,
+        default() {
+          return {}
+        }
+      }
+    },
     directives: {TransferDom},
     components: {
       Icon, Popup, DSearch, LoadMore, RScroll,
@@ -96,6 +108,7 @@
           click: true,
           pullUpLoad: true,
         },
+        isChoice: true,//是否显示右箭头
       }
     },
     watch: {
@@ -104,9 +117,17 @@
           this.showPop = val;
         }
       },
+      defaultValue(val) {
+        this.selItems = JSON.parse(JSON.stringify(this.defaultValue));
+      },
+    },
+    filters:{
+      handlerDate(val){
+        return val.split(' ')[0]
+      }
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -114,29 +135,29 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.showPop = false;
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.selItems.PROJECT_NAME === sItem.PROJECT_NAME;
       },
-      // TODO 选择项目计划
+      // 选择项目计划
       selThis(sItem, sIndex) {
         this.showPop = false;
         this.selItems = sItem;
         this.$emit('sel-item', JSON.stringify(this.selItems));
       },
-      // TODO 获取默认图片
+      // 获取默认图片
       getDefaultImg(item) {
-        let url = require('assets/wl_default02.png');
+        let url = require('assets/wl_default03.png');
         if (item) {
           item.inventoryPic = url;
         }
         return url
       },
-      // TODO 获取项目计划列表
+      // 获取项目计划列表
       getDealer() {
         let filter = [];
         let params = {
@@ -157,10 +178,10 @@
         }
         getProjectApproval(params).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          for (let i = 0; i < tableContent.length; i++) {
-            tableContent[i].EXPECT_START_DATE = tableContent[i].EXPECT_START_DATE.split(' ')[0];
-            tableContent[i].EXPECT_END_DATE = tableContent[i].EXPECT_END_DATE.split(' ')[0];
-          }
+          // for (let i = 0; i < tableContent.length; i++) {
+          //   tableContent[i].EXPECT_START_DATE = tableContent[i].EXPECT_START_DATE.split(' ')[0];
+          //   tableContent[i].EXPECT_END_DATE = tableContent[i].EXPECT_END_DATE.split(' ')[0];
+          // }
           this.dealerList = this.page === 1 ? tableContent : [...this.dealerList, ...tableContent];
           this.$nextTick(() => {
             this.$refs.bScroll.finishPullUp();
@@ -172,7 +193,7 @@
         })
 
       },
-      // TODO 搜索项目计划
+      // 搜索项目计划
       searchList({val = ''}) {
         this.srhInpTx = val;
         this.dealerList = [];
@@ -180,17 +201,21 @@
         this.hasNext = true;
         this.getDealer();
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getDealer();
       },
-      // TODO 点击展示弹窗
+      // 点击展示弹窗
       itemClick() {
         this.showPop = true;
       }
     },
     created() {
+      this.selItems = JSON.parse(JSON.stringify(this.defaultValue));
+      if (this.$route.query.relationKey){
+        this.isChoice = false;
+      }
       this.getDealer();
     },
   }
@@ -219,7 +244,7 @@
     }
     .r_arrow {
       top: 50%;
-      right: .04rem;
+      right: 7px;
       position: absolute;
       transform: translate(0, -50%);
     }
@@ -253,15 +278,16 @@
   .trade_pop_part {
     background: #fff;
     .trade_pop {
-      padding: 0 .08rem;
+      
       height: 100%;
       overflow: hidden;
       box-sizing: border-box;
       // 顶部
       .title {
-        position: relative;
-        margin: 0.08rem 0;
+        height: 100%;
         font-size: .2rem;
+        position: relative;
+        padding-top: 0.08rem;
       }
       .each_mode {
         margin-right: .1rem;

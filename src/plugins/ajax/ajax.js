@@ -1,16 +1,84 @@
+// 请求插件引入
+const fly = new Fly();
+import Fly from 'flyio/dist/npm/fly'
+// 请求地址引入
 import tokenService from '../../service/tokenService'
-import errHandle from 'service/errHandle'
-import axios from 'axios';
+// 弹窗插件引入
+import { AlertModule } from 'vux'
+import errHandle from 'plugins/errHandle'
 
-// import qs from 'qs';
 let qs = require('querystring');
 
-// TODO reject处理
+// reject处理
 let rejectError = (reject, message) => {
   errHandle(message);
   return Promise.reject({ success: false, message });
 };
 
+// fly请求 设置拦截器
+fly.interceptors.request.use((request) => {
+  // 检验 token是否存在
+  let token = tokenService.checkLogin();
+  // token 存在则赋值在header当中
+  if (token) {
+    request.headers.Authorization = token;
+  }
+  else {
+    // token 不存在，锁住请求，优先请求token，后序请求进入队列
+    fly.lock();
+    return tokenService.login().then((token) => {
+      request.headers.Authorization = token;
+      // 请求token成功之后，即将进入第一个请求
+      return request;
+    }).finally(() => {
+      // 解锁队列，后序请求恢复正常
+      fly.unlock()
+    }).catch( err => {
+      // 请求拦截 报错标识
+      console.log('req-err:', err);
+      rejectError('reject', err.message)
+    })
+  }
+})
+
+// fly请求 响应拦截器
+fly.interceptors.response.use(
+  function (response) {
+    let { success = true, message = '请求异常' } = response.data;
+    if (success) {
+      return response;
+    }
+    else {
+      return rejectError('reject', message);
+    }
+  },
+  function (error) {
+    console.log('error:', error);
+    // 响应拦截 报错标识
+    if (error.status === 401) {
+      this.lock();
+      return tokenService.login()
+      .then((token) => {
+        console.log('token已更新')
+        AlertModule.show({
+          title: '温馨提示',
+          content: '您的登录状态似乎有点问题，不用担心，页面刷新之后就好',
+          onHide() {
+            location.reload();
+          }
+        })
+      })
+    }
+    else if (error.status === 1) {
+      if (error.message.includes('timeout')) {
+        return rejectError('reject', '不好意思，网络似乎出了点问题，请稍后再试')
+      }
+    }
+    rejectError('reject', error.response.data.message) 
+  }
+)
+
+// 请求选项列表
 let Rxports = {
   /**
    * @param {String} type      请求的类型，默认post
@@ -23,114 +91,65 @@ let Rxports = {
    * @param {Function} error      发送请求前
    * @param return
    */
+  
+  // 标准请求 （支持GET、POST）
   ajax(opts = {}) {
     return new Promise((resolve, reject) => {
-      tokenService.getToken().then(token => {
-        if (!opts.url) {
-          alert('请填写接口地址');
-          return false;
+      let params = {
+        method: opts.type || opts.method || 'GET',
+        url: opts.url,
+        headers: {
+          'Content-Type': opts.contentType || '*/*',
+        },
+        timeout: opts.time || 30 * 1000,
+        responseType: opts.dataType || 'json'
+      }
+      if (params.method.toUpperCase() === 'POST') {
+        params.data = qs.stringify(opts.data || opts.body) || {}
+        if (opts.contentType === 'application/json') {
+          params.data = opts.data
         }
-        let params = {
-          method: opts.type || 'GET',
-          url: opts.url,
-          headers: {
-            'Content-Type': opts.contentType || '*/*',
-            Authorization: token
-          },
-          timeout: opts.time || 10 * 1000,
-          responseType: opts.dataType || 'json'
-        }
-        if (opts.type && opts.type.toUpperCase() === 'POST') {
-          params.data = qs.stringify(opts.data) || {}
-        } else {
-          // params.params = opts.data || {}
-          if (typeof opts.data === 'object') {
-            let query = [];
-            for (let [key, value] of Object.entries(opts.data)) {
-              query.push(`${key}=${value}`)
-            }
-            if (params.url.indexOf('?') === -1) {
-              // url上没有?
-              params.url = encodeURI(`${params.url}?${query.join('&')}`)
-            } else {
-              // url上有?，给其拼上&
-              params.url = encodeURI(`${params.url}&${query.join('&')}`)
-            }
+      } else {
+        if (typeof opts.data === 'object') {
+          let query = [];
+          for (let [key, value] of Object.entries(opts.data)) {
+            query.push(`${key}=${value}`)
+          }
+          if (params.url.indexOf('?') === -1) {
+            // url上没有?
+            params.url = encodeURI(`${params.url}?${query.join('&')}`)
+          } 
+          else {
+            // url上有?，给其拼上&
+            params.url = encodeURI(`${params.url}&${query.join('&')}`)
           }
         }
-        axios(params).then( res => {
-          let data = res.data;
-          let {success = true, message = '请求异常'} = data;
-          if (success && Number(res.status) === 200) {
-            resolve(data)
-          } else {
-            rejectError(reject, message);
-          }
-        }).catch( error => {
-          console.log(error);
-          let res = error.response;
-          let data = (res && res.data) || {};
-          let status = (res && res.status) || 0;
-          let message = data.message || '请求异常';
-          if (status === 401) {
-            tokenService.login()
-          }
-          rejectError(reject, message);
-        });
-      }).catch(e => {
-        console.log(e);
-        let {success = false, message = '请求异常'} = e;
-        rejectError(reject, message);
-      })
+      }
+      fly.request(params, params.data)
+        .then( res => resolve(res.data))
+        .catch( err => {
+          console.log('err:', err);
+        })
     })
   },
-  // TODO post请求，使用Payload
+  
+  // POST请求
   post(opts = {}) {
     return new Promise((resolve, reject) => {
-      tokenService.getToken().then(token => {
-        if (!opts.url) {
-          reject({
-            success: false,
-            message: '请填写接口地址'
-          });
-        }
-        axios.post(opts.url, opts.data, {
-          headers: Object.assign({
-            Authorization: token,
-          }, opts.headers)
-        }).then(res => {
-          let data = res.data;
-          let {success = true, message = '请求异常'} = data;
-          if (success && Number(res.status) === 200) {
-            resolve(data)
-          } else {
-            rejectError(reject, message);
-          }
-        }).catch( error => {
-          let res = error.response;
-          let data = (res && res.data) || {};
-          let status = (res && res.status) || 0;
-          let message = data.message || '请求异常';
-          if (status === 401) {
-            tokenService.login()
-          }
-          rejectError(reject, message);
-        });
-      }).catch(e => {
-        console.log(e);
-        let {success = false, message = '请求异常'} = e;
-        rejectError(reject, message);
-      })
+      fly.post(opts.url, opts.data).then(res => resolve(res.data));
     })
   },
-  // TODO 上传图片，单个文件
+
+  // 上传图片，单个文件
   upload({file = {}, biReferenceId = ''}) {
-    let param = new FormData();  // 创建form对象
-    param.append('file', file);  // 通过append向form对象添加数据
+    // 创建form对象
+    let param = new FormData(); 
+    // 通过append向form对象添加数据
+    param.append('file', file);  
+    // 添加form表单中其他数据
     if (biReferenceId) {
-      param.append('biReferenceId', biReferenceId); // 添加form表单中其他数据
+      param.append('biReferenceId', biReferenceId); 
     }
-    // console.log(param.get('file')); // FormData私有类对象，访问不到，可以通过get判断值是否传进去
     return this.post({
       url: '/H_roleplay-si/ds/upload',
       headers: {

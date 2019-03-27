@@ -1,0 +1,79 @@
+@import '~scss/biz-app/bizList';
+@import '~@/scss/color';
+.instance-item-wrapper {
+  margin: .1rem;
+  width: calc(100% - .2rem);
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+  transition: background-color 200ms linear;
+  box-sizing: border-box;
+  box-shadow: 0 2px 10px 0 rgba(228, 228, 232, 0.5);
+  &.visited {
+    background-color: $list_visited;
+  }
+  .instance-header {
+    display: flex;
+    justify-content: space-between;
+    .instance_code {
+      position: relative;
+      left: -.15rem;
+      padding-left: .14rem;
+      line-height: .12rem;
+      font-size: .12rem;
+      &:before {
+        width: .08rem;
+        border-left: .08rem solid #3296FA;
+      }
+    }
+    .instance_status {
+      font-size: .12rem;
+      line-height: .12rem;
+    }
+  }
+  .duty_done_c {
+    color: #3296FA;
+  }
+  .duty_doing_c {
+    color: #333;
+  }
+  .duty_fall_c {
+    color: #999;
+  }
+  .instance_process_status {
+    padding: .04rem .06rem;
+    line-height: .12rem;
+    border-radius: 10px;
+    background-color: #fff4e6;
+    color: #fb880b;
+    font-size: .12rem;
+  }
+  .instance-bottom {
+    padding: .15rem .1rem;
+    line-height: .14rem;
+    font-size: .12rem;
+    .instance-bottom-wrapper {
+      display: flex;
+      align-items: center;
+      border-radius: .2rem;
+      padding: .07rem .1rem;
+      justify-content: center;
+      background-color: #f7f7f7;
+      white-space: nowrap;
+    }
+    .instance_bottom_item {
+      display: flex;
+      color: #999;
+      align-items: center;
+    }
+    .instance_handler {
+      margin-right: .15rem;
+    }
+    .icon {
+      display: inline-block;
+      margin-right: .05rem;
+      width: .16rem;
+      height: .16rem;
+    }
+  }
+}

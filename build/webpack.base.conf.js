@@ -25,12 +25,14 @@ let webpackConfig = {
     extensions: ['.js', '.vue', '.json'],
     alias: {
       '@': resolve('src'),
-      'service': resolve('src/service'),
+      'scss': resolve('src/scss'),
       'mixins': resolve('src/mixins'),
-      'pageMixins': resolve('src/components/mixins'),
       'assets': resolve('src/assets'),
+      'service': resolve('src/service'),
       'plugins': resolve('src/plugins'),
-      'components': resolve('src/components')
+      'msgPage': resolve('src/msg/pages'),
+      'homePage': resolve('src/home/pages'),
+      'components': resolve('src/components'),
     }
   },
   module: {

@@ -1,213 +1,382 @@
 <template>
   <div class='childPage'>
-    <div class='detail_content'>
-      <div class='mater_baseinfo vux-1px-b'>
-        <div class='mater_property'>
-          <div class='each_property vux-1px-b'>
-            <label>往来编码:</label>
-            <div class='property_val'>{{dealer.dealerCode}}</div>
+    <r-scroll class='detail_content' ref="bScroll">
+      <div class="dealer_baseinfo has_margin">
+        <div class="baseInfo_top">
+          <div class="baseinfo_part">
+            <img :src='MatPic' @error="getDefaultImg"/>
+            <div class="dealer_name">
+              <p class="name">{{dealer.dealerName}}</p>
+              <p class="code">往来编码：<span class="symbol"></span>{{dealer.dealerCode}}</p>
+            </div>
           </div>
-          <div class='each_property'>
-            <label>往来名称:</label>
-            <div class='property_val'>{{dealer.dealerName}}</div>
-          </div>
+          <span class="dealer_status vux-1px" :class="{'no_use' : baseinfo.status === '已删除'}">{{baseinfo.status}}</span>
         </div>
-        <div class='mater_pic vux-1px-l'>
-          <div class='add_icon'>
-            <label for="file"></label>
-            <img :src='MatPic' class='upload' @error="getDefaultImg"/>
-          </div>
-        </div>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>往来关系标签:</label>
-        <div class='property_val'>{{dealer.dealerLabelName}}</div>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>省市区:</label>
-        <div class='property_val'>
-           {{dealer.province}}{{dealer.city}}{{dealer.county}}
+        <div class="baseinfo_address">
+          <span class="icon-address"></span>
+          <span class="address" v-if="dealer.province || dealer.city || dealer.county || dealer.address">
+            {{dealer.province}}{{dealer.city}}{{dealer.county}}{{dealer.address}}
+          </span>
+          <span class="address" v-else>暂无地址</span>
         </div>
       </div>
-      <div class='each_property vux-1px-b'>
-        <label>详细地址:</label>
-        <div class='property_val'>{{dealer.address}}</div>
+      <div class="dealer_other">
+        <div  v-for="(item, index) in dealerConfig" :key="index">
+          <div class="each_property" :class="{'vux-1px-b': index < dealerConfig.length-1 }" v-show="!item.hiddenInRun">
+            <label>{{item.fieldLabel}}:</label>
+            <div class='property_val'>{{dealer[item.fieldCode] || "无"}}</div>
+          </div>
+        </div>
       </div>
-      <div class='each_property vux-1px-b'>
-        <label>固定电话:</label>
-        <div class='property_val'>{{dealer.dealerPhone}}</div>
+      <div v-for="(cItem, cIndex) in dealerDuplicateConfig" :key="`${cIndex}${cItem.name}`">
+        <div class="d_main common_style" v-if="cItem.show">
+          <div class='content' v-for="(item, index) in formData[cItem.name]" :key="index">
+              <div v-for="(sItem, sIndex) in cItem.items" :key="sIndex">
+                <div class="each_property vux-1px-b" v-if="!sItem.hidden">
+                  <label>{{sItem.text}}:</label>
+                  <div class='property_val' v-if="sItem.editorType === 'r2Datefield'">{{item[sItem.fieldCode] | changeDate}}</div>
+                  <div class='property_val' v-else>{{item[sItem.fieldCode] || "无"}}</div>
+                </div>
+              </div>
+          </div>
+        </div>
       </div>
-      <div class='each_property vux-1px-b'>
-        <label>手机:</label>
-        <div class='property_val'>{{dealer.dealerMobilePhone}}</div>
+      <div class="creator">
+        <div class='each_property vux-1px-b'>
+          <label>创建者:</label>
+          <div class='property_val'>{{baseinfo.creatorName}}</div>
+        </div>
+        <div class='each_property vux-1px-b'>
+          <label>创建时间:</label>
+          <div class='property_val'>{{baseinfo.crtTime | changeDate(true)}}</div>
+        </div>
+        <div class='each_property vux-1px-b' v-if="baseinfo.modiferName">
+          <label>修改者:</label>
+          <div class='property_val'>{{baseinfo.modiferName}}</div>
+        </div>
+        <div class='each_property vux-1px-b' v-if="baseinfo.modTime">
+          <label>修改时间:</label>
+          <div class='property_val'>{{baseinfo.modTime | changeDate(true)}}</div>
+        </div>
       </div>
-      <div class='each_property vux-1px-b'>
-        <label>电子邮件:</label>
-        <div class='property_val'>{{dealer.dealerMail}}</div>
-      </div>
-    </div>
+    </r-scroll>
+    <div class="modify_icon" @click="goEdit">
+      <span class="icon-edit"></span>
+    </div>  
   </div>
 </template>
 <script>
-  import dealerService from 'service/dealerService.js'
-  export default {
-    data() {
-      return {
-        transCode  : '',
-        MatPic: '', // 图片地址
-        imgFileObj: {}, // 上传的图片对象
-        dealer : {},
-        baseinfo :{}
+import { dateFormat } from 'vux'
+import dealerService from 'service/dealerService'
+import { getFormConfig, getFormViews } from 'service/common/commonService'
+import RScroll from 'plugins/scroll/RScroll'
+import FormCell from 'components/detail/commonPart/form-part/FormCell'
+export default {
+  filters: {
+    dateFormat,
+    changeDate(d, hasSecond = false) {
+      if (!d) {
+        return '';
       }
+      if (typeof d === 'string') {
+        d = d.replace(/-/g, '/').replace(/\..*/g, '');
+      }
+      let fmt = 'YYYY-MM-DD';
+      if (hasSecond) {
+        fmt = 'YYYY-MM-DD HH:mm:ss';
+      }
+      return dateFormat(d, fmt)
     },
-    methods: {
-      //往来信息
-      findData() {
-        return dealerService.getDealerInfo(this.transCode).then(({formData = {}, attachment = []}) => {
-          let {baseinfo = {}, dealer = {}} = formData;
-          this.hasDefault = true;
-          this.baseinfo = {...this.baseinfo, ...baseinfo,};
-          this.dealer = {...this.dealer, ...dealer,};
-          for(let key in this.dealer){
-            if(this.dealer[key] == ''){
-              this.dealer[key] = '无'
-            }
+  },
+  data() {
+    return {
+      listId: 'c0375170-d537-4f23-8ed0-a79cf75f5b04',
+      MatPic: '', // 图片地址
+      uniqueId: '',
+      transCode: '',
+      dealer : {},
+      baseinfo :{},
+      formData: {},
+      imgFileObj: {}, // 上传的图片对象
+      dealerConfig: [], // 基本信息配置
+      dealerDuplicateConfig: [], // 重复项配置
+    }
+  },
+  components: {
+    RScroll, FormCell
+  },
+  methods: {
+    //往来信息
+    findData() {
+      return dealerService.getDealerInfo(this.transCode).then(({formData = {}, attachment = []}) => {
+        this.formData = formData;
+        // 此处判断 *重复项* 是否显示
+        this.dealerDuplicateConfig.forEach(item => {
+          if (this.formData[item.name] && !this.formData[item.name].length){
+            item.show = false;
+            return
           }
-          this.biReferenceId = this.dealer.referenceId;
-          if (this.dealer.dealerPic) {
-            this.MatPic = `/H_roleplay-si/ds/download?url=${this.dealer.dealerPic}&width=400&height=400`;
-          }
-          else{
-            this.getDefaultImg()
-          }
-          let [imgFileObj = {}] = attachment.filter(item => {
-            return item.attacthment === this.dealer.dealerPic
-          });
-          this.imgFileObj = imgFileObj;
-          this.$loading.hide();
-        }).catch(e=>{
-          this.$loading.hide();
-          this.$vux.alert.show({
-            content:e.message
-          })
+          item.show = true;
+        })
+        let {baseinfo = {}, dealer = {}} = formData;
+        // 表单状态 转换
+        switch(baseinfo.status) {
+          case -3 :
+            baseinfo.status = '已归档';
+            break;
+          case -2 :
+            baseinfo.status = '已删除';
+            break;
+          case -1 :
+            baseinfo.status = '已失效';
+            break;
+          case 0 :
+            baseinfo.status = '草稿';
+            break;
+          case 1 :
+            baseinfo.status = '已生效';
+            break;
+          case 2 :
+            baseinfo.status = '进行中';
+            break;
+        }
+        this.hasDefault = true;
+        this.baseinfo = {...this.baseinfo, ...baseinfo,};
+        this.dealer = {...this.dealer, ...dealer,};
+        this.biReferenceId = this.dealer.referenceId;
+        if (this.dealer.dealerPic) {
+          this.MatPic = `/H_roleplay-si/ds/download?url=${this.dealer.dealerPic}&width=400&height=400`;
+        }
+        else {
+          this.getDefaultImg()
+        }
+        let [imgFileObj = {}] = attachment.filter(item => {
+          return item.attacthment === this.dealer.dealerPic
         });
-      },
-      // TODO 获取默认图片
-      getDefaultImg() {
-         this.MatPic = require('assets/contact_default02.png');
-      },
+        for (let cItem of this.dealerConfig) {
+          // 主体类型为机构， 税号显示
+          if (cItem.fieldCode === 'taxNo'){
+            cItem.hiddenInRun = this.dealer.mianTypes === '机构' ? false : true
+          }
+          // 默认结算方式为后支付，默认账期方式显示
+          else if (cItem.fieldCode === 'wayOfPayment') {
+            cItem.hiddenInRun = this.dealer.paymentTerm === '后支付' ? false : true
+            break
+          }
+        }
+        this.imgFileObj = imgFileObj;
+      }).catch(e=> {
+        this.$loading.hide();
+        this.$vux.alert.show({
+          content:e.message
+        })
+      });
     },
-    created() {
-      this.$loading.show()
-      let query = this.$route.query;
-      if(query.transCode){
-        this.transCode = query.transCode;
-          this.findData()
-      }
+    // 获取默认图片
+    getDefaultImg() {
+      this.MatPic = require('assets/default/dealer.png');
+    },
+    // 跳转到修改页面
+    goEdit() {
+      this.$router.push({
+        path: '/adress/edit_ads',
+        query: {
+          transCode: this.transCode
+        }
+      })
+    },
+    // 请求表单配置基本信息
+    async getFormViewInfo() {
+      // 请求表单uniqueId
+      await getFormViews(this.listId).then(data => {
+        for (let item of data){
+          if (item.viewType === 'view'){
+            this.uniqueId = item.uniqueId;
+            break;
+          }
+        }
+      })
+      // 请求
+      await getFormConfig(this.uniqueId).then(({config = []}) => {
+        console.log('config:', config);
+        let dealerConfig = [], dealerDuplicateConfig = [];
+        config.forEach(item => {
+          if (!item.isMultiple) {
+            dealerConfig = JSON.parse(JSON.stringify(item.items));
+          }
+          else {
+            dealerDuplicateConfig.push(JSON.parse(JSON.stringify(item)))
+          }
+        })
+        //往来基本信息配置的处理
+        dealerConfig.forEach(item => {
+          // 在渲染的配置中添加字段
+          if (item.fieldCode !== 'dealerCode' && item.fieldCode !== 'dealerName' 
+            && item.fieldCode !== 'dealerPic' && item.fieldCode !== 'dealerStatus' ){
+            this.dealerConfig.push(item);
+          }
+          // 默认将税号,账期方式隐藏
+          if (item.fieldCode === 'taxNo' || item.fieldCode === 'wayOfPayment'){
+            item.hiddenInRun = true
+          }
+        })
+        this.dealerDuplicateConfig = dealerDuplicateConfig;
+      })
+
+    }
+  },
+  created() {
+    this.$loading.show()
+    let query = this.$route.query;
+    if (query.transCode){
+      this.transCode = query.transCode;
+      (async() => {
+        await this.getFormViewInfo();
+        await this.findData();
+        this.$loading.hide()
+      })()
     }
   }
+}
 </script>
 <style lang="scss" scoped>
   .vux-1px-l:before,
   .vux-1px-b:after {
     border-color: #e8e8e8;
   }
+  // 修改按钮
+  .modify_icon {
+    position: absolute;
+    right: .15rem;
+    bottom: 10%;
+    width: .3rem;
+    height: .3rem;
+    z-index: 100;
+    span{
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  }
   .detail_content {
     height: 100%;
-    overflow-y: auto;
+    overflow: hidden;
+    background: #f8f8f8;
+    color: #696969;
+    font-size: .14rem;
     div {
       border: none;
       outline: none;
     }
-    .mater_baseinfo {
-      display: flex;
-      align-items: flex-end;
-      .mater_property {
-        flex: 1;
-      }
-      .mater_pic {
-        .add_icon {
-          position: relative;
-          label {
-            display: block;
-            width: 1.2rem;
-            height: 1.2rem;
+    .common_style{
+      margin-bottom: .1rem;
+      background: #fff;
+      padding: 0 .15rem;
+    }
+    .dealer_baseinfo {
+      @extend .common_style;
+      padding: .12rem .15rem .18rem;
+      // 仓库名，编码，图片，状态
+      .baseInfo_top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        .baseinfo_part {
+          display: flex;
+          align-items: flex-start;
+          img {
+            width: .6rem;
+            height: .6rem;
+            border-radius: .04rem;
+            margin-right: .12rem;
           }
-          .upload {
-            width: 1.2rem;
-            height: 1.2rem;
-            position: absolute;
-            left: 0;
-            top: 0;
-            z-index: -999;
-            span {
-              display: block;
-              text-align: center;
+          .dealer_name {
+            margin-top: .02rem;
+            .name{
+              font-size: .16rem;
+              line-height: .16rem;
+              font-weight: bold;
+              color: #333;
             }
-            .iconfont {
-              font-size: 0.24rem;
-              margin-top: 0.24rem;
+            .code {
+              margin-top: .12rem;
+              line-height: .14rem;
+              .symbol {
+                color: #333;
+              }
+            }
+          }
+        }
+        .dealer_status {
+          font-size: .12rem;
+          line-height: .22rem;
+          color: #FA7138;
+          padding: 0 .05rem;
+          &.vux-1px::before {
+            border-color: #FA7138;
+            border-radius: .04rem;
+          }
+          &.no_use{
+            color: #999;
+            &.vux-1px::before {
+              border-color: #999;
             }
           }
 
         }
-
-        .pic {
-          width: 1.2rem;
-          height: 1.2rem;
-          border: 0;
+      }
+      // 地址
+      .baseinfo_address {
+        margin-top: .1rem;
+        display: flex;
+        align-items: flex-start;
+        .icon-address {
+          width: .16rem;
+          height: .16rem;
+          margin: .02rem .08rem 0 0;
+        }
+        .address{
+          flex: 1;
+          display: block;
+          line-height: .2rem;
         }
       }
     }
     .each_property {
-      min-height: .5rem;
-      padding: 0.05rem 0.08rem;
-      position: relative;
-      label {
-        color: #6d6d6d;
-        font-size: 0.12rem;
-        display: block;
-        height:0.2rem;
-        line-height: 0.2rem;
-      }
+      height: .5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       .property_val {
-        display: block;
-        font-size: 0.16rem;
-        line-height: 0.24rem;
-      }
-      .picker {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        .mater_nature {
-          font-size: 0.16rem;
-          line-height: 0.2rem;
-        }
-        .iconfont {
-          font-size: 0.24rem;
-        }
-      }
-      .vux-cell-box{
-        position: absolute;
-        left:0;
-        top:0;
-        padding: 0.05rem 0.08rem;
-        width:100%;
-        box-sizing: border-box;
-        color: #6d6d6d;
-        font-size: 0.12rem;
-        label{
-          height:0.58rem;
-        }
-        .vux-cell-primary{
-          display: none;
-        }
-        &:not(:first-child):before{
-          border:none;
-        }
-
+        color: #333;
       }
     }
+    .dealer_other {
+      @extend .common_style;
+    }
+    //创建者
+    .creator {
+      @extend .common_style;
+      margin-bottom: 0;
+    }
+  }
+  .d_main {
+    // margin-top: 0.1rem;
+    // background: #fff;
+    .title {
+      color: #111;
+      background: #fff;
+      font-size: .16rem;
+      padding: .06rem 0;
+      font-weight: bold;
+    }
+    .content {
+
+      &.show_border {
+        border-bottom: .03rem solid #e8e8e8;
+      }
+    }
+
   }
   //确认框
   .popup_header {

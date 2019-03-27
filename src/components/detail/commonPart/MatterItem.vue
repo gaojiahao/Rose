@@ -1,56 +1,47 @@
 <template>
-  <div class="matter_item">
-    <div class="mater_img">
-      <img :src="item.inventoryPic" alt="mater_img" @error="getMatterDefault(item)">
-    </div>
-    <div class="mater_main">
-      <!-- 物料名称 -->
-      <div class="mater_name">
-        {{item.inventoryName_transObjCode || '该物料未获取到名称，请检查物料信息。'}}
+  <!-- 单个物料 (嵌套于matterList中) -->
+  <div class="matter-item-container">
+    <div class="matter-main">
+      <img class="matter_img" :src="item.inventoryPic" alt="mater_img" @error="getMatterDefault(item)">
+      <div class="matter_info">
+        <div class="matter_name">
+          {{item.inventoryName_transObjCode || item.facilityName_facilityObjCode || '该物料未获取到名称，请检查物料信息。'}}
+        </div>
+        <div class="matter_info_item flex-start">
+          <div class="matter_detail" v-if="item.tdProcessing">
+            <span class="matter_item_title">属性：</span>
+            <span class="matter_item_value">{{item.tdProcessing}}</span>
+          </div>
+          <div class="matter_detail" v-if="showSpec">
+            <span class="matter_item_title">产品规格：</span>
+            <!-- <span class="matter_item_value">{{item.specification_transObjCode || item.specification_outPutMatCode || item.facilitySpecification_facilityObjCode || item.assMeasureDescription}}</span> -->
+            <span class="matter_item_value">{{item.specification_transObjCode}}</span>
+          </div>
+        </div>
+        <div class="matter_info_item">
+          <div class="matter_detail">
+            <span class="matter_item_title">编码：</span>
+            <span class="matter_item_value">{{item.transObjCode || item.facilityObjCode || '无'}}</span>
+          </div>
+        </div>
+        <div class="matter_info_item" @click="clickMore">
+          <div class="matter_detail">
+            <span class="matter_item_title">其他</span>
+          </div>
+          <i class="icon-more"></i>
+        </div>
+        <div class="matter_info_item matter_price_top" v-if="hasData('price') || hasData('assistQty')">
+          <span class="matter_no_tax" v-if="hasData('price')">￥{{item.price | toFixed | numberComma}}</span>
+          <span class="matter_qty" v-if="item.assistQty">x{{item.assistQty | toFixed}}</span>
+        </div>
+        <div class="matter_info_item" :class="{spillover: `${item.tdAmount}`.length > 6}"
+             v-if="hasData('taxAmount') || item.tdAmount">
+          <span class="matter_tax" v-if="hasData('taxAmount')">税金￥{{item.taxAmount | toFixed | numberComma}}</span>
+          <span class="matter_total_wrapper" v-if="item.tdAmount">
+            合计：<span class="matter_total"><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma}}</span>
+          </span>
+        </div>
       </div>
-      <!-- 物料基本信息 -->
-      <div class="mater_info">
-        <!-- 物料编码 -->
-        <div class="info-item">
-          <span class="title">编码</span>
-          <span class="num">{{item.transObjCode || '无'}}</span>
-        </div>
-        <!-- 物料规格 -->
-        <div class="info-item mater_spec">
-          <span class="title">规格</span>
-          <span class="num">{{item.specification_transObjCode || item.specification_outPutMatCode || '无'}}</span>
-        </div>
-      </div>
-      <slot name="other" :item="item">
-        <!-- 物料数量和价格 -->
-        <div class='mater_other' v-if="!$slots.other && !$scopedSlots.other">
-          <div class='mater_num' v-if='item.tdQty'>
-            <span v-if="isReturnMatter">
-              <span class="num">退货单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-              <span class='num'>退货数量: {{item.tdQty | toFixed}}</span>
-            </span>
-            <span v-else>
-              <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-              <span class='num'>数量: {{item.tdQty | toFixed}}</span>
-            </span>
-            <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
-          </div>
-          <div class='mater_other' v-if="item.priceType || item.priceType === ''">
-            <div class='mater_price'>
-              <span class="symbol">￥</span>{{item.price | toFixed |numberComma(3)}}
-              <span class="num">[类型: {{item.priceType || '无'}}]</span>
-            </div>
-          </div>
-          <div class='mater_price' v-else>
-            <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
-            <span class="num"
-                  :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 5 ? 'block' : '')}"
-                  v-if="item.taxRate">
-              [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
-            </span>
-          </div>
-        </div>
-      </slot>
     </div>
   </div>
 </template>
@@ -58,6 +49,7 @@
 <script>
   import {numberComma} from 'vux'
   import {toFixed} from '@/plugins/calc'
+  import PopMatterDetail from 'components/Popup/matter/PopMatterDetail'
 
   export default {
     name: "MatterItem",
@@ -68,151 +60,132 @@
           return {}
         }
       },
-      //是否退货
-      isReturnMatter : {
-        type : Boolean,
-        default : false
-      }
+    },
+    components: {
+      PopMatterDetail,
     },
     data() {
-      return {}
+      return {
+        showPop: true,
+      }
     },
-    filters: {
-      numberComma,
-      toFixed,
-    },
+    computed: {
+      // 是否显示 产品规格
+      showSpec() {
+        let item = this.item;
+        let spec = item.specification_transObjCode || item.specification_outPutMatCode || item.facilitySpecification_facilityObjCode || item.assMeasureDescription ;
+        return !!spec;
+      }
+    }, 
     methods: {
       //选择默认图片
       getMatterDefault(item) {
-        let url = require('assets/wl_default02.png');
+        let url = require('assets/wl_default03.png');
         if (item) {
           item.inventoryPic = url;
         }
         return url
       },
+      // 点击查看更多
+      clickMore() {
+        this.$emit('on-show-more', this.item);
+      },
+      // 判断是否没有数据
+      hasData(key) {
+        let val = this.item[key];
+        return !!val
+      },
     },
-    created() {
-    }
+    filters: {
+      numberComma,
+      toFixed,
+    },
   }
 </script>
 
 <style scoped lang="scss">
-  .vux-1px-b:after {
-    border-color: #e8e8e8;
-  }
-  // 每个物料
-  .matter_item {
-    display: flex;
-    position: relative;
-    padding: .04rem 0;
-    box-sizing: border-box;
-    // 物料图片
-    .mater_img {
-      display: inline-block;
-      margin-top: .04rem;
-      width: .75rem;
-      height: .75rem;
-      > img {
-        width: 100%;
-        max-height: 100%;
+  .matter-item-container {
+    padding: .15rem;
+    color: #333;
+    .matter-main {
+      display: flex;
+    }
+    .matter_img {
+      width: .9rem;
+      height: .9rem;
+    }
+
+    .matter_info {
+      flex: 1;
+      margin-left: .12rem;
+    }
+    .matter_name {
+      line-height: .24rem;
+      font-size: .16rem;
+      font-weight: 500;
+    }
+    .matter_info_item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: .16rem;
+      line-height: .12rem;
+      font-size: .12rem;
+      & + .matter_info_item {
+        margin-top: .12rem;
+      }
+      &.flex-start {
+        justify-content: flex-start;
+        .matter_detail {
+          & + .matter_detail {
+            margin-left: .1rem;
+          }
+        }
+      }
+      /* 合计金额过多时 */
+      &.spillover {
+        align-items: flex-end;
+        flex-direction: column-reverse;
+        .matter_tax {
+          margin-top: .04rem;
+        }
+      }
+      &.matter_price_top {
+        margin-top: .16rem;
       }
     }
-    // 物料主体
-    .mater_main {
-      width: 2.6rem;
-      margin-left: .1rem;
-      display: inline-block;
-      box-sizing: border-box;
+    .matter_detail {
+      display: flex;
     }
-    // 物料名称
-    .mater_name {
-      overflow: hidden;
-      display: -webkit-box;
-      max-height: .46rem;
-      color: #111;
+    .matter_item_title {
+      color: #999;
+    }
+    .icon-more {
+      display: inline-block;
+      width: .18rem;
+      height: .04rem;
+    }
+    .matter_no_tax {
       font-size: .14rem;
       font-weight: bold;
-      -webkit-line-clamp: 2;
-      text-overflow: ellipsis;
-      -webkit-box-orient: vertical;
     }
-    // 物料信息
-    .mater_info {
-      margin-top: .02rem;
-      color: #757575;
-      font-size: 0;
-      // 物料编码和规格
-      .info-item {
-        display: inline-block;
-        margin-right: .06rem;
-
-        .title, .num {
-          font-size: .1rem;
-          padding: .01rem .04rem;
-        }
-        .title {
-          color: #fff;
-          background: #3f72af;
-          border-top-left-radius: .12rem;
-          border-bottom-left-radius: .12rem;
-        }
-        .num {
-          color: #111;
-          max-width: .9rem;
-          overflow: hidden;
-          white-space: nowrap;
-          background: #dbe2ef;
-          text-overflow: ellipsis;
-          border-top-right-radius: .12rem;
-          border-bottom-right-radius: .12rem;
-        }
-        // 规格
-        &.mater_spec {
-          .title {
-            background: #537791;
-          }
-          .num {
-            color: #fff;
-            max-width: .6rem;
-            background: #ff7f50;
-          }
-        }
-      }
+    .matter_qty {
+      color: #999;
     }
-    //物料价格，数量
-    .mater_other {
-      margin-top: .02rem;
-      // 类型
-      .mater_spec {
-        font-size: .14rem;
-      }
-      // 一般金额
-      .mater_price {
-        color: #ea5455;
-        font-weight: bold;
-        font-size: .14rem;
-        line-height: 0.2rem;
-        margin-top: .04rem;
-        display: inline-block;
-        .symbol {
-          font-size: .12rem;
-        }
-        .num {
-          font-size: .1rem;
-          color: #757575;
-        }
-      }
-      // 单价 数量 税率 等
-      .mater_num {
-        color: #757575;
-        font-size: 0.1rem;
-        span {
-          display: inline-block;
-        }
-        .num {
-          margin-right: 0.04rem;
-        }
-      }
+    .matter_tax {
+      color: #999;
+    }
+    .matter_total_wrapper {
+      color: #696969;
+    }
+    .matter_total {
+      line-height: .16rem;
+      color: #FA7138;
+      font-size: .18rem;
+      font-weight: bold;
+    }
+    .symbol {
+      font-size: .12rem;
     }
   }
 </style>

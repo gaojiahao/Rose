@@ -19,7 +19,7 @@
                :class="{'final-total': lItem.isTotal,
                  'border-1px-t': lItem.isTotal,
                  'is-first': lItem.bigSubject,
-                 'indent': lItem.bigSubject !== undefined && !lItem.bigSubject && !lItem.subjectName.includes('：')}"
+                 'indent': lItem.bigSubject !== undefined && !lItem.bigSubject && !lItem.subjectName.includes(': ')}"
                v-for="(lItem, lIndex) in item.items" :key="lIndex" ref="partLeftContent">
             {{lItem.subjectName}}
           </div>
@@ -55,9 +55,9 @@
 
 <script>
   import {getOffBalance, getProfit} from 'service/kmService'
-  import RScroll from 'components/RScroll'
+  import RScroll from 'plugins/scroll/RScroll'
   import {toFixed} from '@/plugins/calc'
-  import {accAdd} from "@/home/pages/maps/decimalsAdd";
+  import {accAdd} from "plugins/calc/decimalsAdd";
   import {numberComma} from 'vux'
 
   export default {
@@ -94,7 +94,7 @@
       RScroll,
     },
     methods: {
-      // TODO 获取资产负债表数据
+      // 获取资产负债表数据
       getData() {
         return this.listMap[this.code].request().then(res => {
           let {data = []} = res;
@@ -124,7 +124,7 @@
           })
         })
       },
-      // TODO 设置高度
+      // 设置高度
       setHeight(left, ...right) {
         let [first] = right;
         left && left.forEach((item, index) => {
@@ -138,7 +138,7 @@
           }
         });
       },
-      // TODO 初始化swiper
+      // 初始化swiper
       initSwiper() {
         this.$nextTick(() => {
           this.partRightSwiper = new this.Swiper('.part-right');

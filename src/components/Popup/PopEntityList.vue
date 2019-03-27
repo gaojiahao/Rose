@@ -9,21 +9,19 @@
     <div v-else>
       <div class="mode">请选择经办主体</div>
     </div>
-    <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+    <i class="iconfont icon-youjiantou r_arrow"></i>
 
     <!-- 经办主体弹窗 -->
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
-          <div class="title">
-            <m-search @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
-          </div>
+          <m-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
           <!-- 费用列表 -->
           <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp"
                     ref="bScroll">
             <div class="each_mater box_sd" v-for="(item, index) in listData" :key='index'
-                 @click.stop="selThis(item,index)">
+                 @click.stop="selThis(item, index)">
               <div class="mater_main ">
                 <!-- 名称 -->
                 <div class="dealer_name">
@@ -46,9 +44,9 @@
 
 <script>
   import {Icon, Popup,} from 'vux'
-  import {getObjDealerByLabelName} from 'service/commonService'
-  import RScroll from 'components/RScroll'
-  import MSearch from 'components/search'
+  import {getObjDealerByLabelName} from 'service/common/commonService'
+  import RScroll from 'plugins/scroll/RScroll'
+  import MSearch from 'components/search/search'
 
   export default {
     name: "PopEntityList",
@@ -90,7 +88,7 @@
       }
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -98,21 +96,21 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.showPop = false;
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.selItems.dealerName === sItem.dealerName;
       },
-      // TODO 选择物料
+      // 选择物料
       selThis(sItem, sIndex) {
         this.showPop = false;
         this.selItems = {...sItem};
         this.$emit('input', this.selItems);
       },
-      // TODO 获取物料列表
+      // 获取物料列表
       getList() {
         let filter = [];
 
@@ -143,7 +141,7 @@
           })
         });
       },
-      // TODO 搜索物料
+      // 搜索物料
       searchList({val = ''}) {
         this.srhInpTx = val;
         this.listData = [];
@@ -152,7 +150,7 @@
         this.$refs.bScroll.scrollTo(0, 0);
         this.getList();
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getList();
@@ -181,9 +179,9 @@
       font-size: .12rem;
     }
     .r_arrow {
-      position: absolute;
       top: 50%;
-      right: .04rem;
+      right: 7px;
+      position: absolute;
       transform: translate(0, -50%);
     }
   }
@@ -192,10 +190,11 @@
   .trade_pop_part {
     background: #fff;
     .trade_pop {
-      padding: 0 .08rem;
+      
       height: 100%;
       // 顶部
       .title {
+        height: 100%;
         font-size: .2rem;
         position: relative;
         padding-top: 0.08rem;

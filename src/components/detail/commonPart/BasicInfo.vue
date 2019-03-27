@@ -1,48 +1,76 @@
 <template>
   <!-- 经办信息 （订单、主体等） -->
-  <div class="basic_info">
-    <!-- 订单编码栏 -->
-    <div class="serial_bar vux-1px-b">
-      <div>
-        <span class="iconfont icon-dingdan1"></span>
-        <span class="l_size_name">{{workFlowInfo.transCode}}</span>
+  <div class="basic-container">
+    <div class="basic-info-main">
+      <header class="basic_header">
+        <div class="basic_title vux-1px-l">经办信息</div>
+        <div class="basic_process_status">{{orderInfo.biProcessStatus || '暂无流程'}}</div>
+      </header>
+      <div class="basic_top">
+        <div class="basic_code">
+          <span class="basic_code_title">交易号：</span>{{orderInfo.transCode}}
+        </div>
+        <div class="basic_status">{{orderInfo.biStatus}}</div>
       </div>
-      <p class="work_status" :class="workFlowInfo.dyClass">{{workFlowInfo.biStatus}}</p>
+      <div class="basic_detail">
+        <div class="basic_detail_wrapper">
+          <div class="basic_detail_item">
+            <span class="basic_detail_title">经办主体:</span>
+            <span class="basic_detail_value">{{orderInfo.handlerEntityName}}</span>
+          </div>
+        </div>
+        <div class="basic_detail_wrapper">
+          <div class="basic_detail_item">
+            <span class="basic_detail_title">经办人:</span>
+            <span class="basic_detail_value">{{orderInfo.handlerName}}</span>
+          </div>
+          <div class="basic_detail_item">
+            <span class="basic_detail_title">经办组织:</span>
+            <span class="basic_detail_value">{{orderInfo.handlerUnitName}}</span>
+          </div>
+        </div>
+        <div class="basic_detail_wrapper">
+          <div class="basic_detail_item">
+            <span class="basic_detail_title">创建者:</span>
+            <span class="basic_detail_value">{{orderInfo.creatorName}}</span>
+          </div>
+          <div class="basic_detail_item">
+            <span class="basic_detail_title">经办职位:</span>
+            <span class="basic_detail_value">{{orderInfo.handlerRoleName}}</span>
+          </div>
+        </div>
+        <div class="basic_detail_wrapper spec_part">
+          <div class="basic_detail_item">
+            <span class="basic_detail_title">修改者:</span>
+            <span class="basic_detail_value">{{orderInfo.modiferName}}</span>
+          </div>
+          <div class="basic_detail_item">
+            <span class="basic_detail_title">修改时间:</span>
+            <span class="basic_detail_value">{{orderInfo.modTime | dateFormat }}</span>
+          </div>
+        </div>
+      </div>
     </div>
-    <!-- 经办信息 -->
-    <div class="handle_info vux-1px-b">
-      <div class="each_handle s_size_name">
-        <span class="title">经办人：</span>
-        <span class="content">{{orderInfo.handlerName}}</span>
+    <div class="project-container vux-1px-t" v-if="projectInfo.projectName">
+      <div class="project_title">项目信息</div>
+      <div class="project_item">
+        <i class="icon icon-project"></i>
+        <span class="project_item_title">项目名称: </span>
+        <span class="project_item_value">{{projectInfo.projectName}}</span>
       </div>
-      <div class="each_handle s_size_name">
-        <span class="title">经办组织：</span>
-        <span class="content">{{orderInfo.handlerUnitName}}</span>
-      </div>
-      <div class="each_handle s_size_name">
-        <span class="title">经办主体：</span>
-        <span class="content">{{orderInfo.handlerEntityName || '无'}}</span>
-      </div>
-    </div>
-    <!-- 创建时间 完成时间 -->
-    <div class="time_info s_size_name">
-      <div class="each_time">
-        <span class="title">创建人：</span>
-        <span class="content">{{orderInfo.creatorName}}</span>
-      </div>
-      <div class="each_time">
-        <span class="title">创建时间：</span>
-        <span class="content">{{orderInfo.crtTime}}</span>
-      </div>
-      <div class="each_time" v-if="orderInfo.effectiveTime">
-        <span class="title">生效时间：</span>
-        <span class="content">{{orderInfo.effectiveTime}}</span>
+      <div class="project_item">
+        <i class="icon icon-type"></i>
+        <span class="project_item_title">项目类型: </span>
+        <span class="project_item_value">{{projectInfo.projectType}}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+  import { dateFormat } from 'vux'
+  import { fail } from 'assert';
+
   export default {
     name: "BasicInfo",
     props: {
@@ -57,6 +85,23 @@
         default() {
           return {}
         }
+      },
+    },
+    computed: {
+      projectInfo() {
+        let {outPut = {}, inPut = {}} = this.orderInfo;
+        let project = outPut.project || inPut.project || '';
+        let projectType = outPut.projectType_project || inPut.projectType_project || '';
+        return {
+          projectName: project,
+          projectType,
+        }
+      }
+    },
+    filters: { dateFormat },
+    data() {
+      return {
+        showMore: false,
       }
     }
   }
@@ -64,70 +109,112 @@
 
 <style scoped lang="scss">
   // 基本信息 （订单、经办主体等）
-  .basic_info {
-    width: 100%;
-    padding: 0 .1rem;
-    background: #fff;
-    margin-bottom: .1rem;
-    box-sizing: border-box;
-    // 订单栏
-    .serial_bar {
-      display: flex;
-      padding: .04rem 0;
-      align-items: center;
-      justify-content: space-between;
-      // 表单状态
-      .work_status {
-        color: #fff;
+  .basic-container {
+    color: #333;
+    margin: .1rem;
+    border-radius: .04rem;
+    background-color: #fff;
+    width: calc(100% - .2rem);
+    .basic-info-main {
+      width: 100%;
+      padding: .15rem .15rem;
+      box-sizing: border-box;
+      .basic_header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .basic_title {
+        font-size: 16px;
+        font-weight: 600;
+        line-height: .16rem;
+        &:before {
+          left: -.15rem;
+          width: .08rem;
+          border-left: .08rem solid #3296FA;
+        }
+      }
+      .basic_process_status {
+        color: #FB880B;
+        font-size: .1rem;
+        border: 1px solid;
+        line-height: .12rem;
+        border-radius: .04rem;
+        padding: .04rem .06rem;
+      }
+
+      .basic_top {
+        display: flex;
+        padding: .05rem;
         font-size: .12rem;
-        font-weight: bold;
-        padding: .01rem .04rem;
-        background: #53d397;
-        border-radius: .12rem;
+        margin-top: .1rem;
+        align-items: center;
+        line-height: .12rem;
+        background-color: #f7f7f7;
+        justify-content: space-between;
       }
-      // 进行中
-      .doing_work {
-        background: #5077aa;
+      .basic_code_title {
+        color: #999;
       }
-      // 已失效
-      .invalid_work {
-        background: #474a56;
+      .basic_detail {
+        margin-top: .2rem;
+        font-size: .14rem;
+        line-height: .14rem;
+      }
+      .basic_detail_wrapper {
+        display: flex;
+        margin-top: .1rem;
+        &.spec_part {
+          margin-top: .2rem;
+        }
+      }
+      .basic_detail_item {
+        display: flex;
+        & + .basic_detail_item {
+          margin-left: .2rem;
+        }
+      }
+      .basic_detail_title {
+        color: #999;
+      }
+      .basic_detail_value {
+        flex: 1;
+        margin-left: .05rem;
       }
     }
-    // 经办主体
-    .handle_info {
-      padding: .06rem 0;
-      .each_handle {
-        margin: .04rem 0;
+
+    .project-container {
+      padding: .22rem .15rem .15rem;
+      &:before {
+        border-color: #e8e8e8;
       }
-      .title {
-        font-weight: bold;
+      .project_title {
+        font-size: .16rem;
+        line-height: .16rem;
       }
-      .content {
-        color: #454545;
+      .project_item {
+        display: flex;
+        font-size: .14rem;
+        margin-top: .14rem;
+        align-items: center;
+        line-height: .14rem;
+        & + .project_item {
+          margin-top: .1rem;
+        }
       }
-    }
-    // 创建时间
-    .time_info {
-      @extend .handle_info;
-      .each_time {
-        @extend .each_handle;
+      .icon {
+        width: .16rem;
+        height: .16rem;
+        display: inline-block;
+        background-size: 100%;
       }
-    }
-    .l_size_name {
-      color: #111;
-      padding: .06rem 0;
-      font-size: .22rem;
-      font-weight: 400;
-    }
-    .m_size_name {
-      font-size: .18rem;
-    }
-    .s_size_name {
-      font-size: .14rem;
-    }
-    .vux-1px-b:after {
-      border-color: #e8e8e8;
+      .project_item_title {
+        color: #999;
+        margin-left: .08rem;
+      }
+      .project_item_value {
+        margin-left: .05rem;
+      }
     }
   }
 </style>

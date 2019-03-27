@@ -1,9 +1,9 @@
 /* 评论相关接口 */
-import $axios from '../plugins/ajax';
+import $flyio from 'plugins/ajax';
 
-// TODO 获取评论列表(PC)
+// 获取评论列表(PC)
 export let getPCCommentList = (data = {}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/comment/getCommentByRelationKey',
     data: {
       sort: JSON.stringify([{"property": "crtTime", "direction": "DESC"}]),
@@ -15,9 +15,9 @@ export let getPCCommentList = (data = {}) => {
   })
 };
 
-// TODO 获取评论列表
+// 获取评论列表
 export let getCommentList = (data = {}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/ds/getMobileCommentByTransCode',
     data: {
       page: 1,
@@ -27,9 +27,9 @@ export let getCommentList = (data = {}) => {
   })
 };
 
-// TODO 获取回复列表
+// 获取回复列表
 export let getReply = (data = {}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/comment/getCommentByParentId',
     data: {
       sort: JSON.stringify([{"property":"crtTime","direction":"ASC"}]),
@@ -41,22 +41,21 @@ export let getReply = (data = {}) => {
   })
 };
 
-// TODO 发送评论
+// 发送评论
 export let saveComment = (data = {}) => {
-  return $axios.post({
+  return $flyio.post({
     url: '/H_roleplay-si/comment/saveComment',
     data: {
       commentAndReply: false,
       commentAttachments: [],
-      type: "instance",
       ...data,
     }
   })
 };
 
-// TODO 点赞
+// 点赞
 export let savePraise = (commentId = '') => {
-  return $axios.post({
+  return $flyio.post({
     url: '/H_roleplay-si/comment/savePraise',
     data: {
       commentId
@@ -64,9 +63,46 @@ export let savePraise = (commentId = '') => {
   })
 };
 
-export default {
-  getCommentList: getPCCommentList,
-  saveComment,
-  savePraise,
+// 是否关注
+export let isSubscribeByRelationKey = (relationKey = '') => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/comment/isSubscribeByRelationKey',
+    data: {
+      relationKey,
+      type: 'instance'
+    }
+  })
 }
+
+// 关注
+export let subscribeApp = (data = {}) => {
+  return $flyio.ajax({
+    type: 'POST',
+    contentType: 'application/x-www-form-urlencoded',
+    url: '/H_roleplay-si/comment/subscribeApp',
+    data: data
+  })
+}
+
+// 取关
+export let unsubscribeApp = (data = {}) => {
+  return $flyio.ajax({
+    type: 'POST',
+    contentType: 'application/x-www-form-urlencoded',
+    url: '/H_roleplay-si/comment/unsubscribeAppByRelationKey',
+    data: {
+      ...data,
+      type: 'instance'
+    }
+  })
+}
+// 获取关注的人数
+export let getUserList = (data = {}) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/comment/getUserByRelationKey',
+    data
+  })
+}
+
+export default {}
 

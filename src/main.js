@@ -6,8 +6,8 @@ import VueRouter from 'vue-router'
 import adapation from './common/adapation'
 import Swiper from './common/swiper-4.2.2.min.js'
 import { AlertPlugin, ConfirmPlugin, ToastPlugin, TransferDom, DatetimePlugin  } from 'vux'
-import Loading from 'components/loading/pageLoad/loading'
-import HandleLoad from 'components/loading/handleLoad/handleLoading'
+import Loading from 'plugins/loading/pageLoad/loading'
+import HandleLoad from 'plugins/loading/handleLoad/handleLoading'
 
 Vue.use(Loading)
 Vue.use(VueRouter)
@@ -28,7 +28,7 @@ Vue.config.productionTip = false
 // 此处声明空实例 用于非父子组件之间传值
 Vue.prototype.$event = new Vue();
 
-router.afterEach( route =>{
+router.afterEach( route => {
   document.title = route.meta.title || '';
 })
 

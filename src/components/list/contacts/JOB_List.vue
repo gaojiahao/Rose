@@ -1,11 +1,11 @@
 <template>
-  <div class="pages" ref='list'>
+  <div class="pages" :class="{'no-add': !action.add}" ref='list'>
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
-        <searchIcon  @search='searchList'></searchIcon>
+        <searchIcon @search='searchList'></searchIcon>
         <div class="filter_part">
-          <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
+          <tab :line-width='2' default-color='#333' active-color='#3296FA'>
             <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
                       @on-item-click="tabClick(item, index)">{{item.name}}
             </tab-item>
@@ -15,64 +15,70 @@
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class="client_ads vux-1px-b" :class="{visited: item.visited}" v-for="(item, index) in listData" :key="index" @click='goDetail(item, index)'>
-          <div class="job_info ">
-            <div class="job_name">{{item.name}}
-             <span class="job_status" :class="item.borderClass">{{item.changeStatus}}</span>
+        <div class="list-item-wrapper" :class="{visited: item.visited, 'vux-1px-b': index !== listData.length - 1}"
+             v-for="(item, index) in listData" :key="index" @click='goDetail(item, index)'>
+          <i class="icon-job"></i>
+          <div class="list_info_wrapper">
+            <div class="list_detail">
+              <div class="list_name">{{item.name}}</div>
+              <div class="list_detail_item">
+                <span class="list_detail_title">职位类型: </span>
+                <span class="list_detail_value">{{item.changeType}}</span>
+              </div>
             </div>
-            <div class="job_type">{{item.changeType}}</div>
+            <div class="list_status" :class="item.statusClass">{{item.status}}</div>
+            <i class="icon-right"></i>
           </div>
-          <span class="iconfont icon-bianji" @click.stop="goEditJob(item, index)"></span>
         </div>
       </r-scroll>
     </div>
-    <div class=" vux-1px-t btn ">
-      <div class="cfm_btn" @click="goEdit">新增</div>
-    </div>
+    <add-btn :action="action" :goEdit="goEdit"></add-btn>
   </div>
 </template>
 
 <script>
-import listCommon from 'pageMixins/bizListCommon'
-import {getJobList} from 'service//Directorys/jobService'
+// vux 引入
+import { Tab, TabItem } from 'vux'
+// 接口 引入
+import { getJobList } from 'service//Directorys/jobService'
+// mixins 引入
+import listCommon from 'mixins/bizListCommon'
+
 export default {
+  mixins: [listCommon],
+  components: { Tab, TabItem },
   data() {
     return {
+      filterList: [{ name: '职位名称', value: 'name' }],
       listStatus: [
-        {name: '全部', status: ''},
-        {name: '管理类', status: 'M'},
-        {name: '营销类', status: 'Y'},
-        {name: '技术类', status: 'J'},
-        {name: '专业类', status: 'Z'},
-        {name: '操作类', status: 'C'},
+        { name: '全部', status: '' },
+        { name: '管理类', status: 'M' },
+        { name: '营销类', status: 'Y' },
+        { name: '技术类', status: 'J' },
+        { name: '专业类', status: 'Z' },
+        { name: '操作类', status: 'C' },
       ],
-      biStatus:'',
-      filterList: [ // 过滤列表
-        {
-          name: '职位名称',
-          value: 'name',
-        }
-      ],
+      biStatus: '',
+      activeName: '',
     }
   },
-  mixins: [listCommon],
-  methods:{
+  methods: {
     //获取销售订单数据
     getList(noReset = false) {
       let filter = [];
-      if(this.activeTab.length){
+      if (this.activeTab.length) {
         filter = [{operator: "in", value: this.activeTab, property: "type"}];
       }
-      if(this.serachVal){
+      if (this.serachVal) {
         filter = [
           ...filter,
           {
             operator: "like",
             value: this.serachVal,
-            property: this.filterProperty,
+            property: 'name',
           },
         ];
-        if(this.activeTab.length){
+        if (this.activeTab.length) {
           filter[0].attendedOperation = "and";
         }
       }
@@ -81,10 +87,12 @@ export default {
         page: this.page,
         start: (this.page - 1) * this.limit,
         filter: JSON.stringify(filter),
-        sort: JSON.stringify([{ property:"crtTime", direction:"DESC" }])
+        sort: JSON.stringify([{property: "crtTime", direction: "DESC"}])
       }).then(({dataCount = 0, tableContent = []}) => {
         this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
         tableContent.forEach(item => {
+          let status = ['', '使用中', '未使用', '草稿'];
+          item.status = status[item.status] || '停用';
           this.setStatus(item);
           switch (item.type) {
             case 'Y':
@@ -102,25 +110,7 @@ export default {
             case 'M':
               item.changeType = '管理类';
               break;
-            
-          }
-          switch (item.status) {
-            case 1:
-              item.changeStatus = '使用中';
-              item.borderClass = "using"
-              break;
-            case 2:
-              item.changeStatus = '未使用';
-              item.borderClass = "no_use"
-              break;
-            case 3:
-              item.changeStatus = '草稿';
-              item.borderClass = "draft"
-              break;
-            case -1:
-              item.changeStatus = '停用';
-              item.borderClass = "stop_use"
-              break;
+
           }
         });
         this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
@@ -131,21 +121,21 @@ export default {
         }
         //判断最近有无新增数据
         let text = '';
-        if(noReset && this.activeIndex === 0){
-          if(this.total){
-            text = dataCount - this.total === 0 ? '暂无新数据' : text = `新增${dataCount-this.total}条数据`;
+        if (noReset && this.activeIndex === 0) {
+          if (this.total) {
+            text = dataCount - this.total === 0 ? '暂无新数据' : text = `新增${dataCount - this.total}条数据`;
             this.$vux.toast.show({
               text: text,
-              position:'top',
-              width:'50%',
-              type:"text",
-              time : 700
+              position: 'top',
+              width: '50%',
+              type: "text",
+              time: 700
             })
           }
         }
         //列表总数据缓存
-        if(this.activeIndex === 0 && this.page === 1){
-          sessionStorage.setItem(this.applyCode,dataCount);
+        if (this.activeIndex === 0 && this.page === 1) {
+          sessionStorage.setItem(this.applyCode, dataCount);
         }
         this.$loading.hide();
       }).catch(e => {
@@ -157,98 +147,151 @@ export default {
         return
       }
       // 交易号、应用名称等
-      let { name } = this.$route.query,
-          { fileId, listId } = this.$route.params;
+      let {name, listId} = this.$route.query,
+          {folder, fileName} = this.$route.params;
       // 高亮点击的列表
       this.clickVisited = true;
       item.visited = true;
       this.$set(this.listData, index, {...item});
       // 新的路由地址
-      let newPath = `${path}/${fileId}/${listId}`;
+      let newPath = `${path}/${folder}/${fileName}`;
       setTimeout(() => {
         this.clickVisited = false;
         this.$router.push({
-          path : newPath,
-          query : { name, id: item.id }
+          path: newPath,
+          query: {
+            name, 
+            listId,
+            id: item.id
+          }
         });
       }, 200);
     },
     goDetail(item, index) {
       this.goNextPage(item, index, '/detail')
     },
-    goEditJob(item, index) {
-      this.goNextPage(item, index, '/fillform')
-    }
+    // tab切换
+    tabClick(item, index) {
+      this.activeIndex = index;
+      this.activeTab = item.status;
+      this.activeName = item.name === '全部' ? '' : item.name;
+      this.resetCondition();
+      this.getList();
+    },
+    // 新增
+    goEdit() {
+      let { name, listId } = this.$route.query,
+          { folder, fileName } = this.$route.params;
+      this.$router.push({
+        path: `/fillform/${folder}/${fileName}`,
+        query: {
+          name, 
+          listId,
+          jobType: this.activeName
+        }
+      })
+    },
+    // 设置状态的class
+    setStatus(item) {
+      switch (item.status) {
+        case '使用中':
+          item.statusClass = 'duty_done_c';
+          break;
+        default:
+          item.statusClass = 'duty_fall_c';
+      }
+    },
   }
 }
 </script>
 
 <style lang="scss" scoped>
-@import "./../../scss/bizList.scss";
-.client_ads {
+  @import "~scss/biz-app/bizList.scss";
+  @import '~@/scss/color';
+
+  /* 没有新增 */
+  .no-add {
+    .content {
+      height: 100%;
+    }
+  }
+
+  .content {
+    height: calc(100% - .78rem);
+    overflow: auto;
+    .list_wrapper {
+      height: calc(100% - .96rem);
+    }
+  }
+
+  .list-item-wrapper {
+    display: flex;
+    padding: .15rem .33rem .15rem .15rem;
+    width: 100%;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #333;
+    transition: background-color 200ms linear;
+    box-sizing: border-box;
+    &.visited {
+      background-color: $list_visited;
+    }
+    .duty_done_c {
+      color: #333;
+    }
+    .duty_fall_c {
+      color: #999;
+    }
+
+    .icon-job {
+      display: inline-block;
+      width: .3rem;
+      height: .3rem;
+      border-radius: 50%;
+    }
+
+    .list_info_wrapper {
+      flex: 1;
       position: relative;
-      padding: .06rem .4rem .06rem .08rem;
-      transition: background-color 200ms linear;
-      &.visited {
-        background-color: $list_visited;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-left: .2rem;
+    }
+    .list_detail {
+      line-height: .12rem;
+      .list_name {
+        line-height: .14rem;
+        font-size: .16rem;
+        font-weight: 600;
       }
-      // 编辑
-      .icon-bianji {
-        right: 0;
-        top: 50%;
-        width: .35rem;
-        display: block;
-        font-size: .24rem;
-        text-align: center;
-        position: absolute;
-        transform: translate(0, -50%);
+      .list_detail_item {
+        margin-top: .12rem;
+        font-size: .12rem;
       }
-      // 公司信息
-      .job_info {
+      .list_detail_title {
+        color: #999;
+      }
+      .list_detail_value {
+        color: #3296FA;
         font-size: .14rem;
-        .job_name {
-          color: #111;
-          font-weight: bold;
-          .job_status{
-            color:#757575;
-            font-size:0.11rem;
-            margin-left:0.02rem;
-            font-weight: normal;
-            padding: 0 0.03rem;
-          }
-          //使用中
-          // .using{
-          //   color:#1296db;
-          //   border-color: #1296db;
-          // }
-          // //未使用
-          // .no_use{
-          //   color:#1afa29;
-          //   border-color: #1afa29;
-          // }
-          // //停用
-          // .stop_use{
-          //   color:#d81e06;
-          //   border-color:#d81e06;
-          // }
-          // //草稿
-          // .draft{
-          //   color:#757575;
-          // }
-        }
-        .job_type{
-          color:#5077aa;    
-        }
-      }
-      .edit_part {
-        top: 0;
-        right: 0;
-        width: .3rem;
-        height: 100%;
-        position: absolute;
-        background: #4F90F9;
       }
     }
+    .list_status {
+      line-height: .12rem;
+      font-size: .12rem;
+    }
+    .icon-right {
+      position: absolute;
+      top: 50%;
+      right: -.1rem;
+      z-index: 1;
+      display: inline-block;
+      width: .08rem;
+      height: .14rem;
+      transform: translate(100%, -50%);
+    }
+  }
 
 </style>
 

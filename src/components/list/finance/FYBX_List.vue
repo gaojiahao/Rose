@@ -1,63 +1,45 @@
 <template>
-  <div class="pages" ref='list'>
+  <div class="pages" :class="{'no-add': !action.add}" ref='list'>
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
-        <searchIcon :filterList="filterList" @search='searchList'></searchIcon>
+        <searchIcon :filterList="filterList" @search='searchList' ref="search"></searchIcon>
         <div class="filter_part">
-          <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
-            <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
-                      @on-item-click="tabClick(item, index)">{{item.name}}
-            </tab-item>
-          </tab>
+          <r-sort @on-sort="onSortList" @on-filter="onFilter" :list-id="listId" ref="sort"></r-sort>
         </div>
       </div>
-      <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
+      <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class="each_duty" :class="{visited: item.visited}" v-for="(item, index) in listData" :key="index" @click='goDetail(item, index)'>
-          <!-- 订单 时期 -->
-          <div class="duty_top">
-            <p class="duty_code">
-              {{item.transCode}}
-              <span class="duty_crt_man" :class="item.statusClass">{{item.statusName}}</span>
-            </p>
-            <p class="duty_time">{{item.effectiveTime | filterTime}}</p>
-          </div>
-          <div class="project_name"  v-if="item.projectName">
-            <div class="major_content vux-1px-b">
-              <div class="status_part">
-                <span class="iconfont icon-503020"></span>
-                <span class="status_name">{{item.projectType}}</span>
-              </div>
-              {{item.projectName}}
+        <finance-list-item :item="item" v-for="(item, index) in listData" :key="index" 
+                        @click.native="goDetail(item, index)">
+          <template slot="costName" slot-scope="{mItem}">
+            <span class="name">{{mItem.handlerName}}</span>
+          </template>
+          <template slot="cost_info" slot-scope="{mItem}">
+            <div class="each_amount">
+              <span class="money">{{mItem.costName_expCode}}</span>
+              <span class="title">费用对象</span>
             </div>
-          </div>
-          <!-- 金额合计 -->
-          <div class="order_count">
-            <div class="handle_man">
-              {{item.handlerName}}<span style="fontSize:.1rem;">[报销人]</span>
+            <div class="each_amount">
+              <span class="money">{{mItem.costType_expCode}}</span>
+              <span class="title">费用类型</span>
             </div>
-            <div class="money_part">
-              <span class="num">共{{item.itmes.length}}个报销:</span>
-              <span class="money">
-                <span style="fontSize:.1rem;">￥</span>{{item.count | numberComma(3)}}
-              </span>
+            <div class="each_amount">
+              <span class="money">￥{{mItem.tdAmount | numberComma}}</span>
+              <span class="title">申请金额</span>
             </div>
-          </div>
-        </div>
-
+          </template>
+        </finance-list-item>
       </r-scroll>
     </div>
-    <div class=" vux-1px-t btn ">
-      <div class="cfm_btn" @click="goEdit">新增</div>
-    </div>
+    <add-btn :action="action" :goEdit="goEdit"></add-btn>  
   </div>
 </template>
 
 <script>
-  import listCommon from 'pageMixins/bizListCommon'
-  import {getSellOrderList} from 'service/listService'
+  import listCommon from 'mixins/bizListCommon'
+  import financeListItem from 'components/list/commonPart/financeListItem'
   export default {
     data() {
       return {
@@ -66,7 +48,7 @@
           {name: '已生效', status: '已生效'},
           {name: '进行中', status: '进行中'}
         ],
-        listViewID: 2236,
+        listViewID: 2602,
         filterList: [ // 过滤列表
           {
             name: '交易号',
@@ -74,12 +56,12 @@
           }, {
             name: '经办人',
             value: 'handlerName',
-          }, {
-            name: '项目名称',
-            value: 'projectName',
-          },
+          }
         ],
       }
+    },
+    components: {
+      financeListItem
     },
     mixins: [listCommon],
     methods: {
@@ -93,5 +75,5 @@
 </script>
 
 <style lang='scss' scoped>
-  @import "./../../scss/bizList.scss";
+  @import "~scss/biz-app/bizList.scss";
 </style>

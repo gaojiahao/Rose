@@ -1,30 +1,24 @@
 <template>
   <div class="detail_wrapper">
-      <div class="basicPart" v-if='orderInfo && orderInfo.order'>  
-        <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
+      <div class="basicPart" v-if='orderInfo && orderInfo.order'>
+        <!-- <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
           <span>其他应用里存在与本条相关联的数据，快去看看</span>
           <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
-        </div>
+        </div> -->
         <!-- 经办信息 （订单、主体等） -->
         <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
         <!-- 工作流 -->
         <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
-                  :no-status="orderInfo.biStatus"></work-flow>              
-        <!-- 往来联系部分 交易基本信息-->
-        <!-- <contact-part :contact-info="contactInfo" ></contact-part>                -->
+                  :no-status="orderInfo.biStatus"></work-flow>
         <!-- 物料列表 -->
-        <matter-list :matter-list="orderInfo.order.dataSet">
-          <div class='mater_other' slot="matterOther" slot-scope="{item}">
-            <div class='mater_left'>
-              <span class="units">
-                计量单位: {{item.measureUnit_transObjCode}}
-              </span>
-              <span class='num'>数量: {{item.tdQty}}</span>
-            </div>
-          </div>
-        </matter-list>
+        <matter-list :matter-list="matterList" @on-show-more="onShowMore"></matter-list>
+        <!-- 备注 -->
+        <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
+        <!-- 物料详情 -->
+        <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
         <!-- 审批操作 -->
-        <r-action :code="transCode" :task-id="taskId" :actions="actions" @on-submit-success="submitSuccessCallback"></r-action>           
+        <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                  :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
       </div>
   </div>
 </template>
@@ -33,15 +27,15 @@
 // 请求 引入
 import { getSOList, } from 'service/detailService'
 // mixins 引入
-import common from 'components/mixins/detailCommon'
+import common from 'mixins/detailCommon'
 // 组件 引入
-import RAction from 'components/RAction'
-import workFlow from 'components/workFlow'
+import RAction from 'components/public/RAction'
+import workFlow from 'components/public/workFlow'
 import contactPart from 'components/detail/commonPart/ContactPart'
 import PriceTotal from 'components/detail/commonPart/PriceTotal'
 import MatterList from 'components/detail/commonPart/MatterList'
 //公共方法引入
-import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
+import {accAdd,accMul} from 'plugins/calc/decimalsAdd'
 export default {
   data(){
     return{
@@ -58,7 +52,7 @@ export default {
   methods:{
     //选择默认图片
     getDefaultImg(item) {
-      let url = require('assets/wl_default02.png');
+      let url = require('assets/wl_default03.png');
       if (item) {
         item.inventoryPic = url;
       }
@@ -72,32 +66,30 @@ export default {
       }).then(data => {
         this.submitInfo  = JSON.parse(JSON.stringify(data));
         // http200时提示报错信息
-        if(data.success === false){
+        if (data.success === false){
           this.$vux.alert.show({
             content: '抱歉，数据有误，暂无法查看',
-              onHide:()=>{
+              onHide:() => {
               this.$router.back();
             }
           })
           return;
         }
+        this.attachment = data.attachment;
         // 获取合计
         let { dataSet } = data.formData.order;
-        for(let val of dataSet){
-          val.noTaxAmount = accMul(val.price,val.tdQty);
-          val.taxAmount = accMul(val.noTaxAmount,val.taxRate);
-          val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount);
-          this.count = accAdd(this.count,val.tdAmount);
+        for (let val of dataSet){
           val.inventoryPic = val.inventoryPic_transObjCode
             ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
             : this.getDefaultImg();
         }
+        this.matterList = data.formData.order.dataSet;
         this.orderInfo = data.formData;
         this.getcontactInfo()
         this.workFlowInfoHandler();
       })
     },
-    // TODO 生成contactInfo对象
+    // 生成contactInfo对象
     getcontactInfo(key = 'order') {
       let orderInfo = this.orderInfo;
       let order = orderInfo[key];
@@ -120,16 +112,5 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-@import './../../scss/bizDetail';
-  .matter_item {
-    .mater_other {
-      .mater_left {
-        color: #757575;
-        font-size: .1rem;
-        .units {
-          margin-right: .04rem;
-        }
-      }
-    }
-  }
+@import '~scss/biz-app/bizDetail';
 </style>

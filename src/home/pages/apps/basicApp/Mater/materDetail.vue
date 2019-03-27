@@ -1,154 +1,312 @@
 <template>
-  <div class="childPage">
-    <div class="main_content">
-      <!-- 大标题 -->
-      <div class="big_title">
-        <p class="vux-1px-b">基本信息</p>
-      </div>
-      <!-- 物料图片展示区域 -->
-      <div class="d_top box_sd">
-        <div class="top_img">
-          <img :src="inventory.inventoryPic" alt="materImg" @error="getDefaultImg">
-        </div>
-        <div class="mater_info">
-          <!-- 物料编码、规格 -->
-            <!-- 当物料编码字节超过13个时 加载新的class -->
-          <div class="withColor" 
-               :class="{'whenEleven' : contentLength >= 13 }">
-            <div class="justMid">
-              <!-- 物料规格 -->
-              <div class="ForInline">
-                <div class="mater_spec">
-                  <span class="title">规格</span>
-                  <span class="num">{{inventory.specification || '无'}}</span>
-                </div>
-              </div>
-              <!-- 物料编码 -->
-              <div class="ForInline">
-                <div class="mater_code">
-                  <span class="title">编码</span>
-                  <span class="num">{{inventory.inventoryCode}}</span>
-                </div>
-              </div>
+  <div class="childPage" :class="{'no-edit': !action.update}">
+    <r-scroll class="main_content" ref="bScroll">
+      <!-- 物料基本信息 -->
+      <div class="inventory_baseinfo has_margin">
+        <div class="baseInfo_top">
+          <div class="baseinfo_part">
+            <img :src='inventory.inventoryPic' @error="getDefaultImg"/>
+            <div class="inventory_name">
+              <p class="name">{{inventory.inventoryName}}</p>
+              <p class="code">物料编码：<span class="symbol"></span>{{inventory.inventoryCode}}</p>
             </div>
           </div>
-          <!-- 物料名称 -->
-          <div class="mater_name">
-            {{inventory.inventoryName}}
+          <span class="inventory_status vux-1px" :class="{'no_use' : baseinfo.status === '已删除'}">{{baseinfo.status}}</span>
+        </div>
+      </div>
+      <!-- 单一项 -->
+      <div class="inventory_other has_margin">
+        <div class="each_property" :class="{'vux-1px-b': index < matterConfig.length - 1 }" 
+             v-for="(item, index) in matterConfig" :key="index" v-show="item.xtype !== 'r2Spacer'">
+          <label>{{item.fieldLabel}}:</label>
+          <div class='property_val'>{{inventory[item.fieldCode] || "无"}}</div>
+        </div>
+      </div>
+      <!-- 重复项 -->
+      <div class="common_style d_main" v-for="(cItem, cIndex) in matterDuplicateConfig" :key="`${cIndex}${cItem.name}`" v-show="cItem.show">
+        <div class='content' v-for="(item, index) in formData[cItem.name]" :key="index">
+          <div class="each_property vux-1px-b"  v-for="(sItem, sIndex) in cItem.items" :key="sIndex">
+            <label>{{sItem.text}}:</label>
+            <div class='property_val'>{{item[sItem.fieldCode] || "无"}}</div>
           </div>
         </div>
       </div>
-      <!-- 物料基本信息展示区域 -->
-      <div class="d_main">
-        <div class="d_classify vux-1px-b">
-          <div class="father">
-            <p class="title">物料大类:</p>
-            <p class="content">{{inventory.inventoryType || '无'}}</p>
-          </div>
-          <div class="child">
-            <p class="title">物料子类:</p>
-            <p class="content">{{inventory.inventorySubclass || '无'}}</p>
-          </div>
+      <!-- 经办信息等 -->
+      <div class="creator">
+        <div class='each_property vux-1px-b'>
+          <label>创建者:</label>
+          <div class='property_val'>{{baseinfo.creatorName}}</div>
         </div>
-        <div class="d_material vux-1px-b">
-          <div class="father">
-            <p class="title">加工属性:</p>
-            <p class="content">{{inventory.processing}}</p>
-          </div>
-          <div class="child">
-            <p class="title">材质:</p>
-            <p class="content">{{inventory.material || '无'}}</p>
-          </div>
+        <div class='each_property vux-1px-b'>
+          <label>创建时间:</label>
+          <div class='property_val'>{{baseinfo.crtTime | changeDate(true)}}</div>
         </div>
-        <div class="d_material vux-1px-b">
-          <div class="father">
-            <p class="title">颜色:</p>
-            <p class="content">{{inventory.inventoryColor || '无'}}</p>
-          </div>
-          <div class="child">
-            <p class="title">单位:</p>
-            <p class="content">{{inventory.measureUnit}}</p>
-          </div>
+        <div class='each_property vux-1px-b' v-if="baseinfo.modiferName">
+          <label>修改者:</label>
+          <div class='property_val'>{{baseinfo.modiferName}}</div>
+        </div>
+        <div class='each_property vux-1px-b' v-if="baseinfo.modTime">
+          <label>修改时间:</label>
+          <div class='property_val'>{{baseinfo.modTime | changeDate(true)}}</div>
         </div>
       </div>
-    </div>
+    </r-scroll>
     <!-- 修改按钮 -->
-    <div class="btn vux-1px-t">
-      <div class="cfm_btn" @click="goEdit">修改</div>
+    <div class="modify_icon" @click="goEdit">
+      <span class="icon-edit"></span>
     </div>
   </div>
 </template>
 
 <script>
-  import {AlertModule} from 'vux';
-  import {findData} from 'service/materService'
-  export default {
-    name: 'materDetail',
-    data() {
-      return {
-        transCode: '',
-        inventory: {},
-        contentLength: ''
+import { AlertModule, dateFormat } from 'vux';
+import { findData } from 'service/materService'
+import { getAppDetail } from 'service/app-basic/appSettingService'
+import { getFormConfig, getFormViews } from 'service/common/commonService'
+import RScroll from 'plugins/scroll/RScroll'
+import { callbackify } from 'util';
+export default {
+  name: 'materDetail',
+  filters: {
+    dateFormat,
+    changeDate(d, hasSecond = false) {
+      if (!d) {
+        return '';
+      }
+      if (typeof d === 'string') {
+        d = d.replace(/-/g, '/').replace(/\..*/g, '');
+      }
+      let fmt = 'YYYY-MM-DD';
+      if (hasSecond) {
+        fmt = 'YYYY-MM-DD HH:mm:ss';
+      }
+      return dateFormat(d, fmt)
+    },
+  },
+  data() {
+    return {
+      listId: '78a798f8-0f3a-4646-aa8b-d5bb1fada28c',
+      uniqueId : '',
+      baseinfo: {},
+      transCode: '',
+      inventory: {},
+      invMoreUnit: [],
+      invNetWeight: [],
+      invDealerRel: [],
+      invCustomerRel: [],
+      action: {}, // 表单允许的操作
+      matterConfig: [],
+      matterDuplicateConfig: [], // 物料重复项的配置
+      formData: {}
+    }
+  },
+  computed: {
+    // 加工/采购提前期标题
+    leadTimeTitle() {
+      let processing = this.inventory.processing;
+      let pur = ['原料', '商品']; // 采购
+      let mac = ['半成品', '成品', '模具']; // 加工
+      if (pur.includes(processing)) {
+        return '采购提前期'
+      } else if (mac.includes(processing)) {
+        return '加工提前期'
+      } else {
+        return ''
       }
     },
-    methods: {
-      // TODO 跳转到修改页面
-      goEdit() {
-        this.$router.push({
-          path: '/materlist/addMater',
-          query: {
-            transCode: this.transCode
+  },
+  components: {
+    RScroll,
+  },
+  methods: {
+    // 跳转到修改页面
+    goEdit() {
+      this.$router.push({
+        path: '/materlist/addMater',
+        query: {
+          transCode: this.transCode
+        }
+      })
+    },
+    // 获取物料详情
+    findData() {
+      return findData(this.transCode).then(({formData}) => {
+        let { baseinfo = {}, inventory = {}}  = formData;
+        let status = ['', '使用中', '未使用', '草稿'], 
+            statusClass = ['', 'inUse', 'unUse'];
+
+        this.formData = formData;
+
+        // 表单状态 转换
+        switch(baseinfo.status) {
+          case -3 :
+            baseinfo.status = '已归档';
+            break;
+          case -2 :
+            baseinfo.status = '已删除';
+            break;
+          case -1 :
+            baseinfo.status = '已失效';
+            break;
+          case 0 :
+            baseinfo.status = '草稿';
+            break;
+          case 1 :
+            baseinfo.status = '已生效';
+            break;
+          case 2 :
+            baseinfo.status = '进行中';
+            break;
+        }
+
+        this.matterDuplicateConfig.forEach(item => {
+          if (this.formData[item.name] && !this.formData[item.name].length){
+            item.show = false;
+            return
+          }
+          item.show = true;
+        })
+
+        inventory.statusClass = statusClass[inventory.inventoryStatus];
+        inventory.status = status[inventory.inventoryStatus] || '停用';
+        this.baseinfo = formData.baseinfo;
+        this.inventory = formData.inventory;
+        this.invNetWeight = formData.invNetWeight;
+        this.invMoreUnit = formData.invMoreUnit;
+        this.invDealerRel = formData.invDealerRel || [];
+        this.invCustomerRel = formData.invCustomerRel || [];
+
+        let {inventoryPic, inventoryCode, specification} = this.inventory;
+        // 获取规格和编码的字符串总长度
+        this.contentLength = inventoryCode.length + specification.length;
+        // 处理图片
+        if (inventoryPic) {
+          this.inventory.inventoryPic = `/H_roleplay-si/ds/download?url=${inventoryPic}&width=400&height=400`
+        } else {
+          this.getDefaultImg();
+        }
+
+        this.$loading.hide();
+      }).catch(e => {
+        this.$loading.hide();
+        AlertModule.show({
+          content: e.message,
+        })
+      });
+    },
+    // 获取默认图片
+    getDefaultImg() {
+      this.inventory.inventoryPic = require('assets/wl_default03.png');
+    },
+    // 获取应用详情
+    getAppDetail() {
+      return getAppDetail(this.listId).then(([data = {}]) => {
+        let {action} = data;
+        this.action = action;
+      })
+    },
+    // 请求表单配置的基本信息
+    async getFormViewsInfo() {
+      // 根据listId 请求 uniqueId
+      await getFormViews(this.listId).then(data => {
+        for (let item of data){
+          if (item.viewType === 'view'){
+            this.uniqueId = item.uniqueId
+            break;
+          }
+        }
+      })
+      // uniqueId 请求 表单配置
+      await getFormConfig(this.uniqueId).then(({config = []}) => {
+        console.log(config);
+        let matterConfig = [], matterDuplicateConfig = [];
+        config.forEach(item => {
+          if (!item.isMultiple) {
+            matterConfig = JSON.parse(JSON.stringify(item.items));
+          }
+          else {
+            if (!item.hiddenInRun && item.xtype !== 'r2Fileupload' && item.name === 'invMoreUnit'){
+              matterDuplicateConfig.push(JSON.parse(JSON.stringify(item)))
+            }
           }
         })
-      },
-      // TODO 获取物料详情
-      findData() {
-        return findData(this.transCode).then(({formData}) => {
-          this.inventory = formData.inventory;
-          let { inventoryPic, inventoryCode, specification } = this.inventory;
-          // 获取规格和编码的字符串总长度
-          this.contentLength = inventoryCode.length + specification.length;
-          // 处理图片
-          if (inventoryPic) {
-            this.inventory.inventoryPic = `/H_roleplay-si/ds/download?url=${inventoryPic}&width=400&height=400`
-          } else {
-            this.getDefaultImg();
+        // 仓库基本信息配置的处理
+        matterConfig.forEach(item => {
+          if (!item.hiddenInRun){
+            // 在渲染的配置中添加字段
+            if (item.fieldCode !== 'inventoryCode' && item.fieldCode !== 'inventoryName' && item.fieldCode !== 'inventoryPic'
+              && item.fieldCode !== 'inventoryStatus'){
+              this.matterConfig.push(item);
+            }
           }
-          this.$loading.hide();
-        }).catch(e => {
-          this.$loading.hide();
-          AlertModule.show({
-            content: e.message,
+        })
+        matterDuplicateConfig.forEach(item => {
+          switch(item.name){
+            case 'invMoreUnit':
+              item.title = '辅助计量';
+              break;
+            case 'invNetWeight':
+              item.title = '净含量';
+              break;
+            case 'invDealerRel':
+              item.title = '客户';
+              break;
+            case 'invCustomerRel':
+              item.title = '供应商';
+              break;
+          } 
+          let arr = [];
+          item.items.forEach(sItem => {
+            if (!sItem.hidden){
+              arr.push(sItem)
+            }
           })
-        });
-      },
-      // TODO 获取默认图片
-      getDefaultImg() {
-        this.inventory.inventoryPic = require('assets/wl_default02.png');
-      },
-    },
-    created() {
+          item.items = arr;
+        })
+        this.matterDuplicateConfig = matterDuplicateConfig;
+      })
+    }
+  },
+  created() {
+    (async () => {
       this.$loading.show();
       let {transCode = ''} = this.$route.query;
       this.transCode = transCode;
+      await this.getAppDetail();
+      await this.getFormViewsInfo();
       this.findData();
-    }
+    })()
   }
+}
 </script>
 
 <style lang='scss' scoped>
+  .no-edit {
+    .main_content {
+      height: 100%;
+    }
+  }
   .main_content {
-    overflow: auto;
-    height: calc(100% - 10%);
-    -webkit-overflow-scrolling: touch;
+    background-color: #F6F6F6;
+    overflow: hidden;
+    height: 100%;
+    color: #696969;
+    font-size: .14rem;
   }
-
-  // 阴影
-  .box_sd {
-    box-sizing: border-box;
-    box-shadow: 0 0 8px #e8e8e8;
+  // 修改按钮
+  .modify_icon {
+    position: absolute;
+    right: .15rem;
+    bottom: 10%;
+    width: .3rem;
+    height: .3rem;
+    z-index: 100;
+    span{
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
   }
-
   // 下划线
   .vux-1px-b:after {
     border-color: #e8e8e8;
@@ -158,172 +316,114 @@
   .vux-1px-r:after {
     border-color: #e8e8e8;
   }
-
-  .big_title {
-    width: 95%;
-    color: #111;
-    margin: 0 auto;
-    padding: .04rem;
-    font-size: .3rem;
-    font-weight: 300;
-    box-sizing: border-box;
+  .common_style {
+    margin-bottom: .1rem;
+    background: #fff;
+    padding: 0 .15rem;
   }
+  .inventory_baseinfo {
+    @extend .common_style;
+    padding: .12rem .15rem .18rem;
+    // 仓库名，编码，图片，状态
+    .baseInfo_top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      .baseinfo_part {
+        display: flex;
+        align-items: flex-start;
+        img {
+          width: .6rem;
+          height: .6rem;
+          border-radius: .04rem;
+          margin-right: .12rem;
+        }
+        .inventory_name {
+          margin-top: .02rem;
+          .name{
+            font-size: .16rem;
+            line-height: .16rem;
+            font-weight: bold;
+            color: #333;
+          }
+          .code {
+            margin-top: .12rem;
+            line-height: .14rem;
+            .symbol {
+              color: #333;
+            }
+          }
+        }
+      }
+      .inventory_status {
+        font-size: .12rem;
+        line-height: .22rem;
+        color: #FA7138;
+        padding: 0 .05rem;
+        &.vux-1px::before {
+          border-color: #FA7138;
+          border-radius: .04rem;
+        }
+        &.no_use{
+          color: #999;
+          &.vux-1px::before {
+            border-color: #999;
+          }
+        }
 
-  // 顶部
-  .d_top {
-    width: 90%;
-    margin: .1rem auto 0;
-    padding: .2rem 0 .04rem;
-    // 物料图片
-    .top_img {
-      width: 1.2rem;
-      height: 1.2rem;
-      margin: 0 auto;
-      img {
-        width: 100%;
-        max-height: 100%;
       }
     }
-    // 物料信息
-    .mater_info {
-      width: 100%;
-      // 有颜色包裹的
-      .withColor {
-        width: 100%;
-        height: .24rem;
-        position: relative;
-        .ForInline {
-          display: inline-block;
-        }
-        // 居中
-        .justMid {
-          left: 50%;
-          position: absolute;
-          transform: translate(-50%, 0);
-        }
-        // 物料编码
-        .mater_code {
-          display: flex;
-          .title,
-          .num {
-            font-size: .1rem;
-            display: inline-block;
-            padding: .01rem .04rem;
-          }
-          .title {
-            color: #fff;
-            background: #3f72af;
-          }
-          .num {
-            color: #111;
-            max-width: .9rem;
-            overflow: hidden;
-            white-space: nowrap;
-            background: #dbe2ef;
-            text-overflow: ellipsis;
-            box-sizing: border-box;
-          }
-        }
-        // 规格
-        .mater_spec {
-          @extend .mater_code;
-          .num {
-            color: #fff;
-            max-width: .6rem;
-            background: #ff7f50;
-          }
-        }
+    // 地址
+    .baseinfo_address {
+      margin-top: .1rem;
+      display: flex;
+      align-items: flex-start;
+      .icon-address {
+        width: .16rem;
+        height: .16rem;
+        margin: .02rem .08rem 0 0;
       }
-      // 当编码的字节超过11个时
-      .whenEleven {
-        width: 100%;
-        height: .52rem;
-        position: relative;
-        .ForInline {
-          display: block;
-        }
-        //居中
-        .justMid {
-          left: 50%;
-          width: 100%;
-          display: flex;
-          position: absolute;
-          align-items: center;
-          flex-direction: column;
-          transform: translate(-50%, 0);
-        }
-        // 物料编码
-        .mater_code {
-          margin-top: .04rem;
-          .title {
-            color: #fff;
-            background: #537791;
-          }
-          .num {
-            color: #111;
-            max-width: none;
-            overflow: inherit;
-            white-space: inherit;
-            background: #dbe2ef;
-            text-overflow: inherit;
-            box-sizing: inherit;
-          }
-        }
-        // 规格
-        .mater_spec {
-          @extend .mater_code;
-          margin-left: 0;
-          .num {
-            color: #fff;
-            background: #ff7f50;
-          }
-        }
-      }
-      // 物料名称
-      .mater_name {
-        width: 100%;
-        color: #111;
-        padding: 0 .4rem;
-        overflow: hidden;
-        font-size: .14rem;
-        font-weight: bold;
-        text-align: center;
-        max-height: .46rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        box-sizing: border-box;
-        text-overflow: ellipsis;
-        -webkit-box-orient: vertical;
+      .address{
+        flex: 1;
+        display: block;
+        line-height: .2rem;
       }
     }
   }
-
+  .each_property {
+    height: .5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .property_val {
+      color: #333;
+    }
+  }
+  .inventory_other {
+    @extend .common_style;
+  }
+  .creator {
+    @extend .common_style;
+    margin-bottom: 0;
+  }
   // 中部
   .d_main {
-    width: 90%;
-    margin: 0 auto .1rem;
-    .d_classify {
-      display: flex;
-      padding: 0.1rem 0;
-      // height: .6rem;
-      // line-height: .6rem;
-      .father,
-      .child {
-        flex: 1;
-        text-align: center;
-      }
-      .title {
-        font-size: .12rem;
-        color: #757575;
-      }
-      .content {
-        font-weight: bold;
-        font-size: .14rem;
+    margin-top: 0.1rem;
+    background: #fff;
+    .title {
+      color: #111;
+      background: #fff;
+      font-size: .16rem;
+      padding: .06rem 0;
+      font-weight: bold;
+    }
+    .content {
+
+      &.show_border {
+        border-bottom: .03rem solid #e8e8e8;
       }
     }
-    .d_material {
-      @extend .d_classify;
-    }
+
   }
 
   // 相关应用

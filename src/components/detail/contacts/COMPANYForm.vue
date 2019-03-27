@@ -32,27 +32,29 @@
       <div class='each_property vux-1px-b'>
         <label>创建者:</label>
         <div class='property_val'>
-           {{CompanyInfo.creator}}
+           {{CompanyInfo.creator || "无"}}
         </div>
       </div>
       <div class='each_property vux-1px-b'>
         <label>创建时间:</label>
         <div class='property_val'>
-           {{CompanyInfo.crtTime}}
+           {{CompanyInfo.crtTime || "无"}}
         </div>
       </div>
       <div class='each_property vux-1px-b' v-if="CompanyInfo.modifier">
         <label>修改者:</label>
         <div class='property_val'>
-           {{CompanyInfo.modifier}}
+           {{CompanyInfo.modifier || "无"}}
         </div>
       </div>
       <div class='each_property vux-1px-b' v-if="CompanyInfo.modTime">
         <label>修改时间:</label>
         <div class='property_val'>
-           {{CompanyInfo.modTime}}
+           {{CompanyInfo.modTime || "无"}}
         </div>
       </div>
+      <!-- 编辑 -->
+      <div class="edit-btn" @click.stop="goEdit" v-if="action.update">编辑</div>
     </div>
   </div>
 </template>
@@ -60,16 +62,15 @@
 <script>
 // 接口引入
 import { CompanyInfo } from 'service/Directorys/companyService'
-// mixins 引入
-import detailCommon from 'components/mixins/detailCommon'
+import { getAppDetail } from 'service/app-basic/appSettingService'
 export default {
   data(){
     return{
       MatPic: '',
+      action: {},
       CompanyInfo: {}
     }
   },
-  mixins: [detailCommon],
   methods: {
     // 默认图片
     getDefaultImg() {
@@ -77,7 +78,7 @@ export default {
     },
     loadPage() {
       let {groupId = ''} = this.$route.query;
-      if(!groupId){
+      if (!groupId){
         this.$vux.alert.show({
           content: '抱歉，有误，请尝试刷新之后再次进入'
         });
@@ -85,27 +86,59 @@ export default {
       }
       this.$loading.show();
       return CompanyInfo(groupId).then( data => {
-        for(let item of data){
-          switch (item.status){
-            case 1:
-              item.status = '使用中';
-              break;
-            case 2:
-              item.status = '未使用';
-              break;
-            case -1: 
-              item.status = '停用';
-              break;
-          }
-          this.CompanyInfo = item;
-        }
+        let [info = {}] = data;
+        let status = ['', '使用中', '未使用', '草稿'];
+        info.status = status[info.status] || '停用';
+        this.CompanyInfo = info;
         this.$loading.hide();
       })    
+    },
+    // 获取应用详情
+    getAppDetail() {
+      let {listId = ''} = this.$route.query;
+      return getAppDetail(listId).then(([data = {}]) => {
+        let {action} = data;
+        this.action = action;
+      })
+    },
+    // 编辑
+    goEdit(){
+      let { name, groupId } = this.$route.query,
+          { folder, fileName } = this.$route.params;
+      this.$router.push({
+        path: `/fillForm/${folder}/${fileName}`,
+        query: { name, groupId }
+      })
     }
+  },
+  created() {
+    (async () => {
+      let {listId = ''} = this.$route.query;
+      this.listId = listId;
+      await this.getAppDetail();
+      this.loadPage();
+    })()
   }
 }
 </script>
 
 <style lang='scss' scoped>
-@import './../../scss/bizDetail';
+@import '~scss/biz-app/bizDetail';
+.each_property {
+  background: #FFF;
+}
+.detail_content {
+  background: unset;
+}
+.edit-btn {
+  width: 100%;
+  height: .4rem;
+  color: #4F90F9;
+  line-height: .4rem;
+  margin-top: .1rem;
+  font-size: .16rem;
+  font-weight: bold;
+  text-align: center;
+  background: #FFF;
+}
 </style>

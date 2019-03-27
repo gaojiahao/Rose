@@ -1,10 +1,7 @@
 <template>
   <div class="detail_wrapper nbjdgg-detail-container">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
-      <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
-        <span>其他应用里存在与本条相关联的数据，快去看看</span>
-        <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
-      </div>
+
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 工作流 -->
@@ -24,7 +21,7 @@
             </div>
             <div class="order_matter">
               <template v-for="(item, index) in oItem">
-                <matter-item class="vux-1px-b" :item="item">
+                <matter-item :item="item" :class="{'vux-1px-b' : index < oItem.length-1}">
                   <!-- 调拨数量 -->
                   <div class="mater_other" slot="other" slot-scope="{item}">
                     <div class="mater_num">
@@ -34,29 +31,49 @@
                       <span class="units">
                         [待下单余额: {{item.thenQtyBal | toFixed}}]
                       </span>
+                      <span class='get_bom' @click="checkBom(item)">查看原料</span>
                     </div>
                     <div class="mater_num">
-                      <span class="num">
-                        成品计划验收日期: {{item.shippingTime}}
+                      <span class="num" v-if="item.shippingTime">
+                        主计划完工入库日: {{item.shippingTime}}
                       </span>
                     </div>
                   </div>
                 </matter-item>
-                <bom-list :boms="item.boms">
+                <!-- <bom-list :boms="item.boms">
                   <template slot-scope="{bom}" slot="number">
                     <div class="number-part">
                       <span class="main-number">领料需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
                     </div>
                   </template>
-                </bom-list>
+                </bom-list> -->
               </template>
             </div>
           </div>
         </div>
       </div>
+      <!-- bom合计 -->
+      <div class="bom_list" v-show="UniqueBom.length">
+        <bom-list :boms="UniqueBom">
+          <template slot-scope="{bom}" slot="number">
+            <div class="number-part">
+              <span class="main-number">领料需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
+            </div>
+          </template>
+        </bom-list>
+      </div>
+      <!--原料bom列表-->
+      <bom-pop :show="bomPopShow" :bomInfo="bom" v-model="bomPopShow" class="bom_pop" :is-edit="false">
+        <template slot-scope="{bom}" slot="number">
+          <div class="number-part">
+            <span class="main-number">领料需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
+          </div>
+        </template>
+      </bom-pop>
+      <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
-                @on-submit-success="submitSuccessCallback"></r-action>
+                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
 </template>
@@ -64,15 +81,17 @@
   // 请求 引入
   import {getSOList} from 'service/detailService'
   // mixins 引入
-  import detailCommon from 'components/mixins/detailCommon'
+  import detailCommon from 'mixins/detailCommon'
   import common from 'mixins/common'
   //公共方法引入
+  import {accMul,accAdd,accSub} from 'plugins/calc/decimalsAdd'
   // 组件 引入
-  import RAction from 'components/RAction'
-  import workFlow from 'components/workFlow'
+  import RAction from 'components/public/RAction'
+  import workFlow from 'components/public/workFlow'
   import MatterItem from 'components/detail/commonPart/MatterItem'
   import BomList from 'components/detail/commonPart/BomList'
-
+  import FormCell from 'components/detail/commonPart/form-part/FormCell'
+  import BomPop from 'components/apply/commonPart/BomPop'
   export default {
     data() {
       return {
@@ -81,16 +100,26 @@
         formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
         orderList: {}, // 物料列表
         basicInfo: {},//存放基本信息
+        DuplicateBoms:[],//有重复项的bom
+        UniqueBom:[],//合并去重后的bom
+        bomPopShow :false,//bom展示
+        bom:{}//bomPop中要展示的bom
+
       }
     },
     mixins: [detailCommon, common],
     components: {
-      workFlow, RAction, MatterItem, BomList,
+      workFlow, RAction, MatterItem, BomList,FormCell,BomPop
     },
     methods: {
+      //查看原料
+      checkBom(item){
+        this.bom = item;
+        this.bomPopShow = true;
+      },
       //选择默认图片
       getDefaultImg(item) {
-        let url = require('assets/wl_default02.png');
+        let url = require('assets/wl_default03.png');
         if (item) {
           item.inventoryPic = url;
         }
@@ -101,7 +130,7 @@
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode
-        }).then(({success = true, formData = {}}) => {
+        }).then(({success = true, formData = {},attachment = []}) => {
           // http200时提示报错信息
           if (success === false) {
             this.$vux.alert.show({
@@ -114,6 +143,7 @@
           }
           let orderList = {};
           let {order = {}} = formData;
+          this.attachment = attachment;
           // 获取合计
           let {dataSet} = formData.order;
           for (let item of dataSet) {
@@ -126,22 +156,43 @@
                 bom.inventoryCode = bom.transObjCode;
               }
             }
+            if (item.boms) {
+              this.DuplicateBoms = this.DuplicateBoms.concat(JSON.parse(JSON.stringify(item.boms)));
+            }
             if (!orderList[item.transMatchedCode]) {
               orderList[item.transMatchedCode] = [];
             }
             orderList[item.transMatchedCode].push(item);
           }
+          this.mergeBomList();
           this.orderList = orderList;
           this.orderInfo = formData;
           this.workFlowInfoHandler();
         })
-      }
+      },
+      // 合并bom列表
+      mergeBomList() {
+        //对合计的bom进行去重合并
+        let isEqual = (a, b) => a.inventoryCode === b.inventoryCode;
+        let getNew = old => old.reduce((acc, cur) => {
+          let hasItem = acc.some(e => {
+            let temp = isEqual(e, cur);
+            if (temp){
+              e.tdQty = accAdd(e.tdQty, cur.tdQty);
+            }
+            return temp;
+          });
+          if (!hasItem) acc.push(cur);
+          return acc;
+        }, []);
+        this.UniqueBom = getNew(this.DuplicateBoms);
+      },
     }
   }
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizDetail';
+  @import '~scss/biz-app/bizDetail';
 
   .nbjdgg-detail-container {
     // 计划号
@@ -164,7 +215,6 @@
       }
     }
     .order_matter {
-      margin-top: .04rem;
       .each_cell {
         background-color: #fff;
       }
@@ -179,6 +229,38 @@
             color: #757575;
           }
         }
+      }
+    }
+    //bom合计
+    .bom_list{
+      position: relative;
+      background: #FFF;
+      padding: .06rem .08rem;
+      margin-top:0.1rem;
+    }
+    .comment-part{
+      background: #fff;
+      padding: .06rem .08rem;
+    }
+    .get_bom{
+      margin-left: 0.2rem;
+      font-size: 0.12rem;
+      font-weight: bold;
+    }
+  }
+  .bom_pop{
+    .number-part {
+      display: flex;
+      font-size: .1rem;
+      text-align: right;
+      flex-direction: column;
+      .main-number {
+        font-size: .12rem;
+        font-weight: bold;
+        //  color: #757575;
+      }
+      .number-unit {
+        color: #757575;
       }
     }
   }

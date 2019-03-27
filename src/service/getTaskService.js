@@ -1,9 +1,9 @@
-import $axios from '../plugins/ajax'
+import $flyio from 'plugins/ajax'
 
 let getTaskService = {
-  // TODO 返回待处理列表
+  // 返回待处理列表
   getDoList(id,page) {
-    return $axios.ajax({
+    return $flyio.ajax({
       url: '/H_roleplay-si/ds/getTasksListDataByListId',
       data: {
         entityId: 20000,
@@ -18,7 +18,7 @@ let getTaskService = {
   },
   //获取进行中列表
   getList(id,page,status) {
-    return $axios.ajax({
+    return $flyio.ajax({
         url: '/H_roleplay-si/ds/getCompletedByStatusAndListId',
         data: {
           entityId: 20000,

@@ -1,32 +1,30 @@
 <template>
-  <div class="pages" ref='list'>
+  <div class="pages" :class="{'no-add': !action.add}" ref='list'>
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search='searchList'></searchIcon>
         <div class="filter_part">
-          <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
+          <!--<tab :line-width='2' default-color='#757575' active-color='#2c2727'>
             <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
                       @on-item-click="tabClick(item, index)">{{item.name}}
             </tab-item>
-          </tab>
+          </tab>-->
+          <r-sort @on-sort="onSortList"></r-sort>
         </div>
       </div>
-      <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
+      <r-scroll class="list_wrapper " :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)" noCount noPrice></list-item>
+        <mater-list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)" noCount noPrice></mater-list-item>
       </r-scroll>
     </div>
-    <div class="btn vux-1px-t">
-      <div class="cfm_btn" @click="goEdit">新增</div>
-    </div>
+    <add-btn :action="action" :goEdit="goEdit"></add-btn>  
   </div>
 </template>
 
 <script>
-  import {getSellOrderList} from 'service/listService'
-  import listCommon from 'pageMixins/bizListCommon'
+  import listCommon from 'mixins/bizListCommon'
 
   export default {
     data() {
@@ -57,5 +55,5 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizList';
+  @import '~scss/biz-app/bizList';
 </style>

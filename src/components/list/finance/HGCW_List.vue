@@ -1,7 +1,6 @@
 <template>
   <!-- 合规财务报表 -->
   <div class="pages hgcw-list-container">
-    <!-- <div class="tips-word">请选择</div> -->
     <div class="btns">
       <div class="btn-item" v-for="(item, index) in listData" @click="goDetail(item)" :key="index">
         <span>{{item.title}}</span>
@@ -12,43 +11,41 @@
 </template>
 
 <script>
-  import {Group, Cell} from 'vux'
-
-  export default {
-    name: "HGCW_List",
-    data() {
-      return {
-        listData: [
-          {
-            title: '利润表',
-            code: 'LR',
-          }, {
-            title: '资产负债表',
-            code: 'ZCFZ',
-          },
-        ]
-      }
-    },
-    components: {
-      Group,
-      Cell,
-    },
-    methods: {
-      goDetail(item) {
-        let { fileId, listId } = this.$route.params;
-        this.$router.push({
-          path: `/detail/${fileId}/${listId}`,
-          query: {
-            code: item.code,
-            name: item.title
-          }
-        })
-      }
-    },
-    created() {
-      this.$loading.hide();
+import {Group, Cell} from 'vux'
+export default {
+  name: "HGCW_List",
+  data() {
+    return {
+      listData: [
+        {
+          title: '利润表',
+          code: 'LR',
+        }, {
+          title: '资产负债表',
+          code: 'ZCFZ',
+        },
+      ]
     }
+  },
+  components: {
+    Cell, Group
+  },
+  methods: {
+    goDetail(item) {
+      let { folder, fileName } = this.$route.params;
+      this.$router.push({
+        path: `/detail/${folder}/${fileName}`,
+        query: {
+          code: item.code,
+          name: item.title
+        }
+      })
+    }
+  },
+  created() {
+    this.$loading.hide();
   }
+}
 </script>
 
 <style scoped lang="scss">

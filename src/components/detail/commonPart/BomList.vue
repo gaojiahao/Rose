@@ -1,7 +1,8 @@
 <template>
+  <!-- bom列表 -->
   <div class="bom-container" v-if="boms && boms.length">
-    <div class="title vux-1px-b">原料</div>
-    <div class="each-bom-part vux-1px-b" v-for="(bom, bIndex) in boms" :key="bIndex">
+    <div class="title vux-1px-b">bom</div>
+    <div class="each-bom-part" :class="{'vux-1px-b' : bIndex<boms.length-1}" v-for="(bom, bIndex) in boms" :key="bIndex">
       <div class="main-info-part">
         <div class="main-top" v-if="bom.warehouseName || bom.warehouseCode">
           <span class="content-title" v-if="bom.warehouseName">{{bom.warehouseName}}</span>
@@ -11,11 +12,13 @@
         <div class="main-content">
           <div class="content-unit">
             <span class="iconfont icon-bianma"></span>
-            <span>原料编码：{{bom.inventoryCode}}</span>
+            <span>物料编码: {{bom.inventoryCode}}</span>
           </div>
           <div class="content-name">
             {{bom.inventoryName}}
           </div>
+          <slot name="specification" :bom="bom">
+          </slot>
         </div>
       </div>
       <slot :bom="bom" name="number">

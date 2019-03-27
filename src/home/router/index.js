@@ -14,14 +14,14 @@ import WAREHOUSEDETAIL from '../pages/apps/basicApp/warehouse/warehouseDetail'
 import LIST from '../pages/apps/bizApp/list/list'
 import FILLFORM from '../pages/apps/bizApp/fillForm/fillForm'
 import DETAIL from '../pages/apps/bizApp/detail/detail'
+import WORKFLOWFULL from '../pages/apps/bizApp/detail/workFlowFull'
 import RELATED from '../pages/apps/bizApp/detail/related/related'
-// ------- >科目应用 <-------
-
-// ------- >仪表视图 <-------
-import DASHBOARD from '../pages/apps/bizApp/dashboard/dashboard'
-
-//
 import COMMENTLIST from '@/home/pages/apps/bizApp/comment/commentList'
+
+//应用详情
+import APPDETAIL from '../pages/apps/bizApp/appDetail/appDetail.vue'
+import ADDLOG from '../pages/apps/bizApp/appDetail/addLog.vue'
+import ADDADMINCOMMENT from '../pages/apps/bizApp/appDetail/addAdminComment.vue'
 
 export default [
   { path: '/home', name: 'HOME', component: HOME,
@@ -33,35 +33,55 @@ export default [
     meta: { title: '评论' }
   },
   {
-    path: '/dashboard',
-    name: 'DASHBOARD',
-    component: DASHBOARD,
-    meta: { title: '仪表视图' }
-  },
-  {
     path:'/related/:listId',
     name:'RELATED',
     component:RELATED,
     meta:{title:'相关实例'}
   },
   {
-    path:'/list/:fileId/:listId',
+    path:'/list/:folder/:fileName',
     name:'LIST',
     component:LIST,
     meta:{ title:'列表', keepAlive: true},
   },
 
   {
-    path:'/fillform/:fileId/:listId',
+    path:'/fillform/:folder/:fileName',
     name:'FILLFORM',
     component:FILLFORM,
     meta:{ title:'填写新内容' }
   },
   {
-    path:'/detail/:fileId/:listId',
+    path:'/detail/:folder/:fileName',
     name:'DETAIL',
     component:DETAIL,
-    meta:{ title:'订单详情' }
+    meta:{ title:'订单详情', keepAlive: true}
+  },
+  {
+    path:'/workFlowFull',
+    name:'WORKFLOWFULL',
+    component:WORKFLOWFULL,
+    meta:{ title:'工作流列表' }
+  },
+  {
+    path:'/appDetail/:listId',
+    name:'APPDETAIL',
+    component:APPDETAIL,
+    meta:{ title:'应用详情' },
+    children:[
+      {
+        path:'addLog',
+        name:'ADDLOG',
+        component:ADDLOG,
+        meta:{ title:'新增日志' }
+      },
+      {
+        path:'addAdminComment',
+        name:'ADDADMINCOMMENT',
+        component:ADDADMINCOMMENT,
+        meta:{ title:'新增管理员评论' }
+      },
+    ]
   },
   {
     path:'/adress',

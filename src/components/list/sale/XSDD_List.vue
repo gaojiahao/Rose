@@ -1,100 +1,30 @@
 <template>
-  <div class="pages" ref='list'>
+  <div class="pages" :class="{'no-add': !action.add}" ref='list'>
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
-        <searchIcon :filterList="filterList" @search='searchList'></searchIcon>
+        <searchIcon :filterList="filterList" @search='searchList' ref="search"></searchIcon>
         <div class="filter_part">
-          <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
-            <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
-                      @on-item-click="tabClick(item, index)">{{item.name}}
-            </tab-item>
-          </tab>
+          <r-sort @on-sort="onSortList" @on-filter="onFilter" :list-id="listId" ref="sort"></r-sort>
         </div>
       </div>
-      <r-scroll class="list_wrapper" :class="{'dashboard': chartShow}" :options="scrollOptions" :has-next="hasNext"
+      <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <apply-chart v-if='chartShow'></apply-chart>
-        <div class='list' v-else>
-          <list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)" ></list-item>
-        </div>
-
+        <mater-list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)"></mater-list-item>
       </r-scroll>
     </div>
-    <div class="btn vux-1px-t" v-if="!chartShow">
-      <div class="cfm_btn" @click="goEdit">新增</div>
-    </div>
+    <add-btn :action="action" :goEdit="goEdit"></add-btn>  
   </div>
 </template>
 
 <script>
-  import listCommon from 'pageMixins/bizListCommon'
-  import {getSellOrderList} from 'service/listService'
-  import ApplyChart from 'components/list/commonPart/ApplyChart'
-  export default {
-    data() {
-      return {
-        listStatus: [
-          // {name: '仪表视图', status: '仪表视图'},
-          {name: '全部', status: ''},
-          {name: '已生效', status: '已生效'},
-          {name: '进行中', status: '进行中'}
-        ],
-        listViewID : 2190,
-        chartShow : false,
-        hasNext: true,
-        scrollOptions: {
-          click: true,
-          pullDownRefresh: true,
-          pullUpLoad: true,
-        },
-
-      }
-    },
-    components:{
-      ApplyChart
-    },
-    mixins: [listCommon],
-    methods: {
-      ///tab切换
-      // tabClick(item, index) {
-      //   console.log(item);
-      //   switch (item.status) {
-      //     case '已生效' :
-      //       this.biStatus = '1';
-      //       break;
-      //     case '进行中' :
-      //       this.biStatus = '2';
-      //       break;
-      //     case '' :
-      //       this.biStatus = '';
-      //       break;
-      //   }
-      //   if(index === 0){
-      //     this.chartShow = true;
-      //     this.hasNext = false;
-      //   }
-      //   else{
-      //     this.chartShow = false;
-      //     this.hasNext = true;
-      //     this.scrollOptions.pullDownRefresh = true;
-      //     this.scrollOptions.pullUpLoad =  true;
-      //     this.resetScroll();
-      //   }
-      //   this.activeIndex = index;
-      //   this.activeTab = item.status;
-      //   this.resetCondition();
-      //   this.getList();
-      // }
-
-    }
-  }
+import listCommon from 'mixins/bizListCommon'
+export default {
+  mixins: [listCommon]
+}
 </script>
 
 <style lang='scss' scoped>
-  @import "./../../scss/bizList";
-  .dashboard {
-    height: calc(100% - 1rem);
-  }
+  @import "~scss/biz-app/bizList";
 </style>

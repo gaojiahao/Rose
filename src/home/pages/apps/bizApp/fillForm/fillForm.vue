@@ -3,7 +3,8 @@
     <component
       :is='currentComponent'
       @sel-data='selData'
-      @change='modifyRoute'>
+      @change='modifyRoute'
+      ref="fillPage">
     </component>
   </div>
 
@@ -11,9 +12,6 @@
 
 <script>
 import platfrom from '@/plugins/platform'
-// 引入映射表
-import Apps from '@/home/pages/maps/businessApp'
-import AppsFile from '@/home/pages/maps/businessFile'
 export default {
   data(){
     return {
@@ -39,43 +37,46 @@ export default {
   beforeRouteEnter (to, from, next) {
     let { name } = to.query;
     to.meta.title = `新增${name}`;
-    if(to.query.id || to.query.groupId || to.query.colId || to.query.transCode){
+    if (to.query.id || to.query.groupId || to.query.colId || to.query.transCode){
       to.meta.title = `编辑${name}`;
     }
     next();
   },
   created(){
     this.$loading.show();
-    let {transCode} = this.$route.query;
-    if(transCode){
+    let { transCode } = this.$route.query,
+        { folder, fileName } = this.$route.params;
+    if (transCode){
       this.transCode = transCode;
     }
-    let { fileId, listId } = this.$route.params;
-    this.currentComponent = require(`components/apply/${AppsFile[fileId]}/${Apps[fileId][listId]}Form.vue`).default;
+    this.currentComponent = require(`components/apply/${folder}/${fileName}Apply.vue`).default;
   },
   beforeRouteLeave(to, from, next) {
+    if (this.$refs.fillPage.hasDraftData) {
+      this.saveData = this.$refs.fillPage.hasDraftData() || {};
+    }
     let {path} = to;
     let keys = Object.keys(this.saveData)[0];
     // 新建物料，修改列表页的meta值
     if (this.submitSuccess && (to.name === 'LIST' || to.name === 'MSGLIST')) {
       to.meta.reload = true;
-      if(keys){
+      if (keys){
         sessionStorage.removeItem(keys)
-      }     
+      }
     }
     //删除缓存的往来信息
-    if(to.name === "LIST"){
+    if (to.name === "LIST"){
       sessionStorage.removeItem('DEALERLIST_SELITEMS');
     }
     //离开数据保存为草稿
-    if(to.name === "LIST" && keys && !this.transCode && !this.submitSuccess){
+    if (to.name === "LIST" && keys && !this.transCode && !this.submitSuccess){
       this.$vux.confirm.show({
         content:'即将离开，是否保存数据？',
-        onConfirm : ()=>{
+        onConfirm : () => {
           sessionStorage.setItem(keys,JSON.stringify(this.saveData[keys]));
           next();
         },
-        onCancel : ()=>{
+        onCancel : () => {
           sessionStorage.removeItem(keys);
           next();
         }

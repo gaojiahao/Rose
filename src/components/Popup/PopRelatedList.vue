@@ -3,10 +3,7 @@
   <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
-        <div class="title">
-          <!-- 搜索栏 -->
-          <m-search @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
-        </div>
+        <m-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
         <!-- 物料列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !relatedAppList.length" @on-pulling-up="onPullingUp" ref="bScroll">
@@ -61,15 +58,10 @@
 
 <script>
 import {Icon, Popup,dateFormat} from 'vux'
-import {getList} from 'service/commonService'
+import {getList} from 'service/common/commonService'
 import {getListView} from 'service/detailService'
-import RScroll from 'components/RScroll'
-import MSearch from 'components/search'
-// 引入映射表
-// import Apps from '@/home/pages/apps/bizApp/maps/Apps'
-// 引入映射表 (不可移除)
-import Apps from '@/home/pages/maps/businessApp'
-import AppsFile from '@/home/pages/maps/businessFile'
+import RScroll from 'plugins/scroll/RScroll'
+import MSearch from 'components/search/search'
 export default {
   name: "RelatedList",
   props: {
@@ -110,9 +102,9 @@ export default {
   watch: {
     filtersData:{
       handler(val){
-        (async()=>{
+        (async() => {
           await this.getListView();
-          await this.getList().then(()=>{
+          await this.getList().then(() => {
             this.$HandleLoad.hide();
             this.showPop = true;
           });
@@ -121,7 +113,7 @@ export default {
     }
   },
   methods: {
-    // TODO 弹窗展示时调用
+    // 弹窗展示时调用
     onShow() {
       this.$nextTick(() => {
         if (this.$refs.bScroll) {
@@ -135,15 +127,15 @@ export default {
     },
     // 获取相关实例应用的视图
     getListView(){
-      return getListView({listId : this.idInfo.listId}).then(data=>{
+      return getListView({listId : this.idInfo.listId}).then(data=> {
         this.viewId = data[0].id
       })
     },
-    // TODO 获取相关实例列表
+    // 获取相关实例列表
     getList() {
       let value = '';
       this.filtersData.forEach((item, index) => {
-        if(index === this.filtersData.length - 1){
+        if (index === this.filtersData.length - 1){
           value += item;
           return
         }
@@ -173,7 +165,7 @@ export default {
         })
       });
     },
-    // TODO 搜索列表
+    // 搜索列表
     searchList({val = ''}) {
       this.srhInpTx = val;
       this.relatedAppList = [];
@@ -182,7 +174,7 @@ export default {
       this.$refs.bScroll.scrollTo(0, 0);
       this.getList()
     },
-    // TODO 上拉加载
+    // 上拉加载
     onPullingUp() {
       this.page++;
       this.getList()
@@ -190,9 +182,9 @@ export default {
     //跳转详情
     goDetail(item){
       this.showPop = false;
-      let { fileId, listId } = this.idInfo;
+      let { folder, file } = this.idInfo;
       this.$router.push({
-        path: `/detail/${fileId}/${listId}`,
+        path: `/detail/${folder}/${fileName}`,
         query: {
           name: item.transTypeName,
           transCode: item.transCode,
@@ -209,10 +201,11 @@ export default {
   .trade_pop_part {
     background: #fff;
     .trade_pop {
-      padding: 0 .08rem;
+      
       height: 100%;
       // 顶部
       .title {
+        height: 100%;
         font-size: .2rem;
         position: relative;
         padding: .08rem 0;

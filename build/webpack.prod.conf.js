@@ -3,12 +3,14 @@ const path = require('path')
 const utils = require('./utils')
 const webpack = require('webpack')
 const config = require('../config')
+const Version = new Date().getTime()
 const merge = require('webpack-merge')
+const env = require('../config/prod.env')
 const baseWebpackConfig = require('./webpack.base.conf')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const env = require('../config/prod.env')
+const vConsolePlugin = require('vconsole-webpack-plugin')
 
 new webpack.DllReferencePlugin({
   context: __dirname,
@@ -26,10 +28,16 @@ const webpackConfig = merge(baseWebpackConfig, {
   devtool: config.build.productionSourceMap ? config.build.devtool : false,
   output: {
     path: config.build.assetsRoot,
-    filename: utils.assetsPath('js/[name].[chunkhash].js'),
-    chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
+    // filename: utils.assetsPath(`js/[name].js`),
+    // chunkFilename: utils.assetsPath(`js/[id].js`)
+    filename: utils.assetsPath(`js/[name].[chunkhash].${Version}.js`),
+    chunkFilename: utils.assetsPath(`js/[id].[chunkhash].${Version}.js`)
   },
   plugins: [
+    new vConsolePlugin({
+      filter: [],  // 需要过滤的入口文件
+      enable: false // 发布代码前记得改回 false
+    }),
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
       'process.env': env

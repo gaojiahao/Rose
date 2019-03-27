@@ -3,20 +3,18 @@
   <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
-        <div class="title">
-          <m-search @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
-        </div>
+        <m-search @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !costList.length" @on-pulling-up="onPullingUp"
-                   ref="bScroll">
+                  ref="bScroll">
           <div class="each_mater box_sd" v-for="(item, index) in costList" :key='index'
                @click.stop="selThis(item, index)">
             <div class="mater_main ">
               <!-- 物料名称 -->
               <div class="mater_name">{{item.transCode}}</div>
-              <div class="no_invoiced" v-if="getCostList === 'getVATBilling'">代开票金额：{{item.amntBal}}</div>
-              <div class="no_invoiced" v-else>代收票金额：{{item.amntBal}}</div>
+              <div class="no_invoiced">{{item.inventoryName}}</div>
+              <div class="no_invoiced">待{{getListMethod ? '开票' : '收票'}}金额: ￥{{item.amntBal}}</div>
             </div>
             <!-- icon -->
             <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
@@ -29,10 +27,11 @@
 
 <script>
   import {Icon, Popup, LoadMore} from 'vux'
- import {getVATBilling,getVATReceipt} from 'service/invoiceService.js'
-  import RScroll from 'components/RScroll'
-  import MSearch from 'components/search'
-import { sep } from 'path';
+  import {getVATBilling, getVATReceipt, getManyVATBilling, getManyVATReceipt} from 'service/invoiceService'
+  import RScroll from 'plugins/scroll/RScroll'
+  import MSearch from 'components/search/search'
+  import {sep} from 'path';
+
   export default {
     name: "InvoiceList",
     props: {
@@ -61,7 +60,7 @@ import { sep } from 'path';
       },
     },
     components: {
-      Icon, Popup, LoadMore, RScroll,MSearch
+      Icon, Popup, LoadMore, RScroll, MSearch
     },
     data() {
       return {
@@ -77,7 +76,7 @@ import { sep } from 'path';
           click: true,
           pullUpLoad: true,
         },
-        dataCount:0,
+        dataCount: 0,
       }
     },
     watch: {
@@ -97,12 +96,12 @@ import { sep } from 'path';
           // 参数改变，重新请求接口
           this.getCostList();
         },
-        deep:true
+        deep: true
       }
 
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -110,13 +109,13 @@ import { sep } from 'path';
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         // this.tmpItems = [...this.selItems];
         this.$emit('input', false);
-        
+
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         let flag = false;
         this.selItems && this.selItems.every(item => {
@@ -128,19 +127,19 @@ import { sep } from 'path';
         });
         return flag;
       },
-      // TODO 选择物料
+      // 选择物料
       selThis(sItem, sIndex) {
         //已经选择过的不允许再选
         let warn = ''
-        this.selItems.every(item=>{
-          if(sItem.transCode === item.transMatchedCode){
-            warn = '已经选择过';
+        this.selItems.every(item => {
+          if (sItem.transCode === item.transMatchedCode) {
+            warn = '该实例编码已选择，请选择其他';
             return false;
 
           }
           return true
         })
-        if(warn) {
+        if (warn) {
           this.$vux.alert.show({
             content: warn,
           });
@@ -148,19 +147,19 @@ import { sep } from 'path';
         }
         this.showPop = false;
         this.selItems = [sItem];
-        this.$emit('sel-matter',this.selItems[0]);
+        this.$emit('sel-matter', this.selItems[0]);
       },
-      // TODO 设置默认值
+      // 设置默认值
       setDefaultValue() {
         // this.tmpItems = [...this.defaultValue];
         this.selItems = [...this.defaultValue];
       },
-      // TODO 获取物料列表
+      // 获取物料列表
       getCostList() {
         let filter = [];
-        let operation = getVATBilling;
-        if(!this.getListMethod){
-          operation = getVATReceipt
+        let operation = getManyVATBilling;
+        if (!this.getListMethod) {
+          operation = getManyVATReceipt
         }
         if (this.srhInpTx) {
           filter = [
@@ -187,7 +186,7 @@ import { sep } from 'path';
           })
         });
       },
-      // TODO 搜索物料
+      // 搜索物料
       searchList({val = ''}) {
         this.srhInpTx = val;
         this.costList = [];
@@ -196,7 +195,7 @@ import { sep } from 'path';
         this.$refs.bScroll.scrollTo(0, 0);
         this.getCostList();
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getCostList();
@@ -213,14 +212,16 @@ import { sep } from 'path';
   .symbol {
     font-size: .1rem;
   }
+
   // 弹出层
   .trade_pop_part {
     background: #fff;
     .trade_pop {
-      padding: 0 .08rem;
+      
       height: 100%;
       // 顶部
       .title {
+        height: 100%;
         font-size: .2rem;
         position: relative;
         padding-top: 0.08rem;
@@ -334,7 +335,7 @@ import { sep } from 'path';
               color: #111;
               font-size: .18rem;
             }
-            .no_invoiced{
+            .no_invoiced {
               font-size: 0.12rem;
               color: #757575;
             }

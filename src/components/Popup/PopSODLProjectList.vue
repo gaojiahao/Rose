@@ -1,29 +1,25 @@
 <template>
   <div class="pop-sodl-project-list" @click="itemClick">
-    <div class="title">项目名称</div>
-    <div v-if='selItems.projectName'>
-      <div class="cp_info">
-        <p class="cp_name">{{selItems.projectName}}</p>
-      </div>
+    <div class="project-info" v-if='selItems.projectName'>
+      <span class="project-name">{{selItems.projectName}}</span>
+      <span class="project-type">{{selItems.projectType}}</span>
     </div>
-    <div v-else>
-      <div class="mode">请选择项目名称</div>
-    </div>
-    <i class="iconfont icon-youjiantou r-arrow"></i>
-
+    <div class="title" v-else>项目名称 <span>请选择</span></div>
+    <i class="icon-right r-arrow"></i>
     <!-- 项目弹窗 -->
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
+        <div class="popup-top">
+          <i class="icon-close" @click="onHide"></i>
+        </div>
         <div class="trade_pop">
-          <div class="title">
-            <m-search @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
-          </div>
+          <m-search @search='searchList' @turn-off="onHide"></m-search>
           <!-- 费用列表 -->
           <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !projectList.length" @on-pulling-up="onPullingUp"
                     ref="bScroll">
             <div class="each_mater box_sd" v-for="(item, index) in projectList" :key='index'
-                 @click.stop="selThis(item,index)">
+                 @click.stop="selThis(item, index)">
               <div class="mater_main ">
                 <!-- 物料名称 -->
                 <div class="project_name">
@@ -47,8 +43,8 @@
 <script>
   import {Icon, Popup,} from 'vux'
   import {getSalesOutStockProject} from 'service/projectService'
-  import RScroll from 'components/RScroll'
-  import MSearch from 'components/search'
+  import RScroll from 'plugins/scroll/RScroll'
+  import MSearch from 'components/search/search'
 
   export default {
     name: "PopSODLProjectList",
@@ -91,7 +87,7 @@
       }
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -99,21 +95,21 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.showPop = false;
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.selItems.projectName === sItem.projectName;
       },
-      // TODO 选择物料
+      // 选择物料
       selThis(sItem, sIndex) {
         this.showPop = false;
         this.selItems = {...sItem};
         this.$emit('input', this.selItems);
       },
-      // TODO 获取物料列表
+      // 获取物料列表
       getProjectLsit() {
         let filter = [];
 
@@ -140,7 +136,7 @@
           })
         });
       },
-      // TODO 搜索列表
+      // 搜索列表
       searchList({val = ''}) {
         this.srhInpTx = val;
         this.projectList = [];
@@ -149,7 +145,7 @@
         this.$refs.bScroll.scrollTo(0, 0);
         this.getProjectLsit();
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getProjectLsit();
@@ -159,6 +155,9 @@
       }
     },
     created() {
+      this.selItems = {
+        ...this.value,
+      };
       this.getProjectLsit();
     }
   }
@@ -167,44 +166,54 @@
 <style scoped lang="scss">
   .pop-sodl-project-list {
     position: relative;
-    margin: .1rem auto;
-    padding: .06rem .1rem;
-    width: 95%;
+    margin-bottom: .1rem;
+    padding: .18rem .15rem;
     box-sizing: border-box;
     background: #fff;
+    color: #333;
+    font-size: .14rem;
+    line-height: .14rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     .title {
-      color: #757575;
-
-      font-size: .12rem;
+      flex: 1;
+      color: #696969;
+      display: flex;
+      justify-content: space-between;
     }
-    .r_arrow {
-      position: absolute;
-      top: 50%;
-      right: .04rem;
-      transform: translate(0, -50%);
-    }
-    .mode {
-      color: #111;
-      font-weight: 500;
-    }
-    /* 右箭头 */
-    .r-arrow {
-      top: 50%;
-      right: 1%;
-      font-weight: bold;
-      position: absolute;
-      transform: translate(0, -50%);
+    .icon-right{
+      width: .08rem;
+      height: .14rem;
+      margin-left: .1rem;
     }
   }
 
   // 弹出层
   .trade_pop_part {
     background: #fff;
+    .popup-top {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 0 .15rem;
+      height: .4rem;
+      background-color: #fff;
+      .icon-close {
+        display: inline-block;
+        width: .14rem;
+        height: .14rem;
+      }
+    }
     .trade_pop {
-      padding: 0 .08rem;
-      height: 100%;
+      height: calc(100% - .4rem);
+      overflow: hidden;
+      .search {
+        padding-top: 0;
+      }
       // 顶部
       .title {
+        height: 100%;
         font-size: .2rem;
         position: relative;
         padding-top: 0.08rem;

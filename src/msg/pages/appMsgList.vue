@@ -6,7 +6,7 @@
     <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class='each_task' v-for='(item,index) in listData' :key='index' @click='goDetail(item,index)'>
+        <div class='each_task' v-for='(item, index) in listData' :key='index' @click='goDetail(item, index)'>
           <div class="todo_msg" :class="{visited: item.visited}">
             <div class="msg_top">
               <!-- 表单状态 及 编码 -->
@@ -34,10 +34,10 @@
                 </div>
                 <div class="handle_result">
                   <span>操作动作:</span>
-                  <span class="result" 
-                  :class='{reject_c : item.lastNode.status === "同意" || 
-                  item.lastNode.status === "提交"  }'>
-                  {{item.lastNode.status}}
+                  <span class="result"
+                        :class='{reject_c : item.lastNode.status === "同意" ||
+                        item.lastNode.status === "提交"  }'>
+                    {{item.lastNode.status}}
                   </span>
                 </div>
               </div>
@@ -60,8 +60,8 @@ import { isMyflow } from 'service/detailService'
 import { getAllMsgList } from 'service/msgService'
 import { getWorkFlow } from 'service/detailService'
 // 组件引入
-import search from 'components/search'
-import RScroll from 'components/RScroll'
+import search from 'components/search/search'
+import RScroll from 'plugins/scroll/RScroll'
 
 export default {
   data(){
@@ -72,7 +72,7 @@ export default {
       page: 1,
       limit: 10,
       hasNext: true,
-      DefaultImg : require('assets/ava03.png'),
+      DefaultImg : require('assets/ava01.png'),
       scrollOptions: {
         click: true,
         pullDownRefresh: true,
@@ -81,16 +81,15 @@ export default {
     }
   },
   components: {
-    search, RScroll, 
+    search, RScroll,
   },
   methods:{
     goDetail(item, index){
-      // 获取 listID
-      let { listId, title } = item;
+      let { title, listId, folder, packagePath } = item;
+      let start = Date.now();
       // 高亮 点击过的模块
       item.visited = true;
       this.$set(this.listData, index, {...item});
-      let start = Date.now();
       const TRANSITION_TIME = 200; // 动画时间
       //判断是否是重新提交，如果是，跳转到创建订单页面
       isMyflow({transCode : item.businessKey}).then(({tableContent}) => {
@@ -99,19 +98,21 @@ export default {
           if (tableContent.length > 0) {
             let {isMyTask, nodeName} = tableContent[0];
             if (isMyTask === 1 && nodeName === '重新提交') {
-              path = `/fillform/${item.typeID}/${item.listId}`;
+              path = `/fillform/${folder}/${packagePath}`;
             } else {
-              path = `/detail/${item.typeID}/${item.listId}`;
+              path = `/detail/${folder}/${packagePath}`;
             }
           } else {
-            path = `/detail/${item.typeID}/${item.listId}`;
+            path = `/detail/${folder}/${packagePath}`;
+          }
+          let query = {
+            listId,
+            name: title,
+            transCode : item.businessKey,
           }
           this.$router.push({
             path,
-            query: {
-              name: title,
-              transCode : item.businessKey,
-            }
+            query
           })
         };
         let calcTime = Date.now() - start;
@@ -129,7 +130,7 @@ export default {
         this.$set(this.listData, index, {...item});
       })
     },
-    // TODO 重置列表条件
+    // 重置列表条件
     resetCondition() {
       this.listData = [];
       this.page = 1;
@@ -137,57 +138,57 @@ export default {
       this.$refs.bScroll.scrollTo(0, 0);
       this.$refs.bScroll.resetPullDown();
     },
-    searchList(val) {
+    searchList({val = '', property = ''}) {
       this.serachVal = val;
       this.resetCondition();
       this.getList();
     },
     //获取销售订单数据
     getList(noReset = false) {
-        let filter = {
-          title : this.title,
-          businessKey: this.serachVal,
-          crtName: this.serachVal
-        };
-        return getAllMsgList({
-          limit: this.limit,
-          page: this.page,
-          filter: JSON.stringify(filter),
-        }).then(({total = 0, tasks = [], success = true}) => {
-          tasks.forEach(item => {           
-            item.status = "待处理"
-            item.transCode = item.businessKey;
-          });
-          this.hasNext = total > (this.page - 1) * this.limit + tasks.length;
-          this.listData = this.page === 1 ? tasks : [...this.listData, ...tasks];
-          if (!noReset) {
-            this.$nextTick(() => {
-              this.resetScroll();
-            })
-          }
-        }).catch(e => {
-          this.resetScroll();
-        })
-      },
-      // TODO 获取默认图片
-      getDefaultImg(item) {
-        let url = require('assets/avatar.png');
-        if (item) {
-          item.inventoryPic = url;
+      let filter = {
+        title : this.title,
+        businessKey: this.serachVal,
+        crtName: this.serachVal
+      };
+      return getAllMsgList({
+        limit: this.limit,
+        page: this.page,
+        filter: JSON.stringify(filter),
+      }).then(({total = 0, tasks = [], success = true}) => {
+        tasks.forEach(item => {
+          item.status = "待处理"
+          item.transCode = item.businessKey;
+        });
+        this.hasNext = total > (this.page - 1) * this.limit + tasks.length;
+        this.listData = this.page === 1 ? tasks : [...this.listData, ...tasks];
+        if (!noReset) {
+          this.$nextTick(() => {
+            this.resetScroll();
+          })
         }
-        return url
-      },
-    // TODO 重置下拉刷新、上拉加载的状态
+      }).catch(e => {
+        this.resetScroll();
+      })
+    },
+    // 获取默认图片
+    getDefaultImg(item) {
+      let url = require('assets/avatar.png');
+      if (item) {
+        item.inventoryPic = url;
+      }
+      return url
+    },
+    // 重置下拉刷新、上拉加载的状态
     resetScroll() {
       this.$refs.bScroll.finishPullDown();
       this.$refs.bScroll.finishPullUp();
     },
-    // TODO 上拉加载
+    // 上拉加载
     onPullingUp() {
       this.page++;
       this.getList();
     },
-    // TODO 下拉刷新
+    // 下拉刷新
     onPullingDown() {
       this.page = 1;
       this.getList(true).then(() => {
@@ -216,10 +217,10 @@ export default {
       leave2 = date - (hours*3600) ,       //计算小时数后剩余的毫秒数
       minutes = Math.floor(leave2/(60)),
       backTime;
-      if(hours > 0){
+      if (hours > 0){
         backTime = `${hours}小时前`;
       }
-      else{
+      else {
          backTime = minutes === 0 ? '1分钟前' :`${minutes}分钟前`;
       }
       return hours < 24 ? backTime : `${val.crtTime.split(' ')[0]}`;
@@ -243,7 +244,7 @@ export default {
       });
       this.listData = tmp;
     },200);
-    if(reload){
+    if (reload){
       this.$loading.show();
       this.reloadData();
       this.$route.meta.reload = false;
@@ -254,7 +255,7 @@ export default {
     next();
   },
   beforeRouteLeave (to, from, next) {
-    if(to.name === 'MSGHOME'){
+    if (to.name === 'MSGHOME'){
       from.meta.reload = true;
     }
     next();
@@ -366,7 +367,7 @@ export default {
         // 操作
         .handle {
           font-size: .14rem;
-          
+
         }
         .tips {
           color: #757575;

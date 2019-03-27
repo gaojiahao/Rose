@@ -11,15 +11,12 @@
     <div v-transfer-dom v-if="!disabled">
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
-          <div class="title">
-            <!-- 搜索栏 -->
-            <d-search @search='searchList' @turn-off="onHide" :isFill='true'></d-search>
-          </div>
+          <d-search @search="searchList" @turn-off="onHide" :isFill="true"></d-search>
           <!-- 仓库列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
-            <div class="pop-list-item box_sd" v-for="(item, index) in listData" :key='index'
-                 @click.stop="selThis(item,index)">
+            <div class="pop-mater-list-item box_sd" v-for="(item, index) in listData" :key='index'
+                 @click.stop="selThis(item, index)">
               <div class="pop-list-main ">
                 <div class="pop-list-info">
                   <div class="withColor">
@@ -53,9 +50,9 @@
 
 <script>
   import {Icon, Popup, TransferDom, LoadMore} from 'vux'
-  import {getWarehouseNBJGRK} from 'service/listService'
-  import RScroll from 'components/RScroll'
-  import DSearch from 'components/search'
+  import {getWarehouse} from 'service/listService'
+  import RScroll from 'plugins/scroll/RScroll'
+  import DSearch from 'components/search/search'
 
   export default {
     name: "PopWarehouseList",
@@ -122,7 +119,7 @@
       }
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -130,7 +127,7 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.showPop = false;
         this.$emit('on-hide');
@@ -142,25 +139,25 @@
         this.hasNext = true;
         this.getList();
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.selItems.warehouseCode === sItem.warehouseCode;
       },
-      // TODO 选择物料
+      // 选择物料
       selThis(sItem, sIndex) {
         this.showPop = false;
         this.selItems = sItem;
         this.$emit('sel-item', this.selItems);
       },
-      // TODO 获取默认图片
+      // 获取默认图片
       getDefaultImg(item) {
-        let url = require('assets/wl_default02.png');
+        let url = require('assets/wl_default03.png');
         if (item) {
           item.inventoryPic = url;
         }
         return url
       },
-      // TODO 获取仓库列表
+      // 获取仓库列表
       getList() {
         let filter = [];
         if (this.srhInpTx) {
@@ -173,7 +170,7 @@
               // attendedOperation: 'or'
             }];
         }
-        return getWarehouseNBJGRK({
+        return getWarehouse({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
@@ -198,7 +195,7 @@
           })
         });
       },
-      // TODO 搜索仓库
+      // 搜索仓库
       searchList({val = ''}) {
         this.srhInpTx = val;
         this.listData = [];
@@ -206,16 +203,16 @@
         this.hasNext = true;
         this.getList();
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getList();
       },
-      // TODO 设置默认值
+      // 设置默认值
       setDefaultValue() {
         this.selItems = this.defaultValue ? {...this.defaultValue} : {};
       },
-      // TODO 点击仓库
+      // 点击仓库
       warehouseClick() {
         if (this.disabled) {
           return
@@ -310,7 +307,7 @@
     background: #fff;
     z-index: 502;
     .trade_pop {
-      padding: 0 .08rem;
+      
       height: 100%;
       overflow: hidden;
       // 顶部
@@ -334,7 +331,7 @@
           padding: .04rem .04rem 0 .3rem;
         }
         // 列表项
-        .pop-list-item {
+        .pop-mater-list-item {
           position: relative;
           display: flex;
           padding: 0.08rem;

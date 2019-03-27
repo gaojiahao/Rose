@@ -2,121 +2,137 @@
   <div class="inPage">
     <div class="content" ref='home'>
       <div class="wrapper">
-        <!-- 用户头像部分 -->
-        <div class="user_part">
-          <div class="user_avatar vux-1px-b">
-            <div class='user_info'>
-              <img :src="userInfo.avatar">
-              <div class="tips" style="display:inline-block;">欢迎,{{userInfo.name ? userInfo.name : '访问者'}}</div>
-            </div>
-            <div>
-              <div class='current_entity' @click="showDrop = !showDrop">
-                <span class="entity-name">{{currentEntity}}</span>
-                <x-icon v-if="entityList.length > 1" type="ios-arrow-down" :class="{'arrow-up': showDrop}" size="14"></x-icon>
+        <div class="top-part-container">
+          <div class="top-part">
+            <div class="user-info-container">
+              <div class="user_avatar">
+                <img :src="userInfo.avatar">
               </div>
+              <div class="user-info">
+                <p class="user_name">{{userInfo.nickname}}</p>
+                <p class="user_other">@{{userInfo.userCode}}</p>
+              </div>
+            </div>
+            <div class="entity-part" :class="{'active': showDrop}" @click="showDrop = !showDrop">
+              <span class="entity_name">{{userInfo.entityName}}</span>
+              <span v-if="entityList.length > 1" class="iconfont" :class="{'icon-xia' : !showDrop, 'icon-shang' : showDrop}"></span>
               <ul class="r-dropdown-list" v-show="showDrop">
-                <li class="r-dropdown-item" :class="{'vux-1px-b': index !== entityList.length - 1}" v-for="(item, index) in entityList"
-                    @click.stop="dropItemClick(item)" :key="index">
-                  <span :class='{ active : selItem.groupName === item.groupName }'>{{item.groupName}}</span>
+                <li class="r-dropdown-item" :class="{'vux-1px-b': index !== entityList.length - 1 }" :key="index" v-for="(item, index) in entityList"
+                    @click.stop="dropItemClick(item)" >
+                  <div class="each_item" :class="{'active is-being-sel' : selItem.groupCode === item.groupCode}">
+                    <p class="full_name">{{item.groupName}}</p>
+                    <p class="shor_name">简称: {{item.groupShortName}}</p>
+                  </div>
+                  <div class="tips_part" v-if="selItem.groupCode === item.groupCode">
+                    <span class="tips_word">当前选中</span>
+                  </div>
                 </li>
               </ul>
-            </div>  
+            </div>
           </div>
         </div>
-        <!-- 基础应用部分 -->
-        <basic-app :BasicApps='BasicApps' :goBasic='goBasic'></basic-app>
-        <!-- 业务应用部分 -->
-        <bus-app :BusApps='BusApps' :goList='goList' :getDefaultIcon='getDefaultIcon'></bus-app>
-      </div>   
+        <basic-app :BasicApps='BasicApps' :goBasic='goBasic' :goAppDetail='goAppDetail'></basic-app>
+        <bus-app :BusApps='BusApps' :goList='goList' :goAppDetail='goAppDetail' :getDefaultIcon='getDefaultIcon'></bus-app>
+      </div>
     </div>
+    <div class="close-part" v-show="showDrop" @click="showDrop = false"></div> 
   </div>
 </template>
 
 <script>
-import {Icon} from 'vux'
 // 接口引入
 import homeService from 'service/homeservice'
-import { getMsgList } from 'service/msgService.js'
+import { getMsgList } from 'service/msgService'
 // 映射表引入
 import basicMap from './maps/basic'
-import Apps from './maps/businessApp'
-import AppsFile from './maps/businessFile'
 // 组件引入
-import busApp from 'components/home/busAppList'        // 业务应用
-import basicApp from 'components/home/basicApp'        // 基础应用
+import busApp from 'homePage/components/home-related/busAppList'        // 业务应用
+import basicApp from 'homePage/components/home-related/basicApp'        // 基础应用
 // 插件引入
 import Bscroll from 'better-scroll'
 export default {
-  data(){
+  data() {
     return{
       BUSobj: {},
-      userInfo:{},         // 用户信息
-      BasicApps : [],        // 基础对象 
-      BusApps: {},        // 业务应用 
-      homeScroll : null,
-      currentEntity :'',//当前主体
-      entityList : [] ,//主体列表
-      showDrop :false,
-      selItem : {}
+      userInfo:{},            // 用户信息
+      selItem : {},           // 选中的主体内容
+      BusApps: [],            // 业务应用
+      BasicApps : [],         // 基础对象
+      entityList : [],        // 主体列表
+      showDrop :false,        // 是否显示主体下拉选择
+      homeScroll : null,      // 滑动实例
     }
   },
-  components:{ busApp, basicApp,Icon},
+  components:{ busApp, basicApp },
   methods:{
     // 基础应用
-    goBasic(item){
-      this.$router.push({ path : `${basicMap[item]}`})
+    goBasic(item) {
+      this.$router.push({path: `${basicMap[item]}`})
     },
     // 前往列表
-    goList(listId, name, file){
-      this.$router.push({ path: `/list/${file}/${listId}`, query: { name }})
+    goList(folder, fileName, name, listId) {
+      this.$router.push({
+        path: `/list/${folder}/${fileName}`, 
+        query: { name, listId }
+      })
+    },
+    goAppDetail(listId) {
+      this.$router.push({path: `/appDetail/${listId}`})
     },
     // 设置默认图片
-    getDefaultIcon(app){
+    getDefaultIcon(app) {
       let url = require('assets/defaultApp.png');
-      if(app){
+      if (app) {
         app.icon = url;
       }
       return url;
     },
     //获取代办数量
-    getNews(){
+    getNews() {
       let newsNumber;
       return getMsgList().then( data => {
-        if(data.dataCount > 99){
+        if (data.dataCount > 99) {
           newsNumber = '99+';
           return
         }
         newsNumber = data.dataCount;
-        this.$event.$emit('badgeNum',newsNumber);
+        this.$event.$emit('badgeNum', newsNumber);
       })
-    }, 
-    //获取当前用户信息 
-    getCurrentUser(){
-      return homeService.currentUser().then( data=>{
-        this.currentEntity = data.entityName;
-        data.sysGroupList && data.sysGroupList.forEach(item=>{
-          if(item.groupType === 'C'){
+    },
+    //获取当前用户信息
+    getCurrentUser() {
+      return homeService.currentUser().then(data => {
+        this.userInfo = {
+          photo: data.photo,                      // 头像
+          mobile: data.mobile,                    // 手机号
+          userCode: data.userCode,                // 工号
+          nickname: data.nickname,                // 姓名
+          entityName: data.entityName && data.entityName.slice(0, 4) || '' // 当前组织
+        }
+        // 获取 公司主体列表
+        data.sysGroupList && data.sysGroupList.forEach(item => {
+          if (item.groupType === 'C') {
             this.entityList.push(item);
-            if(item.groupName === data.entityName){
+            if (item.groupCode === data.entityId) {
               this.selItem = item;
             }
           }
         })
       })
     },
-    // TODO 选择单条记录
+    // 选择单条记录
     dropItemClick(item) {
+      if (this.selItem.groupCode === item.groupCode) return;
       this.selItem = {...item};
-      this.currentEntity = item.groupName;
       this.showDrop = false;
       this.$loading.show();
-      homeService.changeEntity({entityId : item.groupCode}).then((data)=>{
+      homeService.changeEntity({entityId : item.groupCode}).then((data) => {
         let tokenInfo = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
-        if(tokenInfo){
+        if (tokenInfo) {
           tokenInfo = JSON.parse(tokenInfo);
           tokenInfo.entityId = data.entityId;
           tokenInfo.token = data.token;
-          sessionStorage.setItem('ROSE_LOGIN_TOKEN',JSON.stringify(tokenInfo));
+          sessionStorage.setItem('ROSE_LOGIN_TOKEN', JSON.stringify(tokenInfo));
           location.reload();
         }
       })
@@ -124,15 +140,15 @@ export default {
   },
   watch:{
     $route:{
-      handler(val){
+      handler(val) {
         // 返回首页进行滑动刷新
-        if(val.name === 'HOME'){
+        if (val.name === 'HOME') {
           this.homeScroll.refresh();
         }
       }
     }
   },
-  created(){
+  created() {
     this.$loading.show();
     (async() => {
       //获取当前用户
@@ -140,79 +156,92 @@ export default {
       // 获取首页应用列表
       await homeService.getMeau().then( res => {
         let BUSobj = this.BUSobj;
-        for(let val of res){
-          // 获取应用
-          if(Apps[val.id]){
-            for(let item of val.children ){
-              // 基础对象
-              if(basicMap[item.text]){
-                if(item.transName){
-                  // 动态添加对应的背景底色
-                  switch(item.text){
-                    case '仓库':
-                      item.bgColor = '#D85656';
-                      item.boxShadow = '#D85656';
-                      break;
-                    case '产品与物料':
-                      item.bgColor = '#F29C35';
-                      item.boxShadow = '#F29C35';
-                      break;
-                    case '所有往来账户':
-                      item.bgColor = '#338183';
-                      item.boxShadow = '#338183';
-                      break;
-                  }
-                  // 图片处理
-                  item.icon = item.icon
-                    ? `/dist/${item.icon}`
-                    : ''
-                  this.BasicApps.push(item);              
-                }
-              }
-              // 业务应用
-              if(Apps[val.id][item.listId]){
-                item.icon = item.icon
-                  ? `/dist/${item.icon}`
-                  : this.getDefaultIcon();
-                // 归类到相应的小数组
-                if(!this.BusApps[val.text]){
-                  this.$set(this.BusApps, val.text, { appList: [item] })
-                }
-                else {
-                  this.BusApps[val.text].appList.push(item);
-                }  
-              }
+        for (let val of res) {
+          BUSobj[val.text] = [];
+          for (let item of val.children) {
+            // 基础对象应用需 根据映射表 单独处理
+            if (basicMap[item.listId]) {
+              // 图片处理
+              item.icon = item.icon 
+                ? `/dist/${item.icon}`
+                : ''
+              this.BasicApps.push(item);
+            }
+            // 处理 业务应用
+            if (item.packagePath) {
               // 获取 应用类型ID 对应相应文件夹
               item.fileID = val.id;
+              // 处理 应用图标
+              if (item.icon) {
+                item.icon.includes('download') 
+                  // 用户自定义上传 应用icon
+                  ? item.icon = `${location.origin}${item.icon}`
+                  // 系统自带图标
+                  : item.icon = `/dist/${item.icon}`
+              }
+              else {
+                // 初始化应用图标
+                this.getDefaultIcon();
+              }
+              // 归类到相应的小数组
+              BUSobj[val.text].push(item);
             }
-            this.$loading.hide();     
+            // 如果应用里面 存在分类
+            if (item.children) {
+              for (let childItem of item.children) {
+                if (childItem.packagePath) {
+                  childItem.fileID = val.id;
+                  childItem.icon = childItem.icon
+                    ? `/dist/${childItem.icon}`
+                    : this.getDefaultIcon();
+                  if (!BUSobj[val.text][item.text]) {
+                    this.$set(BUSobj[val.text], item.text, {childId: item.id, childName: item.text, childList: [childItem]})
+                  }
+                  else {
+                    BUSobj[val.text][item.text].childList.push(childItem)
+                  }
+                }
+              }
+            }
           }
+          this.BusApps.push({
+            id: val.id,
+            name: val.text,
+            folder: val.folder,
+            appList: {...BUSobj[val.text]}
+          })
+          this.$loading.hide();
         }
       })
       // 获取 头像姓名
-      let { name, avatar } = JSON.parse(sessionStorage.getItem('ROSE_LOGIN_TOKEN'));
+      let { name, avatar, position } = JSON.parse(sessionStorage.getItem('ROSE_LOGIN_TOKEN'));
       // 如果头像不存在则指定默认头像
-      if(!avatar){
-        let url = require('assets/ava03.png')
+      if (!avatar) {
+        let url = this.userInfo.photo;
+        if (!this.userInfo.photo) {
+          url = require('assets/ava01.png');
+        }
         avatar = url;
       };
-      this.userInfo = { name, avatar };
+      this.userInfo = { 
+        ...this.userInfo,
+        name, 
+        avatar, 
+        position 
+      };
       await this.getNews();
     })()
   },
-  mounted(){
+  mounted() {
     this.homeScroll = new Bscroll(this.$refs.home,{
       click:true
     })
   }
-    
+
 }
 </script>
 
 <style lang='scss' scoped>
-.inPage {
-  background: #F5F5F5;
-}
 .vux-1px-b:after {
   border-color: #e8e8e8;
 }
@@ -224,87 +253,167 @@ export default {
     padding-bottom: .1rem;
   }
 }
-.mg_auto {
-  width: 95%;
-  margin: 0 auto;
+.close-part {
+  top: 0;
+  left: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  position: absolute;
 }
 // 顶部 用户头像部分
-.user_part {
-  display: flex;
+.top-part-container {
+  width: 100%;
   padding: 0 .1rem;
   background: #fff;
   box-sizing: border-box;
-  .user_avatar {
+  .top-part {
     width: 100%;
     display: flex;
-    padding: .04rem 0 .02rem;
+    padding-top: .1rem;
     align-items: center;
     justify-content: space-between;
-    .user_info{
-      display: flex;
-      align-items: center;
+  }
+  .entity-part {
+    display: flex;
+    color: #7A7A7A;
+    position: relative;
+    align-items: center;
+    border-radius: .2rem;
+    background: #F5F5F5;
+    padding: .1rem .12rem;
+    justify-content: center;
+    .entity_name {
+      font-size: .14rem;
+      &.when-is-out {
+        &:after {
+          right: 0; 
+          bottom: 0; 
+          content: ""; 
+          height: inherit; 
+          position: absolute; 
+          padding-left: .18rem; 
+          background: linear-gradient(to right, rgba(255,255,255,0), #fff 75%);
+        }
+      }
     }
-    img {
-      width: .35rem;
-      height: .35rem;
-      border-radius: 50%;
+    .iconfont {
+      right: 8px;
+      color: #7A7A7A;
+      font-size: .12rem;
+      margin-left: .04rem;
     }
-    .tips {
-      margin-left:.05rem;
+    .tips-fade-part {
+      width: 40px;
+      height: 25px;
+      position: relative;
+      span {
+        right: 0;
+        position: absolute;
+      }
     }
-    .current_entity {
-      display: flex;
-      align-items: center;
-      .entity-name {
-        display: block;
-        max-width: 1.8rem;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-
+  }
+  .user-info-container {
+    display: flex;
+    align-items: center;
+    .user_avatar {
+      width: .4rem;
+      height: .4rem;
+      margin-right: .1rem;
+      img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+      }
+    }
+    .user-info {
+      line-height: .18rem;
+      .user_name {
+        font-size: .14rem;
+        font-weight: bold;
+      }
+      .user_other {
+        color: #757575;
+        font-size: .14rem;
       }
     }
   }
 }
+
 /* 列表容器 */
-    .r-dropdown-list {
-      position: absolute;
-      right: 0;
-      top: 100%;
-      z-index: 100;
-      border-bottom-left-radius: .08rem;
-      border-bottom-right-radius: .08rem;
-      background-color: #fff;
-      box-shadow: 0 2px 10px #e8e8e8;
-      box-sizing: border-box;
+.r-dropdown-list {
+  $bgColor: #FFF;
+  right: 0;
+  top: 130%;
+  width: 2rem;
+  z-index: 100;
+  position: absolute;
+  background: $bgColor;
+  border-radius: .06rem;
+  box-sizing: border-box;
+  box-shadow: 0 1px 5px #e8e8e8;
+  &:before {
+    width: 0;
+    height: 0;
+    top: -17px; 
+    right: 10.5%;
+    content: '';
+    z-index: 9999;
+    border-width: 9px;
+    position: absolute;
+    border-style: solid; 
+    border-color: transparent transparent #FFF transparent;
+  }
+  &:after {
+    width: 0;
+    height: 0;
+    top: -20px; 
+    right: 10%;
+    content: '';
+    position: absolute;
+    border-style: solid; 
+    border-width: 10px;
+    border-color: transparent transparent rgba(232, 232, 232, .3) transparent;
+  }
+}
+/* 列表项 */
+.r-dropdown-item {
+  width: 100%;
+  z-index: 101;
+  display: flex;
+  position: relative;
+  align-items: baseline;
+  padding: .12rem .1rem;
+  box-sizing: border-box;
+  justify-content: space-between;
+  .each_item {
+    width: 100%;
+    &.is-being-sel {
+      width: 75%;
+    }    
+    .full_name {
+      width: 100%;
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
-    /* 列表项 */
-    .r-dropdown-item {
-      position: relative;
-      line-height: .4rem;
-      font-size: .16rem;
-      text-align: right;
-      span{
-        display: inline-block;
-        width:100%;
-        box-sizing: border-box;
-        padding: 0 .1rem;
-      }
-      .active{
-        background: #e8e8e8;
-      }
-      .weui_icon_success-no-circle {
-        position: absolute;
-        top: 50%;
-        right: 0;
-        transform: translateY(-50%);
-      }
+    .shor_name {
+      font-size: .1rem;
     }
-    /* 倒三角 */
-    .vux-x-icon-ios-arrow-down {
-      transition: transform 200ms linear;
-      &.arrow-up {
-        transform: rotate(-180deg);
-      }
+  }
+  .tips_part {
+    color: #757575;
+    font-size: .1rem;
+    .tips_word {
+      padding: .02rem;
+      border-radius: .3rem;
+      background: #e8e8e8;
     }
+  }
+  .active {
+    color: #006DFF;
+    font-weight: bold;
+  }
+}
 </style>

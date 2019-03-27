@@ -1,32 +1,25 @@
 <template>
-  <div class="or_ads mg_auto box_sd" @click="warehouseClick">
+  <div class="or_ads" @click="warehouseClick">
     <!-- 仓库信息 -->
-    <div v-if="selItems.dealerName">
-      <div class="title">{{title}}</div>
-      <div class="user_info">
-        <span class="user_name">{{selItems.dealerName}}</span>
-        <span class="user_tel">{{selItems.dealerMobilePhone}}</span>
+    <div>
+      <div class='each_property'>
+        <label class="required">{{title}}</label>
+        <div class='picker'>
+          <span class='mater_nature'>{{selItems.dealerName || "请选择"}}</span>
+          <span class='icon-right'></span>
+        </div>
       </div>
     </div>
-    <div v-else>
-      <div class="title required">{{title}}</div>
-      <div class="mode">请选择</div>
-    </div>
-    <x-icon class="r_arrow" type="ios-arrow-right" size="20" v-show="!disabled"></x-icon>
-
     <!-- 项目经理pop -->
     <div v-transfer-dom v-if="!disabled">
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
-          <div class="title">
-            <!-- 搜索栏 -->
-            <d-search @search='searchList' @turn-off="onHide" :isFill='true'></d-search>
-          </div>
+          <d-search @search="searchList"></d-search>
           <!-- 经理列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
-            <div class="pop-list-item box_sd" v-for="(item, index) in listData" :key='index'
-                 @click.stop="selThis(item,index)">
+            <div class="pop-mater-list-item box_sd" :class="{selected: showSelIcon(item)}" v-for="(item, index) in listData" :key='index'
+                 @click.stop="selThis(item, index)">
               <div class="pop-list-main ">
                 <div class="pop-list-info">
                   <!--联系人电话 -->
@@ -49,8 +42,6 @@
                   </div>
                 </div>
               </div>
-              <!-- icon -->
-              <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
             </div>
           </r-scroll>
         </div>
@@ -61,9 +52,9 @@
 
 <script>
   import {Icon, Popup, TransferDom, LoadMore} from 'vux'
-  import {getObjDealerByLabelName} from 'service/commonService'
-  import RScroll from 'components/RScroll'
-  import DSearch from 'components/search'
+  import {getObjDealerByLabelName} from 'service/common/commonService'
+  import RScroll from 'plugins/scroll/RScroll'
+  import DSearch from 'components/search/search'
 
   export default {
     name: "PopManagerList",
@@ -120,7 +111,7 @@
       }
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -128,7 +119,7 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.showPop = false;
       },
@@ -139,25 +130,25 @@
         this.hasNext = true;
         this.getList();
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.selItems.dealerName === sItem.dealerName;
       },
-      // TODO 选择物料
+      // 选择物料
       selThis(sItem, sIndex) {
         this.showPop = false;
         this.selItems = sItem;
         this.$emit('sel-item', JSON.stringify(this.selItems));
       },
-      // TODO 获取默认图片
+      // 获取默认图片
       getDefaultImg(item) {
-        let url = require('assets/wl_default02.png');
+        let url = require('assets/wl_default03.png');
         if (item) {
           item.inventoryPic = url;
         }
         return url
       },
-      // TODO 获取仓库列表
+      // 获取仓库列表
       getList() {
         let filter = [];
         if (this.srhInpTx) {
@@ -183,7 +174,7 @@
           })
         });
       },
-      // TODO 搜索仓库
+      // 搜索仓库
       searchList({val = ''}) {
         this.srhInpTx = val;
         this.listData = [];
@@ -191,16 +182,16 @@
         this.hasNext = true;
         this.getList();
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getList();
       },
-      // TODO 设置默认值
+      // 设置默认值
       setDefaultValue() {
         this.selItems = this.defaultValue ? {...this.defaultValue} : {};
       },
-      // TODO 点击仓库
+      // 点击仓库
       warehouseClick() {
         if (this.disabled) {
           return
@@ -228,81 +219,18 @@
 </script>
 
 <style scoped lang="scss">
-  // 居中
-  .mg_auto {
-    width: 95%;
-    margin: 10px auto;
-  }
-
-  // 阴影
-  .box_sd {
-    box-sizing: border-box;
-    box-shadow: 0 0 8px #e8e8e8;
-  }
-
+  @import '~@/scss/color.scss';
   // 地址栏
   .or_ads {
     position: relative;
-    padding: .06rem .4rem .06rem .08rem;
-    .icon-gengduo {
-      top: 50%;
-      right: .1rem;
-      font-size: .24rem;
-      position: absolute;
-      transform: translate(0, -50%);
-    }
-    .title {
-      color: #757575;
-
-      font-size: .12rem;
-    }
-    .mode {
-      color: #111;
-      font-weight: 500;
-    }
-    .required{
-      color: #5077aa;
-      font-weight: bold;
-    }
-    .r_arrow {
-      top: 50%;
-      right: .04rem;
-      position: absolute;
-      transform: translate(0, -50%);
-    }
-    // 用户信息
-    .user_info {
-      color: #111;
-      font-size: .18rem;
-      font-weight: 500;
-      // 用户姓名
-      .user_name {
-        margin-right: .02rem;
-      }
-      // 用户电话
-      .user_tel {
-        font-size: .14rem;
-        font-family: sans-serif, -apple-system-font;
-      }
-    }
-    // 公司信息
-    .cp_info {
-      .cp_name {
-        color: #111;
-        font-weight: 500;
-      }
-      .cp_ads {
-
-        color: #757575;
-      }
-    }
+    box-sizing: border-box;
+    background: #fff; 
   }
 
   // 弹出层
   .trade_pop_part {
     background: #fff;
     .trade_pop {
-      padding: 0 .08rem;
       height: 100%;
       overflow: hidden;
       // 顶部
@@ -323,10 +251,11 @@
         box-sizing: border-box;
         height: calc(100% - .46rem);
         /deep/ .scroll-wrapper {
-          padding: .04rem .04rem 0 .3rem;
+          padding: .05rem .15rem 0;
+          // padding: .04rem .04rem 0 .3rem;
         }
         // 列表项
-        .pop-list-item {
+        .pop-mater-list-item {
           position: relative;
           display: flex;
           padding: 0.08rem;
@@ -335,7 +264,10 @@
           // 阴影
           &.box_sd {
             box-sizing: border-box;
-            box-shadow: 0 0 8px #e8e8e8;
+            box-shadow: 0 2px 10px 0 rgba(228, 228, 232, 0.5);
+          }
+          &.selected {
+            border: 1px solid $main_color;
           }
           // 列表主体
           .pop-list-main {
@@ -362,52 +294,37 @@
               }
             }
           }
-          // 选择icon
-          .selIcon,
-          .isSelIcon {
-            top: 50%;
-            left: -.3rem;
-            position: absolute;
-            transform: translate(0, -50%);
-          }
-          .isSelIcon {
-            fill: #5077aa;
-          }
         }
       }
 
     }
   }
-
-  // 当没有数据时
-  .when_null_conteiner {
-    margin-top: 10px;
-    .when_null {
-      width: 3rem;
-      margin: 0 auto;
-      color: #757575;
+  .each_property {
+    padding: .18rem 0;
+    display: flex;
+    justify-content: space-between;
+    line-height: .14rem;
+    label{
+      color: #696969;
+    }
+    .required {
+      color: #3296FA;
       font-weight: bold;
-      // 提醒文字
-      .title {
-        font-size: .2rem;
+    }
+    .property_val {
+      text-align: right;
+    }
+    .readonly {
+      color: #999;
+    }
+    .picker {
+      display: flex;
+      align-items: center;
+      .icon-right{
+        width: .08rem;
+        height: .14rem;
+        margin-left: .1rem;
       }
-      // 新增往来
-      .tips {
-        li {
-          list-style: square;
-          margin-top: .1rem;
-        }
-
-        font-size: .14rem;
-        .addNew {
-          color: #fff;
-          background: #5077aa;
-          display: inline-block;
-          padding: 0 .04rem;
-          border-radius: .04rem;
-        }
-      }
-
     }
   }
 </style>

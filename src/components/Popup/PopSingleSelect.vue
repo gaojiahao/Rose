@@ -1,10 +1,10 @@
 <template>
   <div class="pop-single-container" @click="showPop = !showPop">
     <div class='pop_info'>
-      <div class="title">{{title}}</div>
+      <div class="title" :class="{required : isRequired}">{{title}}</div>
       <div class="mode">
-        <span class="mode-content">{{selected}}</span>
-        <span class="iconfont icon-shenglve"></span>
+        <span class="mode-content">{{selected || '请选择'}}</span>
+        <span class="icon-right"></span>
         </div>
     </div>   
     <!-- 结算popup -->
@@ -15,10 +15,10 @@
             <x-icon class="close_icon" type="ios-close-empty" size="30" @click="showPop = !showPop"></x-icon>
           </div>
           <span class="each_mode"
-                :class="{choiced : item===tmp}"
+                :class="{choiced : item.name === tmp}"
                 v-for="(item, index) in data"
                 :key="index"
-                @click="selItem(item,index)">{{item}}</span>
+                @click="selItem(item.name, index)">{{item.name}}</span>
         </div>
         <div class="cfm_btn" @click="confirm">确定</div>
       </popup>
@@ -45,6 +45,10 @@
         default() {
           return []
         }
+      },
+      isRequired: {
+        type: Boolean,
+        default: false
       }
     },
     components: {
@@ -85,33 +89,30 @@
 <style scoped lang="scss">
   // 结算方式
   .pop-single-container {
-    width: 95%;
-    margin: 0 auto;
-    position: relative;
+    padding: .18rem 0;
     background: #fff;
-    box-sizing: border-box;
-    padding: .02rem .1rem;
-    .pop_info{
+    font-size: .14rem;
+    color: #333;
+    .pop_info {
       display: flex;
-      font-size: .14rem;
+      line-height: .14rem;
       align-items: center;
       justify-content: space-between;
       .title {
-        color: #757575;
+        color: #696969;
+        &.required {
+          color: #3296FA;
+          font-weight: bold;
+        }
       }
-    }
-    .icon-shenglve,
-    .icon-gengduo {
-      font-size: .2rem;
-      color: #707070;
-    }
-    .mode {
-      color: #111;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      .mode-content {
-        margin-right: .06rem;
+      .mode {
+        display: flex;
+        align-items: center;
+        .icon-right {
+          width: .08rem;
+          height: .14rem;
+          margin-left: .1rem;
+        }
       }
     }
   }
@@ -120,34 +121,44 @@
   .trade_pop_part {
     background: #fff;
     .trade_pop {
-      padding: 0 .08rem;
+      overflow: hidden;
+      padding: 0 .15rem;
+      position: relative;
       // 顶部
       .title {
-        font-size: .2rem;
+        font-size: .16rem;
         position: relative;
         padding: 0.08rem 0 .14rem;
+        text-align: center;
+        margin-top: .3rem;
+        color: #17181D;
         // 关闭icon
         .close_icon {
-          top: 45%;
-          right: -2%;
+          top: -.2rem;
+          right: 0;
           position: absolute;
-          transform: translate(0, -50%);
         }
       }
       .each_mode {
-        margin-right: .1rem;
+        font-size: .14rem;
+        line-height: .14rem;
+        border-radius: .22rem;
+        background: #F7F7F7;
+        color: #696969;
+        margin: 0 .1rem .1rem 0;
         display: inline-block;
-        padding: .04rem .2rem;
-        border: 1px solid #C7C7C7;
+        padding: .08rem .25rem;
+        border: 1px solid #F7F7F7;
         border-radius: 40px;
       }
       .choiced {
-        background: #5077aa;
-        color: #fff;
+        border: 1px solid #30A7FF;
+        background: #fff;
+        color: #30A7FF;
       }
-      .vux-1px:before {
-        border-radius: 40px;
-      }
+      // .vux-1px:before {
+      //   border-radius: 40px;
+      // }
     }
     // 确定
     .cfm_btn {

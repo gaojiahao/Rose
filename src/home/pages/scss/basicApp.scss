@@ -1,0 +1,135 @@
+/* 修改vue-1px-样式 */
+.vux-1px-b:after,
+.vux-1px-l:before,
+.vux-1px-t:before {
+  border-color: #e8e8e8;
+}
+.content {
+  color: #333333;
+  overflow: hidden;
+  font-size: .14rem;
+  box-sizing: border-box;
+  height: calc(100% - .86rem);
+  input {
+    border: none;
+    outline: none;
+    font-size: .14rem;
+  }
+  .mater_baseinfo {
+    .mater_pic {
+      display: flex;
+      background: #fff;
+      align-items: center;
+      padding: .08rem .15rem;
+      justify-content: space-between;
+      .title {
+        color: #676769;
+      }
+    }
+  }
+  .each-info {
+    width: 100%;
+    padding: 0 .15rem;
+    box-sizing: border-box;
+    background-color: #fff;
+  }
+  .each_property {
+    display: flex;
+    padding: .18rem 0;
+    line-height: .14rem;
+    align-items: center;
+    justify-content: space-between;
+    input {
+      flex: 1;
+      padding-left: .1rem;
+    }
+    label {
+      color: #696969;
+    }
+    .add {
+      color: #3296FA;
+    }
+    .required {
+      color: #3296FA;
+      font-weight: bold;
+    }
+    .property_val {
+      text-align: right;
+      &:disabled {
+        color: #b2b2b2;
+        background: unset;
+      }
+    }
+    &.readonly {
+      color: #b2b2b2;
+      label {
+        color: #b2b2b2;
+      }
+    }
+    .picker {
+      display: flex;
+      align-items: center;
+      .icon-right {
+        width: .08rem;
+        height: .14rem;
+        margin-left: .1rem;
+      }
+    }
+  }
+}
+// 重复项 
+.duplicate-wrapper {
+  margin: .1rem 0;
+  .title {
+    padding: 0 .15rem;
+    background: #fff;
+  }
+  .duplicate-item {
+    padding: 0 .15rem;
+    background: #fff;
+    &.has_border {
+      margin-top: .1rem;
+    }
+  }
+}
+// 重复项新增和删除按钮
+.add_more {
+  width: 100%;
+  color: #757575;
+  text-align: center;
+  font-size: 0.12rem;
+  padding-top: 0.1rem;
+  span {
+    margin: 0 5px;
+    color: #3296FA;
+  }
+  .delete {
+    color: red;
+  }
+  em {
+    font-style: normal;
+  }
+}
+/* 提交 */ 
+.btn {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background: #fff;
+  padding: .21rem 5%;
+  position: absolute;
+  box-sizing: border-box;
+  .cfm_btn {
+    width:100%;
+    color: #fff;
+    height: .44rem;
+    font-size: .16rem;
+    text-align: center;
+    line-height: .44rem;
+    background: #3296FA;
+    border-radius: .04rem;
+  }
+  .disabled {
+    background:#c7c7c7;
+  }
+}

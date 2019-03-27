@@ -18,55 +18,53 @@
 </template>
 
 <script>
-  require('../static/css/iconfont/iconfont.css')
-  import platfrom from './plugins/platform/index'
-  import { getMsgList } from 'service/msgService.js'
-  import { Badge } from 'vux'
-  export default {
-    name: 'app',
-    data(){
-      return{
-        tablist: [
-					{title: '应用', path: '/home', icon: 'icon-1'},
-					{title: '消息', path: '/notice', icon: 'icon-message'},
-        ],
-        newsNumber:0,
-      }
-    },
-    components:{
-      Badge
-    },
-    created(){
-      // getMsgList().then( data => {
-      //   if(data.dataCount > 99){
-      //     this.newsNumber = '99+';
-      //     return
-      //   }
-      //   this.newsNumber = data.dataCount;
-      // })
-      this.$event.$on('badgeNum',(val)=>{
-        this.newsNumber = val;
+require('../static/css/iconfont/iconfont.css')
+import platfrom from './plugins/platform/index'
+import { getMsgList } from 'service/msgService'
+import { Badge } from 'vux'
+export default {
+  name: 'app',
+  data() {
+    return{
+      tablist: [
+        {title: '应用', path: '/home', icon: 'icon-1'},
+        {title: '消息', path: '/notice', icon: 'icon-message'},
+      ],
+      newsNumber:0,
+    }
+  },
+  components:{
+    Badge
+  },
+  created() {
+    this.$event.$on('badgeNum', (val) => {
+      this.newsNumber = val;
+    })
+  },
+  updated() {
+    // 安卓的输入框会挡住input输入的解决办法
+    if (platfrom.isAndroid) {
+      window.addEventListener("resize", function() {
+        if (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA") {
+          setTimeout(() => {
+            document.activeElement.scrollIntoViewIfNeeded();
+          }, 0);
+        }
       })
-    },
-    updated(){
-      // 安卓的输入框会挡住input输入的解决办法
-      if(platfrom.isAndroid){
-        window.addEventListener("resize", function() {
-          if(document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA") {
-            setTimeout(() => {
-              document.activeElement.scrollIntoViewIfNeeded();
-            }, 0);
-          }
-        })
-      }
     }
   }
+}
 </script>
 
 <style lang="less">
   @import '~vux/src/styles/reset.less';
   @import '~vux/src/styles/1px.less';
   @import './common/swiper-4.2.2.min.css';
+  @import './../static/css/icon.css';
+
+  .vux-1px-t:before {
+    border-color: #E8E8E8;
+  }
   html {
     height: 100%;
   }

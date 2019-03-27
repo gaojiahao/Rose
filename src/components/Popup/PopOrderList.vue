@@ -3,24 +3,24 @@
   <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
-        <div class="title">
-          <!-- 搜索栏 -->
-          <r-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></r-search>
-        </div>
+        <r-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></r-search>
         <!-- 物料列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
           <div class="each_mater box_sd" v-for="(item, index) in listData" :key='index'
-               @click.stop="selThis(item,index)">
-            <div class="order-code">{{item.transCode}}</div>
+               @click.stop="selThis(item, index)">
+            <div class="order-code">
+              <slot name='titleName'>
+                <span class="order-title">订单号</span>
+              </slot>
+              <span class="order-num">{{item.transCode}}</span>
+            </div>
             <div class="order-matter">
               <div class="mater_img">
                 <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
               </div>
               <div class="mater_main ">
-                <!-- 物料名称 -->
                 <div class="mater_name">
-                  <span class="whiNum">No.{{index + 1}}</span>
                   {{item.inventoryName}}
                 </div>
                 <!-- 物料基本信息 -->
@@ -44,26 +44,28 @@
                   </div>
                   <!-- 物料分类、材质 -->
                   <div class="withoutColor">
-                    <!-- 物料分类 -->
-                    <div class="mater_classify">
-                      <span class="type">属性: {{item.processing}}</span>
-                      <span class="father">大类: {{item.inventoryType}}</span>
-                      <span class="child">子类: {{item.inventorySubclass}}</span>
-                    </div>
-                    <!-- 物料材质等 -->
-                    <div class="mater_material">
-                      <span class="unit">单位: {{item.measureUnit}}</span>
-                      <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
-                      <span class="spec">材质: {{item.material || '无'}}</span>
-                    </div>
+                    <slot name="basicInfo" :item="item">
+                      <!-- 物料分类 -->
+                      <div class="mater_classify">
+                        <span class="type">属性: {{item.processing}}</span>
+                        <span class="father">大类: {{item.inventoryType}}</span>
+                        <span class="child">子类: {{item.inventorySubclass || '无'}}</span>
+                      </div>
+                      <!-- 物料材质等 -->
+                      <div class="mater_material">
+                        <span class="unit">单位: {{item.measureUnit}}</span>
+                        <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
+                        <span class="spec">材质: {{item.material || '无'}}</span>
+                      </div>
+                    </slot>
                     <slot name="materInfo" :item="item">
-                      <!--默认展示的子弹-->
-                      <div  class="mater_material">
+                      <!--默认展示的字段-->
+                      <div class="mater_material">
                         <span>待交付数量:{{item.qtyBal}}</span>
                         <span>库存: {{item.qtyStockBal}}</span>
                       </div>
                     </slot>
-                    
+
                   </div>
                 </div>
               </div>
@@ -85,9 +87,9 @@
 
 <script>
   import {Icon, Popup} from 'vux'
-  import RScroll from 'components/RScroll'
+  import RScroll from 'plugins/scroll/RScroll'
   import {getSalesOrderList,getMaterOrderList,getNBJGLLOrderList} from 'service/listService'
-  import RSearch from 'components/search'
+  import RSearch from 'components/search/search'
 
   export default {
     name: "PopOrderList",
@@ -131,7 +133,7 @@
         selItems: [], // 哪些被选中了
         tmpItems: [],
         listData: [],
-        limit: 10,
+        limit: 100,
         page: 1.,
         hasNext: true,
         scrollOptions: {
@@ -147,7 +149,7 @@
             name: '物料编码',
             value: 'inventoryCode',
           }, {
-            name: '交易号',
+            name: '订单号',
             value: 'transCode'
           }
         ],
@@ -172,7 +174,7 @@
       },
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -180,18 +182,20 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.tmpItems = [...this.selItems];
         this.$emit('input', false);
+        // 组件传值 传回给search组件 强制关闭下拉框
+        this.$event.$emit('shut-down-filter', false);
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.tmpItems.findIndex(item => item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode) !== -1;
       },
-      // TODO 选择物料
+      // 选择物料
       selThis(sItem, sIndex) {
-        if ( !this.isMaterOrder && (sItem.qtyStockBal===0 || sItem.qtyStock === 0 )) {
+        if ( (!this.isMaterOrder && (sItem.qtyStockBal===0 || sItem.qtyStock === 0 )) || (this.isMaterOrder && sItem.qtyStock === 0)) {
           this.$vux.alert.show({
             content: '当前订单库存为0，请选择其他订单'
           });
@@ -206,7 +210,7 @@
         }
         arr.push(sItem);
       },
-      // TODO 确定选择订单
+      // 确定选择订单
       selConfirm() {
         let sels = [];
         // 返回上层
@@ -216,15 +220,15 @@
         this.selItems = [...this.tmpItems];
         this.$emit('sel-matter', JSON.stringify(this.selItems));
       },
-      // TODO 获取默认图片
+      // 获取默认图片
       getDefaultImg(item) {
-        let url = require('assets/wl_default02.png');
+        let url = require('assets/wl_default03.png');
         if (item) {
           item.inventoryPic = url;
         }
         return url
       },
-      // TODO 获取订单列表
+      // 获取订单列表
       getList() {
         let filter = [];
         if (this.srhInpTx) {
@@ -233,21 +237,31 @@
               operator: 'like',
               value: this.srhInpTx,
               property: this.filterProperty,
-            }];
+            }
+          ];
         }
         let requestMethods = getSalesOrderList;
         let submitData = {
           ...this.params,
         }
         //物料订单
-        if(this.isMaterOrder){
+        if (this.isMaterOrder){
           requestMethods = getMaterOrderList;
           submitData = {};
         }
         //加工物料
-        if(this.isMaterProccing){
+        if (this.isMaterProccing){
           requestMethods = getNBJGLLOrderList;
-        }    
+        }
+        let {relationKey=''} = this.$route.query;
+        if (relationKey){
+          filter = [{          
+              operator: 'eq',
+              value: relationKey,
+              property: 'transCode'
+            }
+          ]
+        }
         return requestMethods({
           ...submitData,
           limit: this.limit,
@@ -258,6 +272,10 @@
           tableContent.forEach(item => {
             item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
           });
+          if (relationKey){
+            this.selItems = [...tableContent];
+            this.$emit('sel-matter', JSON.stringify(this.selItems));
+          }
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
           this.$nextTick(() => {
@@ -265,27 +283,27 @@
           })
         });
       },
-      // TODO 重置列表条件
+      // 重置列表条件
       resetCondition() {
         this.listData = [];
         this.page = 1;
         this.hasNext = true;
         this.$refs.bScroll.scrollTo(0, 0);
       },
-      // TODO 搜索订单
+      // 搜索订单
       searchList({val = '', property = ''}) {
         this.srhInpTx = val;
         this.filterProperty = property;
         this.resetCondition();
         this.getList();
       },
-      // TODO 清空搜索条件
+      // 清空搜索条件
       clearList() {
         this.srhInpTx = '';
         this.resetCondition();
         this.getList();
       },
-      // TODO 删除选中项
+      // 删除选中项
       delSelItem(dItem) {
         let delIndex = this.selItems.findIndex(item => item.transCode === dItem.transCode && item.inventoryCode === dItem.inventoryCode);
         if (delIndex !== -1) {
@@ -293,17 +311,17 @@
         }
         this.tmpItems = [...this.selItems];
       },
-      // TODO 清空选择项
+      // 清空选择项
       clearSel() {
         this.selItems = [];
         this.tmpItems = [];
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getList();
       },
-      // TODO 设置默认值
+      // 设置默认值
       setDefaultValue() {
         let tmp = [];
         for (let items of Object.values(this.defaultValue)) {
@@ -326,10 +344,11 @@
   .trade_pop_part {
     background: #fff;
     .trade_pop {
-      padding: 0 .08rem;
+      
       height: calc(100% - .44rem);
       // 顶部
       .title {
+        height: 100%;
         font-size: .2rem;
         position: relative;
         padding-top: 0.08rem;
@@ -425,7 +444,20 @@
             box-shadow: 0 0 8px #e8e8e8;
           }
           .order-code {
-            font-size: .14rem;
+            display: flex;
+            color: #fff;
+            font-size: .12rem;
+            span {
+              display: inline-block;
+              padding: 0 .04rem;
+            }
+            .order-title {
+              background: #455d7a;
+            }
+            .order-num {
+              background: #c93d1b;
+              border-top-right-radius: .08rem;
+            }
           }
           .order-matter {
             display: flex;
@@ -433,12 +465,13 @@
           }
           // 物料图片
           .mater_img {
-            display: inline-block;
             width: .75rem;
             height: .75rem;
+            display: inline-block;
             img {
               width: 100%;
               max-height: 100%;
+              border-radius: .04rem;
             }
           }
           // 物料主体
@@ -489,6 +522,8 @@
                   .title {
                     color: #fff;
                     background: #3f72af;
+                    border-top-left-radius: .04rem;
+                    border-bottom-left-radius: .04rem;
                   }
                   .num {
                     color: #111;
@@ -498,6 +533,8 @@
                     background: #dbe2ef;
                     box-sizing: border-box;
                     text-overflow: ellipsis;
+                    border-top-right-radius: .04rem;
+                    border-bottom-right-radius: .04rem;
                   }
                 }
                 // 规格

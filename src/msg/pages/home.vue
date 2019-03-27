@@ -1,224 +1,439 @@
 <template>
   <div class="inPage">
-    <template v-if="listData">
-      <div class='wrapper' ref="bScroll">
-        <div class="when_null" v-if="isNull">
-          暂无待办消息
-        </div>
-        <div class="msg_list" v-else>
-          <div class="msg"
-              @click="goMsglist(value, i)"
-              v-for='(value, i) in listData'
-              :key='i'>
-            <div class='each_msg' :class="{visited: value.visited}">
-              <div class="msg_info">
-                <!-- 图片 和 应用名称 -->
-                <div class="app_info">
-                  <span class="app_img">
-                    <img :src='value.list[0].pic' alt="appImg" @error='getDefaultImg(value[0])'>
-                  </span>
-                  <span class="app_name">{{i}}</span>
-                </div>
-                <!-- 时间 -->
-                <div class="msg_time">{{value.list[0] | handleCrt }}</div>
-                <badge :text="value.list.length"></badge>
-              </div>
-              <div class="recv_msg">
-                您收到{{value.list.length>1 ? '多' : '一'}}条新的消息
-              </div>
+    <r-tab :data="tabList" :active-index="activeIndex" @on-click="onTabClick" mode="3"></r-tab>
+    <div class="swiper-container notice-container">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide" v-for="(slide, key, idx) in noticeData" :key="key">
+          <r-scroll class="wrapper" :options="scrollOptions" :has-next="slide.hasNext" :no-data="false"
+                    @on-pulling-up="onPullingUp" ref="bScroll">
+            <div class="when_null" v-if="slide.isNull">
+              <img class="no_data" :class="[`no_data_${key}`]" :src="require(`assets/noData/${key}.png`)" alt="no-data">
+              <div class="text">{{noDataText}}</div>
             </div>
-          </div>
+            <div class="msg_list" v-else>
+              <template v-if="idx === 0">
+                <todo-item :name="key" :item="value" v-for='(value, key) in slide.listData'
+                           :no-border="value.noBorder" @click.native="goMsglist(value, key)"
+                           :key='key'></todo-item>
+              </template>
+              <template v-else-if="idx === 1 || idx === 2">
+                <comment-item :item="item" v-for="(item, index) in slide.listData"
+                              :no-border="index === slide.listData.length - 1" @click.native="goDetail(item, index)"
+                              @on-popover-click="onPopoverClick" :key="index" ref="commentItem">
+                </comment-item>
+              </template>
+            </div>
+          </r-scroll>
         </div>
       </div>
-    </template>
-    <router-view></router-view>
+    </div>
   </div>
 </template>
 <script>
 // vux组件引入
-import { Badge } from 'vux'
-// 映射表 引入
-import Apps from '@/home/pages/apps/bizApp/maps/Apps'
+import {Badge} from 'vux'
 // 请求 引入
-import { getMsgList } from 'service/msgService'
+import {getMsgList, getNotice, getNoticeByPraise} from 'service/msgService'
 // 组件 引入
-import BScroll from 'better-scroll'
+import RScroll from 'plugins/scroll/RScroll'
+import RTab from 'components/list/commonPart/RTab'
+import TodoItem from 'msgPage/components/TodoItem'
+import CommentItem from 'msgPage/components/CommentItem'
+/* 引入微信相关 */
+import {register} from 'plugins/wx'
+
+const BASE_PARAMS = {
+  page: 1,
+  limit: 10,
+  hasNext: true,
+  isNull: false,
+  listData: [],
+};
 export default {
-  data(){
-    return{
-      listData: {},
-      isNull: false
+  data() {
+    return {
+      tabList: [
+        {name: '待办', status: 'todo'},
+        {name: '评论', status: 'comment'},
+        {name: '点赞', status: 'praise'},
+      ],
+      activeIndex: 0,
+      scrollOptions: {
+        bounce: {top: false},
+        pullUpLoad: true,
+      },
+      isClickDetail: false,
+      pageSwiper: null,
+      noticeData: {
+        todo: {...BASE_PARAMS, listData: {}},
+        comment: {...BASE_PARAMS},
+        praise: {...BASE_PARAMS},
+      },
+      isMovingSwiper: false, // swiper是否滑动中，防止滑动时跳转到详情页
     }
   },
-  components: {
-   Badge
+  computed: {
+    // 暂无数据
+    noDataText() {
+      let list = ['暂无待办消息', '暂无评论消息', '暂无点赞消息'];
+      return list[this.activeIndex]
+    },
+    // 当前滑块
+    currentItem() {
+      let {status} = this.tabList[this.activeIndex];
+      return this.noticeData[status];
+    },
+    // 当前滚动容器
+    currentScroll() {
+      return this.$refs.bScroll[this.activeIndex]
+    },
   },
-  methods:{
-    getDefaultImg(item) {
+  components: {
+    Badge, RScroll, TodoItem, CommentItem, RTab,
+  },
+  methods: {
+    // tab切换
+    onTabClick({index}) {
+      this.activeIndex = index;
+      this.currentScroll.scrollTo(0, 0);
+      this.resetCondition();
+      this.pageSwiper.slideTo(index);
+    },
+    // 获取应用icon
+    getDefaultIcon(item) {
       let url = require('assets/defaultApp.png');
       if (item) {
-        item.pic = url;
+        item.icon = url;
       }
       return url
+    },
+    // 重置条件
+    resetCondition() {
+      let {status} = this.tabList[this.activeIndex];
+      let data = {...BASE_PARAMS};
+      if (!this.activeIndex) {
+        data.listData = {};
+      }
+      this.noticeData[status] = data;
     },
     //获取应用消息数据
     getList() {
       return getMsgList().then(({dataCount = 0, tableContent = []}) => {
-        this.$event.$emit('badgeNum',dataCount);
-        if(!tableContent.length){
-          // 没有数据的时候
-          this.isNull = true;
-          return;
-        }
-        tableContent.forEach( item => {
-          this.isNull = false;
+        let listData = {};
+        this.$event.$emit('badgeNum', dataCount);
+        this.currentItem.hasNext = false;
+        tableContent.forEach(item => {
           // app图标处理
-          item.pic = item.icon
-            ? `/dist/${item.icon}`
-            : this.getDefaultImg();
+          item.pic = item.icon ? `/dist/${item.icon}` : this.getDefaultIcon();
           // 只针对已经移动化的应用做消息的显示
-          if(Apps[item.listId]){
-            if (!this.listData[item.title]) {
+          if (item.packagePath) {
+            if (!listData[item.title]) {
               // 以 <应用名称> 进行分类
-              this.$set(this.listData, item.title, {list:[item]})
+              listData[item.title] = {
+                list: [item],
+                noBorder: false,
+              };
             }
-            else{
-              this.listData[item.title].list.push(item);
+            else {
+              listData[item.title].list.push(item);
             }
           }
-        })
-        this.$nextTick(()=>{
-          this.scroll = new BScroll(this.$refs.bScroll, {
-            click:true
-          })
+        });
+        if (!Object.getOwnPropertyNames(listData).length) {
+          this.currentItem.isNull = true;
+          return;
+        }
+        let values = Object.values(listData);
+        // 设置最后一项不展示边框
+        if (values.length) {
+          values[values.length - 1].noBorder = true;
+        }
+        this.currentItem.listData = listData;
+        this.$nextTick(() => {
+          this.currentScroll.finishPullUp();
         })
       })
     },
     // 前往应用消息列表
-    goMsglist(item, name){
+    goMsglist(item, name) {
+      let {status} = this.tabList[this.activeIndex];
+      // 判断是否在滑动swiper中
+      if (this.isMovingSwiper) {
+        return
+      }
       // 高亮点击的应用
       item.visited = true;
-      this.$set(this.listData, name, {...item});
-       // 等待动画结束后跳转
+      this.isClickDetail = true;
+      this.$set(this.noticeData[status].listData, name, {...item});
+      // 等待动画结束后跳转
       setTimeout(() => {
         this.$router.push({
-          path :'/msglist', query : { name }
+          path: '/msglist', query: {name}
         })
-      },200);
-    }
-  },
-  filters:{
-    handleCrt(val){
-      let date = val.duration,
-      //计算出小时数
-      hours = parseInt( date / (3600) ),
-      //计算相差分钟数
-      leave2 = date - ( hours * 3600 ) ,       //计算小时数后剩余的毫秒数
-      minutes = Math.floor( leave2 / (60) ),
-      //计算相差秒数
-      leave3 = leave2 - ( minutes * 60 ) ,     //计算分钟数后剩余的毫秒数
-      seconds = Math.round(leave3),
-      backTime;
-      if(hours > 0){
-        backTime = `${hours}小时前`;
+      }, 200);
+    },
+    // 设置评论者/实例创建者的颜色
+    setReply(name) {
+      return `<span style="color: #2994FD;">${name}</span>`;
+    },
+    // 获取通知，默认取评论
+    getNotice(noticeType = 'comment') {
+      let {page, limit} = this.currentItem;
+      let filter = [{
+        property: 'type',
+        operator: 'eq',
+        value: noticeType
+      }];
+      return getNotice({
+        page,
+        limit,
+        filter: JSON.stringify(filter)
+      }).then(data => {
+        let {dataCount = 0, tableContent = []} = data;
+        let {page, limit} = this.currentItem;
+        this.currentItem.isNull = !tableContent.length;
+        this.currentItem.hasNext = dataCount > (page - 1) * limit + tableContent.length;
+        for (let item of tableContent) {
+          let content = JSON.parse(item.content);
+          item.comment = content.content; // 评论内容
+          item.commentType = content.type; // 评论类型,list为应用,instance为实例
+          item.attachment = content.attachment;
+          item.RELATION_KEY = content.relationKey; // 实例的交易号
+          item.pic = item.icon ? `/dist/${item.icon}` : this.getDefaultIcon(); // app图标处理
+          // list为应用，instance为实例
+          item.other = content.type === 'list' ? `@应用详情` : `@实例编码：${content.relationKey}`;
+          // 为回复，不为评论
+          if (content.parentId !== -1) {
+            item.comment = `回复@${this.setReply(content.objCreator)}：${content.content}`;
+            item.reply = {
+              createrName: content.objCreator,
+              comment: `@${this.setReply(content.objCreator)} 评论：${content.objContent}`,
+            };
+          }
+        }
+        this.currentItem.listData = this.page === 1 ? tableContent : [...this.currentItem.listData, ...tableContent];
+        this.$nextTick(() => {
+          this.currentScroll.finishPullUp();
+        });
+        return data
+      })
+    },
+    // 获取点赞列表
+    getNoticeByPraise() {
+      let {page, limit} = this.currentItem;
+      return getNoticeByPraise({
+        page,
+        limit,
+      }).then(data => {
+        let {total = 0, praiseNoticeList = []} = data;
+        let {page, limit} = this.currentItem;
+        this.currentItem.isNull = !praiseNoticeList.length;
+        this.currentItem.hasNext = total > (page - 1) * limit + praiseNoticeList.length;
+        for (let item of praiseNoticeList) {
+          let content = JSON.parse(item.content);
+          item.comment = '赞了这条评论';
+          item.reply = {
+            createrName: content.creator,
+            comment: `@${this.setReply(content.creator)}: ${content.content}`,
+            attachment: content.attachment,
+          };
+          item.commentType = content.type; // 评论类型,list为应用,instance为实例
+          item.attachment = content.attachment;
+          item.RELATION_KEY = content.relationKey; // 实例的交易号
+          item.pic = item.icon ? `/dist/${item.icon}` : this.getDefaultIcon(); // app图标处理
+          // list为应用，instance为实例
+          item.other = content.type === 'list' ? `@应用详情` : `@实例编码：${content.relationKey}`;
+        }
+        this.currentItem.listData = this.page === 1 ? praiseNoticeList : [...this.currentItem.listData, ...praiseNoticeList];
+        this.$nextTick(() => {
+          this.currentScroll.finishPullUp();
+        });
+        return data
+      })
+    },
+    // 获取评论
+    getComment() {
+      return this.getNotice();
+    },
+    // 获取点赞
+    getPraise() {
+      return this.getNoticeByPraise();
+    },
+    // 进入详情
+    goDetail(item, index) {
+      let {listId, folder, packagePath, listName, RELATION_KEY, commentType } = item;
+      let query = {
+        name: listName,
+        transCode: RELATION_KEY,
+      };
+      let path = `/detail/${folder}/${packagePath}`;
+      let {status} = this.tabList[this.activeIndex];
+      // 判断是否在滑动swiper中
+      if (this.isMovingSwiper) {
+        return
       }
-      else{
-        backTime = minutes === 0 ? '1分钟前' :`${minutes}分钟前`;
+      if (commentType === 'list') {
+        path = `/appDetail/${listId}`;
+        query = {};
       }
-      return hours < 24 ? backTime : `${val.crtTime.split(' ')[0]}`;
-
-    }
+      // 高亮点击的应用
+      item.visited = true;
+      this.isClickDetail = true;
+      this.$set(this.noticeData[status].listData, index, {...item});
+      // 等待动画结束后跳转
+      setTimeout(() => {
+        this.$router.push({path, query,})
+      }, 200);
+    },
+    // 上拉加载
+    onPullingUp() {
+      this.currentItem.page++;
+      if (this.activeIndex === 1) {
+        this.getNotice();
+      } else if (this.activeIndex === 2) {
+        this.getPraise();
+      }
+    },
+    // 改变访问状态
+    changeVisitedStatus() {
+      let tmp = [];
+      if (this.activeIndex === 0) {
+        tmp = {...this.currentItem.listData};
+        Object.values(tmp).forEach(item => {
+          item.visited = false;
+        });
+      } else {
+        tmp = [...this.currentItem.listData];
+        tmp.forEach(item => {
+          item.visited = false;
+        });
+      }
+      setTimeout(() => {
+        this.currentItem.listData = tmp;
+      }, 200);
+      this.isClickDetail = false;
+    },
+    // popover点击事件
+    onPopoverClick() {
+      let $commentItem = this.$refs.commentItem || [];
+      $commentItem.forEach(comment => {
+        comment.hidePopover();
+      });
+    },
+    // 初始化swiper
+    initSwiper() {
+      this.$nextTick(() => {
+        this.pageSwiper = new this.Swiper('.notice-container', {
+          touchAngle: 30,
+          on: {
+            slideChangeTransitionStart: () => {
+              let index = this.pageSwiper.activeIndex;
+              let list = [this.getList, this.getComment, this.getPraise];
+              let {status} = this.tabList[index];
+              this.activeIndex = index;
+              this.isMovingSwiper = true;
+              // 已有数据则不重新请求
+              if (Object.keys(this.currentItem.listData).length) {
+                return
+              }
+              this.resetCondition();
+              list[this.activeIndex]();
+            },
+            slideChangeTransitionEnd: () => {
+              this.isMovingSwiper = false;
+            }
+          },
+        });
+      })
+    },
   },
-  created(){
+  beforeRouteLeave(to, from, next) {
+    let {path} = to;
+    if (path === '/home') {
+      this.activeIndex = 0;
+      this.noticeData = {
+        todo: {...BASE_PARAMS, listData: {}},
+        comment: {...BASE_PARAMS},
+        praise: {...BASE_PARAMS},
+      };
+      this.pageSwiper.slideTo(0);
+      from.meta.reload = true;
+    }
+    next();
+  },
+  created() {
     this.$loading.show();
+    this.initSwiper();
     this.getList().then(() => {
       this.$loading.hide();
     });
   },
+  activated() {
+    let reload = this.$route.meta.reload;
+    register();
+    // 是否需要重新加载数据
+    if (reload) {
+      this.$loading.show();
+      this.getList().then(() => {
+        this.$loading.hide();
+      });
+      this.$route.meta.reload = false;
+    } else {
+      // 进入过详情才改变状态
+      this.isClickDetail && this.changeVisitedStatus();
+    }
+  }
 }
 </script>
 
 <style lang='scss' scoped>
-.when_null {
-  top: 50%;
-  width: 100%;
-  font-size: .24rem;
-  color: #c8c8c8;
-  font-weight: bold;
-  text-align: center;
-  position: absolute;
-  transform: translate(0, -50%);
-}
-.inPage{
-  overflow: hidden;
-}
-.wrapper{
-  width:100%;
-  height: calc(100% - .49rem);
-  overflow: hidden;
-  .msg_list {
-    padding: .04rem 0 .02rem;
-  }
-}
-.each_msg{
-  position: relative;
-  .vux-badge{
-    position: absolute;
-    right:0;
-    top:-.1rem;
-  }
-}
-.each_msg {
-  width: 95%;
-  padding: .1rem;
-  background: #fff;
-  margin: .1rem auto .2rem;
-  box-sizing: border-box;
-  border-radius: .08rem;
-  box-shadow: 0 2px 10px #e8e8e8;
-  transition: background-color 200ms linear;
-  &.visited {
-    background-color: #e8e8e8;
-  }
-  // 消息头部信息
-  .msg_info {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    span {
-      display: inline-block;
+  .inPage {
+    overflow: hidden;
+    .notice-container {
+      width: 100%;
+      height: calc(100% - .99rem);
     }
-    // 图片、应用名称
-    .app_info {
-      display: flex;
-      align-items: center;
-      // 图片
-      .app_img {
-        width: .24rem;
-        height: .24rem;
-        img {
-          width: 100%;
-          border-radius: .06rem;
-        }
+    .wrapper {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    /deep/ .scroll-wrapper {
+      position: relative;
+      min-height: 100%;
+    }
+    .when_null {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      line-height: .2rem;
+      color: #999;
+      text-align: center;
+      font-size: 0;
+      transform: translate(0, -50%);
+      .no_data {
+        vertical-align: top;
       }
-      // 应用名称
-      .app_name {
+      .no_data_{
+        width: .72rem;
+        height: .66rem;
+      }
+      .no_data_comment {
+        width: .7rem;
+        height: .69rem;
+      }
+      .no_data_praise {
+        width: .75rem;
+        height: .71rem;
+      }
+      .text {
+        margin-top: .14rem;
         font-size: .14rem;
-        margin-left: .06rem;
       }
     }
-    // 产生时间
-    .msg_time {
-      font-size: .14rem;
-      color: #757575;
+    .msg_list {
+      // background: #F6F6F6;
+      // padding: .04rem 0 .02rem;
     }
   }
-  // 消息内容
-  .recv_msg {
-    color: #3a3a3a;
-    
-    margin-top: .1rem;
-  }
-}
 </style>

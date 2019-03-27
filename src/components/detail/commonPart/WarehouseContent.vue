@@ -1,19 +1,25 @@
 <template>
-  <div class="main_content">
-    <span v-if="warehouse.warehouseIcon" class="iconfont" :class="warehouse.warehouseIcon" ></span>
-    <span v-else class="iconfont icon--" ></span>
-    
-    <div class="warehouse_name m_size_name">
-      <span v-if="warehouse.warehouseAction">{{warehouse.warehouseAction}} - </span>{{warehouse.warehouseName}}
-    </div>
-    <div class="other_info s_size_name">
-      <span class="title">类型：</span>
-      <span class="content">{{warehouse.warehouseType || '暂无'}}</span>
-    </div>
-    <div class="other_info s_size_name">
-      <span class="title">地址：</span>
-      <span class="content" v-if="noAddress">暂无</span>
-      <span class="content" v-else>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}{{warehouse.warehouseAddress}} </span>
+  <!-- 基于config 动态渲染仓库相关信息 -->
+  <div class="warehouse-container">
+    <header class="warehouse-header">
+      <div class="warehouse_title vux-1px-l">仓库信息</div>
+      <div class="warehouse_switch" v-if="warehouseConfig.length > 1">
+        <div class="warehouse_switch_item" :class="{active: activeIndex === index}"
+             v-for="(item, index) in warehouseConfig" :key="index" @click="warehouseChange(item, index)">
+          {{item.warehouseAction}}
+        </div>
+      </div>
+    </header>
+    <div class="warehouse-main">
+      <div v-for="(item, index) in PicList" :key="index" v-show="activeIndex === index">
+        <img class="warehouse_img" :src="item.warehousePic">
+      </div>
+      <div class="warehouse_info" v-if="warehouseConfig[activeIndex]">
+        <div class="warehouse_info_item" v-for="(item, index) in warehouseConfig[activeIndex].config" :key="index" v-show="item.fieldLabel">
+          <span class="warehouse_item_title">{{item.fieldLabel}}:</span>
+          <span class="warehouse_item_value">{{item.fieldValue || '无'}}</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -22,60 +28,101 @@
   export default {
     name: "WarehouseContent",
     props: {
-      warehouse: {
-        type: Object,
-        default() {
-          return {}
-        }
-      },
+      warehouseConfig: {
+        type: Array,
+        required: true
+      }
     },
     data() {
-      return {}
+      return {
+        activeIndex: 0,
+        PicList: [
+          { warehousePic: require('assets/iconfont/warehouse_out.png') },
+          { warehousePic: require('assets/iconfont/warehouse_in.png') }
+        ]
+      }
     },
-    computed: {
-      noAddress() {
-        let {warehouseProvince = '', warehouseCity = '', warehouseDistrict = '', warehouseAddress = ''} = this.warehouse;
-        return !warehouseProvince && !warehouseCity && !warehouseDistrict && !warehouseAddress;
+    methods: {
+      warehouseChange(item, index) {
+        this.activeIndex = index;
       }
     },
   }
 </script>
 
 <style scoped lang="scss">
-  .main_content {
-    position: relative;
-    padding: .06rem .1rem .06rem .2rem;
-    .iconfont {
-      top: .09rem;
-      left: -.01rem;
-      font-size: .14rem;
-      position: absolute;
-      font-weight: bold;
-    }
-    &:last-of-type{
-      .iconfont{
-        top: .07rem;
-        font-size: .15rem;
+  @import '~@/scss/color.scss';
+
+  .warehouse-container {
+    margin: .1rem;
+    padding: .15rem;
+    width: calc(100% - .2rem);
+    background-color: #fff;
+    color: #333;
+    box-sizing: border-box;
+    .warehouse-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .warehouse_title {
+        line-height: .16rem;
+        font-size: 16px;
+        font-weight: 600;
+        &:before {
+          left: -.15rem;
+          width: .08rem;
+          border-left: .08rem solid #3296FA;
+        }
       }
-      .icon-- {
-        top: .08rem;
-        font-size: .16rem;
+
+      .warehouse_switch {
+        display: flex;
+        line-height: .14rem;
+        border: 1px solid;
+        border-radius: .04rem;
+        color: $main_color;
+        font-size: .1rem;
+      }
+      .warehouse_switch_item {
+        padding: .03rem .12rem;
+        &.active {
+          background-color: $main_color;
+          color: #fff;
+        }
       }
     }
-    // 仓库名称
-    .warehouse_name {
-      font-weight: bold;
-    }
-    // 其他信息
-    .other_info {
-      color: #454545;
-      
-    }
-    .m_size_name {
-      font-size: .18rem;
-    }
-    .s_size_name {
+
+    .warehouse-main {
+      display: flex;
+      margin-top: .22rem;
       font-size: .14rem;
+      .warehouse_img {
+        width: .5rem;
+        height: .5rem;
+      }
+
+      .warehouse_info {
+        margin-left: .17rem;
+      }
+      .warehouse_name {
+        line-height: .14rem;
+        font-weight: 600;
+      }
+      .warehouse_info_item {
+        display: flex;
+        align-items: baseline;
+        & + .warehouse_info_item {
+          margin-top: .06rem;
+        }
+      }
+      .warehouse_item_title {
+        color: #999;
+      }
+      .warehouse_item_value {
+        flex: 1;
+        margin-left: .08rem;
+        line-height: .2rem;
+      }
     }
   }
 </style>

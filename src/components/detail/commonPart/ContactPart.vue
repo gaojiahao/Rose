@@ -1,149 +1,160 @@
 <template>
   <!-- 往来联系部分 交易基本信息-->
-  <div :class="{contacts_part : hasClass}">
-    <div class="main_content" :class="{'vux-1px-b' : payment || logistics}">
-      <span class="iconfont icon-kehu1"></span>
-      <div class="cp_name m_size_name">{{contactInfo.dealerName}}</div>
-      <div class="other_info s_size_name">
-        <span class="title">手机：</span>
-        <span class="content">{{contactInfo.dealerMobilePhone || '暂无'}}</span>
+  <div class="contact-container">
+    <div class="contact-main">
+      <header class="contact_header vux-1px-l">往来信息</header>
+      <div class="contact_top" v-if="contactInfo.dealerContactPersonName || contactInfo.dealerMobilePhone">
+        <div class="contact_top_item">
+          <span class="contact_top_title">联系人: </span>{{contactInfo.dealerContactPersonName || '暂无'}}
+        </div>
+        <div class="contact_top_item">
+          <span class="contact_top_title">手机号: </span>{{contactInfo.dealerMobilePhone || '暂无'}}
+        </div>
       </div>
-      <div class="other_info s_size_name">
-        <span class="title">地址：</span>
-        <span class="content" v-if="noAddress">暂无</span>
-        <span class="content" v-else>{{contactInfo.province}}{{contactInfo.city}}{{contactInfo.county}}{{contactInfo.address}}</span>
+      <div class="contact_top" v-else-if="contactInfo.dealerCode_dealerCodeCredit">
+        <div class="contact_top_item">
+          <span class="contact_top_title">往来编码: </span>{{contactInfo.dealerCode_dealerCodeCredit || '暂无'}}
+        </div>
+        <div class="contact_top_item">
+          <span class="contact_top_title">往来标签: </span>{{contactInfo.crDealerLabel || '暂无'}}
+        </div>
+      </div>
+      <div class="contact_dealer">
+        <div class="contact_dealer_item">
+          <i class="icon icon-dealer2"></i>
+          <span class="contact_dealer_title">往来名称：</span>
+          <span class="contact_dealer_value">{{contactInfo.dealerName || contactInfo.dealerName_dealerCodeCredit}}</span>
+        </div>
+        <div class="contact_dealer_item" v-if="showAddress">
+          <i class="icon icon-address"></i>
+          <span class="contact_dealer_title">往来地址：</span>
+          <span class="contact_dealer_value">{{contactInfo.address || '暂无'}}</span>
+        </div>
       </div>
     </div>
-    <div class="other_content" v-if="payment || logistics">
-      <div class="trade_info s_size_name" v-if="payment">
-        <span class="title">结算方式：</span>
-        <span class="mode">{{contactInfo.payment || '暂无'}}</span>
+    <div class="contact-other vux-1px-t" v-if="configs.length">
+      <div class="contact_other_wrapper" v-for="(item, index) in configs" :key="index">
+        <div class="contact_other_item">
+          <span class="contact_other_title">{{item.fieldLabel}}：</span>
+          <span class="contact_other_value" v-if="item.xtype === 'r2Permilfield'">{{item.fieldValue || contactInfo[item.fieldCode]}}</span>
+          <span class="contact_other_value" v-else>{{item.fieldValue || contactInfo[item.fieldCode]|| '暂无'}}</span>
+        </div>
       </div>
-      <div class="trade_info s_size_name" v-if="logistics">
-        <span class="title">物流条款：</span>
-        <span class="mode">{{contactInfo.logistics || '暂无'}}</span>
-      </div>
-    </div>
-    <div class="valid vux-1px-t" v-if="validUntil">
-       <span class="title">有效期至：</span>
-        <span class="mode">{{contactInfo.validUntil || '暂无'}}</span>
     </div>
   </div>
 </template>
 
 <script>
+  import {dateFormat} from 'vux'
+
   export default {
     name: "contactPart",
     props: {
-      //外层div是否有contacts_part
-      hasClass : {
-        type: Boolean,
-        default : true
-      },
       contactInfo: {
         type: Object,
         default() {
           return {}
         }
       },
-      // 是否展示付款方式
-      payment: {
+      configs: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
+      showAddress: {
         type: Boolean,
         default: true
-      },
-      // 是否展示物流条款
-      logistics: {
-        type: Boolean,
-        default: true
-      },
-      //是否展示有限期
-      validUntil : {
-        type : Boolean,
-        default : false
-
       }
     },
-    data() {
-      return {}
-    },
-    computed:{
-      noAddress() {
-        let {province = '', city = '', county = '', address = ''} = this.contactInfo;
-        return !province && !city && !county && !address;
-      }
-    },
-    created(){
+    filters: {
+      dateFormat,
     }
   }
 </script>
 
 <style scoped lang="scss">
-  .contacts_part {
-    margin-bottom: .1rem;
-    padding: .06rem .1rem 0;
-    width: 100%;
-    background: #fff;
-    box-sizing: border-box;
-    .main_content {
-      position: relative;
-      padding: 0 .1rem .06rem .2rem;
-    }
-    .iconfont {
-      top: .02rem;
-      left: -.01rem;
-      font-size: .16rem;
-      position: absolute;
-    }
-    // 公司信息
-    .cp_name {
-      font-weight: bold;
-    }
-    // 其他信息
-    .other_info {
-      color: #454545;
-      // 
-    }
-    .other_content {
-      padding: .06rem 0;
-      .trade_info {
-        margin: .04rem 0;
-        .title {
-          font-weight: bold;
-        }
-        .mode {
-          color: #454545;
-          
+  .contact-container {
+    color: #333;
+    margin: .1rem;
+    border-radius: .04rem;
+    background-color: #fff;
+    width: calc(100% - .2rem);
+    .contact-main {
+      width: 100%;
+      padding: .15rem;
+      box-sizing: border-box;
+      .contact_header {
+        line-height: .16rem;
+        font-size: 16px;
+        font-weight: 600;
+        &:before {
+          left: -.15rem;
+          width: .08rem;
+          border-left: .08rem solid #3296FA;
         }
       }
-    }
-    .valid{
-      padding: .06rem 0;
-      font-size: .14rem;
-      .title {
-          font-weight: bold;
+      .contact_top {
+        margin-top: .2rem;
+        display: flex;
+        line-height: .14rem;
+        font-size: .14rem;
+      }
+      .contact_top_item {
+        flex: 1;
+      }
+      .contact_top_title {
+        color: #999;
+      }
+
+      .contact_dealer {
+        margin-top: .17rem;
+      }
+      .contact_dealer_item {
+        display: flex;
+        line-height: .22rem;
+        font-size: .14rem;
+        & + .contact_dealer_item {
+          margin-top: .05rem;
         }
-        .mode {
-          color: #454545;
-          
-        }
+      }
+      .icon {
+        display: inline-block;
+        margin-top: .03rem;
+        width: .16rem;
+        height: .16rem;
+      }
+      .contact_dealer_title {
+        margin-left: .08rem;
+        color: #999;
+      }
+      .contact_dealer_value {
+        flex: 1;
+      }
     }
-    .l_size_name {
-      color: #111;
-      padding: .06rem 0;
-      font-size: .22rem;
-      font-weight: 400;
-    }
-    .m_size_name {
-      font-size: .18rem;
-    }
-    .s_size_name {
-      font-size: .14rem;
-    }
-    .vux-1px-b:after {
-      border-color: #e8e8e8;
-    }
-    .vux-1px-t:before {
-      border-color: #e8e8e8;
+
+    .contact-other {
+      display: flex;
+      flex-wrap: wrap;
+      padding: .08rem .15rem .15rem;
+      &:before {
+        border-color: #e8e8e8;
+      }
+      .contact_other_wrapper {
+        display: flex;
+        margin-top: .12rem;
+        margin-right: .2rem;
+        min-width: calc(50% - 0.2rem);
+      }
+      .contact_other_item {
+        flex: 1;
+        display: flex;
+        line-height: .14rem;
+        font-size: .14rem;
+      }
+      .contact_other_title {
+        color: #999;
+      }
     }
   }
 </style>

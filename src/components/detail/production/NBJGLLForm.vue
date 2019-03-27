@@ -1,48 +1,24 @@
 <template>
   <div class="detail_wrapper">
     <div class="basicPart" v-if='orderInfo && orderInfo.outPut'>
-      <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
-        <span>其他应用里存在与本条相关联的数据，快去看看</span>
-        <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
-      </div>
+
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
+      <!-- 仓库信息 -->
+      <warehouse-content :warehouse="warehouseIn"  :warehouse-out="warehouseOut"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName"
                   :is-my-task="isMyTask"
                   :no-status="orderInfo.biStatus"></work-flow>
-      <!-- 仓库信息 -->
-      <div class="warehouse_part">
-        <!-- 出库-->
-        <warehouse-content class="vux-1px-b" :warehouse="warehouseOut"></warehouse-content>
-        <!-- 入库 -->
-        <warehouse-content :warehouse="warehouseIn"></warehouse-content>
-      </div>
       <!-- 物料列表 -->
-      <matter-list :matter-list="orderInfo.outPut.dataSet">
-        <!-- 调拨数量 -->
-        <div class="mater_other" slot="matterOther" slot-scope="{item}">
-          <div class="mater_left">
-            <span class="units">
-              计量单位: {{item.measureUnit_outPutMatCode}}
-            </span>
-            <span class="units">
-              待领料: {{item.thenQtyBal}}
-            </span>
-          </div>
-          <div class="mater_num">
-            <span class="num">
-              本次领料: {{item.tdQty | toFixed}}
-            </span>
-            <span class="units">
-              [库存数量: {{item.thenQtyStock | toFixed}}]
-            </span>
-          </div>
-        </div>
-      </matter-list>
+      <matter-list :matter-list="matterList" @on-show-more="onShowMore"></matter-list>
+      <other-part :other-info="orderInfo" :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"
+                  :attachment="attachment"></other-part>
+      <!-- 物料详情 -->
+      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
-                @on-submit-success="submitSuccessCallback"></r-action>
+                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
 </template>
@@ -51,10 +27,10 @@
   // 请求 引入
   import {getSOList,} from 'service/detailService'
   // mixins 引入
-  import detailCommon from 'components/mixins/detailCommon'
+  import detailCommon from 'mixins/detailCommon'
   // 组件引入
-  import RAction from 'components/RAction'
-  import workFlow from 'components/workFlow'
+  import RAction from 'components/public/RAction'
+  import workFlow from 'components/public/workFlow'
   import PopWarehouseList from 'components/Popup/PopWarehouseList'
   import WarehouseContent from 'components/detail/commonPart/WarehouseContent'
   import MatterList from 'components/detail/commonPart/MatterList'
@@ -78,7 +54,7 @@
     methods: {
       //选择默认图片
       getDefaultImg(item) {
-        let url = require('assets/wl_default02.png');
+        let url = require('assets/wl_default03.png');
         if (item) {
           item.inventoryPic = url;
         }
@@ -100,11 +76,14 @@
             });
             return;
           }
-          let {outPut = {}} = data.formData;
+          let {attachment = [], formData = {}} = data;
+          let {outPut = {}} = formData;
           let {dataSet} = outPut;
+          this.attachment = attachment;
           for (let val of dataSet) {
             val.inventoryName_transObjCode = val.inventoryName_outPutMatCode;
             val.transObjCode = val.outPutMatCode;
+            val.specification = val.specification_outPutMatCode;
             val.inventoryPic = val.inventoryPic_outPutMatCode
               ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_outPutMatCode}&width=400&height=400`
               : this.getDefaultImg();
@@ -133,7 +112,10 @@
             warehouseDistrict: outPut.warehouseDistrict_containerCodeOut,
             warehouseAddress: outPut.warehouseAddress_containerCodeOut,
           };
-          this.orderInfo = data.formData;
+          this.matterList = dataSet;
+          this.orderInfo = {
+            ...formData,
+          };
           this.workFlowInfoHandler();
         })
       },
@@ -143,7 +125,7 @@
   }
 </script>
 <style lang='scss' scoped>
-  @import './../../scss/bizDetail';
+  @import '~scss/biz-app/bizDetail';
   .mater_other {
     .mater_left {
       color: #757575;

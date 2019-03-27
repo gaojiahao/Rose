@@ -1,25 +1,21 @@
 <template>
   <div class="pop-salesman-list-container">
     <div class="SJForm_cell" @click="itemClick">
-      <div>{{title}}</div>
+      <div :class="{required: required}">{{title}}</div>
       <div class="value">{{currentValue || '请选择'}}</div>
     </div>
     <!-- 销售人员、渠道popup -->
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
-          <div class="trade_pop_title">
-            <r-search @search="searchList" @turn-off="onHide" :isFill='true'></r-search>
-          </div>
+          <r-search @search="searchList" @turn-off="onHide" :isFill='true'></r-search>
           <r-scroll class="salesman-list" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !dealerList.length" @on-pulling-up="onPullingUp" ref="bScroll">
-            <div class="list-item" v-for="(item, index) in dealerList" :key='index'
-                 @click.stop="selThis(item,index)">
-              <div class="list-item-content">
+            <div class="mater-list-item" v-for="(item, index) in dealerList" :key='index'
+                 @click.stop="selThis(item, index)">
+              <div class="mater-list-item-content">
                 <!-- 名称 -->
                 <div class="name">{{item.dealerName}}</div>
-                <!-- 编码 -->
-                <!-- <div class="code">{{item.dealerCode}}</div> -->
                 <!-- 地址 -->
                 <div>{{item.province}}{{item.city}}{{item.county}}{{item.address}}</div>
               </div>
@@ -35,9 +31,9 @@
 
 <script>
   import {Icon, Popup, AlertModule, TransferDom} from 'vux'
-  import {getObjDealerByLabelName} from 'service/commonService'
-  import RScroll from 'components/RScroll'
-  import RSearch from 'components/search'
+  import {getObjDealerByLabelName} from 'service/common/commonService'
+  import RScroll from 'plugins/scroll/RScroll'
+  import RSearch from 'components/search/search'
 
   export default {
     name: "PopSalesmanList",
@@ -57,6 +53,10 @@
       value: {
         type: String,
         default: ''
+      },
+      required: {
+        type: Boolean,
+        default: false
       }
     },
     directives: {TransferDom},
@@ -86,7 +86,7 @@
       },
     },
     methods: {
-      // TODO 弹窗展示时调用
+      // 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
@@ -94,22 +94,22 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
+      // 弹窗隐藏时调用
       onHide() {
         this.showPop = false;
       },
-      // TODO 判断是否展示选中图标
+      // 判断是否展示选中图标
       showSelIcon(sItem) {
         return sItem.dealerName === this.currentValue;
       },
-      // TODO 选择商机
+      // 选择商机
       selThis(sItem, sIndex) {
         let val = sItem.dealerName;
         this.showPop = false;
         this.currentValue = val;
         this.$emit('input', val)
       },
-      // TODO 获取销售列表
+      // 获取销售列表
       getDealer() {
         let filter = [];
         if (this.srhInpTx) {
@@ -137,12 +137,12 @@
           })
         })
       },
-      // TODO 上拉加载
+      // 上拉加载
       onPullingUp() {
         this.page++;
         this.getDealer();
       },
-      // TODO 点击展示弹窗
+      // 点击展示弹窗
       itemClick() {
         this.showPop = true;
       },
@@ -179,6 +179,10 @@
       transform-origin: 0 0;
       transform: scaleY(0.5);
     }
+    .required {
+      font-weight: bold;
+      color: #5077aa;
+    }
     .value {
       color: #757575;
     }
@@ -188,7 +192,7 @@
   .trade_pop_part {
     background: #fff;
     .trade_pop {
-      padding: 0 .08rem;
+      
       height: 100%;
       overflow: hidden;
       box-sizing: border-box;
@@ -207,7 +211,7 @@
           padding: .04rem .04rem 0 .3rem;
         }
         // 每个销售
-        .list-item {
+        .mater-list-item {
           position: relative;
           display: flex;
           padding: 0.08rem;
@@ -215,7 +219,7 @@
           box-shadow: 0 0 8px #e8e8e8;
           box-sizing: border-box;
           // 销售主体
-          .list-item-content {
+          .mater-list-item-content {
             flex: 1;
             padding-left: .1rem;
             box-sizing: border-box;
