@@ -14,7 +14,8 @@
           </div>
           <div class="matter_detail" v-if="showSpec">
             <span class="matter_item_title">产品规格：</span>
-            <span class="matter_item_value">{{item.specification_transObjCode || item.specification_outPutMatCode || item.facilitySpecification_facilityObjCode || item.assMeasureDescription}}</span>
+            <!-- <span class="matter_item_value">{{item.specification_transObjCode || item.specification_outPutMatCode || item.facilitySpecification_facilityObjCode || item.assMeasureDescription}}</span> -->
+            <span class="matter_item_value">{{item.specification_transObjCode}}</span>
           </div>
         </div>
         <div class="matter_info_item">
