@@ -49,7 +49,7 @@
 export const corpid = window.ROLETASK_LoginConfig && window.ROLETASK_LoginConfig.qw_appid; // 企业id
 export const secret = window.ROLETASK_LoginConfig && window.ROLETASK_LoginConfig.qw_secret; // 应用凭证
 export const agentid = window.ROLETASK_LoginConfig && window.ROLETASK_LoginConfig.qw_agentid; // 企业应用的id
-export const redirect_uri = window.ROLETASK_LoginConfig && window.ROLETASK_LoginConfig.qw_redirect_uri_mobel; // 首页路径
+export const redirect_uri = window.ROLETASK_LoginConfig && window.ROLETASK_LoginConfig.qw_redirect_uri_mobile; // 首页路径
 
 export default {
   corpid,
