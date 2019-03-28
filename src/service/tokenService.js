@@ -20,7 +20,7 @@ let tokenService = {
       name: data.name,
       department: data.department,
       avatar: data.avatar,
-      position : data.position,
+      position: data.position,
       timestamp: +new Date()
     }));
     window.localStorage.setItem(PC_RFD_TOKEN_KEY, JSON.stringify({
@@ -55,18 +55,16 @@ let tokenService = {
     // 获取当前域名
     let nowUrl = location.origin;
     // 是否为企业微信客户端
-    let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; 
+    let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
 
     // 根据环境不同 调用不同的登录接口
     if (nowUrl.includes('192.168.3.') || nowUrl.includes('localhost')) {
       console.log('当前为测试环境');
       return this.pcLogin();
-    }
-    else {
+    } else {
       if (isQYWX) {
         return this.QYWXLogin();
-      } 
-      else {
+      } else {
         window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redirect_uri}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
       }
     }
@@ -75,6 +73,7 @@ let tokenService = {
   pcLogin(key = 'token') {
     console.log('进入pc了')
     return new Promise((resolve, reject) => {
+<<<<<<< HEAD
         let params = {
           method: 'post',
           baseURL: '/H_roleplay-si',
@@ -107,8 +106,42 @@ let tokenService = {
             success: false,
             message: message
           })
+=======
+      let params = {
+        method: 'post',
+        baseURL: '/H_roleplay-si',
+        url: '/login',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: {
+          password: '123456',
+          userCode: '15399909500'
+        }
+      };
+      fly.request(params, params.data).then(res => {
+        let data = res.data;
+        this.setToken({
+          key1: data.key1 || '',
+          active: data.active || '',
+          token: data.token || '',
+          entityId: data.entityId || '',
+          name: data.name || '',
+          department: data.department || '',
+          avatar: data.avatar || ''
+>>>>>>> 490c1f6e760f4c2d2f61746810e8c87b57c4f079
         });
-      }
+        resolve(data[key])
+      }).catch(function (error) {
+        let res = error.response;
+        let data = (res && res.data) || {};
+        let message = data.message || '请求异常';
+        reject({
+          success: false,
+          message: message
+        })
+      });
+    }
     )
   },
   // 企业微信登录，默认返回token
