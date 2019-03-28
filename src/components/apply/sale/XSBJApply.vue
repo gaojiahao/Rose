@@ -216,10 +216,11 @@ export default {
         } else if (price < item.specialReservePrice) {
           warn = "需求数量不能小于特批底价";
           return false;
-        } else if (price > item.standardPrice) {
-          warn = "需求数量不能大于标准价格";
-          return false;
-        }
+        } 
+        // else if (price > item.standardPrice) {
+        //   warn = "需求数量不能大于标准价格";
+        //   return false;
+        // }
         let taxRate = item.taxRate || this.taxRate;
         let taxAmount = accMul(item.price, item.tdQty, taxRate);
         let mItem = {
@@ -271,7 +272,7 @@ export default {
               dealerDebit: this.dealerInfo.dealerCode || '',
               drDealerLabel: this.dealerInfo.dealerLabelName,
               drDealerPaymentTerm: this.dealerInfo.drDealerPaymentTerm,
-              validUntil: this.formData.validUntil,
+              validUntil: this.dealerInfo.validUntil,
               dataSet
             },
           };
@@ -363,6 +364,7 @@ export default {
           address: order.address_dealerDebit || '', // 详细地址
           drDealerPaymentTerm: order.drDealerPaymentTerm,
           drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
+          validUntil: dateFormat(order.validUntil, 'YYYY-MM-DD')
         };
         this.contactInfo = {
           dealerName: formData.dealerDebitContactPersonName,
@@ -384,8 +386,7 @@ export default {
           biId: formData.biId,
           biProcessStatus: formData.biProcessStatus,
           creator: formData.creator,
-          modifer: formData.modifer,
-          validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD'),
+          modifer: formData.modifer
         }
         this.biReferenceId = formData.biReferenceId;
         this.matterList = matterList;
@@ -409,9 +410,9 @@ export default {
     // 获取物料价格区间
     getPriceRange(item, index) {
       return getPriceRange({
-        inventoryCode: item.inventoryCode,
-      }).then(({ tableContent }) => {
-        item.priceRange = tableContent;
+        matCodes: item.inventoryCode,
+      }).then(({ data }) => {
+        item.priceRange = data;
       })
     },
     // 校验数量
