@@ -86,11 +86,11 @@ export default {
           name: '经办人',
           value: 'handlerName',
         }, {
-          name: '任务类型',
-          value: 'taskType',
+          name: '任务名称',
+          value: 'taskName_projectPlanTask',
         }, {
           name: '项目名称',
-          value: 'projectName_project',
+          value: 'projectName_projectApprovalId',
         },
       ],
     }
