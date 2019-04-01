@@ -18,9 +18,9 @@
                 </div>
                 <div class="pop-list-info">
                   <!-- 名字 -->
-                  <div class="user_name">{{item.nickname}}</div>
+                  <div class="user_name">{{item.name}}</div>
                   <!-- 用户id -->
-                  <div class="user_code" v-if="item.userId">{{item.userId}}</div>
+                  <div class="user_code" v-if="item.value">{{item.value}}</div>
                 </div>
               </div>
             </div>
@@ -144,7 +144,7 @@ export default {
           {
             operator: 'like',
             value: this.srhInpTx,
-            property: 'nickname',
+            property: 'DEALER_NAME',
           }
         ];
       }
@@ -167,6 +167,17 @@ export default {
       // }).then(({dataCount = 0, tableContent = []}) => {
         this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
         this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
+        let aa = [];
+        this.listData.forEach( item=> {
+          let tt = {
+            DEALER_CODE : item.DEALER_CODE,
+            DEALER_NAME : item.DEALER_NAME,
+            name : item.DEALER_NAME,
+            value : item.DEALER_CODE
+          }
+          aa.push(tt);
+        });
+        this.listData = aa;
         this.$nextTick(() => {
           this.$refs.bScroll.finishPullUp();
         })

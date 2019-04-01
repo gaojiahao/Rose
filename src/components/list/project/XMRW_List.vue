@@ -37,17 +37,17 @@
                     </div>
                     <div class="task_info_item">
                       <span class="task_info_title">计划开始日期: </span>
-                      <span class="task_info_day">{{task.startDate_projectPlanTask | dateFormat('YYYY-MM-DD') || '无'}}</span>
+                      <span class="task_info_day">{{task.startDate_projectPlanTask || dateFormat('YYYY-MM-DD') || '无'}}</span>
                     </div>
                   </div>
                   <div class="task_info" :class="{'when-is-fill': task.deadline_projectPlanTask && task.completeTime_projectPlanTask}">
                     <div class="task_info_item">
                       <span class="task_info_title">计划截止日期: </span>
-                      <span class="task_info_day">{{task.deadline_projectPlanTask | dateFormat('YYYY-MM-DD') || '无'}}</span>
+                      <span class="task_info_day">{{task.deadline_projectPlanTask || dateFormat('YYYY-MM-DD') || '无'}}</span>
                     </div>
                     <div class="task_info_item">
                       <span class="task_info_title">实际完成日期: </span>
-                      <span class="task_info_day">{{task.completeTime_projectPlanTask | dateFormat('YYYY-MM-DD') || '无'}}</span>
+                      <span class="task_info_day">{{task.completeTime_projectPlanTask || dateFormat('YYYY-MM-DD') || '无'}}</span>
                     </div>
                   </div>
                 </div>
@@ -86,11 +86,11 @@ export default {
           name: '经办人',
           value: 'handlerName',
         }, {
-          name: '任务类型',
-          value: 'taskType',
+          name: '任务名称',
+          value: 'taskName_projectPlanTask',
         }, {
           name: '项目名称',
-          value: 'projectName_project',
+          value: 'projectName_projectApprovalId',
         },
       ],
     }

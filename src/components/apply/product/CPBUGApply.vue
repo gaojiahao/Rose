@@ -16,7 +16,7 @@
                 </div>
               </div>
               <pop-handler-list :show="showAuthorized" :default-value="currentAuthorized" :requestParams="item.requestParams"
-                    v-model="showAuthorized" @sel-handler="selHandler"></pop-handler-list>
+                    v-model="showAuthorized" @sel-handler="selHandler" :list-data="item.remoteData"></pop-handler-list>
             </template>
             <template v-else>
               <!-- 下拉框 -->
@@ -155,8 +155,9 @@
         this.showAuthorized = true;
       }, 
       selHandler(val){
+        console.log(val);
         this.currentAuthorized = {...val};
-        this.formData.authorized = val.nickname;
+        this.formData.authorized = val.name;
       },
       // 选择日期
       getDate(sItem, dItem){
@@ -198,6 +199,7 @@
           // 确定回调
           onConfirm: () => {
             this.$HandleLoad.show();
+            this.formData.authorized = this.currentAuthorized.value;
             let formData = this.formData,
                 operation = this.processCode.length ? saveAndStartWf : submitAndCalc;
             let submitData = {
