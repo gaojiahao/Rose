@@ -292,10 +292,9 @@ export let getSalesOrderNew = (data = {}) => {
 // 获取销售报价的价格区间
 export let getPriceRange = (data = {}) => {
   return $flyio.ajax({
-    url: '/H_roleplay-si/ds/getPriceRange',
+    url: '/H_roleplay-si/formAPI/getPriceFromProuductPrice',
     data: {
       _dc: Date.now(),
-      drDealerLabel: '客户',
       ...data
     }
   })

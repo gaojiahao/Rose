@@ -90,8 +90,8 @@
         <div class='confirm'>确认</div>
       </div>
     </popup>
-
-    <x-dialog class="dialog-view" v-model="showDialog" hide-on-blur>
+    <x-dialog class="dialog-view" v-model="showDialog" hide-on-blur scroll>
+      <div class="dialog-box">
       <div class="tip-top">
         <p class="header_content">温馨提示</p>
         <p class="header_btn_tips">订单折合包装比: {{chosenMatter.assMeasureScale}}</p>
@@ -107,7 +107,7 @@
           <span class="order_num">[折合包装数量: {{item.qtyDownline | numberComma}}]</span>
         </div>
         <div class="each-info-part">
-          <span class="order_num">标准价格: ￥{{item.standardPrice | numberComma}}</span>
+          <span class="order_num">标准价格: ￥{{item.price | numberComma}}</span>
           <span class="order_num">特批底价: ￥{{item.specialReservePrice | numberComma}}</span>
         </div>
       </div>
@@ -116,6 +116,7 @@
         </p>
       </div>
       <div class="btn-part" @click="showDialog = !showDialog">我已阅读</div>
+      </div>
     </x-dialog>
   </div>
 </template>
@@ -256,7 +257,7 @@
         let warn = '';
         this.config.editPart.every(item => {
           if (!item.allowBlank) {
-            if ((Array.isArray(this.chosenMatter[item.fieldCode]) && !this.chosenMatter[item.fieldCode].length) || !this.chosenMatter[item.fieldCode]) {
+            if ((Array.isArray(this.chosenMatter[item.fieldCode]) && !this.chosenMatter[item.fieldCode].length) || (!this.chosenMatter[item.fieldCode]&&(this.chosenMatter[item.fieldCode].toString()==''))) {
               warn = item.text + '不能为空';
               return false
             }
@@ -441,8 +442,12 @@
       text-align: center;
     }
   }
-
   .dialog-view {
+    .dialog-box {
+      height:480px;
+      overflow:scroll;
+      -webkit-overflow-scrolling:touch;
+    }
     .tip-top {
       padding: .1rem 0;
       line-height: .2rem;

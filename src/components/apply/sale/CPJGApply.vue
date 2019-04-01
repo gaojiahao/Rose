@@ -161,7 +161,7 @@ export default {
         this.matterList.every(item => {
           this.matterEditConfig.editPart.every(vItem => {
             if (!vItem.hiddenInRun && !vItem.allowBlank) {
-              if ((Array.isArray(item[vItem.fieldCode]) && !item[vItem.fieldCode].length) || !item[vItem.fieldCode]) {
+              if ((Array.isArray(item[vItem.fieldCode]) && !item[vItem.fieldCode].length) || (!item[vItem.fieldCode]&&item[vItem.fieldCode].toString()=='')) {
                 warn = `${vItem.text}不能为空`;
               }
               return !warn

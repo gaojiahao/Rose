@@ -16,10 +16,10 @@
 // export const redirect_uri = 'http%3A%2F%2Fcpacn2012.3322.org%3A1172%2FHermes%2Fhome'; // 首页路径
 
 // 175 Roletask 
-export const corpid = 'ww3c1aa17c16e380b7'; // 企业id
-export const secret = '_MTqTVltBKS_HVBPbM00zHAdC0NpLNtcGvpTD0BQjC4'; // 应用凭证
-export const agentid = '1000039'; // 企业应用的id
-export const redirect_uri = 'http%3A%2F%2Fcpacn2012.3322.org%3A1175%2FHermes%2Fhome'; // 首页路径
+// export const corpid = 'ww3c1aa17c16e380b7'; // 企业id
+// export const secret = '_MTqTVltBKS_HVBPbM00zHAdC0NpLNtcGvpTD0BQjC4'; // 应用凭证
+// export const agentid = '1000039'; // 企业应用的id
+// export const redirect_uri = 'http%3A%2F%2Fcpacn2012.3322.org%3A1175%2FHermes%2Fhome'; // 首页路径
 
 // 178 Roletask
 // export const corpid = 'ww3c1aa17c16e380b7'; // 企业id
@@ -45,6 +45,12 @@ export const redirect_uri = 'http%3A%2F%2Fcpacn2012.3322.org%3A1175%2FHermes%2Fh
 // export const secret = '4qeG9ge1wNjxBP6PBgqo01pG--RSWrZBGasBc57IMGY'; // 应用凭证
 // export const agentid = '1000002'; // 企业应用的id
 // export const redirect_uri = 'https%3a%2f%2fZooCoffee.roletask.com%2fHermes'; // 首页路径
+
+export const corpid = window.ROLETASK_LoginConfig && window.ROLETASK_LoginConfig.qw_appid; // 企业id
+export const secret = window.ROLETASK_LoginConfig && window.ROLETASK_LoginConfig.qw_secret; // 应用凭证
+export const agentid = window.ROLETASK_LoginConfig && window.ROLETASK_LoginConfig.qw_agentid; // 企业应用的id
+export const redirect_uri = window.ROLETASK_LoginConfig && window.ROLETASK_LoginConfig.qw_redirect_uri_mobile; // 首页路径
+
 export default {
   corpid,
   secret,
