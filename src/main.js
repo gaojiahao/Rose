@@ -5,6 +5,7 @@ import FastClick from 'fastclick'
 import VueRouter from 'vue-router'
 import adapation from './common/adapation'
 import Swiper from './common/swiper-4.2.2.min.js'
+import RText from './components/public/RText'
 import { AlertPlugin, ConfirmPlugin, ToastPlugin, TransferDom, DatetimePlugin  } from 'vux'
 import Loading from 'plugins/loading/pageLoad/loading'
 import HandleLoad from 'plugins/loading/handleLoad/handleLoading'
@@ -24,7 +25,7 @@ FastClick.attach(document.body)
 const isDebug_mode = process.env.NODE_ENV !== 'production'
 Vue.config.debug = isDebug_mode
 Vue.config.devtools = isDebug_mode
-Vue.config.productionTip = false
+Vue.config.productionTip = true
 // 此处声明空实例 用于非父子组件之间传值
 Vue.prototype.$event = new Vue();
 
