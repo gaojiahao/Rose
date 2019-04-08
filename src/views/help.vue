@@ -44,7 +44,7 @@
 
         <group class="caution_inputs">
           <x-input title="其他A类产品" v-model.number="Aclass" text-align="right" placeholder="请输入金额"></x-input>
-          <cell title="其他A类产品套数" disabled :value="otherAclass"></cell>
+          <cell title="其他A类产品套数" disabled :value="otherAclass" style=" display:none;"></cell>
           <cell title="A类产品合计" disabled :value="AclassTotal"></cell>
         </group>
 
@@ -160,7 +160,7 @@
         return toFixed(accDiv(this.Aclass, 1996), 3)
       },
       BclassTotal() {
-        return accAdd(this.Bclass, this.BclassDown)
+        return accMul(accAdd(this.Bclass, this.BclassDown),0.3)
       },
       // B类产品套数线上
       BSet() {
@@ -311,7 +311,7 @@
           }, {
             id: this.guid(),
             transObjCode: "B类产品(线上)", //项目类产品名称
-            containerCode: "B", //类型
+            containerCode: "B1", //类型
             qty: "",
             amount: Number(this.Bclass), //总金额
             fgCode: "",
@@ -319,7 +319,7 @@
           }, {
             id: this.guid(),
             transObjCode: "B类产品(线下)", //项目类产品名称
-            containerCode: "B", //类型
+            containerCode: "B2", //类型
             qty: "",
             amount: Number(this.BclassDown), //总金额
             fgCode: "",
