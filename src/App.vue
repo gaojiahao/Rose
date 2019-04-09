@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import platfrom from '@/plugins/platform'
+import platfrom from '@/plugins/platForm'
 export default {
   name: 'app',
   updated(){
