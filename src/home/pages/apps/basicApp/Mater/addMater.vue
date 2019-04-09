@@ -175,7 +175,7 @@ export default {
     },
     // 拼接 物料编码
     inventoryCode() {
-      return `M${this.processId}${this.typeId}${this.subclassId}`
+      return `${this.processId}${this.typeId}${this.subclassId}X`
     },
   },
   watch: {
@@ -448,7 +448,9 @@ export default {
         });
         return
       }
-
+      if(this.inventory.inventoryCode != ''){
+        delete this.inventory.inventoryCode;
+      }
       let formData = {
         baseinfo: this.baseinfo,
         inventory: {
