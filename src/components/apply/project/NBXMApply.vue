@@ -19,10 +19,7 @@
                       v-model="ProjectApproval[item.fieldCode]" :required="!item.allowBlank"
                       v-if="item.xtype === 'r2Combo' || item.xtype === 'r2Selector'"></r-picker>
               <!-- 输入框（文字） -->
-              <div class='each_property' v-if="item.xtype === 'r2Textfield'">
-                <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
-                <input type='text' v-model="ProjectApproval[item.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
-              </div>
+              <r-text :cfg="item" v-if="item.xtype === 'r2Textfield'" v-model="ProjectApproval[item.fieldCode]" :values="ProjectApproval"/>
               <!-- 输入框（数字） -->
               <div class='each_property ' v-if="item.xtype === 'r2Numberfield' || item.xtype === 'r2Permilfield'">
                 <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
@@ -59,6 +56,7 @@
 </template>
 
 <script>
+  //内部项目
   // vux组件引入
   import {
     XTextarea, dateFormat
@@ -289,7 +287,7 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   @import '~scss/biz-app/bizApply';
   .materiel_list {
     background: #fff;
