@@ -1,6 +1,6 @@
 <template>
   <div class="inPage">
-    <div class="content" ref='home'>
+    <div class="content" ref="home">
       <div class="wrapper">
         <div class="top-part-container">
           <div class="top-part">
@@ -15,11 +15,23 @@
             </div>
             <div class="entity-part" :class="{'active': showDrop}" @click="showDrop = !showDrop">
               <span class="entity_name">{{userInfo.entityName}}</span>
-              <span v-if="entityList.length > 1" class="iconfont" :class="{'icon-xia' : !showDrop, 'icon-shang' : showDrop}"></span>
+              <span
+                v-if="entityList.length > 1"
+                class="iconfont"
+                :class="{'icon-xia' : !showDrop, 'icon-shang' : showDrop}"
+              ></span>
               <ul class="r-dropdown-list" v-show="showDrop">
-                <li class="r-dropdown-item" :class="{'vux-1px-b': index !== entityList.length - 1 }" :key="index" v-for="(item, index) in entityList"
-                    @click.stop="dropItemClick(item)" >
-                  <div class="each_item" :class="{'active is-being-sel' : selItem.groupCode === item.groupCode}">
+                <li
+                  class="r-dropdown-item"
+                  :class="{'vux-1px-b': index !== entityList.length - 1 }"
+                  :key="index"
+                  v-for="(item, index) in entityList"
+                  @click.stop="dropItemClick(item)"
+                >
+                  <div
+                    class="each_item"
+                    :class="{'active is-being-sel' : selItem.groupCode === item.groupCode}"
+                  >
                     <p class="full_name">{{item.groupName}}</p>
                     <p class="shor_name">简称: {{item.groupShortName}}</p>
                   </div>
@@ -31,57 +43,62 @@
             </div>
           </div>
         </div>
-        <basic-app :BasicApps='BasicApps' :goBasic='goBasic' :goAppDetail='goAppDetail'></basic-app>
-        <bus-app :BusApps='BusApps' :goList='goList' :goAppDetail='goAppDetail' :getDefaultIcon='getDefaultIcon'></bus-app>
+        <basic-app :BasicApps="BasicApps" :goBasic="goBasic" :goAppDetail="goAppDetail"></basic-app>
+        <bus-app
+          :BusApps="BusApps"
+          :goList="goList"
+          :goAppDetail="goAppDetail"
+          :getDefaultIcon="getDefaultIcon"
+        ></bus-app>
       </div>
     </div>
-    <div class="close-part" v-show="showDrop" @click="showDrop = false"></div> 
+    <div class="close-part" v-show="showDrop" @click="showDrop = false"></div>
   </div>
 </template>
 
 <script>
 // 接口引入
-import homeService from 'service/homeservice'
-import { getMsgList } from 'service/msgService'
+import homeService from "service/homeservice";
+import { getMsgList } from "service/msgService";
 // 映射表引入
-import basicMap from './maps/basic'
+import basicMap from "./maps/basic";
 // 组件引入
-import busApp from 'homePage/components/home-related/busAppList'        // 业务应用
-import basicApp from 'homePage/components/home-related/basicApp'        // 基础应用
+import busApp from "homePage/components/home-related/busAppList"; // 业务应用
+import basicApp from "homePage/components/home-related/basicApp"; // 基础应用
 // 插件引入
-import Bscroll from 'better-scroll'
+import Bscroll from "better-scroll";
 export default {
   data() {
-    return{
+    return {
       BUSobj: {},
-      userInfo:{},            // 用户信息
-      selItem : {},           // 选中的主体内容
-      BusApps: [],            // 业务应用
-      BasicApps : [],         // 基础对象
-      entityList : [],        // 主体列表
-      showDrop :false,        // 是否显示主体下拉选择
-      homeScroll : null,      // 滑动实例
-    }
+      userInfo: {}, // 用户信息
+      selItem: {}, // 选中的主体内容
+      BusApps: [], // 业务应用
+      BasicApps: [], // 基础对象
+      entityList: [], // 主体列表
+      showDrop: false, // 是否显示主体下拉选择
+      homeScroll: null // 滑动实例
+    };
   },
-  components:{ busApp, basicApp },
-  methods:{
+  components: { busApp, basicApp },
+  methods: {
     // 基础应用
     goBasic(item) {
-      this.$router.push({path: `${basicMap[item]}`})
+      this.$router.push({ path: `${basicMap[item]}` });
     },
     // 前往列表
     goList(folder, fileName, name, listId) {
       this.$router.push({
-        path: `/list/${folder}/${fileName}`, 
+        path: `/list/${folder}/${fileName}`,
         query: { name, listId }
-      })
+      });
     },
     goAppDetail(listId) {
-      this.$router.push({path: `/appDetail/${listId}`})
+      this.$router.push({ path: `/appDetail/${listId}` });
     },
     // 设置默认图片
     getDefaultIcon(app) {
-      let url = require('assets/defaultApp.png');
+      let url = require("assets/defaultApp.png");
       if (app) {
         app.icon = url;
       }
@@ -90,59 +107,60 @@ export default {
     //获取代办数量
     getNews() {
       let newsNumber;
-      return getMsgList().then( data => {
+      return getMsgList().then(data => {
         if (data.dataCount > 99) {
-          newsNumber = '99+';
-          return
+          newsNumber = "99+";
+          return;
         }
         newsNumber = data.dataCount;
-        this.$event.$emit('badgeNum', newsNumber);
-      })
+        this.$event.$emit("badgeNum", newsNumber);
+      });
     },
     //获取当前用户信息
     getCurrentUser() {
       return homeService.currentUser().then(data => {
         this.userInfo = {
-          photo: data.photo,                      // 头像
-          mobile: data.mobile,                    // 手机号
-          userCode: data.userCode,                // 工号
-          nickname: data.nickname,                // 姓名
-          entityName: data.entityName && data.entityName.slice(0, 4) || '' // 当前组织
-        }
+          photo: data.photo, // 头像
+          mobile: data.mobile, // 手机号
+          userCode: data.userCode, // 工号
+          nickname: data.nickname, // 姓名
+          entityName: (data.entityName && data.entityName.slice(0, 4)) || "" // 当前组织
+        };
         // 获取 公司主体列表
-        data.sysGroupList && data.sysGroupList.forEach(item => {
-          if (item.groupType === 'C') {
-            this.entityList.push(item);
-            if (item.groupCode === data.entityId) {
-              this.selItem = item;
+        data.sysGroupList &&
+          data.sysGroupList.forEach(item => {
+            if (item.groupType === "C") {
+              this.entityList.push(item);
+              if (item.groupCode === data.entityId) {
+                this.selItem = item;
+              }
             }
-          }
-        })
-      })
+          });
+      });
     },
     // 选择单条记录
     dropItemClick(item) {
       if (this.selItem.groupCode === item.groupCode) return;
-      this.selItem = {...item};
+      this.selItem = { ...item };
       this.showDrop = false;
       this.$loading.show();
-      homeService.changeEntity({entityId : item.groupCode}).then((data) => {
-        let tokenInfo = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
+      homeService.changeEntity({ entityId: item.groupCode }).then(data => {
+        let tokenInfo = sessionStorage.getItem("ROSE_LOGIN_TOKEN");
         if (tokenInfo) {
           tokenInfo = JSON.parse(tokenInfo);
           tokenInfo.entityId = data.entityId;
           tokenInfo.token = data.token;
-          sessionStorage.setItem('ROSE_LOGIN_TOKEN', JSON.stringify(tokenInfo));
+          sessionStorage.setItem("ROSE_LOGIN_TOKEN", JSON.stringify(tokenInfo));
           location.reload();
         }
-      })
-    },
+      });
+    }
   },
-  watch:{
-    $route:{
+  watch: {
+    $route: {
       handler(val) {
         // 返回首页进行滑动刷新
-        if (val.name === 'HOME') {
+        if (val.name === "HOME") {
           this.homeScroll.refresh();
         }
       }
@@ -150,11 +168,11 @@ export default {
   },
   created() {
     this.$loading.show();
-    (async() => {
+    (async () => {
       //获取当前用户
-      await this.getCurrentUser()
+      await this.getCurrentUser();
       // 获取首页应用列表
-      await homeService.getMeau().then( res => {
+      await homeService.getMeau().then(res => {
         let BUSobj = this.BUSobj;
         for (let val of res) {
           BUSobj[val.text] = [];
@@ -162,9 +180,7 @@ export default {
             // 基础对象应用需 根据映射表 单独处理
             if (basicMap[item.listId]) {
               // 图片处理
-              item.icon = item.icon 
-                ? `/dist/${item.icon}`
-                : ''
+              item.icon = item.icon ? `${item.icon}` : "";
               this.BasicApps.push(item);
             }
             // 处理 业务应用
@@ -173,13 +189,12 @@ export default {
               item.fileID = val.id;
               // 处理 应用图标
               if (item.icon) {
-                item.icon.includes('download') 
-                  // 用户自定义上传 应用icon
-                  ? item.icon = `${location.origin}${item.icon}`
-                  // 系统自带图标
-                  : item.icon = `/dist/${item.icon}`
-              }
-              else {
+                item.icon.includes("download")
+                  ? // 用户自定义上传 应用icon
+                    (item.icon = `${location.origin}${item.icon}`)
+                  : // 系统自带图标
+                    (item.icon = `${item.icon}`);
+              } else {
                 // 初始化应用图标
                 this.getDefaultIcon();
               }
@@ -192,53 +207,59 @@ export default {
                 if (childItem.packagePath) {
                   childItem.fileID = val.id;
                   childItem.icon = childItem.icon
-                    ? `/dist/${childItem.icon}`
+                    ? `${childItem.icon}`
                     : this.getDefaultIcon();
                   if (!BUSobj[val.text][item.text]) {
-                    this.$set(BUSobj[val.text], item.text, {childId: item.id, childName: item.text, childList: [childItem]})
-                  }
-                  else {
-                    BUSobj[val.text][item.text].childList.push(childItem)
+                    this.$set(BUSobj[val.text], item.text, {
+                      childId: item.id,
+                      childName: item.text,
+                      childList: [childItem]
+                    });
+                  } else {
+                    BUSobj[val.text][item.text].childList.push(childItem);
                   }
                 }
               }
             }
           }
-          this.BusApps.push({
-            id: val.id,
-            name: val.text,
-            folder: val.folder,
-            appList: {...BUSobj[val.text]}
-          })
+          if (val.folder) {
+            this.BusApps.push({
+              id: val.id,
+              name: val.text,
+              folder: val.folder,
+              appList: { ...BUSobj[val.text] }
+            });
+          }
           this.$loading.hide();
         }
-      })
+      });
       // 获取 头像姓名
-      let { name, avatar, position } = JSON.parse(sessionStorage.getItem('ROSE_LOGIN_TOKEN'));
+      let { name, avatar, position } = JSON.parse(
+        sessionStorage.getItem("ROSE_LOGIN_TOKEN")
+      );
       // 如果头像不存在则指定默认头像
       if (!avatar) {
         let url = this.userInfo.photo;
         if (!this.userInfo.photo) {
-          url = require('assets/ava01.png');
+          url = require("assets/ava01.png");
         }
         avatar = url;
-      };
-      this.userInfo = { 
+      }
+      this.userInfo = {
         ...this.userInfo,
-        name, 
-        avatar, 
-        position 
+        name,
+        avatar,
+        position
       };
       await this.getNews();
-    })()
+    })();
   },
   mounted() {
-    this.homeScroll = new Bscroll(this.$refs.home,{
-      click:true
-    })
+    this.homeScroll = new Bscroll(this.$refs.home, {
+      click: true
+    });
   }
-
-}
+};
 </script>
 
 <style lang='scss' scoped>
@@ -247,10 +268,10 @@ export default {
 }
 .content {
   width: 100%;
-  height: calc(100% - .49rem);
+  height: calc(100% - 0.49rem);
   overflow: hidden;
   .wrapper {
-    padding-bottom: .1rem;
+    padding-bottom: 0.1rem;
   }
 }
 .close-part {
@@ -264,44 +285,48 @@ export default {
 // 顶部 用户头像部分
 .top-part-container {
   width: 100%;
-  padding: 0 .1rem;
+  padding: 0 0.1rem;
   background: #fff;
   box-sizing: border-box;
   .top-part {
     width: 100%;
     display: flex;
-    padding-top: .1rem;
+    padding-top: 0.1rem;
     align-items: center;
     justify-content: space-between;
   }
   .entity-part {
     display: flex;
-    color: #7A7A7A;
+    color: #7a7a7a;
     position: relative;
     align-items: center;
-    border-radius: .2rem;
-    background: #F5F5F5;
-    padding: .1rem .12rem;
+    border-radius: 0.2rem;
+    background: #f5f5f5;
+    padding: 0.1rem 0.12rem;
     justify-content: center;
     .entity_name {
-      font-size: .14rem;
+      font-size: 0.14rem;
       &.when-is-out {
         &:after {
-          right: 0; 
-          bottom: 0; 
-          content: ""; 
-          height: inherit; 
-          position: absolute; 
-          padding-left: .18rem; 
-          background: linear-gradient(to right, rgba(255,255,255,0), #fff 75%);
+          right: 0;
+          bottom: 0;
+          content: "";
+          height: inherit;
+          position: absolute;
+          padding-left: 0.18rem;
+          background: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0),
+            #fff 75%
+          );
         }
       }
     }
     .iconfont {
       right: 8px;
-      color: #7A7A7A;
-      font-size: .12rem;
-      margin-left: .04rem;
+      color: #7a7a7a;
+      font-size: 0.12rem;
+      margin-left: 0.04rem;
     }
     .tips-fade-part {
       width: 40px;
@@ -317,9 +342,9 @@ export default {
     display: flex;
     align-items: center;
     .user_avatar {
-      width: .4rem;
-      height: .4rem;
-      margin-right: .1rem;
+      width: 0.4rem;
+      height: 0.4rem;
+      margin-right: 0.1rem;
       img {
         width: 100%;
         height: 100%;
@@ -327,14 +352,14 @@ export default {
       }
     }
     .user-info {
-      line-height: .18rem;
+      line-height: 0.18rem;
       .user_name {
-        font-size: .14rem;
+        font-size: 0.14rem;
         font-weight: bold;
       }
       .user_other {
         color: #757575;
-        font-size: .14rem;
+        font-size: 0.14rem;
       }
     }
   }
@@ -342,38 +367,38 @@ export default {
 
 /* 列表容器 */
 .r-dropdown-list {
-  $bgColor: #FFF;
+  $bgColor: #fff;
   right: 0;
   top: 130%;
   width: 2rem;
   z-index: 100;
   position: absolute;
   background: $bgColor;
-  border-radius: .06rem;
+  border-radius: 0.06rem;
   box-sizing: border-box;
   box-shadow: 0 1px 5px #e8e8e8;
   &:before {
     width: 0;
     height: 0;
-    top: -17px; 
+    top: -17px;
     right: 10.5%;
-    content: '';
+    content: "";
     z-index: 9999;
     border-width: 9px;
     position: absolute;
-    border-style: solid; 
-    border-color: transparent transparent #FFF transparent;
+    border-style: solid;
+    border-color: transparent transparent #fff transparent;
   }
   &:after {
     width: 0;
     height: 0;
-    top: -20px; 
+    top: -20px;
     right: 10%;
-    content: '';
+    content: "";
     position: absolute;
-    border-style: solid; 
+    border-style: solid;
     border-width: 10px;
-    border-color: transparent transparent rgba(232, 232, 232, .3) transparent;
+    border-color: transparent transparent rgba(232, 232, 232, 0.3) transparent;
   }
 }
 /* 列表项 */
@@ -383,14 +408,14 @@ export default {
   display: flex;
   position: relative;
   align-items: baseline;
-  padding: .12rem .1rem;
+  padding: 0.12rem 0.1rem;
   box-sizing: border-box;
   justify-content: space-between;
   .each_item {
     width: 100%;
     &.is-being-sel {
       width: 75%;
-    }    
+    }
     .full_name {
       width: 100%;
       display: block;
@@ -399,20 +424,20 @@ export default {
       text-overflow: ellipsis;
     }
     .shor_name {
-      font-size: .1rem;
+      font-size: 0.1rem;
     }
   }
   .tips_part {
     color: #757575;
-    font-size: .1rem;
+    font-size: 0.1rem;
     .tips_word {
-      padding: .02rem;
-      border-radius: .3rem;
+      padding: 0.02rem;
+      border-radius: 0.3rem;
       background: #e8e8e8;
     }
   }
   .active {
-    color: #006DFF;
+    color: #006dff;
     font-weight: bold;
   }
 }

@@ -82,7 +82,7 @@ let tokenService = {
         },
         data: {
           password: '123456',
-          userCode: '15399909500'
+          userCode: 'jiangxing'
         }
       };
       fly.request(params, params.data).then(res => {

@@ -221,14 +221,14 @@
   .sj-apply-container {
     .SJ_group {
 
-      /deep/ > .vux-label {
+      .vux-label {
         color: #5077aa;
         font-weight: bold;
       }
-      /deep/ > .vux-no-group-title {
+      .vux-no-group-title {
         margin-top: 0.08rem;
       }
-      /deep/> .weui-cells {
+      .weui-cells {
         font-size: .16rem;
         .vux-tap-active {
           .vux-label {
@@ -244,7 +244,7 @@
         &:before{
           left: 0;
         }
-        /deep/ >.weui-cell {
+        .weui-cell {
           padding: 10px 0;
         }
       }

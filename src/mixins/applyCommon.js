@@ -576,7 +576,7 @@ export default {
               dealerConfig = [...dealerConfig, ...item.items]
             }
             // 既不是 “往来段落” 也不是 “物料段路”
-            if (item.name === 'pb' || item.name === 'projectApproval' || item.name === 'projectPlanTask' || item.name === 'jobLog') {
+            if (item.name === 'pb' || item.name === 'projectApproval' || item.name === 'projectPlanTask' || item.name === 'jobLog' || item.name === 'ck') {
               otherConfig = item.items;
             }
             // 请注意 此处也有可能会存放 往来相关 配置

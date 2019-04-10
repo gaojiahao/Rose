@@ -171,6 +171,25 @@ export default {
         if (typeof(this.formData[key]) === 'string' && this.formData[key].indexOf(' ') >= 0) {
           this.formData[key] = this.formData[key].replace(/\s/g, '');
         }
+        //处理跟进人编码问题
+        if(key == 'followPeople') {
+          console.log(this.formData[key]);
+          console.log('ee',this.otherConfig);
+          for(let i in this.otherConfig) {
+            if(this.otherConfig[i].fieldCode == 'followPeople') {
+              for(let j in this.otherConfig[i].remoteData) {
+                if(this.otherConfig[i].remoteData[j].name == this.formData[key]) {
+                  //console.log('aa',this.formData[key]);
+                  //console.log('bb',this.otherConfig[i].remoteData[j].name);
+                  //console.log('cc',this.otherConfig[i].remoteData);                  
+                  //console.log('gg',this.otherConfig[i].remoteData[j].DEALER_CODE);
+                  this.formData[key] = this.otherConfig[i].remoteData[j].DEALER_CODE;
+                  break;
+                }
+              }
+            }
+          }
+        }
       }
       let warn = '';
       if (Object.keys(this.dealerParams).length && !this.dealerInfo.dealerCode) {
@@ -252,6 +271,26 @@ export default {
           ...this.formData,
           ...formData
         };
+        console.log('AAA',this.formData);
+        console.log('BBB',this.otherConfig);
+        for (let key in this.formData) {
+          console.log('EE',this.formData[key]);
+          for(let i in this.otherConfig) {
+            if(this.otherConfig[i].fieldCode == 'followPeople') {
+              for(let j in this.otherConfig[i].remoteData) {
+                if(this.otherConfig[i].remoteData[j].name == this.formData[key]) {
+                  console.log('aa',this.formData[key]);
+                  console.log('bb',this.otherConfig[i].remoteData[j].name);
+                  console.log('cc',this.otherConfig[i].remoteData);                  
+                  console.log('gg',this.otherConfig[i].remoteData[j].DEALER_NAME);
+                  this.formData[key] = this.otherConfig[i].remoteData[j].DEALER_NAME;
+                  break;
+                }
+              }
+            }
+          }
+        }
+        console.log('bbb',this.formData);
         this.dealerInfo = {
           dealerCode: formData.productDealerCode,  // 往来编码
           address: formData.address_productDealerCode, // 往来地址

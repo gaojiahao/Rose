@@ -23,12 +23,8 @@
         <div class="cost_amount">
           <slot name="cost_info" :mItem="mItem">
             <div class="each_amount">
-              <span class="money">￥{{mItem.noTaxAmount | numberComma}}</span>
-              <span class="title">抵扣后金额</span>
-            </div>
-            <div class="each_amount">
-              <span class="money">￥{{mItem.taxAmount | numberComma}}</span>
-              <span class="title">可抵扣税金</span>
+              <span class="money">{{mItem.fundName_cashOutCode}}</span>
+              <span class="title">资金账户名称</span>
             </div>
             <div class="each_amount">
               <span class="money">￥{{mItem.tdAmount | numberComma}}</span>
