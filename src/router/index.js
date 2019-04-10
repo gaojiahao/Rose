@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import option from 'views/option'
 import Home from 'views/home'
-import Login from 'views/login'
 import saleReport from 'views/sale_report'
 import myRecord from 'views/my_record'
 import count from 'views/count'
@@ -23,12 +22,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Login',
-      component: Login,
-      // redirect: '/Login',
-      meta: {
-        title: '登录'
-      }
+      redirect: '/Home',
     },
     {
       path: '/option',
@@ -143,7 +137,7 @@ export default new Router({
     },
     {
       path: '*',
-      redirect: '/Login'
+      redirect: '/Home'
     }
   ]
 })
