@@ -1,6 +1,7 @@
 import { querystring } from 'vux'
 import { corpid, secret, agentid, redirect_uri } from '@/plugins/ajax/conf'
 import Fly from 'flyio/dist/npm/fly'
+import router from '../router';
 
 const fly = new Fly();
 const ROSE_TOKEN_KEY = 'ROSE_LOGIN_TOKEN';
@@ -30,8 +31,8 @@ let tokenService = {
       token: data.token
     }));
   },
-  // 检查是否登录
-  checkLogin() {
+  // 获取token
+  getToken() {
     let token = JSON.parse(window.sessionStorage.getItem(ROSE_TOKEN_KEY)) || {};
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
     if (token['token']) {
@@ -52,21 +53,20 @@ let tokenService = {
   login() {
     // 清楚token缓存
     this.clean();
-    // 获取当前域名
-    let nowUrl = location.origin;
+    let query = querystring.parse(location.search.slice(1));
+    let code = query.code;
     // 是否为企业微信客户端
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
 
     // 根据环境不同 调用不同的登录接口
-    if (nowUrl.includes('192.168.3.') || nowUrl.includes('localhost')) {
-      console.log('当前为测试环境');
-      return this.pcLogin();
-    } else {
-      if (isQYWX) {
+    if (isQYWX) {
+      if(code != null){
         return this.QYWXLogin();
       } else {
         window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redirect_uri}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
       }
+    } else {
+      router.push({path:'/login'});
     }
   },
   // PC端登录，默认返回token
