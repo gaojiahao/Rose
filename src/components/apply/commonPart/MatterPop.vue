@@ -73,6 +73,10 @@
               <r-picker class="picker vux-1px-b" :title="eItem.text" :data="eItem.remoteData" v-model="chosenMatter[eItem.fieldCode]"
                         :required="!eItem.allowBlank" placeholder="请选择" v-if="eItem.editorType === 'r2Combo'">
               </r-picker>
+              <!-- 下拉框plus -->
+              <r-picker class="picker vux-1px-b" :title="eItem.text" :data="eItem.remoteData" v-model="chosenMatter[eItem.fieldCode]"
+                        :required="!eItem.allowBlank" placeholder="请选择" v-if="eItem.editorType === 'r2SelectorPlus'" @sel-matter="selMatter">
+              </r-picker>
             </template>
             <!--字段不可编辑-->
             <template v-else>
@@ -207,6 +211,7 @@
       // 监听用于根据（生产日期+保质期天数）计算有效期
       chosenMatter: {
         handler(val) {
+          console.log('val',val);
           if (val.productionDate && val.keepingDays) {
             let productionDate = new Date(val.productionDate).getTime(),
             day = 24 * 3600 * 1000;
@@ -293,6 +298,9 @@
       //输入框获取焦点时内容选中
       getFocus(e) {
         event.currentTarget.select();
+      },
+      selMatter(val) {
+        console.log('aa',val);
       }
     }
   }
