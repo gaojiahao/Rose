@@ -475,7 +475,8 @@ export default {
         if (item.fieldCode === 'assMeasureUnit' && !item.readOnly) {
           editMatterPopConfig.editPart.push(item);
         }
-        else if (item.fieldCode === 'drDealerLabel' || item.fieldCode === 'tdQty' || item.fieldCode === 'qualityQty' || item.fieldCode === "qtyDownline") {
+        else if (item.fieldCode === 'drDealerLabel' || item.fieldCode === 'tdQty' || item.fieldCode === 'qualityQty' || item.fieldCode === "qtyDownline" 
+        || item.fieldCode === "warehouseName_containerCodeOut" || item.fieldCode === "warehouseName_storehouseOutCode" || item.fieldCode === "storehouseOutCode") {
           editMatterPopConfig.property = editMatterPop.slice(0, index);
           editMatterPopConfig.editPart = [...editMatterPopConfig.editPart, ...editMatterPop.slice(index)]
           break;
@@ -732,6 +733,32 @@ export default {
                 })
               }
             }
+            //r2SelectorPlus
+            else if (item.editorType === 'r2SelectorPlus' && !item.readOnly) {
+              let url = item.dataSource.data.url,
+                  params = item.dataSource.data.params,
+                  keys = Object.keys(params),
+                  requestParams = {url};
+              if (keys.length) {
+                let data = {};
+                keys.forEach(key => {
+                  data[key] = params[key].value;
+                })
+                requestParams.data = data;
+              }
+              if (item.fieldCode.includes('warehouse')) {
+                requestData(requestParams).then(({tableContent = []}) => {
+                  let arr = [];
+                  tableContent.forEach(item => {
+                    item.name = item.warehouseName;
+                    item.value = item.warehouseCode;
+                    item.parent = index;
+                    arr.push(item);
+                  })
+                  item.remoteData = [arr];
+                })
+              }
+            }
           }
           else if (item.dataSource && item.dataSource.type === 'staticData') {
             let remoteData = []
@@ -841,7 +868,7 @@ export default {
               this.dealerParams = this.handlerParams(item);
             }
             // 处理 重复项 或者 其他单选类型 
-            if ((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo') && item.dataSource && item.dataSource.type === 'remoteData') {
+            if ((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo' || item.xtype === "r2Selector") && item.dataSource && item.dataSource.type === 'remoteData') {
               item.requestParams = this.handlerParams(item);
               // 因为联系人已单独作为组件存在 此处不需提前请求 
               if (item.fieldCode !== 'dealerDebitContactPersonName') {
