@@ -66,11 +66,15 @@ let tokenService = {
         window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redirect_uri}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
       }
     } else {
-      router.push({path:'/login'});
+     // router.push({path:'/login'});
+      router.push('/login');
+      return new Promise((resolve, reject)=>{
+
+      })
     }
   },
   // PC端登录，默认返回token
-  pcLogin(key = 'token') {
+  pcLogin(userCode, password, key = 'token') {
     console.log('进入pc了')
     return new Promise((resolve, reject) => {
       let params = {
@@ -81,8 +85,10 @@ let tokenService = {
           'Content-Type': 'application/json',
         },
         data: {
-          password: '123456',
-          userCode: 'jiangxing'
+          // password: '123456',
+          // userCode: 'jiangxing',
+          password: password,
+          userCode: userCode
         }
       };
       fly.request(params, params.data).then(res => {

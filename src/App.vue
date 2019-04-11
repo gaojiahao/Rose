@@ -7,7 +7,7 @@
     <router-view v-if="!$route.meta.keepAlive"></router-view>
 
     <!-- 底部导航栏 -->
-    <nav class="tabs vux-1px-t">
+    <nav class="tabs vux-1px-t" v-if="this.$route.path != '/login'">
       <router-link class="tab" v-for="(tab, index) in tablist" :to="tab.path" :key='index'>
         <span class="tabicon iconfont" :class="tab.icon"></span>
         <span class="title">{{tab.title}}</span>
