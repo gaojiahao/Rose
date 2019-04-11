@@ -60,7 +60,11 @@ let tokenService = {
     // 根据环境不同 调用不同的登录接口
     if (nowUrl.includes('192.168.3.') || nowUrl.includes('localhost')) {
       console.log('当前为测试环境');
-      return this.pcLogin();
+      // return this.pcLogin();
+      router.push('/login');
+      return new Promise((resolve, reject)=>{
+
+      })
     } else {
       if (isQYWX) {
         return this.QYWXLogin();
@@ -70,7 +74,7 @@ let tokenService = {
     }
   },
   // PC端登录，默认返回token
-  pcLogin(key = 'token') {
+  pcLogin(userCode, password, key = 'token') {
     console.log('进入pc了')
     return new Promise((resolve, reject) => {
       let params = {
@@ -81,8 +85,10 @@ let tokenService = {
           'Content-Type': 'application/json',
         },
         data: {
-          password: '123456',
-          userCode: 'jiangxing'
+          // password: '123456',
+          // userCode: 'jiangxing',
+          password: password,
+          userCode: userCode
         }
       };
       fly.request(params, params.data).then(res => {

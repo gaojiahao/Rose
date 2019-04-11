@@ -5,12 +5,16 @@ import MsgRouter from '@/msg/router'
 
 Vue.use(Router)
 
-let router = new Router({
-  mode:'history',
-  base:'/Hermes',
-  routes: [
-    ...HomeRouter,
-    ...MsgRouter
-  ]
-})
-export default router
+let router = window.router;
+if (router == null) {
+  window.router =  new Router({
+    mode:'history',
+    base:'/Hermes',
+    routes: [
+      ...HomeRouter,
+      ...MsgRouter
+    ]
+  })
+}
+
+export default window.router
