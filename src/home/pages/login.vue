@@ -42,6 +42,9 @@ export default {
                 });
             });
         }
+    },
+    created() {
+        this.$loading.hide();
     }
 }
 </script>

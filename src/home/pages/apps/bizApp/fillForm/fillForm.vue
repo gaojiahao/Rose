@@ -52,7 +52,8 @@ export default {
     this.currentComponent = require(`components/apply/${folder}/${fileName}Apply.vue`).default;
   },
   beforeRouteLeave(to, from, next) {
-    if (this.$refs.fillPage.hasDraftData) {
+    let fillPage = this.$refs.fillPage;
+    if (fillPage && fillPage.hasDraftData) {
       this.saveData = this.$refs.fillPage.hasDraftData() || {};
     }
     let {path} = to;
