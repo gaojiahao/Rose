@@ -252,13 +252,14 @@ export default {
         // 仓库基本信息配置的处理
         warehouseConfig.forEach(item => {
           // 默认显示员工，（渠道商，组织等隐藏）
+          var fieldCodeFilter = ['warehouseCode','warehouseName','warehousePic','warehouseProvince','warehouseCity','warehouseDistrict',
+          'warehouseAddress','warehouseStatus']
+          if(item.xtype == 'r2Spacer')return;
           if (!item.hiddenInRun){
             // 在渲染的配置中添加字段
-            if (item.fieldCode !== 'warehouseCode' && item.fieldCode !== 'warehouseName' && item.fieldCode !== 'warehousePic'
-              && item.fieldCode !== 'warehouseProvince' && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'
-              && item.fieldCode !== 'warehouseAddress' && item.fieldCode !== 'warehouseStatus'){
-              this.warehouseConfig.push(item);
-            }
+            if (fieldCodeFilter.indexOf(item.fieldCode) == -1){
+                this.warehouseConfig.push(item);
+            }           
           }
         })
         warehouseMultipleConfig.forEach(item => {
@@ -325,6 +326,7 @@ export default {
         this.warehouse = warehouse;      
         this.typeSub = this.typeToSubMap[this.warehouse.warehouseType]
         for (let item of this.warehouseConfig){
+          console.log(item);
           if (item.fieldCode === this.typeSub){
             item.hiddenInRun = false;
           }
