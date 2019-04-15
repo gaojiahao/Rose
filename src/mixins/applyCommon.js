@@ -573,7 +573,7 @@ export default {
           // 处理表单配置 <非重复项渲染> 部分
           if (!item.hiddenInRun && !item.isMultiple) {
             // 往来段落 配置
-            if (item.name === 'kh' || item.name === 'inPut' || item.name === 'gys') {
+            if (item.name === 'kh' || item.name === 'inPut' || item.name === 'gys' || item.name === 'outPut') {
               dealerConfig = [...dealerConfig, ...item.items]
             }
             // 既不是 “往来段落” 也不是 “物料段路”
@@ -998,7 +998,7 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      if(this.$refs.fill != null)this.fillBscroll = new Bscroll(this.$refs.fill, {
+      this.fillBscroll = new Bscroll(this.$refs.fill, {
         click: true
       })
     })
