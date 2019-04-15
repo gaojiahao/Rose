@@ -131,6 +131,7 @@ export default {
             if (item.fieldCode === 'project'){
               for (let dItem of item.remoteData){
                 if (dItem.name === val.project){
+                  this.project.projectType_project = dItem.PROJECT_TYPE;
                   this.project.dealerName_projectManager = dItem.projectManagerName;
                   this.project.expectStartDate_project = dItem.expectStartDate;
                   this.project.expectEndDate_project = dItem.expectEndDate;

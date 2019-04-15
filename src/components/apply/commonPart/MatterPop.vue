@@ -75,7 +75,7 @@
               </r-picker>
               <!-- 下拉框plus -->
               <r-picker class="picker vux-1px-b" :title="eItem.text" :data="eItem.remoteData" v-model="chosenMatter[eItem.fieldCode]"
-                        :required="!eItem.allowBlank" placeholder="请选择" v-if="eItem.editorType === 'r2SelectorPlus'" @sel-matter="selMatter">
+                        :required="!eItem.allowBlank" placeholder="请选择" v-if="eItem.editorType === 'r2SelectorPlus'">
               </r-picker>
             </template>
             <!--字段不可编辑-->
@@ -212,6 +212,61 @@
       chosenMatter: {
         handler(val) {
           console.log('val',val);
+          if(val.warehouseName_containerCodeOut) {
+            for (let dItem of this.config.editPart){
+              if (dItem.fieldCode == "warehouseName_containerCodeOut"){
+                for(var i=0 ;i < dItem.remoteData[0].length; i++){
+                  if(val.warehouseName_containerCodeOut == dItem.remoteData[0][i].warehouseCode) {
+                    this.chosenMatter.containerCodeOut = dItem.remoteData[0][i].warehouseCode;
+                    //this.chosenMatter.warehouseName_containerCodeOut = dItem.remoteData[0][i].warehouseName;
+                    break;
+                  }
+                }
+                break;
+              }
+            }
+          }
+          //处理库区信息
+          for(let dItem of this.config.editPart){
+            if(dItem.fieldCode == 'warehouseName_storehouseOutCode') {
+              console.log(dItem.dataSource);
+              let url =dItem.dataSource.data.url,
+                  params = dItem.dataSource.data.params,
+                  keys = Object.keys(params),
+                  requestParams = {url};
+              if (keys.length) {
+                let data = {};
+                keys.forEach(key => {
+                  data[key] = params[key].value;
+                })
+                requestParams.data = data;
+              }
+              console.log(requestParams.data);
+            }
+          }
+          // let url = item.dataSource.data.url,
+          //     params = item.dataSource.data.params,
+          //     keys = Object.keys(params),
+          //     requestParams = {url};
+          // if (keys.length) {
+          //   let data = {};
+          //   keys.forEach(key => {
+          //     data[key] = params[key].value;
+          //   })
+          //   requestParams.data = data;
+          // }
+          // if (item.fieldCode.includes('warehouse')) {
+          //   requestData(requestParams).then(({tableContent = []}) => {
+          //     let arr = [];
+          //     tableContent.forEach(item => {
+          //       item.name = item.warehouseName;
+          //       item.value = item.warehouseCode;
+          //       item.parent = index;
+          //       arr.push(item);
+          //     })
+          //     item.remoteData = [arr];
+          //   })
+          // }
           if (val.productionDate && val.keepingDays) {
             let productionDate = new Date(val.productionDate).getTime(),
             day = 24 * 3600 * 1000;
@@ -299,9 +354,6 @@
       getFocus(e) {
         event.currentTarget.select();
       },
-      selMatter(val) {
-        console.log('aa',val);
-      }
     }
   }
 </script>

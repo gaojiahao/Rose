@@ -225,7 +225,13 @@
              if (item.fieldCode === 'project'){
                for (let dItem of item.remoteData){
                  if (dItem.name === val.project){
-                   this.project.projectType_project = dItem.PROJECT_TYPE;
+                    this.project.projectType_project = dItem.PROJECT_TYPE;
+                    this.project.dealerName_projectManager = dItem.projectManagerName;
+                    this.project.expectStartDate_project = dItem.expectStartDate;
+                    this.project.expectEndDate_project = dItem.expectEndDate;
+                    this.project.projectAddress_project = dItem.address;
+                    this.project.budgetIncome_project = dItem.budgetIncome;
+                    this.project.tdProjectId_project = dItem.projectApprovalId;
                    break
                  }
                }
@@ -308,7 +314,10 @@
               warn = `${sItem.text}不为空`
               break;
             }
-            oItem[sItem.fieldCode] = item[sItem.fieldCode] != null ? item[sItem.fieldCode] : null
+            if(sItem.fieldCode != 'project' && sItem.fieldCode != 'tdProjectId_project' && sItem.fieldCode != 'dealerName_projectManager' && sItem.fieldCode != 'expectStartDate_project' && 
+               sItem.fieldCode != 'expectEndDate_project' && sItem.fieldCode != 'projectAddress_project' && sItem.fieldCode != 'budgetIncome_project') {
+              oItem[sItem.fieldCode] = item[sItem.fieldCode] != null ? item[sItem.fieldCode] : null
+            }
           }
           dataSet.push(oItem);
         }
@@ -336,6 +345,13 @@
               },
               order: {
                 project: this.project.project,
+                tdProjectId_project: this.project.tdProjectId_project,
+                projectType_project: this.project.PROJECT_TYPE,
+                dealerName_projectManager: this.project.dealerName_projectManager,
+                expectStartDate_project: this.project.expectStartDate_project,
+                expectEndDate_project: this.project.expectEndDate_project,
+                projectAddress_project: this.project.projectAddress_project,
+                budgetIncome_project: this.project.budgetIncome_project,
                 departmentName: this.formData.handlerUnitName,
                 dataSet,
               },
@@ -457,7 +473,12 @@
           }
           this.project = {
             project: order.project,
-            projectType_project: order.projectType_project
+            projectType_project: order.projectType_project,
+            dealerName_projectManager: order.dealerName_projectManager,
+            expectStartDate_project: order.departmentName,
+            expectEndDate_project: order.expectEndDate_project,
+            projectAddress_project: order.expectStartDate_project,
+            budgetIncome_project: order.projectAddress_project
           }
           this.biReferenceId = formData.biReferenceId;
           this.$loading.hide();

@@ -4,7 +4,7 @@
       <div class='user-content' v-if="dealerInfo.dealerCode">
         <div class="user-info">
           <div class="user-name">
-            <span>{{dealerInfo.dealerName}}</span>
+            <span>{{dealerInfo.dealerName || dealerInfo.nickname}}</span>
           </div>
           <div class="cp-info">
             <span class="icon-dealer-address"></span>
@@ -41,7 +41,7 @@
                    :key="index" @click.stop="selDealer(item, index)">
                 <img class="dealer_img" :src="require('assets/default/company2.png')" alt="dealer_img">
                 <div class="dealer_main">
-                  <div class="dealer_name">{{item.dealerName}}</div>
+                  <div class="dealer_name">{{item.dealerName || item.nickname}}</div>
                   <div class="dealer_address">{{item.dealerAddress}}</div>
                   <div class="dealer_detail">
                     <div class="dealer_phone_wrapper">
