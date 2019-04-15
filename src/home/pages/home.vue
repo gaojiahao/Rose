@@ -174,8 +174,11 @@ export default {
       // 获取首页应用列表
       await homeService.getMeau().then(res => {
         let BUSobj = this.BUSobj;
+
         for (let val of res) {
-          BUSobj[val.text] = [];
+          BUSobj[val.text] = [];//分类
+
+          //item 应用
           for (let item of val.children) {
             // 基础对象应用需 根据映射表 单独处理
             if (basicMap[item.listId]) {
@@ -222,6 +225,7 @@ export default {
               }
             }
           }
+
           if (val.folder) {
             this.BusApps.push({
               id: val.id,
@@ -230,6 +234,7 @@ export default {
               appList: { ...BUSobj[val.text] }
             });
           }
+
           this.$loading.hide();
         }
       });
