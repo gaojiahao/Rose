@@ -998,7 +998,7 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.fillBscroll = new Bscroll(this.$refs.fill, {
+      if(this.$refs.fill != null)this.fillBscroll = new Bscroll(this.$refs.fill, {
         click: true
       })
     })

@@ -79,6 +79,7 @@
           }
         }
         this.$nextTick(() => {
+          if(this.$refs.bScroll == null)return;
           this.bScroll = new BScroll(this.$refs.bScroll, options);
           // 绑定滚动加载事件
           this.bScroll.on('pullingUp', () => {

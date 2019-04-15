@@ -1,4 +1,5 @@
 import HOME from '../pages/home'
+import Login from '../pages/login'
 
 // ------> 基础应用 <-------
 import ADRESS from '../pages/apps/basicApp/dealer/adressList'
@@ -26,6 +27,15 @@ import ADDADMINCOMMENT from '../pages/apps/bizApp/appDetail/addAdminComment.vue'
 export default [
   { path: '/home', name: 'HOME', component: HOME,
   meta:{ title:'首页' , keepAlive: true} },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login,
+    // redirect: '/Login',
+    meta: {
+      title: '登录'
+    }
+  },
   {
     path: '/commentList',
     name: 'COMMENTLIST',

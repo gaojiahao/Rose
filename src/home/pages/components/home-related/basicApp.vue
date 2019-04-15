@@ -38,6 +38,16 @@ export default {
       type: Function,
       require : true
     }
+  },
+  methods:{
+    // 设置默认图片
+    getDefaultIcon(app){
+      let url = require('assets/defaultApp.png');
+      if (app){
+        app.icon = url;
+      }
+      return url;
+    }
   }
 }
 </script>
