@@ -1,6 +1,7 @@
 import { querystring } from 'vux'
 import { corpid, secret, agentid, redirect_uri } from '@/plugins/ajax/conf'
 import Fly from 'flyio/dist/npm/fly'
+import * as dd from 'dingtalk-jsapi'
 import router from '../router';
 
 const fly = new Fly();
@@ -65,6 +66,8 @@ let tokenService = {
       } else {
         window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redirect_uri}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
       }
+    } else if (dd.ios || dd.android) {
+      return this.DDLogin();
     } else {
      // router.push({path:'/login'});
       router.push('/login');
@@ -142,6 +145,45 @@ let tokenService = {
           success: false,
           message: message
         })
+      });
+    })
+  },
+  DDLogin(key = 'token') {
+    return new Promise((resolve, reject) => {
+      dd.ready(function () {
+        dd.runtime.permission.requestAuthCode({
+          corpId: 'ding3ab6e5b6f4cecf64', // 企业id
+          onSuccess: function (info) {
+            let code = info.code;
+            fly.get(`/H_roleplay-si/ddLogin?code=${code}`).then((res) => {
+              let data = res.data;
+              window.sessionStorage.setItem(ROSE_TOKEN_KEY, JSON.stringify({
+                entityId: data.entityId,
+                token: data.token,
+                name: data.name,
+                department: data.department,
+                avatar: data.avatar,
+                position: data.position,
+                timestamp: +new Date()
+              }));
+              window.localStorage.setItem(PC_RFD_TOKEN_KEY, JSON.stringify({
+                key1: data.key1,
+                active: data.active,
+                entityId: data.entityId,
+                token: data.token
+              }));
+              resolve(data[key])
+            }).catch(function (error) {
+              let res = error.response;
+              let data = (res && res.data) || {};
+              let message = data.message || '请求异常';
+              reject({
+                success: false,
+                message: message
+              })
+            });
+          }
+        });
       });
     })
   }

@@ -185,11 +185,11 @@ export default {
     },
     handleCfg:function(config,reconfig){
         let newCfg = { 
-              dealerConfig:[], 
-              matterConfig:[], 
-              otherConfig:[], 
-              baseinfoExtConfig:[], 
-              fundConfig:[]
+                dealerConfig:[], 
+                otherConfig:[], 
+                baseinfoExtConfig:[], 
+                fundConfig:[],
+                matterConfig:[]
             },
             cfgMap = {},
             containerCodeObj = {
