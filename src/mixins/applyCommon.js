@@ -288,7 +288,7 @@ export default {
         })
         this.baseinfoExtConfig = baseinfoExt;
     },
-    handleDealerCfg(dealerConfig){
+    handleDealerCfg(dealerConfig,dealerFilter){
         
         // 处理往来配置里面的接口请求
         let blankDealerConfig = [];
