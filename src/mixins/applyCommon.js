@@ -949,10 +949,10 @@ export default {
       })
       // 根据uniqueId 请求表单配置
       await getFormConfig(this.viewId).then((data) => {
-        let matterCols = [], { config, reconfig = {} } = data;
+        let matterCols = [], { config, reconfig = {},dataSource} = data;
         // 处理将数据源配置在data中的情况
-        if (data.dataSource) {
-          this.handleAccountDS(data.dataSource,matterCols);
+        if (dataSource) {
+          this.handleAccountDS(dataSource,matterCols);
         }
         console.log('config:', config);
         let {dealerConfig,matterConfig,otherConfig,baseinfoExtConfig,fundConfig} = this.handleCfg(config,reconfig);
