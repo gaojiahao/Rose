@@ -226,7 +226,7 @@ export default {
             type = cfgMap[item.name];
             if(type != null){
                ct = newCfg[type];
-               ct = ct.length ? ct.concat(item.items) : item.items;
+               newCfg[type] = ct.length ? ct.concat(item.items) : item.items;
             }
           }
           // 处理表单配置 <重复项渲染> 部分
@@ -583,8 +583,9 @@ export default {
     handleAccountDS:function(ds,matterCols){
       let dataSource = JSON.parse(JSON.parse(ds)[0].dataSource.source);
       if (dataSource) {
-
-        matterCols = dataSource.cols;
+         dataSource.cols.map(function(item){
+            matterCols.push(item);
+        });
         // 请求数据 组合要渲染的matterList配置
         let url = dataSource.url,
             params = dataSource.params,
