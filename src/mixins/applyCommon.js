@@ -454,19 +454,17 @@ export default {
           if (item.editorType === 'r2Selector') {
             let hiddenField = JSON.parse(JSON.stringify(item.dataSource.data.hFields));
             hiddenField.unshift('transCode','inventoryName', 'inventoryCode', 'specification','invName','matCode','facilityName', 'facilityCode', 'facilitySpecification')
-            let matterPopField = JSON.parse(JSON.stringify(item.proertyContext.dataSourceCols));
+            let matterPopField = [],
+                dsCols = JSON.parse(JSON.stringify(item.proertyContext.dataSourceCols));
+
             // 循环删除要隐藏的字段
-            hiddenField.forEach(hItem => {
-              matterPopField.forEach((item, index) => {
-                if (item.k === 'transCode') {
-                  this.matterPopOrderTitle = item.v;
-                }
-                if (item.k === hItem) {
-                  matterPopField.splice(index, 1)
-                  index --;
-                  return false
-                }
-              })
+            dsCols.forEach((item, index) => {
+              if (item.k === 'transCode') {
+                this.matterPopOrderTitle = item.v;
+              }
+              if (hiddenField.indexOf(item.k) == -1) {
+                  matterPopField.push(item);
+              }
             })
             this.matterPopConfig = matterPopField;
           }
