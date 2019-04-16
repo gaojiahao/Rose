@@ -98,7 +98,7 @@
         </div>
         <!-- 工序popup -->
         <pop-work-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
-                        @sel-work="selWork" ref="matter"></pop-work-list>
+                        @sel-item="selWork" ref="matter"></pop-work-list>
         <pop-manager-list :show="showManagerPop" v-model="showManagerPop" @sel-item="selManager"
                           :defaultValue="defaultManager[managerIndex]"></pop-manager-list>
         <pop-work-facility-list :show="showFacilityPop" v-model="showFacilityPop" @sel-item="selFacility"
@@ -201,7 +201,7 @@ export default {
     },
     // 选择工序
     selWork(val) {
-      this.workInfo = JSON.parse(val);
+      this.workInfo = val;
       this.workInfo.forEach((item, index) => {
         // 数量赋初始值
         item.tdQty = item.thenQtyBal;
@@ -229,7 +229,7 @@ export default {
     },
     // 选择组长
     selManager(val) {
-      let selItem = JSON.parse(val);
+      let selItem = val;
       this.defaultManager[this.managerIndex] = selItem;
       this.workInfo[this.managerIndex].dealerName_dealerDebit = selItem.dealerName;
 			this.workInfo[this.managerIndex].dealerDebit = selItem.dealerCode;
