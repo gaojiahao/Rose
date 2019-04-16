@@ -184,11 +184,35 @@ export default {
       })
     },
     handleCfg:function(config,reconfig){
-        let dealerConfig = [], matterConfig = [], 
-            otherConfig = [], baseinfoExtConfig = [], fundConfig = [];
+        let newCfg = { 
+                dealerConfig:[], 
+                otherConfig:[], 
+                baseinfoExtConfig:[], 
+                fundConfig:[],
+                matterConfig:[]
+            },
+            cfgMap = {},
+            containerCodeObj = {
+              dealerConfig:['kh','inPut','gys','outPut'], // 往来段落 配置
+              otherConfig:['pb','projectApproval','projectPlanTask','jobLog','ck'],// 既不是 “往来段落” 也不是 “物料段路”
+              baseinfoExtConfig:['baseinfoExt'], // 请注意 此处也有可能会存放 往来相关 配置
+              fundConfig:['order']// 用于借款与备用金
+            },
+            type,
+            codes,
+            code,
+            i,l;
 
+        for(type in containerCodeObj){
+           codes = containerCodeObj[type];
+           for(i=0,l = codes.length;i<l;i++){
+              code = codes[i];
+              cfgMap[code] = type;
+           }
+        }
         // 从请求回来的配置中拆分往来，物料，其他段落的配置
         config.forEach(item => {
+           var ct;
           // 覆盖配置
           if (item.formViewPartId) {
             let reconfigData = reconfig[`_${item.formViewPartId}`] || {};
@@ -199,37 +223,26 @@ export default {
           }
           // 处理表单配置 <非重复项渲染> 部分
           if (!item.hiddenInRun && !item.isMultiple) {
-            // 往来段落 配置
-            if (item.name === 'kh' || item.name === 'inPut' || item.name === 'gys' || item.name === 'outPut') {
-              dealerConfig = [...dealerConfig, ...item.items]
-            }
-            // 既不是 “往来段落” 也不是 “物料段路”
-            if (item.name === 'pb' || item.name === 'projectApproval' || item.name === 'projectPlanTask' || item.name === 'jobLog' || item.name === 'ck') {
-              otherConfig = item.items;
-            }
-            // 请注意 此处也有可能会存放 往来相关 配置
-            if (item.name === 'baseinfoExt') {              
-              baseinfoExtConfig = [...baseinfoExtConfig, ...item.items];
-            }
-            // 用于借款与备用金
-            if (item.name === 'order') {
-              fundConfig = item.items
+            type = cfgMap[item.name];
+            if(type != null){
+               ct = newCfg[type];
+               newCfg[type] = ct.length ? ct.concat(item.items) : item.items;
             }
           }
           // 处理表单配置 <重复项渲染> 部分
           else if (!item.hiddenInRun && item.isMultiple) {
             if (item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
-              matterConfig = item.items;
+              newCfg.matterConfig = item.items;
               if (item.dataIndexMap) {
                 this.dataIndexMap = item.dataIndexMap;
               }
             }
           }
         })
-        return {dealerConfig,matterConfig,otherConfig,baseinfoExtConfig,fundConfig};
+        return newCfg;
     },
     // 处理 baseInfoExt 相关配置
-    handleBaseinfoExtCfg(baseinfoExtConfig){    
+    handleBaseinfoExtCfg(baseinfoExtConfig,dealerFilter){    
         let baseinfoExt = [];
         baseinfoExtConfig.forEach(item => {
           // 处理提交字段
@@ -275,21 +288,8 @@ export default {
         })
         this.baseinfoExtConfig = baseinfoExt;
     },
-    handleDealerCfg(dealerConfig){
-        // 由于往来组件已经单独定义 此处需要过滤部分字段
-        let dealerFilter = [
-          'dealerDebit', 
-          'drDealerLabel', 
-          'crDealerLabel', 
-          'dealerCodeCredit', 
-          'address_dealerDebit', 
-          'dealerName_dealerDebit',
-          'address_dealerCodeCredit', 
-          'dealerDebitContactPersonName',
-          'dealerDebitContactInformation',
-          'dealerCreditContactPersonName', 
-          'dealerCreditContactInformation'
-        ];
+    handleDealerCfg(dealerConfig,dealerFilter){
+        
         // 处理往来配置里面的接口请求
         let blankDealerConfig = [];
         // 组合 往来部分 配置
@@ -454,19 +454,17 @@ export default {
           if (item.editorType === 'r2Selector') {
             let hiddenField = JSON.parse(JSON.stringify(item.dataSource.data.hFields));
             hiddenField.unshift('transCode','inventoryName', 'inventoryCode', 'specification','invName','matCode','facilityName', 'facilityCode', 'facilitySpecification')
-            let matterPopField = JSON.parse(JSON.stringify(item.proertyContext.dataSourceCols));
+            let matterPopField = [],
+                dsCols = JSON.parse(JSON.stringify(item.proertyContext.dataSourceCols));
+
             // 循环删除要隐藏的字段
-            hiddenField.forEach(hItem => {
-              matterPopField.forEach((item, index) => {
-                if (item.k === 'transCode') {
-                  this.matterPopOrderTitle = item.v;
-                }
-                if (item.k === hItem) {
-                  matterPopField.splice(index, 1)
-                  index --;
-                  return false
-                }
-              })
+            dsCols.forEach((item, index) => {
+              if (item.k === 'transCode') {
+                this.matterPopOrderTitle = item.v;
+              }
+              if (hiddenField.indexOf(item.k) == -1) {
+                  matterPopField.push(item);
+              }
             })
             this.matterPopConfig = matterPopField;
           }
@@ -583,8 +581,9 @@ export default {
     handleAccountDS:function(ds,matterCols){
       let dataSource = JSON.parse(JSON.parse(ds)[0].dataSource.source);
       if (dataSource) {
-
-        matterCols = dataSource.cols;
+         dataSource.cols.map(function(item){
+            matterCols.push(item);
+        });
         // 请求数据 组合要渲染的matterList配置
         let url = dataSource.url,
             params = dataSource.params,
@@ -950,6 +949,20 @@ export default {
       // 根据uniqueId 请求表单配置
       await getFormConfig(this.viewId).then((data) => {
         let matterCols = [], { config, reconfig = {},dataSource} = data;
+        // 由于往来组件已经单独定义 此处需要过滤部分字段
+        let dealerFilter = [
+          'dealerDebit', 
+          'drDealerLabel', 
+          'crDealerLabel', 
+          'dealerCodeCredit', 
+          'address_dealerDebit', 
+          'dealerName_dealerDebit',
+          'address_dealerCodeCredit', 
+          'dealerDebitContactPersonName',
+          'dealerDebitContactInformation',
+          'dealerCreditContactPersonName', 
+          'dealerCreditContactInformation'
+        ];
         // 处理将数据源配置在data中的情况
         if (dataSource) {
           this.handleAccountDS(dataSource,matterCols);
@@ -957,10 +970,10 @@ export default {
         console.log('config:', config);
         let {dealerConfig,matterConfig,otherConfig,baseinfoExtConfig,fundConfig} = this.handleCfg(config,reconfig);
         
-        this.handleDealerCfg(dealerConfig);
+        this.handleDealerCfg(dealerConfig,dealerFilter);
         this.handleMatterCfg(matterConfig,matterCols);
         this.handleOtherCfg(otherConfig);
-        this.handleBaseinfoExtCfg(baseinfoExtConfig);
+        this.handleBaseinfoExtCfg(baseinfoExtConfig,dealerFilter);
         this.handleFundCfg(fundConfig);
       })
     },

@@ -7,7 +7,7 @@
         <span class="status" :class="item.statusClass">{{item.biStatus}}</span>
       </div>
       <div class="order_amount" v-show="isHasCount">
-        <p class="amount">总支付￥{{item.count | toFixed | numberComma(3)}}</p>
+        <p class="amount">总收款￥{{item.count | toFixed | numberComma(3)}}</p>
         <p class="num">共{{item.itemCount}}笔</p>
       </div>
     </div>
@@ -22,10 +22,10 @@
         </div>
         <div class="cost_amount">
           <slot name="cost_info" :mItem="mItem">
-            <!-- <div class="each_amount">
+            <div class="each_amount">
               <span class="money">{{mItem.fundName_cashOutCode}}</span>
               <span class="title">资金账户名称</span>
-            </div> -->
+            </div>
             <div class="each_amount">
               <span class="money">￥{{mItem.tdAmount | numberComma}}</span>
               <span class="title">申请金额</span>
