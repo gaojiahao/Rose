@@ -126,7 +126,7 @@
       selThis(sItem, sIndex) {
         this.showPop = false;
         this.selItems = sItem;
-        this.$emit('sel-item', JSON.stringify(this.selItems));
+        this.$emit('sel-item', this.selItems);
       },
       // 获取默认图片
       getDefaultImg(item) {
