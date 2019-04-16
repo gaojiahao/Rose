@@ -4,11 +4,11 @@
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
+        <!-- <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker> -->
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" dealer-label-name="客户,原厂供应商,经销供应商,设施供应商,投资者,银行,其他"
-                        dealerTitle="往来" :defaultValue="dealerInfo" :defaultContact="contact">
+                        dealerTitle="往来" :defaultValue="dealerInfo" :defaultContact="contact" :dealer-params="dealerParams">
         </pop-dealer-list>
         <!-- 费用列表 -->
         <div class="materiel_list" v-for="(item, index) in CostList" :key='index'>
@@ -43,7 +43,7 @@
         </div>
         <div class="materiel_list">
           <group title="其他信息" class="costGroup">
-            <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
+            <x-textarea title="备注" v-model="formData.biComment" :max="100" class="fontSize"></x-textarea>
           </group>
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
@@ -347,14 +347,14 @@
   @import '~scss/biz-app/bizApply.scss';
 
   .costGroup {
-    /deep/ > .vux-no-group-title {
+    .vux-no-group-title {
       margin-top: 0.08rem;
     }
-    /deep/ > .weui-cells:after {
+    .weui-cells:after {
       border-bottom: none;
     }
     .vux-cell-box {
-      /deep/ > .weui-cell {
+      .weui-cell {
         padding: 10px 0;
       }
       &:before {
@@ -362,15 +362,18 @@
       }
 
     }
-    .weui-cell {
-      padding: 10px 0;
-      &:before {
-        left: 0;
-      }
+    // .weui-cell {
+    //   padding: 10px 0;
+    //   &:before {
+    //     left: 0;
+    //   }
+    // }
+    .required {
+      font-size: .14rem;
     }
   }
 
-  /deep/ > .weui-cells__title {
+  .weui-cells__title {
     padding-left: 0;
     font-size: 0.12rem;
   }
@@ -396,5 +399,8 @@
     em {
       font-style: normal;
     }
+  }
+  .fontSize {
+    font-size: .14rem;
   }
 </style>

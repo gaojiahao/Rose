@@ -23,22 +23,10 @@
                   <span>{{item.inventoryName}}</span>
                   <span class="iconfont icon-shanchu1" @click="deleteClick(index)"></span>
                 </div>
-                <div class="detail-item">
-                  <span class="item-title">订单号:</span>
-                  <span>{{item.transCode}}</span>
-                </div>
-                <div class="detail-item" v-for="(cItem, cIndex) in matterEditConfig.property" :key="cIndex">
-                  <span class="item-title">{{cItem.text}}:</span>
-                  <span>{{item[cItem.fieldCode] || item[cItem.showFieldCode] || "无"}}</span>
-                </div>
-                <div class="detail-item">
-                  <span class="item-title">工艺路线编码:</span>
-                  <span>{{item.proFlowCode|| "无"}}</span>
-                </div>
-                <div class="detail-item" >
-                  <span class="item-title">工艺路线名称:</span>
-                  <span>{{item.technicsName || "无"}}</span>
-                </div>
+                <r-column-item :title="'订单号'" :value="item.transCode"/>
+                <r-column-item :title="cItem.text" :value="item[cItem.fieldCode] || item[cItem.showFieldCode]" v-for="(cItem, cIndex) in matterEditConfig.property" :key="cIndex" />
+                <r-column-item :title="'工艺路线编码'" :value="item.proFlowCode"/>
+                <r-column-item :title="'工艺路线名称'" :value="item.technicsName"/>
               </div>
               <div class="edit_part" v-for="(dItem, dIndex) in matterEditConfig.editPart" :key="dIndex" >
                 <!-- 可编辑的字段 -->
@@ -98,7 +86,7 @@
         </div>
         <!-- 工序popup -->
         <pop-work-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
-                        @sel-work="selWork" ref="matter"></pop-work-list>
+                        @sel-item="selWork" ref="matter"></pop-work-list>
         <pop-manager-list :show="showManagerPop" v-model="showManagerPop" @sel-item="selManager"
                           :defaultValue="defaultManager[managerIndex]"></pop-manager-list>
         <pop-work-facility-list :show="showFacilityPop" v-model="showFacilityPop" @sel-item="selFacility"
@@ -190,6 +178,9 @@ export default {
     numberComma,
   },
   methods: {
+    handlerMatterEditConfig:function(config){
+       console.log(config);
+    },
     getOrder(){
       if (!this.warehouse.warehouseCode){
         this.$vux.alert.show({
@@ -201,7 +192,7 @@ export default {
     },
     // 选择工序
     selWork(val) {
-      this.workInfo = JSON.parse(val);
+      this.workInfo = val;
       this.workInfo.forEach((item, index) => {
         // 数量赋初始值
         item.tdQty = item.thenQtyBal;
@@ -229,7 +220,7 @@ export default {
     },
     // 选择组长
     selManager(val) {
-      let selItem = JSON.parse(val);
+      let selItem = val;
       this.defaultManager[this.managerIndex] = selItem;
       this.workInfo[this.managerIndex].dealerName_dealerDebit = selItem.dealerName;
 			this.workInfo[this.managerIndex].dealerDebit = selItem.dealerCode;

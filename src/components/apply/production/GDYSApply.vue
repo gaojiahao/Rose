@@ -155,7 +155,7 @@ export default {
     },
     // 选择员工
     selManager (val) {
-      this.defaultManager = JSON.parse(val);
+      this.defaultManager = val;
       // 员工 工号
       this.workInfo.dealerName_dealerDebit = this.defaultManager.dealerName;
       this.workInfo.dealerDebit = this.defaultManager.dealerCode;

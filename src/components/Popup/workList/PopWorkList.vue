@@ -200,7 +200,7 @@ import MSearch from 'components/search/search'
         this.tmpItems.sort((a, b) => b.effectiveTime - a.effectiveTime);
         this.selItems = [...this.tmpItems];
         // 触发父组件选中事件
-        this.$emit('sel-work', JSON.stringify(this.selItems));
+        this.$emit('sel-item', this.selItems);
       },
       // 搜索物料
       searchList({val = '', property = ''}) {

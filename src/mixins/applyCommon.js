@@ -183,6 +183,457 @@ export default {
         })
       })
     },
+    handleCfg:function(config,reconfig){
+        let newCfg = { 
+                dealerConfig:[], 
+                otherConfig:[], 
+                baseinfoExtConfig:[], 
+                fundConfig:[],
+                matterConfig:[]
+            },
+            cfgMap = {},
+            containerCodeObj = {
+              dealerConfig:['kh','inPut','gys','outPut'], // 往来段落 配置
+              otherConfig:['pb','projectApproval','projectPlanTask','jobLog','ck'],// 既不是 “往来段落” 也不是 “物料段路”
+              baseinfoExtConfig:['baseinfoExt'], // 请注意 此处也有可能会存放 往来相关 配置
+              fundConfig:['order']// 用于借款与备用金
+            },
+            type,
+            codes,
+            code,
+            i,l;
+
+        for(type in containerCodeObj){
+           codes = containerCodeObj[type];
+           for(i=0,l = codes.length;i<l;i++){
+              code = codes[i];
+              cfgMap[code] = type;
+           }
+        }
+        // 从请求回来的配置中拆分往来，物料，其他段落的配置
+        config.forEach(item => {
+           var ct;
+          // 覆盖配置
+          if (item.formViewPartId) {
+            let reconfigData = reconfig[`_${item.formViewPartId}`] || {};
+            item.items = item.items && item.items.map(cItem => {
+              let matched = reconfigData[cItem.fieldCode] || {};
+              return {...cItem, ...matched,}
+            });
+          }
+          // 处理表单配置 <非重复项渲染> 部分
+          if (!item.hiddenInRun && !item.isMultiple) {
+            type = cfgMap[item.name];
+            if(type != null){
+               ct = newCfg[type];
+               ct = ct.length ? ct.concat(item.items) : item.items;
+            }
+          }
+          // 处理表单配置 <重复项渲染> 部分
+          else if (!item.hiddenInRun && item.isMultiple) {
+            if (item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
+              newCfg.matterConfig = item.items;
+              if (item.dataIndexMap) {
+                this.dataIndexMap = item.dataIndexMap;
+              }
+            }
+          }
+        })
+        return newCfg;
+    },
+    // 处理 baseInfoExt 相关配置
+    handleBaseinfoExtCfg(baseinfoExtConfig,dealerFilter){    
+        let baseinfoExt = [];
+        baseinfoExtConfig.forEach(item => {
+          // 处理提交字段
+          if (item.submitValue) {
+            this.submitMatterField.push(item)
+          }
+          // 非隐藏字段
+          if (!item.hiddenInRun) {
+            // 处理请求往来数据的接口
+            if (item.xtype === 'r2Selector' && item.dataSource && item.dataSource.type === 'remoteData' && item.fieldCode !== 'project') {
+              this.dealerParams = this.handlerParams(item);
+            }
+            // 处理 重复项 或者 其他单选类型 
+            if ((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo' || item.xtype === "r2Selector") && item.dataSource && item.dataSource.type === 'remoteData') {
+              item.requestParams = this.handlerParams(item);
+              // 因为联系人已单独作为组件存在 此处不需提前请求 
+              if (item.fieldCode !== 'dealerDebitContactPersonName') {
+                  requestData(this.handlerParams(item)).then(data => {
+                  if (data.tableContent) {
+                    data.tableContent.forEach(dItem => {
+                      dItem.originValue = dItem.value;
+                      dItem.name = dItem[item.displayField]
+                      dItem.value = dItem[item.displayField];
+                    })
+                    this.$set(item, 'remoteData', data.tableContent)
+                  }
+                })
+              }
+            }
+            // 存在静态数据
+            else if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData') {
+              this.$set(item, 'remoteData', item.dataSource.data)
+            }
+            // 过滤 已定义的往来字段
+            if (!dealerFilter.includes(item.fieldCode)) {
+              baseinfoExt.push(item);
+            }   
+          }
+          // 包含判断条件的字段
+          if (item.hiddenInRun && item.r2Bind && item.r2Bind.hidden) {
+            blankDealerConfig.push(item);
+          }
+        })
+        this.baseinfoExtConfig = baseinfoExt;
+    },
+    handleDealerCfg(dealerConfig){
+        
+        // 处理往来配置里面的接口请求
+        let blankDealerConfig = [];
+        // 组合 往来部分 配置
+        dealerConfig.forEach(item => {
+          // 非隐藏字段
+          if (!item.hiddenInRun) {
+            // 处理请求往来数据的接口
+            if (item.xtype === 'r2Selector' && item.dataSource && item.dataSource.type === 'remoteData' && item.fieldCode !== 'project') {
+              this.dealerParams = this.handlerParams(item);
+            }
+            // 处理请求物流，结算方式的接口
+            if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {              
+              // 因为联系人已单独作为组件存在 此处不需提前请求 
+              if (item.fieldCode !== 'dealerDebitContactPersonName') {
+                requestData(this.handlerParams(item)).then(data => {
+                  this.$set(item, 'remoteData', data.tableContent)
+                })
+              }
+            }
+            // 处理 静态数据
+            else if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData') {
+              let arr = [];
+              for (let val of item.dataSource.data) {
+                arr.push({ name: val })
+              }
+              this.$set(item, 'remoteData', arr)
+            }
+            // 过滤 已定义的往来字段
+            if (!dealerFilter.includes(item.fieldCode)) {
+              blankDealerConfig.push(item)
+            }
+          }
+          // 包含判断条件的字段
+          if (item.hiddenInRun && item.r2Bind && item.r2Bind.hidden) {
+            blankDealerConfig.push(item);
+          }
+        })
+        this.dealerConfig = blankDealerConfig;
+    },
+    // 处理物料配置
+    handleMatterCfg:function(matterConfig,matterCols){
+         var editMatterPopConfig = {
+                property: [],
+                editPart: []
+             },
+             editMatterPop = [],
+             submitFields = [];
+
+        matterConfig.forEach((item, index) => {
+          // 组合要提交的物料字段
+          if (item.submitValue) {
+            submitFields.push(item)
+          }
+          if (matterCols.length) {
+            let key = this.dataIndexMap[item.fieldCode];
+            let matchedCol = matterCols.find(col => col.k === key);
+            // 若存在映射表则根据映射表的字段确定显示或隐藏
+            item.hidden = key ? (matchedCol ? item.hidden : true) : item.hidden;
+          }
+          // 数据源是动态请求数据
+          if (item.dataSource && item.dataSource.type === 'remoteData') {
+            // 物料或者订单请求
+            if (item.editorType === 'r2Selector') {
+              if (item.text === '物料名称' || item.text === '物料编码') {
+                this.orderListTitle = '物料'
+              }
+              else if (item.text === '设施名称') {
+                this.orderListTitle = '设施'
+              }
+              else {
+                if (item.text.includes('编码')) {
+                  this.orderListTitle = item.text.slice(0, item.text.indexOf('编码')); 
+                }
+                else {
+                  this.orderListTitle = item.text;      
+                }          
+              }
+              let url = item.dataSource.data.url;
+              let params = item.dataSource.data.params;
+              let keys = Object.keys(params);
+              let requestParams = {
+                url,
+              }
+              if (keys.length) {
+                let matterParams = {};
+                keys.forEach(item => {
+                  // 当存在默认仓库的时候 对物料请求参数进行赋值
+                  if (item === 'whCode' && this.warehouse.warehouseCode) {
+                    matterParams[item] = this.warehouse.warehouseCode;
+                    return
+                  }
+                  // 根据form配置返回dataSource参数 此处组装 <组件请求参数> 默认值
+                  matterParams[item] = params[item].type === 'text' ? params[item].value : '';
+                })
+                requestParams.data = matterParams;
+              }
+              this.matterParams = requestParams
+            }
+            // 物料信息里有下拉选择的字段
+            else if (item.editorType === 'r2Combo' && !item.readOnly) {
+              let url = item.dataSource.data.url,
+                  params = item.dataSource.data.params,
+                  keys = Object.keys(params),
+                  requestParams = {url};
+              if (keys.length) {
+                let data = {};
+                keys.forEach(key => {
+                  data[key] = params[key].value;
+                })
+                requestParams.data = data;
+              }
+              // 为避免重复请求 此处仅针对 *产品价格应用* 单独做初始化请求设置
+              if (item.fieldCode.includes('drDealerLabel')) {
+                requestData(requestParams).then(({tableContent = []}) => {
+                  let arr = [];
+                  tableContent.forEach(item => {
+                    arr.push(item.name)
+                  })
+                  item.remoteData = [arr];
+                })
+              }
+            }
+            //r2SelectorPlus
+            else if (item.editorType === 'r2SelectorPlus' && !item.readOnly) {
+              let url = item.dataSource.data.url,
+                  params = item.dataSource.data.params,
+                  keys = Object.keys(params),
+                  requestParams = {url};
+              if (keys.length) {
+                let data = {};
+                keys.forEach(key => {
+                  data[key] = params[key].value;
+                })
+                requestParams.data = data;
+              }
+              if (item.fieldCode.includes('warehouse')) {
+                requestData(requestParams).then(({tableContent = []}) => {
+                  let arr = [];
+                  tableContent.forEach(item => {
+                    item.name = item.warehouseName;
+                    item.value = item.warehouseCode;
+                    item.parent = index;
+                    arr.push(item);
+                  })
+                  item.remoteData = [arr];
+                })
+              }
+            }
+          }
+          else if (item.dataSource && item.dataSource.type === 'staticData') {
+            let remoteData = []
+            item.dataSource.data.forEach(dItem => {
+              remoteData.push({
+                name: dItem,
+                value: dItem
+              })
+            })
+            this.$set(item, 'remoteData', remoteData)
+          }
+          // 组合matterPop配置
+          // matterPop需要隐藏的物料的字段
+          if (item.editorType === 'r2Selector') {
+            let hiddenField = JSON.parse(JSON.stringify(item.dataSource.data.hFields));
+            hiddenField.unshift('transCode','inventoryName', 'inventoryCode', 'specification','invName','matCode','facilityName', 'facilityCode', 'facilitySpecification')
+            let matterPopField = JSON.parse(JSON.stringify(item.proertyContext.dataSourceCols));
+            // 循环删除要隐藏的字段
+            hiddenField.forEach(hItem => {
+              matterPopField.forEach((item, index) => {
+                if (item.k === 'transCode') {
+                  this.matterPopOrderTitle = item.v;
+                }
+                if (item.k === hItem) {
+                  matterPopField.splice(index, 1)
+                  index --;
+                  return false
+                }
+              })
+            })
+            this.matterPopConfig = matterPopField;
+          }
+          // 没有映射表时，根据物料poplist中数据来去对应的字段的值
+          if (item.dataSource && item.dataSource.type === 'formData') {
+            if (typeof(item.dataSource.data.valueField) === 'string') {
+              let arr = item.dataSource.data.valueField.replace(/\[|]/g, '').split(/\"/);
+              let valueField = [];
+              arr.forEach(item => {
+                if (item) {
+                  valueField.push(item)
+                }
+              })
+              item.dataSource.data.valueField = valueField;
+
+            }
+            item.showFieldCode = item.dataSource.data.valueField[1];
+          }
+          // 当存在映射表时，根据映射表来取对应的值
+          if (Object.keys(this.dataIndexMap).length) {
+            item.showFieldCode = this.dataIndexMap[item.fieldCode];
+          }
+          // 组合物料编辑的matterPop的配置
+          if (!item.hidden) {
+            if (item.valueField !== "transCode" && item.valueField !== 'inventoryName' && item.valueField !== 'facilityName' 
+              && !item.fieldCode.includes('inventoryName') 
+              && item.showFieldCode !== 'transCode' && item.showFieldCode !== 'facilityName' 
+              && item.showFieldCode !== 'facilityCode' && item.showFieldCode !== 'facilitySpecification') {
+              editMatterPop.push(item);
+            }
+          }
+        })
+        // 判断是否只读 如果不是只读就统一塞进编辑页面
+        if (editMatterPop.length) {
+          this.splitConfig(editMatterPop, editMatterPopConfig);
+        }
+        if(this.handlerMatterEditConfig)this.handlerMatterEditConfig(editMatterPopConfig);
+        this.matterEditConfig = editMatterPopConfig;
+        this.submitMatterField = this.submitMatterField.concat(submitFields);
+    },
+    handleOtherCfg(otherConfig){
+        // 处理其他信息的配置
+        let other = [];
+        otherConfig.forEach(item => {
+          if (item.submitValue) {
+            this.submitMatterField.push(item)
+          }
+          if (!item.hiddenInRun) {
+            if ((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo') && item.dataSource && item.dataSource.type === 'remoteData') {
+              item.requestParams = this.handlerParams(item);
+              requestData(this.handlerParams(item)).then(data => {
+                if (data.tableContent) {
+                  data.tableContent.forEach(dItem => {
+                    dItem.originValue = dItem.value;
+                    dItem.name = dItem[item.displayField]
+                    dItem.value = dItem[item.displayField];
+                  })
+                  this.$set(item, 'remoteData', data.tableContent)
+                }
+              })
+            }
+            else if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData') {
+              this.$set(item, 'remoteData', item.dataSource.data)
+            }
+            other.push(item)
+          }
+        })
+        this.otherConfig = other;
+    },
+    // 用于借款与备用金中往来的配置
+    handleFundCfg(fundConfig){
+        let fund = [];
+        fundConfig.forEach(item => {
+          // 没有映射表时，根据物料poplist中数据来去对应的字段的值
+          if (item.dataSource && item.dataSource.type === 'formData') {
+            if (typeof(item.dataSource.data.valueField) === 'string') {
+              let arr = item.dataSource.data.valueField.replace(/\[|]/g, '').split(/\"/);
+              let valueField = [];
+              arr.forEach(item => {
+                if (item) {
+                  valueField.push(item)
+                }
+              })
+              item.dataSource.data.valueField = valueField;
+
+            }
+            item.showFieldCode = item.dataSource.data.valueField.length === 1 ? item.dataSource.data.valueField[0] : item.dataSource.data.valueField[1];
+          }
+          if (item.submitValue) {
+            this.submitMatterField.push(item)
+          } 
+          if (!item.hiddenInRun) {
+            if ((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo') && item.dataSource && item.dataSource.type === 'remoteData') {
+              item.requestParams = this.handlerParams(item)
+              requestData(this.handlerParams(item)).then(data => {
+                if (data.tableContent) {
+                  data.tableContent.forEach(dItem => {
+                    dItem.originValue = dItem.value;
+                    dItem.name = dItem[item.displayField]
+                    dItem.value = dItem[item.displayField];
+                  })
+                  this.$set(item, 'remoteData', data.tableContent)
+                }
+              })
+            }
+            else if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData') {
+              this.$set(item, 'remoteData', item.dataSource.data)
+            }
+            fund.push(item)
+          }
+        })
+        this.fundConfig = fund;
+    },
+    handleAccountDS:function(ds,matterCols){
+      let dataSource = JSON.parse(JSON.parse(ds)[0].dataSource.source);
+      if (dataSource) {
+
+        matterCols = dataSource.cols;
+        // 请求数据 组合要渲染的matterList配置
+        let url = dataSource.url,
+            params = dataSource.params,
+            keys = Object.keys(params),
+            requestParams = { url };
+
+        // 处理 数据源当中的参数
+        if (keys.length) {
+          let matterParams = {};
+          keys.forEach(item => {
+            // 处理销售出库默认选中成品仓
+            if (item === 'whCode' && this.warehouse.warehouseCode) {
+              matterParams[item] = this.warehouse.warehouseCode;
+              return
+            }
+            if (item === 'dealerCode' && this.dealerInfo.dealerCode) {
+              matterParams[item] = this.dealerInfo.dealerCode;
+              return
+            }
+            matterParams[item] = params[item].type === 'text' ? params[item].value : '';
+          })
+          requestParams.data = matterParams;
+        }
+        this.matterParams = requestParams;
+
+        // 处理物料的配置
+        let arr = [];
+        for (let cItem of dataSource.cols) {
+          if (!cItem.h) {
+            // 配置中的字段要去除掉物料名称，交易号
+            if (cItem.k !== 'inventoryName' && cItem.k !== 'transCode' && cItem.k !== 'invName') {
+              arr.push(cItem)
+            }
+            // 确定要物料段落显示的title
+            if (cItem.k === 'inventoryCode' && !this.orderListTitle) {
+              this.orderListTitle = '物料';
+            }
+            else if (cItem.k === 'transCode') {
+              if (cItem.v.includes('编码')) {
+                this.orderListTitle = cItem.v.slice(0, cItem.v.indexOf('编码'));
+                continue;
+              }
+              this.orderListTitle = cItem.v;
+            }
+          }
+        }
+        this.matterPopConfig = arr;
+      }
+    },
     // 提交订单
     saveData(request, submitData) {
       request(submitData).then(data => {
@@ -498,108 +949,7 @@ export default {
       })
       // 根据uniqueId 请求表单配置
       await getFormConfig(this.viewId).then((data) => {
-        let matterCols = [], { config, reconfig = {} } = data;
-        // 处理将数据源配置在data中的情况
-        if (data.dataSource) {
-          let dataSource = JSON.parse(JSON.parse(data.dataSource)[0].dataSource.source);
-          
-          if (dataSource) {
-            matterCols = dataSource.cols;
-            // 请求数据 组合要渲染的matterList配置
-            let url = dataSource.url,
-                params = dataSource.params,
-                keys = Object.keys(params),
-                requestParams = { url };
-
-            // 处理 数据源当中的参数
-            if (keys.length) {
-              let matterParams = {};
-              keys.forEach(item => {
-                // 处理销售出库默认选中成品仓
-                if (item === 'whCode' && this.warehouse.warehouseCode) {
-                  matterParams[item] = this.warehouse.warehouseCode;
-                  return
-                }
-                if (item === 'dealerCode' && this.dealerInfo.dealerCode) {
-                  matterParams[item] = this.dealerInfo.dealerCode;
-                  return
-                }
-                matterParams[item] = params[item].type === 'text' ? params[item].value : '';
-              })
-              requestParams.data = matterParams;
-            }
-            this.matterParams = requestParams;
-
-            // 处理物料的配置
-            let arr = [];
-            for (let cItem of dataSource.cols) {
-              if (!cItem.h) {
-                // 配置中的字段要去除掉物料名称，交易号
-                if (cItem.k !== 'inventoryName' && cItem.k !== 'transCode' && cItem.k !== 'invName') {
-                  arr.push(cItem)
-                }
-                // 确定要物料段落显示的title
-                if (cItem.k === 'inventoryCode' && !this.orderListTitle) {
-                  this.orderListTitle = '物料';
-                }
-                else if (cItem.k === 'transCode') {
-                  if (cItem.v.includes('编码')) {
-                    this.orderListTitle = cItem.v.slice(0, cItem.v.indexOf('编码'));
-                    continue;
-                  }
-                  this.orderListTitle = cItem.v;
-                }
-              }
-            }
-            this.matterPopConfig = arr;
-          }
-        }
-
-        console.log('config:', config);
-
-        let dealerConfig = [], matterConfig = [], 
-            otherConfig = [], baseinfoExtConfig = [], fundConfig = [];
-
-        // 从请求回来的配置中拆分往来，物料，其他段落的配置
-        config.forEach(item => {
-          // 覆盖配置
-          if (item.formViewPartId) {
-            let reconfigData = reconfig[`_${item.formViewPartId}`] || {};
-            item.items = item.items && item.items.map(cItem => {
-              let matched = reconfigData[cItem.fieldCode] || {};
-              return {...cItem, ...matched,}
-            });
-          }
-          // 处理表单配置 <非重复项渲染> 部分
-          if (!item.hiddenInRun && !item.isMultiple) {
-            // 往来段落 配置
-            if (item.name === 'kh' || item.name === 'inPut' || item.name === 'gys' || item.name === 'outPut') {
-              dealerConfig = [...dealerConfig, ...item.items]
-            }
-            // 既不是 “往来段落” 也不是 “物料段路”
-            if (item.name === 'pb' || item.name === 'projectApproval' || item.name === 'projectPlanTask' || item.name === 'jobLog' || item.name === 'ck') {
-              otherConfig = item.items;
-            }
-            // 请注意 此处也有可能会存放 往来相关 配置
-            if (item.name === 'baseinfoExt') {              
-              baseinfoExtConfig = [...baseinfoExtConfig, ...item.items];
-            }
-            // 用于借款与备用金
-            if (item.name === 'order') {
-              fundConfig = item.items
-            }
-          }
-          // 处理表单配置 <重复项渲染> 部分
-          else if (!item.hiddenInRun && item.isMultiple) {
-            if (item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
-              matterConfig = item.items;
-              if (item.dataIndexMap) {
-                this.dataIndexMap = item.dataIndexMap;
-              }
-            }
-          }
-        })
-
+        let matterCols = [], { config, reconfig = {},dataSource} = data;
         // 由于往来组件已经单独定义 此处需要过滤部分字段
         let dealerFilter = [
           'dealerDebit', 
@@ -614,334 +964,18 @@ export default {
           'dealerCreditContactPersonName', 
           'dealerCreditContactInformation'
         ];
-        // 处理往来配置里面的接口请求
-        let blankDealerConfig = [];
-        // 组合 往来部分 配置
-        dealerConfig.forEach(item => {
-          // 非隐藏字段
-          if (!item.hiddenInRun) {
-            // 处理请求往来数据的接口
-            if (item.xtype === 'r2Selector' && item.dataSource && item.dataSource.type === 'remoteData' && item.fieldCode !== 'project') {
-              this.dealerParams = this.handlerParams(item);
-            }
-            // 处理请求物流，结算方式的接口
-            if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {              
-              // 因为联系人已单独作为组件存在 此处不需提前请求 
-              if (item.fieldCode !== 'dealerDebitContactPersonName') {
-                requestData(this.handlerParams(item)).then(data => {
-                  this.$set(item, 'remoteData', data.tableContent)
-                })
-              }
-            }
-            // 处理 静态数据
-            else if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData') {
-              let arr = [];
-              for (let val of item.dataSource.data) {
-                arr.push({ name: val })
-              }
-              this.$set(item, 'remoteData', arr)
-            }
-            // 过滤 已定义的往来字段
-            if (!dealerFilter.includes(item.fieldCode)) {
-              blankDealerConfig.push(item)
-            }
-          }
-          // 包含判断条件的字段
-          if (item.hiddenInRun && item.r2Bind && item.r2Bind.hidden) {
-            blankDealerConfig.push(item);
-          }
-        })
-        this.dealerConfig = blankDealerConfig;
-
-        // 处理物料配置
-        let editMatterPopConfig = {
-          property: [],
-          editPart: []
-        };
-        let editMatterPop = [];
-        matterConfig.forEach((item, index) => {
-          // 组合要提交的物料字段
-          if (item.submitValue) {
-            this.submitMatterField.push(item)
-          }
-          if (matterCols.length) {
-            let key = this.dataIndexMap[item.fieldCode];
-            let matchedCol = matterCols.find(col => col.k === key);
-            // 若存在映射表则根据映射表的字段确定显示或隐藏
-            item.hidden = key ? (matchedCol ? item.hidden : true) : item.hidden;
-          }
-          // 数据源是动态请求数据
-          if (item.dataSource && item.dataSource.type === 'remoteData') {
-            // 物料或者订单请求
-            if (item.editorType === 'r2Selector') {
-              if (item.text === '物料名称' || item.text === '物料编码') {
-                this.orderListTitle = '物料'
-              }
-              else if (item.text === '设施名称') {
-                this.orderListTitle = '设施'
-              }
-              else {
-                if (item.text.includes('编码')) {
-                  this.orderListTitle = item.text.slice(0, item.text.indexOf('编码')); 
-                }
-                else {
-                  this.orderListTitle = item.text;      
-                }          
-              }
-              let url = item.dataSource.data.url;
-              let params = item.dataSource.data.params;
-              let keys = Object.keys(params);
-              let requestParams = {
-                url,
-              }
-              if (keys.length) {
-                let matterParams = {};
-                keys.forEach(item => {
-                  // 当存在默认仓库的时候 对物料请求参数进行赋值
-                  if (item === 'whCode' && this.warehouse.warehouseCode) {
-                    matterParams[item] = this.warehouse.warehouseCode;
-                    return
-                  }
-                  // 根据form配置返回dataSource参数 此处组装 <组件请求参数> 默认值
-                  matterParams[item] = params[item].type === 'text' ? params[item].value : '';
-                })
-                requestParams.data = matterParams;
-              }
-              this.matterParams = requestParams
-            }
-            // 物料信息里有下拉选择的字段
-            else if (item.editorType === 'r2Combo' && !item.readOnly) {
-              let url = item.dataSource.data.url,
-                  params = item.dataSource.data.params,
-                  keys = Object.keys(params),
-                  requestParams = {url};
-              if (keys.length) {
-                let data = {};
-                keys.forEach(key => {
-                  data[key] = params[key].value;
-                })
-                requestParams.data = data;
-              }
-              // 为避免重复请求 此处仅针对 *产品价格应用* 单独做初始化请求设置
-              if (item.fieldCode.includes('drDealerLabel')) {
-                requestData(requestParams).then(({tableContent = []}) => {
-                  let arr = [];
-                  tableContent.forEach(item => {
-                    arr.push(item.name)
-                  })
-                  item.remoteData = [arr];
-                })
-              }
-            }
-            //r2SelectorPlus
-            else if (item.editorType === 'r2SelectorPlus' && !item.readOnly) {
-              let url = item.dataSource.data.url,
-                  params = item.dataSource.data.params,
-                  keys = Object.keys(params),
-                  requestParams = {url};
-              if (keys.length) {
-                let data = {};
-                keys.forEach(key => {
-                  data[key] = params[key].value;
-                })
-                requestParams.data = data;
-              }
-              if (item.fieldCode.includes('warehouse')) {
-                requestData(requestParams).then(({tableContent = []}) => {
-                  let arr = [];
-                  tableContent.forEach(item => {
-                    item.name = item.warehouseName;
-                    item.value = item.warehouseCode;
-                    item.parent = index;
-                    arr.push(item);
-                  })
-                  item.remoteData = [arr];
-                })
-              }
-            }
-          }
-          else if (item.dataSource && item.dataSource.type === 'staticData') {
-            let remoteData = []
-            item.dataSource.data.forEach(dItem => {
-              remoteData.push({
-                name: dItem,
-                value: dItem
-              })
-            })
-            this.$set(item, 'remoteData', remoteData)
-          }
-          // 组合matterPop配置
-          // matterPop需要隐藏的物料的字段
-          if (item.editorType === 'r2Selector') {
-            let hiddenField = JSON.parse(JSON.stringify(item.dataSource.data.hFields));
-            hiddenField.unshift('transCode','inventoryName', 'inventoryCode', 'specification','invName','matCode','facilityName', 'facilityCode', 'facilitySpecification')
-            let matterPopField = JSON.parse(JSON.stringify(item.proertyContext.dataSourceCols));
-            // 循环删除要隐藏的字段
-            hiddenField.forEach(hItem => {
-              matterPopField.forEach((item, index) => {
-                if (item.k === 'transCode') {
-                  this.matterPopOrderTitle = item.v;
-                }
-                if (item.k === hItem) {
-                  matterPopField.splice(index, 1)
-                  index --;
-                  return false
-                }
-              })
-            })
-            this.matterPopConfig = matterPopField;
-          }
-          // 没有映射表时，根据物料poplist中数据来去对应的字段的值
-          if (item.dataSource && item.dataSource.type === 'formData') {
-            if (typeof(item.dataSource.data.valueField) === 'string') {
-              let arr = item.dataSource.data.valueField.replace(/\[|]/g, '').split(/\"/);
-              let valueField = [];
-              arr.forEach(item => {
-                if (item) {
-                  valueField.push(item)
-                }
-              })
-              item.dataSource.data.valueField = valueField;
-
-            }
-            item.showFieldCode = item.dataSource.data.valueField[1];
-          }
-          // 当存在映射表时，根据映射表来取对应的值
-          if (Object.keys(this.dataIndexMap).length) {
-            item.showFieldCode = this.dataIndexMap[item.fieldCode];
-          }
-          // 组合物料编辑的matterPop的配置
-          if (!item.hidden) {
-            if (item.valueField !== "transCode" && item.valueField !== 'inventoryName' && item.valueField !== 'facilityName' 
-              && !item.fieldCode.includes('inventoryName') 
-              && item.showFieldCode !== 'transCode' && item.showFieldCode !== 'facilityName' 
-              && item.showFieldCode !== 'facilityCode' && item.showFieldCode !== 'facilitySpecification') {
-              editMatterPop.push(item);
-            }
-          }
-        })
-        // 判断是否只读 如果不是只读就统一塞进编辑页面
-        if (editMatterPop.length) {
-          this.splitConfig(editMatterPop, editMatterPopConfig);
+        // 处理将数据源配置在data中的情况
+        if (dataSource) {
+          this.handleAccountDS(dataSource,matterCols);
         }
-        this.matterEditConfig = editMatterPopConfig;
-
-        // 处理其他信息的配置
-        let other = [];
-        otherConfig.forEach(item => {
-          if (item.submitValue) {
-            this.submitMatterField.push(item)
-          }
-          if (!item.hiddenInRun) {
-            if ((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo') && item.dataSource && item.dataSource.type === 'remoteData') {
-              item.requestParams = this.handlerParams(item);
-              requestData(this.handlerParams(item)).then(data => {
-                if (data.tableContent) {
-                  data.tableContent.forEach(dItem => {
-                    dItem.originValue = dItem.value;
-                    dItem.name = dItem[item.displayField]
-                    dItem.value = dItem[item.displayField];
-                  })
-                  this.$set(item, 'remoteData', data.tableContent)
-                }
-              })
-            }
-            else if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData') {
-              this.$set(item, 'remoteData', item.dataSource.data)
-            }
-            other.push(item)
-          }
-        })
-        this.otherConfig = other;
-
-        // 处理 baseInfoExt 相关配置
-        let baseinfoExt = [];
-        baseinfoExtConfig.forEach(item => {
-          // 处理提交字段
-          if (item.submitValue) {
-            this.submitMatterField.push(item)
-          }
-          // 非隐藏字段
-          if (!item.hiddenInRun) {
-            // 处理请求往来数据的接口
-            if (item.xtype === 'r2Selector' && item.dataSource && item.dataSource.type === 'remoteData' && item.fieldCode !== 'project') {
-              this.dealerParams = this.handlerParams(item);
-            }
-            // 处理 重复项 或者 其他单选类型 
-            if ((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo' || item.xtype === "r2Selector") && item.dataSource && item.dataSource.type === 'remoteData') {
-              item.requestParams = this.handlerParams(item);
-              // 因为联系人已单独作为组件存在 此处不需提前请求 
-              if (item.fieldCode !== 'dealerDebitContactPersonName') {
-                  requestData(this.handlerParams(item)).then(data => {
-                  if (data.tableContent) {
-                    data.tableContent.forEach(dItem => {
-                      dItem.originValue = dItem.value;
-                      dItem.name = dItem[item.displayField]
-                      dItem.value = dItem[item.displayField];
-                    })
-                    this.$set(item, 'remoteData', data.tableContent)
-                  }
-                })
-              }
-            }
-            // 存在静态数据
-            else if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData') {
-              this.$set(item, 'remoteData', item.dataSource.data)
-            }
-            // 过滤 已定义的往来字段
-            if (!dealerFilter.includes(item.fieldCode)) {
-              baseinfoExt.push(item);
-            }   
-          }
-          // 包含判断条件的字段
-          if (item.hiddenInRun && item.r2Bind && item.r2Bind.hidden) {
-            blankDealerConfig.push(item);
-          }
-        })
-        this.baseinfoExtConfig = baseinfoExt;
-
-        // 用于借款与备用金中往来的配置
-        let fund = [];
-        fundConfig.forEach(item => {
-          // 没有映射表时，根据物料poplist中数据来去对应的字段的值
-          if (item.dataSource && item.dataSource.type === 'formData') {
-            if (typeof(item.dataSource.data.valueField) === 'string') {
-              let arr = item.dataSource.data.valueField.replace(/\[|]/g, '').split(/\"/);
-              let valueField = [];
-              arr.forEach(item => {
-                if (item) {
-                  valueField.push(item)
-                }
-              })
-              item.dataSource.data.valueField = valueField;
-
-            }
-            item.showFieldCode = item.dataSource.data.valueField.length === 1 ? item.dataSource.data.valueField[0] : item.dataSource.data.valueField[1];
-          }
-          if (item.submitValue) {
-            this.submitMatterField.push(item)
-          } 
-          if (!item.hiddenInRun) {
-            if ((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo') && item.dataSource && item.dataSource.type === 'remoteData') {
-              item.requestParams = this.handlerParams(item)
-              requestData(this.handlerParams(item)).then(data => {
-                if (data.tableContent) {
-                  data.tableContent.forEach(dItem => {
-                    dItem.originValue = dItem.value;
-                    dItem.name = dItem[item.displayField]
-                    dItem.value = dItem[item.displayField];
-                  })
-                  this.$set(item, 'remoteData', data.tableContent)
-                }
-              })
-            }
-            else if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData') {
-              this.$set(item, 'remoteData', item.dataSource.data)
-            }
-            fund.push(item)
-          }
-        })
-        this.fundConfig = fund;
+        console.log('config:', config);
+        let {dealerConfig,matterConfig,otherConfig,baseinfoExtConfig,fundConfig} = this.handleCfg(config,reconfig);
+        
+        this.handleDealerCfg(dealerConfig,dealerFilter);
+        this.handleMatterCfg(matterConfig,matterCols);
+        this.handleOtherCfg(otherConfig);
+        this.handleBaseinfoExtCfg(baseinfoExtConfig,dealerFilter);
+        this.handleFundCfg(fundConfig);
       })
     },
     // 处理配置中数据请求
