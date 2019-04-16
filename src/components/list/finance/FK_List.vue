@@ -8,29 +8,16 @@
           <r-sort @on-sort="onSortList" @on-filter="onFilter" :list-id="listId" ref="sort"></r-sort>
         </div>
       </div>
-      <r-scroll
-        class="list_wrapper has-sort"
-        :options="scrollOptions"
-        :has-next="hasNext"
-        :no-data="!hasNext && !listData.length"
-        @on-pulling-up="onPullingUp"
-        @on-pulling-down="onPullingDown"
-        ref="bScroll"
-      >
-        <finance-list-item
-          :item="item"
-          v-for="(item, index) in listData"
-          :key="index"
-          @click.native="goDetail(item, index)"
-        >
-          <template slot="list-item" slot-scope="{item}">
+      <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext" :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" ref="bScroll">
+        <finance-list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)">
+          <!-- <template slot="list-item" slot-scope="{item}">
             <div class="each-slot-item" v-for="(val, index) in item.detailItem" :key="index">
               <div class="top-content">资金账户: {{val.fundName_cashInCode}}</div>
               <div class="main-content">
                 <div class="info_part">收款金额: ￥{{val.tdAmount | numberComma}}</div>
               </div>
             </div>
-          </template>
+          </template> -->
         </finance-list-item>
       </r-scroll>
     </div>
@@ -40,7 +27,7 @@
 
 <script>
 import listCommon from "mixins/bizListCommon";
-import financeListItem from "components/list/commonPart/financeListItem";
+import financeListItem from "components/list/commonPart/fkListItem";
 export default {
   data() {
     return {

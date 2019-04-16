@@ -10,6 +10,7 @@
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" dealer-label-name="客户,原厂供应商,经销供应商,设施供应商,投资者,银行,其他"
                         dealerTitle="往来" :defaultValue="dealerInfo" :defaultContact="contact" :dealer-params="dealerParams">
         </pop-dealer-list>
+
         <!-- 费用列表 -->
         <div class="materiel_list" v-for="(item, index) in CostList" :key='index'>
           <group :title='`资金账户${index+1}`' class='costGroup'>
@@ -198,7 +199,7 @@
             this.$HandleLoad.show();
             let operation = saveAndStartWf;
             let wfPara = {
-              [this.processCode]: {businessKey: this.businessKey, createdBy: JSON.stringify(this.formData.handler)}
+              [this.processCode]: {businessKey: this.businessKey, createdBy: JSON.stringify(this.formData.handler), dealerCode:this.dealerInfo.dealerCode ,receiptType : '其他'}
             }
             if (this.isResubmit) {
               wfPara = {
