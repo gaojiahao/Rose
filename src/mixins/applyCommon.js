@@ -389,7 +389,7 @@ export default {
               this.matterParams = requestParams
             }
             // 物料信息里有下拉选择的字段
-            else if (item.editorType === 'r2Combo' && !item.readOnly) {
+            else if (['r2Combo','r2SelectorPlus'].indexOf(item.editorType ) != -1 && !item.readOnly) {
               let url = item.dataSource.data.url,
                   params = item.dataSource.data.params,
                   keys = Object.keys(params),
@@ -410,22 +410,7 @@ export default {
                   })
                   item.remoteData = [arr];
                 })
-              }
-            }
-            //r2SelectorPlus
-            else if (item.editorType === 'r2SelectorPlus' && !item.readOnly) {
-              let url = item.dataSource.data.url,
-                  params = item.dataSource.data.params,
-                  keys = Object.keys(params),
-                  requestParams = {url};
-              if (keys.length) {
-                let data = {};
-                keys.forEach(key => {
-                  data[key] = params[key].value;
-                })
-                requestParams.data = data;
-              }
-              if (item.fieldCode.includes('warehouse')) {
+              } else if (item.fieldCode.includes('warehouse')) {
                 requestData(requestParams).then(({tableContent = []}) => {
                   let arr = [];
                   tableContent.forEach(item => {

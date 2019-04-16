@@ -1,4 +1,5 @@
 <template>
+<!--开票申请-->
   <div class="pages xmjh-apply-container">
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">

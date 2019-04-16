@@ -7,7 +7,7 @@
             <p>{{item.name}}</p>
           </div>
           <div class="app-list">
-            <div v-show="app.text" class="indval_app" 
+            <div v-if="app.text" class="indval_app" 
               @click='goList(item.folder, app.packagePath, app.text, app.listId )'
               v-for="(app, index) of item.appList" :key='index'>
                 <template>
@@ -22,7 +22,7 @@
             </div>
           </div>
           <div class="child-list">
-            <div v-show="app.childName" class="each_child" 
+            <div v-if="app.childName" class="each_child" 
               v-for="(app, index) of item.appList" :key='index'>
               <div class="child_name">
                 <span class="circle"></span>
