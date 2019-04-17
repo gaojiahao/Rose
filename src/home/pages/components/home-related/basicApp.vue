@@ -15,7 +15,8 @@
 </template>
 
 <script>
-import app from './app'
+import app from './app';
+import basicMap from "homePage/maps/basic";
 let swiper;
 export default {
   components:{app},

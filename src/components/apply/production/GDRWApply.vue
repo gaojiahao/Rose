@@ -1,4 +1,5 @@
 <template>
+<!--工单任务-->
   <div class="pages gdrw-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
@@ -23,10 +24,10 @@
                   <span>{{item.inventoryName}}</span>
                   <span class="iconfont icon-shanchu1" @click="deleteClick(index)"></span>
                 </div>
-                <r-column-item :title="'订单号'" :value="item.transCode"/>
+                <r-column-item title="订单号" :value="item.transCode"/>
                 <r-column-item :title="cItem.text" :value="item[cItem.fieldCode] || item[cItem.showFieldCode]" v-for="(cItem, cIndex) in matterEditConfig.property" :key="cIndex" />
-                <r-column-item :title="'工艺路线编码'" :value="item.proFlowCode"/>
-                <r-column-item :title="'工艺路线名称'" :value="item.technicsName"/>
+                <r-column-item title="工艺路线编码" :value="item.proFlowCode"/>
+                <r-column-item title="工艺路线名称" :value="item.technicsName"/>
               </div>
               <div class="edit_part" v-for="(dItem, dIndex) in matterEditConfig.editPart" :key="dIndex" >
                 <!-- 可编辑的字段 -->
