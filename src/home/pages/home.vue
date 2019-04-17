@@ -43,12 +43,9 @@
             </div>
           </div>
         </div>
-        <basic-app :BasicApps="BasicApps" :goBasic="goBasic" :goAppDetail="goAppDetail"></basic-app>
+        <basic-app :BasicApps="BasicApps"></basic-app>
         <bus-app
           :BusApps="BusApps"
-          :goList="goList"
-          :goAppDetail="goAppDetail"
-          :getDefaultIcon="getDefaultIcon"
         ></bus-app>
       </div>
     </div>
@@ -82,28 +79,6 @@ export default {
   },
   components: { busApp, basicApp },
   methods: {
-    // 基础应用
-    goBasic(item) {
-      this.$router.push({ path: `${basicMap[item]}` });
-    },
-    // 前往列表
-    goList(folder, fileName, name, listId) {
-      this.$router.push({
-        path: `/list/${folder}/${fileName}`,
-        query: { name, listId }
-      });
-    },
-    goAppDetail(listId) {
-      this.$router.push({ path: `/appDetail/${listId}` });
-    },
-    // 设置默认图片
-    getDefaultIcon(app) {
-      let url = require("assets/defaultApp.png");
-      if (app) {
-        app.icon = url;
-      }
-      return url;
-    },
     //获取代办数量
     getNews() {
       let newsNumber;
