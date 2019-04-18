@@ -1,4 +1,5 @@
 <template>
+<!--产品价格-->
   <div class="pages">
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
