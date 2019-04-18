@@ -20,10 +20,7 @@
             <div class="order-detail" :class="{'has_top' : index > 0}" v-for="(item, index) in workInfo"
                  :key="index">
               <div class="work_info vux-1px-b">
-                <div class="matter_name">
-                  <span>{{item.inventoryName}}</span>
-                  <span class="iconfont icon-shanchu1" @click="deleteClick(index)"></span>
-                </div>
+                <r-column-title :title ="item.inventoryName" @click="deleteClick(index)"/>
                 <r-column-item title="订单号" :value="item.transCode"/>
                 <r-column-item :title="cItem.text" :value="item[cItem.fieldCode] || item[cItem.showFieldCode]" v-for="(cItem, cIndex) in matterEditConfig.property" :key="cIndex" />
                 <r-column-item title="工艺路线编码" :value="item.proFlowCode"/>
@@ -516,7 +513,7 @@ export default {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang='scss'>
   @import '~scss/biz-app/bizApply';
   @import '~@/scss/color';
   .vux-1px-b:after {

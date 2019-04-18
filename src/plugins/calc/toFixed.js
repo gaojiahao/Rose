@@ -1,7 +1,7 @@
 // 保留小数位
 export default (val, length = 2) => {
   if (val === undefined || !/^-?\d*\.?\d*$/.test(val)) {
-    console.error('the value can not change to number');
+    //console.error('the value can not change to number');
     return ''
   }
   // 获取整数值和小数值
