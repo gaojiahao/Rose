@@ -31,7 +31,7 @@
 
 <script>
   import {Icon, Popup, LoadMore} from 'vux'
- import { getObjFunds, getEmployeeReserveFunds } from 'service/costService'
+ import { getUniversalPayment, getEmployeeReserveFunds } from 'service/costService'
   import RScroll from 'plugins/scroll/RScroll'
   import MSearch from 'components/search/search'
   export default {
@@ -50,7 +50,7 @@
       },
       getListMethod: {
         type: String,
-        default: 'getObjFunds'
+        default: 'getUniversalPayment'
       },
     },
     components: {
@@ -126,7 +126,7 @@
         this.selItems = [...this.defaultValue];
       },
       // 获取物料列表
-      getObjFunds() {
+      getUniversalPayment() {
         let filter = [];
 
         if (this.srhInpTx) {
@@ -139,7 +139,7 @@
             },
           ];
         }
-        return getObjFunds({
+        return getUniversalPayment({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,

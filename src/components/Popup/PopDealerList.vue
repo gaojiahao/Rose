@@ -3,15 +3,24 @@
     <div class='dealer-info' @click="showDealerPop = !showDealerPop">
       <div class='user-content' v-if="dealerInfo.dealerCode">
         <div class="user-info">
-          <div class="user-name">
+          <!-- <div class="user-name">
             <span>{{dealerInfo.dealerName || dealerInfo.nickname}}</span>
+          </div> -->
+          <div class="cp-info">
+            <span class="cp-ads-box">往来名称</span>
+            <span class="cp-ads">{{dealerInfo.dealerName || dealerInfo.nickname}}</span>
           </div>
           <div class="cp-info">
-            <span class="icon-dealer-address"></span>
-            <span class="cp-ads" v-if="noAddress">暂无联系地址</span>
-            <span class="cp-ads" v-else>
-              {{dealerInfo.address}}
-            </span>
+            <span class="cp-ads-box">地址</span>
+            <span class="cp-ads" >{{dealerInfo.address}}</span>
+          </div>
+          <div class="cp-info">
+            <span class="cp-ads-box">往来关系</span>
+            <div class="cp-ads">{{dealerInfo.dealerLabelName}}</div>
+          </div>
+           <div class="cp-info">
+             <span class="cp-ads-box">往来余额</span>
+            <div class="cp-ads">{{dealerInfo.amntBal}}</div>
           </div>
         </div>
         <span class='icon-right'></span>
@@ -77,12 +86,13 @@
 </template>
 
 <script>
-import {Icon, Popup, LoadMore, AlertModule, TransferDom} from 'vux'
+import {Icon, Popup, LoadMore, AlertModule, TransferDom, XInput} from 'vux'
 import DSearch from 'components/search/search'
 import dealerService from 'service/dealerService'
 import {requestData} from 'service/common/commonService'
 import BScroll from 'better-scroll'
 import PopContactList from 'components/Popup/dealer/PopContactList'
+import { constants } from 'crypto';
 
 export default {
   name: "PopDealerList",
@@ -144,7 +154,7 @@ export default {
   },
   directives: {TransferDom},
   components: {
-    Icon, Popup, DSearch, LoadMore, PopContactList
+    Icon, Popup, DSearch, LoadMore, PopContactList, XInput
   },
   data() {
     return {
@@ -227,14 +237,26 @@ export default {
       // 存在搜索字段
       let filter = [];
       if (this.srhInpTx) {
-        filter = [
-          ...filter,
-          {
-            operator: 'like',
-            value: this.srhInpTx,
-            property: 'dealerName',
-          },
-        ];
+        //暂时性处理不同数据源，过滤字段问题
+        if(this.dealerParams.url = '/H_roleplay-si/ds/getPaymentContacts') {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: 'nickname',
+            },
+          ];  
+        } else {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: 'dealerName',
+            },
+          ];
+        }
       }
 
       // 请求参数
@@ -257,9 +279,10 @@ export default {
         tableContent.forEach(item => {
           let {province = '', city = '', county = '', address = ''} = item;
           item.dealerAddress = !province && !city && !county && !address ? '暂无联系地址' : `${address}`;
+          item.applicationAmount = '0';
         });
         this.dealerList = this.page === 1 ? tableContent : [...this.dealerList, ...tableContent];
-        
+        console.log('this.dealerList',this.dealerList);
         this.$nextTick(() => {
           this.bScroll.refresh();
           if (!this.hasNext) {
@@ -559,5 +582,11 @@ export default {
         }
       }
     }
+  }
+  .cp-ads-box {
+    margin-right: .17rem;
+    height: .14rem;
+    font-size: .12rem;
+    width: .5rem;
   }
 </style>

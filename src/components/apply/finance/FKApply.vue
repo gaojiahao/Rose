@@ -10,8 +10,6 @@
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" dealer-label-name="客户,原厂供应商,经销供应商,设施供应商,员工"
                           dealerTitle="往来" :defaultValue="dealerInfo" :defaultContact="contact" :dealer-params="dealerParams">
         </pop-dealer-list>
-        <!-- <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo" :defaultContact="contact" :dealer-params="dealerParams"
-                         dealerTitle="供应商" @sel-contact="selContact"></pop-dealer-list> -->
         <!-- 费用列表 -->
         <div class="materiel_list" v-for="(item, index) in CostList" :key='index'>
           <group :title='`资金账户${index+1}`' class='costGroup'>
@@ -27,6 +25,11 @@
                 <span class='required'>资金账户大类</span>
               </template>
             </cell>
+            <cell title="账户余额" :value="item.thenAmntBal">
+              <template slot="title">
+                <span class='required'>账户余额</span>
+              </template>
+            </cell>
             <x-input title="支付金额" text-align='right' placeholder='请填写' @on-focus="getFocus($event)"
                      @on-blur="checkAmt(item)" type='number' v-model.number='item.tdAmount'>
               <template slot="label">
@@ -38,7 +41,7 @@
         </div>
         <!-- 新增更多 按钮 -->
         <div class="add_more">
-          您还需要添加新的报销?请点击
+          您还需要添加新的明细?请点击
           <span class='add' @click="addCost">新增</span>
           <em v-show="CostList.length>1">或</em>
           <span class='delete' @click="deleteCost" v-show="CostList.length>1">删除</span>
@@ -107,6 +110,7 @@
             cashOutCode: '', // 资金账户编码
             cashType_cashOutCode: '', // 资金账户大类
             tdAmount: '', // 支付金额
+            thenAmntBal: '', //账号余额
           }
         ],
         selectedCost: [],
@@ -154,6 +158,7 @@
           cashOutCode: '', // 资金账户编码
           cashType_cashOutCode: '', // 资金账户大类
           tdAmount: '', // 支付金额
+          thenAmntBal : '' //账号余额
         })
       },
       // 删除费用明细
@@ -166,6 +171,7 @@
         this.CostList[this.costIndex].cashName = sels.fundName;
         this.CostList[this.costIndex].cashOutCode = sels.fundCode;
         this.CostList[this.costIndex].cashType_cashOutCode = sels.fundType;
+        this.CostList[this.costIndex].thenAmntBal = sels.thenAmntBal;
       },
       // 提交
       submitOrder () {
@@ -226,11 +232,15 @@
                   drDealerLabel: this.dealerInfo.dealerLabelName,
                   dataSet
                 },
+                outPut: {
+                  dataSet: this.dealerInfo
+                },
                 dealerDebitContactPersonName: this.contact.dealerName || null,
 	              dealerDebitContactInformation: this.contact.dealerMobilePhone || null,
               }),
               wfPara: JSON.stringify(wfPara)
             };
+            console.log('submitData',submitData);
             // 重新提交
             if (this.isResubmit) {
               submitData.biReferenceId = this.biReferenceId;

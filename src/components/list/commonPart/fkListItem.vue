@@ -13,16 +13,16 @@
     </div>
     <ul class="order-cost">
       <li class="each_cost" :class="{'vux-1px-b' : mIndex < item.detailItem.length-1}" v-for="(mItem, mIndex) in item.detailItem" :key="mIndex">
-        <div class="cost_name">
+        <!-- <div class="cost_name">
           <slot name="costName" :mItem="mItem">
-            <span class="name">:{{mItem.dealerName_dealerDebit}}</span>
+            <span class="name">{{mItem.dealerName_dealerDebit}}</span>
           </slot>  
-        </div>
+        </div> -->
         <div class="cost_amount">
           <slot name="cost_info" :mItem="mItem">
             <div class="each_amount">
-              <span class="money">{{mItem.fundName_cashOutCode}}</span>
-              <span class="title">资金账户名称</span>
+              <span class="costName">{{mItem.dealerName_dealerDebit}}</span>
+              <span class="title">{{mItem.fundName_cashOutCode}}</span>
             </div>
             <div class="each_amount">
               <span class="money">￥{{mItem.tdAmount | numberComma}}</span>
