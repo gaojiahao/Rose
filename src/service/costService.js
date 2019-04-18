@@ -31,6 +31,13 @@ export let getObjFunds = (data = {}) => {
     data
   })
 }
+// 获取付款资金账户列表2
+export let getUniversalPayment = (data = {}) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getUniversalPayment',
+    data
+  })
+}
 // 获取【员工借款与备用金】往来用户的余额
 export let getEmployeeBal = (data) => {
   return $flyio.ajax({

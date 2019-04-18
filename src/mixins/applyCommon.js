@@ -227,6 +227,7 @@ export default {
             if(type != null){
                ct = newCfg[type];
                newCfg[type] = ct.length ? ct.concat(item.items) : item.items;
+               //console.log(newCfg[type]);
             }
           }
           // 处理表单配置 <重复项渲染> 部分
@@ -960,6 +961,12 @@ export default {
         this.handleOtherCfg(otherConfig);
         this.handleBaseinfoExtCfg(baseinfoExtConfig,dealerFilter);
         this.handleFundCfg(fundConfig);
+
+        //console.log('this.dealerConfig',this.dealerConfig);
+        //console.log('this.matterConfig',this.matterConfig);
+        //console.log('this.otherConfig',this.otherConfig);
+        //console.log('this.baseinfoExtConfig',this.baseinfoExtConfig);
+        //console.log('this.fundConfig',this.fundConfig);
       })
     },
     // 处理配置中数据请求

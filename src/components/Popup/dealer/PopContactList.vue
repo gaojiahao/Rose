@@ -82,9 +82,9 @@
         showPop: false,
         srhInpTx: '',           // 搜索框内容
         bScroll: null,
-        contactInfo: {},        // 联系人信息
+        contactInfo: [],        // 联系人信息
         dealerList: [],
-        contactList: [],        // 联系人列表
+        contactList: {},        // 联系人列表
         scrollOptions: {
           pullUpLoad: true,
         },
@@ -100,19 +100,20 @@
           if (newVal) {
             newId = newVal.id || '';
           } 
-          if (JSON.stringify(oldVal) !== '{}' && oldId !== newId) {
+          if (JSON.stringify(oldVal) !== '{}') {
+          //if (JSON.stringify(oldVal) !== '{}' && oldId !== newId) {
             this.resetCondition();
             this.getContact();
           }
         },
         immediate: true
       },
-      defaultValue: {
-        handler() {
-          this.contactInfo = Object.freeze({...this.defaultValue})
-        },
-        immediate: true,
-      }
+      // defaultValue: {
+      //   handler() {
+      //     this.contactInfo = Object.freeze({...this.defaultValue})
+      //   },
+      //   immediate: true,
+      // }
     },
     methods: {
       // 弹窗展示时调用
@@ -148,6 +149,8 @@
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.contactList = this.page === 1 ? tableContent : [...this.contactList, ...tableContent];
+          //获取往来的同时赋予默认联系人
+          this.contactInfo = Object.freeze({...this.contactList[0]})
           this.$nextTick(() => {
             this.$refs.bScroll.finishPullUp();
           })
