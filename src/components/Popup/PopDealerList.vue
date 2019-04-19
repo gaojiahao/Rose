@@ -166,7 +166,7 @@ export default {
     jineData: {
       type: Array,
       default() {
-        return {}
+        return []
       }
     },
   },
