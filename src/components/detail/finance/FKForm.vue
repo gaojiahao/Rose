@@ -10,7 +10,7 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <div class="form_part">
+      <div class="form_part" v-if = 'this.matterConfig.length != 0 '>
         <div class="form_title vux-1px-b">
           <span class="iconfont icon-baoxiao"></span><span class="title">账户列表</span>
         </div>
@@ -20,9 +20,39 @@
           <div class="main_content" >
               <form-cell cellTitle='资金账户名称' :cellContent="item.fundName_cashOutCode" :showTopBorder=false></form-cell>
               <form-cell cellTitle='资金账户大类' :cellContent="item.cashType_cashOutCode"></form-cell>
+              <form-cell cellTitle='账号余额' showSymbol :cellContent="item.thenAmntBal | toFixed | numberComma(3)"></form-cell>
               <form-cell cellTitle='支付金额' showSymbol :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
           </div>
         </div>
+
+        <div class="materiel_list" v-for="(item, index) in this.matterConfig[1].items" :key='index'>
+            <group :title='`资金账户${index+1}`' class='costGroup'>
+              <cell title="资金账户名称" v-model='item.cashName' is-link @click.native="getCost(index,item)">
+                <template slot="title">
+                  <span class='required'>资金账户名称
+                  </span>
+                </template>
+              </cell>
+              <!-- <cell title="费用编码" :value="item.expCode"></cell> -->
+              <cell title="资金账户大类" :value="item.cashType_cashOutCode">
+                <template slot="title">
+                  <span class='required'>资金账户大类</span>
+                </template>
+              </cell>
+              <cell title="账户余额" :value="item.thenAmntBal">
+                <template slot="title">
+                  <span class='required'>账户余额</span>
+                </template>
+              </cell>
+              <x-input title="支付金额" text-align='right' placeholder='请填写' @on-focus="getFocus($event)"
+                      @on-blur="checkAmt(item)" type='number' v-model.number='item.tdAmount'>
+                <template slot="label">
+                  <span class='required'>支付金额
+                  </span>
+                </template>
+              </x-input>
+            </group>
+          </div>
       </div>
       <!-- <div class="price_cell vux-1px-t">
         <div class="price_title">
@@ -93,18 +123,20 @@ export default {
         }
         data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
         this.orderInfo = data.formData;
-        let {order} = this.orderInfo;
+        let {outPut} = this.orderInfo;
         this.contactInfo = {
-          creatorName: order.dealerDebitContactPersonName, // 客户名
-          dealerName: order.dealerName_dealerDebit, // 公司名
+          creatorName:outPut.dataSet[0].dealerDebitContactPersonName, // 客户名
+          dealerName: outPut.dataSet[0].dealerName_dealerDebit, // 公司名
           dealerMobilePhone: this.orderInfo.dealerDebitContactInformation, // 手机
           dealerContactPersonName: this.orderInfo.dealerDebitContactPersonName, // 联系人
-          dealerCode: order.dealerDebit, // 客户编码
-          dealerLabelName: order.dealerName_dealerDebit, // 关系标签
-          province: order.province_dealerDebit, // 省份
-          city: order.city_dealerDebit, // 城市
-          county: order.county_dealerDebit, // 地区
-          address: order.address_dealerDebit, // 详细地址
+          dealerCode:  outPut.dataSet[0].dealerDebit, // 客户编码
+          dealerLabelName: outPut.dataSet[0].dealerName_dealerDebit, // 关系标签
+          province:outPut.dataSet[0].province_dealerDebit, // 省份
+          city: outPut.dataSet[0].city_dealerDebit, // 城市
+          county: outPut.dataSet[0].county_dealerDebit, // 地区
+          address: outPut.dataSet[0].address_dealerDebit, // 详细地址
+          thenTotalAmntBal: outPut.dataSet[0].thenTotalAmntBal, // 往来余额
+          applicationAmount: outPut.dataSet[0].applicationAmount, // 申请金额
         };
         this.workFlowInfoHandler();
       })

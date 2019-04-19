@@ -3,7 +3,7 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
-                      :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
+                      :handle-org-list="handleORG" :user-role-list="userRoleList" :statusData = "currentStage"></pop-baseinfo>
         <!-- <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker> -->
         <!-- 用户地址和基本信息-->
@@ -37,7 +37,7 @@
         </div>
         <!-- 新增更多 按钮 -->
         <div class="add_more">
-          您还需要添加新的报销?请点击
+          您还需要添加新的资金账户?请点击
           <span class='add' @click="addCost">新增</span>
           <em v-show="CostList.length>1">或</em>
           <span class='delete' @click="deleteCost" v-show="CostList.length>1">删除</span>

@@ -12,7 +12,7 @@
       <r-picker class="vux-1px-b" title="经办组织" :data="groupList" :value="group" 
                 v-model="group" :required="requiredField === 'group'" @on-change="changeGroup"></r-picker>
       <r-picker class="vux-1px-b" title="经办职位" :data="roleList" :value="role" v-model="role" @on-change="changeRole"></r-picker>
-      <r-picker title="流程状态" :data="statusData" v-model="biProcessStatus" :value="biProcessStatus" v-if="showStatus"></r-picker>
+      <r-picker title="流程状态" :data="statusData" v-model="biProcessStatus" :value="biProcessStatus" v-if="biProcessStatus"></r-picker>
     </div>
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
@@ -276,6 +276,7 @@
         }
         this.defaultORG();  // 默认 经办组织
         this.defaultUserRole(); // 默认 经办职位
+        this.biProcessStatus = this.statusData.length ? this.statusData[0].fieldVlaue : '';
       },
       // 默认（传入）经办组织
       defaultORG() {

@@ -6,10 +6,13 @@
         <span class="code vux-1px-l">{{item.transCode}}</span>
         <span class="status" :class="item.statusClass">{{item.biStatus}}</span>
       </div>
-      <div class="order_amount" v-show="isHasCount">
+      <div class="order_code">
+        <span class="vux-1px-l">往来:{{item.dealerName_dealerDebit}}</span>
+      </div>
+      <!-- <div class="order_amount" v-show="isHasCount">
         <p class="amount">总支付￥{{item.count | toFixed | numberComma(3)}}</p>
         <p class="num">共{{item.itemCount}}笔</p>
-      </div>
+      </div> -->
     </div>
     <ul class="order-cost">
       <li class="each_cost" :class="{'vux-1px-b' : mIndex < item.detailItem.length-1}" v-for="(mItem, mIndex) in item.detailItem" :key="mIndex">
@@ -21,12 +24,12 @@
         <div class="cost_amount">
           <slot name="cost_info" :mItem="mItem">
             <div class="each_amount">
-              <span class="costName">{{mItem.dealerName_dealerDebit}}</span>
+              <!-- <span class="costName">{{mItem.dealerName_dealerDebit}}</span> -->
               <span class="title">{{mItem.fundName_cashOutCode}}</span>
             </div>
             <div class="each_amount">
               <span class="money">￥{{mItem.tdAmount | numberComma}}</span>
-              <span class="title">申请金额</span>
+              <span class="title">支付金额</span>
             </div>
           </slot>
         </div>

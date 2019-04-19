@@ -23,12 +23,20 @@
         <div class="contact_dealer_item">
           <i class="icon icon-dealer2"></i>
           <span class="contact_dealer_title">往来名称：</span>
-          <span class="contact_dealer_value">{{contactInfo.dealerName || contactInfo.dealerName_dealerCodeCredit}}</span>
+          <span class="contact_dealer_value">{{contactInfo.dealerName || contactInfo.dealerName_dealerCodeCredit || contactInfo.dealerName_dealerDebit}}</span>
         </div>
         <div class="contact_dealer_item" v-if="showAddress">
           <i class="icon icon-address"></i>
           <span class="contact_dealer_title">往来地址：</span>
           <span class="contact_dealer_value">{{contactInfo.address || '暂无'}}</span>
+        </div>
+      </div>
+      <div class="contact_top">
+        <div class="contact_top_item">
+          <span class="contact_top_title">往来余额: </span>{{contactInfo.thenTotalAmntBal}}
+        </div>
+        <div class="contact_top_item">
+          <span class="contact_top_title">申请金额: </span>{{contactInfo.applicationAmount}}
         </div>
       </div>
     </div>
