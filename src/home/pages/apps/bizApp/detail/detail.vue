@@ -98,7 +98,11 @@ export default {
       this.hasComment = !!transCode;
       this.transCode = transCode;
       try {
-        this.currentComponent = require(`components/detail/${folder}/${fileName}Form.vue`).default;
+        if(fileName == 'null'){
+            this.currentComponent = require(`components/detail/CommonForm.vue`).default;
+        } else {
+            this.currentComponent = require(`components/detail/${folder}/${fileName}Form.vue`).default;
+        }
         // 监听详情页传回来的 ‘评论’
         this.$event.$on('commentCount', (val) => {
           this.commentCount = val;

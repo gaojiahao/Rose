@@ -5,7 +5,7 @@ let rtext = Vue.component('RText',{
     render:function(c){
         var self = this,
             cfg = this.cfg,
-            values =  this.values;
+            values =  this.values||{};
         
        return cfg.xtype == 'r2Textfield' ? c(
            'div',
@@ -24,6 +24,7 @@ let rtext = Vue.component('RText',{
                    },
                    cfg.fieldLabel
                ),
+               cfg.readOnly == false ?
                c(
                    'input',
                    {
@@ -42,6 +43,10 @@ let rtext = Vue.component('RText',{
                            }
                        }
                    }
+               ):c(
+                   'span',
+                   {},
+                   values[cfg.fieldCode]||'无'
                )
            ]
        ):undefined;
