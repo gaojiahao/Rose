@@ -1,4 +1,5 @@
 <template>
+<!--低值易耗品采购申请-->
   <div class="pages xsbj-list-conatiner" :class="{'no-add': !action.add}" ref='list'>
     <div class='content'>
       <div class="list_top">
