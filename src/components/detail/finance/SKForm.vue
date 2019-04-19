@@ -105,6 +105,8 @@ export default {
           city: order.city_dealerCodeCredit, // 城市
           county: order.county_dealerCodeCredit, // 地区
           address: order.address_dealerCodeCredit, // 详细地址
+          thenTotalAmntBal:order.thenTotalAmntBal,    //往来余额
+          applicationAmount:order.thenAlreadyAmnt   //申请金额
         };
         this.workFlowInfoHandler();
       })

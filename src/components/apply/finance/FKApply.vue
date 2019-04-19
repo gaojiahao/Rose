@@ -3,48 +3,50 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
-                      :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
+                      :handle-org-list="handleORG" :user-role-list="userRoleList" :statusData = "currentStage" ref='base'></pop-baseinfo>
         <!-- <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker> -->
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" dealer-label-name="客户,原厂供应商,经销供应商,设施供应商,员工"
-                          dealerTitle="往来" :defaultValue="dealerInfo" :defaultContact="contact" :dealer-params="dealerParams">
+                          dealerTitle="往来" :defaultValue="dealerInfo" :defaultContact="contactInfo" :dealer-params="dealerParams" :jineData = "this.dealerConfig" ref='dlist'>
         </pop-dealer-list>
         <!-- 费用列表 -->
-        <div class="materiel_list" v-for="(item, index) in CostList" :key='index'>
-          <group :title='`资金账户${index+1}`' class='costGroup'>
-            <cell title="资金账户名称" v-model='item.cashName' is-link @click.native="getCost(index,item)">
-              <template slot="title">
-                <span class='required'>资金账户名称
-                </span>
-              </template>
-            </cell>
-            <!-- <cell title="费用编码" :value="item.expCode"></cell> -->
-            <cell title="资金账户大类" :value="item.cashType_cashOutCode">
-              <template slot="title">
-                <span class='required'>资金账户大类</span>
-              </template>
-            </cell>
-            <cell title="账户余额" :value="item.thenAmntBal">
-              <template slot="title">
-                <span class='required'>账户余额</span>
-              </template>
-            </cell>
-            <x-input title="支付金额" text-align='right' placeholder='请填写' @on-focus="getFocus($event)"
-                     @on-blur="checkAmt(item)" type='number' v-model.number='item.tdAmount'>
-              <template slot="label">
-                <span class='required'>支付金额
-                </span>
-              </template>
-            </x-input>
-          </group>
-        </div>
-        <!-- 新增更多 按钮 -->
-        <div class="add_more">
-          您还需要添加新的明细?请点击
-          <span class='add' @click="addCost">新增</span>
-          <em v-show="CostList.length>1">或</em>
-          <span class='delete' @click="deleteCost" v-show="CostList.length>1">删除</span>
+        <div  v-if = 'this.submitMatterField.length != 0 '>
+          <div class="materiel_list" v-for="(item, index) in CostList" :key='index'>
+            <group :title='`资金账户${index+1}`' class='costGroup'>
+              <cell title="资金账户名称" v-model='item.cashName' is-link @click.native="getCost(index,item)">
+                <template slot="title">
+                  <span class='required'>资金账户名称
+                  </span>
+                </template>
+              </cell>
+              <!-- <cell title="费用编码" :value="item.expCode"></cell> -->
+              <cell title="资金账户大类" :value="item.cashType_cashOutCode">
+                <template slot="title">
+                  <span class='required'>资金账户大类</span>
+                </template>
+              </cell>
+              <cell title="账户余额" :value="item.thenAmntBal">
+                <template slot="title">
+                  <span class='required'>账户余额</span>
+                </template>
+              </cell>
+              <x-input title="支付金额" text-align='right' placeholder='请填写' @on-focus="getFocus($event)"
+                      @on-blur="checkAmt(item)" type='number' v-model.number='item.tdAmount'>
+                <template slot="label">
+                  <span class='required'>支付金额
+                  </span>
+                </template>
+              </x-input>
+            </group>
+          </div>
+          <!-- 新增更多 按钮 -->
+          <div class="add_more">
+            您还需要添加新的资金账户?请点击
+            <span class='add' @click="addCost">新增</span>
+            <em v-show="CostList.length>1">或</em>
+            <span class='delete' @click="deleteCost" v-show="CostList.length>1">删除</span>
+          </div>
         </div>
         <div class="materiel_list">
           <group title="其他信息" class="costGroup">
@@ -60,7 +62,7 @@
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}">
       <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}}
+        <!-- <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}} -->
       </span>
       <span class="count_btn stop" @click="stopOrder"
             v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
@@ -89,6 +91,7 @@
   // 方法引入
   import { accAdd, accMul, accSub, accDiv } from 'plugins/calc/decimalsAdd'
   import { toFixed } from '@/plugins/calc'
+import { constants } from 'crypto';
 
   const DRAFT_KEY = 'FK_DATA';
   export default {
@@ -118,7 +121,8 @@
         dealer: {},
         transCode: '',
         dealerInfo: {},
-        contact: {},
+        contactInfo: {},
+        jineData: {},
         formData: {
           biComment: '',
           biProcessStatus: ''
@@ -143,7 +147,7 @@
         this.dealerInfo = JSON.parse(val)[0];
       },
       selContact(val) {
-        this.contact = {...val};
+        this.contactInfo = {...val};
       },
       getCost (index, item) {
         this.showCostPop = true;
@@ -177,29 +181,76 @@
       submitOrder () {
         let warn = '';
         let dataSet = [];
-        this.CostList.every(item => {
-          if (!item.cashName) {
-            warn = '请选择资金账户';
-            return false
+        let dataSet2 = [];
+        //取申请金额       
+        for(let i = 0; this.$refs.dlist.jineData[i]; i++){
+          if(this.$refs.dlist.jineData[i].fieldCode == 'applicationAmount') {
+            this.dealerInfo.applicationAmount = this.$refs.dlist.jineData[i].applicationAmount
+            break;
           }
-          if (!item.tdAmount) {
-            warn = '请填写支付金额';
-            return false
+        };
+        console.log('this.dealerInfo',this.dealerInfo);
+        if(!this.dealerInfo.dealerCode) {
+          warn = '请选择往来列表';
+          if (warn) {
+            this.$vux.alert.show({
+              content: warn,
+            });
+            return
           }
-          dataSet.push({
-            tdId: item.tdId || '',
-            cashOutCode: item.cashOutCode, // 费用编码
-            cashType_cashOutCode: item.cashType_cashOutCode, // 费用科目
-            tdAmount: item.tdAmount, // 报销金额
-          });
-          return true
-        });
-        if (warn) {
-          this.$vux.alert.show({
-            content: warn,
-          });
-          return
         }
+        if(!this.dealerInfo.applicationAmount) {
+          warn = '请填写申请金额';
+          if (warn) {
+            this.$vux.alert.show({
+              content: warn,
+            });
+            return
+          }
+        }
+        dataSet2.push({
+          dealerDebit: this.dealerInfo.dealerCode,
+          drDealerLabel: this.dealerInfo.dealerLabelName,
+          thenTotalAmntBal: this.dealerInfo.amntBal,
+          applicationAmount: this.dealerInfo.applicationAmount,
+          thenAlreadyAmnt: '',
+          differenceAmount: this.dealerInfo.amntBal,  
+        });
+        dataSet.push({
+          cashOutCode: '', // 费用编码
+          cashType_cashOutCode: '', // 费用科目
+          dealerDebit: this.dealerInfo.dealerCode,
+          drDealerLabel: this.dealerInfo.dealerLabelName,
+          thenAmntBal: '',
+          tdAmount: '', 
+        });
+        // this.CostList.every(item => {
+        //   if (!item.cashName) {
+        //     warn = '请选择资金账户';
+        //     return false
+        //   }
+        //   if (!item.tdAmount) {
+        //     warn = '请填写支付金额';
+        //     return false
+        //   }
+        //   dataSet.push({
+        //     tdId: item.tdId || '',
+        //     cashOutCode: item.cashOutCode, // 费用编码
+        //     cashType_cashOutCode: item.cashType_cashOutCode, // 费用科目
+        //     tdAmount: item.tdAmount, // 报销金额
+        //     dealerDebit: this.dealerInfo.dealerCode,
+        //     drDealerLabel: this.dealerInfo.dealerLabelName,
+        //     thenAmntBal: '',
+        //     tdAmount: '', 
+        //   });
+        //   return true
+        // });
+        // if (warn) {
+        //   this.$vux.alert.show({
+        //     content: warn,
+        //   });
+        //   return
+        // }
         this.$vux.confirm.show({
           content: '确认提交?',
           // 确定回调
@@ -219,6 +270,8 @@
                 comment: ""
               }
             }
+            console.log(this.dealerInfo)
+            this.formData.biProcessStatus = this.$refs.base.biProcessStatus;
             let submitData = {
               listId: this.listId,
               biComment: '',
@@ -228,19 +281,18 @@
                 creator: this.transCode ? this.formData.handler : '',
                 modifer: this.transCode ? this.formData.handler : '',
                 order: {
-                  dealerDebit: this.dealerInfo.dealerCode,
-                  drDealerLabel: this.dealerInfo.dealerLabelName,
                   dataSet
                 },
                 outPut: {
-                  dataSet: this.dealerInfo
+                  dataSet: dataSet2
                 },
-                dealerDebitContactPersonName: this.contact.dealerName || null,
-	              dealerDebitContactInformation: this.contact.dealerMobilePhone || null,
+                dealerDebitContactPersonName: this.contactInfo.dealerName || null,
+	              dealerDebitContactInformation: this.contactInfo.dealerMobilePhone || null,
               }),
               wfPara: JSON.stringify(wfPara)
             };
             console.log('submitData',submitData);
+            
             // 重新提交
             if (this.isResubmit) {
               submitData.biReferenceId = this.biReferenceId;
@@ -312,7 +364,7 @@
             county: formData.order.county_dealerDebit,
             address: formData.order.address_dealerDebit
           }
-          this.contact = {
+          this.contactInfo = {
             dealerName: formData.dealerDebitContactPersonName,
             dealerMobilePhone: formData.dealerDebitContactInformation
           }
@@ -337,7 +389,7 @@
             cost: this.CostList,
             formData: this.formData,
             dealerInfo: this.dealerInfo,
-            contact: this.contact,
+            contactInfo: this.contactInfo,
           }
         };
       },
@@ -349,7 +401,7 @@
         this.CostList = draft.cost;
         this.formData = draft.formData;
         this.dealerInfo = draft.dealerInfo;
-        this.contact = draft.contact;
+        this.contactInfo = draft.contactInfo;
         sessionStorage.removeItem(DRAFT_KEY);
       }
     },

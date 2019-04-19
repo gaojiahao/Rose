@@ -3,10 +3,13 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
-                      :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
+                      :handle-org-list="handleORG" :user-role-list="userRoleList" :statusData = "currentStage"></pop-baseinfo>
+        <!-- <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker> -->
         <!-- 往来信息 -->
+        <div v-for="(item, index) in this.config" :key = "index">
+          <div>{{item.name}}</div>
+        </div>
         <pop-dealer-list :default-value="dealerInfo" @sel-item="selDealer">
           <template slot="other">
             <div class="amt-dealer">
@@ -438,14 +441,14 @@
   }
 
   .costGroup {
-    /deep/ > .vux-no-group-title {
+    .vux-no-group-title {
       margin-top: 0.08rem;
     }
-    /deep/ > .weui-cells:after {
+    .weui-cells:after {
       border-bottom: none;
     }
     .vux-cell-box {
-      /deep/ > .weui-cell {
+      .weui-cell {
         padding: 10px 0;
       }
       &:before {
@@ -461,7 +464,7 @@
     }
   }
 
-  /deep/ > .weui-cells__title {
+  .weui-cells__title {
     padding-left: 0;
     font-size: 0.12rem;
   }

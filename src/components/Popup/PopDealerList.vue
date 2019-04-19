@@ -18,8 +18,8 @@
             <span class="cp-ads-box">往来关系</span>
             <div class="cp-ads">{{dealerInfo.dealerLabelName}}</div>
           </div>
-           <div class="cp-info">
-             <span class="cp-ads-box">往来余额</span>
+          <div class="cp-info" style=" display:none;">
+            <span class="cp-ads-box">往来余额</span>
             <div class="cp-ads">{{dealerInfo.amntBal}}</div>
           </div>
         </div>
@@ -33,8 +33,8 @@
         </div>
       </div>
     </div>
-    <pop-contact-list :dealer-info="dealerInfo" :default-value="contactInfo"
-                      @sel-contact="selContact" v-if="!noContact"></pop-contact-list>
+    <pop-contact-list :dealer-info="dealerInfo" :default-value="contactInfo" @sel-contact="selContact" v-if="!noContact">
+    </pop-contact-list>
     <!-- 往来 Popup -->
     <div v-transfer-dom>
       <popup v-model="showDealerPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
@@ -82,18 +82,36 @@
         </div>
       </popup>
     </div>
+    <div class="materiel_list" v-for="(item, index) in jineData" :key='index'>
+      <group class='costGroup'>
+        <cell title='item.fieldLabel' :value="dealerInfo.amntBal" v-if= 'item.fieldCode == "thenTotalAmntBal"'>
+          <template slot="title">
+            <span class='norequired'>{{item.fieldLabel}}</span>
+          </template>
+        </cell>
+        <x-input title='item.fieldLabel' text-align='right' placeholder='请填写' @on-focus="getFocus($event)"
+                  @on-blur="checkAmt(item)" type='number' v-model.number='item.applicationAmount' v-if= 'item.fieldCode == "applicationAmount"'>
+          <template slot="label">
+            <span class='required'>{{item.fieldLabel}}
+            </span>
+          </template>
+        </x-input>
+      </group>
+    </div>
   </div>
 </template>
 
 <script>
-import {Icon, Popup, LoadMore, AlertModule, TransferDom, XInput} from 'vux'
+import {Icon, Popup, LoadMore, AlertModule, TransferDom, XInput, Group, Cell} from 'vux'
 import DSearch from 'components/search/search'
 import dealerService from 'service/dealerService'
 import {requestData} from 'service/common/commonService'
 import BScroll from 'better-scroll'
 import PopContactList from 'components/Popup/dealer/PopContactList'
 import { constants } from 'crypto';
-
+// mixins 引入
+import ApplyCommon from 'mixins/applyCommon'
+import {toFixed} from '@/plugins/calc'
 export default {
   name: "PopDealerList",
   props: {
@@ -144,7 +162,13 @@ export default {
       default() {
         return {}
       }
-    }
+    },
+    jineData: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
   },
   computed: {
     noAddress() {
@@ -154,7 +178,7 @@ export default {
   },
   directives: {TransferDom},
   components: {
-    Icon, Popup, DSearch, LoadMore, PopContactList, XInput
+    Icon, Popup, DSearch, LoadMore, PopContactList, XInput, Group , Cell
   },
   data() {
     return {
@@ -212,6 +236,52 @@ export default {
     // 判断是否展示选中图标
     showSelIcon(sItem) {
       return this.selItems.findIndex(item => item.colId === sItem.colId) !== -1;
+    },
+    // 输入框获取焦点，内容选中
+    getFocus(e) {
+      event.currentTarget.select();
+    },
+    checkAmt(item, key, val) {
+      let { tdQty, taxRate, qtyBal, qtyStock, qtyBalance, 
+        assistQty, qtyStockBal, qtyOnline, qtyDownline} = item;
+
+      item[key] = Math.abs(toFixed(val));
+
+      // 数量
+      if (key === 'tdQty' && tdQty) {
+        // qtyStockBal为销售出库的库存，数量不允许大于余额
+        if (!qtyStockBal && !qtyStock && qtyBal && tdQty > qtyBal) {
+          item.tdQty = qtyBal;
+        }
+        else if (qtyStockBal && tdQty > qtyStockBal) { // 数量不允许大于库存
+          item.tdQty = qtyStockBal;
+        }
+        //qtyStock为物料领料，数量不允许大于库存
+        else if (qtyStock && tdQty > qtyStock) {
+          item.tdQty = qtyStock;
+        }
+        else if (qtyBalance && tdQty > qtyBalance) {
+          item.tdQty = qtyBalance;
+        }
+        else if (qtyOnline && qtyDownline) {
+          /** 
+           *  @assistQty  辅助计量 数量
+           *  @qtyDownline  数量下限
+           *  @qtyOnline  数量上限
+           *  只有当符合下列条件时 数据才会相应的动态赋值
+           */ 
+          if (assistQty >= qtyDownline && assistQty <= qtyOnline) {
+            this.defineObjVal(item, item.otherField, item.otherField)
+          }
+          else {
+            this.defineObjVal(item, item.otherField, '')
+          }
+        }
+      }
+      //税率
+      if (taxRate) {
+        item.taxRate = Math.abs(toFixed(taxRate));
+      }
     },
     // 选择往来
     selDealer(sItem, sIndex) {
@@ -279,10 +349,8 @@ export default {
         tableContent.forEach(item => {
           let {province = '', city = '', county = '', address = ''} = item;
           item.dealerAddress = !province && !city && !county && !address ? '暂无联系地址' : `${address}`;
-          item.applicationAmount = '0';
         });
         this.dealerList = this.page === 1 ? tableContent : [...this.dealerList, ...tableContent];
-        console.log('this.dealerList',this.dealerList);
         this.$nextTick(() => {
           this.bScroll.refresh();
           if (!this.hasNext) {
@@ -588,5 +656,73 @@ export default {
     height: .14rem;
     font-size: .12rem;
     width: .5rem;
+  }
+  .costGroup {
+    .required {
+      color: #3296FA;
+      font-weight: bold;
+    }
+    .norequired {
+      color: #696969;
+      //font-weight: bold;
+      font-size: .14rem;
+    }
+    .vux-no-group-title {
+      margin-top: 0.08rem;
+      .weui-cell {
+      padding: 10px 0px;  
+    }
+    }
+    .weui-cells:after {
+      border-bottom: none;
+    }
+    .vux-cell-box {
+      .weui-cell {
+        padding: 10px 0;
+      }
+      &:before {
+        left: 0;
+      }
+    }
+    // .weui-cell {
+    //   padding: 10px 0;
+    //   &:before {
+    //     left: 0;
+    //   }
+    // }
+    .required {
+      font-size: .14rem;
+    }
+    .fontSize {
+      font-size: .14rem;
+    }
+  }
+
+  .weui-cells__title {
+    padding-left: 0;
+    font-size: 0.12rem;
+  }
+
+  .add_more {
+    width: 100%;
+    text-align: center;
+    font-size: 0.12rem;
+    padding: 0.1rem 0;
+    color: #757575;
+    span {
+      margin: 0 5px;
+      color: #fff;
+      padding: .01rem .06rem;
+      border-radius: .12rem;
+    }
+    .add {
+      background: #5077aa;
+    }
+    .delete {
+      background: red;
+    }
+    em {
+      font-style: normal;
+    }
   }
 </style>
