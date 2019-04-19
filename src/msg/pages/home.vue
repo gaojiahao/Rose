@@ -181,7 +181,6 @@ export default {
     },
     // 前往应用消息列表
     goMsglist(item, name) {
-      debugger;
       let { status } = this.tabList[this.activeIndex];
       // 判断是否在滑动swiper中
       if (this.isMovingSwiper) {
