@@ -1,7 +1,7 @@
 <template>
   <div class="each-msg" :class="{visited: item.visited}">
     <div class="app-img-part">
-      <img :src="item.list && item.list[0].pic" alt="appImg" @error="getDefaultImg(item[0] || "")">
+      <img :src="item.list && item.list[0].pic" alt="appImg" @error="getDefaultImg(item[0] || '')">
     </div>
     <div class="msg-container-part" :class="{'vux-1px-b': !noBorder}">
       <div class="top_part">
