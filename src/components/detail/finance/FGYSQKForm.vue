@@ -61,6 +61,10 @@
           </div>
         </div>
       </div>
+      <!-- <div v-for="(item,index) in this.config" :key = 'index'>
+        <div>{{ item.name}}{{ index }}</div>
+        
+      </div> -->
       <!-- 资金列表 -->
       <div class="form_part">
         <div class="form_title vux-1px-b">

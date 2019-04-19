@@ -40,10 +40,10 @@
                   <div class="instance_detail_amt">￥{{detail.tdAmount | numberComma}}</div>
                   <div class="instance_detail_title">本次支付</div>
                 </div>
-                <div class="instance_detail_amt_item">
+                <!-- <div class="instance_detail_amt_item">
                   <div class="instance_detail_amt">￥{{detail.differenceAmount | numberComma}}</div>
                   <div class="instance_detail_title">余额</div>
-                </div>
+                </div> -->
               </div>
             </div>
             <div class="instance-bottom">
