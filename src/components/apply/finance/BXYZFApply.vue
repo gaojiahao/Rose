@@ -4,6 +4,24 @@
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList" :showStatus="false"></pop-baseinfo>
+        <div class="project_part">
+          <div :class="{'vux-1px-t': dIndex>0}" v-for="(dItem,dIndex) in baseinfoExtConfig" :key="dIndex">
+            <!-- 可编辑的字段 -->
+            <template v-if="!dItem.readOnly">
+              <!-- 下拉框 -->
+              <r-picker :title="dItem.fieldLabel" :data="dItem.remoteData" :value="project[dItem.fieldCode]"
+                      v-model="project[dItem.fieldCode]" :required="!dItem.allowBlank"
+                      v-if="dItem.xtype === 'r2Selector'"></r-picker>
+            </template>
+            <!--不可编辑的字段 -->
+            <template  v-else>
+              <div class='each_property readOnly'>
+                <label :class="{required: !dItem.allowBlank}">{{dItem.fieldLabel}}</label>
+                <span class='property_val'>{{project[dItem.fieldCode]}}</span>
+              </div>
+            </template>
+          </div>
+        </div>
         <!-- 费用明细-->
         <div class="cost_list">
           <div class="cost_item" :class="{'has_border' : sIndex > 0}" v-for="(sItem, sIndex) in costList" :key="sIndex">
@@ -61,24 +79,6 @@
         </div>
         <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost'
                        :cost-params="matterParams" ref="matter"></pop-cost-list>
-        <div class="project_part">
-          <div :class="{'vux-1px-t': dIndex>0}" v-for="(dItem,dIndex) in baseinfoExtConfig" :key="dIndex">
-            <!-- 可编辑的字段 -->
-            <template v-if="!dItem.readOnly">
-              <!-- 下拉框 -->
-              <r-picker :title="dItem.fieldLabel" :data="dItem.remoteData" :value="project[dItem.fieldCode]"
-                      v-model="project[dItem.fieldCode]" :required="!dItem.allowBlank"
-                      v-if="dItem.xtype === 'r2Selector'"></r-picker>
-            </template>
-            <!--不可编辑的字段 -->
-            <template  v-else>
-              <div class='each_property readOnly'>
-                <label :class="{required: !dItem.allowBlank}">{{dItem.fieldLabel}}</label>
-                <span class='property_val'>{{project[dItem.fieldCode]}}</span>
-              </div>
-            </template>
-          </div>
-        </div>
         <div class='comment'>
           <p class="commit-label vux-1px-b">备注栏</p>
           <x-textarea v-model="formData.biComment" placeholder="请输入"></x-textarea>
@@ -109,6 +109,7 @@
   // 方法引入
   import {toFixed} from '@/plugins/calc'
   import {accAdd, accSub} from 'plugins/calc/decimalsAdd'
+  import { constants } from 'crypto';
 
   const DRAFT_KEY = 'BXYZF_DATA';
   export default {
@@ -232,6 +233,8 @@
                     this.project.projectAddress_project = dItem.address;
                     this.project.budgetIncome_project = dItem.budgetIncome;
                     this.project.tdProjectId_project = dItem.projectApprovalId;
+                    this.matterParams.data.project = dItem.projectApprovalId;
+                    this.costList = [{}];
                    break
                  }
                }
@@ -537,6 +540,7 @@
   }
   
   .cost_list{
+    margin-top: .1rem;
     input {
       border: none;
       outline: none;
