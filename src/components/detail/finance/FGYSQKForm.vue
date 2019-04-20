@@ -61,12 +61,17 @@
           </div>
         </div>
       </div>
-      <!-- <div v-for="(item,index) in this.config" :key = 'index'>
-        <div>{{ item.name}}{{ index }}</div>
-        
-      </div> -->
-      <!-- 资金列表 -->
       <div class="form_part">
+        <div v-for="(item,index) in this.config" :key = 'index'>
+          <div class="form_content" v-if = 'item.name ==="outPut" && !(item.hiddenInRun) '>
+            <div class="main_content" v-for="(cell,index) in item.items" :key = 'index'>
+              <form-cell :cellTitle="cell.fieldLabel" :cellContent="orderInfo.order.dataSet[0][cell.fieldCode]" v-if='!cell.hiddenInRun'></form-cell>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 资金列表 -->
+      <!-- <div class="form_part">
         <div class="form_title vux-1px-b">
           <span class="iconfont icon-baoxiao"></span><span class="title">供资金详情</span>
         </div>
@@ -80,7 +85,7 @@
             <form-cell cellTitle='本次支付' :cellContent="item.tdAmount | toFixed | numberComma(3)" showSymbol></form-cell>
           </div>
         </div>
-      </div>
+      </div> -->
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle"
                    :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
@@ -104,6 +109,7 @@
   import ProjectPart from 'components/detail/commonPart/Project'
   //公共方法引入
   import {accAdd} from 'plugins/calc/decimalsAdd'
+  import FormCell from 'components/detail/commonPart/form-part/FormCell'
 
   export default {
     data() {
@@ -114,7 +120,7 @@
     },
     mixins: [detailCommon],
     components: {
-      workFlow, RAction, ProjectPart
+      workFlow, RAction, ProjectPart,FormCell
     },
     methods: {
       // 获取详情
@@ -156,6 +162,9 @@
     .form_title .iconfont {
       margin-right: .04rem;
       font-size: .14rem;
+    }
+    .main_content {
+      margin-bottom: 0;
     }
   }
 </style>

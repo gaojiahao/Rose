@@ -24,11 +24,11 @@
           <slot name="cost_info" :mItem="mItem">
             <div class="each_amount">
               <span class="money">{{mItem.fundName_cashInCode}}</span>
-              <span class="title">资金账户名称</span>
+              <!-- <span class="title">资金账户名称</span> -->
             </div>
             <div class="each_amount">
               <span class="money">￥{{mItem.tdAmount | numberComma}}</span>
-              <span class="title">申请金额</span>
+              <span class="title">收款金额</span>
             </div>
           </slot>
         </div>

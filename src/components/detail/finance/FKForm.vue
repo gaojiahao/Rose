@@ -20,12 +20,12 @@
           <div class="main_content" >
               <form-cell cellTitle='资金账户名称' :cellContent="item.fundName_cashOutCode" :showTopBorder=false></form-cell>
               <form-cell cellTitle='资金账户大类' :cellContent="item.cashType_cashOutCode"></form-cell>
-              <form-cell cellTitle='账号余额' showSymbol :cellContent="item.thenAmntBal | toFixed | numberComma(3)"></form-cell>
+              <form-cell cellTitle='账户余额' showSymbol :cellContent="item.thenAmntBal | toFixed | numberComma(3)"></form-cell>
               <form-cell cellTitle='支付金额' showSymbol :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
           </div>
         </div>
 
-        <div class="materiel_list" v-for="(item, index) in this.matterConfig[1].items" :key='index'>
+        <!-- <div class="materiel_list" v-for="(item, index) in this.matterConfig[1].items" :key='index'>
             <group :title='`资金账户${index+1}`' class='costGroup'>
               <cell title="资金账户名称" v-model='item.cashName' is-link @click.native="getCost(index,item)">
                 <template slot="title">
@@ -33,7 +33,6 @@
                   </span>
                 </template>
               </cell>
-              <!-- <cell title="费用编码" :value="item.expCode"></cell> -->
               <cell title="资金账户大类" :value="item.cashType_cashOutCode">
                 <template slot="title">
                   <span class='required'>资金账户大类</span>
@@ -52,7 +51,7 @@
                 </template>
               </x-input>
             </group>
-          </div>
+          </div> -->
       </div>
       <!-- <div class="price_cell vux-1px-t">
         <div class="price_title">

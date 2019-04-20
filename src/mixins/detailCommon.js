@@ -80,6 +80,7 @@ export default {
       hasReviseView: false,               // 当前表单是否可以修改
       HasValRealted: false,               // 相关实例是否有值为0
       showMatterDetail: false,            // 是否展示物料详情弹窗
+      config: [],
     }
   },
   computed: {
@@ -382,7 +383,7 @@ export default {
         this.currenrForm = data.viewType;
         
         let {config = [], dataSource = '[]', reconfig = {}} = data;
-
+        this.config = config;
         console.log('config:', config);
         console.log('二次配置-reconfig:', reconfig);
 

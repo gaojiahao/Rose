@@ -227,7 +227,7 @@
   }
 
   .pop_dealer_list {
-    width: 95%;
+    //width: 95%;
     margin: .1rem auto;
     background: #fff;
     margin-bottom: 0.1rem;

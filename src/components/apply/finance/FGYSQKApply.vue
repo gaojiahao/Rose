@@ -7,9 +7,6 @@
         <!-- <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker> -->
         <!-- 往来信息 -->
-        <div v-for="(item, index) in this.config" :key = "index">
-          <div>{{item.name}}</div>
-        </div>
         <pop-dealer-list :default-value="dealerInfo" @sel-item="selDealer">
           <template slot="other">
             <div class="amt-dealer">
