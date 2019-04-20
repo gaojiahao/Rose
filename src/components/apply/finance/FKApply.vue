@@ -11,7 +11,8 @@
                           dealerTitle="往来" :defaultValue="dealerInfo" :defaultContact="contactInfo" :dealer-params="dealerParams" :jineData = "this.dealerConfig" ref='dlist'>
         </pop-dealer-list>
         <!-- 费用列表 -->
-        <div  v-if = 'this.submitMatterField.length != 0 '>
+        <div>
+        <!-- <div v-if = 'this.submitMatterField.length != 0 '> -->
           <div class="materiel_list" v-for="(item, index) in CostList" :key='index'>
             <group :title='`资金账户${index+1}`' class='costGroup'>
               <cell title="资金账户名称" v-model='item.cashName' is-link @click.native="getCost(index,item)">
