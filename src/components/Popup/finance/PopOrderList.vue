@@ -93,12 +93,13 @@
         filterProperty: '', // 过滤的key
         filterList: [ // 过滤列表
           {
-            name: '物料名称',
-            value: 'inventoryName',
-          }, {
-            name: '物料编码',
-            value: 'inventoryCode',
-          },
+            name: '入库号',
+            value: 'popiCode',
+          },    
+          // }, {
+          //   name: '采购订单号',
+          //   value: 'poCode',
+          // },
         ],
       }
     },

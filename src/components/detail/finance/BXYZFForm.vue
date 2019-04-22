@@ -137,6 +137,7 @@
       // 判断纸巾账户的支付金额是否可编辑
       isEditAdmout() {
         let isEdit = false;
+        console.log('this.otherConfig',this.otherConfig);
         this.otherConfig.forEach(item => {
           if (item.fieldCode === "tdAmountCopy1"){
            isEdit = item.readOnly;
@@ -151,6 +152,7 @@
             thenAmntBal: this.cashInfo.thenAmntBal || this.cashInfo.thenAmntBalCopy1,
           }
         }
+        console.log('isEdit',isEdit);
         return isEdit
       }
     },

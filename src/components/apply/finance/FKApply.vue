@@ -12,7 +12,7 @@
         </pop-dealer-list>
         <!-- 费用列表 -->
         <div>
-        <!-- <div v-if = 'this.submitMatterField.length != 0 '> -->
+        <div v-if = 'this.submitMatterField.length != 0 '>
           <div class="materiel_list" v-for="(item, index) in CostList" :key='index'>
             <group :title='`资金账户${index+1}`' class='costGroup'>
               <cell title="资金账户名称" v-model='item.cashName' is-link @click.native="getCost(index,item)">
@@ -41,6 +41,7 @@
               </x-input>
             </group>
           </div>
+        </div>
           <!-- 新增更多 按钮 -->
           <div class="add_more">
             您还需要添加新的资金账户?请点击
@@ -50,7 +51,7 @@
           </div>
         </div>
         <div class="materiel_list">
-          <group title="其他信息" class="costGroup">
+          <group title="" class="costGroup">
             <x-textarea title="备注" v-model="formData.biComment" :max="100" class="fontSize"></x-textarea>
           </group>
         </div>
@@ -154,6 +155,9 @@ import { constants } from 'crypto';
         this.showCostPop = true;
         this.costIndex = index;
         this.selectedCost = [item];
+      },
+      checkAmt(item) {
+        item.tdAmount = Math.abs(toFixed(item.tdAmount)); 
       },
       // 点击增加费用
       addCost () {

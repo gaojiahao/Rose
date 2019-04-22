@@ -43,7 +43,7 @@
           <span class='delete' @click="deleteCost" v-show="CostList.length>1">删除</span>
         </div>
         <div class="materiel_list">
-          <group title="其他信息" class="costGroup">
+          <group title="" class="costGroup">
             <x-textarea title="备注" v-model="formData.biComment" :max="100" class="fontSize"></x-textarea>
           </group>
         </div>
@@ -85,6 +85,7 @@
   // 方法引入
   import { accAdd, accMul, accSub, accDiv } from 'plugins/calc/decimalsAdd'
   import { toFixed } from '@/plugins/calc'
+import { constants } from 'crypto';
 
   const DRAFT_KEY = 'SK_DATA';
   export default {
@@ -143,6 +144,9 @@
         this.showCostPop = true;
         this.costIndex = index;
         this.selectedCost = [item];
+      },
+      checkAmt(item) {
+        item.tdAmount = Math.abs(toFixed(item.tdAmount)); 
       },
       // 点击增加费用
       addCost () {
