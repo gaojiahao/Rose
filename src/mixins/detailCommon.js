@@ -71,6 +71,7 @@ export default {
       otherConfig: [],                    // 用于存放非往来，仓库的单一项配置
       dealerConfig: [],                   // 往来 相关配置
       matterConfig: [],                   // 物料相关配置
+      warehouseConfig: [],                //仓库配置
       baseinfoExtConfig: [],              // baseinfoExt相关配置（此处可能会存放*往来相关配置*）
       submitMatterField: [],              // 审批时要提交的物料字段
       isMine: false,                      // 是否 为我创建
@@ -601,7 +602,7 @@ export default {
       let info = { warehouseAction: type, config: []} ;
       for (let item of config) {
         if (!item.hiddenInRun) {
-          item.fieldValue = this.warehouse[item.fieldCode] || '';
+          //item.fieldValue = this.warehouse[item.fieldCode] || '';
           info.config.push(item);
         }
       }

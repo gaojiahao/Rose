@@ -137,9 +137,9 @@
       // 判断纸巾账户的支付金额是否可编辑
       isEditAdmout() {
         let isEdit = false;
-        console.log('this.otherConfig',this.otherConfig);
+
         this.otherConfig.forEach(item => {
-          if (item.fieldCode === "tdAmountCopy1"){
+          if (item.fieldCode === "fundName_cashInCode"){
            isEdit = item.readOnly;
           }
         })
@@ -152,7 +152,6 @@
             thenAmntBal: this.cashInfo.thenAmntBal || this.cashInfo.thenAmntBalCopy1,
           }
         }
-        console.log('isEdit',isEdit);
         return isEdit
       }
     },
@@ -232,16 +231,15 @@
             let cashInfo = this.cashInfo;
             formData.outPut = {
               dataSet: [{
-                fundName_cashInCode: cashInfo.fundName_cashInCode || cashInfo.fundName,
-                cashInCode: cashInfo.cashInCode || cashInfo.fundCode,
-                cashType_cashInCode: cashInfo.cashType_cashInCode || cashInfo.fundType,
-                thenAmntBalCopy1: cashInfo.thenAmntBalCopy1 || cashInfo.thenAmntBal,
+                fundName_cashInCode: cashInfo.fundName_cashInCode,
+                cashInCode: cashInfo.cashInCode,
+                cashType_cashInCode: cashInfo.cashType_cashInCode,
+                thenAmntBalCopy1: cashInfo.thenAmntBalCopy1,
                 tdAmountCopy1: cashInfo.tdAmountCopy1,
                 tdIdCopy1: cashInfo.tdIdCopy1,
               }],
             }
           }
-
           this.saveData(formData);
           return true
         }
@@ -270,10 +268,14 @@
       },
       // 选中资金
       selCash(item) {
-        this.cashInfo = {
-          ...this.cashInfo,
-          ...item,
-        };
+        // this.cashInfo = {
+        //   ...this.cashInfo,
+        //   ...item,
+        // };
+        this.cashInfo.fundName_cashInCode = item.fundName;
+        this.cashInfo.cashInCode = item.fundCode;
+        this.cashInfo.thenAmntBalCopy1 = item.thenAmntBal;
+        this.cashInfo.cashType_cashInCode = item.fundType;
       },
     }
   }
