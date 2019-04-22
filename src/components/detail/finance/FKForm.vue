@@ -24,35 +24,34 @@
               <form-cell cellTitle='支付金额' showSymbol :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
           </div>
         </div>
-
-        <!-- <div class="materiel_list" v-for="(item, index) in this.matterConfig[1].items" :key='index'>
-            <group :title='`资金账户${index+1}`' class='costGroup'>
-              <cell title="资金账户名称" v-model='item.cashName' is-link @click.native="getCost(index,item)">
-                <template slot="title">
-                  <span class='required'>资金账户名称
-                  </span>
-                </template>
-              </cell>
-              <cell title="资金账户大类" :value="item.cashType_cashOutCode">
-                <template slot="title">
-                  <span class='required'>资金账户大类</span>
-                </template>
-              </cell>
-              <cell title="账户余额" :value="item.thenAmntBal">
-                <template slot="title">
-                  <span class='required'>账户余额</span>
-                </template>
-              </cell>
-              <x-input title="支付金额" text-align='right' placeholder='请填写' @on-focus="getFocus($event)"
-                      @on-blur="checkAmt(item)" type='number' v-model.number='item.tdAmount'>
-                <template slot="label">
-                  <span class='required'>支付金额
-                  </span>
-                </template>
-              </x-input>
-            </group>
-          </div> -->
-      </div>
+        </div>
+      <!-- <div class="materiel_list" v-for="(item, index) in this.matterConfig[1].items" :key='index'>
+          <group :title='`资金账户${index+1}`' class='costGroup'>
+            <cell title="资金账户名称" v-model='item.cashName' is-link @click.native="getCost(index,item)">
+              <template slot="title">
+                <span class='required'>资金账户名称
+                </span>
+              </template>
+            </cell>
+            <cell title="资金账户大类" :value="item.cashType_cashOutCode">
+              <template slot="title">
+                <span class='required'>资金账户大类</span>
+              </template>
+            </cell>
+            <cell title="账户余额" :value="item.thenAmntBal">
+              <template slot="title">
+                <span class='required'>账户余额</span>
+              </template>
+            </cell>
+            <x-input title="支付金额" text-align='right' placeholder='请填写' @on-focus="getFocus($event)"
+                    @on-blur="checkAmt(item)" type='number' v-model.number='item.tdAmount'>
+              <template slot="label">
+                <span class='required'>支付金额
+                </span>
+              </template>
+            </x-input>
+          </group>
+        </div> -->
       <!-- <div class="price_cell vux-1px-t">
         <div class="price_title">
           <span>报销人: </span>

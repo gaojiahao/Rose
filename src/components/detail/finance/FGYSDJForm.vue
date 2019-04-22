@@ -258,13 +258,13 @@
 
   .form_content {
     .main_content {
-      /deep/ .weui-cell {
+      .weui-cell {
         padding: .08rem 0;
         &:before {
           left: 0;
         }
       }
-      /deep/ .weui-label {
+      .weui-label {
         color: #757575;
         font-size: .14rem;
       }

@@ -67,8 +67,8 @@
         </pop-cash-list> -->
 
         <div class="materiel_list">
-          <group title="其他信息" class="costGroup">
-            <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
+          <group title="备注" class="costGroup">
+            <x-textarea title="" v-model="formData.biComment" :max="100"></x-textarea>
           </group>
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
@@ -465,14 +465,14 @@
   }
 
   .costGroup {
-    /deep/ > .vux-no-group-title {
+    .vux-no-group-title {
       margin-top: 0.08rem;
     }
-    /deep/ > .weui-cells:after {
+    .weui-cells:after {
       border-bottom: none;
     }
     .vux-cell-box {
-      /deep/ > .weui-cell {
+      .weui-cell {
         padding: 10px 0;
       }
       &:before {
@@ -488,7 +488,7 @@
     }
   }
 
-  /deep/ > .weui-cells__title {
+  .weui-cells__title {
     padding-left: 0;
     font-size: 0.12rem;
   }
@@ -570,6 +570,22 @@
       font-size: .14rem;
       &:before {
         left: 0;
+      }
+    }
+  }
+  .materiel_list {
+    //width: 95%;
+    //margin: .1rem auto;
+    background: #fff;
+    margin-top: 0.1rem;
+    box-sizing: border-box;
+    padding: .06rem .1rem;
+    .title {
+      color: #757575;
+      font-size: .12rem;
+      .required {
+        color: required;
+        font-weight: bold;
       }
     }
   }
