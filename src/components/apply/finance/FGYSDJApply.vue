@@ -4,8 +4,8 @@
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
+        <!-- <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker> -->
         <!-- 往来信息 -->
         <pop-dealer-list request="1" :default-value="dealerInfo" @sel-item="selDealer">
           <template slot="other">
@@ -513,7 +513,7 @@
   // 新增更多
   .handle_part {
     margin: 0 auto;
-    width: 95%;
+    width: 100%;
     text-align: center;
     position: relative;
     background-color: #fff;
