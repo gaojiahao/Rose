@@ -1,7 +1,6 @@
 <template>
   <div class="detail_wrapper">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
-
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 往来联系部分 交易基本信息-->
@@ -24,7 +23,17 @@
               <form-cell cellTitle='支付金额' showSymbol :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
           </div>
         </div>
-        </div>
+      </div>
+      <!-- 资金账户可编辑-->
+      <pop-cash-list :default-value="cashInfo" @sel-item="selCash" request="4" :params="cashParams"
+                     v-show="otherConfig.length &&  !isEditAdmout" required>
+        <template slot="other">
+          <div class='each_property vux-1px-t'>
+            <label>支付金额</label>
+            <input type='number' v-model.number="cashInfo.tdAmountCopy1" placeholder="请输入" class='property_val' @blur="checkAmt(cashInfo, 'tdAmountCopy1', cashInfo.tdAmountCopy1)"/>
+          </div>
+        </template>
+      </pop-cash-list>
       <!-- <div class="materiel_list" v-for="(item, index) in this.matterConfig[1].items" :key='index'>
           <group :title='`资金账户${index+1}`' class='costGroup'>
             <cell title="资金账户名称" v-model='item.cashName' is-link @click.native="getCost(index,item)">
@@ -82,21 +91,54 @@ import detailCommon from 'mixins/detailCommon'
 import RAction from 'components/public/RAction'
 import workFlow from 'components/public/workFlow'
 import contactPart from 'components/detail/commonPart/ContactPart'
+import PopCashList from 'components/Popup/finance/PopCashList'
 //公共方法引入
 import {accAdd} from 'plugins/calc/decimalsAdd'
+import {toFixed} from '@/plugins/calc'
 export default {
   data() {
     return {
       count: 0,          // 金额合计
       formViewUniqueId: '7aa1ae41-77a0-4905-84b4-9fa09926be70',
       contactInfo: {}, // 客户、付款方式、物流条款的值
+      cashInfo: {},
     }
   },
   mixins: [detailCommon],
   components: {
-    workFlow, RAction, contactPart
+    workFlow, RAction, contactPart , PopCashList
+  },
+  computed: {
+    cashParams() {
+      return {
+        transCode: this.transCode
+      }
+    },
+    // 判断纸巾账户的支付金额是否可编辑
+    isEditAdmout() {
+      let isEdit = false;
+
+      this.otherConfig.forEach(item => {
+        if (item.fieldCode === "fundName_cashInCode"){
+          isEdit = item.readOnly;
+        }
+      })
+      if (!isEdit){
+        this.cashInfo = {
+          ...this.cashInfo,
+          fundCode: this.cashInfo.fundCode || this.cashInfo.cashInCode,
+          fundType: this.cashInfo.fundType || this.cashInfo.cashType_cashInCode,
+          fundName: this.cashInfo.fundName || this.cashInfo.fundName_cashInCode,
+          thenAmntBal: this.cashInfo.thenAmntBal || this.cashInfo.thenAmntBalCopy1,
+        }
+      }
+      return isEdit
+    }
   },
   methods: {
+    checkAmt(item, key, val) {
+      item[key] = Math.abs(toFixed(val)); 
+    },
     // 获取详情
     getOrderList(transCode = '') {
       return getSOList({
@@ -138,7 +180,18 @@ export default {
         };
         this.workFlowInfoHandler();
       })
-    }
+    },
+    // 选中资金
+    selCash(item) {
+      // this.cashInfo = {
+      //   ...this.cashInfo,
+      //   ...item,
+      // };
+      this.cashInfo.fundName_cashInCode = item.fundName;
+      this.cashInfo.cashInCode = item.fundCode;
+      this.cashInfo.thenAmntBalCopy1 = item.thenAmntBal;
+      this.cashInfo.cashType_cashInCode = item.fundType;
+    },
   }
 }
 </script>
@@ -148,5 +201,22 @@ export default {
   .form_part .form_title .iconfont {
     font-size: .14rem;
     margin-right: .04rem;
+  }
+  .each_property {
+    padding: .18rem 0;
+    display: flex;
+    justify-content: space-between;
+    line-height: .14rem;
+    input{  
+      border: none;
+      outline: none;
+      font-size: .14rem;
+    }
+    label{
+      color: #696969;
+    }
+    .property_val {
+      text-align: right;
+    }
   }
 </style>

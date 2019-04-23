@@ -201,7 +201,7 @@
       // 同意的处理
       agreeHandler() {
         if (this.isApproval || this.isAccounting || this.isCashier) {
-          if (this.isCashier && !this.cashInfo.fundCode) {
+          if (this.isCashier && !this.cashInfo.cashInCode) {
             this.$vux.alert.show({
               content: '请选择资金账户',
             });
