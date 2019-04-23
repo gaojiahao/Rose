@@ -202,10 +202,12 @@
           });
           return
         }
+        console.log('this.dealerInfo',this.dealerInfo)
         this.orderList.forEach(item => {
           dataSet.push({
             tdId: item.tdId || '',
             transMatchedCode: item.transCode,
+            drDealerLabel: this.dealerInfo.dealerLabelName,
             thenTotalAmntBal: item.thenAmntBal,
             differenceAmountCopy1: item.amount,
             thenAlreadyAmnt: item.amnted,
@@ -213,6 +215,7 @@
             applicationAmount: item.tdAmount,
             tdAmountCopy1: item.tdAmount,
             dealerDebit: this.dealerInfo.dealerCode,
+
           });
         })
         this.$vux.confirm.show({
@@ -254,7 +257,8 @@
               // tdAmount: this.cashInfo.tdAmount,
               ...this.cashInfo,
               tdAmount: this.applicationAmount,
-
+              dealerDebitCopy1: this.dealerInfo.dealerCode,
+              drDealerLabelCopy1: this.dealerInfo.dealerLabelName,
             };
             if (this.transCode) {
               inputDataSet.tdIdCopy1 = this.dealerInfo.tdIdCopy1;
