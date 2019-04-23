@@ -7,7 +7,7 @@
         <span class="status" :class="item.statusClass">{{item.biStatus}}</span>
       </div>
       <div class="order_code">
-        <span class="vux-1px-l">往来:{{item.dealerName_dealerDebit}}</span>
+        <span class="">{{item.dealerName_dealerDebit}}</span>
       </div>
       <!-- <div class="order_amount" v-show="isHasCount">
         <p class="amount">总支付￥{{item.count | toFixed | numberComma(3)}}</p>

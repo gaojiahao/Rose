@@ -222,7 +222,7 @@
   }
 
   .required {
-    color: $required;
+    color: #3296FA;
     font-weight: bold;
   }
 
@@ -236,8 +236,8 @@
     .title {
       color: #757575;
       font-size: .12rem;
-      &.required {
-        color: $required;
+      .required {
+        color: #3296FA;
         font-weight: bold;
       }
     }
