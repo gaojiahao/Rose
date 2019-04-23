@@ -202,7 +202,6 @@
           });
           return
         }
-        console.log('this.dealerInfo',this.dealerInfo)
         this.orderList.forEach(item => {
           dataSet.push({
             tdId: item.tdId || '',
