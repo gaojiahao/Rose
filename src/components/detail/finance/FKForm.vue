@@ -25,7 +25,7 @@
         </div>
       </div>
       <!-- 资金账户可编辑-->
-      <pop-cash-list :default-value="cashInfo" @sel-item="selCash" request="4" :params="cashParams"
+      <!-- <pop-cash-list :default-value="cashInfo" @sel-item="selCash" request="4" :params="cashParams"
                      v-show="otherConfig.length &&  !isEditAdmout" required>
         <template slot="other">
           <div class='each_property vux-1px-t'>
@@ -33,7 +33,7 @@
             <input type='number' v-model.number="cashInfo.tdAmountCopy1" placeholder="请输入" class='property_val' @blur="checkAmt(cashInfo, 'tdAmountCopy1', cashInfo.tdAmountCopy1)"/>
           </div>
         </template>
-      </pop-cash-list>
+      </pop-cash-list> -->
       <!-- <div class="materiel_list" v-for="(item, index) in this.matterConfig[1].items" :key='index'>
           <group :title='`资金账户${index+1}`' class='costGroup'>
             <cell title="资金账户名称" v-model='item.cashName' is-link @click.native="getCost(index,item)">
