@@ -21,12 +21,12 @@
           <template v-else>
             <div class="order-detail" :class="{'vux-1px-t': index !== 0}" v-for="(item, index) in orderList"
                  :key="index">
-              <div class="title">欠款明细{{index+1}}</div>
+              <div class="title">收票明细{{index+1}}<span class="iconfont icon-shanchu1" @click="deleteCost(sIndex)"></span></div>
               <div class="detail-item top">
-                <span class="info-item">入库单:{{item.popiCode}}</span>
+                <span class="info-item">收票号:{{item.popiCode}}</span>
               </div>
               <div class="detail-item">
-                <span class="info-item">采购订单号: {{item.poCode}}</span>
+                <!-- <span class="info-item">采购订单号: {{item.poCode}}</span> -->
                 <span class="info-item">价税合计: {{item.thenTotalAmntBal | numberComma(3)}}</span>
               </div>
               <div class="detail-item">
@@ -164,6 +164,10 @@
       },
     },
     methods: {
+      // 删除费用明细
+      deleteCost(index) {
+        this.orderList.splice(index, 1);
+      },
       // 提交
       submitOrder() {
         let warn = '';
@@ -177,7 +181,7 @@
         if (!warn) {
           this.orderList.every(item => {
             if (!item.popiCode) {
-              warn = '请选择采购入库号';
+              warn = '请选择收票号';
               return false
             }
             item.tdAmount = item.applicationAmount;
@@ -528,6 +532,12 @@
     }
     &:last-child {
       margin-bottom: 0;
+    }
+    .title {
+      span{
+          color: red;
+          float: right;
+        }
     }
     .detail-item {
       display: flex;

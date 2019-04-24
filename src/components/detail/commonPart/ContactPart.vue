@@ -32,10 +32,10 @@
         </div>
       </div>
       <div class="contact_top">
-        <div class="contact_top_item">
+        <div class="contact_top_item" v-if="contactInfo.thenTotalAmntBal">
           <span class="contact_top_title">往来余额: </span>{{contactInfo.thenTotalAmntBal}}
         </div>
-        <div class="contact_top_item">
+        <div class="contact_top_item" v-if="contactInfo.applicationAmount">
           <span class="contact_top_title">申请金额: </span>{{contactInfo.applicationAmount}}
         </div>
       </div>

@@ -64,7 +64,7 @@
         </div>
       </div>
       <!-- 项目 -->
-      <div class="form_content">
+      <!-- <div class="form_content">
         <div class="main_content">
           <div :class="{'vux-1px-t': cIndex > 0}" v-for="(cItem, cIndex) in baseinfoExtConfig" :key="cIndex">
             <div class="each_info">
@@ -73,7 +73,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       <!-- 备注 -->
       <div class="comment">
         <form-cell cellTitle='备注' :cellContent="orderInfo.biComment"></form-cell>
@@ -137,9 +137,9 @@
       // 判断纸巾账户的支付金额是否可编辑
       isEditAdmout() {
         let isEdit = false;
-        console.log('this.otherConfig',this.otherConfig);
+
         this.otherConfig.forEach(item => {
-          if (item.fieldCode === "tdAmountCopy1"){
+          if (item.fieldCode === "fundName_cashInCode"){
            isEdit = item.readOnly;
           }
         })
@@ -152,7 +152,6 @@
             thenAmntBal: this.cashInfo.thenAmntBal || this.cashInfo.thenAmntBalCopy1,
           }
         }
-        console.log('isEdit',isEdit);
         return isEdit
       }
     },
@@ -187,7 +186,15 @@
           this.dealerInfo = formData.inPut.dataSet[0];
           this.cashInfo = formData.outPut.dataSet[0];
           this.costList = dataSet;
-
+          this.dealerInfo = {
+            ...this.dealerInfo,
+            dealerName_projectManager: formData.order.dealerName_projectManager,
+            expectStartDate_project: formData.order.expectStartDate_project,
+            expectEndDate_project: formData.order.expectEndDate_project,
+            projectAddress_project: formData.order.projectAddress_project,
+            budgetIncome_project: formData.order.budgetIncome_project,
+            thenAmntBal: formData.order.thenAmntBal,
+          }
           // 当前审批人为会计时，自动赋值本次支付金额
           if (this.isAccounting) {
             let {thenAmntBal = 0, thenAlreadyAmnt = 0} = this.dealerInfo;
@@ -202,7 +209,7 @@
       // 同意的处理
       agreeHandler() {
         if (this.isApproval || this.isAccounting || this.isCashier) {
-          if (this.isCashier && !this.cashInfo.fundCode) {
+          if (this.isCashier && !this.cashInfo.cashInCode) {
             this.$vux.alert.show({
               content: '请选择资金账户',
             });
@@ -232,16 +239,15 @@
             let cashInfo = this.cashInfo;
             formData.outPut = {
               dataSet: [{
-                fundName_cashInCode: cashInfo.fundName_cashInCode || cashInfo.fundName,
-                cashInCode: cashInfo.cashInCode || cashInfo.fundCode,
-                cashType_cashInCode: cashInfo.cashType_cashInCode || cashInfo.fundType,
-                thenAmntBalCopy1: cashInfo.thenAmntBalCopy1 || cashInfo.thenAmntBal,
+                fundName_cashInCode: cashInfo.fundName_cashInCode,
+                cashInCode: cashInfo.cashInCode,
+                cashType_cashInCode: cashInfo.cashType_cashInCode,
+                thenAmntBalCopy1: cashInfo.thenAmntBalCopy1,
                 tdAmountCopy1: cashInfo.tdAmountCopy1,
                 tdIdCopy1: cashInfo.tdIdCopy1,
               }],
             }
           }
-
           this.saveData(formData);
           return true
         }
@@ -270,10 +276,14 @@
       },
       // 选中资金
       selCash(item) {
-        this.cashInfo = {
-          ...this.cashInfo,
-          ...item,
-        };
+        // this.cashInfo = {
+        //   ...this.cashInfo,
+        //   ...item,
+        // };
+        this.cashInfo.fundName_cashInCode = item.fundName;
+        this.cashInfo.cashInCode = item.fundCode;
+        this.cashInfo.thenAmntBalCopy1 = item.thenAmntBal;
+        this.cashInfo.cashType_cashInCode = item.fundType;
       },
     }
   }

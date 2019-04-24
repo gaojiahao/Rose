@@ -43,12 +43,12 @@
           </div>
         </div>
           <!-- 新增更多 按钮 -->
-          <div class="add_more">
+          <!-- <div class="add_more">
             您还需要添加新的资金账户?请点击
             <span class='add' @click="addCost">新增</span>
             <em v-show="CostList.length>1">或</em>
             <span class='delete' @click="deleteCost" v-show="CostList.length>1">删除</span>
-          </div>
+          </div> -->
         </div>
         <div class="materiel_list">
           <group title="" class="costGroup">

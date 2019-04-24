@@ -15,8 +15,7 @@
         </div>
         <div class="form_content">
           <div class="main_content">
-            <form-cell cellTitle='供应商名称' :cellContent="dealerInfo.dealerName_dealerDebit"
-                       :showTopBorder=false></form-cell>
+            <form-cell cellTitle='供应商名称' :cellContent="dealerInfo.dealerName_dealerDebit" :showTopBorder=false></form-cell>
             <form-cell cellTitle='供应商编码' :cellContent="dealerInfo.dealerDebit"></form-cell>
             <form-cell cellTitle='往来关系标签' :cellContent="dealerInfo.drDealerLabel"></form-cell>
             <form-cell cellTitle='往来余额' :cellContent="dealerInfo.thenAmntBalCopy1 | toFixed | numberComma(3)"
@@ -49,9 +48,9 @@
                        showSymbol></form-cell>
             <form-cell cellTitle='本次申请' :cellContent="item.applicationAmount | toFixed | numberComma(3)"
                        showSymbol></form-cell>
-            <x-input type="number" title="本次支付" :value="dealerInfo.tdAmountCopy1" text-align="right"
-                     @on-focus="getFocus" @on-blur="calcPayment(dealerInfo)" v-model.number="dealerInfo.tdAmountCopy1"
-                     v-if="isAccount"></x-input>
+            <x-input type="number" title="本次支付" :value="item.tdAmountCopy1" text-align="right"
+                     @on-focus="getFocus" @on-blur="calcPayment(item)" v-model.number="item.tdAmountCopy1"
+                     v-if="!isAccount"></x-input>
             <form-cell cellTitle='本次支付' :cellContent="item.tdAmountCopy1 | toFixed | numberComma(3)"
                        showSymbol v-else></form-cell>
           </div>
@@ -66,7 +65,7 @@
         </template>
       </pop-cash-list>
       <!-- 资金列表 -->
-      <div class="form_part" v-else-if="!isApproval && !isAccount">
+      <div class="form_part" v-else-if="!isApproval">
         <div class="form_title vux-1px-b">
           <span class="iconfont icon-baoxiao"></span><span class="title">供资金详情</span>
         </div>
@@ -106,6 +105,7 @@
   //公共方法引入
   import {accAdd} from 'plugins/calc/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
+import { constants } from 'crypto';
 
   export default {
     data() {
@@ -197,6 +197,7 @@
             return {
               tdIdCopy1: item.tdIdCopy1,
               transMatchedCode: item.transMatchedCode,
+              drDealerLabel: this.dealerInfo.dealerDebit,
               thenTotalAmntBal: item.thenTotalAmntBal,
               differenceAmountCopy1: item.differenceAmountCopy1,
               thenAlreadyAmnt: item.thenAlreadyAmnt,
@@ -219,6 +220,8 @@
                 thenAmntBal: cashInfo.thenAmntBal,
                 tdAmount: cashInfo.tdAmount,
                 tdId: cashInfo.tdId,
+                dealerDebitCopy1: this.dealerInfo.dealerDebit,
+			          drDealerLabelCopy1: this.dealerInfo.drDealerLabel,
               }],
             },
           };
@@ -258,13 +261,13 @@
 
   .form_content {
     .main_content {
-      /deep/ .weui-cell {
+      .weui-cell {
         padding: .08rem 0;
         &:before {
           left: 0;
         }
       }
-      /deep/ .weui-label {
+      .weui-label {
         color: #757575;
         font-size: .14rem;
       }

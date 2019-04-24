@@ -13,7 +13,7 @@
               <span class="info-item">{{item.popiCode}}</span>
             </div>
             <div class="pop-info">
-              <span class="info-item">采购订单号: {{item.poCode}}</span>
+              <span class="info-item">收票号: {{item.poCode}}</span>
               <span class="info-item">价税合计: {{item.thenTotalAmntBal}}</span>
             </div>
             <div class="pop-info">
@@ -93,7 +93,7 @@
         filterProperty: '', // 过滤的key
         filterList: [ // 过滤列表
           {
-            name: '入库号',
+            name: '收票号',
             value: 'popiCode',
           },    
           // }, {

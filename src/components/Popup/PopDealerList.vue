@@ -90,7 +90,7 @@
           </template>
         </cell>
         <x-input title='item.fieldLabel' text-align='right' placeholder='请填写' @on-focus="getFocus($event)"
-                  @on-blur="checkAmt(item)" type='number' v-model.number='item.applicationAmount' v-if= 'item.fieldCode == "applicationAmount"'>
+                  @on-blur="checkAmt(item,item.fieldCode,item.applicationAmount)" type='number' v-model.number='item.applicationAmount' v-if= 'item.fieldCode == "applicationAmount"'>
           <template slot="label">
             <span class='required'>{{item.fieldLabel}}
             </span>
