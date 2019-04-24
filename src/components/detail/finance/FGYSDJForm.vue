@@ -32,12 +32,12 @@
       <!-- 采购费用列表 -->
       <div class="form_part">
         <div class="form_title vux-1px-b">
-          <span class="iconfont icon-baoxiao"></span><span class="title">定金列表</span>
+          <span class="iconfont icon-baoxiao"></span><span class="title">采购明细列表</span>
         </div>
         <div class="form_content" :class="{ 'show_border' : index !== listData.length - 1}"
              v-for="(item, index) in listData" :key='index'>
           <div class="main_content">
-            <form-cell cellTitle='协议号' :cellContent="item.transMatchedCode" :showTopBorder=false></form-cell>
+            <form-cell cellTitle='采购订单号' :cellContent="item.transMatchedCode" :showTopBorder=false></form-cell>
             <form-cell cellTitle='总金额' :cellContent="item.thenTotalAmntBal | toFixed | numberComma(3)"
                        showSymbol></form-cell>
             <form-cell cellTitle='采购定金' :cellContent="item.differenceAmountCopy1 | toFixed | numberComma(3)"
@@ -227,8 +227,9 @@ import { constants } from 'crypto';
           };
           let wfPara = {'本次支付': dealerInfo.tdAmountCopy1};
           this.saveData(formData, wfPara);
+          return true
         }
-        return true
+        return false
       },
       // 选中资金
       selCash(item) {
