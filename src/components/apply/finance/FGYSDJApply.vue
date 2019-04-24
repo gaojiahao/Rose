@@ -22,14 +22,14 @@
         <!-- 采购列表 -->
         <div class="materiel_list">
           <div class="order-info" @click="showOrder = true" v-if="!orderList.length">
-            <div class="title">定金明细</div>
-            <div class="mode">请选择定金明细</div>
+            <div class="title">采购明细</div>
+            <div class="mode">请选择采购明细</div>
             <span class="iconfont icon-youjiantou r-arrow"></span>
           </div>
           <template v-else>
-            <div class="title">定金明细</div>
             <div class="order-detail" :class="{'vux-1px-t': index !== 0}" v-for="(item, index) in orderList"
                  :key="index">
+              <div class="title">定金明细{{index+1}}<span class="iconfont icon-shanchu1" @click="deleteCost(sIndex)"></span></div>
               <div class="detail-item top">
                 <span class="info-item">{{item.transCode}}</span>
               </div>
@@ -162,6 +162,10 @@
       },
     },
     methods: {
+      // 删除费用明细
+      deleteCost(index) {
+        this.orderList.splice(index, 1);
+      },
       // 提交
       submitOrder() {
         let warn = '';
@@ -170,7 +174,7 @@
           warn = '请选择供应商';
         }
         if (!warn && !this.orderList.length) {
-          warn = '请选择定金明细'
+          warn = '请选择采购明细'
         }
         // if (!warn) {
         //   this.orderList.every(item => {
@@ -554,6 +558,12 @@
     }
     &:last-child {
       margin-bottom: 0;
+    }
+    .title {
+      span{
+          color: red;
+          float: right;
+        }
     }
     .detail-item {
       display: flex;

@@ -32,21 +32,21 @@
       <!-- 采购费用列表 -->
       <div class="form_part">
         <div class="form_title vux-1px-b">
-          <span class="iconfont icon-baoxiao"></span><span class="title">采购费用列表</span>
+          <span class="iconfont icon-baoxiao"></span><span class="title">收票列表</span>
         </div>
         <div class="form_content"
              :class="{ 'show_border' : index !== orderInfo.order.dataSet.length - 1}"
              v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
           <div class="main_content">
-            <form-cell cellTitle='采购入库号' :cellContent="item.transMatchedCode" :showTopBorder=false></form-cell>
-            <form-cell cellTitle='采购订单号' :cellContent="item.orderCode"></form-cell>
+            <form-cell cellTitle='收票号' :cellContent="item.transMatchedCode" :showTopBorder=false></form-cell>
+            <!-- <form-cell cellTitle='采购订单号' :cellContent="item.orderCode"></form-cell> -->
             <form-cell cellTitle='价税合计' :cellContent="item.thenTotalAmntBal | toFixed | numberComma(3)"
                        showSymbol></form-cell>
             <form-cell cellTitle='已核销' :cellContent="item.thenAlreadyAmnt | toFixed | numberComma(3)"
                        showSymbol></form-cell>
             <form-cell cellTitle='待核销' :cellContent="item.thenAmntBal | toFixed | numberComma(3)"
                        showSymbol></form-cell>
-            <form-cell cellTitle='账期到期日' :cellContent="item.accountExpirationDate"></form-cell>
+            <form-cell cellTitle='预期付款日' :cellContent="item.expectedPaymentDate"></form-cell>
             <form-cell cellTitle='账期天数' :cellContent="`${item.daysOfAccount}`"></form-cell>
             <form-cell cellTitle='帐龄天数' :cellContent="`${item.ageOfAging}`"></form-cell>
             <form-cell cellTitle='账期剩余天数' :cellContent="`${item.accountRemaingDays}`"></form-cell>

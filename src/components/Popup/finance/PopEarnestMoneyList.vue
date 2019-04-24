@@ -82,7 +82,7 @@
         filterProperty: '', // 过滤的key
         filterList: [ // 过滤列表
           {
-            name: '协议号',
+            name: '采购订单号',
             value: 'transCode',
           }, 
         ],

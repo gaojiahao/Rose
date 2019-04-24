@@ -15,8 +15,7 @@
         </div>
         <div class="form_content">
           <div class="main_content">
-            <form-cell cellTitle='供应商名称' :cellContent="dealerInfo.dealerName_dealerDebit"
-                       :showTopBorder=false></form-cell>
+            <form-cell cellTitle='供应商名称' :cellContent="dealerInfo.dealerName_dealerDebit" :showTopBorder=false></form-cell>
             <form-cell cellTitle='供应商编码' :cellContent="dealerInfo.dealerDebit"></form-cell>
             <form-cell cellTitle='往来关系标签' :cellContent="dealerInfo.drDealerLabel"></form-cell>
             <form-cell cellTitle='往来余额' :cellContent="dealerInfo.thenAmntBalCopy1 | toFixed | numberComma(3)"
