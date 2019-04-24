@@ -64,7 +64,7 @@
         </div>
       </div>
       <!-- 项目 -->
-      <div class="form_content">
+      <!-- <div class="form_content">
         <div class="main_content">
           <div :class="{'vux-1px-t': cIndex > 0}" v-for="(cItem, cIndex) in baseinfoExtConfig" :key="cIndex">
             <div class="each_info">
@@ -73,7 +73,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       <!-- 备注 -->
       <div class="comment">
         <form-cell cellTitle='备注' :cellContent="orderInfo.biComment"></form-cell>
@@ -186,7 +186,15 @@
           this.dealerInfo = formData.inPut.dataSet[0];
           this.cashInfo = formData.outPut.dataSet[0];
           this.costList = dataSet;
-
+          this.dealerInfo = {
+            ...this.dealerInfo,
+            dealerName_projectManager: formData.order.dealerName_projectManager,
+            expectStartDate_project: formData.order.expectStartDate_project,
+            expectEndDate_project: formData.order.expectEndDate_project,
+            projectAddress_project: formData.order.projectAddress_project,
+            budgetIncome_project: formData.order.budgetIncome_project,
+            thenAmntBal: formData.order.thenAmntBal,
+          }
           // 当前审批人为会计时，自动赋值本次支付金额
           if (this.isAccounting) {
             let {thenAmntBal = 0, thenAlreadyAmnt = 0} = this.dealerInfo;
