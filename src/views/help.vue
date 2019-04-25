@@ -2,7 +2,7 @@
   <div class="pages">
     <div v-if='$route.name=="help"'>
       <div id='mescroll' class="mescroll">
-        <div class="weui-cells__title">请选择所属的地区</div>
+        <div class="weui-cells__title">请选择销量实际发生地区</div>
         <group label-align='left' title="">
           <popup-picker
             class="each_part"
