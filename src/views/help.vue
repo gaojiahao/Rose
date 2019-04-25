@@ -2,17 +2,18 @@
   <div class="pages">
     <div v-if='$route.name=="help"'>
       <div id='mescroll' class="mescroll">
-        <group label-align='left' title="请选择所属的地区">
+        <div class="weui-cells__title">请选择所属的地区</div>
+        <group label-align='left' title="">
           <popup-picker
             class="each_part"
-            title="所属银行"
+            title="销量所属银行"
             placeholder="请选择银行"
             :data='bankList'
             v-model="bankValue"
             :columns="1"></popup-picker>
           <popup-picker
             class="each_part"
-            title="所属地区"
+            title="销量所属地区"
             placeholder="请选择省份"
             :data='areaList'
             v-model="areaValue"
@@ -289,6 +290,7 @@
             integer1: year,     //年
             integer2: month,     //月
             integer3: day,        //日
+            varchar25: ROSE_OPTION.subSector,
             ...this.baseinfoExt,
             // double12: this.AclassTotal, // A类产品合计
             // double13: this.BclassTotal, // B类产品合计
@@ -467,5 +469,15 @@
 
   .commit-container {
     top: 257px;
+  }
+  
+  .weui-cells__title {
+    margin-top: 0.77em;
+    margin-bottom: -1.1em;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-size: 14px;
+    color: #3296FA;
+    font-weight: bold;
   }
 </style>
