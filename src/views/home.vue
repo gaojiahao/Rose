@@ -158,17 +158,17 @@ export default {
         let allowList = ['0414', '1204', '1207', '1129', 'rfd9527', 'rfd125', '2025'];
         this.showLookSales = allowList.includes(userCode);
         this.userInfo = {
-          bank: completeData[0].homeBank || '',         //银行
-          region: completeData[0].homeProvince || '',   //省份地区
-          dept: completeData[0].area || '',             //事业部
+          bank: completeData.homeBank || '',         //银行
+          region: completeData.homeProvince || '',   //省份地区
+          dept: completeData.area || '',             //事业部
         };
         localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({
-          bank: completeData[0].homeBank || '',         //银行
-          region: completeData[0].homeProvince || '',   //省份地区
-          dept: completeData[0].area || '',             //事业部
-          groupName: completeData[0].dept || '',    //部门
-          captain: completeData[0].bmName || '',        //队长（暂无）
-          userCode: completeData[0].userCode || '',      //工号
+          bank: completeData.homeBank || '',         //银行
+          region: completeData.homeProvince || '',   //省份地区
+          dept: completeData.area || '',             //事业部
+          groupName: completeData.groupName || '',    //部门
+          captain: completeData.bmName || '',        //队长（暂无）
+          userCode: completeData.userCode || '',      //工号
         }))
       })
       await getCurrMonthStatus().then(({ differ, currMonthTarget }) => {

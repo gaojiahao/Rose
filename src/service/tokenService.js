@@ -91,8 +91,8 @@ let tokenService = {
 
             // password: '18037921095',
             // password: '1803792',
-            userCode: '3842',
-            password: '123456'
+            userCode: 'rfd9527',
+            password: 'stark'
             // password: '1701',
             // userCode: '1701'
           }
@@ -155,7 +155,7 @@ let tokenService = {
         data.completeData = {...data};
         for (let [key, value] of Object.entries(data)) {
           if (key !== 'completeData') {
-            data[key] = value ;
+            data[key] = value && value.split(',')[0];
           }
         }
         return data
@@ -165,18 +165,11 @@ let tokenService = {
         return
       }
       $axios.ajax({
-        url: '/ds/getUserDetails',
+        url: '/trans/getModelData?refresh=true&dsCode=getUserDetails',
       }).then((data = {}) => {
-        sessionStorage.setItem(USER_INFO, JSON.stringify(data.tableContent));
-        resolve(handleCurrentUser(data.tableContent));
+        sessionStorage.setItem(USER_INFO, JSON.stringify(data));
+        resolve(handleCurrentUser(data));
       })
-      //$axios.ajax({
-      //  url: '/trans/getModelData?refresh=true&dsCode=getUserDetails',
-      //}).then((data = {}) => {
-      //  console.log('JSON.stringify(data)',JSON.stringify(data))
-      //  sessionStorage.setItem(USER_INFO, JSON.stringify(data));
-      //  resolve(handleCurrentUser(data));
-      //})
     });
   },
   // 判断是否为总裁
