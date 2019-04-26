@@ -197,7 +197,7 @@ import { constants } from 'crypto';
             return {
               tdIdCopy1: item.tdIdCopy1,
               transMatchedCode: item.transMatchedCode,
-              drDealerLabel: this.dealerInfo.dealerDebit,
+              drDealerLabel: this.dealerInfo.drDealerLabel,
               thenTotalAmntBal: item.thenTotalAmntBal,
               differenceAmountCopy1: item.differenceAmountCopy1,
               thenAlreadyAmnt: item.thenAlreadyAmnt,
@@ -207,8 +207,20 @@ import { constants } from 'crypto';
               dealerDebit: item.dealerDebit,
             };
           });
+
           let formData = {
             ...orderInfo,
+            inPut: {
+              dataSet: [{
+                dealerName_dealerDebit: this.dealerInfo.dealerName_dealerDebit,
+                dealerDebit: this.dealerInfo.dealerDebit,
+                drDealerLabel: this.dealerInfo.drDealerLabel,
+                applicationAmount: this.dealerInfo.tdAmountCopy1,
+                tdAmountCopy1: cashInfo.tdAmount,
+                differenceAmount: this.dealerInfo.differenceAmount,
+              }],
+              thenAmntBalCopy1: this.dealerInfo.thenAmntBalCopy1
+            },
             order: {
               dataSet,
             },
@@ -219,7 +231,7 @@ import { constants } from 'crypto';
                 cashType_cashOutCode: cashInfo.fundType || cashInfo.cashType_cashOutCode,
                 thenAmntBal: cashInfo.thenAmntBal,
                 tdAmount: cashInfo.tdAmount,
-                tdId: cashInfo.tdId,
+                //tdId: cashInfo.tdId,
                 dealerDebitCopy1: this.dealerInfo.dealerDebit,
 			          drDealerLabelCopy1: this.dealerInfo.drDealerLabel,
               }],
