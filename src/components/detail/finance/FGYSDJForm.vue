@@ -67,7 +67,7 @@
       <!-- 资金列表 -->
       <div class="form_part" v-else-if="!isApproval">
         <div class="form_title vux-1px-b">
-          <span class="iconfont icon-baoxiao"></span><span class="title">供资金详情</span>
+          <span class="iconfont icon-baoxiao"></span><span class="title">资金列表</span>
         </div>
         <div class="form_content">
           <div class="main_content">
