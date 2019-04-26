@@ -184,7 +184,6 @@
           this.attachment = attachment;
           this.orderInfo = formData;
           this.dealerInfo = formData.inPut.dataSet[0];
-          console.log('this.dealerInfo',this.dealerInfo)
           this.cashInfo = formData.outPut.dataSet[0];
           this.costList = dataSet;
           this.dealerInfo = {
@@ -196,7 +195,6 @@
             budgetIncome_project: formData.order.budgetIncome_project,
           }
           
-          console.log('this.dealerInfo2',this.dealerInfo)
           // 当前审批人为会计时，自动赋值本次支付金额
           if (this.isAccounting) {
             let {thenAmntBal = 0, thenAlreadyAmnt = 0} = this.dealerInfo;

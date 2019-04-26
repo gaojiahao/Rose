@@ -194,7 +194,6 @@ import { constants } from 'crypto';
             break;
           }
         };
-        console.log('this.dealerInfo',this.dealerInfo);
         if(!this.dealerInfo.dealerCode) {
           warn = '请选择往来列表';
           if (warn) {
@@ -296,7 +295,6 @@ import { constants } from 'crypto';
               }),
               wfPara: JSON.stringify(wfPara)
             };
-            console.log('submitData',submitData);
             
             // 重新提交
             if (this.isResubmit) {

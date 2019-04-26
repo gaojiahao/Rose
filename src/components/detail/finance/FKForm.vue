@@ -94,13 +94,9 @@ export default {
       let isEdit = false;
       this.matterConfig.forEach(item => {
         if (item.fieldCode === "fundName_cashOutCode"){
-          console.log('this.contactInfo',this.contactInfo)
-          console.log('aaa')
-          console.log('this.matterConfig.length',this.matterConfig.length)
           isEdit = item.readOnly;
         }
       })
-      console.log('isEdit',isEdit);
       // if (!isEdit){
       //   this.cashInfo = {
       //     ...this.cashInfo,
@@ -219,7 +215,6 @@ export default {
             }],
           }
         }
-        console.log('this.formData',formData);
         // return 0;
         this.saveData(formData);
         return true
@@ -228,7 +223,6 @@ export default {
     },
     // 选中资金
     selCash(item) {
-      console.log('item',item)
       // this.cashInfo = {
       //   ...this.cashInfo,
       //   ...item,
