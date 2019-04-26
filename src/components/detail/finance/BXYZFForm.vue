@@ -40,7 +40,7 @@
         <template slot="other">
           <div class='each_property vux-1px-t'>
             <label>支付金额</label>
-            <input type='number' v-model.number="cashInfo.tdAmountCopy1" placeholder="请输入" class='property_val' @blur="checkAmt(cashInfo, 'tdAmountCopy1', cashInfo.tdAmountCopy1)"/>
+            <input  readonly="readonly" type='number' v-model.number="cashInfo.tdAmountCopy1" placeholder="请输入" class='property_val' @blur="checkAmt(cashInfo, 'tdAmountCopy1', cashInfo.tdAmountCopy1)"/>
           </div>
         </template>
       </pop-cash-list>
@@ -184,6 +184,7 @@
           this.attachment = attachment;
           this.orderInfo = formData;
           this.dealerInfo = formData.inPut.dataSet[0];
+          console.log('this.dealerInfo',this.dealerInfo)
           this.cashInfo = formData.outPut.dataSet[0];
           this.costList = dataSet;
           this.dealerInfo = {
@@ -193,8 +194,9 @@
             expectEndDate_project: formData.order.expectEndDate_project,
             projectAddress_project: formData.order.projectAddress_project,
             budgetIncome_project: formData.order.budgetIncome_project,
-            thenAmntBal: formData.order.thenAmntBal,
           }
+          
+          console.log('this.dealerInfo2',this.dealerInfo)
           // 当前审批人为会计时，自动赋值本次支付金额
           if (this.isAccounting) {
             let {thenAmntBal = 0, thenAlreadyAmnt = 0} = this.dealerInfo;
