@@ -263,10 +263,10 @@
               dealerDebitCopy1: this.dealerInfo.dealerCode,
               drDealerLabelCopy1: this.dealerInfo.dealerLabelName,
             };
-            if (this.transCode) {
-              inputDataSet.tdIdCopy1 = this.dealerInfo.tdIdCopy1;
-              outputDataSet.tdId = this.cashInfo.tdId;
-            }
+            // if (this.transCode) {
+            //   inputDataSet.tdIdCopy1 = this.dealerInfo.tdIdCopy1;
+            //   outputDataSet.tdId = this.cashInfo.tdId;
+            // }
             let submitData = {
               listId: this.listId,
               biComment: this.formData.biComment,

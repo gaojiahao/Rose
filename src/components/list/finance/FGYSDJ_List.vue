@@ -29,7 +29,7 @@
           </div>
           <div class="instance-detail vux-1px-t">
             <div class="instance_detail_item" v-for="(detail, index) in item.detailItem" :key="index">
-              <div class="instance_detail_code">协议号: {{detail.transMatchedCode}}</div>
+              <div class="instance_detail_code">采购订单号: {{detail.transMatchedCode}}</div>
               <div class="instance_detail_amt_wrapper">
                 <div class="instance_detail_amt_item">
                   <div class="instance_detail_amt">￥{{detail.thenTotalAmntBal | numberComma}}</div>
