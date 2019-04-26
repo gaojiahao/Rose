@@ -4,12 +4,12 @@
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 往来联系部分 交易基本信息-->
-      <contact-part :contact-info="contactInfo"></contact-part>
+      <contact-part-other :contact-info="contactInfo" :configs="otherConfig"></contact-part-other>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <div class="form_part" v-if = 'this.matterConfig.length != 0 '>
+      <div class="form_part" v-if ='this.matterConfig.length != 0 &&  isEditAdmout'>
         <div class="form_title vux-1px-b">
           <span class="iconfont icon-baoxiao"></span><span class="title">账户列表</span>
         </div>
@@ -25,55 +25,19 @@
         </div>
       </div>
       <!-- 资金账户可编辑-->
-      <!-- <pop-cash-list :default-value="cashInfo" @sel-item="selCash" request="4" :params="cashParams"
-                     v-show="otherConfig.length &&  !isEditAdmout" required>
+      <pop-cash-list :default-value="cashInfo" @sel-item="selCash" request="4" :params="cashParams"
+                     v-show="matterConfig.length &&  !isEditAdmout" required>
         <template slot="other">
           <div class='each_property vux-1px-t'>
             <label>支付金额</label>
-            <input type='number' v-model.number="cashInfo.tdAmountCopy1" placeholder="请输入" class='property_val' @blur="checkAmt(cashInfo, 'tdAmountCopy1', cashInfo.tdAmountCopy1)"/>
+            <input type='number' v-model.number="cashInfo.tdAmount" placeholder="请输入" class='property_val' @blur="checkAmt(cashInfo, 'tdAmount', cashInfo.tdAmount)"/>
           </div>
         </template>
-      </pop-cash-list> -->
-      <!-- <div class="materiel_list" v-for="(item, index) in this.matterConfig[1].items" :key='index'>
-          <group :title='`资金账户${index+1}`' class='costGroup'>
-            <cell title="资金账户名称" v-model='item.cashName' is-link @click.native="getCost(index,item)">
-              <template slot="title">
-                <span class='required'>资金账户名称
-                </span>
-              </template>
-            </cell>
-            <cell title="资金账户大类" :value="item.cashType_cashOutCode">
-              <template slot="title">
-                <span class='required'>资金账户大类</span>
-              </template>
-            </cell>
-            <cell title="账户余额" :value="item.thenAmntBal">
-              <template slot="title">
-                <span class='required'>账户余额</span>
-              </template>
-            </cell>
-            <x-input title="支付金额" text-align='right' placeholder='请填写' @on-focus="getFocus($event)"
-                    @on-blur="checkAmt(item)" type='number' v-model.number='item.tdAmount'>
-              <template slot="label">
-                <span class='required'>支付金额
-                </span>
-              </template>
-            </x-input>
-          </group>
-        </div> -->
-      <!-- <div class="price_cell vux-1px-t">
-        <div class="price_title">
-          <span>报销人: </span>
-          <span class="people_name">{{orderInfo.creatorName }}</span>
-        </div>
-        <div>
-          <span class='title'>合计:</span>
-          <span class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</span>
-        </div>
-      </div> -->
+      </pop-cash-list>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
-      <r-action :code="transCode" :task-id="taskId" :actions="actions"
+      
+      <r-action :code="transCode" :task-id="taskId" :actions="actions" :agree-handler="agreeHandler"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
@@ -90,11 +54,12 @@ import detailCommon from 'mixins/detailCommon'
 // 组件 引入
 import RAction from 'components/public/RAction'
 import workFlow from 'components/public/workFlow'
-import contactPart from 'components/detail/commonPart/ContactPart'
+import contactPartOther from 'components/detail/commonPart/ContactPartOther'
 import PopCashList from 'components/Popup/finance/PopCashList'
 //公共方法引入
-import {accAdd} from 'plugins/calc/decimalsAdd'
+import {accAdd,accSub} from 'plugins/calc/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
+import { constants } from 'crypto';
 export default {
   data() {
     return {
@@ -106,9 +71,19 @@ export default {
   },
   mixins: [detailCommon],
   components: {
-    workFlow, RAction, contactPart , PopCashList
+    workFlow, RAction, contactPartOther , PopCashList
   },
   computed: {
+    // 是否为会计复核
+    isAccounting() {
+      let {viewId = ''} = this.currentWL;
+      return this.isMyTask && viewId === 'c5308aa2-5f52-4d77-a935-8738ae009b88';
+    },
+    // 是否为出纳
+    isCashier() {
+      let {viewId = ''} = this.currentWL;
+      return this.isMyTask && viewId === 'cc27ce28-1385-420c-8b59-6d823a427853';
+    },
     cashParams() {
       return {
         transCode: this.transCode
@@ -117,27 +92,32 @@ export default {
     // 判断纸巾账户的支付金额是否可编辑
     isEditAdmout() {
       let isEdit = false;
-
-      this.otherConfig.forEach(item => {
-        if (item.fieldCode === "fundName_cashInCode"){
+      this.matterConfig.forEach(item => {
+        if (item.fieldCode === "fundName_cashOutCode"){
+          console.log('this.contactInfo',this.contactInfo)
+          console.log('aaa')
+          console.log('this.matterConfig.length',this.matterConfig.length)
           isEdit = item.readOnly;
         }
       })
-      if (!isEdit){
-        this.cashInfo = {
-          ...this.cashInfo,
-          fundCode: this.cashInfo.fundCode || this.cashInfo.cashInCode,
-          fundType: this.cashInfo.fundType || this.cashInfo.cashType_cashInCode,
-          fundName: this.cashInfo.fundName || this.cashInfo.fundName_cashInCode,
-          thenAmntBal: this.cashInfo.thenAmntBal || this.cashInfo.thenAmntBalCopy1,
-        }
-      }
+      console.log('isEdit',isEdit);
+      // if (!isEdit){
+      //   this.cashInfo = {
+      //     ...this.cashInfo,
+      //     fundCode: this.cashInfo.fundCode || this.cashInfo.cashInCode,
+      //     fundType: this.cashInfo.fundType || this.cashInfo.cashType_cashInCode,
+      //     fundName: this.cashInfo.fundName || this.cashInfo.fundName_cashInCode,
+      //     thenAmntBal: this.cashInfo.thenAmntBal || this.cashInfo.thenAmntBalCopy1,
+      //   }
+      // }
       return isEdit
     }
   },
   methods: {
     checkAmt(item, key, val) {
-      item[key] = Math.abs(toFixed(val)); 
+      this.cashInfo.tdAmount = Math.abs(toFixed(val)); 
+      this.contactInfo.thenAlreadyAmnt = this.cashInfo.tdAmount;
+      this.contactInfo.differenceAmount = toFixed(accAdd(this.contactInfo.thenTotalAmntBal,this.cashInfo.tdAmount))
     },
     // 获取详情
     getOrderList(transCode = '') {
@@ -163,34 +143,105 @@ export default {
         }
         data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
         this.orderInfo = data.formData;
-        let {outPut} = this.orderInfo;
+        let {outPut,order} = this.orderInfo;
+        // this.contactInfo = {
+        //   creatorName:outPut.dataSet[0].dealerDebitContactPersonName, // 客户名
+        //   dealerName: outPut.dataSet[0].dealerName_dealerDebit, // 公司名
+        //   dealerMobilePhone: this.orderInfo.dealerDebitContactInformation, // 手机
+        //   dealerContactPersonName: this.orderInfo.dealerDebitContactPersonName, // 联系人
+        //   dealerCode:  outPut.dataSet[0].dealerDebit, // 客户编码
+        //   dealerLabelName: outPut.dataSet[0].dealerName_dealerDebit, // 关系标签
+        //   province:outPut.dataSet[0].province_dealerDebit, // 省份
+        //   city: outPut.dataSet[0].city_dealerDebit, // 城市
+        //   county: outPut.dataSet[0].county_dealerDebit, // 地区
+        //   address: outPut.dataSet[0].address_dealerDebit, // 详细地址
+        //   thenTotalAmntBal: outPut.dataSet[0].thenTotalAmntBal, // 往来余额
+        //   applicationAmount: outPut.dataSet[0].applicationAmount, // 申请金额
+        // };
         this.contactInfo = {
           creatorName:outPut.dataSet[0].dealerDebitContactPersonName, // 客户名
-          dealerName: outPut.dataSet[0].dealerName_dealerDebit, // 公司名
-          dealerMobilePhone: this.orderInfo.dealerDebitContactInformation, // 手机
-          dealerContactPersonName: this.orderInfo.dealerDebitContactPersonName, // 联系人
-          dealerCode:  outPut.dataSet[0].dealerDebit, // 客户编码
-          dealerLabelName: outPut.dataSet[0].dealerName_dealerDebit, // 关系标签
+          dealerName_dealerDebit: outPut.dataSet[0].dealerName_dealerDebit, // 公司名
+          dealerDebitContactInformation: this.orderInfo.dealerDebitContactInformation, // 手机
+          dealerDebitContactPersonName: this.orderInfo.dealerDebitContactPersonName, // 联系人
+          dealerDebit:  outPut.dataSet[0].dealerDebit, // 客户编码
+          drDealerLabel: this.orderInfo.order.dataSet[0].drDealerLabel, // 关系标签
           province:outPut.dataSet[0].province_dealerDebit, // 省份
           city: outPut.dataSet[0].city_dealerDebit, // 城市
           county: outPut.dataSet[0].county_dealerDebit, // 地区
-          address: outPut.dataSet[0].address_dealerDebit, // 详细地址
+          address_dealerDebit: outPut.dataSet[0].address_dealerDebit, // 详细地址
           thenTotalAmntBal: outPut.dataSet[0].thenTotalAmntBal, // 往来余额
+          differenceAmount: accAdd(outPut.dataSet[0].thenTotalAmntBal,(outPut.dataSet[0].thenAlreadyAmnt || 0)), 
+          thenAlreadyAmnt: outPut.dataSet[0].thenAlreadyAmnt || 0,
           applicationAmount: outPut.dataSet[0].applicationAmount, // 申请金额
+          tdId: order.dataSet[0].tdId,
+          tdId2: outPut.dataSet[0].tdId,
         };
         this.workFlowInfoHandler();
       })
     },
+    // 同意的处理
+    agreeHandler() {
+      if (this.isAccounting || this.isCashier) {
+        if (this.isCashier && !this.cashInfo.cashInCode) {
+          this.$vux.alert.show({
+            content: '请选择资金账户',
+          });
+          return true
+        }
+        let orderInfo = this.orderInfo;
+        let dataSet = {
+          tdId: this.contactInfo.tdId || '',
+          cashOutCode: this.cashInfo.fundCode,
+          cashType_cashOutCode: this.cashInfo.cashType_cashInCode,
+          dealerDebit: this.contactInfo.dealerDebit,
+          drDealerLabel: this.contactInfo.drDealerLabel,
+          thenAmntBal: this.cashInfo.thenAmntBal,
+          tdAmount: this.cashInfo.tdAmount,
+        };
+        let formData = {
+          ...orderInfo,
+          order: {
+            dataSet: [{
+              ...dataSet
+            }],
+          },
+        };
+        if (this.otherConfig.length) {
+          formData.outPut = {
+            dataSet: [{
+              dealerDebit: this.contactInfo.dealerDebit,
+              drDealerLabel: this.contactInfo.drDealerLabel,
+              thenTotalAmntBal: this.contactInfo.thenTotalAmntBal,
+              applicationAmount: this.contactInfo.applicationAmount,
+              thenAlreadyAmnt: this.contactInfo.thenAlreadyAmnt,
+              differenceAmount: this.contactInfo.differenceAmount,
+              tdId: this.contactInfo.tdId2,
+            }],
+          }
+        }
+        console.log('this.formData',formData);
+        // return 0;
+        this.saveData(formData);
+        return true
+      }
+      return false
+    },
     // 选中资金
     selCash(item) {
+      console.log('item',item)
       // this.cashInfo = {
       //   ...this.cashInfo,
       //   ...item,
       // };
+      this.cashInfo.fundCode = item.fundCode;
+      this.cashInfo.fundName = item.fundName;
+      this.cashInfo.fundType = item.fundType;
+      this.cashInfo.thenAmntBal = item.thenAmntBal;
       this.cashInfo.fundName_cashInCode = item.fundName;
       this.cashInfo.cashInCode = item.fundCode;
       this.cashInfo.thenAmntBalCopy1 = item.thenAmntBal;
       this.cashInfo.cashType_cashInCode = item.fundType;
+      this.cashInfo.tdId = item.colId;
     },
   }
 }
