@@ -334,7 +334,9 @@ import { constants } from 'crypto';
             item.popiCode = item.transMatchedCode;
             item.poCode = item.orderCode;
             item.invoicing = item.invoiced;
+            item.crDealerLabel = item.drDealerLabel;
           });
+           console.log('this.orderDataSet',orderDataSet)
           this.dealerInfo = {
             ...dealerInfo,
             nickname: dealerInfo.dealerName_dealerDebit,
@@ -342,6 +344,7 @@ import { constants } from 'crypto';
             dealerLabelName: dealerInfo.drDealerLabel,
             amntBal: dealerInfo.thenAmntBalCopy1,
           };
+          console.log('this.dealerInfo',this.dealerInfo)
           this.cashInfo = {
             ...cashInfo,
             fundName: cashInfo.fundName_cashOutCode,
