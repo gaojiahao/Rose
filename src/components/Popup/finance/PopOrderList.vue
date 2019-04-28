@@ -10,10 +10,11 @@
           <div class="each_mater box_sd" v-for="(item, index) in matterList" :key='index'
                @click.stop="selThis(item, index)">
             <div class="pop-info top">
-              <span class="info-item">{{item.popiCode}}</span>
+              <span class="info-item">收票号：{{item.popiCode}}</span>
             </div>
             <div class="pop-info">
-              <span class="info-item">收票号: {{item.poCode}}</span>
+              <!-- <span class="info-item">收票号: {{item.poCode}}</span> -->
+              <span class="info-item">往来关系: {{item.crDealerLabel}}</span>
               <span class="info-item">价税合计: {{item.thenTotalAmntBal}}</span>
             </div>
             <div class="pop-info">
@@ -21,7 +22,7 @@
               <span class="info-item">待核销: {{item.thenAmntBal}}</span>
             </div>
             <div class="pop-info">
-              <span class="info-item" v-if="item.accountExpirationDate || item.accountExpirationDate === 0">账期到期日: {{item.accountExpirationDate}}</span>
+              <span class="info-item" v-if="item.accountExpirationDate || item.accountExpirationDate === 0 || item.expectedPaymentDate">账期到期日: {{item.accountExpirationDate || item.expectedPaymentDate}}</span>
               <span class="info-item"
                     v-if="item.daysOfAccount || item.daysOfAccount === 0">账期天数: {{item.daysOfAccount}}</span>
               <span class="info-item" v-if="item.ageOfAging || item.ageOfAging === 0">账龄天数: {{item.ageOfAging}}</span>

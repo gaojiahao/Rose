@@ -26,7 +26,7 @@
                 <span class="info-item">收票号:{{item.popiCode}}</span>
               </div>
               <div class="detail-item">
-                <!-- <span class="info-item">采购订单号: {{item.poCode}}</span> -->
+                <span class="info-item">往来关系: {{item.crDealerLabel}}</span>
                 <span class="info-item">价税合计: {{item.thenTotalAmntBal | numberComma(3)}}</span>
               </div>
               <div class="detail-item">
@@ -105,6 +105,7 @@
   // 方法引入
   import {accAdd,accSub} from 'plugins/calc/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
+import { constants } from 'crypto';
 
   const DRAFT_KEY = 'FGYSQK_DATA';
   export default {
@@ -187,12 +188,12 @@
             item.tdAmount = item.applicationAmount;
             item.differenceAmount = toFixed(accSub(item.thenAmntBal, item.tdAmount));
             dataSet.push({
-              //tdId: item.tdId || '',
+              // tdId: item.tdId || '',
               transMatchedCode: item.popiCode,
               orderCode: item.poCode,
+              drDealerLabel: item.crDealerLabel,
               thenTotalAmntBal: item.thenTotalAmntBal,
               dealerDebit: this.dealerInfo.dealerCode,
-              drDealerLabel: this.dealerInfo.dealerLabelName,
               thenAlreadyAmnt: item.thenAlreadyAmnt,
               thenAmntBal: item.thenAmntBal,
               expectedPaymentDate: item.expectedPaymentDate,
@@ -206,6 +207,7 @@
               tdAmount: item.tdAmount,
               differenceAmount: item.differenceAmount,
             });
+
             return true
           });
         }
@@ -237,7 +239,7 @@
             let inputDataSet = {
               dealerName_dealerDebit: this.dealerInfo.nickname,
               dealerDebit: this.dealerInfo.dealerCode,
-              drDealerLabel: this.dealerInfo.dealerLabelName,
+              // drDealerLabel: this.dealerInfo.dealerLabelName,
               thenAmntBalCopy1: this.dealerInfo.amntBal,
               applicationAmount: this.applicationAmount,
               tdAmountCopy1: this.tdAmountCopy1,
@@ -378,7 +380,6 @@
       // 选中采购明细
       selOrder(val) {
         this.orderList = JSON.parse(val);
-        this.orderList
       },
       // 选中资金
       selCash(val) {
