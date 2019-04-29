@@ -40,6 +40,19 @@
           <span class="contact_top_title">申请金额: </span>{{contactInfo.applicationAmount}}
         </div>
       </div>
+      <div class="contact_top">
+        <div class="contact_top_item" v-if="contactInfo.crDealerPaymentTerm">
+          <span class="contact_top_title">结算方式: </span>{{contactInfo.crDealerPaymentTerm}}
+        </div>
+        <div class="contact_top_item" v-if="contactInfo.thenAlreadyAmnt">
+          <span class="contact_top_title">本次收款: </span>{{contactInfo.thenAlreadyAmnt}}
+        </div>
+      </div>
+      <div class="contact_top">
+        <div class="contact_top_item" v-if="contactInfo.differenceAmount">
+          <span class="contact_top_title">本次收款后余额: </span>{{contactInfo.differenceAmount}}
+        </div>
+      </div>
     </div>
     <div class="contact-other vux-1px-t" v-if="configs.length">
       <div class="contact_other_wrapper" v-for="(item, index) in configs" :key="index">
