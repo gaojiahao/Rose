@@ -4,7 +4,7 @@
 
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
-      <warehouse-content :warehouse="warehouseIn" :warehouse-out="warehouseOut"></warehouse-content>
+      <warehouse-content :warehouse="warehouseIn" :warehouse-out="warehouseOut" :warehouseConfig='warehouseConfig'></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
@@ -154,27 +154,30 @@
             item.measureUnit = item.measureUnit_outPutMatCode;
           });
           this.warehouseIn = {
-            warehouseCode: order.containerCode,
-            warehouseName: order.warehouseName_containerCode,
+            containerCodeOut: order.containerCodeOut,
+            warehouseName_containerCodeOut: order.warehouseName_containerCodeOut,
             warehouseAction: '入库',
             warehouseIcon: 'icon-ruku',
-            warehouseType: order.warehouseType_containerCode,
-            warehouseProvince: order.warehouseProvince_containerCode,
-            warehouseCity: order.warehouseCity_containerCode,
-            warehouseDistrict: order.warehouseDistrict_containerCode,
-            warehouseAddress: order.warehouseAddress_containerCode,
+            warehouseType_containerCodeOut: order.warehouseType_containerCodeOut,
+            warehouseAddress_containerCodeOut: order.warehouseAddress_containerCodeOut,
+            containerOutWarehouseManager: formData.containerOutWarehouseManager,
+            warehouseName_storehouseOutCode: order.warehouseName_storehouseOutCode,
+            storehouseOutCode: order.warehouseCode_storehouseOutCode,
+            warehouseType_storehouseOutCode: order.warehouseType_storehouseOutCode,
+            warehouseAddress_storehouseOutCode: order.warehouseAddress_storehouseOutCode,
           };
-          // 出库
-          this.warehouseOut = {
-            warehouseCode: order.containerCodeOut,
-            warehouseName: `${order.warehouseName_containerCodeOut}`,
+           this.warehouseOut = {
+            containerCode: order.containerCode,
+            warehouseName_containerCode: order.warehouseName_containerCode,
             warehouseAction: '在制仓库',
             warehouseIcon: 'icon-chuku',
-            warehouseType: order.warehouseType_containerCodeOut,
-            warehouseProvince: order.warehouseProvince_containerCodeOut,
-            warehouseCity: order.warehouseCity_containerCodeOut,
-            warehouseDistrict: order.warehouseDistrict_containerCodeOut,
-            warehouseAddress: order.warehouseAddress_containerCodeOut,
+            warehouseType_containerCode: order.warehouseType_containerCode,
+            warehouseAddress_containerCode: order.warehouseAddress_containerCode,
+            containerInWarehouseManager: formData.containerInWarehouseManager,
+            warehouseName_storehouseInCode: order.warehouseName_storehouseInCode,
+            storehouseInCode: order.storehouseInCode,
+            warehouseType_storehouseInCode: order.warehouseType_storehouseInCode,
+            warehouseAddress_storehouseInCode: order.warehouseAddress_storehouseInCode,
           };
           this.orderList = orderList;
           this.bomList = bomList;
