@@ -37,17 +37,17 @@
                     </div>
                     <div class="task_info_item">
                       <span class="task_info_title">计划开始日期: </span>
-                      <span class="task_info_day">{{task.startDate_projectPlanTask || dateFormat('YYYY-MM-DD') || '无'}}</span>
+                      <span class="task_info_day">{{task.startDate_projectPlanTask || '无'}}</span>
                     </div>
                   </div>
                   <div class="task_info" :class="{'when-is-fill': task.deadline_projectPlanTask && task.completeTime_projectPlanTask}">
                     <div class="task_info_item">
                       <span class="task_info_title">计划截止日期: </span>
-                      <span class="task_info_day">{{task.deadline_projectPlanTask || dateFormat('YYYY-MM-DD') || '无'}}</span>
+                      <span class="task_info_day">{{task.deadline_projectPlanTask || '无'}}</span>
                     </div>
                     <div class="task_info_item">
                       <span class="task_info_title">实际完成日期: </span>
-                      <span class="task_info_day">{{task.completeTime_projectPlanTask || dateFormat('YYYY-MM-DD') || '无'}}</span>
+                      <span class="task_info_day">{{task.completeTime_projectPlanTask || '无'}}</span>
                     </div>
                   </div>
                 </div>
@@ -62,7 +62,7 @@
               </div>
               <div class="instance_bottom_item instance_mod_time">
                 <i class="icon icon-mod-time"></i>
-                <span>修改时间: {{item.modTime | dateFormat('YYYY-MM-DD HH:mm')}}</span>
+                <span>修改时间: {{item.modTime}}</span>
               </div>
             </div>
           </div>

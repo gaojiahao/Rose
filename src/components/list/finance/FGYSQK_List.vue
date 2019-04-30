@@ -46,7 +46,7 @@
               v-for="(detail, index) in item.detailItem"
               :key="index"
             >
-              <div class="instance_detail_code">入库单号: {{detail.transMatchedCode}}</div>
+              <div class="instance_detail_code">收票号: {{detail.transMatchedCode}}</div>
               <div class="instance_detail_amt_wrapper">
                 <div class="instance_detail_amt_item">
                   <div class="instance_detail_amt">￥{{detail.applicationAmount | numberComma}}</div>

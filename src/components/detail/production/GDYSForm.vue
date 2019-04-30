@@ -4,7 +4,7 @@
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 仓库信息 -->
-      <warehouse-content :warehouse-config="warehouseConfig"></warehouse-content>
+      <warehouse-content :warehouse-config="warehouseConfig" :warehouse='warehouse'></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
@@ -91,19 +91,19 @@ export default {
         }
         let {order = {}, outPut = {}} = formData;
         let {dataSet = []} = outPut;
-        this.warehouse = {
-          ...this.warehouse,
-          containerCode: order.containerCode,
-          storehouseInCode: order.storehouseInCode,
-          warehouseInType: order.warehouseInType,
-          warehouseAddress_containerCode: order.warehouseAddress_containerCode,
-          warehouseAddress_storehouseInCode: order.warehouseAddress_storehouseInCode,
-          warehouseName_containerCode: order.warehouseName_containerCode,
-          warehouseName_storehouseInCode: order.warehouseName_storehouseInCode,
-          warehouseType_containerCode: order.warehouseType_containerCode,
-          warehouseType_storehouseInCode: order.warehouseType_storehouseInCode,
-          containerInWarehouseManager: formData.containerInWarehouseManager,
-        }
+        // this.warehouse = {
+        //   ...this.warehouse,
+        //   containerCode: order.containerCode,
+        //   storehouseInCode: order.storehouseInCode,
+        //   warehouseInType: order.warehouseInType,
+        //   warehouseAddress_containerCode: order.warehouseAddress_containerCode,
+        //   warehouseAddress_storehouseInCode: order.warehouseAddress_storehouseInCode,
+        //   warehouseName_containerCode: order.warehouseName_containerCode,
+        //   warehouseName_storehouseInCode: order.warehouseName_storehouseInCode,
+        //   warehouseType_containerCode: order.warehouseType_containerCode,
+        //   warehouseType_storehouseInCode: order.warehouseType_storehouseInCode,
+        //   containerInWarehouseManager: formData.containerInWarehouseManager,
+        // }
         // 设置bom列表
         dataSet.forEach(item => {
           item.inventoryName = item.inventoryName_outPutMatCode;
@@ -115,6 +115,17 @@ export default {
         this.attachment = attachment;
         this.orderInfo = formData;
         this.workInfo = formData.order.dataSet[0];
+        this.warehouse = {
+          warehouseName_containerCode : order.warehouseName_containerCode,     
+          containerCode : order.containerCode,     
+          warehouseInType : order.warehouseInType,     
+          warehouseAddress_containerCode : order.warehouseAddress_containerCode,     
+          containerInWarehouseManager : formData.containerInWarehouseManager,                  //仓管员
+          warehouseName_storehouseInCode : order.warehouseName_storehouseInCode,                     //库区
+          storehouseInCode : order.storehouseInCode,       //库位编码
+          warehouseType_storehouseInCode : order.warehouseType_storehouseInCode,     //库位仓库类型
+          warehouseAddress_storehouseInCode : order.warehouseAddress_storehouseInCode,    //仓库地址       
+        }
         this.workFlowInfoHandler();
       })
     },

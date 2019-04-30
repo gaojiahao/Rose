@@ -17,7 +17,7 @@
       <div class="warehouse_info" v-if="warehouseConfig[activeIndex]">
         <div class="warehouse_info_item" v-for="(item, index) in warehouseConfig[activeIndex].config" :key="index" v-show="item.fieldLabel">
           <span class="warehouse_item_title">{{item.fieldLabel}}:</span>
-          <span class="warehouse_item_value">{{item.fieldValue || '无'}}</span>
+          <span class="warehouse_item_value">{{warehouse[item.fieldCode]}}</span>
         </div>
       </div>
     </div>
@@ -30,6 +30,10 @@
     props: {
       warehouseConfig: {
         type: Array,
+        required: true
+      },
+      warehouse: {
+        type: Object,
         required: true
       }
     },

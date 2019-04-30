@@ -17,7 +17,7 @@
           <div class="main_content">
             <form-cell cellTitle='供应商名称' :cellContent="item.dealerName_dealerDebit" :showTopBorder=false></form-cell>
             <form-cell cellTitle='供应商编码' :cellContent="item.dealerCode_dealerDebit"></form-cell>
-            <form-cell cellTitle='往来关系标签' :cellContent="item.drDealerLabel"></form-cell>
+            <!-- <form-cell cellTitle='往来关系标签' :cellContent="item.drDealerLabel"></form-cell> -->
             <form-cell cellTitle='往来余额' :cellContent="item.thenAmntBalCopy1 | toFixed | numberComma(3)"
                        showSymbol></form-cell>
             <form-cell cellTitle='申请金额' :cellContent="item.applicationAmount | toFixed | numberComma(3)"
@@ -40,6 +40,7 @@
           <div class="main_content">
             <form-cell cellTitle='收票号' :cellContent="item.transMatchedCode" :showTopBorder=false></form-cell>
             <!-- <form-cell cellTitle='采购订单号' :cellContent="item.orderCode"></form-cell> -->
+            <form-cell cellTitle='关系标签' :cellContent="item.drDealerLabel"></form-cell>
             <form-cell cellTitle='价税合计' :cellContent="item.thenTotalAmntBal | toFixed | numberComma(3)"
                        showSymbol></form-cell>
             <form-cell cellTitle='已核销' :cellContent="item.thenAlreadyAmnt | toFixed | numberComma(3)"
@@ -61,7 +62,36 @@
           </div>
         </div>
       </div>
-      <div class="form_part">
+       <!-- 资金账户可编辑-->
+      <pop-cash-list :default-value="cashInfo" @sel-item="selCash" request="4" :params="cashParams"
+                     v-show="otherConfig.length &&  !isEditAdmout" required>
+        <template slot="other">
+          <div class='each_property vux-1px-t'>
+            <label>支付金额</label>
+            <input  readonly="readonly" type='number' v-model.number="cashInfo.tdAmountCopy1" class='property_val' />
+          </div>
+        </template>
+      </pop-cash-list>
+      <!-- 资金账户不可编辑 -->
+      <div class="form_content" v-show="otherConfig.length &&  isEditAdmout">
+        <div class="main_content">
+          <div :class="{'vux-1px-t': cIndex > 0}" v-for="(cItem, cIndex) in otherConfig" :key="cIndex">
+            <template v-if="cItem.xtype === 'r2Permilfield'">
+              <div class="each_info">
+                <label>{{cItem.fieldLabel}}</label>
+                <span class="field_value">￥{{cashInfo[cItem.fieldCode] | numberComma}}</span>
+              </div>
+            </template>
+            <template v-else>
+              <div class="each_info">
+                <label>{{cItem.fieldLabel}}</label>
+                <span class="field_value">{{cashInfo[cItem.fieldCode] || "无"}}</span>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="form_part">
         <div v-for="(item,index) in this.config" :key = 'index'>
           <div class="form_content" v-if = 'item.name ==="outPut" && !(item.hiddenInRun) '>
             <div class="main_content" v-for="(cell,index) in item.items" :key = 'index'>
@@ -69,7 +99,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       <!-- 资金列表 -->
       <!-- <div class="form_part">
         <div class="form_title vux-1px-b">
@@ -89,7 +119,7 @@
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle"
                    :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
-      <r-action :code="transCode" :task-id="taskId" :actions="actions"
+      <r-action :code="transCode" :task-id="taskId" :actions="actions" :agree-handler="agreeHandler"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
@@ -103,24 +133,69 @@
   // mixins 引入
   import detailCommon from 'mixins/detailCommon'
   // 组件引入
-  // 组件 引入
   import RAction from 'components/public/RAction'
   import workFlow from 'components/public/workFlow'
   import ProjectPart from 'components/detail/commonPart/Project'
+  import PopCashList from 'components/Popup/finance/PopCashList'
   //公共方法引入
   import {accAdd} from 'plugins/calc/decimalsAdd'
   import FormCell from 'components/detail/commonPart/form-part/FormCell'
+  import {toFixed} from '@/plugins/calc'
 
   export default {
     data() {
       return {
         count: 0,          // 金额合计
-        formViewUniqueId: '7aa1ae41-77a0-4905-84b4-9fa09926be70'
+        formViewUniqueId: '7aa1ae41-77a0-4905-84b4-9fa09926be70',
+        cashInfo: {},
+        dealerInfo: {},
       }
     },
     mixins: [detailCommon],
     components: {
-      workFlow, RAction, ProjectPart,FormCell
+      workFlow, RAction, ProjectPart,FormCell,PopCashList
+    },
+    computed: {
+      // 付供应商欠款（审批）
+      isApproval(){
+        let {viewId = ''} = this.currentWL;
+        return this.isMyTask && viewId === 'c2b5dea5-9ce0-4d38-83ea-393a53e82081';
+      },
+      // 付供应商欠款（会计审批）
+      isAccounting() {
+        let {viewId = ''} = this.currentWL;
+        return this.isMyTask && viewId === 'f3b0157d-ab23-43ad-b06b-772b4771cf3c';
+      },
+      // 付供应商欠款（出纳审批）
+      isCashier() {
+        let {viewId = ''} = this.currentWL;
+        return this.isMyTask && viewId === '7d4bc781-8dc7-443d-90d0-171968ec9f23';
+      },
+      // 判断纸巾账户的支付金额是否可编辑
+      isEditAdmout() {
+        let isEdit = false;
+        this.otherConfig.forEach(item => {
+          if (item.fieldCode === "fundName_cashOutCode"){
+           isEdit = item.readOnly;
+          }
+        })
+        if (!isEdit){
+          this.cashInfo = {
+            ...this.cashInfo,
+            fundCode: this.cashInfo.fundCode || this.cashInfo.cashInCode,
+            fundType: this.cashInfo.fundType || this.cashInfo.cashType_cashInCode,
+            fundName: this.cashInfo.fundName || this.cashInfo.fundName_cashInCode,
+            thenAmntBal: this.cashInfo.thenAmntBal || this.cashInfo.thenAmntBalCopy1,
+            tdAmountCopy1 :  Math.abs(toFixed(this.orderInfo.inPut.dataSet[0].tdAmountCopy1)),
+          }
+        }
+        return isEdit
+      },
+      cashParams() {
+        return {
+          transCode: this.transCode
+        }
+      },
     },
     methods: {
       // 获取详情
@@ -147,9 +222,57 @@
           }
           data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
           this.orderInfo = data.formData;
+          this.cashInfo = this.orderInfo.outPut.dataSet[0];
+          // 当前审批人为会计时，自动赋值本次支付金额
+          if (this.isCashier) {
+            let {thenAmntBal = 0, thenAlreadyAmnt = 0} = this.dealerInfo;
+            this.dealerInfo.thenTotalAmntBal = thenAlreadyAmnt;
+            // 往来余额 - 本次贷方增加 + 本次支付
+            this.dealerInfo.differenceAmount = thenAmntBal;
+          }
           this.workFlowInfoHandler();
         })
-      }
+      },
+      // 选中资金
+      selCash(item) {
+        this.cashInfo.fundName_cashInCode = item.fundName;
+        this.cashInfo.cashInCode = item.fundCode;
+        this.cashInfo.thenAmntBalCopy1 = item.thenAmntBal;
+        this.cashInfo.cashType_cashInCode = item.fundType;
+        this.cashInfo.tdAmountCopy1 =  Math.abs(toFixed(this.orderInfo.inPut.dataSet[0].tdAmountCopy1));
+      },
+      // 同意的处理
+      agreeHandler() {
+        if (this.isApproval || this.isAccounting || this.isCashier) {
+          if (this.isCashier && !this.cashInfo.cashInCode) {
+            this.$vux.alert.show({
+              content: '请选择资金账户',
+            });
+            return true
+          }
+          let orderInfo = this.orderInfo;
+          let formData = {
+            ...orderInfo,
+          };
+          if (this.otherConfig.length) {
+            let cashInfo = this.cashInfo;
+            formData.outPut = {
+              dataSet: [{
+                fundName_cashOutCode: cashInfo.fundName_cashInCode,
+                cashOutCode: cashInfo.cashInCode,
+                cashType_cashOutCode: cashInfo.cashType_cashInCode,
+                thenAmntBal: cashInfo.thenAmntBalCopy1,
+                tdAmount: cashInfo.tdAmountCopy1,
+                dealerDebitCopy1: orderInfo.inPut.dataSet[0].dealerCode_dealerDebit,
+                drDealerLabelCopy1 : orderInfo.inPut.dataSet[0].drDealerLabel,
+              }],
+            }
+          }
+          this.saveData(formData);
+          return true
+        }
+        return false
+      },
     }
   }
 </script>
@@ -165,6 +288,23 @@
     }
     .main_content {
       margin-bottom: 0;
+    }
+  }
+  .each_property {
+    padding: .18rem 0;
+    display: flex;
+    justify-content: space-between;
+    line-height: .14rem;
+    input{  
+      border: none;
+      outline: none;
+      font-size: .14rem;
+    }
+    label{
+      color: #696969;
+    }
+    .property_val {
+      text-align: right;
     }
   }
 </style>
