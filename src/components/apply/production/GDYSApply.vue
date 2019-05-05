@@ -30,6 +30,12 @@
                 <input type='number' v-model.number="workInfo[dItem.fieldCode]" placeholder="请输入" class='property_val' 
                       @focus="getFocus($event)" @blur="checkAmt(workInfo) "/>
               </div>
+               <!-- 输入框（数字） -->
+              <div class='each_property ' v-if="dItem.xtype === 'r2Permilfield'">
+                <label :class="{required: !dItem.allowBlank}">{{dItem.fieldLabel}}</label>
+                <input type='number' v-model.number="workInfo[dItem.fieldCode]" placeholder="请输入" class='property_val' 
+                      @focus="getFocus($event)" @blur="checkAmt(workInfo) "/>
+              </div>
               <!-- 输入框（文字） -->
               <div class='each_property' v-if="dItem.xtype === 'r2Textfield'">
                 <label :class="{required: !dItem.allowBlank}">{{dItem.fieldLabel}}</label>
@@ -42,6 +48,11 @@
                   <span class='mater_nature'>{{workInfo[dItem.fieldCode] || "请选择"}}</span>
                   <span class='icon-right'></span>
                 </div>
+              </div>
+              <!-- 单选 -->
+              <div class='each_property' v-if="dItem.xtype === 'r2Checkbox'">
+                <!-- <label :class="{required: !dItem.allowBlank}">{{dItem.fieldLabel}}</label> -->
+                <x-switch :title="dItem.fieldLabel" v-model="workInfo[dItem.fieldCode]"></x-switch>
               </div>
             </template>
             <!--不可编辑的字段 -->
@@ -94,7 +105,7 @@
 
 <script>
 // vux组件引入
-import { XTextarea } from 'vux'
+import { XTextarea,XSwitch } from 'vux'
 // 请求 引入
 import { saveAndStartWf, saveAndCommitTask, submitAndCalc, updateData } from 'service/common/commonService'
 import { getBomWorkCheck } from 'service/Product/gdService'
@@ -109,14 +120,15 @@ import BomList from 'components/detail/commonPart/BomList'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 // 插件 引入
 import { toFixed } from '@/plugins/calc'
-import { accMul } from 'plugins/calc/decimalsAdd'
+import { accMul,accAdd } from 'plugins/calc/decimalsAdd'
+import { constants } from 'crypto';
 
 const DRAFT_KEY = 'GDYS_DATA';
 export default {
   mixins: [Applycommon],
   components: {
     BomList, XTextarea, PopBaseinfo,
-    PopManagerList, PopWorkCheckList, PopWarehouseList,  
+    PopManagerList, PopWorkCheckList, PopWarehouseList, XSwitch
   },
   data () {
     return {
@@ -139,11 +151,15 @@ export default {
     // 选择工序
     selWork (val) {
       val.tdQty = val.qtyBal;
+      val.differenceNum = 0;
+      val.checkLossQty = 0;
+      val.productDemandQty = val.qtyBal;
       this.workInfo = val;
       this.defaultManager = {};
       getBomWorkCheck({
-        transCode: val.orderCode,
-        inventoryCode: val.matCode
+        startCode: val.orderCode,
+        processCode: val.processCode,
+        parentInvCode: val.matCode
       }).then(({tableContent = []}) => {
         this.bomList = tableContent;
         this.setBomQty();
@@ -163,7 +179,10 @@ export default {
     // 检验本次验收数量
     checkAmt (item) {
       let {tdQty, qtyBal} = item;
-      item.tdQty = Math.abs(toFixed(tdQty))
+      item.tdQty = Math.abs(toFixed(tdQty));
+      item.differenceNum = item.differenceNum || 0; 
+      item.checkLossQty = item.checkLossQty || 0;
+      item.productDemandQty = item.differenceNum + item.tdQty + item.checkLossQty;
       if (tdQty) {
         if (tdQty > qtyBal) {
           item.tdQty = qtyBal;
@@ -174,6 +193,39 @@ export default {
     // 选择的库位
     getStore(val){
       this.warehouseStoreInfo = {...val};
+    },
+    //计算合格扣料数(可验收,bom数量,损耗率,物料属性)
+    calcThenTotalQtyBal(thenQtyBal,bomQty,bomSpecificLoss,tdProcessing) {
+      let qty = 0;
+      if(thenQtyBal && bomQty){
+        qty = toFixed(thenQtyBal * bomQty);
+        if (bomSpecificLoss) qty = toFixed(qty + qty * Number(bomSpecificLoss));
+        if(tdProcessing == '包装物') qty = Math.ceil(qty);
+      }
+      return qty;
+    },
+    //计算数量(本次验收合格数,不合格数,损耗数,bom数量,损耗率,物料属性)
+    calcTdQty(tdQty,differenceNum,checkLossQty,bomQty,bomSpecificLoss,tdProcessing) {
+      let qty = 0;
+      let productDemandQty = 0;
+      productDemandQty = tdQty + differenceNum + checkLossQty;
+      if(productDemandQty && bomQty){
+        qty = toFixed(productDemandQty * bomQty);
+        if (bomSpecificLoss) {
+          qty = toFixed(qty + qty * Number(bomSpecificLoss));
+        }
+      }
+      return qty;
+    },
+    //是否关闭工单
+    checkWhether(val) {
+      let whether = 0;
+      if(val) {
+        whether = 1;
+      } else {
+        whether = 0;
+      }
+      return whether;
     },
     // 提价订单
     submitOrder () {
@@ -212,13 +264,17 @@ export default {
         proPointCode: workInfo.proPointCode, // 工序编码
         thenQtyBal: workInfo.qtyBal, // 可验收余额
         tdQty: workInfo.tdQty, // 本次验收
+        differenceNum: workInfo.differenceNum, //不合格数
+        checkLossQty: workInfo.checkLossQty, //损耗数
+        productDemandQty: workInfo.productDemandQty,
         rearProPointCode: workInfo.rearProPointCode || '', // 后置工序编码
         dealerDebit: this.defaultManager.dealerCode, // 验收人
         proFlowCode: workInfo.proFlowCode || '',
         transObjCode: workInfo.matCode, // 物料编码
         tdProcessing: workInfo.processing,// 加工属性
         skinFee: workInfo.skinFee,
-        wages: workInfo.wages
+        wages: workInfo.wages,
+        whether: this.checkWhether(workInfo.whether),
       });
       this.bomList.forEach(item => {
         outPutDataSet.push({
@@ -235,13 +291,14 @@ export default {
           measureUnit_outPutMatCode: item.measureUnit,
           containerCodeOut: item.whCode,
           warehouseName_storehouseOutCode: item.warehouseName,
-          storehouseOutCode: this.warehouseStoreInfo.warehouseCode,
+          storehouseOutCode: item.warehouseCode,
           thenTotalQtyStock: item.qtyBalance,
           locationStock: item.storehouseQtyBal,          
           bomType: item.bomType,
           bomQty: item.qty,
+          thenTotalQtyBal: this.calcThenTotalQtyBal(workInfo.qtyBal,item.qty,item.specificLoss,item.processing),
           bomSpecificLoss: item.specificLoss,
-          tdQty: item.tdQty,
+          tdQty: this.calcTdQty(workInfo.tdQty,workInfo.differenceNum,workInfo.checkLossQty,item.qty,item.specificLoss,item.processing),
         })
       });
 
@@ -366,6 +423,7 @@ export default {
           bom.whCode = bom.containerCodeOut,
           bom.specification = bom.specification_outPutMatCode || '无';
           bom.specificLoss = bom.bomSpecificLoss || 0;
+          bom.warehouseCode = bom.storehouseOutCode; 
         })
         this.bomList = boms;
         // 仓库
@@ -438,7 +496,7 @@ export default {
       this.bomList = this.bomList.map(item => {
         return {
           ...item,
-          tdQty: toFixed(accMul(item.qty, tdQty, (1 + item.specificLoss)), 2)
+          tdQty: this.calcTdQty(this.workInfo.tdQty,this.workInfo.differenceNum,this.workInfo.checkLossQty,item.qty,item.specificLoss,item.processing),
         }
       });
     },
@@ -509,6 +567,14 @@ export default {
           width: .08rem;
           height: .14rem;
           margin-left: .1rem;
+        }
+      }
+      .weui-cell {
+        padding: 0;
+        color: #696969;
+        width: 100%;
+        .weui-cell__ft {
+          float:right;
         }
       }
     }
