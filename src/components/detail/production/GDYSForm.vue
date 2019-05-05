@@ -115,6 +115,7 @@ export default {
         this.attachment = attachment;
         this.orderInfo = formData;
         this.workInfo = formData.order.dataSet[0];
+        this.workInfo.whether = formData.order.dataSet[0].whether == 1 ? '是':'否'
         this.warehouse = {
           warehouseName_containerCode : order.warehouseName_containerCode,     
           containerCode : order.containerCode,     
