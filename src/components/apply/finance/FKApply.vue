@@ -274,7 +274,6 @@ import { constants } from 'crypto';
                 comment: ""
               }
             }
-            console.log(this.dealerInfo)
             this.formData.biProcessStatus = this.$refs.base.biProcessStatus;
             let submitData = {
               listId: this.listId,
