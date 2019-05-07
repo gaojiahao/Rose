@@ -172,6 +172,19 @@ export default {
           tdId: order.dataSet[0].tdId,
           tdId2: outPut.dataSet[0].tdId,
         };
+        this.cashInfo = this.orderInfo.order.dataSet[0];
+        this.cashInfo = {
+          fundCode : this.orderInfo.order.dataSet[0].cashOutCode,
+          fundName : this.orderInfo.order.dataSet[0].fundName_cashOutCode,
+          fundType : this.orderInfo.order.dataSet[0].cashType_cashOutCode,
+          thenAmntBal : this.orderInfo.order.dataSet[0].thenAmntBal,
+          fundName_cashInCode : this.orderInfo.order.dataSet[0].cashOutCode,
+          cashInCode : this.orderInfo.order.dataSet[0].cashOutCode,
+          thenAmntBalCopy1 : this.orderInfo.order.dataSet[0].thenAmntBal,
+          cashType_cashInCode : this.orderInfo.order.dataSet[0].cashType_cashOutCode,
+          tdId : this.orderInfo.order.dataSet[0].tdId,
+          tdAmount : this.orderInfo.order.dataSet[0].tdAmount,
+        }
         this.workFlowInfoHandler();
       })
     },

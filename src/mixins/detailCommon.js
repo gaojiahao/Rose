@@ -214,7 +214,12 @@ export default {
         let [createFlow = {}] = workFlow;
         let last = workFlow[workFlow.length - 1] || {};
         let operationList = ['同意', '不同意']; // 操作列表的status
-
+        if(data.tableContent.length) {
+          this.actions = data.tableContent[0].actions || [];
+          if(this.actions.length) {
+            this.actions = this.actions.split(',')
+          }
+        }
         // 赋值 完整版工作流
         this.fullWL = workFlow;
         this.currentWL = flow;
@@ -233,13 +238,19 @@ export default {
         });
 
         // actions字段没有返回，修改固定赋值
-        this.actions = ['agreement', 'disagree', 'transfer']; 
+        if(this.actions.length){
+          this.actions.push('transfer')
+        } else {
+          this.actions = ['agreement', 'disagree', 'transfer']; 
+        }
+        //this.actions = ['agreement', 'disagree', 'transfer']; 
         // 判断是否为我创建的任务
-        if (createFlow.isFirstNode === 0 && createFlow.startUserId === this.userId) {
+        if (createFlow.isFirstNode === 0 && createFlow.startUserId === this.userId) { 
           this.isMine = true;
           // 如果没有审批操作，则删除拒绝，加入撤回
           if (this.noOperation) {
-            this.actions.splice(this.actions.findIndex(item => item === 'disagree'), 1, 'revoke');
+            this.actions.push('revoke')
+            //this.actions.splice(this.actions.findIndex(item => item === 'disagree'), 1, 'revoke');
           }
         }
         this.taskId = taskId;
@@ -250,6 +261,7 @@ export default {
           this.actions = this.isMine && this.noOperation ? ['revoke'] : [];
           return
         }
+
         this.formViewUniqueId = viewId;
       })
     },

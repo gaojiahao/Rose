@@ -68,7 +68,7 @@
         <template slot="other">
           <div class='each_property vux-1px-t'>
             <label>支付金额</label>
-            <input  readonly="readonly" type='number' v-model.number="cashInfo.tdAmountCopy1" class='property_val' />
+            <input type='number' v-model.number="cashInfo.tdAmountCopy1" class='property_val' />
           </div>
         </template>
       </pop-cash-list>
@@ -141,6 +141,7 @@
   import {accAdd} from 'plugins/calc/decimalsAdd'
   import FormCell from 'components/detail/commonPart/form-part/FormCell'
   import {toFixed} from '@/plugins/calc'
+import { constants } from 'crypto';
 
   export default {
     data() {
@@ -258,11 +259,11 @@
             let cashInfo = this.cashInfo;
             formData.outPut = {
               dataSet: [{
-                fundName_cashOutCode: cashInfo.fundName_cashInCode,
-                cashOutCode: cashInfo.cashInCode,
-                cashType_cashOutCode: cashInfo.cashType_cashInCode,
-                thenAmntBal: cashInfo.thenAmntBalCopy1,
-                tdAmount: cashInfo.tdAmountCopy1,
+                fundName_cashOutCode: cashInfo.fundName_cashInCode || cashInfo.fundName_cashOutCode,
+                cashOutCode: cashInfo.cashInCode || cashInfo.fundCode_cashOutCode,
+                cashType_cashOutCode: cashInfo.cashType_cashInCode || cashInfo.cashType_cashOutCode,
+                thenAmntBal: cashInfo.thenAmntBalCopy1 || cashInfo.thenAmntBal,
+                tdAmount: cashInfo.tdAmount,
                 dealerDebitCopy1: orderInfo.inPut.dataSet[0].dealerCode_dealerDebit,
                 drDealerLabelCopy1 : orderInfo.inPut.dataSet[0].drDealerLabel,
               }],

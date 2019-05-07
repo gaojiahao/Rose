@@ -91,6 +91,7 @@ export default {
           this.commitTask({
             result: 0,
             successMsg: '拒绝成功',
+            value: value,
             callback: () => {
               // 当某个节点审批为自己 如果用户点击了拒绝 则需要判断情况 决定是否回到重新提交页面
               let { folder, fileName } = this.$route.params,
