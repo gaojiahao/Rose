@@ -214,9 +214,12 @@ export default {
         let [createFlow = {}] = workFlow;
         let last = workFlow[workFlow.length - 1] || {};
         let operationList = ['同意', '不同意']; // 操作列表的status
-        this.actions = data.tableContent[0].actions || [];
-        this.actions = this.actions.split(',')
-
+        if(data.tableContent.length) {
+          this.actions = data.tableContent[0].actions || [];
+          if(this.actions.length) {
+            this.actions = this.actions.split(',')
+          }
+        }
         // 赋值 完整版工作流
         this.fullWL = workFlow;
         this.currentWL = flow;
@@ -258,7 +261,7 @@ export default {
           this.actions = this.isMine && this.noOperation ? ['revoke'] : [];
           return
         }
-        
+
         this.formViewUniqueId = viewId;
       })
     },
