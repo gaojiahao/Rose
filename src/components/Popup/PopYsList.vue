@@ -77,14 +77,13 @@
 
 <script>
   import {Icon, Popup, TransferDom, LoadMore} from 'vux'
-  import {getObjWorkshopWarehouse, getWareHouseType} from 'service/listService'
+  import {getWorkCheckWh, getWareHouseType} from 'service/listService'
   import RScroll from 'plugins/scroll/RScroll'
   import DSearch from 'components/search/search'
   import PopWarehouseStoreList from 'components/Popup/PopWarehouseStoreList'
-import { constants } from 'crypto';
 
   export default {
-    name: "PopWarehouseList3",
+    name: "PopYsList",
     props: {
       // 标题
       title: {
@@ -124,7 +123,7 @@ import { constants } from 'crypto';
       },
       getListMethod: {
         type: String,
-        default: 'getObjWorkshopWarehouse'
+        default: 'getWorkCheckWh'
       },
       // 请求参数
       params: {
@@ -196,7 +195,7 @@ import { constants } from 'crypto';
         immediate: true
       },
       glParams(val) {
-        this.getObjWorkshopWarehouse();
+        this.getWorkCheckWh();
       }
     },
     methods: {
@@ -244,20 +243,20 @@ import { constants } from 'crypto';
         this.$emit('get-store', val);
       },
       // 获取仓库列表
-      getObjWorkshopWarehouse() {
-        // let filter = this.filterParams;
-        // if (this.srhInpTx) {
-        //   filter = [
-        //     ...filter,
-        //     {
-        //       operator: 'like',
-        //       value: this.srhInpTx,
-        //       property: 'warehouseName',
-        //       // attendedOperation: 'or'
-        //     },
-        //   ];
-        // }
-        return getObjWorkshopWarehouse({
+      getWorkCheckWh() {
+        let filter = this.filterParams;
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: 'warehouseName',
+              // attendedOperation: 'or'
+            },
+          ];
+        }
+        return getWorkCheckWh({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
@@ -347,7 +346,7 @@ import { constants } from 'crypto';
       if (this.disabled) {
         return
       }
-      //this[this.getListMethod]();
+      this[this.getListMethod]();
     }
   }
 </script>

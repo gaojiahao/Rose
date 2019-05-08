@@ -77,13 +77,14 @@
 
 <script>
   import {Icon, Popup, TransferDom, LoadMore} from 'vux'
-  import {getWorkCheckWh, getWareHouseType} from 'service/listService'
+  import {getObjWorkshopWarehouse, getWareHouseType} from 'service/listService'
   import RScroll from 'plugins/scroll/RScroll'
   import DSearch from 'components/search/search'
   import PopWarehouseStoreList from 'components/Popup/PopWarehouseStoreList'
+import { constants } from 'crypto';
 
   export default {
-    name: "PopWarehouseList2",
+    name: "PopPgList",
     props: {
       // 标题
       title: {
@@ -123,7 +124,7 @@
       },
       getListMethod: {
         type: String,
-        default: 'getWorkCheckWh'
+        default: 'getObjWorkshopWarehouse'
       },
       // 请求参数
       params: {
@@ -195,7 +196,7 @@
         immediate: true
       },
       glParams(val) {
-        this.getWorkCheckWh();
+        this.getObjWorkshopWarehouse();
       }
     },
     methods: {
@@ -243,20 +244,20 @@
         this.$emit('get-store', val);
       },
       // 获取仓库列表
-      getWorkCheckWh() {
-        let filter = this.filterParams;
-        if (this.srhInpTx) {
-          filter = [
-            ...filter,
-            {
-              operator: 'like',
-              value: this.srhInpTx,
-              property: 'warehouseName',
-              // attendedOperation: 'or'
-            },
-          ];
-        }
-        return getWorkCheckWh({
+      getObjWorkshopWarehouse() {
+        // let filter = this.filterParams;
+        // if (this.srhInpTx) {
+        //   filter = [
+        //     ...filter,
+        //     {
+        //       operator: 'like',
+        //       value: this.srhInpTx,
+        //       property: 'warehouseName',
+        //       // attendedOperation: 'or'
+        //     },
+        //   ];
+        // }
+        return getObjWorkshopWarehouse({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
@@ -346,7 +347,7 @@
       if (this.disabled) {
         return
       }
-      this[this.getListMethod]();
+      //this[this.getListMethod]();
     }
   }
 </script>
