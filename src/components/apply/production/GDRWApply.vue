@@ -5,9 +5,9 @@
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList" :showStatus="false"></pop-baseinfo>
-        <pop-warehouse-list3 title="在制仓库" :default-value="warehouse" @sel-item="selWarehouse" :default-store="warehouseStoreInfo" 
+        <pop-pg-list title="在制仓库" :default-value="warehouse" @sel-item="selWarehouse" :default-store="warehouseStoreInfo" 
                             @get-store="getStore" :filter-params="filterParams" :gl-params="glParams" isRequired isShowStore>
-        </pop-warehouse-list3>
+        </pop-pg-list>
         <!-- 工单列表 -->
         <div class="materiel_list work_list">
           <div class="order-info" @click="getOrder" v-if="!workInfo.length">
@@ -117,7 +117,7 @@ import { updateData, submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'se
 import Applycommon from 'mixins/applyCommon'
 // 组件 引入
 import PopWorkList from 'components/Popup/workList/PopWorkList'
-import PopWarehouseList3 from 'components/Popup/PopWarehouseList3'
+import PopPgList from 'components/Popup/PopPgList'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 import PopManagerList from 'components/Popup/workList/PopManagerList'
 import PopWorkFacilityList from 'components/Popup/workList/PopWorkFacilityList'
@@ -132,7 +132,7 @@ export default {
   components: {
     Popup, Datetime, XTextarea,
     PopBaseinfo, PopWorkList, PopManagerList,
-    PopWarehouseList3, PopWorkFacilityList
+    PopPgList, PopWorkFacilityList
   },
   data() {
     return {
