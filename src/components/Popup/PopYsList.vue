@@ -260,7 +260,7 @@
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
-          //filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter),
           ...this.glParams,
         }).then(this.dataHandler)
       },

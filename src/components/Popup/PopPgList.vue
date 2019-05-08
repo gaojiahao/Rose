@@ -245,23 +245,22 @@ import { constants } from 'crypto';
       },
       // 获取仓库列表
       getObjWorkshopWarehouse() {
-        // let filter = this.filterParams;
-        // if (this.srhInpTx) {
-        //   filter = [
-        //     ...filter,
-        //     {
-        //       operator: 'like',
-        //       value: this.srhInpTx,
-        //       property: 'warehouseName',
-        //       // attendedOperation: 'or'
-        //     },
-        //   ];
-        // }
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: 'warehouseName',
+              // attendedOperation: 'or'
+            },
+          ];
+        }
         return getObjWorkshopWarehouse({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
-          //filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter),
           ...this.glParams,
         }).then(this.dataHandler)
       },
@@ -310,6 +309,7 @@ import { constants } from 'crypto';
       },
       // 搜索仓库
       searchList({val = ''}) {
+        console.log('val',val)
         this.srhInpTx = val;
         this.listData = [];
         this.page = 1;
