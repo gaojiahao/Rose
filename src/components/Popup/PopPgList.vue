@@ -19,7 +19,7 @@
         </template>
       </div>
     </div>
-    <pop-warehouse-store-list :store-params="warehouseStoreParams" v-if="isShowStore && selItems.warehouseCode"
+    <pop-warehouse-store-list :store-params="warehouseStoreParams"
           :defaultValue="warehouseStore"  @sel-store="selStore">
     </pop-warehouse-store-list>
     <!-- 仓库popup -->
