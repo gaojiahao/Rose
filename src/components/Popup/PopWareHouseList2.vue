@@ -77,7 +77,7 @@
 
 <script>
   import {Icon, Popup, TransferDom, LoadMore} from 'vux'
-  import {getWarehouse, getWareHouseType} from 'service/listService'
+  import {getWorkCheckWh, getWareHouseType} from 'service/listService'
   import RScroll from 'plugins/scroll/RScroll'
   import DSearch from 'components/search/search'
   import PopWarehouseStoreList from 'components/Popup/PopWarehouseStoreList'
@@ -123,10 +123,17 @@
       },
       getListMethod: {
         type: String,
-        default: 'getWarehouse'
+        default: 'getWorkCheckWh'
       },
       // 请求参数
       params: {
+        type: Object,
+        default() {
+          return {}
+        }
+      },
+      // 请求参数
+      glParams: {
         type: Object,
         default() {
           return {}
@@ -187,6 +194,9 @@
         },
         immediate: true
       },
+      glParams(val) {
+        this.getWorkCheckWh();
+      }
     },
     methods: {
       // 弹窗展示时调用
@@ -233,7 +243,7 @@
         this.$emit('get-store', val);
       },
       // 获取仓库列表
-      getWarehouse() {
+      getWorkCheckWh() {
         let filter = this.filterParams;
         if (this.srhInpTx) {
           filter = [
@@ -246,12 +256,12 @@
             },
           ];
         }
-        return getWarehouse({
+        return getWorkCheckWh({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
-          filter: JSON.stringify(filter),
-          ...this.params,
+          //filter: JSON.stringify(filter),
+          ...this.glParams,
         }).then(this.dataHandler)
       },
       getWareHouseType(){

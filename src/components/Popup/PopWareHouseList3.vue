@@ -77,10 +77,11 @@
 
 <script>
   import {Icon, Popup, TransferDom, LoadMore} from 'vux'
-  import {getWarehouse, getWareHouseType} from 'service/listService'
+  import {getObjWorkshopWarehouse, getWareHouseType} from 'service/listService'
   import RScroll from 'plugins/scroll/RScroll'
   import DSearch from 'components/search/search'
   import PopWarehouseStoreList from 'components/Popup/PopWarehouseStoreList'
+import { constants } from 'crypto';
 
   export default {
     name: "PopWarehouseList",
@@ -123,10 +124,17 @@
       },
       getListMethod: {
         type: String,
-        default: 'getWarehouse'
+        default: 'getObjWorkshopWarehouse'
       },
       // 请求参数
       params: {
+        type: Object,
+        default() {
+          return {}
+        }
+      },
+      // 请求参数
+      glParams: {
         type: Object,
         default() {
           return {}
@@ -187,6 +195,9 @@
         },
         immediate: true
       },
+      glParams(val) {
+        this.getObjWorkshopWarehouse();
+      }
     },
     methods: {
       // 弹窗展示时调用
@@ -233,25 +244,25 @@
         this.$emit('get-store', val);
       },
       // 获取仓库列表
-      getWarehouse() {
-        let filter = this.filterParams;
-        if (this.srhInpTx) {
-          filter = [
-            ...filter,
-            {
-              operator: 'like',
-              value: this.srhInpTx,
-              property: 'warehouseName',
-              // attendedOperation: 'or'
-            },
-          ];
-        }
-        return getWarehouse({
+      getObjWorkshopWarehouse() {
+        // let filter = this.filterParams;
+        // if (this.srhInpTx) {
+        //   filter = [
+        //     ...filter,
+        //     {
+        //       operator: 'like',
+        //       value: this.srhInpTx,
+        //       property: 'warehouseName',
+        //       // attendedOperation: 'or'
+        //     },
+        //   ];
+        // }
+        return getObjWorkshopWarehouse({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
-          filter: JSON.stringify(filter),
-          ...this.params,
+          //filter: JSON.stringify(filter),
+          ...this.glParams,
         }).then(this.dataHandler)
       },
       getWareHouseType(){
@@ -336,7 +347,7 @@
       if (this.disabled) {
         return
       }
-      this[this.getListMethod]();
+      //this[this.getListMethod]();
     }
   }
 </script>
