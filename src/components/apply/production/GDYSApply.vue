@@ -69,8 +69,8 @@
         </div>
         <pop-manager-list :show="showManagerPop" v-model="showManagerPop" @sel-item="selManager"
                           :defaultValue="defaultManager"></pop-manager-list>
-        <pop-warehouse-list title="入库仓库" :filter-params="filterParams" :default-value="warehouse" :default-store="warehouseStoreInfo" 
-                            @get-store="getStore" @sel-item="selWarehouse" isRequired isShowStore></pop-warehouse-list>
+        <pop-warehouse-list2 title="入库仓库" :filter-params="filterParams" :default-value="warehouse" :default-store="warehouseStoreInfo" 
+                            @get-store="getStore" @sel-item="selWarehouse" :gl-params="glParams" isRequired isShowStore></pop-warehouse-list2>
         <div class="materiel_list work_list" v-show="bomList.length">
           <bom-list :boms="bomList">
             <template slot-scope="{bom}" slot="specification">
@@ -114,7 +114,7 @@ import { getSOList } from 'service/detailService'
 import Applycommon from 'mixins/applyCommon'
 // 组件引入
 import PopManagerList from 'components/Popup/workList/PopManagerList'
-import PopWarehouseList from 'components/Popup/PopWarehouseList'
+import PopWarehouseList2 from 'components/Popup/PopWarehouseList2'
 import PopWorkCheckList from 'components/Popup/workList/PopWorkCheckList'
 import BomList from 'components/detail/commonPart/BomList'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
@@ -128,7 +128,7 @@ export default {
   mixins: [Applycommon],
   components: {
     BomList, XTextarea, PopBaseinfo,
-    PopManagerList, PopWorkCheckList, PopWarehouseList, XSwitch
+    PopManagerList, PopWorkCheckList, PopWarehouseList2, XSwitch
   },
   data () {
     return {
@@ -147,9 +147,18 @@ export default {
       showManagerPop: false,
     }
   },
+  computed: {
+    glParams() {
+      return {
+        isLastProPoint:  this.workInfo.isLastProPoint,
+        warehouseType: '加工车间仓,一般部门仓'
+      }
+    },
+  },
   methods: {
     // 选择工序
     selWork (val) {
+      console.log('val',val)
       val.tdQty = val.qtyBal;
       val.differenceNum = 0;
       val.checkLossQty = 0;

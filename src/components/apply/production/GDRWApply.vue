@@ -5,9 +5,9 @@
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList" :showStatus="false"></pop-baseinfo>
-        <pop-warehouse-list title="在制仓库" :default-value="warehouse" @sel-item="selWarehouse" :default-store="warehouseStoreInfo" 
-                            @get-store="getStore" :filter-params="filterParams" isRequired isShowStore>
-        </pop-warehouse-list>
+        <pop-warehouse-list3 title="在制仓库" :default-value="warehouse" @sel-item="selWarehouse" :default-store="warehouseStoreInfo" 
+                            @get-store="getStore" :filter-params="filterParams" :gl-params="glParams" isRequired isShowStore>
+        </pop-warehouse-list3>
         <!-- 工单列表 -->
         <div class="materiel_list work_list">
           <div class="order-info" @click="getOrder" v-if="!workInfo.length">
@@ -84,7 +84,7 @@
         </div>
         <!-- 工序popup -->
         <pop-work-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
-                        @sel-item="selWork" ref="matter"></pop-work-list>
+                        @sel-item="selWork" ref="matter" :ck-params="ckParams" ></pop-work-list>
         <pop-manager-list :show="showManagerPop" v-model="showManagerPop" @sel-item="selManager"
                           :defaultValue="defaultManager[managerIndex]"></pop-manager-list>
         <pop-work-facility-list :show="showFacilityPop" v-model="showFacilityPop" @sel-item="selFacility"
@@ -117,13 +117,14 @@ import { updateData, submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'se
 import Applycommon from 'mixins/applyCommon'
 // 组件 引入
 import PopWorkList from 'components/Popup/workList/PopWorkList'
-import PopWarehouseList from 'components/Popup/PopWarehouseList'
+import PopWarehouseList3 from 'components/Popup/PopWarehouseList3'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 import PopManagerList from 'components/Popup/workList/PopManagerList'
 import PopWorkFacilityList from 'components/Popup/workList/PopWorkFacilityList'
 // 插件 引入
 import { accMul } from 'plugins/calc/decimalsAdd'
 import { toFixed } from '@/plugins/calc'
+import { constants } from 'crypto';
 const DRAFT_KEY = 'GDRW_DATA';
 
 export default {
@@ -131,7 +132,7 @@ export default {
   components: {
     Popup, Datetime, XTextarea,
     PopBaseinfo, PopWorkList, PopManagerList,
-    PopWarehouseList, PopWorkFacilityList
+    PopWarehouseList3, PopWorkFacilityList
   },
   data() {
     return {
@@ -174,6 +175,34 @@ export default {
   mixins: [Applycommon],
   filters: {
     numberComma,
+  },
+  computed: {
+    departId() {
+      return this.formData.handlerUnit;
+    },
+    glParams() {
+      return {
+        groupId:  this.formData.handlerUnit
+      }
+    },
+    ckParams() {
+      return {
+        whCode: this.warehouse.warehouseCode
+      }
+    }
+  },
+  watch: {
+    // 此处监听 经办组织id
+    departId: {
+      handler(newVal, oldVal){
+        this.glParams.groupId = newVal;
+      }     
+    },
+    warehouse: {
+      handler(val){
+        this.ckParams.whCode = val.warehouseCode;
+      }
+    }
   },
   methods: {
     handlerMatterEditConfig:function(config){
