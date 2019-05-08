@@ -418,7 +418,7 @@
       // 用户填写表单内容
       this.echoStorage(basicInfo, formInfo);
       // 获取连长、团长
-      this.getSuperior();
+      this.getSuperior((JSON.parse(localStorage.getItem("ROSE_OPTION"))).userId);
       // 支援地区
       this.getArea();
       // 支援银行

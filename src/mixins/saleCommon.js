@@ -311,11 +311,11 @@ export default {
       this.showProjectPopup = true;
     },
     // 获取连长、团长
-    getSuperior() {
-      return saleRepotService.getSuperior().then(({tableContent = []}) => {
-        let [companyCommander = {}, group = {}] = tableContent;
-        this.governor = companyCommander.nickname || ''; // 连长
-        this.member = group.nickname || ''; // 团长
+    getSuperior(data) {
+      return saleRepotService.getSuperior(data).then(({tableContent = []}) => {
+        //let [companyCommander = {}, group = {}] = tableContent;
+        this.governor = tableContent[0].govName || ''; // 连长
+        this.member = tableContent[0].comName || ''; // 团长
       })
     },
     // 获取地区级联数据

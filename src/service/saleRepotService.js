@@ -39,7 +39,10 @@ let saleReportService = {
   // 获取连长、团长
   getSuperior(data) {
     return $axios.ajax({
-      url: '/ds/getSuperior',
+      url: '/ds/getAutomaticReviewer',
+      data: {
+        userId: data,
+      },
     })
   },
 };

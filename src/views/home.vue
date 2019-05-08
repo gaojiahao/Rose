@@ -170,6 +170,7 @@ export default {
           captain: completeData[0].bmName || '',        //队长（暂无）
           userCode: completeData[0].userCode || '',      //工号
           subSector: completeData[0].subSector || '',      //三级部门
+          userId: completeData[0].userId || ''
         }))
       })
       await getCurrMonthStatus().then(({ differ, currMonthTarget }) => {
