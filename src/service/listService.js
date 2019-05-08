@@ -79,6 +79,18 @@ export let getWarehouse = (data = {}) => {
     }
   })
 };
+
+// 获取内部加工入库的仓库列表
+export let getObjWorkshopWarehouse = (data = {}) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getObjWorkshopWarehouse',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
+
 // TODO获取销售的出库的库位
 export let getObjWarehouseRel = (data = {}) => {
   return $flyio.ajax({

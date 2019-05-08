@@ -75,6 +75,13 @@ import MSearch from 'components/search/search'
           return []
         }
       },
+      // 请求参数
+      ckParams: {
+        type: Object,
+        default() {
+          return {}
+        }
+      },
     },
     components: { Popup, RScroll, MSearch },
     filters: { dateFormat },
@@ -120,6 +127,9 @@ import MSearch from 'components/search/search'
           this.setDefaultValue();
         }
       },
+      ckParams(val) {
+        this.getWorkOrderTask();
+      }
     },
     methods: {
       // 弹窗展示时调用
@@ -185,6 +195,7 @@ import MSearch from 'components/search/search'
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
+          ...this.ckParams,
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.workList = this.page === 1 ? tableContent : [...this.workList, ...tableContent];

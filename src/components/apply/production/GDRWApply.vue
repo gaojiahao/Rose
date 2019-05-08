@@ -6,7 +6,7 @@
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList" :showStatus="false"></pop-baseinfo>
         <pop-warehouse-list title="在制仓库" :default-value="warehouse" @sel-item="selWarehouse" :default-store="warehouseStoreInfo" 
-                            @get-store="getStore" :filter-params="filterParams" isRequired isShowStore>
+                            @get-store="getStore" :filter-params="filterParams" :gl-params="glParams" isRequired isShowStore>
         </pop-warehouse-list>
         <!-- 工单列表 -->
         <div class="materiel_list work_list">
@@ -84,7 +84,7 @@
         </div>
         <!-- 工序popup -->
         <pop-work-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
-                        @sel-item="selWork" ref="matter"></pop-work-list>
+                        @sel-item="selWork" ref="matter" :ck-params="ckParams" ></pop-work-list>
         <pop-manager-list :show="showManagerPop" v-model="showManagerPop" @sel-item="selManager"
                           :defaultValue="defaultManager[managerIndex]"></pop-manager-list>
         <pop-work-facility-list :show="showFacilityPop" v-model="showFacilityPop" @sel-item="selFacility"
@@ -124,6 +124,7 @@ import PopWorkFacilityList from 'components/Popup/workList/PopWorkFacilityList'
 // 插件 引入
 import { accMul } from 'plugins/calc/decimalsAdd'
 import { toFixed } from '@/plugins/calc'
+import { constants } from 'crypto';
 const DRAFT_KEY = 'GDRW_DATA';
 
 export default {
@@ -174,6 +175,34 @@ export default {
   mixins: [Applycommon],
   filters: {
     numberComma,
+  },
+  computed: {
+    departId() {
+      return this.formData.handlerUnit;
+    },
+    glParams() {
+      return {
+        groupId:  this.formData.handlerUnit
+      }
+    },
+    ckParams() {
+      return {
+        whCode: this.warehouse.warehouseCode
+      }
+    }
+  },
+  watch: {
+    // 此处监听 经办组织id
+    departId: {
+      handler(newVal, oldVal){
+        this.glParams.groupId = newVal;
+      }     
+    },
+    warehouse: {
+      handler(val){
+        this.ckParams.whCode = val.warehouseCode;
+      }
+    }
   },
   methods: {
     handlerMatterEditConfig:function(config){
