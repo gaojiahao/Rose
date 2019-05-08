@@ -84,7 +84,7 @@
 import { constants } from 'crypto';
 
   export default {
-    name: "PopWarehouseList",
+    name: "PopWarehouseList3",
     props: {
       // 标题
       title: {
