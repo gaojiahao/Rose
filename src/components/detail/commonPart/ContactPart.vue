@@ -11,8 +11,8 @@
           <span class="contact_top_title">手机号: </span>{{contactInfo.dealerMobilePhone || '暂无'}}
         </div>
       </div>
-      <div class="contact_top" v-else-if="contactInfo.dealerCode_dealerCodeCredit">
-        <div class="contact_top_item">
+      <div class="contact_top" v-if="contactInfo.crDealerLabel">
+        <div class="contact_top_item"  v-if="contactInfo.dealerCode_dealerCodeCredit">
           <span class="contact_top_title">往来编码: </span>{{contactInfo.dealerCode_dealerCodeCredit || '暂无'}}
         </div>
         <div class="contact_top_item">
@@ -31,8 +31,8 @@
           <span class="contact_dealer_value">{{contactInfo.address || '暂无'}}</span>
         </div>
       </div>
-      <div class="contact_top">
-        <div class="contact_top_item" v-if="contactInfo.thenTotalAmntBal">
+      <div class="contact_top" v-if="contactInfo.thenTotalAmntBal">
+        <div class="contact_top_item">
           <!-- <span class="contact_top_title">往来余额: </span>{{contactInfo.thenTotalAmntBal}} -->
           <span class="contact_top_title">往来余额: </span>{{contactInfo.thenAmntBal}}
         </div>
@@ -40,16 +40,16 @@
           <span class="contact_top_title">申请金额: </span>{{contactInfo.applicationAmount}}
         </div>
       </div>
-      <div class="contact_top">
-        <div class="contact_top_item" v-if="contactInfo.crDealerPaymentTerm">
+      <div class="contact_top" v-if="contactInfo.crDealerPaymentTerm">
+        <div class="contact_top_item">
           <span class="contact_top_title">结算方式: </span>{{contactInfo.crDealerPaymentTerm}}
         </div>
         <div class="contact_top_item" v-if="contactInfo.thenAlreadyAmnt">
           <span class="contact_top_title">本次收款: </span>{{contactInfo.thenAlreadyAmnt}}
         </div>
       </div>
-      <div class="contact_top">
-        <div class="contact_top_item" v-if="contactInfo.differenceAmount">
+      <div class="contact_top" v-if="contactInfo.differenceAmount">
+        <div class="contact_top_item">
           <span class="contact_top_title">本次收款后余额: </span>{{contactInfo.differenceAmount}}
         </div>
       </div>
