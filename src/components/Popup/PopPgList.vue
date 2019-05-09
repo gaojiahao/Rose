@@ -19,6 +19,15 @@
         </template>
       </div>
     </div>
+    <!-- 仓管员 -->
+    <div class="warehouse-manager-part">
+      <div class="warehouse-manager-info">
+        <template>
+          <r-picker title="仓管员" :data="managerList" :value="defaultManage"
+                      v-model="defaultManage"></r-picker>
+        </template>
+      </div>
+    </div>
     <pop-warehouse-store-list :store-params="warehouseStoreParams"
           :defaultValue="warehouseStore"  @sel-store="selStore">
     </pop-warehouse-store-list>
@@ -77,11 +86,12 @@
 
 <script>
   import {Icon, Popup, TransferDom, LoadMore} from 'vux'
-  import {getObjWorkshopWarehouse, getWareHouseType} from 'service/listService'
+  import {getObjWorkshopWarehouse, getWareHouseType, getWarehouseManager} from 'service/listService'
   import RScroll from 'plugins/scroll/RScroll'
   import DSearch from 'components/search/search'
   import PopWarehouseStoreList from 'components/Popup/PopWarehouseStoreList'
-import { constants } from 'crypto';
+  import RPicker from 'components/public/basicPicker'
+  import { constants } from 'crypto';
 
   export default {
     name: "PopPgList",
@@ -148,7 +158,7 @@ import { constants } from 'crypto';
     },
     directives: {TransferDom},
     components: {
-      Icon, Popup, RScroll, DSearch, LoadMore, PopWarehouseStoreList
+      Icon, Popup, RScroll, DSearch, LoadMore, PopWarehouseStoreList ,RPicker
     },
     data() {
       return {
@@ -165,6 +175,8 @@ import { constants } from 'crypto';
         },
         showAddWarehouse: false, // 展示新增仓库按钮
         warehouseStore: {} , // 库位信息
+        managerList: [],
+        defaultManage: '',
       }
     },
     computed: {
@@ -309,12 +321,27 @@ import { constants } from 'crypto';
       },
       // 搜索仓库
       searchList({val = ''}) {
-        console.log('val',val)
         this.srhInpTx = val;
         this.listData = [];
         this.page = 1;
         this.hasNext = true;
         this[this.getListMethod]();
+      },
+      //获取仓管员
+      getWarehouseManger() {
+        return getWarehouseManager({
+          warehouseCode: this.selItems.warehouseCode,
+        }).then(({dataCount = 0, tableContent = []}) => {
+          let data = [];
+          tableContent.forEach((item,index) => {
+            item.name = item.dealerName;
+            item.value = item.dealerName;
+            data.push(item);
+          });
+          this.managerList = tableContent;
+          this.selItems.warehouseManager = tableContent[0].dealerName;
+          this.defaultManage = this.selItems.warehouseManager;
+        });
       },
       // 上拉加载
       onPullingUp() {
@@ -324,6 +351,7 @@ import { constants } from 'crypto';
       // 设置默认值
       setDefaultValue() {
         this.selItems = this.defaultValue ? {...this.defaultValue} : {};
+        this.getWarehouseManger();
       },
       // 点击仓库
       warehouseClick() {

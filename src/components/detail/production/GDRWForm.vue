@@ -92,6 +92,7 @@ export default {
         //   // warehouseAddress: order.warehouseAddress_containerCode,
         // }
         this.warehouse = {
+          containerInWarehouseManager: data.formData.containerInWarehouseManager,
           warehouseName_containerCode : order.warehouseName_containerCode,     
           containerCode : order.containerCode,     
           warehouseType_containerCode : order.warehouseType_containerCode,     

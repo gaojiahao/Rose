@@ -6,7 +6,7 @@
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList" :showStatus="false"></pop-baseinfo>
         <pop-pg-list title="在制仓库" :default-value="warehouse" @sel-item="selWarehouse" :default-store="warehouseStoreInfo" 
-                            @get-store="getStore" :filter-params="filterParams" :gl-params="glParams" isRequired isShowStore>
+                            @get-store="getStore" :filter-params="filterParams" :gl-params="glParams" isRequired isShowStore ref='defManager'>
         </pop-pg-list>
         <!-- 工单列表 -->
         <div class="materiel_list work_list">
@@ -393,6 +393,7 @@ export default {
                 storehouseInCode: this.warehouseStoreInfo.warehouseCode,
                 dataSet,
               },
+              containerInWarehouseManager: this.$refs.defManager.defaultManage,
             }),
             wfPara : JSON.stringify(wfPara)
           }
@@ -497,6 +498,7 @@ export default {
           biProcessStatus: formData.biProcessStatus,
           creator: formData.creator,
           modifer: formData.modifer,
+          containerInWarehouseManager: formData.containerInWarehouseManager,
         }
         this.biReferenceId = formData.biReferenceId;
         this.$loading.hide();
