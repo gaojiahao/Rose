@@ -211,7 +211,6 @@
       // 监听用于根据（生产日期+保质期天数）计算有效期
       chosenMatter: {
         handler(val) {
-          console.log('val',val);
           if(val.warehouseName_containerCodeOut) {
             for (let dItem of this.config.editPart){
               if (dItem.fieldCode == "warehouseName_containerCodeOut"){

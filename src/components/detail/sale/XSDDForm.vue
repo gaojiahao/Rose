@@ -110,15 +110,15 @@
           };
           this.contactInfo = {
             creatorName: dealerInfo.dealerDebitContactPersonName, // 客户名
-            dealerName: dealerInfo.dealerName_dealerDebit, // 公司名
+            dealerName: inPut.dealerName_dealerDebit, // 公司名
             dealerMobilePhone: formData.dealerDebitContactInformation, // 手机
             dealerContactPersonName: formData.dealerDebitContactPersonName, // 联系人
             dealerCode: dealerInfo.dealerDebit, // 客户编码
-            dealerLabelName: dealerInfo.drDealerLabel, // 关系标签
+            crDealerLabel: dealerInfo.drDealerLabel, // 关系标签
             province: dealerInfo.province_dealerDebit, // 省份
             city: dealerInfo.city_dealerDebit, // 城市
             county: dealerInfo.county_dealerDebit, // 地区
-            address: dealerInfo.address_dealerDebit, // 详细地址
+            address: inPut.address_dealerDebit, // 详细地址
           };
           this.workFlowInfoHandler();
         })
