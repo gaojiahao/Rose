@@ -6,7 +6,7 @@
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 用户地址和基本信息-->
       <contact-part :contact-info="dealerInfo" :configs="dealerConfig"></contact-part>
-      <warehouse-content :warehouse-config="warehouseConfig"></warehouse-content>
+      <warehouse-content :warehouse-config="warehouseConfig" :warehouse="warehouse"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
@@ -41,6 +41,7 @@ import WarehouseContent from 'components/detail/commonPart/WarehouseContent'
 import ProjectPart from 'components/detail/commonPart/Project'
 import MatterItem from 'components/detail/commonPart/MatterItem'
 import FormCell from 'components/detail/commonPart/form-part/FormCell'
+import { constants } from 'crypto';
 export default {
   data() {
     return {
