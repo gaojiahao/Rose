@@ -99,11 +99,15 @@
             dealerMobilePhone: formData.dealerDebitContactInformation, // 手机
             dealerContactPersonName: formData.dealerDebitContactPersonName, // 联系人
             dealerCode: order.dealerDebit, // 客户编码
-            dealerLabelName: order.drDealerLabel, // 关系标签
+            crDealerLabel: order.drDealerLabel, // 关系标签
             province: order.province_dealerDebit, // 省份
             city: order.city_dealerDebit, // 城市
             county: order.county_dealerDebit, // 地区
             address: order.address_dealerDebit, // 详细地址
+            advancePaymentDueDate: formData.inPut.dataSet[0].advancePaymentDueDate,
+            tdAmountCopy1: formData.inPut.dataSet[0].tdAmountCopy1,
+            validUntil: formData.inPut.validUntil,
+            thenTotalAmntBal: formData.inPut.dataSet[0].thenTotalAmntBal,
           };
           this.workFlowInfoHandler();
         })

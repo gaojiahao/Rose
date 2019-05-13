@@ -1,73 +1,43 @@
 <template>
-  <div class="pop-warehouse-container2 vux-1px-t" @click="warehouseClick">
+  <div class="pop-warehouse-container" >
     <!-- 仓库信息 -->
-    <div class="warehouse-info">
-      <div v-if="selItems.warehouseName">
-        <div class="user_info">
-          <span class="user_name">{{selItems.warehouseName}}</span>
-          <span class="user_tel">{{selItems.warehouseCode}}</span>
-        </div>
-        <div class="cp_info" v-if="!noAddress">
-          <span class="icon-dealer-address"></span>
-          <span class="cp_ads">
-            <!-- {{selItems.warehouseProvince}}{{selItems.warehouseCity}}{{selItems.warehouseDistrict}}{{selItems.warehouseAddress}} -->
-            {{selItems.warehouseAddress}}
-          </span>
-        </div>
-      </div>
-      <div v-else>
-        <div class="no-warehouse">
-          <div class="picker">
-            <span class="mode required">请选择库位</span>
+    <div class="warehouse-part" @click="warehouseClick">
+      <div class="warehouse-info">
+        <template v-if="selItems.warehouseName">
+          <div class="user_info">
+            <span class="user_name">{{selItems.warehouseName}}</span>
+            <span class="user_tel">{{selItems.warehouseType}}</span>
           </div>
-        </div>
-      </div>
-    </div>
-    <span class="icon-right"></span>
-    <!-- 仓库popup -->
-    <div v-transfer-dom>
-      <popup v-model="storeStorePop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
-        <div class="popup-top">
-          <i class="icon-close" @click="onHide"></i>
-        </div>
-        <div class="trade_pop">
-          <d-search @search="searchList" @turn-off="onHide"></d-search>
-          <!-- 仓库列表 -->
-          <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
-                    :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
-            <div class="pop-mater-list-item box_sd" :class="{'seleted' : showSelIcon(item)}" v-for="(item, index) in listData" :key='index'
-                 @click.stop="selThis(item, index)">
-              <div class="pop-list-main">
-                <img class="warehouse_img" :src="require('assets/default/warehouse.png')" alt="warehouse_img">
-                <div class="pop-list-info">
-                  <!--联系人电话 -->
-                  <div class="withColor">
-                    <span class="name">{{item.warehouseName}}</span>
-                    <span class="type">{{item.warehouseType}}</span>
-                  </div>
-                  <!-- 地址 -->
-                  <div class="warehouse-address">
-                    <span>{{item.warehouseProvince}}{{item.warehouseCity}}{{item.warehouseDistrict}}{{item.warehouseAddress}}</span>
-                  </div>
-                </div>
-              </div>
+          <span class='icon-right'></span>
+        </template>
+        <template v-else>
+            <div class="title" :class='{required : isRequired}'>{{title}}</div>
+            <div class="picker">
+              <span class="mode">请选择</span>
+              <span class="icon-right"></span>
             </div>
-          </r-scroll>
-        </div>
-      </popup>
+        </template>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-  import {Icon, Popup, TransferDom} from 'vux'
-  import {getObjWarehouseRel} from 'service/listService'
+  import {Icon, Popup, TransferDom, LoadMore} from 'vux'
+  import {getObjWorkshopWarehouse, getWareHouseType} from 'service/listService'
   import RScroll from 'plugins/scroll/RScroll'
   import DSearch from 'components/search/search'
+  import PopWarehouseStoreList from 'components/Popup/PopWarehouseStoreList'
+import { constants } from 'crypto';
 
   export default {
-    name: "PopWarehouseStoreList",
+    name: "PopPgList",
     props: {
+      // 标题
+      title: {
+        type: String,
+        default: '仓库列表'
+      },
       // 默认值
       defaultValue: {
         type: Object,
@@ -75,21 +45,61 @@
           return {}
         }
       },
-      // 请求参数
-      storeParams: {
+      // 默认库位信息
+      defaultStore: {
         type: Object,
         default() {
           return {}
         }
+      },
+      // 是否禁用选择
+      disabled: {
+        type: Boolean,
+        default: false
+      },
+      //是否必选
+      isRequired : {
+        type : Boolean,
+        default : false,
+      },
+      // 列表请求过滤参数
+      filterParams: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
+      getListMethod: {
+        type: String,
+        default: 'getObjWorkshopWarehouse'
+      },
+      // 请求参数
+      params: {
+        type: Object,
+        default() {
+          return {}
+        }
+      },
+      // 请求参数
+      glParams: {
+        type: Object,
+        default() {
+          return {}
+        }
+      },
+      // 是否展示库位
+      isShowStore: {
+        type: Boolean,
+        default: false,
       }
     },
     directives: {TransferDom},
     components: {
-      Icon, Popup, RScroll, DSearch,
+      Icon, Popup, RScroll, DSearch, LoadMore, PopWarehouseStoreList
     },
     data() {
       return {
-        storeStorePop: false,
+        showPop: false,
         srhInpTx: '', // 搜索框内容
         selItems: {}, // 哪些被选中了
         listData: [],
@@ -100,33 +110,41 @@
           click: true,
           pullUpLoad: true,
         },
+        showAddWarehouse: false, // 展示新增仓库按钮
+        warehouseStore: {} , // 库位信息
       }
     },
     computed: {
+      tip() {
+        let tip = '加载中';
+        if (!this.hasNext) {
+          tip = '暂无数据'
+        }
+        return tip;
+      },
       noAddress() {
         let {warehouseProvince = '', warehouseCity = '', warehouseDistrict = '', warehouseAddress = ''} = this.selItems;
         return !warehouseProvince && !warehouseCity && !warehouseDistrict && !warehouseAddress
+      },
+      warehouseStoreParams() {
+        return {
+          warehouseCode: this.selItems.warehouseCode || ''
+        }
       }
     },
     watch: {
-      defaultValue: {
-        handler(val) {
-          this.selItems = this.defaultValue ? {...this.defaultValue} : {};
-        },
-        immediate: true,
+      defaultValue(val) {
+        this.setDefaultValue();
       },
-      storeParams: {
-        handler(oldVal, newVal) {
-          let oldId = JSON.stringify(oldVal),
-              newId = JSON.stringify(newVal);
-          // 匹配当前选择的往来id 如果不一致则重新发起请求
-          if (newId !== oldId) {
-            this.resetCondition();
-            this.getObjWarehouseRel();
-          }
+      defaultStore: {
+        handler() {
+          this.warehouseStore = Object.freeze({...this.defaultStore});
         },
-        immediate: true,
+        immediate: true
       },
+      glParams(val) {
+        this.getObjWorkshopWarehouse();
+      }
     },
     methods: {
       // 弹窗展示时调用
@@ -139,30 +157,25 @@
       },
       // 弹窗隐藏时调用
       onHide() {
-        this.storeStorePop = false;
+        this.showPop = false;
       },
       clearList() {
         this.srhInpTx = '';
         this.listData = [];
         this.page = 1;
         this.hasNext = true;
-        this.getObjWarehouseRel()
+        this[this.getListMethod]();
       },
       // 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.selItems.warehouseCode === sItem.warehouseCode;
       },
-      // 重新请求数据
-      resetCondition() {
-        this.page = 1;
-        this.hasNext = true;
-        this.listData = [];
-      },
       // 选择物料
       selThis(sItem, sIndex) {
-        this.storeStorePop = false;
+        this.showPop = false;
         this.selItems = sItem;
-        this.$emit('sel-store', this.selItems);
+        this.warehouseStore = {}
+        this.$emit('sel-item', JSON.stringify(this.selItems));
       },
       // 获取默认图片
       getDefaultImg(item) {
@@ -172,9 +185,34 @@
         }
         return url
       },
+      // 选择的库位
+      selStore(val){
+        this.warehouseStore = val;
+        this.$emit('get-store', val);
+      },
       // 获取仓库列表
-      getObjWarehouseRel() {
+      getObjWorkshopWarehouse() {
         let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: 'warehouseName',
+              // attendedOperation: 'or'
+            },
+          ];
+        }
+        return getObjWorkshopWarehouse({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          filter: JSON.stringify(filter),
+          ...this.glParams,
+        }).then(this.dataHandler)
+      },
+      getWareHouseType(){
+        let filter = this.filterParams;
         if (this.srhInpTx) {
           filter = [
             ...filter,
@@ -185,74 +223,121 @@
             },
           ];
         }
-        return getObjWarehouseRel({
+        getWareHouseType({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
-          ...this.storeParams,
-        }).then(({dataCount = 0, tableContent = []}) => {
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
-          this.$nextTick(() => {
-            this.$refs.bScroll.finishPullUp();
-          })
+          ...this.params,
+        }).then(this.dataHandler)
+      },
+      // 共用的数据处理方法
+      dataHandler({dataCount = 0, tableContent = []}){
+        this.showAddWarehouse = this.srhInpTx && tableContent.length === 0;
+        this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+        tableContent.forEach(item => {
+          item.warehouseCity = item.warehouseCity || item.wareHouseCity;
         });
+        this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
+        //获取缓存
+        if (sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')) {
+          let EDIT_WAREHOUSE_TRANSCODE = JSON.parse(sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')).transCode;
+          for (let i = 0; i < this.listData.length; i++) {
+            if (this.listData[i].transCode == EDIT_WAREHOUSE_TRANSCODE) {
+              this.selItems = this.listData[i];
+              this.$emit('sel-item', JSON.stringify(this.listData[i]));
+              sessionStorage.removeItem('EDIT_WAREHOUSE_TRANSCODE')
+            }
+          }
+        }
+        this.$nextTick(() => {
+          this.$refs.bScroll.finishPullUp();
+        })
       },
       // 搜索仓库
       searchList({val = ''}) {
+        console.log('val',val)
         this.srhInpTx = val;
         this.listData = [];
         this.page = 1;
         this.hasNext = true;
-        this.getObjWarehouseRel()
+        this[this.getListMethod]();
       },
       // 上拉加载
       onPullingUp() {
         this.page++;
-        this.getObjWarehouseRel()
+        this[this.getListMethod]();
+      },
+      // 设置默认值
+      setDefaultValue() {
+        this.selItems = this.defaultValue ? {...this.defaultValue} : {};
       },
       // 点击仓库
       warehouseClick() {
-        this.storeStorePop = !this.storeStorePop;
+        if (this.disabled) {
+          return
+        }
+        this.showPop = !this.showPop;
       },
+      //新增仓库
+      addWarehouse() {
+        this.$router.push({
+          path: '/warehouse/edit_warehouse',
+          query: {
+            add: 1
+          }
+        })
+      }
     },
     created() {
+      this.setDefaultValue();
+      if (this.disabled) {
+        return
+      }
+      //this[this.getListMethod]();
     }
   }
 </script>
 
 <style scoped lang="scss">
 @import '~@/scss/color.scss';
-  .vux-1px-t:before{
-    border-color: #e8e8e8;
-  }
-  .pop-warehouse-container2 {
-    color: #333;
-    font-size: .14rem;
-    padding: .18rem 0;
-    background: #fff;
-    position: relative;
-    line-height: .14rem;
+  .pop-warehouse-container {
+    padding:  0 .15rem;
     box-sizing: border-box;
+    background: #fff;
+    margin-bottom: .1rem;
+    font-size: .14rem;
+    color: #333;
+    .warehouse-part{
+      position: relative;
+    }
+    .warehouse-info {
+      display: flex;
+      padding: .18rem 0;
+      justify-content: space-between;
+    }
     .title {
       color: #696969;
-    }
-    .mode {
-      font-weight: 500;
-      &.required{
+      &.required {
         color: #3296FA;
         font-weight: bold;
       }
     }
-    /* 右箭头 */
+    .mode {
+      font-weight: 500;
+      &.required{
+        font-weight: bold;
+      }
+    }
+    .picker {
+      display: flex;
+      align-items: center;
+    }
+    // 右箭头
     .icon-right {
-      top: 50%;
-      right: 0;
       width: .08rem;
       height: .14rem;
-      position: absolute;
-      transform: translate(0, -50%);
+      margin-left: .1rem;
     }
     // 用户信息
     .user_info {
@@ -266,12 +351,11 @@
     .cp_info {
       color: #111;
       display: flex;
-      margin-top: .1rem;
-      align-items: center;
+      margin-top: .06rem;
       .icon-dealer-address {
         width: .12rem;
         height: .14rem;
-        margin-right: .06rem;
+        margin: .03rem .07rem 0 0;
       }
       .cp_ads {
         flex: 1;
@@ -281,8 +365,8 @@
     }
     .no-warehouse {
       display: flex;
+      line-height: .14rem;
       align-items: center;
-      width: calc( 100% - .18rem);
       justify-content: space-between;
       .required {
         color: #3296FA;
@@ -324,13 +408,13 @@
         box-sizing: border-box;
         height: calc(100% - .46rem);
         /deep/ .scroll-wrapper {
-          padding: 0 .15rem;
+          padding: .05rem .15rem 0;
         }
         // 列表项
         .pop-mater-list-item {
-          margin: .2rem 0;
           padding: .15rem;
           position: relative;
+          margin-bottom: .15rem;
           border-radius: .04rem;
           box-sizing: border-box;
           &.seleted {
@@ -339,7 +423,7 @@
           // 阴影
           &.box_sd {
             box-sizing: border-box;
-            box-shadow: 0 0 8px #e8e8e8;
+            box-shadow: 0 2px 10px 0 rgba(228, 228, 232, 0.5);
           }
           // 列表主体
           .pop-list-main {
@@ -349,6 +433,7 @@
               height: .4rem;
               border-radius: 50%;
             }
+
             // 物料信息
             .pop-list-info {
               font-size: .14rem;
@@ -397,6 +482,7 @@
           list-style: square;
           margin-top: .1rem;
         }
+
         font-size: .14rem;
         .addNew {
           color: #fff;
