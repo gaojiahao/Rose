@@ -23,8 +23,8 @@
       </div>
       <slot :bom="bom" name="number">
         <div class="number-part">
-          <span class="main-number">本次扣料: {{bom.tdQty}}{{bom.measureUnit}}</span>
-          <span class="number-unit">可用余额: {{bom.qtyStock}}</span>
+          <span class="main-number">Bom需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
+          <span class="number-unit">在库可用: {{bom.qtyStock}}</span>
         </div>
       </slot>
     </div>
