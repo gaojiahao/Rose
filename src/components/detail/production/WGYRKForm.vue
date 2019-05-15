@@ -5,7 +5,7 @@
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 仓库信息 -->
-      <warehouse-content :warehouse="warehouseIn" :warehouse-out="warehouseOut"></warehouse-content>
+      <warehouse-content :warehouse="warehouseIn" :warehouse-out="warehouseOut" :warehouseConfig="warehouseConfig"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName"
                  :is-my-task="isMyTask"
@@ -87,28 +87,38 @@
               : this.getDefaultImg();
           }
           // 入库
-          this.warehouseIn = {
-            warehouseCode: inPut.containerCode,
-            warehouseName: `${inPut.warehouseName_containerCode}`,
+          this.warehouseIn = { 
+            containerCodeOut: inPut.containerCodeOut,
+            warehouseName_containerCodeOut: `${inPut.warehouseName_containerCodeOut}`,
             warehouseAction: '入库',
             warehouseIcon: 'icon-ruku',
-            warehouseType: inPut.warehouseType_containerCode,
-            warehouseProvince: inPut.warehouseProvince_containerCode,
-            warehouseCity: inPut.warehouseCity_containerCode,
-            warehouseDistrict: inPut.warehouseDistrict_containerCode,
-            warehouseAddress: inPut.warehouseAddress_containerCode,
-          };
-          // 出库
-          this.warehouseOut = {
-            warehouseCode: inPut.containerCodeOut,
-            warehouseName: `${inPut.warehouseName_containerCodeOut}`,
-            warehouseAction: '出库',
-            warehouseIcon: 'icon-chuku',
-            warehouseType: inPut.warehouseType_containerCodeOut,
+            warehouseType_containerCodeOut: inPut.warehouseType_containerCodeOut,
             warehouseProvince: inPut.warehouseProvince_containerCodeOut,
             warehouseCity: inPut.warehouseCity_containerCodeOut,
             warehouseDistrict: inPut.warehouseDistrict_containerCodeOut,
-            warehouseAddress: inPut.warehouseAddress_containerCodeOut,
+            warehouseAddress_containerCodeOut: inPut.warehouseAddress_containerCodeOut,
+            containerOutWarehouseManager: formData.containerOutWarehouseManager,
+            warehouseName_storehouseOutCode: inPut.warehouseName_storehouseOutCode,
+            storehouseOutCode: inPut.storehouseOutCode,
+            warehouseType_storehouseOutCode: inPut.warehouseType_storehouseOutCode,
+            warehouseAddress_storehouseOutCode: inPut.warehouseAddress_storehouseOutCode,
+          };
+          // 出库
+          this.warehouseOut = {
+            containerCode: inPut.containerCode,
+            warehouseName_containerCode: `${inPut.warehouseName_containerCode}`,
+            warehouseAction: '出库',
+            warehouseIcon: 'icon-chuku',
+            warehouseType_containerCode: inPut.warehouseType_containerCode,
+            warehouseProvince: inPut.warehouseProvince_containerCode,
+            warehouseCity: inPut.warehouseCity_containerCode,
+            warehouseDistrict: inPut.warehouseDistrict_containerCode,
+            warehouseAddress_containerCode: inPut.warehouseAddress_containerCode,
+            containerInWarehouseManager: formData.containerInWarehouseManager,
+            warehouseName_storehouseInCode: inPut.warehouseName_storehouseInCode,
+            storehouseInCode: inPut.storehouseInCode,
+            warehouseType_storehouseInCode: inPut.warehouseType_storehouseInCode,
+            warehouseAddress_storehouseInCode: inPut.warehouseAddress_storehouseInCode,
           };
           this.attachment = attachment
           this.matterList = inPut.dataSet;

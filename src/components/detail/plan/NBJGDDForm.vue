@@ -15,13 +15,13 @@
         <div class="mater_list">
           <div class="each_mater"
                v-for="(oItem, key) in orderList" :key='key'>
-            <div class="order_code">
-              <span class="order_title">计划号</span>
-              <span class="order_num">{{key}}</span>
-            </div>
             <div class="order_matter">
               <template v-for="(item, index) in oItem">
-                <matter-item :item="item" :class="{'vux-1px-b' : index < oItem.length-1}">
+                <div class="order_code" :key="100+index">
+                  <span class="order_title">计划号</span>
+                  <span class="order_num">{{item.transMatchedCode}}</span>
+                </div>
+                <matter-item :item="item" :class="{'vux-1px-b' : index < oItem.length-1}" :key="index" @on-show-more="onShowMore(item, index)">
                   <!-- 调拨数量 -->
                   <div class="mater_other" slot="other" slot-scope="{item}">
                     <div class="mater_num">
@@ -71,6 +71,8 @@
         </template>
       </bom-pop>
       <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
+       <!-- 物料详情 -->
+      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>

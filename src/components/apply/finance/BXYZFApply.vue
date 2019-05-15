@@ -3,7 +3,7 @@
     <div class="basicPart no_count" ref='fill'>
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
-                      :handle-org-list="handleORG" :user-role-list="userRoleList" :showStatus="false"></pop-baseinfo>
+                      :handle-org-list="handleORG" :user-role-list="userRoleList" :showStatus="false" ref='baseChild' ></pop-baseinfo>
         <div class="project_part">
           <div :class="{'vux-1px-t': dIndex>0}" v-for="(dItem,dIndex) in baseinfoExtConfig" :key="dIndex">
             <!-- 可编辑的字段 -->
@@ -32,14 +32,26 @@
             <div v-for="(dItem,dIndex) in matterEditConfig.editPart" :key="dIndex" :class="{'vux-1px-b': dIndex < matterEditConfig.editPart.length-1}">
               <!-- 可编辑的字段 -->
               <template v-if="!dItem.readOnly">
-                <!-- 下拉框 -->
-                <div class='each_property' v-if="dItem.editorType === 'r2Selector'" @click="getCost(sItem,sIndex)">
+                <!-- 下拉框Plus -->
+                <div class='each_property' v-if="dItem.editorType === 'r2SelectorPlus'" @click="getCost(sItem,sIndex)">
                   <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
                   <div class='picker'>
                     <span class='mater_nature'>{{sItem[dItem.fieldCode] || "请选择"}}</span>
                     <span class='icon-right'></span>
                   </div>
                 </div>
+                <pop-fybx-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost'
+                       :matter-params="glParams" ref="matter"></pop-fybx-list>
+                <!-- 下拉框 -->
+                <div class='each_property' v-if="dItem.editorType === 'r2Selector'" @click="getDep(sItem,sIndex)">
+                  <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+                  <div class='picker'>
+                    <span class='mater_nature'>{{sItem[dItem.fieldCode] || "请选择"}}</span>
+                    <span class='icon-right'></span>
+                  </div>
+                </div>
+                 <pop-department-list :show="showDepPop" v-model="showDepPop" @sel-dep="selDep" :defaultValue='selectedDep'
+                       :dep-params="matterParams" ref="dep"></pop-department-list>
                 <!-- 输入框（数字） -->
                 <div class='each_property ' v-if="dItem.editorType === 'r2Numberfield'">
                   <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
@@ -77,8 +89,8 @@
             <span class="add_more stop" v-if="this.actions.includes('stop')" @click="stopOrder">终止提交</span>
           </div>
         </div>
-        <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost'
-                       :cost-params="matterParams" ref="matter"></pop-cost-list>
+        <!-- <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost'
+                       :cost-params="matterParams" ref="matter"></pop-cost-list> -->
         <div class='comment'>
           <p class="commit-label vux-1px-b">备注栏</p>
           <x-textarea v-model="formData.biComment" placeholder="请输入"></x-textarea>
@@ -104,7 +116,8 @@
   import RPicker from 'components/public/basicPicker'
   import PopFundList from 'components/Popup/PopFundList'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
-  import PopCostList from 'components/Popup/PopCostList'
+  import PopFybxList from 'components/Popup/PopFybxList'
+  import PopDepartmentList from 'components/Popup/PopDepartmentList'
   import OpButton from 'components/apply/commonPart/OpButton'
   // 方法引入
   import {toFixed} from '@/plugins/calc'
@@ -140,18 +153,22 @@
           tdAmountCopy1: '', // 支付金额
         },
         costList: [{}],
+        depList: [{}],
         biReferenceId: '',
         showCostPop: false, // 费用的Pop
+        showDepPop: false, // 组织的Pop
         selectedCost: [],
+        selectedDep: [],
         costIndex: null,
+        depIndex: null,
         showFundPop: false, // 账户的Pop
         selectedFund: [],
-        project: {}
+        project: {},
       }
     },
     components: {
       Cell, Group, XInput, XTextarea,
-      RPicker, PopFundList, PopBaseinfo, PopCostList, OpButton
+      RPicker, PopFundList, PopBaseinfo, PopFybxList, OpButton, PopDepartmentList
     },
     mixins: [common],
     computed: {
@@ -160,6 +177,12 @@
       },
       creatorName() {
         return this.formData.handlerName
+      },
+      glParams() {
+        return {
+          groupId:  this.formData.handlerUnit,
+          project:  this.project.tdProjectId_project
+        }
       },
       // 本次报销与支付后余额
       differenceAmount() {
@@ -210,12 +233,19 @@
       // 此处监听 经办组织id
       departId: {
         handler(newVal, oldVal){
-          if (this.matterParams.data && this.matterParams.data.groupId != null){
+          if (this.matterParams.data){
             this.matterParams.data.groupId = newVal;
           }
           if (oldVal){
-            this.costList = [{}]
+            //this.costList = [{}]
+            for(let i=0; i < this.costList.length; i++) {
+              this.costList[i].departmentName =  this.$refs.baseChild.group || this.handlerDefault.handlerUnitName
+            }
           }
+          for(let i=0; i < this.costList.length; i++) {
+            this.costList[i].departmentName =  this.$refs.baseChild.group || this.handlerDefault.handlerUnitName
+          }
+          this.matterParams.data.groupId = newVal;
         }     
       },
       project: {
@@ -235,6 +265,9 @@
                     this.project.tdProjectId_project = dItem.projectApprovalId;
                     this.matterParams.data.project = dItem.projectApprovalId;
                     this.costList = [{}];
+                    for(let i=0; i < this.costList.length; i++) {
+                      this.costList[i].departmentName =  this.$refs.baseChild.group || this.handlerDefault.handlerUnitName
+                    }
                    break
                  }
                }
@@ -270,7 +303,7 @@
       },
       // 点击增加费用
       addCost() {
-        this.costList.push({})
+        this.costList.push({departmentName :  this.$refs.baseChild.group || this.handlerDefault.handlerUnitName})
       },
       // 删除费用明细
       deleteCost(index) {
@@ -285,6 +318,15 @@
         }
         this.selectedCost = [item];
       },
+      getDep(item, index) {
+        this.showDepPop = true;
+        this.depIndex = index;
+        // if (!item.costName_expCode){
+        //   this.selectedCost = [];
+        //   return
+        // }
+        this.selectedDep = [item];
+      },
       // 选中费用
       selMatter(val) {
         this.selectedCost.push(val)
@@ -297,6 +339,14 @@
           expSubject: val.costSubject
         }
         this.$set(this.costList, this.costIndex , {...obj})
+      },
+      // 选中组织
+      selDep(val) {
+        this.selectedDep.push(val)
+        let obj = {
+          departmentName: val.GROUP_NAME
+        }
+        this.$set(this.costList, this.depIndex , {...obj})
       },
       // 校验数字
       checkAmt(item, key, val) {

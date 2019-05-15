@@ -1,7 +1,6 @@
 <template>
   <div class="detail_wrapper wlxqjh-detail-container">
-    <div class="basicPart" v-if='orderInfo && orderInfo.inPut'>
-
+    <div class="basicPart" v-if='orderInfo && orderInfo.outPut'>
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 工作流 -->
@@ -15,32 +14,13 @@
         <div class="mater_list">
           <div class="each_mater"
                v-for="(oItem, key) in orderList" :key='key'>
-            <div class="order_code">
-              <span class="order_title">加工订单号</span>
-              <span class="order_num">{{key}}</span>
-            </div>
             <div class="order_matter">
-              <template v-for="(item, index) in oItem">
-                <matter-item :class="{'vux-1px-b': item.bom}" :item="item">
-                  <!-- 调拨数量 -->
-                  <div class="mater_other" slot="other" slot-scope="{item}">
-                    <div class="mater_left">
-                      <span class="num" v-if="item.promDeliTime">承诺交付日期: {{item.promDeliTime}}</span>
-                      <span class="num" v-if="item.shippingTime">主计划截止验收日: {{item.shippingTime}}</span>
-                    </div>
-                    <div class="mater_num">
-                      <span class="num">库存计划: {{item.lockQty | toFixed}}</span>
-                    </div>
-                    <div class="mater_num">
-                      <span class="num">待计划余额: {{item.thenQtyBal | toFixed}}</span>
-                    </div>
-                    <div class="mater_num">
-                      <span class="num">
-                        加工计划: {{item.processQty | toFixed}}
-                      </span>
-                      <span class='get_bom' @click="checkBom(item)">查看原料</span>
-                    </div>
-                  </div>
+              <template v-for="(item, index) in oItem" >
+                <div class="order_code" :key="100+index"> 
+                  <span class="order_title">主计划号</span>
+                  <span class="order_num">{{item.transMatchedCode}}</span>
+                </div>
+                <matter-item :class="{'vux-1px-b': item.bom}" :item="item" :key="index"  @on-show-more="onShowMore(item, index)">
                 </matter-item>
               </template>
             </div>
@@ -66,6 +46,8 @@
           <div class="specific_loss">单位损耗率: {{bom.bomSpecificLoss}}</div>
         </template>
       </bom-pop>
+      <!-- 物料详情 -->
+      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -87,6 +69,7 @@
   import BomList from 'components/detail/commonPart/BomList'
   import FormCell from 'components/detail/commonPart/form-part/FormCell'
   import BomPop from 'components/apply/commonPart/BomPop'
+import { constants } from 'crypto';
 
   export default {
     data() {
@@ -114,6 +97,7 @@
             let hasItem = acc.some(e => {
               let temp = isEqual(e, cur);
               if (temp) {
+                e.tdQty = accAdd(e.tdQty, cur.tdQty);
                 e.tdQty = accAdd(e.tdQty, cur.tdQty);
               }
               return temp;
@@ -160,8 +144,8 @@
           let {order = {}} = formData;
           this.attachment = attachment;
           // 获取合计
-          let {dataSet} = formData.inPut;
-          for (let item of dataSet) {
+          let {dataSet} = formData.outPut;
+          for (let item of order.dataSet) {
             item.inventoryPic = item.inventoryPic_transObjCode
               ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
@@ -169,14 +153,21 @@
               for (let bom of item.boms) {
                 bom.inventoryCode = bom.transObjCode;
                 bom.warehouseName = bom.warehouseName_containerCodeOut;
-                bom.warehouseCode = bom.containerCodeOut;
-                bom.qtyStock = bom.thenQtyStock;
+                bom.warehouseCode = bom.containerCodeOut; 
                 // 接口返回的tdQty有误，自己手动计算
                 // bom.tdQty = accMul(bom.bomQty, item.tdQty, (1 + bom.bomSpecificLoss));
-                bom.tdQty = accSub(accMul(item.processQty, bom.bomQty, (1 + bom.bomSpecificLoss)), bom.lockQty);
+                //bom.tdQty = accSub(accMul(item.processQty, bom.bomQty, (1 + bom.bomSpecificLoss)), bom.lockQty);
+                for(let obom of dataSet) {
+                  if(obom.outPutMatCode == bom.transObjCode) {
+                    //console.log('bom.transObjCode',bom.transObjCode)
+                    bom.qtyStock = obom.thenQtyStock;
+                  }
+                }
+                bom.tdQty = bom.demandQty;
+                this.DuplicateBoms.push(bom)
               }
             }
-            this.DuplicateBoms = this.DuplicateBoms.concat(JSON.parse(JSON.stringify(item.boms)));
+            //this.DuplicateBoms = this.DuplicateBoms.concat(JSON.parse(JSON.stringify(item.boms)));
             if (!orderList[item.transMatchedCode]) {
               orderList[item.transMatchedCode] = [];
             }
@@ -195,6 +186,14 @@
   @import '~scss/biz-app/bizDetail';
 
   .wlxqjh-detail-container {
+    .materiel_list {
+      padding: .15rem;
+      margin: .1rem .1rem 0;
+    }
+    .bom_list {
+      padding: .15rem;
+      margin: .1rem .1rem 0;   
+    }
     // 加工订单号
     .order_code {
       display: flex;

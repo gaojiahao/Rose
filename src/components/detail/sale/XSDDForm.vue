@@ -119,7 +119,10 @@
             city: dealerInfo.city_dealerDebit, // 城市
             county: dealerInfo.county_dealerDebit, // 地区
             address: inPut.address_dealerDebit, // 详细地址
+            advancePaymentDueDate: formData.inPut.dataSet[0].advancePaymentDueDate,
+            tdAmountCopy1: formData.inPut.dataSet[0].tdAmountCopy1,
           };
+          console.log('this.contactInfo',this.contactInfo)
           this.workFlowInfoHandler();
         })
       },

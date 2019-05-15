@@ -3,17 +3,17 @@
   <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
-        <m-search @search='searchList'></m-search>
+        <m-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
-                  :no-data="!hasNext && !costList.length" @on-pulling-up="onPullingUp"
+                  :no-data="!hasNext && !depList.length" @on-pulling-up="onPullingUp"
                    ref="bScroll">
-          <div class="each_mater box_sd" :class="{selected: showSelIcon(item)}" v-for="(item, index) in costList" :key='index'
+          <div class="each_mater box_sd" :class="{selected: showSelIcon(item)}" v-for="(item, index) in depList" :key='index'
                @click.stop="selThis(item, index)">
             <div class="mater_main">
-              <div class="cost_name">{{item.costName}}</div>
-              <div class="cost_type">{{item.costType}}</div>
-              <div class="cost_subject">{{item.costSubject}}</div>
+              <div class="cost_name">{{item.GROUP_NAME}}</div>
+              <div class="cost_type">{{item.DEP_FUNCTION}}</div>
+              <!-- <div class="cost_subject">{{item.costSubject}}</div> -->
             </div>
           </div>
         </r-scroll>
@@ -29,7 +29,7 @@ import {requestData} from 'service/common/commonService'
 import RScroll from 'plugins/scroll/RScroll'
 import MSearch from 'components/search/search'
 export default {
-  name: "costList",
+  name: "popDepartmentList",
   props: {
     show: {
       type: Boolean,
@@ -50,7 +50,7 @@ export default {
       type: String,
       default: 'getCostByGroupId'
     },
-    costParams: {
+    depParams: {
       type: Object,
       default() {
         return {}
@@ -66,7 +66,7 @@ export default {
       srhInpTx: '', // 搜索框内容
       selItems: [], // 哪些被选中了
       tmpItems: [],
-      costList: [],
+      depList: [],
       limit: 10,
       page: 1.,
       hasNext: true,
@@ -74,6 +74,12 @@ export default {
         click: true,
         pullUpLoad: true,
       },
+      filterList: [ // 过滤列表
+        {
+          name: '组织名称',
+          value: 'GROUP_NAME',
+        }, 
+      ],
     }
   },
   watch: {
@@ -89,10 +95,10 @@ export default {
       }
     },
     groupId(){
-      this.costList();
+      this.depList();
     },
     // 请求 参数
-    costParams: {
+    depParams: {
       handler(val) {
         // 为避免触发重复请求 此处设置监听
         let Parmsdata = val.data, isRequest = false;
@@ -142,7 +148,7 @@ export default {
     selThis(sItem, sIndex) {
       this.showPop = false;
       this.selItems = [sItem];
-      this.$emit('sel-matter',this.selItems[0]);
+      this.$emit('sel-dep',this.selItems[0]);
     },
     // 设置默认值
     setDefaultValue() {
@@ -158,7 +164,7 @@ export default {
           {
             operator: 'like',
             value: this.srhInpTx,
-            property: 'costName'
+            property: 'GROUP_NAME'
           },
         ];
       }
@@ -167,23 +173,24 @@ export default {
         page: this.page,
         start: (this.page - 1) * this.limit,
         filter: JSON.stringify(filter),
-        ...this.costParams.data,
+        ...this.depParams.data,
       }
         return requestData({
-        url: this.costParams.url,
+        url: this.depParams.url,
         data
       }).then(({dataCount = 0, tableContent = []}) => {
         this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-        this.costList = this.page === 1 ? tableContent : [...this.costList, ...tableContent];
+        this.depList = this.page === 1 ? tableContent : [...this.depList, ...tableContent];
         this.$nextTick(() => {
           this.$refs.bScroll.finishPullUp();
         })
       })
     },
     // 搜索物料
-    searchList({val = ''}) {
+    searchList({val = '', property = ''}) {
       this.srhInpTx = val;
-      this.costList = [];
+      this.filterProperty = property;
+      this.depList = [];
       this.page = 1;
       this.hasNext = true;
       this.$refs.bScroll.scrollTo(0, 0);

@@ -162,6 +162,17 @@ export let getComplexExpenseReimbursement = (data = {}) => {
   })
 };
 
+// 费用报销获取往来
+export let getEmployeeBalList = (data = {}) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getEmployeeBal',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
+
 export default {
 
 }

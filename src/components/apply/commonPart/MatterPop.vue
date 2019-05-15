@@ -316,7 +316,7 @@
         let warn = '';
         this.config.editPart.every(item => {
           if (!item.allowBlank) {
-            if ((Array.isArray(this.chosenMatter[item.fieldCode]) && !this.chosenMatter[item.fieldCode].length) || (!this.chosenMatter[item.fieldCode]&&(this.chosenMatter[item.fieldCode].toString()==''))) {
+            if ((Array.isArray(this.chosenMatter[item.fieldCode]) && !this.chosenMatter[item.fieldCode].length) || (!this.chosenMatter[item.fieldCode])) {
               warn = item.text + '不能为空';
               return false
             }
