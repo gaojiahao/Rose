@@ -3,7 +3,7 @@
   <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
-        <m-search @search='searchList'></m-search>
+        <m-search @search='searchList' :filterList="filterList" @turn-off="onHide" :isFill='true'></m-search>
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !costList.length" @on-pulling-up="onPullingUp"
@@ -11,9 +11,10 @@
           <div class="each_mater box_sd" :class="{selected: showSelIcon(item)}" v-for="(item, index) in costList" :key='index'
                @click.stop="selThis(item, index)">
             <div class="mater_main">
-              <div class="cost_name">{{item.costName}}</div>
-              <div class="cost_type">{{item.costType}}</div>
-              <div class="cost_subject">{{item.costSubject}}</div>
+                <span class="cost_name">{{item.costCode}}</span>
+                <span class="cost_subject">{{item.costName}}</span>
+                <span class="cost_type">{{item.costType}}</span>
+                <span class="cost_type">{{item.costSubject}}</span>
             </div>
           </div>
         </r-scroll>
@@ -28,8 +29,9 @@ import { getProjectCostByGroupId, getCostByGroupId } from 'service/costService'
 import {requestData} from 'service/common/commonService'
 import RScroll from 'plugins/scroll/RScroll'
 import MSearch from 'components/search/search'
+import { constants } from 'crypto';
 export default {
-  name: "costList",
+  name: "fybxList",
   props: {
     show: {
       type: Boolean,
@@ -41,20 +43,20 @@ export default {
       default() {
         return []
       }
-    },
-    groupId: {
-      type: Number,
-      default: 990713
-    },
+    }, 
     getListMethod: {
       type: String,
       default: 'getCostByGroupId'
     },
-    costParams: {
+    matterParams: {
       type: Object,
       default() {
         return {}
       }
+    },
+    costParamsUrl: {
+        type: String,
+        default: '/H_roleplay-si/ds/getProjectCostByGroupId'    
     }
   },
   components: {
@@ -74,6 +76,12 @@ export default {
         click: true,
         pullUpLoad: true,
       },
+      filterList: [ // 过滤列表
+        {
+          name: '费用编码',
+          value: 'costCode',
+        }, 
+      ],
     }
   },
   watch: {
@@ -88,26 +96,12 @@ export default {
         this.setDefaultValue();
       }
     },
-    groupId(){
-      this.costList();
-    },
+    // groupId(){
+    //   this.getCostList();
+    // },
     // 请求 参数
-    costParams: {
-      handler(val) {
-        // 为避免触发重复请求 此处设置监听
-        let Parmsdata = val.data, isRequest = false;
-        for (let [key, item] of Object.entries(Parmsdata)) {
-          if (item) {
-            isRequest = true
-          }
-          else {
-            isRequest = false;
-            break;
-          }
-        }
-        isRequest && this.getCostList() 
-      },
-      deep: true
+    matterParams(val) {
+        this.getCostList() 
     }
   },
   methods: {
@@ -151,38 +145,40 @@ export default {
     },
     // 获取物料列表
     getCostList() {
-      let filter = [];
-      if (this.srhInpTx) {
-        filter = [
-          ...filter,
-          {
-            operator: 'like',
-            value: this.srhInpTx,
-            property: 'costName'
-          },
-        ];
-      }
-      let data = {
-        limit: this.limit,
-        page: this.page,
-        start: (this.page - 1) * this.limit,
-        filter: JSON.stringify(filter),
-        ...this.costParams.data,
-      }
+        let filter = [];
+        if (this.srhInpTx) {
+            filter = [
+                ...filter,
+                {
+                operator: 'like',
+                value: this.srhInpTx,
+                property: 'costCode'
+                },
+            ];
+        }
+        let data = {
+            _dc: Date.now(),
+            limit: this.limit,
+            page: this.page,
+            start: (this.page - 1) * this.limit,
+            filter: JSON.stringify(filter),
+            ...this.matterParams,
+        }
         return requestData({
-        url: this.costParams.url,
+        url: this.costParamsUrl,
         data
       }).then(({dataCount = 0, tableContent = []}) => {
         this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
         this.costList = this.page === 1 ? tableContent : [...this.costList, ...tableContent];
         this.$nextTick(() => {
-          this.$refs.bScroll.finishPullUp();
+            this.$refs.bScroll.finishPullUp();
         })
       })
     },
     // 搜索物料
-    searchList({val = ''}) {
+    searchList({val = '', property = ''}) {
       this.srhInpTx = val;
+      this.filterProperty = property;
       this.costList = [];
       this.page = 1;
       this.hasNext = true;
@@ -197,7 +193,7 @@ export default {
   },
   created() {
     this.setDefaultValue();
-    this.getCostList();
+    //this.getCostList();
   }
 }
 </script>
