@@ -1,9 +1,12 @@
 <template>
   <div class="detail_wrapper">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
-
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
+      <!-- 往来账户可编辑-->
+      <pop-dealer-list :default-value="dealerInfo" @sel-item="selDealer" request="5" :params="cashParams"
+                     v-show="dealerConfig.length && !isEditDealer" required>
+      </pop-dealer-list>
       <!-- 往来联系部分 交易基本信息-->
       <contact-part :contact-info="dealerInfo" :configs="dealerConfig" :showAddress=false v-show="dealerConfig.length"></contact-part>
       <!-- 工作流 -->
@@ -99,9 +102,11 @@
   import workFlow from 'components/public/workFlow'
   import contactPart from 'components/detail/commonPart/ContactPart'
   import PopCashList from 'components/Popup/finance/PopCashList'
+  import PopDealerList from 'components/Popup/dealer/PopDealerList'
   //公共方法引入
   import {accAdd, accSub} from 'plugins/calc/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
+import { constants } from 'crypto';
 
   export default {
     data() {
@@ -153,11 +158,21 @@
           }
         }
         return isEdit
+      },
+      // 判断纸巾账户的支付金额是否可编辑
+      isEditDealer() {
+        let isEdit = false;
+        this.config[2].items.forEach(item => {
+          if (item.fieldCode === "dealerName_dealerCodeCredit"){
+           isEdit = item.readOnly;
+          }
+        })
+        return isEdit
       }
     },
     mixins: [detailCommon],
     components: {
-      workFlow, RAction, contactPart, XInput, PopCashList
+      workFlow, RAction, contactPart, XInput, PopCashList, PopDealerList
     },
     methods: {
       checkAmt(item, key, val) {
@@ -193,8 +208,11 @@
             expectEndDate_project: formData.order.expectEndDate_project,
             projectAddress_project: formData.order.projectAddress_project,
             budgetIncome_project: formData.order.budgetIncome_project,
+            nickname: this.dealerInfo.dealerName_dealerCodeCredit,
+            dealerLabelName: this.dealerInfo.crDealerLabel,
+            dealerCode: this.dealerInfo.dealerCodeCredit,
+            amntBal: this.dealerInfo.thenAmntBal,
           }
-          
           // 当前审批人为会计时，自动赋值本次支付金额
           if (this.isAccounting) {
             let {thenAmntBal = 0, thenAlreadyAmnt = 0} = this.dealerInfo;
@@ -248,6 +266,13 @@
               }],
             }
           }
+          if (this.dealerConfig.length) {
+            formData.inPut = {
+              dataSet: [{
+                ...this.dealerInfo
+              }],
+            }
+          }
           this.saveData(formData);
           return true
         }
@@ -285,6 +310,21 @@
         this.cashInfo.thenAmntBalCopy1 = item.thenAmntBal;
         this.cashInfo.cashType_cashInCode = item.fundType;
       },
+      selDealer(item) {
+        this.dealerInfo = {
+          ...this.dealerInfo,
+          dealerCodeCredit: item.dealerCode,
+          dealerCode_dealerCodeCredit: item.dealerCode,
+          crDealerLabel: item.dealerLabelName,
+          dealerName_dealerCodeCredit: item.nickname,
+          thenAmntBal: item.amntBal,
+          differenceAmount: item.amntBal,
+          nickname: item.nickname,
+          dealerLabelName: item.dealerLabelName,
+          dealerCode: item.dealerCode,
+          amntBal: item.amntBal,
+        }
+      }
     }
   }
 </script>
