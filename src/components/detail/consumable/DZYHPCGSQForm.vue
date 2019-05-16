@@ -1,4 +1,5 @@
 <template>
+<!--低值易耗品采购申请-->
   <div class="detail_wrapper xsbj-detail-container">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
 
