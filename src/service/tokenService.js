@@ -69,10 +69,9 @@ let tokenService = {
     } else if (dd.ios || dd.android) {
       return this.DDLogin();
     } else {
-     // router.push({path:'/login'});
       router.push('/login');
       return new Promise((resolve, reject)=>{
-
+        resolve();
       })
     }
   },
@@ -88,8 +87,6 @@ let tokenService = {
           'Content-Type': 'application/json',
         },
         data: {
-          // password: '123456',
-          // userCode: 'jiangxing',
           password: password,
           userCode: userCode
         }

@@ -79,6 +79,33 @@ export default {
   },
   components: { busApp, basicApp },
   methods: {
+     initData:async function(){
+      this.$loading.show();
+        //获取当前用户
+      await this.getCurrentUser();
+      // 获取首页应用列表
+      await this.initMenu();
+      // 获取 头像姓名
+      let { name, avatar, position } = JSON.parse(
+        sessionStorage.getItem("ROSE_LOGIN_TOKEN")
+      );
+      // 如果头像不存在则指定默认头像
+      if (!avatar) {
+        let url = this.userInfo.photo;
+        if (!this.userInfo.photo) {
+          url = require("assets/ava01.png");
+        }
+        avatar = url;
+      }
+      this.userInfo = {
+        ...this.userInfo,
+        name,
+        avatar,
+        position
+      };
+      await this.getNews();
+      this.$loading.hide();
+    },
     //获取代办数量
     getNews() {
       let newsNumber;
@@ -113,41 +140,8 @@ export default {
           });
       });
     },
-    // 选择单条记录
-    dropItemClick(item) {
-      if (this.selItem.groupCode === item.groupCode) return;
-      this.selItem = { ...item };
-      this.showDrop = false;
-      this.$loading.show();
-      homeService.changeEntity({ entityId: item.groupCode }).then(data => {
-        let tokenInfo = sessionStorage.getItem("ROSE_LOGIN_TOKEN");
-        if (tokenInfo) {
-          tokenInfo = JSON.parse(tokenInfo);
-          tokenInfo.entityId = data.entityId;
-          tokenInfo.token = data.token;
-          sessionStorage.setItem("ROSE_LOGIN_TOKEN", JSON.stringify(tokenInfo));
-          location.reload();
-        }
-      });
-    }
-  },
-  watch: {
-    $route: {
-      handler(val) {
-        // 返回首页进行滑动刷新
-        if (val.name === "HOME") {
-          this.homeScroll.refresh();
-        }
-      }
-    }
-  },
-  created() {
-    this.$loading.show();
-    (async () => {
-      //获取当前用户
-      await this.getCurrentUser();
-      // 获取首页应用列表
-      await homeService.getMeau().then(res => {
+    initMenu(){
+        return homeService.getMeau().then(res => {
         let BUSobj = this.BUSobj;
 
         for (let val of res) {
@@ -209,30 +203,43 @@ export default {
               appList: { ...BUSobj[val.text] }
             });
           }
-
-          this.$loading.hide();
         }
       });
-      // 获取 头像姓名
-      let { name, avatar, position } = JSON.parse(
-        sessionStorage.getItem("ROSE_LOGIN_TOKEN")
-      );
-      // 如果头像不存在则指定默认头像
-      if (!avatar) {
-        let url = this.userInfo.photo;
-        if (!this.userInfo.photo) {
-          url = require("assets/ava01.png");
+    },
+    // 选择单条记录
+    dropItemClick(item) {
+      if (this.selItem.groupCode === item.groupCode) return;
+      this.selItem = { ...item };
+      this.showDrop = false;
+      this.$loading.show();
+      homeService.changeEntity({ entityId: item.groupCode }).then(data => {
+        let tokenInfo = sessionStorage.getItem("ROSE_LOGIN_TOKEN");
+        if (tokenInfo) {
+          tokenInfo = JSON.parse(tokenInfo);
+          tokenInfo.entityId = data.entityId;
+          tokenInfo.token = data.token;
+          sessionStorage.setItem("ROSE_LOGIN_TOKEN", JSON.stringify(tokenInfo));
+          location.reload();
         }
-        avatar = url;
+      });
+    }
+  },
+  watch: {
+    $route: {
+      handler(val) {
+        // 返回首页进行滑动刷新
+        if (val.name === "HOME") {
+          this.homeScroll.refresh();
+        }
       }
-      this.userInfo = {
-        ...this.userInfo,
-        name,
-        avatar,
-        position
-      };
-      await this.getNews();
-    })();
+    }
+  },
+  activated(){
+     if(this.BusApps.length == 0){
+       this.initData();
+     } else {
+       this.$loading.hide();
+     }
   },
   mounted() {
     this.homeScroll = new Bscroll(this.$refs.home, {

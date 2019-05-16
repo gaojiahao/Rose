@@ -27,9 +27,11 @@ fly.interceptors.request.use((request) => {
     // token 不存在，锁住请求，优先请求token，后序请求进入队列
     fly.lock();
     return tokenService.login().then((token) => {
-      request.headers.Authorization = token;
+      if(token){
+        request.headers.Authorization = token;
       // 请求token成功之后，即将进入第一个请求
-      return request;
+        return request;
+      }
     }).finally(() => {
       // 解锁队列，后序请求恢复正常
       fly.unlock()
@@ -74,7 +76,7 @@ fly.interceptors.response.use(
         return rejectError('reject', '不好意思，网络似乎出了点问题，请稍后再试')
       }
     }
-    rejectError('reject', error.response.data.message) 
+    rejectError('reject', error.response && error.response.data.message) 
   }
 )
 
