@@ -124,6 +124,16 @@ export let getObjWarehouseRel = (data = {}) => {
   })
 };
 
+export let getObjWarehouseInfo = (data = {}) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getObjWarehouseInfo',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
+
 export let getWareHouseType = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getWareHouseType',
