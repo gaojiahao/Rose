@@ -38,6 +38,7 @@ let tokenService = {
       } else if (timeCalc > (12 * 3600 * 1000)) { // 设置12小时过期时间
         return ''
       }
+      return token['token'];
     } else {
       return ''
     }
@@ -69,7 +70,7 @@ let tokenService = {
   },
   // PC端登录，默认返回token
   pcLogin(userCode, password, key = 'token') {
-    console.log('进入pc了')
+    //console.log('进入pc了')
     return new Promise((resolve, reject) => {
       let params = {
         method: 'post',

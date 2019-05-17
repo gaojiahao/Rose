@@ -299,7 +299,7 @@ export default {
     // 是否已经关注该订单
     isSubscribeByRelationKey() {
       isSubscribeByRelationKey(this.transCode).then(data => {
-        this.$emit('is-subscribe', data)
+        this.$emit('subscribeChange', data)
       })
     },
     async loadPage() {
