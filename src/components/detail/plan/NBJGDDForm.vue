@@ -57,7 +57,7 @@
         <bom-list :boms="UniqueBom">
           <template slot-scope="{bom}" slot="number">
             <div class="number-part">
-              <span class="main-number">领料需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
+              <span class="main-number">领料需求: {{bom.qualityQty}}{{bom.measureUnit}}</span>
             </div>
           </template>
         </bom-list>
@@ -66,7 +66,7 @@
       <bom-pop :show="bomPopShow" :bomInfo="bom" v-model="bomPopShow" class="bom_pop" :is-edit="false">
         <template slot-scope="{bom}" slot="number">
           <div class="number-part">
-            <span class="main-number">领料需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
+            <span class="main-number">领料需求: {{bom.qualityQty}}{{bom.measureUnit}}</span>
           </div>
         </template>
       </bom-pop>
@@ -156,10 +156,13 @@
             if (item.boms) {
               for (let bom of item.boms) {
                 bom.inventoryCode = bom.transObjCode;
+                for(let obom of formData.outPut.dataSet) {
+                  if(obom.outPutMatCode == bom.transObjCode) {
+                    bom.tdQty = obom.tdQty;
+                  }
+                }
+                this.DuplicateBoms.push(bom)
               }
-            }
-            if (item.boms) {
-              this.DuplicateBoms = this.DuplicateBoms.concat(JSON.parse(JSON.stringify(item.boms)));
             }
             if (!orderList[item.transMatchedCode]) {
               orderList[item.transMatchedCode] = [];
@@ -188,6 +191,7 @@
           return acc;
         }, []);
         this.UniqueBom = getNew(this.DuplicateBoms);
+        console.log('this.UniqueBom',this.UniqueBom)
       },
     }
   }
@@ -238,7 +242,7 @@
       position: relative;
       background: #FFF;
       padding: .06rem .08rem;
-      margin-top:0.1rem;
+      margin: .1rem;
     }
     .comment-part{
       background: #fff;
@@ -266,5 +270,18 @@
       }
     }
   }
-
+  .materiel_list {
+    background: #fff;
+    margin: .1rem;
+    box-sizing: border-box;
+    padding: .06rem .1rem;
+    .title {
+      color: #757575;
+      font-size: .12rem;
+      .required {
+        color: required;
+        font-weight: bold;
+      }
+    }
+  }
 </style>
