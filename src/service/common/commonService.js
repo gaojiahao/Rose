@@ -324,12 +324,31 @@ export let getPriceFromProcurementContract = (data = {}) => {
     data: JSON.stringify(data)
   })
 }
+//获取baseinfo信息
+export let getBasicInfo = (data ={})=> {
+  return $flyio.ajax({
+    url: `/H_roleplay-si/app/getBasicInfo`,
+    data: {
+      _dc: Date.now(),
+    }
+  })
+}
 // 获取提交页面表单配置
 export let getFormConfig = (viewId = '') => {
   return $flyio.ajax({
     url: `/H_roleplay-si/mobile/formView/${viewId}`
   })
 
+}
+// 获取提交页面表单二次配置
+export let findConfigInfo = (viewId = '') => {
+  return $flyio.ajax({
+    url: `/H_roleplay-si/easy/formViewClient/findConfigInfo`,
+    data: {
+      _dc: Date.now(),
+      formViewId: viewId,
+    }
+  })
 }
 // 获取提交页面表单配置
 export let getFormViews = (listId = '') => {

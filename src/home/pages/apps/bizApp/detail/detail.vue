@@ -5,7 +5,7 @@
         :is='currentComponent'
         @change='modifyRoute'
         @refresh-scroll="refresh"
-        @is-subscribe="isSubscribe"
+        @subscribeChange="setSubscribe"
         ref="detailComponent">
       </component>
     </div>
@@ -63,9 +63,9 @@ export default {
         }
       })
     },
-    // 是否已经关注该订单
-    isSubscribe(val){
-      this.isConcern = val;
+    // 设置是否已经关注该订单
+    setSubscribe(val){
+      this.isConcern = +val;
     },
     // 关注或取关
     goConcern() {

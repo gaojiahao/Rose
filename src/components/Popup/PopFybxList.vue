@@ -96,12 +96,18 @@ export default {
         this.setDefaultValue();
       }
     },
-    // groupId(){
-    //   this.getCostList();
-    // },
+    groupId(){
+      this.getCostList();
+    },
     // 请求 参数
-    matterParams(val) {
-        this.getCostList() 
+    // matterParams(val) {
+    //   console.log(val)
+    //     this.getCostList() 
+    // }
+    matterParams: {
+      handler(val) {
+      this.getCostList() 
+      }
     }
   },
   methods: {
@@ -193,7 +199,7 @@ export default {
   },
   created() {
     this.setDefaultValue();
-    //this.getCostList();
+    this.getCostList();
   }
 }
 </script>

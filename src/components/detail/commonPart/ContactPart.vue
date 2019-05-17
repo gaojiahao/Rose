@@ -42,7 +42,7 @@
       </div>
       <div class="contact_top" v-if="contactInfo.crDealerPaymentTerm">
         <div class="contact_top_item">
-          <span class="contact_top_title">结算方式: </span>{{contactInfo.crDealerPaymentTerm}}
+          <span class="contact_top_title">结算方式: </span>{{contactInfo.crDealerPaymentTerm || ''}}
         </div>
         <div class="contact_top_item" v-if="contactInfo.thenAlreadyAmnt">
           <span class="contact_top_title">本次收款: </span>{{contactInfo.thenAlreadyAmnt}}
@@ -59,7 +59,7 @@
         <div class="contact_other_item">
           <span class="contact_other_title">{{item.fieldLabel}}：</span>
           <span class="contact_other_value" v-if="item.xtype === 'r2Permilfield'">{{item.fieldValue || contactInfo[item.fieldCode]}}</span>
-          <span class="contact_other_value" v-else>{{item.fieldValue || contactInfo[item.fieldCode]|| '暂无'}}</span>
+          <span class="contact_other_value" v-else>{{item.fieldValue || contactInfo[item.fieldCode]|| ''}}</span>
         </div>
       </div>
     </div>

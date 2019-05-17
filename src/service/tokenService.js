@@ -6,13 +6,11 @@ import router from '../router';
 
 const fly = new Fly();
 const ROSE_TOKEN_KEY = 'ROSE_LOGIN_TOKEN';
-const PC_RFD_TOKEN_KEY = 'roleplay-token';
 
 let tokenService = {
   // 清除token
   clean() {
     window.sessionStorage.removeItem(ROSE_TOKEN_KEY);
-    window.localStorage.removeItem(PC_RFD_TOKEN_KEY);
   },
   // 设置token
   setToken(data) {
@@ -23,13 +21,9 @@ let tokenService = {
       department: data.department,
       avatar: data.avatar,
       position: data.position,
-      timestamp: +new Date()
-    }));
-    window.localStorage.setItem(PC_RFD_TOKEN_KEY, JSON.stringify({
       key1: data.key1,
       active: data.active,
-      entityId: data.entityId,
-      token: data.token
+      timestamp: +new Date()
     }));
   },
   // 获取token
@@ -41,14 +35,13 @@ let tokenService = {
       let timeCalc = new Date() - timestamp;
       if (isQYWX && (timeCalc > (2 * 3600 * 1000))) {
         return ''
-      }
-      if (timeCalc > (12 * 3600 * 1000)) { // 设置12小时过期时间
+      } else if (timeCalc > (12 * 3600 * 1000)) { // 设置12小时过期时间
         return ''
       }
+      return token['token'];
     } else {
       return ''
     }
-    return token['token']
   },
   // 登录
   login() {
@@ -69,16 +62,15 @@ let tokenService = {
     } else if (dd.ios || dd.android) {
       return this.DDLogin();
     } else {
-     // router.push({path:'/login'});
       router.push('/login');
       return new Promise((resolve, reject)=>{
-
+        resolve();
       })
     }
   },
   // PC端登录，默认返回token
   pcLogin(userCode, password, key = 'token') {
-    console.log('进入pc了')
+    //console.log('进入pc了')
     return new Promise((resolve, reject) => {
       let params = {
         method: 'post',
@@ -88,8 +80,6 @@ let tokenService = {
           'Content-Type': 'application/json',
         },
         data: {
-          // password: '123456',
-          // userCode: 'jiangxing',
           password: password,
           userCode: userCode
         }
@@ -149,6 +139,7 @@ let tokenService = {
     })
   },
   DDLogin(key = 'token') {
+    var me = this;
     return new Promise((resolve, reject) => {
       dd.ready(function () {
         dd.runtime.permission.requestAuthCode({
@@ -157,21 +148,16 @@ let tokenService = {
             let code = info.code;
             fly.get(`/H_roleplay-si/ddLogin?code=${code}`).then((res) => {
               let data = res.data;
-              window.sessionStorage.setItem(ROSE_TOKEN_KEY, JSON.stringify({
+              me.setToken({
                 entityId: data.entityId,
                 token: data.token,
                 name: data.name,
                 department: data.department,
                 avatar: data.avatar,
                 position: data.position,
-                timestamp: +new Date()
-              }));
-              window.localStorage.setItem(PC_RFD_TOKEN_KEY, JSON.stringify({
                 key1: data.key1,
-                active: data.active,
-                entityId: data.entityId,
-                token: data.token
-              }));
+                active: data.active
+              });
               resolve(data[key])
             }).catch(function (error) {
               let res = error.response;
