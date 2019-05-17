@@ -35,7 +35,6 @@ export default {
   },
   data() {
     return {
-      matterDetailIndex: 0,
       orderTitle: '所属订单', // 物料交易号名称
       clientHeight: document.documentElement.clientHeight,
       uploadStyle: { //附件容器样式
@@ -55,7 +54,6 @@ export default {
       transCode: '',
       formStatus: '',                     // 当前表单的状态
       currenrForm: '',                    // 当前表单类型
-      matterDetailKey: '',
       formViewUniqueId: '',
       action: {},                         // 表单允许的操作
       orderList: {},                      // 按订单划分的物料列表
@@ -697,15 +695,6 @@ export default {
         matter.dates = dates;
         matter.matterComment = matterComment;
       });
-    },
-    // 查看更多
-    onShowMore(item, index, key) {
-      if (key) {
-        this.matterDetailKey = key;
-      }
-      this.matterDetail = JSON.parse(JSON.stringify(item));
-      this.matterDetailIndex = index;
-      this.showMatterDetail = true;
     }
   },
   created() {
