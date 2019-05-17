@@ -10,7 +10,7 @@ import {
 } from 'service/detailService'
 import { isSubscribeByRelationKey } from 'service/commentService'
 import { getAppDetail, getPCCommentList } from 'service/app-basic/appSettingService'
-import { getFormViews, getFormConfig, saveAndCommitTask } from 'service/common/commonService'
+import { getFormViews, getFormConfig, saveAndCommitTask, getBasicInfo, findConfigInfo} from 'service/common/commonService'
 // vux 引入
 import { numberComma } from 'vux'
 // 组件 引入
@@ -82,6 +82,7 @@ export default {
       HasValRealted: false,               // 相关实例是否有值为0
       showMatterDetail: false,            // 是否展示物料详情弹窗
       config: [],
+      baseinfoConfig: {},                 //baseinfo配置
     }
   },
   computed: {
@@ -320,6 +321,7 @@ export default {
         await this.getCurrentUser();  //查询 当前用户基本信息
       }
       await this.getListId();
+      await this.getBasicInfo();
       await this.getFlowAndActions();
       await this.getOrderList(transCode);   // 获取表单表单详情
       await this.getFromStatus();
@@ -389,6 +391,52 @@ export default {
         }
       });
     },
+    //请求baseinfo配置
+    getBasicInfo() {
+      return getBasicInfo().then(data => {
+        this.baseinfoConfig = data;
+      });  
+    },
+    //请求二次配置
+    findConfigInfo() {
+      return findConfigInfo(this.formViewUniqueId).then(data => {
+        if(this.baseinfoConfig.clientFlag) {
+          this.getNewFormConfig(this.config,data.data);
+        }
+      });
+    },
+    //二次配置覆盖
+    getNewFormConfig(old,New) {
+      let firstCongif = old;
+      New = JSON.parse(New)
+      let containerCfg =  New && New.container,
+          fieldsCfg = New && New.fields;
+      if(New){
+        if(JSON.stringify(New.form) != '{}') {
+          old = New.form;
+        }; 
+        for(let i = 0; i < old.length; i++) {
+          let name = old[i].name,
+          isList = old[i].isMultiple,
+          fields = old[i].items,
+          grid;
+
+          if ((JSON.stringify(fieldsCfg)!='{}') && old[i].items) {
+            for(let k = 0; k < old[i].items.length; k++) {
+              var key = isList ? [name, old[i].items[k].fieldCode].join('.') : old[i].items[k].fieldCode;
+              for(var prop in fieldsCfg) {
+                if(old[i].items[k].fieldCode == prop) {
+                  for(var prop2 in fieldsCfg[key]) {
+                    old[i].items[k][prop2] = fieldsCfg[key][prop2]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+    },
     // 请求配置
     getFormConfig() {
       return getFormConfig(this.formViewUniqueId).then(data => {
@@ -399,7 +447,7 @@ export default {
         this.config = config;
         console.log('config:', config);
         console.log('二次配置-reconfig:', reconfig);
-
+        this.findConfigInfo();
         // 声明相关变量
         let [ 
           ckConfig,             // 出库 相关配置
