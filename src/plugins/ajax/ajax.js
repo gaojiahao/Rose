@@ -128,7 +128,9 @@ let Rxports = {
         }
       }
       fly.request(params, params.data)
-        .then( res => resolve(res.data))
+        .then( res => {
+          res && resolve(res.data);
+        })
         .catch( err => {
           console.log('err:', err);
         })
