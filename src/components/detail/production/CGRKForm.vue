@@ -1,4 +1,5 @@
 <template>
+<!--采购入库，原料采购进货-->
   <div class="detail_wrapper">
     <div class="basicPart" v-if='orderInfo && orderInfo.inPut'>
 
@@ -9,16 +10,12 @@
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 往来联系部分 交易基本信息-->
       <contact-part :contact-info="dealerInfo" :configs="dealerConfig"></contact-part>
-      <warehouse-content :warehouse-config="warehouseConfig"></warehouse-content>
+      <warehouse-content :warehouse-config="warehouseConfig" :warehouseOut="{}" :warehouse="{}"></warehouse-content>
       <!-- 物料列表 -->
-      <matter-list :order-list='orderList' :order-title="orderTitle" @on-show-more="onShowMore"></matter-list>
+      <matter-list :order-list='orderList' :order-title="orderTitle" :btnIsHide = "btnIsHide" :check-amt="checkAmt" @on-detailEdit="onDetailConfirm"></matter-list>
       <!-- 备注 -->
       <other-part :other-info="orderInfo" :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"
                   :attachment="attachment"></other-part>
-      <!-- 物料详情 -->
-      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" :btn-is-hide="btnIsHide"
-                         :check-amt="checkAmt" @on-confirm="onDetailConfirm"
-                         v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions" :agree-handler="agreeHandler"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -231,8 +228,8 @@
         this.matterDetail = item;
       },
       // 确认修改
-      onDetailConfirm(item) {
-        this.$set(this.orderList[this.matterDetailKey], this.matterDetailIndex, item);
+      onDetailConfirm(item,matterDetailIndex,matterDetailKey) {
+          this.$set(this.orderList[matterDetailKey], matterDetailIndex, item);
       },
       // 同意的处理
       agreeHandler() {
