@@ -96,12 +96,18 @@ export default {
         this.setDefaultValue();
       }
     },
-    // groupId(){
-    //   this.getCostList();
-    // },
+    groupId(){
+      this.getCostList();
+    },
     // 请求 参数
-    matterParams(val) {
-        this.getCostList() 
+    // matterParams(val) {
+    //   console.log(val)
+    //     this.getCostList() 
+    // }
+    matterParams: {
+      handler(val) {
+      this.getCostList() 
+      }
     }
   },
   methods: {
@@ -146,6 +152,7 @@ export default {
     // 获取物料列表
     getCostList() {
         let filter = [];
+        console.log('matterParams',this.matterParams)
         if (this.srhInpTx) {
             filter = [
                 ...filter,
@@ -193,7 +200,7 @@ export default {
   },
   created() {
     this.setDefaultValue();
-    //this.getCostList();
+    this.getCostList();
   }
 }
 </script>
