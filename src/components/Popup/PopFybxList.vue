@@ -152,7 +152,6 @@ export default {
     // 获取物料列表
     getCostList() {
         let filter = [];
-        console.log('matterParams',this.matterParams)
         if (this.srhInpTx) {
             filter = [
                 ...filter,

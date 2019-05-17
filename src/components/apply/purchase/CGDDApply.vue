@@ -423,7 +423,9 @@ export default {
                     dealerDebit: this.dealerInfo.dealerCode,
                     drDealerLabel: this.dealerInfo.dealerLabelName || '',
                     tdAmountCopy1: this.dealerInfo.tdAmountCopy1 || null,
-                    prepaymentDueDate: this.dealerInfo.prepaymentDueDate || ''
+                    prepaymentDueDate: this.dealerInfo.prepaymentDueDate || '',
+                    drDealerPaymentTerm: this.dealerInfo.drDealerPaymentTerm || '',
+                    daysOfAccount: this.dealerInfo.daysOfAccount || '',
                   }
                 ]
               }
@@ -526,7 +528,9 @@ export default {
           dealerLabelName: inPut.dataSet[0].drDealerLabel,
           dealerName: inPut.dataSet[0].dealerName_dealerDebit,
           prepaymentDueDate: inPut.dataSet[0].prepaymentDueDate,
-          dealerName_dealerDebit: inPut.dataSet[0].dealerName_dealerDebit
+          dealerName_dealerDebit: inPut.dataSet[0].dealerName_dealerDebit,
+          daysOfAccount: inPut.dataSet[0].daysOfAccount,
+          drDealerPaymentTerm: inPut.dataSet[0].drDealerPaymentTerm, 
         }
         this.contact = {
           dealerName: formData.dealerDebitContactPersonName,
