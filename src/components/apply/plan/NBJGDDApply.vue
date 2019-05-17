@@ -4,27 +4,25 @@
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
+        <!-- <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker> -->
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
-          <template v-if="!Object.keys(orderList).length">
-            <div @click="showOrderPop = !showOrderPop">
-              <div class="title">订单列表</div>
-              <div class="required">请选择订单</div>
-              <i class="iconfont icon-youjiantou r_arrow"></i>
-            </div>
-          </template>
+          <div class="order-info" v-if="!Object.keys(orderList).length" @click="showOrderPop = !showOrderPop">
+            <div class="title">订单列表</div>
+            <div class="required">请选择订单</div>
+            <span class="iconfont icon-youjiantou r-arrow"></span>
+          </div>
           <!-- 已经选择了物料 -->
           <template v-else>
-            <div class="title" @click="showDelete">
+            <div class="title has-matter" @click="showDelete">
               <div>订单列表</div>
               <div class='edit' v-if='!matterModifyClass'>编辑</div>
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater" v-for="(oItem, key,index) in orderList" :key="key">
+              <div class="each_mater" v-for="(oItem, key) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
                   <span class="order_title">计划号</span>
                   <span class="order_num">{{key}}</span>
@@ -676,5 +674,84 @@
         color: #757575;
       }
     }
+  }
+  .materiel_list {
+    background: #fff;
+    margin-top: 0.1rem;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: .06rem .1rem;
+    margin-bottom: 0.1rem;
+    .title {
+      color: #757575;
+      font-size: .12rem;
+      .required {
+        color: required;
+        font-weight: bold;
+      }
+    }
+  }
+  .order-info {
+    position: relative;
+    font-size: .14rem;
+    .title {
+      font-size: .14rem;
+    }
+    .r-arrow {
+      position: absolute;
+      top: 50%;
+      right: -1%;
+      font-weight: bold;
+      transform: translate(0, -50%);
+      color: #333;
+    }
+  }
+  .handle_part {
+    margin: 0 auto;
+    //width: 95%;
+    text-align: center;
+    position: relative;
+    background-color: #fff;
+    .add_more {
+      display: inline-block;
+      width: 1rem;
+      color: #fff;
+      height: .24rem;
+      font-size: .12rem;
+      text-align: center;
+      line-height: .24rem;
+      margin: 0 auto .1rem;
+      padding: 0;
+      border-radius: .4rem;
+      background: #5077aa;
+      box-shadow: 0 2px 5px #5077aa;
+      box-sizing: border-box;
+    }
+    .symbol {
+      left: 50%;
+      bottom: 25%;
+      color: #757575;
+      font-size: .12rem;
+      position: absolute;
+      transform: translate(-50%, 0);
+    }
+    .stop {
+      margin-right: .24rem;
+      background: #ea5455;
+      box-shadow: 0 2px 5px #ea5455;
+    }
+  }
+  // 有物料的title的样式
+  .has-matter {
+    display: flex;
+    line-height: .14rem;
+    justify-content: space-between;
+    .title {
+      color: #696969;
+    }
+    .edit {
+      color: #333;
+    }
+
   }
 </style>

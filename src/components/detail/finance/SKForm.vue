@@ -115,7 +115,7 @@ export default {
           address: order.address_dealerCodeCredit, // 详细地址
           thenTotalAmntBal:order.thenTotalAmntBal,    //往来余额
           thenAmntBal:order.thenTotalAmntBal,    //往来余额
-          applicationAmount:order.thenAlreadyAmnt,   //申请金额
+          //applicationAmount:order.thenAlreadyAmnt,   //申请金额
           crDealerPaymentTerm: order.crDealerPaymentTerm,            //结算方式
           thenAlreadyAmnt: order.thenAlreadyAmnt,                    //本次收款
           differenceAmount: order.differenceAmount                   //本次收款后余额
