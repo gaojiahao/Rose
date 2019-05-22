@@ -210,7 +210,7 @@
       },
       // 选中项目经理
       selManager (val) {
-        let sel = val;
+        let sel = JSON.parse(val);
         this.$set(this.ProjectApproval, 'projectManagerName', sel.dealerName)
         this.$set(this.ProjectApproval, 'phoneNumber', sel.dealerMobilePhone)
         this.$set(this.ProjectApproval, 'projectManager', sel.dealerCode)
