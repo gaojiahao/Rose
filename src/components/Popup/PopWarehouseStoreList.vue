@@ -43,6 +43,7 @@
                   <!--联系人电话 -->
                   <div class="withColor">
                     <span class="name">{{item.warehouseName}}</span>
+                    <span class="type">{{item.warehouseCode}}</span>
                     <span class="type">{{item.warehouseType}}</span>
                   </div>
                   <!-- 地址 -->

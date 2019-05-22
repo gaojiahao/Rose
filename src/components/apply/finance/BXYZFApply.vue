@@ -249,13 +249,13 @@
         }     
       },
       project: {
-        handler(val) {
+        handler(newVal, oldVal) {
           // 修改项目名称，获取对应的项目类型
-          if (val.project) {
+          if (newVal.project&&(newVal.project!=oldVal.project)&&(JSON.stringify(oldVal) !=='{}')) {
             for (let item of this.baseinfoExtConfig) {
              if (item.fieldCode === 'project'){
                for (let dItem of item.remoteData){
-                 if (dItem.name === val.project){
+                 if (dItem.name === newVal.project){
                     this.project.projectType_project = dItem.PROJECT_TYPE;
                     this.project.dealerName_projectManager = dItem.projectManagerName;
                     this.project.expectStartDate_project = dItem.expectStartDate;

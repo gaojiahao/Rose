@@ -42,7 +42,7 @@
                   </div>
                   <div class="task_info" :class="{'when-is-fill': task.deadline_projectPlanTask && task.completeTime_projectPlanTask}">
                     <div class="task_info_item">
-                      <span class="task_info_title">计划截止日期: </span>
+                      <span class="task_info_title">计划结束日期: </span>
                       <span class="task_info_day">{{task.deadline_projectPlanTask || '无'}}</span>
                     </div>
                     <div class="task_info_item">
