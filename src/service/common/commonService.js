@@ -1,5 +1,5 @@
 import $flyio from 'plugins/ajax'
-
+let baseInfo;
 // 保存
 export let saveAndStartWf = (data = {}) => {
   return $flyio.ajax({
@@ -59,11 +59,10 @@ export let commitTask = (data = {}) => {
 // 获取当前用户信息(基础对象调用)
 export let getBaseInfoDataBase = () => {
   return new Promise(async (resolve, reject) => {
-    let {nickname, userId} = await $flyio.ajax({
-      url: '/H_roleplay-si/userInfo/currentUser',
-    }).then(data => {
+    let {currentUser} = await getBasicInfo().then(data => {
       return data
     })
+    let {nickname, userId} = currentUser;
     let {userGroupId = '', userGroupName = ''} = await $flyio.ajax({
       url: '/H_roleplay-si/ds/getUnitsByUserId',
       data: {
@@ -98,50 +97,25 @@ export let getBaseInfoDataBase = () => {
     })
   });
 };
-
-// 获取当前用户信息
-export let getBaseInfoData = () => {
-  return new Promise(async (resolve, reject) => {
-    // 当前用户
-    let {nickname, userId, userCode} = await $flyio.ajax({
-      url: '/H_roleplay-si/userInfo/currentUser',
-    }).then(data => {
-      return data
-    })
-    // 经办组织
-    let { tableContent: handleORG } = await $flyio.ajax({
-      url: '/H_roleplay-si/ds/getGroupByUserId',
-      data: {
-        userId,
-        page: 1,
-        start: 0,
-        limit: 10000
-      }
-    }).then(({tableContent = []}) => {
-      return { tableContent };
-    })
-    // 经办职位
-    let { tableContent: userRoleList } = await $flyio.ajax({
-      url: '/H_roleplay-si/ds/getRoleByUserId',
-      data: {
-        userId,
-        page: 1,
-        start: 0,
-        limit: 10000
-      }
-    }).then(({tableContent = []}) => {
-      return { tableContent }
-    })
-    resolve({
-      handleORG,    // 组织
-      userRoleList, // 职位
-      userId,       // id
-      nickname,     // 姓名
-      userCode,     // 工号
-    })
-  });
+//获取baseinfo信息
+export let getBasicInfo = (data ={})=> {
+  return new Promise((resolve,reject)=>{
+     if(baseInfo == null){
+        $flyio.ajax({
+          url: `/H_roleplay-si/app/getBasicInfo`,
+          data: {
+            _dc: Date.now(),
+          }
+        }).then(data=>{
+          baseInfo = data;
+          resolve(data);
+        })
+     } else {
+       resolve(baseInfo);
+     }
+  })
+  return 
 };
-
 // 获取视图列表
 export let getList = (viewId = 0, data = {}) => {
   return $flyio.ajax({
@@ -324,15 +298,6 @@ export let getPriceFromProcurementContract = (data = {}) => {
     data: JSON.stringify(data)
   })
 }
-//获取baseinfo信息
-export let getBasicInfo = (data ={})=> {
-  return $flyio.ajax({
-    url: `/H_roleplay-si/app/getBasicInfo`,
-    data: {
-      _dc: Date.now(),
-    }
-  })
-}
 // 获取提交页面表单配置
 export let getFormConfig = (viewId = '') => {
   return $flyio.ajax({
@@ -404,7 +369,6 @@ export default {
   submitAndCalc,
   getDictByValue,
   saveAndStartWf,
-  getBaseInfoData,
   saveAndCommitTask,
   getProcessStatus,
   getObjDealerByLabelName,

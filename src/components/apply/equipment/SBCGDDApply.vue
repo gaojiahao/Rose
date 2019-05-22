@@ -127,7 +127,6 @@
   import {getSOList} from 'service/detailService'
   import {
     saveAndStartWf,
-    getBaseInfoData,
     saveAndCommitTask,
     commitTask,
     getDictByType,

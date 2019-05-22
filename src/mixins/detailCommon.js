@@ -4,7 +4,6 @@ import {
   getListId, 
   getListById, 
   getWorkFlow, 
-  currentUser, 
   getFromStatus, 
   getAppExampleDetails 
 } from 'service/detailService'
@@ -123,13 +122,6 @@ export default {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
       }
       return (S4() + S4() + S4());
-    },
-    // 获取当前用户
-    getCurrentUser() {
-      return currentUser().then(({userId, nickname, userCode}) => {
-        this.userId = `${userId}`;
-        this.userName = `${nickname}-${userCode}`;
-      })
     },
     // 获取listid
     getListId() {
@@ -311,24 +303,18 @@ export default {
       }
       this.transCode = transCode;
       this.$loading.show();
-      /**
-       * getBaseInfoData 接口一般用于提交页面   
-       * 由于“项目任务(XMRW)”在详情页面 可进行“任务日志”的提交 此处是为防止重复请求
-       */
-      if (!this.getBaseInfoData) {
-        await this.getCurrentUser();  //查询 当前用户基本信息
-      }
-      await this.getListId();
-      await this.getBasicInfo();
-      await this.getFlowAndActions();
-      await this.getOrderList(transCode);   // 获取表单表单详情
-      await this.getFromStatus();
-      await this.getFormConfig();
-      await this.getFormViews();
-      await this.getAction();
-      await this.getCommentList();
-      await this.getAppExampleDetails();
-      await this.isSubscribeByRelationKey();
+      await this.getBasicInfo(); // 用户信息，ds服务器地址，是否客户端
+      await this.getListId();// listid,viewId信息
+     
+      await this.getFlowAndActions();// 流程信息,有可能替换viewId
+      await this.getOrderList(transCode);// 获取表单表单详情
+      await this.getFromStatus();// 表单状态
+      await this.getFormConfig();// 表单配置
+      await this.getFormViews();// 所有的视图列表
+      await this.getAction();// 获取列表权限
+      await this.getCommentList();// 请求评论列表
+      await this.getAppExampleDetails();// 获取相关实例
+      await this.isSubscribeByRelationKey(); //是否订阅
 
       this.$loading.hide();
 
@@ -392,7 +378,10 @@ export default {
     //请求baseinfo配置
     getBasicInfo() {
       return getBasicInfo().then(data => {
+        let {currentUser} = data;
         this.baseinfoConfig = data;
+        this.userId = `${currentUser.userId}`;
+        this.userName = `${currentUser.nickname}-${currentUser.userCode}`;
       });  
     },
     //请求二次配置
@@ -445,7 +434,7 @@ export default {
         this.config = config;
         console.log('config:', config);
         console.log('二次配置-reconfig:', reconfig);
-        this.findConfigInfo();
+        if(this.baseinfoConfig.clientFlag)this.findConfigInfo();//加载二次配置信息
         // 声明相关变量
         let [ 
           ckConfig,             // 出库 相关配置
