@@ -32,15 +32,15 @@
                                @click.native="delClick(index,item, key)" :class="{'vux-1px-b' : index < oItem.length-1 }">
                     <template slot-scope="{item}" slot="info">
                       <div class='mater_more'>
-                        <span>单位: {{item.measureUnit}}</span>
-                        <span>待下单余额: {{item.qtyBal}}</span>
+                        <span>主计量单位: {{item.measureUnit}}</span>
+                        <span>待加工数: {{item.qtyBal}}</span>
                       </div>
                       <div class="mater_more" v-show="item.shippingTime">
                         <span>成品计划验收日期:{{item.shippingTime}}</span>
                       </div>
                       <div class="mater_other" v-if="item.tdQty">
                         <div class="matter-remain">
-                          本次下单: {{item.tdQty}}
+                          本次加工: {{item.tdQty}}
                         </div>
                         <span class='check_bom' @click="checkBom(item, index,key)">查看原料</span>
                       </div>
@@ -89,8 +89,8 @@
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
+        <pop-matter :chosen-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false" :config="matterEditConfig" :check-amt="checkAmt">
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="本次下单" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
                      @on-blur="checkAmt(modifyMatter)"  @on-focus="getFocus($event)" placeholder="请输入"></x-input>
@@ -207,6 +207,14 @@
         this.bomPopShow = true;
         this.modifyBomTdqty = JSON.parse(JSON.stringify(item.boms))
       },
+      // 显示物料修改的pop
+      getMatterModify(item, index, key) {
+        this.matter = JSON.parse(JSON.stringify(item));
+        this.showMatterPop = true;
+        this.modifyIndex = index;
+        this.modifyKey = key;
+        this.modifyBomTdqty = [...item.boms]
+      },
       // 修改原料的损耗率
       bomConfirm (val) {
         let matter = JSON.parse(val);
@@ -220,6 +228,10 @@
         this.modifyIndex = index;
         this.modifyKey = key;
         this.modifyBomTdqty = [...item.boms]
+      },
+      // 校验单价
+      checkAmt(item, key, val) {
+        
       },
       // 更新修改后的物料信息
       selConfirm (val) {
@@ -259,7 +271,7 @@
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
-          promises.push(getJGDDBom({parentInvCode: item.inventoryCode}).then(({tableContent = []}) => {
+          promises.push(getJGDDBom({inventoryCode: item.inventoryCode}).then(({tableContent = []}) => {
             tableContent.forEach(bom => {
               let matchedBom = boms.find(item => bom.inventoryCode === item.inventoryCode) || {};
               let {specificLoss = bom.specificLoss} = matchedBom;
@@ -307,6 +319,11 @@
         }
         arr.push(sItem);
       },
+      // 展开可删除状态
+      showDelete() {
+        this.matterModifyClass = ! this.matterModifyClass;
+        this.selItems = [];
+      },
       // 判断是否展示选中图标
       showSelIcon (sItem) {
         return this.findIndex(this.selItems, sItem) !== -1;
@@ -349,7 +366,7 @@
             // 删除bom
             this.selItems.forEach(item=> {
               item.boms.forEach(BItem=> {
-                this.UniqueBom.forEach((Aitem, index) => {
+                this.UniqueBom.forEach((AItem, index) => {
                   if (BItem.inventoryCode === AItem.inventoryCode) {
                     let tdQty = accSub(AItem.tdQty,BItem.tdQty)
                     AItem.tdQty = toFixed(tdQty);

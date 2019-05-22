@@ -145,7 +145,7 @@ import { constants } from 'crypto';
           this.attachment = attachment;
           // 获取合计
           let {dataSet} = formData.outPut;
-          for (let item of order.dataSet) {
+          for (let item of formData.order.dataSet) {
             item.inventoryPic = item.inventoryPic_transObjCode
               ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
@@ -157,7 +157,7 @@ import { constants } from 'crypto';
                 // 接口返回的tdQty有误，自己手动计算
                 // bom.tdQty = accMul(bom.bomQty, item.tdQty, (1 + bom.bomSpecificLoss));
                 //bom.tdQty = accSub(accMul(item.processQty, bom.bomQty, (1 + bom.bomSpecificLoss)), bom.lockQty);
-                for(let obom of dataSet) {
+                for(let obom of formData.outPut.dataSet) {
                   if(obom.outPutMatCode == bom.transObjCode) {
                     //console.log('bom.transObjCode',bom.transObjCode)
                     bom.qtyStock = obom.thenQtyStock;

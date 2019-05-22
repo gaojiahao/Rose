@@ -154,7 +154,7 @@ export let getPurchaseInNeeds = (data = {}) => {
 // 获取加工订单Bom
 export let getJGDDBom = (data = {}) => {
   return $flyio.ajax({
-    url: '/H_roleplay-si/ds/getInProcessingOrderBom',
+    url: '/H_roleplay-si/ds/getProcessingOrderSumSource',
     data: {
       _dc: Date.now(),
       ...data
