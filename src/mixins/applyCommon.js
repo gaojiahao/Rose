@@ -11,7 +11,7 @@ import {
   requestData, 
   getFormViews,
   getFormConfig, 
-  getBaseInfoData, 
+  getBasicInfo, 
   getProcessStatus, 
 } from 'service/common/commonService'
 // 组件引入
@@ -704,7 +704,10 @@ export default {
     },
     // 获取用户基本信息
     getBaseInfoData() {
-      getBaseInfoData().then(({handleORG, userRoleList, ...basicUserInfo}) => {
+      getBasicInfo().then(({currentUser}) => {
+        let handleORG = currentUser.sysDeptList,
+            userRoleList = currentUser.sysRoleList;
+
         this.handleORG = handleORG;
         this.userRoleList = userRoleList;
 
@@ -727,13 +730,13 @@ export default {
         }
         else {
           defaultUserInfo = {
-            handler: basicUserInfo.userId,  // 用户id
-            handlerName: basicUserInfo.nickname,  //用户名称
+            handler: currentUser.userId,  // 用户id
+            handlerName: currentUser.nickname,  //用户名称
             handlerUnit: firstORG.groupId,  // 用户组织id
             handlerUnitName: firstORG.groupName,  // 用户组织名称
-            handlerRole: firstRole.roleId || '',  // 用户职位id
-            handlerRoleName: firstRole.roleName || '',  // 用户职位名称
-            userCode: basicUserInfo.userCode, // 用户工号
+            handlerRole: firstRole.id || '',  // 用户职位id
+            handlerRoleName: firstRole.name || '',  // 用户职位名称
+            userCode: currentUser.userCode, // 用户工号
           }
         }
 

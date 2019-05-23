@@ -34,7 +34,8 @@
 </template>
 
 <script>
-import { getWorkFlow, currentUser } from "service/detailService";
+import { getWorkFlow} from "service/detailService";
+import {currentUser} from 'service/homeservice';
 import { dateFormat } from "vux";
 import RScroll from "plugins/scroll/RScroll";
 

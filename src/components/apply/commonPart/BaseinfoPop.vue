@@ -197,7 +197,7 @@
         this.selItems.handlerRoleName = val;
         this.roleList.forEach(item => {
           if (item.name === val) {
-            this.selItems.handlerRole = item.userGroupId;
+            this.selItems.handlerRole = item.id;
             return false;
           }
         });
@@ -285,7 +285,7 @@
           this.groupList.push({
             ...item,
             name: item.userGroupName,
-            value: item.userGroupName,
+            value: item.userGroupName
           })
         });
       },
@@ -295,8 +295,7 @@
         this.userRoleList.forEach(item => {
           this.roleList.push({
             ...item,
-            name: item.userGroupName,
-            value: item.userGroupName,
+            value: item.name,
           })
         });
       },
@@ -329,13 +328,12 @@
           tableContent.forEach(item => {
             this.roleList.push({
               ...item,
-              name: item.userGroupName,
-              value: item.userGroupName,
+              value: item.name,
             })
           });
           if (tableContent.length && this.isSetInitial) {
-            this.role = tableContent[0].userGroupName;
-            this.selItems.handlerRole = tableContent[0].userGroupId;
+            this.role = tableContent[0].name;
+            this.selItems.handlerRole = tableContent[0].id;
           }
           ;
         })

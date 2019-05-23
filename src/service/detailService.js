@@ -31,14 +31,6 @@ export let getSOList = (data = {}) => {
         data
     })
 }
-// 获取当前用户
-export let currentUser = (_dc = '') => {
-    return $flyio.ajax({
-        url: '/H_roleplay-si/userInfo/currentUser',
-        _dc
-    })
-}
-
 // 获取物料价格
 export let getSaleQuotePrice = (data = {}) => {
   return $flyio.ajax({
