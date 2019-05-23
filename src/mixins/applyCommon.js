@@ -919,6 +919,7 @@ export default {
       item.noTaxAmount = toFixed(accMul(price, tdQty));
       item.taxAmount = toFixed(accMul(item.noTaxAmount, taxRate));
       item.tdAmount = toFixed(accAdd(item.noTaxAmount, item.taxAmount));
+      item.assistQty = toFixed(accDiv(item.qty,item.invSubUnitMulti));
     },
     // 将物料配置拆分成属性和可编辑部分
     splitConfig(editMatterPop, editMatterPopConfig) {

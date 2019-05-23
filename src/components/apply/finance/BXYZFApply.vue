@@ -251,7 +251,7 @@
       project: {
         handler(newVal, oldVal) {
           // 修改项目名称，获取对应的项目类型
-          if (newVal.project&&(newVal.project!=oldVal.project)&&(JSON.stringify(oldVal) !=='{}')) {
+          if (newVal.project) {
             for (let item of this.baseinfoExtConfig) {
              if (item.fieldCode === 'project'){
                for (let dItem of item.remoteData){
@@ -264,7 +264,9 @@
                     this.project.budgetIncome_project = dItem.budgetIncome;
                     this.project.tdProjectId_project = dItem.projectApprovalId;
                     this.matterParams.data.project = dItem.projectApprovalId;
-                    this.costList = [{}];
+                    if((newVal.project!=oldVal.project)&&(JSON.stringify(oldVal) !=='{}')) {
+                      this.costList = [{}];
+                    }
                     for(let i=0; i < this.costList.length; i++) {
                       this.costList[i].departmentName =  this.$refs.baseChild.group || this.handlerDefault.handlerUnitName
                     }
