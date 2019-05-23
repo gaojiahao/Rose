@@ -966,9 +966,9 @@ export default {
           'dealerCreditContactInformation'
         ];
         // 处理将数据源配置在data中的情况
-        if (dataSource) {
-          this.handleAccountDS(dataSource,matterCols);
-        }
+        //if (dataSource) {
+        // this.handleAccountDS(dataSource,matterCols);
+        //}
         console.log('config:', config);
         let {dealerConfig,matterConfig,otherConfig,baseinfoExtConfig,fundConfig} = this.handleCfg(config,reconfig);
         
@@ -977,7 +977,9 @@ export default {
         this.handleOtherCfg(otherConfig);
         this.handleBaseinfoExtCfg(baseinfoExtConfig,dealerFilter);
         this.handleFundCfg(fundConfig);
-
+        if (dataSource) {
+          this.handleAccountDS(dataSource,matterCols);
+        }
       })
     },
     // 处理配置中数据请求
