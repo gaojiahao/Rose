@@ -36,7 +36,7 @@
 
 <script>
 // vux组件引入
-import { XTextarea } from 'vux'
+import { dateFormat, XTextarea } from 'vux'
 // 请求 引入
 import {getSOList} from 'service/detailService'
 import {submitAndCalc, saveAndStartWf, getDictByType, saveAndCommitTask} from 'service/common/commonService'
@@ -84,6 +84,9 @@ export default {
     consumables:{
       handler(val){
         this.simpleCalcMatter(val)
+        if(val.promDeliTime) {
+          val.shippingTime = this.getShippingTime(val.promDeliTime,val.leadTime);
+        }
       },
       deep:true
     },
@@ -102,6 +105,37 @@ export default {
     }
   },
   methods: {
+    //下单截止日自动计算
+    getShippingTime(promDeliTime,leadTime) {
+      let pTime = promDeliTime,
+        lTime = leadTime,
+        newDate,
+        i = 0,
+        day,
+        n;
+      if(promDeliTime) {
+        lTime = lTime || 0;
+        newDate = new Date(pTime);
+        if(lTime >=5) {
+          n = Math.floor(lTime / 5);
+          newDate.setDate(newDate.getDate() + (-n * 7))
+          //newDate = addDate(newDate, -n * 7);
+          lTime = lTime % 5;
+        }
+        for(i=0;i<lTime;i++) {
+          day = newDate.getDay();
+          day === 0 && (newDate.setDate(newDate.getDate() + (-2)));
+          day === 6 && (newDate.setDate(newDate.getDate() + (-1)));
+          //day === 0 && (newDate = addDate(newDate,-2));
+          //day === 6 && (newDate = addDate(newDate,-1));
+          newDate.setDate(newDate.getDate() + (-1))
+        }
+        if([6,0].indexOf((day = newDate.getDay())) != -1) {
+          newDate = addDate(newDate,day == 6 ? -1 : -2);
+        }
+        return dateFormat(newDate,'YYYY-MM-DD');
+      }
+    },
     // 显示物料修改的pop
     getMatterModify(item, index, key) {
       this.consumables = JSON.parse(JSON.stringify(item));

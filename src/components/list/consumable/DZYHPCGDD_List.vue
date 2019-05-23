@@ -31,7 +31,7 @@ export default {
           name: '物料编码',
           value: 'inventoryCode_transObjCode',
         }, {
-          name: '申请号',
+          name: '交易号',
           value: 'transCode',
         },
         {
