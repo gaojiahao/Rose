@@ -10,7 +10,8 @@ import columnItem from './components/public/column/Item'
 import columnTitle from './components/public/column/Title'
 import fieldset from './components/public/Fieldset'
 import grid from './components/public/Grid'
-import { AlertPlugin, ConfirmPlugin, ToastPlugin, TransferDom, DatetimePlugin  } from 'vux'
+import transactorView from './components/public/TransactorView'
+import { AlertPlugin, ConfirmPlugin, ToastPlugin, TransferDom, DatetimePlugin } from 'vux'
 import Loading from 'plugins/loading/pageLoad/loading'
 import HandleLoad from 'plugins/loading/handleLoad/handleLoading'
 
@@ -33,7 +34,7 @@ Vue.config.productionTip = true
 // 此处声明空实例 用于非父子组件之间传值
 Vue.prototype.$event = new Vue();
 
-router.afterEach( route => {
+router.afterEach(route => {
   document.title = route.meta.title || '';
 })
 
