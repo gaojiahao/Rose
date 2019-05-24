@@ -56,6 +56,7 @@
 <script>
 // 接口引入
 import homeService from "service/homeservice";
+import tokenService from "service/tokenService";
 import { getMsgList } from "service/msgService";
 // 映射表引入
 import basicMap from "./maps/basic";
@@ -86,9 +87,7 @@ export default {
       // 获取首页应用列表
       await this.initMenu();
       // 获取 头像姓名
-      let { name, avatar, position } = JSON.parse(
-        sessionStorage.getItem("ROSE_LOGIN_TOKEN")
-      );
+      let { name, avatar, position } = tokenService.getToken(true);
       // 如果头像不存在则指定默认头像
       if (!avatar) {
         let url = this.userInfo.photo;
@@ -213,12 +212,11 @@ export default {
       this.showDrop = false;
       this.$loading.show();
       homeService.changeEntity({ entityId: item.groupCode }).then(data => {
-        let tokenInfo = sessionStorage.getItem("ROSE_LOGIN_TOKEN");
+        let tokenInfo = tokenService.getToken(true);
         if (tokenInfo) {
-          tokenInfo = JSON.parse(tokenInfo);
           tokenInfo.entityId = data.entityId;
           tokenInfo.token = data.token;
-          sessionStorage.setItem("ROSE_LOGIN_TOKEN", JSON.stringify(tokenInfo));
+          tokenService.setToken(tokenInfo);
           location.reload();
         }
       });
