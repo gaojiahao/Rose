@@ -75,7 +75,7 @@ export default {
           name: '物料编码',
           value: 'inventoryCode',
         }, {
-          name: '申请单',
+          name: '入库单号',
           value: 'transCode',
         }
       ]
