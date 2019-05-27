@@ -11,16 +11,16 @@
             <span class="cp-ads">{{dealerInfo.dealerName || dealerInfo.nickname}}</span>
           </div>
           <div class="cp-info">
-            <span class="cp-ads-box">地址</span>
+            <span class="cp-ads-box">联系地址</span>
             <span class="cp-ads" >{{dealerInfo.address}}</span>
           </div>
           <div class="cp-info">
             <span class="cp-ads-box">往来关系</span>
-            <div class="cp-ads">{{dealerInfo.dealerLabelName}}</div>
+            <span class="cp-ads">{{dealerInfo.dealerLabelName}}</span>
           </div>
           <div class="cp-info" style=" display:none;">
             <span class="cp-ads-box">往来余额</span>
-            <div class="cp-ads">{{dealerInfo.amntBal}}</div>
+            <span class="cp-ads">{{dealerInfo.amntBal}}</span>
           </div>
         </div>
         <span class='icon-right'></span>
@@ -508,6 +508,7 @@ export default {
             color: #111;
             display: flex;
             margin-top: .06rem;
+            line-height: .1rem;
             .icon-dealer-address {
               margin-top: .03rem;
               width: .12rem;

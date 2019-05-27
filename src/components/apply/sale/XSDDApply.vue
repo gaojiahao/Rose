@@ -70,7 +70,7 @@ export default {
       ],
       customPrice: '',  //缓存用户自定义的单价
       formData: {},
-      selItems: {},
+      //selItems: {},
       orderList: {},
       dealerInfo: {},
       contactInfo: {},
@@ -150,6 +150,11 @@ export default {
   mixins: [common],
   filters: { numberComma },
   methods: {
+    // 展开可删除状态
+    showDelete() {
+      this.matterModifyClass = ! this.matterModifyClass;
+      this.selItems = [];
+    },
     // 选中的客户
     selDealer(val) {
       let matterParams = this.matterParams;
@@ -279,28 +284,18 @@ export default {
     },
     // 选择要删除的物料
     delClick(sItem, index, key) {
-      let arr = this.selItems[key];
-      if (arr) {
-        let delIndex = arr.findIndex(item => item === index);
-        if (delIndex !== -1) {
-          arr.splice(delIndex, 1);
-          if (!arr.length) delete this.selItems[key];
-          return;
-        }
-        arr.push(index);
+      let arr = this.selItems;
+      let delIndex = arr.findIndex(item => item === index);
+      //若存在重复的 则清除
+      if (delIndex !== -1) {
+        arr.splice(delIndex, 1);
+        return;
       }
-      else {
-        this.$set(this.selItems, key, [index])
-      }
+      arr.push(index);
     },
     // 删除的选中状态
     showSelIcon(sItem, index) {
-      // if (sItem.transCode) {
-      //   return this.selItems[sItem.transCode] && this.selItems[sItem.transCode].findIndex(item => item === index) !== -1;
-      // }
-      // else {
-        return this.checkList.includes(index);
-      // }
+      return this.selItems.includes(index);
     },
     // 全选
     checkAll() {
@@ -325,7 +320,8 @@ export default {
 
           // 被选中删除的物料
           let selItems = this.selItems, checkList = this.checkList;
-          
+          console.log('selItems',selItems)
+          console.log('orderList',this.orderList)
           for (let key in this.selItems) {
             // 当没有对应的交易单号
             if (key === 'noCode') {
@@ -342,10 +338,10 @@ export default {
             // 当存在对应的交易单号
             else {
               // 将orderList中对应交易号的物料 按照selItems中的索引删除
-              let newIndexs = this.selItems[key].map((val, idx) => val - idx);              
-              newIndexs.forEach((sItem, sIndex) => {
-                this.orderList[key].splice(sItem, 1);
-              }) 
+              // let newIndexs = this.selItems[key].map((val, idx) => val - idx);              
+              // newIndexs.forEach((sItem, sIndex) => {
+              //   this.orderList[key].splice(sItem, 1);
+              // }) 
               if (!this.orderList[key].length) {
                 delete this.orderList[key]
               }
