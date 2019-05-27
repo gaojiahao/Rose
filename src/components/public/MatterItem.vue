@@ -1,6 +1,9 @@
 <template>
   <!-- 单个物料 (嵌套于matterList中) -->
   <div class="matter-item-container">
+    <div class="order_code" v-if="item.transCode || item.transMatchedCode">
+      <span class="order_num">{{item.transCode || item.transMatchedCode}}</span>
+    </div>
     <div class="matter-main">
       <img class="matter_img" :src="item.inventoryPic" alt="mater_img" @error="getMatterDefault(item)">
       <div class="matter_info">
@@ -127,19 +130,19 @@
       margin-left: .12rem;
     }
     .matter_name {
-      line-height: .24rem;
-      font-size: .16rem;
+      //line-height: .24rem;
+      font-size: .14rem;
       font-weight: 500;
     }
     .matter_info_item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: .16rem;
+      margin-top: .05rem;
       line-height: .12rem;
       font-size: .12rem;
       & + .matter_info_item {
-        margin-top: .12rem;
+        margin-top: .05rem;
       }
       &.flex-start {
         justify-content: flex-start;
@@ -158,7 +161,7 @@
         }
       }
       &.matter_price_top {
-        margin-top: .16rem;
+        margin-top: .05rem;
       }
     }
     .matter_detail {
@@ -195,4 +198,34 @@
       font-size: .12rem;
     }
   }
+  .order_code {
+      display: flex;
+      position: relative;
+      line-height: .16rem;
+      color: #999;
+      font-size: .12rem;
+      > span {
+        display: inline-block;
+      }
+      .order_num {
+        position: relative;
+        &:before {
+          top: 0;
+          bottom: 0;
+          content: " ";
+          width: .08rem;
+          left: -.15rem;
+          color: #3296FA;
+          position: absolute;
+          transform-origin: 0 0;
+          transform: scaleX(0.5);
+          border-left: .08rem solid #3296FA;
+        }
+      }
+      // 订单号
+      // .order_num {
+      //   //color: #696969;
+      //   color: #3296FA;
+      // }
+    }
 </style>

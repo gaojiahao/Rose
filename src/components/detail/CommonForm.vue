@@ -152,7 +152,6 @@ export default {
           }
         });
         this.config = data;
-        console.log('config',config)
         this.fieldSets = config;
       });
     },
@@ -205,6 +204,7 @@ export default {
                 }, []);
                 this.matterConfig = matterConfig;
                 this.setMatterConfig(this.matterList);
+                console.log(this.matterList)
             }
         });
     },
