@@ -2,17 +2,18 @@
   <!--通用form组件-->
   <div class="detail_wrapper">
     <div class="basicPart">
+      <baseinfo-view :values="baseinfo"></baseinfo-view>
       <!-- 经办信息 （订单、主体等）TransactorView -->
       <transactor-view :values="transactor"></transactor-view>
       <matter-list-view :matterList="matterList" :matterConfig="matterConfig"></matter-list-view>
       <!-- 工作流 -->
-        <!-- <work-flow
+      <!-- <work-flow
           :work-flow-info="workFlowInfo"
           :full-work-flow="fullWL"
           :userName="userName"
           :is-my-task="isMyTask"
           :no-status="orderInfo.biStatus"
-        ></work-flow>-->
+      ></work-flow>-->
       <div v-for="(fieldSet,index) in fieldSets" :key="index">
         <r-fieldset
           :cfg="fieldSet"
@@ -59,6 +60,8 @@ export default {
       config:{},
       matterList: [],           //物料列表
       matterConfig: [],         //物料配置
+      //经过处理的基本信息
+      baseinfo: {}
     };
   },
   methods: {
@@ -94,7 +97,17 @@ export default {
         }
       }
       this.formData = formData;
-
+      //预估以下mapping在未来业务上是确定的所以可以通过以下代码进行固化
+      //mapping 基本信息
+      this.baseinfo = {
+        createBy: formData.creatorName,
+        createAt: formData.crtTime,
+        modifyBy: formData.modiferName,
+        modifyAt: formData.modTime,
+        status: formData.biStatus,
+        effectiveTime:formData.effectiveTime
+      };
+      //mapping 经办人信息
       this.transactor = {
         name: formData.handlerName,
         position: formData.handlerRoleName,
