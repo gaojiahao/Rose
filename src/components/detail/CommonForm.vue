@@ -6,6 +6,7 @@
       <!-- 经办信息 （订单、主体等）TransactorView -->
       <transactor-view :values="transactor"></transactor-view>
       <matter-list-view :matterList="matterList" :matterConfig="matterConfig"></matter-list-view>
+      <bom-list-view :boms="uniqueBom"></bom-list-view>
       <!-- 工作流 -->
       <!-- <work-flow
           :work-flow-info="workFlowInfo"
@@ -14,7 +15,7 @@
           :is-my-task="isMyTask"
           :no-status="orderInfo.biStatus"
       ></work-flow>-->
-      <div v-for="(fieldSet,index) in fieldSets" :key="index">
+      <!-- <div v-for="(fieldSet,index) in fieldSets" :key="index">
         <r-fieldset
           :cfg="fieldSet"
           v-if="fieldSet.hiddenInRun == false && 'r2FieldSet' == fieldSet.xtype && fieldSet.isMultiple == false"
@@ -25,7 +26,7 @@
           :values="formData"
           v-if="fieldSet.xtype.indexOf('Grid') != -1 || fieldSet.isMultiple == true"
         />
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -61,7 +62,8 @@ export default {
       matterList: [],           //物料列表
       matterConfig: [],         //物料配置
       //经过处理的基本信息
-      baseinfo: {}
+      baseinfo: {},
+      uniqueBom: [],            //合并去重后的bom
     };
   },
   methods: {
@@ -178,6 +180,9 @@ export default {
                         each['isBomGrid'] = true;
                         })
                     }
+                    if (item.xtype === 'r2BomGridIPPO') {
+                        this.uniqueBom = this.formData.outPut;
+                    }
                     matterConfig = item.items;
                     dataIndexMap = item.dataIndexMap || {};
                     hasDataIndexMap = !!Object.keys(dataIndexMap).length;
@@ -204,7 +209,6 @@ export default {
                 }, []);
                 this.matterConfig = matterConfig;
                 this.setMatterConfig(this.matterList);
-                console.log(this.matterList)
             }
         });
     },

@@ -32,16 +32,6 @@ var component = {
         return []
       }
     },
-    orderList: {
-      type: Object,
-      default() {
-        return {}
-      }
-    },
-    orderTitle: {
-      type: String,
-      default: ''
-    },
     btnIsHide: {
         type: Boolean,
         default: false

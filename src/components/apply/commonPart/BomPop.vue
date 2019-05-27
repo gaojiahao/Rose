@@ -4,34 +4,51 @@
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
         <r-scroll class="mater_list" :options="scrollOptions" ref="bScroll">
-          <div class="bom-container" v-if="bomInfo.boms && bomInfo.boms.length">
+          <div class="bom-container" v-if="bomInfo">
             <div class="title vux-1px-b">bom</div>
-            <div class="each-bom-part vux-1px-b" v-for="(bom, bIndex) in bomInfo.boms" :key="bIndex">
+            <div class="each-bom-part vux-1px-b">
               <div class="main-info-part">
-                <div class="main-top" v-if="bom.warehouseName || bom.warehouseCode">
-                  <span class="content-title" v-if="bom.warehouseName">{{bom.warehouseName}}</span>
-                  <span class="side-bar vux-1px-r" v-if="bom.warehouseName"></span>
-                  <span class="content-info" v-if="bom.warehouseCode">{{bom.warehouseCode}}</span>
+                <div class="main-top" v-if="bomInfo.warehouseCode || bomInfo.warehouseName">
+                  <span class="content-title" v-if="bomInfo.warehouseName">{{bomInfo.warehouseName}}</span>
+                  <span class="side-bar vux-1px-r" v-if="bomInfo.warehouseName"></span>
+                  <span class="content-info" v-if="bomInfo.warehouseCode">{{bomInfo.warehouseCode}}</span>
+                </div>
+                <div class="main-content">
+                  <div class="content-name">
+                    <!-- <span class="iconfont icon-bianma"></span> -->
+                    <span>物料名称: {{bomInfo.inventoryName}}</span>
+                  </div>
+                  <div class="content-unit">
+                    物料编码:{{bomInfo.inventoryCode}}
+                  </div>
                 </div>
                 <div class="main-content">
                   <div class="content-unit">
-                    <span class="iconfont icon-bianma"></span>
-                    <span>物料编码: {{bom.inventoryCode}}</span>
+                    <span>计量单位: {{bomInfo.measureUnit_outPutMatCode}}</span>
                   </div>
-                  <div class="content-name">
-                    {{bom.inventoryName}}
+                  <div class="content-unit">
+                    <span>加工属性: {{bomInfo.processing_outPutMatCode}}</span>
+                  </div>
+                  <div class="content-unit">
+                    <span>获取方式: {{bomInfo.productSource}}</span>
+                  </div>
+                  <div class="content-unit">
+                    <span>BOM需求: {{bomInfo.tdQty}}</span>
+                  </div>
+                  <div class="content-unit">
+                    <span>在库库存: {{bomInfo.thenQtyStock}}</span>
+                  </div>
+                  <div class="content-unit">
+                    <span>在途占用: {{bomInfo.thenLockQtyStock}}</span>
+                  </div>
+                  <div class="content-unit">
+                    <span>在库计划: {{bomInfo.lockQty}}</span>
+                  </div>
+                  <div class="content-unit">
+                    <span>计划需求日: {{bomInfo.processingStartDate}}</span>
                   </div>
                 </div>
-                <slot :bom="bom" name="bom-left"></slot>
-              </div>
-              <div class="edit_info">
-                <slot :bom="bom" name="number">
-                  <div class="number-part">
-                    <span class="main-number">本次扣料: {{bom.tdQty}}{{bom.measureUnit}}</span>
-                    <span class="number-unit">可用余额: {{bom.qtyStock}}</span>
-                  </div>
-                </slot>
-                <div class="specific_loss" @click="modifyBom(bom)" v-show="isEdit && !noSpecificLoss">{{specificLossText}}: {{bom.specificLoss}}<span class="iconfont icon-bianji1"></span></div>
+                <slot :bom="bomInfo" name="bom-left"></slot>
               </div>
             </div>
           </div>
@@ -153,7 +170,6 @@ export default {
       this.btnNext = '确认';
     },
   }
-
 }
 </script>
 
