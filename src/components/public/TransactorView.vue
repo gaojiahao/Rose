@@ -3,24 +3,13 @@
   <div class="basic-container">
     <div class="basic-info-main">
       <header class="basic_header">
-        <div class="basic_title vux-1px-l">经办信息</div>
+        <div class="basic_title vux-1px-l">经办：{{values.name}}</div>
       </header>
       <div class="basic_detail">
         <div class="basic_detail_wrapper">
-          <div class="basic_detail_item">
-            <span class="basic_detail_title"></span>
-            <span class="basic_detail_value">{{values.entity}}</span>
-          </div>
-        </div>
-        <div class="basic_detail_wrapper">
-          <div class="basic_detail_item">
-            <span class="basic_detail_title"></span>
-            <span class="basic_detail_value">{{values.name}}</span>
-          </div>
-          <div class="basic_detail_item">
-            <span class="basic_detail_title"></span>
-            <span class="basic_detail_value">{{values.unit}}</span>
-          </div>
+          <span class="basic_detail_value">{{values.position}}</span>
+          <span class="basic_detail_value">{{values.unit}}</span>
+          <span class="basic_detail_value">{{values.entity}}</span>
         </div>
       </div>
     </div>
@@ -94,12 +83,6 @@ export default Vue.component("TransactorView", component);
       margin-top: 0.1rem;
       &.spec_part {
         margin-top: 0.2rem;
-      }
-    }
-    .basic_detail_item {
-      display: flex;
-      & + .basic_detail_item {
-        margin-left: 0.2rem;
       }
     }
     .basic_detail_title {
