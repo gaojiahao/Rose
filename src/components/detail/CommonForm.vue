@@ -4,6 +4,7 @@
     <div class="basicPart">
       <!-- 经办信息 （订单、主体等）TransactorView -->
       <transactor-view :values="transactor"></transactor-view>
+      <matter-list-view :matterList="matterList" :matterConfig="matterConfig"></matter-list-view>
       <!-- 工作流 -->
         <!-- <work-flow
           :work-flow-info="workFlowInfo"
@@ -28,6 +29,7 @@
   </div>
 </template>
 <script>
+import { numberComma } from 'vux'
 // 请求 引入
 import {
   isMyflow,
@@ -53,7 +55,10 @@ export default {
       fieldSets: [],
       formData: {},
       //经过处理的经办人信息
-      transactor: {}
+      transactor: {},
+      config:{},
+      matterList: [],           //物料列表
+      matterConfig: [],         //物料配置
     };
   },
   methods: {
@@ -109,6 +114,7 @@ export default {
       await this.getListId(transCode);
       await this.loadFormCfg();
       await this.loadFormData(transCode);
+      await this.getMatterConfig(this.config);
     },
     loadFormData(transCode) {
       return getSOList({
@@ -132,7 +138,91 @@ export default {
               });
           }
         });
+        this.config = data;
+        console.log('config',config)
         this.fieldSets = config;
+      });
+    },
+    //获取物料配置
+    getMatterConfig(data) {
+        let {config = [], dataSource = '[]', reconfig = {}} = data;
+        let [matterData = {}] = JSON.parse(dataSource);
+        let matterSource = matterData.dataSource && JSON.parse(matterData.dataSource.source) || {};
+        let matterCols = matterSource.cols || []; // 数据源列
+        let dataIndexMap = {}; // 映射表
+        let hasDataIndexMap = false; // 是否存在映射表
+        let matterConfig = [];
+
+        config.forEach(item => {
+            if (!item.hiddenInRun && item.isMultiple) {
+                if (item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
+                    if (item.r2GridXtype) {
+                        item.items.forEach(each => {
+                        each['r2GridXtype'] = item.r2GridXtype;
+                        })
+                    }
+                    if (item.xtype === 'r2BomGridWTSK') {
+                        item.items.forEach(each => {
+                        each['isBomGrid'] = true;
+                        })
+                    }
+                    matterConfig = item.items;
+                    dataIndexMap = item.dataIndexMap || {};
+                    hasDataIndexMap = !!Object.keys(dataIndexMap).length;
+                    this.matterList = this.formData[item.name];
+                }
+                matterConfig = matterConfig.reduce((arr, item, index) => {
+                    // 匹配 *映射表字段*
+                    let key = dataIndexMap[item.fieldCode];
+                    // 根据 *数据源* 查询映射表中存在字段 
+                    let matchedCol = matterCols.find(col => col.k === key);
+                    // 判断是否存在映射关系，若有映射关系，则判断是否有该字段且判断字段是否隐藏，没有映射关系则直接展示
+                    let needShow = key ? (matchedCol ? !item.hidden : false) : true;
+                    if (matterCols.length) {
+                        if (!item.hidden && needShow) {
+                        arr.push(item);
+                        }
+                    }
+                    else {
+                        if (!item.hidden) {
+                            arr.push(item) 
+                        }
+                    }          
+                    return arr
+                }, []);
+                this.matterConfig = matterConfig;
+                this.setMatterConfig(this.matterList);
+            }
+        });
+    },
+    //设置物料的动态渲染部分
+    setMatterConfig(arr) {
+      let numTypeList = ['r2Numberfield', 'r2Percentfield', 'r2Permilfield'];
+      let matterConfig = this.matterConfig;
+      arr.forEach(matter => {
+        let others = [];
+        let dates = [];
+        let matterComment = {};
+        matterConfig.forEach(item => {
+          item = {...item};
+
+          item.value = numTypeList.includes(item.editorType) 
+            ? numberComma(matter[item.fieldCode]) || '0' 
+            : matter[item.fieldCode] || '无';
+
+          if (item.editorType === 'r2Datefield') {
+            dates.push(item);
+          } 
+          else if (item.fieldCode === 'comment') {
+            matterComment = item;
+          } 
+          else {
+            others.push(item);
+          }
+        });
+        matter.others = others;
+        matter.dates = dates;
+        matter.matterComment = matterComment;
       });
     }
   },
