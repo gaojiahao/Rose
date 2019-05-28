@@ -5,8 +5,6 @@
       <baseinfo-view :values="baseinfo"></baseinfo-view>
       <!-- 经办信息 （订单、主体等）TransactorView -->
       <transactor-view :values="transactor"></transactor-view>
-      <matter-list-view :matterList="matterList" :matterConfig="matterConfig"></matter-list-view>
-      <bom-list-view :boms="uniqueBom"></bom-list-view>
       <!-- 工作流 -->
       <!-- <work-flow
           :work-flow-info="workFlowInfo"
@@ -15,7 +13,7 @@
           :is-my-task="isMyTask"
           :no-status="orderInfo.biStatus"
       ></work-flow>-->
-      <!-- <div v-for="(fieldSet,index) in fieldSets" :key="index">
+      <div v-for="(fieldSet,index) in fieldSets" :key="index">
         <r-fieldset
           :cfg="fieldSet"
           v-if="fieldSet.hiddenInRun == false && 'r2FieldSet' == fieldSet.xtype && fieldSet.isMultiple == false"
@@ -26,7 +24,11 @@
           :values="formData"
           v-if="fieldSet.xtype.indexOf('Grid') != -1 || fieldSet.isMultiple == true"
         />
-      </div> -->
+        <matter-list-view :cfg="{items:[fieldSet]}" :values="formData" :name="fieldSet.name" 
+            v-if="('r2FieldSet' == fieldSet.xtype && fieldSet.isMultiple == true) || 
+            (fieldSet.xtype.indexOf('Grid') != -1 && fieldSet.isMultiple == true)" 
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -46,7 +48,8 @@ import {
 import {
   getFormViews,
   getFormConfig,
-  saveAndCommitTask
+  saveAndCommitTask,
+  getNewFormConfig
 } from "service/common/commonService";
 export default {
   data() {
@@ -59,11 +62,8 @@ export default {
       //经过处理的经办人信息
       transactor: {},
       config:{},
-      matterList: [],           //物料列表
-      matterConfig: [],         //物料配置
       //经过处理的基本信息
       baseinfo: {},
-      uniqueBom: [],            //合并去重后的bom
     };
   },
   methods: {
@@ -129,7 +129,6 @@ export default {
       await this.getListId(transCode);
       await this.loadFormCfg();
       await this.loadFormData(transCode);
-      await this.getMatterConfig(this.config);
     },
     loadFormData(transCode) {
       return getSOList({
@@ -140,8 +139,10 @@ export default {
       });
     },
     loadFormCfg() {
-      return getFormConfig(this.formViewUniqueId).then(data => {
-        let { config = [], dataSource = "[]", reconfig = {} } = data;
+      return getNewFormConfig(this.formViewUniqueId).then(data => {
+        let obj = JSON.parse(data.config);
+        let config = obj.items;
+        let reconfig = obj.reconfig;
         config.forEach(item => {
           if (item.formViewPartId) {
             let reconfigData = reconfig[`_${item.formViewPartId}`] || {};
@@ -153,95 +154,15 @@ export default {
               });
           }
         });
-        this.config = data;
+        console.log('config',config);
+        this.config = {
+            config: config,
+            dataSource: data.dataSource,
+            reconfig: reconfig,
+        }
         this.fieldSets = config;
       });
     },
-    //获取物料配置
-    getMatterConfig(data) {
-        let {config = [], dataSource = '[]', reconfig = {}} = data;
-        let [matterData = {}] = JSON.parse(dataSource);
-        let matterSource = matterData.dataSource && JSON.parse(matterData.dataSource.source) || {};
-        let matterCols = matterSource.cols || []; // 数据源列
-        let dataIndexMap = {}; // 映射表
-        let hasDataIndexMap = false; // 是否存在映射表
-        let matterConfig = [];
-
-        config.forEach(item => {
-            if (!item.hiddenInRun && item.isMultiple) {
-                if (item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
-                    if (item.r2GridXtype) {
-                        item.items.forEach(each => {
-                        each['r2GridXtype'] = item.r2GridXtype;
-                        })
-                    }
-                    if (item.xtype === 'r2BomGridWTSK') {
-                        item.items.forEach(each => {
-                        each['isBomGrid'] = true;
-                        })
-                    }
-                    if (item.xtype === 'r2BomGridIPPO') {
-                        this.uniqueBom = this.formData.outPut;
-                    }
-                    matterConfig = item.items;
-                    dataIndexMap = item.dataIndexMap || {};
-                    hasDataIndexMap = !!Object.keys(dataIndexMap).length;
-                    this.matterList = this.formData[item.name];
-                }
-                matterConfig = matterConfig.reduce((arr, item, index) => {
-                    // 匹配 *映射表字段*
-                    let key = dataIndexMap[item.fieldCode];
-                    // 根据 *数据源* 查询映射表中存在字段 
-                    let matchedCol = matterCols.find(col => col.k === key);
-                    // 判断是否存在映射关系，若有映射关系，则判断是否有该字段且判断字段是否隐藏，没有映射关系则直接展示
-                    let needShow = key ? (matchedCol ? !item.hidden : false) : true;
-                    if (matterCols.length) {
-                        if (!item.hidden && needShow) {
-                        arr.push(item);
-                        }
-                    }
-                    else {
-                        if (!item.hidden) {
-                            arr.push(item) 
-                        }
-                    }          
-                    return arr
-                }, []);
-                this.matterConfig = matterConfig;
-                this.setMatterConfig(this.matterList);
-            }
-        });
-    },
-    //设置物料的动态渲染部分
-    setMatterConfig(arr) {
-      let numTypeList = ['r2Numberfield', 'r2Percentfield', 'r2Permilfield'];
-      let matterConfig = this.matterConfig;
-      arr.forEach(matter => {
-        let others = [];
-        let dates = [];
-        let matterComment = {};
-        matterConfig.forEach(item => {
-          item = {...item};
-
-          item.value = numTypeList.includes(item.editorType) 
-            ? numberComma(matter[item.fieldCode]) || '0' 
-            : matter[item.fieldCode] || '无';
-
-          if (item.editorType === 'r2Datefield') {
-            dates.push(item);
-          } 
-          else if (item.fieldCode === 'comment') {
-            matterComment = item;
-          } 
-          else {
-            others.push(item);
-          }
-        });
-        matter.others = others;
-        matter.dates = dates;
-        matter.matterComment = matterComment;
-      });
-    }
   },
   created() {
     this.loadPage();
