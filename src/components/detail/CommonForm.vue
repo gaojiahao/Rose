@@ -8,29 +8,25 @@
       <matter-list-view :matterList="matterList" :matterConfig="matterConfig"></matter-list-view>
       <bom-list-view :boms="uniqueBom"></bom-list-view>
       <!-- 工作流 -->
-      <!-- <work-flow
+      <!--work-flow
           :work-flow-info="workFlowInfo"
           :full-work-flow="fullWL"
           :userName="userName"
           :is-my-task="isMyTask"
           :no-status="orderInfo.biStatus"
-      ></work-flow>-->
-      <!-- <div v-for="(fieldSet,index) in fieldSets" :key="index">
-        <r-fieldset
-          :cfg="fieldSet"
-          v-if="fieldSet.hiddenInRun == false && 'r2FieldSet' == fieldSet.xtype && fieldSet.isMultiple == false"
-          :values="formData"
-        />
-        <r-fieldset
-          :cfg="{items:[fieldSet]}"
-          :values="formData"
-          v-if="fieldSet.xtype.indexOf('Grid') != -1 || fieldSet.isMultiple == true"
-        />
-      </div> -->
+      ></work-flow-->
+      <r-fieldset-ct
+        :cfg="fieldSets"
+        :values="formData"
+        v-if="fieldSets.length"
+      />
+      <!-- 备注 -->
+      <other-part :other-info="formData" :attachment="attachment"></other-part>
     </div>
   </div>
 </template>
 <script>
+import OtherPart from 'components/detail/commonPart/OtherPart'
 import { numberComma } from 'vux'
 // 请求 引入
 import {
@@ -45,10 +41,13 @@ import {
 } from "service/detailService";
 import {
   getFormViews,
-  getFormConfig,
+  getFormViewByUniqueId,
   saveAndCommitTask
 } from "service/common/commonService";
 export default {
+  components: {
+    OtherPart
+  },
   data() {
     return {
       transCode: "",
@@ -63,6 +62,7 @@ export default {
       matterConfig: [],         //物料配置
       //经过处理的基本信息
       baseinfo: {},
+      attachment:[],
       uniqueBom: [],            //合并去重后的bom
     };
   },
@@ -129,7 +129,7 @@ export default {
       await this.getListId(transCode);
       await this.loadFormCfg();
       await this.loadFormData(transCode);
-      await this.getMatterConfig(this.config);
+      await this.getMatterConfig(this.fieldSets);
     },
     loadFormData(transCode) {
       return getSOList({
@@ -140,26 +140,45 @@ export default {
       });
     },
     loadFormCfg() {
-      return getFormConfig(this.formViewUniqueId).then(data => {
-        let { config = [], dataSource = "[]", reconfig = {} } = data;
-        config.forEach(item => {
-          if (item.formViewPartId) {
-            let reconfigData = reconfig[`_${item.formViewPartId}`] || {};
-            item.items =
-              item.items &&
-              item.items.map(cItem => {
-                let matched = reconfigData[cItem.fieldCode] || {};
-                return { ...cItem, ...matched };
-              });
-          }
-        });
-        this.config = data;
-        this.fieldSets = config;
+      return getFormViewByUniqueId(this.formViewUniqueId).then(data => {
+        let { appName,config, dataSource} = data;
+        try{
+          config = JSON.parse(config);
+          data.config = config;
+        }catch(e){
+          config = null;
+        }
+        if(config){
+          let fieldSets = config.items,
+              reconfig = config.reconfig;
+
+            fieldSets.forEach(item => {
+            if (item.formViewPartId) {
+              let reconfigData = reconfig[`_${item.formViewPartId}`];
+
+              if(reconfigData){
+                item.items =
+                  item.items &&
+                  item.items.map(cItem => {
+                    let matched = reconfigData[cItem.fieldCode] || {};
+                    return { ...cItem, ...matched };
+                });
+                if(reconfigData._prop){
+                  item = {...item,...reconfigData._prop}
+                }
+              }
+            }
+          });
+          this.config = data;
+          this.fieldSets = fieldSets;
+      }
+
+        
       });
     },
     //获取物料配置
-    getMatterConfig(data) {
-        let {config = [], dataSource = '[]', reconfig = {}} = data;
+    getMatterConfig(fieldSets) {
+        let dataSource  = this.config.dataSource || '[]';
         let [matterData = {}] = JSON.parse(dataSource);
         let matterSource = matterData.dataSource && JSON.parse(matterData.dataSource.source) || {};
         let matterCols = matterSource.cols || []; // 数据源列
@@ -167,7 +186,7 @@ export default {
         let hasDataIndexMap = false; // 是否存在映射表
         let matterConfig = [];
 
-        config.forEach(item => {
+        fieldSets.forEach(item => {
             if (!item.hiddenInRun && item.isMultiple) {
                 if (item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
                     if (item.r2GridXtype) {
