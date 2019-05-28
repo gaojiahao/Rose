@@ -1,7 +1,7 @@
 <template>
   <div class="r-grid">
     <div class="r-row" v-for="(row,rIndex) in value">
-      <div v-for="(item, index) in cfg.items" :key="index" class="cell vux-1px-b when-is-right" v-if="item.hidden == false">
+      <div v-for="(item, index) in cfg.columns" :key="index" class="cell vux-1px-b when-is-right" v-if="item.hidden == false">
          <p class="cell-name">{{item.text}}</p>
          <p class="cell-content">{{row[item.fieldCode]}}</p>
       </div>

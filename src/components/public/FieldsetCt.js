@@ -14,11 +14,11 @@ let RFieldsetCt = Vue.component('RFieldsetCt',{
         for(l = fieldsets.length; i<l;i++){
            itemCfg = fieldsets[i];
            xtype = 'RFieldset';
-           if(itemCfg.isMultiple == true){
-               if(matterNames.indexOf(itemCfg.name)!= -1){
-                    xtype = 'MatterListView'
-               }
-           }
+        //    if(itemCfg.isMultiple == true){
+        //        if(matterNames.indexOf(itemCfg.name)!= -1){
+        //             xtype = 'MatterListView'
+        //        }
+        //    }
            items.push(
                _c(xtype,{
                 attrs:{

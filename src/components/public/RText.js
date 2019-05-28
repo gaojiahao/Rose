@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-let rtext = Vue.component('RText',{
+let rtext = Vue.component('r2Textfield',{
     props:['cfg','values'],
     render:function(c){
         var self = this,
@@ -11,7 +11,7 @@ let rtext = Vue.component('RText',{
            'div',
            {
                attrs:{
-                 class:'each_property'  
+                 class:'cell each_property'  
                }
            },
            [
