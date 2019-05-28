@@ -300,10 +300,15 @@ export let getPriceFromProcurementContract = (data = {}) => {
 }
 // 获取提交页面表单配置
 export let getFormConfig = (viewId = '') => {
-  return $flyio.ajax({
+   return $flyio.ajax({
     url: `/H_roleplay-si/mobile/formView/${viewId}`
-  })
+   })
 
+}
+export let getFormViewByUniqueId = (uniqueId) =>{
+   return $flyio.ajax({
+    url: `/H_roleplay-si/form/${uniqueId}/view`
+   })
 }
 // 获取提交页面表单二次配置
 export let findConfigInfo = (viewId = '') => {
@@ -359,6 +364,9 @@ export let getListViewById = (uniqueId) => {
       uniqueId,
     }
   })
+}
+export let fieldSetFactory=(config)=>{
+    
 }
 export default {
   getList,

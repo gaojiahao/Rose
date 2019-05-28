@@ -6,33 +6,31 @@
       <!-- 经办信息 （订单、主体等）TransactorView -->
       <transactor-view :values="transactor"></transactor-view>
       <!-- 工作流 -->
-      <!-- <work-flow
+      <!--work-flow
           :work-flow-info="workFlowInfo"
           :full-work-flow="fullWL"
           :userName="userName"
           :is-my-task="isMyTask"
           :no-status="orderInfo.biStatus"
-      ></work-flow>-->
-      <div v-for="(fieldSet,index) in fieldSets" :key="index">
-        <r-fieldset
-          :cfg="fieldSet"
-          v-if="fieldSet.hiddenInRun == false && 'r2FieldSet' == fieldSet.xtype && fieldSet.isMultiple == false"
-          :values="formData"
-        />
-        <r-fieldset
-          :cfg="{items:[fieldSet]}"
-          :values="formData"
-          v-if="fieldSet.xtype.indexOf('Grid') != -1 || fieldSet.isMultiple == true"
-        />
+      ></work-flow-->
+      <r-fieldset-ct
+        :cfg="fieldSets"
+        :values="formData"
+        v-if="fieldSets.length"
+      />
+      <!-- <div v-for="(fieldSet,index) in fieldSets" :key="index">
         <matter-list-view :cfg="{items:[fieldSet]}" :values="formData" :name="fieldSet.name" 
             v-if="('r2FieldSet' == fieldSet.xtype && fieldSet.isMultiple == true) || 
             (fieldSet.xtype.indexOf('Grid') != -1 && fieldSet.isMultiple == true)" 
         />
-      </div>
+      </div> -->
+      <!-- 备注 -->
+      <other-part :other-info="formData" :attachment="attachment"></other-part>
     </div>
   </div>
 </template>
 <script>
+import OtherPart from 'components/detail/commonPart/OtherPart'
 import { numberComma } from 'vux'
 // 请求 引入
 import {
@@ -47,11 +45,13 @@ import {
 } from "service/detailService";
 import {
   getFormViews,
-  getFormConfig,
-  saveAndCommitTask,
-  getNewFormConfig
+  getFormViewByUniqueId,
+  saveAndCommitTask
 } from "service/common/commonService";
 export default {
+  components: {
+    OtherPart
+  },
   data() {
     return {
       transCode: "",
@@ -64,6 +64,7 @@ export default {
       config:{},
       //经过处理的基本信息
       baseinfo: {},
+      attachment:[],
     };
   },
   methods: {
@@ -139,28 +140,40 @@ export default {
       });
     },
     loadFormCfg() {
-      return getNewFormConfig(this.formViewUniqueId).then(data => {
-        let obj = JSON.parse(data.config);
-        let config = obj.items;
-        let reconfig = obj.reconfig;
-        config.forEach(item => {
-          if (item.formViewPartId) {
-            let reconfigData = reconfig[`_${item.formViewPartId}`] || {};
-            item.items =
-              item.items &&
-              item.items.map(cItem => {
-                let matched = reconfigData[cItem.fieldCode] || {};
-                return { ...cItem, ...matched };
-              });
-          }
-        });
-        console.log('config',config);
-        this.config = {
-            config: config,
-            dataSource: data.dataSource,
-            reconfig: reconfig,
+      return getFormViewByUniqueId(this.formViewUniqueId).then(data => {
+        let { appName,config, dataSource} = data;
+        try{
+          config = JSON.parse(config);
+          data.config = config;
+        }catch(e){
+          config = null;
         }
-        this.fieldSets = config;
+        if(config){
+          let fieldSets = config.items,
+              reconfig = config.reconfig;
+
+            fieldSets.forEach(item => {
+            if (item.formViewPartId) {
+              let reconfigData = reconfig[`_${item.formViewPartId}`];
+
+              if(reconfigData){
+                item.items =
+                  item.items &&
+                  item.items.map(cItem => {
+                    let matched = reconfigData[cItem.fieldCode] || {};
+                    return { ...cItem, ...matched };
+                });
+                if(reconfigData._prop){
+                  item = {...item,...reconfigData._prop}
+                }
+              }
+            }
+          });
+          this.config = data;
+          this.fieldSets = fieldSets;
+      }
+
+        
       });
     },
   },
