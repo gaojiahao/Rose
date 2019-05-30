@@ -7,13 +7,13 @@
                    v-show="showAllMatter || index < 3"></matter-item>
       <div class="matter-more-wrapper" v-show="matterList.length > 3 && !showAllMatter">
         <div class="matter-more" @click="clickMore('')">
-          <span>查看更多商品</span>
+          <span>更多</span>
           <i class="icon-filter-down"></i>
         </div>
       </div>
     </div>
     <pop-matter-detail :show="showMatterDetail" :item="matterDetail" :check-amt="checkAmt" v-model="showMatterDetail" @on-confirm="doDetailEdit"></pop-matter-detail>
-    <bom-list-view :boms="uniqueBom"></bom-list-view>
+    <bom-list-view :boms="uniqueBom" v-if="cfg.items[0].bomDataIndexMap"></bom-list-view>
   </div>
 </template>
 
@@ -68,6 +68,9 @@ var component = {
   watch: {
     values: {
       handler(val){
+        // console.log('cfg',this.cfg);
+        // console.log('values',this.values);
+        // console.log('name',this.name);
         this.matterList = this.values[this.name];
         this.getMatterConfig();
       }
