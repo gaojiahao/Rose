@@ -40,7 +40,9 @@ Vue.config.devtools = isDebug_mode
 Vue.config.productionTip = true
 // 此处声明空实例 用于非父子组件之间传值
 Vue.prototype.$event = new Vue();
-
+Vue.clone = function(a){
+   return JSON.parse(JSON.stringify(a));
+};
 router.afterEach(route => {
   document.title = route.meta.title || '';
 })

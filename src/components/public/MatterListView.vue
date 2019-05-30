@@ -12,8 +12,8 @@
         </div>
       </div>
     </div>
-    <pop-matter-detail :show="showMatterDetail" :item="matterDetail" :check-amt="checkAmt" v-model="showMatterDetail" @on-confirm="doDetailEdit"></pop-matter-detail>
-    <bom-list-view :boms="uniqueBom" v-if="cfg.items[0].bomDataIndexMap"></bom-list-view>
+    <pop-matter-detail :show="showMatterDetail" :item="matterDetail" :columns="columns" :dates="dates" :comment="commit" :check-amt="checkAmt" v-model="showMatterDetail" @on-confirm="doDetailEdit"></pop-matter-detail>
+    <bom-list-view :boms="uniqueBom" v-if="cfg.bomDataIndexMap"></bom-list-view>
   </div>
 </template>
 
@@ -39,10 +39,6 @@ var component = {
         return {}
       }
     },
-    name: {
-      type: String,
-      default: '',
-    },
     btnIsHide: {
         type: Boolean,
         default: false
@@ -62,6 +58,9 @@ var component = {
       matterDetailIndex:0,
       matterDetailKey:0,
       matterList: {},
+      columns:[],
+      dates:[],
+      commit:null,
       uniqueBom: [],            //合并去重后的bom
     }
   },
@@ -71,7 +70,7 @@ var component = {
         // console.log('cfg',this.cfg);
         // console.log('values',this.values);
         // console.log('name',this.name);
-        this.matterList = this.values[this.name];
+        this.matterList = this.values[this.cfg.name];
         this.getMatterConfig();
       }
     }   
@@ -80,67 +79,52 @@ var component = {
     //获取物料配置
     getMatterConfig() {
       this.uniqueBom = this.values.outPut;
-      this.setMatterConfig(this.values[this.name]);
+      this.setMatterConfig();
     },
     //设置物料的动态渲染部分
-    setMatterConfig(arr) {
-      let numTypeList = ['r2Numberfield', 'r2Percentfield', 'r2Permilfield'];
-      let matterConfig;
-      let matterData = {};
-      let matterSource = matterData.dataSource && JSON.parse(matterData.dataSource.source) || {};
-      let dataIndexMap = {}; // 映射表
-      let matterCols = matterSource.cols || []; // 数据源列
+    setMatterConfig() {
+      let numTypeList = ['r2Numberfield', 'r2Percentfield', 'r2Permilfield'],
+          cfg = this.cfg,
+          values = this.values[cfg.name],
+          grid = cfg.items && cfg.items[0],//bom没有items
+          columns = (grid && grid.columns)||cfg.columns|| []; //grid||bom||[]
 
-      if('columns' in this.cfg.items[0]) {
-        matterConfig = this.cfg.items[0].columns;    
-      } else if ('columns' in this.cfg.items[0].items[0]) {
-        matterConfig = this.cfg.items[0].items[0].columns;  
-      }
-      matterConfig = matterConfig.reduce((arr, item, index) => {
-        // 匹配 *映射表字段*
-        let key = dataIndexMap[item.fieldCode];
-        // 根据 *数据源* 查询映射表中存在字段 
-        let matchedCol = matterCols.find(col => col.k === key);
-        // 判断是否存在映射关系，若有映射关系，则判断是否有该字段且判断字段是否隐藏，没有映射关系则直接展示
-        let needShow = key ? (matchedCol ? !item.hidden : false) : true;
-        if (matterCols.length) {
-            if (!item.hidden && needShow) {
-            arr.push(item);
+      let dataSource = cfg.dataSource || {},
+          dataIndexMap = cfg.dataIndexMap || {},
+          hasDataIndexMap = !!Object.keys(dataIndexMap).length, // 映射表
+          dataSouceCols = dataSource.cols || []; // 数据源列
+
+      let others = [];
+      let dates = [];
+      let comment;
+
+      columns = columns.filter((item, index) => {
+        let isMapItem,
+            dataSouceCol;
+ 
+        if(item.hidden) return false;
+        if(hasDataIndexMap){
+            // 匹配 *映射表字段
+            isMapItem = dataIndexMap[item.fieldCode];
+            if (isMapItem != null){// 判断是否存在映射关系
+               // 根据 *数据源* 查询映射表中存在字段 
+               dataSouceCol = dataSouceCols.find(col => col.k === key);
+               if (dataSouceCol == null) return false //如果数据源没有相关列映射到该字段，该字段不显示。
             }
         }
-        else {
-            if (!item.hidden) {
-                arr.push(item) 
-            }
-        }          
-        return arr
-      }, []);
-
-      arr.forEach(matter => {
-        let others = [];
-        let dates = [];
-        let matterComment = {};
-        matterConfig.forEach(item => {
-          item = {...item};
-
-          item.value = numTypeList.includes(item.editorType) 
-            ? numberComma(matter[item.fieldCode]) || '0' 
-            : matter[item.fieldCode] || '无';
-
-          if (item.editorType === 'r2Datefield') {
+        if (item.editorType === 'r2Datefield') {
             dates.push(item);
-          } 
-          else if (item.fieldCode === 'comment') {
-            matterComment = item;
-          } 
-          else {
-            others.push(item);
-          }
-        });
-        matter.others = others;
-        matter.dates = dates;
-        matter.matterComment = matterComment;
+            return false;
+        } 
+        else if (item.fieldCode === 'comment') {
+            comment = item;
+           return false
+        }
+        return true;
       });
+      this.columns = columns;
+      this.dates = datas;
+      this.comment = comment;
     },
     //获取物料配置
     // getMatterConfig(data) {
@@ -230,7 +214,7 @@ var component = {
     //   });
     // },
     onShowMore(item, index, key) {
-      this.matterDetail = JSON.parse(JSON.stringify(item));
+      this.matterDetail = Vue.clone(item);
       this.showMatterDetail = true;
       this.matterDetailIndex = index;
       if (key) {

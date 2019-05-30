@@ -124,6 +124,15 @@ import { constants } from 'crypto';
         this.bom = item;
         this.bomPopShow = true;
       },
+      onShowMore(item, index, key) {
+        this.matterDetail = JSON.parse(JSON.stringify(item));
+        this.showMatterDetail = true;
+        this.matterDetailIndex = index;
+        if (key) {
+          this.matterDetailKey = key;
+        }
+        //this.$emit('on-show-more', item, index, key);
+      },
       // 获取详情
       getOrderList(transCode = '') {
         return getSOList({

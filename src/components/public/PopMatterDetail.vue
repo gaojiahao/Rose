@@ -49,7 +49,7 @@
         <div class="matter-other">
           <div class="matter_other_item" v-for="(other, index) in readOnlyParts" :key="index">
             <span class="matter_other_title">{{other.text}}</span>
-            <span>{{other.value}}</span>
+            <span>{{item[other.fieldCode]}}</span>
           </div>
         </div>
         <div class="matter-date vux-1px-t" v-if="hasDate">
@@ -87,6 +87,18 @@
         type: Object,
         default() {
           return {}
+        }
+      },
+      dates:{
+        type:[],
+        default(){
+          return [];
+        }
+      },
+      columns:{
+        type:[],
+        default(){
+          return [];
         }
       },
       btnIsHide: {
@@ -140,13 +152,12 @@
         },
         immediate: true
       },
-      item: {
-        handler(val) {
+      columns: {
+        handler(columns) {
           // *部分应用* 物料详情在审批节点可以重新录入数据 此处进行数据分割
-          let {others = []} = val;
           let editParts = [];
           let readOnlyParts = [];
-          others.forEach(item => {
+          columns.forEach(item => {
             // 当Grid组件只读为false时 各个字段的readOnly才能启用
             if (item.r2GridXtype && !item.r2GridXtype.readOnly) {
               item.readOnly ? readOnlyParts.push(item) : editParts.push(item);

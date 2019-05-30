@@ -18,14 +18,6 @@
         :values="formData"
         v-if="fieldSets.length"
       />
-      <div v-for="(fieldSet,index) in fieldSets" :key="index">
-        <content-view :cfg="{items:[fieldSet]}" :values="formData" :name="fieldSet.name"
-            v-if="('r2FieldSet' == fieldSet.xtype && fieldSet.isMultiple == false)"
-        />
-        <matter-list-view :cfg="{items:[fieldSet]}" :values="formData" :name="fieldSet.name" 
-            v-if="('r2FieldSet' == fieldSet.xtype && fieldSet.isMultiple == true) || 
-            (fieldSet.xtype.indexOf('Grid') != -1 && fieldSet.isMultiple == true)" 
-        />
       </div>
       <!-- 备注 -->
       <!-- <other-part :other-info="formData" :attachment="attachment"></other-part> -->
