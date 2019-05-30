@@ -13,9 +13,8 @@ let RFieldsetCt = Vue.component('RFieldsetCt',{
 
         for(l = fieldsets.length; i<l;i++){
            itemCfg = fieldsets[i];
-           xtype = 'ContentView';//'RFieldset';
+           xtype = 'RFieldset';//'ContentView';
            if(itemCfg.isMultiple == true){
-               xtype = 'MatterListView';
                if(matterNames.indexOf(itemCfg.name)!= -1){
                     xtype = 'MatterListView'
                }

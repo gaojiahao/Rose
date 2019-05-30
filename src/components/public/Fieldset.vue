@@ -2,7 +2,7 @@
   <div class="r-fieldset">
     <div class="readOnlyPart" v-if="readOnlyParts.length">
       <template v-for="(item, index) in readOnlyParts">
-        <span :key="index" class="title">{{item.fieldLabel}}：</span><span>{{values[item.fieldCode]||'无'}}</span>
+        <span :key="index">{{item.fieldLabel}}：</span><span>{{values[item.fieldCode]||'无'}}</span>
       </template>
     </div>
     <template v-for="(item, index) in editParts" >

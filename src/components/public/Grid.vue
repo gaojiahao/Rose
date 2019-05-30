@@ -1,48 +1,70 @@
 <template>
   <div class="r-grid">
-    <div class="r-row" v-for="(row,rIndex) in value">
-      <div v-for="(item, index) in cfg.columns" :key="index" class="cell vux-1px-b when-is-right" v-if="item.hidden == false">
-         <p class="cell-name">{{item.text}}</p>
-         <p class="cell-content">{{row[item.fieldCode]}}</p>
-      </div>
+    <div class="r-row vux-1px-b" v-for="(row,rIndex) in value">
+      <template v-for="(item, index) in cfg.columns" class="cell  when-is-right" v-if="item.hidden == false">
+         <span :key="index">{{item.text}}：</span><span>{{row[item.fieldCode]||'无'}}</span>
+      </template>
+      <div @click="onShowMore(row,rIndex)" class="show-more">查看详情<i class="icon-more"></i></div>
     </div>
+    <grid-detail :show="showDetail" :item ="detail" :columns="cfg.columns" v-model="showDetail" @on-confirm="doDetailEdit"/>
   </div>
 </template>
 <script>
 import Vue from 'vue';
 var component = {
-    props:['cfg','value']
+    props:['cfg','value'],
+    data(){
+      return {
+        showDetail:false,
+        detail:{}
+      }
+    },
+    methods:{
+      doDetailEdit(){},
+      checkAmt(){},
+      onShowMore(row){
+         this.detail = row;
+         this.showDetail = true;
+      }
+    }
 }
 export default Vue.component('RGrid',component)
 </script>
 
 <style lang="scss">
-.r-row{
-  padding: 0 .15rem;
+.r-grid{
+  padding:0.15rem 0;
 }
-.cell {
-  display: flex;
-  font-size: .14rem;
-  padding: .15rem 0;
-  line-height: .2rem;
-  align-items: flex-start;
-  .cell-name {
-    color: #999;
-    margin-right: .1rem;
+.r-row{
+  margin: 0.05rem .15rem 0.05rem;
+  line-height: .22rem;
+  font-size: .12rem;
+  span:nth-child(2n+1){
+    color:#999;
   }
-  .cell-content {
-    flex: 1;
-    color: #333;
-    word-break: break-all;
+  span:nth-child(2n){
+    margin-right:0.05rem;
   }
   &.vux-1px-b:after {
     border-color: #e8e8e8;
   }
-}
-.when-is-right {
-  .cell-content {
-    flex: 1;
-    text-align: right;
+   &.vux-1px-b:last-child:after{
+     border:none;
+   }
+  .show-more{
+    text-align:right;
+    color:blue;
   }
+  .icon-more{
+      display: inline-block;
+      width: .2rem;
+      height: .04rem;
+  }
+}
+.r-row:first-child{
+  margin-top:0rem;
+}
+.r-row:last-child{
+  margin-bottom:0rem;
 }
 </style>
