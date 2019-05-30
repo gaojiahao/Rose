@@ -90,13 +90,13 @@
         }
       },
       dates:{
-        type:[],
+        type:Array,
         default(){
           return [];
         }
       },
       columns:{
-        type:[],
+        type:Array,
         default(){
           return [];
         }

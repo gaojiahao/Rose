@@ -2,22 +2,23 @@
   <!-- 基于config 动态渲染相关信息 -->
   <div class="warehouse-container" v-if="cfg.items.length">
     <header class="warehouse-header">
-      <div class="warehouse_title vux-1px-l" v-if="name === 'rk'">入库</div>
-      <div class="warehouse_title vux-1px-l" v-else-if="name === 'ck'">出库</div>
-      <div class="warehouse_title vux-1px-l" v-else-if="name === 'baseinfo'">经办</div>
-      <div class="warehouse_title vux-1px-l" v-else-if="name === 'comment'">备注</div>
-      <div class="warehouse_title vux-1px-l" v-else>{{ name }}</div>
+      <div class="warehouse_title vux-1px-l" v-if="cfg.name === 'rk'">入库</div>
+      <div class="warehouse_title vux-1px-l" v-else-if="cfg.name === 'ck'">出库</div>
+      <div class="warehouse_title vux-1px-l" v-else-if="cfg.name === 'baseinfo'">经办</div>
+      <div class="warehouse_title vux-1px-l" v-else-if="cfg.name === 'comment'">备注</div>
+      <div class="warehouse_title vux-1px-l" v-else>{{ cfg.name }}</div>
     </header>
     <div class="warehouse-main">
       <div>
-        <img class="warehouse_img" :src="PicList[0].warehousePic" v-if="name === 'ck' || name === 'inPut'">
-        <img class="warehouse_img" :src="PicList[1].warehousePic" v-else-if="name === 'rk' || name === 'outPut'">
+        <img class="warehouse_img" :src="PicList[0].warehousePic" v-if="cfg.name === 'ck' || cfg.name === 'inPut'">
+        <img class="warehouse_img" :src="PicList[1].warehousePic" v-else-if="cfg.name === 'rk' || cfg.name === 'outPut'">
         <img class="warehouse_img" :src="PicList[2].warehousePic" v-else>
       </div>
       <div class="warehouse_info">
-        <div class="warehouse_info_item" v-for="(item, index) in cfg.items[0].items" :key="index" v-show="item.fieldLabel && !item.hiddenInRun">
+        <div class="warehouse_info_item" v-for="(item, index) in cfg.items" :key="index" v-show="item.fieldLabel && !item.hiddenInRun">
           <span class="warehouse_item_title">{{item.fieldLabel}}:</span>
-          <span class="warehouse_item_value">{{values[item.fieldCode]}}</span>
+           <span class="warehouse_item_value" v-if="data && data[item.fieldCode]">{{data[item.fieldCode]}}</span>
+          <span class="warehouse_item_value" v-else>{{values[item.fieldCode]}}</span>
         </div>
       </div>
     </div>
@@ -53,15 +54,17 @@ import Vue from 'vue';
           { warehousePic: require('assets/iconfont/warehouse_out.png') },
           { warehousePic: require('assets/iconfont/warehouse_in.png') },
           { warehousePic: require('assets/iconfont/commonContent.png') }
-        ]
+        ],
+        data: [],
       }
     },
     watch: {
       values: {
         handler(val){
-          // console.log('cfg',this.cfg);
-          // console.log('values',this.values);
-          // console.log('name',this.name)
+          let name = this.cfg.name;
+          let data = this.values;
+          this.data = data && data[name];
+          this.data = this.data && this.data[0];
         }
       }
     },
