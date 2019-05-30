@@ -2,9 +2,9 @@
   <!--通用form组件-->
   <div class="detail_wrapper">
     <div class="basicPart">
-      <baseinfo-view :values="baseinfo"></baseinfo-view>
+      <!-- <baseinfo-view :values="baseinfo"></baseinfo-view> -->
       <!-- 经办信息 （订单、主体等）TransactorView -->
-      <transactor-view :values="transactor"></transactor-view>
+      <!-- <transactor-view :values="transactor"></transactor-view> -->
       <!-- 工作流 -->
       <!--work-flow
           :work-flow-info="workFlowInfo"
@@ -18,14 +18,17 @@
         :values="formData"
         v-if="fieldSets.length"
       />
-      <!-- <div v-for="(fieldSet,index) in fieldSets" :key="index">
+      <div v-for="(fieldSet,index) in fieldSets" :key="index">
+        <content-view :cfg="{items:[fieldSet]}" :values="formData" :name="fieldSet.name"
+            v-if="('r2FieldSet' == fieldSet.xtype && fieldSet.isMultiple == false)"
+        />
         <matter-list-view :cfg="{items:[fieldSet]}" :values="formData" :name="fieldSet.name" 
             v-if="('r2FieldSet' == fieldSet.xtype && fieldSet.isMultiple == true) || 
             (fieldSet.xtype.indexOf('Grid') != -1 && fieldSet.isMultiple == true)" 
         />
-      </div> -->
+      </div>
       <!-- 备注 -->
-      <other-part :other-info="formData" :attachment="attachment"></other-part>
+      <!-- <other-part :other-info="formData" :attachment="attachment"></other-part> -->
     </div>
   </div>
 </template>
@@ -170,6 +173,7 @@ export default {
             }
           });
           this.config = data;
+          console.log('this.config',this.config)
           this.fieldSets = fieldSets;
       }
 

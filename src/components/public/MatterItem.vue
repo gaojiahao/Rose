@@ -1,8 +1,8 @@
 <template>
   <!-- 单个物料 (嵌套于matterList中) -->
   <div class="matter-item-container">
-    <div class="order_code" v-if="item.transCode || item.transMatchedCode">
-      <span class="order_num">{{item.transCode || item.transMatchedCode}}</span>
+    <div class="order_code">
+      <span class="order_num">{{item.transCode || item.transMatchedCode}}&nbsp;</span>
     </div>
     <div class="matter-main">
       <img class="matter_img" :src="item.inventoryPic" alt="mater_img" @error="getMatterDefault(item)">
@@ -17,7 +17,6 @@
           </div>
           <div class="matter_detail">
             <span class="matter_item_title">产品规格：</span>
-            <!-- <span class="matter_item_value">{{item.specification_transObjCode || item.specification_outPutMatCode || item.facilitySpecification_facilityObjCode || item.assMeasureDescription}}</span> -->
             <span class="matter_item_value">{{item.specification_transObjCode || item.specification_outPutMatCode || item.assMeasureDescription || '无'}}</span>
           </div>
         </div>
