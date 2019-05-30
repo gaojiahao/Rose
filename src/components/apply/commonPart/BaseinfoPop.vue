@@ -328,12 +328,13 @@
           tableContent.forEach(item => {
             this.roleList.push({
               ...item,
-              value: item.name,
+              value: item.userGroupName,
+              name:item.userGroupName
             })
           });
           if (tableContent.length && this.isSetInitial) {
-            this.role = tableContent[0].name;
-            this.selItems.handlerRole = tableContent[0].id;
+            this.role = tableContent[0].userGroupName;
+            this.selItems.handlerRole = tableContent[0].userGroupId;
           }
           ;
         })

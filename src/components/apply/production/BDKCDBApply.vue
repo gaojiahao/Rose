@@ -66,7 +66,7 @@
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
                            :default-value="matterList" :config="matterPopConfig" :matter-params="matterParams"
-                           ref="matter"></pop-matter-list>
+                           ref="matter" ></pop-matter-list>
         </div>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
@@ -76,7 +76,7 @@
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' 
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig" :check-amt="checkAmt">
         </pop-matter>
       </div>
     </div>

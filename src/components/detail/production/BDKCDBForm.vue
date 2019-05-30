@@ -1,11 +1,12 @@
 <template>
+<!--本地调拨-->
   <div class="detail_wrapper">
     <div class="basicPart" v-if='orderInfo && orderInfo.inPut'>
 
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 仓库信息 -->
-      <warehouse-content :warehouse-config="warehouseConfig"></warehouse-content>
+      <warehouse-content :warehouse-config="warehouseConfig" :warehouseOut="{}" :warehouse="{}"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName"
                   :is-my-task="isMyTask" :no-status="orderInfo.biStatus"></work-flow>

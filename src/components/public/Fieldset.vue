@@ -1,15 +1,15 @@
 <template>
   <div class="r-fieldset">
-    <div class="readOnlyPart">
-    <template v-for="(item, index) in readOnlyParts">
-       <span :key="index" class="title">{{item.fieldLabel}}：</span><span>{{values[item.fieldCode]||'无'}}</span>
+    <div class="readOnlyPart" v-if="readOnlyParts.length">
+      <template v-for="(item, index) in readOnlyParts">
+        <span :key="index" class="title">{{item.fieldLabel}}：</span><span>{{values[item.fieldCode]||'无'}}</span>
+      </template>
+    </div>
+    <template v-for="(item, index) in editParts" >
+       <r2Textfield :cfg="item" :values="values" v-if="item.xtype == 'r2Textfield'" :key="index"/>
+       <r2Datefield :cfg="item" :values="values" v-if="item.xtype == 'r2Datefield'" :key="index"/>
+       <r-grid :cfg="item" :value="values[cfg.name]" v-if="item.xtype.indexOf('Grid') != -1" :key="index"/>
     </template>
-    </div>
-    <div v-for="(item, index) in editParts" :key="index">
-       <r2Textfield :cfg="item" :values="values" v-if="item.xtype == 'r2Textfield'"/>
-       <r2Datefield :cfg="item" :values="values" v-if="item.xtype == 'r2Datefield'"/>
-       <r-grid :cfg="item" :value="values[cfg.name]" v-if="item.xtype.indexOf('Grid') != -1"/>
-    </div>
   </div>
 </template>
 <script>
