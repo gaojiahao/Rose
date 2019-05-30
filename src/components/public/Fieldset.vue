@@ -1,5 +1,10 @@
 <template>
   <div class="r-fieldset">
+    <div class="box">
+    <header v-show="cfg.cName">
+        <div class="vux-1px-l">{{cfg.cName}}</div>
+        <div class="basic_process_status"></div>
+    </header>
     <div class="readOnlyPart" v-if="readOnlyParts.length">
       <template v-for="(item, index) in readOnlyParts">
         <span :key="index">{{item.fieldLabel}}：</span><span>{{values[item.fieldCode]||'无'}}</span>
@@ -10,6 +15,7 @@
        <r2Datefield :cfg="item" :values="values" v-if="item.xtype == 'r2Datefield'" :key="index"/>
        <r-grid :cfg="item" :value="values[cfg.name]" v-if="item.xtype.indexOf('Grid') != -1" :key="index"/>
     </template>
+    </div>
   </div>
 </template>
 <script>
@@ -18,6 +24,7 @@ var component = {
     props:['cfg','values'],
     data(){
       return {
+         title:null,
          editParts:[],
          readOnlyParts:[]
       }
@@ -55,8 +62,27 @@ export default Vue.component('RFieldset',component)
     border-radius: .04rem;
     background-color: #fff;
     width: calc(100% - .2rem);
+    .box{
+       padding:0.15rem;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      margin-bottom:0.1rem;
+      justify-content: space-between;
+      div:first-child {
+        font-size: 16px;
+        font-weight: 600;
+        line-height: .16rem;
+        &:before {
+          left: -.15rem;
+          width: .08rem;
+          border-left: .08rem solid #3296FA;
+        }
+      }
+    }
+    
     .readOnlyPart{
-      padding:.15rem;
       line-height: .22rem;
       font-size: .12rem;
       span:nth-child(2n+1){

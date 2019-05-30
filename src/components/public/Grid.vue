@@ -32,11 +32,8 @@ export default Vue.component('RGrid',component)
 </script>
 
 <style lang="scss">
-.r-grid{
-  padding:0.15rem 0;
-}
 .r-row{
-  margin: 0.05rem .15rem 0.05rem;
+  margin: 0.05rem 0 0.05rem;
   line-height: .22rem;
   font-size: .12rem;
   span:nth-child(2n+1){

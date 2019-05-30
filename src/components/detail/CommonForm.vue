@@ -125,6 +125,8 @@ export default {
       await this.getListId(transCode);
       await this.loadFormCfg();
       await this.loadFormData(transCode);
+      // 触发父组件的scroll刷新
+      this.$emit('refresh-scroll');
     },
     loadFormData(transCode) {
       return getSOList({
@@ -147,7 +149,7 @@ export default {
           let fieldSets = config.items,
               reconfig = config.reconfig;
 
-            fieldSets.forEach(item => {
+          if (reconfig) fieldSets.forEach(item => {
             if (item.formViewPartId) {
               let reconfigData = reconfig[`_${item.formViewPartId}`];
 
@@ -164,6 +166,7 @@ export default {
               }
             }
           });
+
           this.config = data;
           console.log('this.config',this.config)
           this.fieldSets = fieldSets;
