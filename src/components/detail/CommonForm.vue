@@ -18,7 +18,6 @@
         :values="formData"
         v-if="fieldSets.length"
       />
-      </div>
       <!-- 备注 -->
       <!-- <other-part :other-info="formData" :attachment="attachment"></other-part> -->
     </div>
