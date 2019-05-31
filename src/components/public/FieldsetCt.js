@@ -18,6 +18,7 @@ let RFieldsetCt = Vue.component('RFieldsetCt',{
                if(matterNames.indexOf(itemCfg.name)!= -1){
                     xtype = 'MatterListView'
                }
+               if(itemCfg.xtype == 'r2Fileupload')continue;
            }
            items.push(
                _c(xtype,{

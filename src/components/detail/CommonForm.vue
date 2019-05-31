@@ -63,7 +63,7 @@ export default {
   },
   methods: {
     // 获取listid
-    getListId(transCode) {
+    getViewIdByTransCode(transCode) {
       return new Promise((resolve, reject) => {
         getListId(transCode).then(data => {
           if (data.length) {
@@ -77,6 +77,9 @@ export default {
           }
         });
       });
+    },
+    getViewIdByListId(listId){
+
     },
     handlerFormData(formData) {
       var key, key1, item, list;
@@ -113,19 +116,31 @@ export default {
       };
     },
     async loadPage() {
-      let { transCode } = this.$route.query;
-      if (!transCode) {
-        this.$vux.alert.show({
-          content: "抱歉，交易号有误，请尝试刷新之后再次进入"
-        });
-        return;
+      let { transCode,listId} = this.$route.query;
+      if (transCode) {
+        this.transCode = transCode;
+        await this.getViewIdByTransCode(transCode);
+        await this.loadFormData(transCode);
+      } else if(listId) {
+        this.listId = listId;
+        await this.getViewIdByListId();
+        // this.$vux.alert.show({
+        //   content: "抱歉，交易号有误，请尝试刷新之后再次进入"
+        // });
+        // return;
       }
-      this.transCode = transCode;
-      await this.getListId(transCode);
-      await this.loadFormCfg();
-      await this.loadFormData(transCode);
-      // 触发父组件的scroll刷新
-      this.$emit('refresh-scroll');
+      if(this.formViewUniqueId){
+          await this.loadFormCfg();
+          // 触发父组件的scroll刷新
+          this.$emit('refresh-scroll');
+      } else {
+          this.$vux.alert.show({
+              content: '抱歉，无法支持该应用的查看',
+              onHide: () => {
+                  this.$router.go(-1);
+              }
+          });
+      }
     },
     loadFormData(transCode) {
       return getSOList({

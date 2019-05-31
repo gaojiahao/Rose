@@ -49,7 +49,22 @@ export default {
     if (transCode){
       this.transCode = transCode;
     }
-    this.currentComponent = require(`components/apply/${folder}/${fileName}Apply.vue`).default;
+    try {
+      if(fileName == 'null'){
+          this.currentComponent = require(`components/detail/CommonForm.vue`).default;
+      } else {
+          this.currentComponent = require(`components/apply/${folder}/${fileName}Apply.vue`).default;
+      }
+    }catch (e) {
+      console.log(e);
+      this.$vux.alert.show({
+        content: '抱歉，无法支持该应用的查看',
+        onHide: () => {
+          this.$router.go(-1);
+        }
+      });
+    } 
+
   },
   beforeRouteLeave(to, from, next) {
     let fillPage = this.$refs.fillPage;

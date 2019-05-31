@@ -107,6 +107,13 @@ export default {
         this.$event.$on('commentCount', (val) => {
           this.commentCount = val;
         })
+        this.$nextTick(() => {
+          if (!this.detailScroll) {
+            this.detailScroll = new Bscroll(this.$refs.detail, {
+              click: true,
+            })
+          }
+        })
       } catch (e) {
         console.log(e);
         this.$vux.alert.show({
@@ -115,14 +122,7 @@ export default {
             this.$router.go(-1);
           }
         });
-      }
-      this.$nextTick(() => {
-        if (!this.detailScroll) {
-          this.detailScroll = new Bscroll(this.$refs.detail, {
-            click: true,
-          })
-        }
-      })
+      } 
     },
   },
   created() {

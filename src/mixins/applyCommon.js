@@ -1,5 +1,6 @@
 // 请求引入
 import { getAppDetail } from 'service/app-basic/appSettingService'
+import tokenService from 'service/tokenService'
 import {
   isMyflow, 
   getListId, 
@@ -1013,8 +1014,8 @@ export default {
     this.isModify = isModify;
 
     // 获取本地保存的当前的主体
-    let data = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
-    if (data) this.entity.dealerName = JSON.parse(data).entityId;
+    let data = tokenService.getToken(true);
+    if (data) this.entity.dealerName = data.entityId;
     // 请求页面的数据
     (async () => {
       await this.getFormViewInfo();
