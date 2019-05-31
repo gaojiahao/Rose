@@ -5,7 +5,7 @@ let RFieldsetCt = Vue.component('RFieldsetCt',{
     render:function(_c){
        var items = [],
            fieldsets = this.cfg,
-           matterNames = ['inPut'],
+           matterNames = ['inPut','order'],
            xtype,
            i = 0,
            itemCfg,

@@ -1,6 +1,6 @@
 <template>
   <!-- 基于config 动态渲染相关信息 -->
-  <div class="warehouse-container" v-if="cfg.items.length">
+  <div class="warehouse-container" v-if="cfg.items">
     <header class="warehouse-header">
       <div class="warehouse_title vux-1px-l" v-if="cfg.name === 'rk'">入库</div>
       <div class="warehouse_title vux-1px-l" v-else-if="cfg.name === 'ck'">出库</div>
