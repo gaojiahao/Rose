@@ -18,10 +18,11 @@
   </div>
 </template>
 <script>
+import Vue from 'vue';
 import {Popup, Group, Icon, XButton, dateFormat} from 'vux'
 import RScroll from 'plugins/scroll/RScroll'
-
-export default {
+var component = {
+  name: "WFlow",
   props: {
     // 完整工作流
     fullWorkFlow: {
@@ -103,6 +104,7 @@ export default {
   created() {
   }
 }
+export default Vue.component('WFlow',component)
 </script>
 
 <style lang='scss' scoped>
