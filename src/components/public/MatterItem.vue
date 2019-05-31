@@ -1,6 +1,6 @@
 <template>
   <!-- 单个物料 (嵌套于matterList中) -->
-  <div class="matter-item-container">
+  <div class="matter-item-container" v-if="item.inventoryName_transObjCode">
     <div class="order_code">
       <span class="order_num">{{item.transCode || item.transMatchedCode}}&nbsp;</span>
     </div>
@@ -46,6 +46,19 @@
       </div>
     </div>
   </div>
+  <div class="matter-item-container" v-else>
+    <div class="matter-main">
+      <div class="matter_info_item2">
+          <div class="matter_detail2">
+            <template v-for="(citem, index) in columns">
+              <span class="matter_item_title" :key="index" v-if=" index < 10">{{ citem.text }}：</span>
+              <span class="matter_item_value2" v-if=" index < 10">{{ item[citem.fieldCode] || '无'}}</span>
+            </template>
+            <i class="icon-more" @click="clickMore" v-if="columns.length >=10"></i>
+          </div>
+        </div>
+    </div>  
+  </div>
 </template>
 
 <script>
@@ -59,6 +72,12 @@
         type: Object,
         default() {
           return {}
+        }
+      },
+      columns: {
+        type: Array,
+        default() {
+          return []
         }
       },
     },
@@ -161,6 +180,17 @@
       }
       &.matter_price_top {
         margin-top: .05rem;
+      }
+    }
+    .matter_info_item2 {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: .05rem;
+      line-height: .22rem;
+      font-size: .12rem;  
+      .matter_item_value2{
+        margin-right: 0.05rem;
       }
     }
     .matter_detail {

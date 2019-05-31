@@ -5,19 +5,19 @@
       <!-- <baseinfo-view :values="baseinfo"></baseinfo-view> -->
       <!-- 经办信息 （订单、主体等）TransactorView -->
       <!-- <transactor-view :values="transactor"></transactor-view> -->
-      <!-- 工作流 -->
-      <!--work-flow
-          :work-flow-info="workFlowInfo"
-          :full-work-flow="fullWL"
-          :userName="userName"
-          :is-my-task="isMyTask"
-          :no-status="orderInfo.biStatus"
-      ></work-flow-->
       <r-fieldset-ct
         :cfg="fieldSets"
         :values="formData"
         v-if="fieldSets.length"
       />
+      <!-- 工作流 -->
+      <w-flow
+          :work-flow-info="workFlowInfo"
+          :full-work-flow="fullWL"
+          :userName="userName"
+          :is-my-task="isMyTask"
+          :no-status="formData.biStatus"
+      ></w-flow>
       <!-- 备注 -->
       <!-- <other-part :other-info="formData" :attachment="attachment"></other-part> -->
     </div>
@@ -40,7 +40,8 @@ import {
 import {
   getFormViews,
   getFormViewByUniqueId,
-  saveAndCommitTask
+  saveAndCommitTask,
+  getBasicInfo
 } from "service/common/commonService";
 export default {
   components: {
@@ -60,6 +61,10 @@ export default {
       //经过处理的基本信息
       baseinfo: {},
       attachment:[],
+      workFlowInfo: {},
+      fullWL: [],
+      userName: '',
+      isMyTask: false,
     };
   },
   methods: {
@@ -154,6 +159,11 @@ export default {
               }
           });
       }
+      await this.getFlowAndActions();
+      await this.getBasicInfo();
+      await this.workFlowInfoHandler();
+      // 触发父组件的scroll刷新
+      this.$emit('refresh-scroll');
     },
     loadFormData(transCode) {
       return getSOList({
@@ -194,13 +204,65 @@ export default {
               }
             }
           });
-
           this.config = data;
           console.log('this.config',this.config)
           this.fieldSets = fieldSets;
-        }
+      } 
       });
     },
+    isMyflow() {
+      return isMyflow({
+        _dc: Date.now(),
+        transCode: this.transCode
+      });
+    },
+    getWorkFlow() {
+      return getWorkFlow({
+        _dc: Date.now(),
+        transCode: this.transCode
+      })
+    },
+    // 处理简易版工作流数据
+    workFlowInfoHandler() {
+        this.workFlowInfo = {
+            biStatus: this.formData.biStatus,
+            transCode: this.formData.transCode,
+        };
+        switch (this.formData.biStatus) {
+            case '进行中':
+                let newkey = 'dyClass',
+                cokey = 'coClass';
+                this.workFlowInfo[newkey] = 'doing_work';
+                this.workFlowInfo[cokey] = 'doing_code';
+                break;
+            case '草稿':
+                newkey = 'dyClass';
+                this.workFlowInfo[newkey] = 'invalid_work';
+                break;
+            case '已失效':
+                newkey = 'dyClass';
+                this.workFlowInfo[newkey] = 'invalid_work';
+                break;
+        }
+    },
+    getBasicInfo() {
+      return getBasicInfo().then(data => {
+        let {currentUser} = data;
+        // this.baseinfoConfig = data;
+        // this.userId = `${currentUser.userId}`;
+        this.userName = `${currentUser.nickname}-${currentUser.userCode}`;
+      });  
+    },
+    getFlowAndActions() {
+        return Promise.all([this.isMyflow(), this.getWorkFlow()]).then(([data = {}, data2 = {}]) => {
+            this.myFlow = data.tableContent || [];
+            this.workFlow = data2.tableContent || [];
+            let [flow = {}] = this.myFlow;
+            let {isMyTask = 0, actions = '', taskId, viewId} = flow;
+            // 赋值 完整版工作流
+            this.fullWL = this.workFlow;
+        });
+    }
   },
   created() {
     this.loadPage();

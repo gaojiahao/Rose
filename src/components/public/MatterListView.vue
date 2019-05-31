@@ -3,7 +3,7 @@
   <div class="materiel_ct_list">
     <!-- 传入的物料是数组 -->
     <div class="mater_list" v-if="matterList">
-      <matter-item :item="item" v-for="(item, index) in matterList" :key='index' @on-show-more="onShowMore(item, index)"
+      <matter-item :columns="columns" :item="item" v-for="(item, index) in matterList" :key='index' @on-show-more="onShowMore(item, index)"
                    v-show="showAllMatter || index < 3"></matter-item>
       <div class="matter-more-wrapper" v-show="matterList.length > 3 && !showAllMatter">
         <div class="matter-more" @click="clickMore('')">

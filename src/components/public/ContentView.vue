@@ -1,24 +1,27 @@
 <template>
   <!-- 基于config 动态渲染相关信息 -->
-  <div class="warehouse-container" v-if="cfg.items.length">
+  <div class="warehouse-container" v-if="cfg.items">
     <header class="warehouse-header">
       <div class="warehouse_title vux-1px-l" v-if="cfg.name === 'rk'">入库</div>
       <div class="warehouse_title vux-1px-l" v-else-if="cfg.name === 'ck'">出库</div>
       <div class="warehouse_title vux-1px-l" v-else-if="cfg.name === 'baseinfo'">经办</div>
       <div class="warehouse_title vux-1px-l" v-else-if="cfg.name === 'comment'">备注</div>
-      <div class="warehouse_title vux-1px-l" v-else>{{ cfg.name }}</div>
+      <div class="warehouse_title vux-1px-l" v-else-if="cfg.name === 'transDetail.file'">附件</div>
+      <div class="warehouse_title vux-1px-l" v-else>{{ cfg.cName }}</div>
     </header>
     <div class="warehouse-main">
       <div>
         <img class="warehouse_img" :src="PicList[0].warehousePic" v-if="cfg.name === 'ck' || cfg.name === 'inPut'">
         <img class="warehouse_img" :src="PicList[1].warehousePic" v-else-if="cfg.name === 'rk' || cfg.name === 'outPut'">
-        <img class="warehouse_img" :src="PicList[2].warehousePic" v-else>
+        <!-- <img class="warehouse_img" :src="PicList[2].warehousePic" v-else> -->
       </div>
       <div class="warehouse_info">
-        <div class="warehouse_info_item" v-for="(item, index) in cfg.items" :key="index" v-show="item.fieldLabel && !item.hiddenInRun">
-          <span class="warehouse_item_title">{{item.fieldLabel}}:</span>
-           <span class="warehouse_item_value" v-if="data && data[item.fieldCode]">{{data[item.fieldCode]}}</span>
-          <span class="warehouse_item_value" v-else>{{values[item.fieldCode]}}</span>
+        <div class="warehouse_info_item">
+          <template v-for="(item, index) in cfg.items">
+            <span class="warehouse_item_title" :key="index" v-show="item.fieldLabel && !item.hiddenInRun" >{{item.fieldLabel}}:</span>
+            <span class="warehouse_item_value" v-if="data && data[item.fieldCode]" v-show="item.fieldLabel && !item.hiddenInRun">{{data[item.fieldCode]}}</span>
+            <span class="warehouse_item_value" v-else v-show="item.fieldLabel && !item.hiddenInRun">{{values[item.fieldCode]}}</span>
+          </template>
         </div>
       </div>
     </div>
@@ -121,23 +124,25 @@ import Vue from 'vue';
 
     .warehouse-main {
       display: flex;
-      margin-top: .22rem;
+      margin-top: .12rem;
       font-size: .14rem;
       .warehouse_img {
         width: .5rem;
         height: .5rem;
+        margin-right: .17rem;
       }
 
-      .warehouse_info {
-        margin-left: .17rem;
-      }
+      // .warehouse_info {
+      //   margin-left: .17rem;
+      // }
       .warehouse_name {
         line-height: .14rem;
         font-weight: 600;
       }
       .warehouse_info_item {
-        display: flex;
+        // display: flex;
         align-items: baseline;
+        font-size: .12rem;
         & + .warehouse_info_item {
           margin-top: .06rem;
         }
@@ -146,9 +151,9 @@ import Vue from 'vue';
         color: #999;
       }
       .warehouse_item_value {
-        flex: 1;
-        margin-left: .08rem;
-        line-height: .2rem;
+        // flex: 1;
+        margin-right: 0.05rem;
+        line-height: .14rem;
       }
     }
   }
