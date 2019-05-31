@@ -23,13 +23,14 @@ let RFieldsetCt = Vue.component('RFieldsetCt',{
            items.push(
                _c(xtype,{
                 attrs:{
+                    form:this.$parent,
                     cfg:itemCfg,
                     values:this.values
                 }
                })
            )
         }
-        return _c('div',{},items);
+        return _c('div',{attrs:{class:'fieldSets'}},items);
     }
 });
 export default RFieldsetCt

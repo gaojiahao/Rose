@@ -9,8 +9,8 @@
 import Vue from 'vue'
 import fieldBase from 'mixins/fieldBase'
 let  cfg = {
-     mixins:[fieldBase],
+     mixins: [fieldBase],
      props:['cfg','values'], 
 }
-export default Vue.component('R2Datefield',cfg);
+export default Vue.component('r2Permilfield',cfg);
 </script>

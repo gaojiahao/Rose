@@ -50,7 +50,8 @@ export default {
     return {
       transCode: "",
       listId: "",
-      formViewUniqueId: "",
+      viewId: "",
+      model:null,
       fieldSets: [],
       formData: {},
       //经过处理的经办人信息
@@ -67,8 +68,9 @@ export default {
       return new Promise((resolve, reject) => {
         getListId(transCode).then(data => {
           if (data.length) {
-            this.formViewUniqueId = data[0].uniqueId;
+            this.viewId = data[0].uniqueId;
             this.listId = data[0].listId;
+            this.model = "view"//查看视图
             resolve();
           } else {
             this.$vux.alert.show({
@@ -78,8 +80,16 @@ export default {
         });
       });
     },
-    getViewIdByListId(listId){
-
+    async getViewIdByListId(){
+       await getFormViews(this.listId).then(data => {
+        for (let item of data) {
+          if (item.viewType === 'submit') {
+            this.viewId = item.uniqueId;
+            this.model = 'new';
+            break;
+          }
+        }
+      })
     },
     handlerFormData(formData) {
       var key, key1, item, list;
@@ -116,21 +126,24 @@ export default {
       };
     },
     async loadPage() {
-      let { transCode,listId} = this.$route.query;
+      let { transCode,listId,viewId,model} = this.$route.query;
       if (transCode) {
         this.transCode = transCode;
-        await this.getViewIdByTransCode(transCode);
+        if(viewId){
+          this.viewId = viewId; 
+          this.model = model || 'edit';
+        }else {
+          //加载查看视图
+          await this.getViewIdByTransCode(transCode);
+        }
         await this.loadFormData(transCode);
       } else if(listId) {
         this.listId = listId;
         await this.getViewIdByListId();
-        // this.$vux.alert.show({
-        //   content: "抱歉，交易号有误，请尝试刷新之后再次进入"
-        // });
-        // return;
       }
-      if(this.formViewUniqueId){
+      if(this.viewId){
           await this.loadFormCfg();
+          this.$loading.hide();
           // 触发父组件的scroll刷新
           this.$emit('refresh-scroll');
       } else {
@@ -144,14 +157,14 @@ export default {
     },
     loadFormData(transCode) {
       return getSOList({
-        formViewUniqueId: this.formViewUniqueId,
+        formViewUniqueId: this.viewId,
         transCode
       }).then(({ formData = {}, attachment = [] }) => {
         this.handlerFormData(formData);
       });
     },
     loadFormCfg() {
-      return getFormViewByUniqueId(this.formViewUniqueId).then(data => {
+      return getFormViewByUniqueId(this.viewId).then(data => {
         let { appName,config, dataSource} = data;
         try{
           config = JSON.parse(config);
@@ -159,6 +172,7 @@ export default {
         }catch(e){
           config = null;
         }
+
         if(config){
           let fieldSets = config.items,
               reconfig = config.reconfig;
@@ -184,9 +198,7 @@ export default {
           this.config = data;
           console.log('this.config',this.config)
           this.fieldSets = fieldSets;
-      }
-
-        
+        }
       });
     },
   },
@@ -195,3 +207,8 @@ export default {
   }
 };
 </script>
+<style>
+  .fieldSets{
+    background: #F8F8F8;
+  }
+</style>
