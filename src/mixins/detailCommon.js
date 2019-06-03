@@ -9,7 +9,7 @@ import {
 } from 'service/detailService'
 import { isSubscribeByRelationKey } from 'service/commentService'
 import { getAppDetail, getPCCommentList } from 'service/app-basic/appSettingService'
-import { getFormViews, getFormConfig, saveAndCommitTask, getBasicInfo, findConfigInfo} from 'service/common/commonService'
+import { getFormViews, getFormConfig, saveAndCommitTask, getBasicInfo, findConfigInfo} from 'service/commonService'
 // vux 引入
 import { numberComma } from 'vux'
 // 组件 引入

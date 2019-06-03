@@ -60,7 +60,7 @@
 
 <script>
   import {getAllUsers} from 'service/Directorys/userService'
-  import {getList} from 'service/common/commonService'
+  import {getList} from 'service/commonService'
   import { getLeaveDetailItem } from 'service/listService'
   import listCommon from 'mixins/bizListCommon'
   import { dateFormat } from 'vux'

@@ -33,6 +33,7 @@ import {dateFormat} from 'vux'
 //请求 引入
 import {getAppDetail} from 'service/app-basic/appSettingService'
 import homeService from 'service/homeservice'
+import commonService from 'service/commonService'
 //组件引入
 import RScroll from 'plugins/scroll/RScroll'
 import ChangeLog from 'homePage/components/app-detail/ChangeLog'
@@ -95,8 +96,8 @@ export default {
     },
     //获取当前用户信息
     getCurrentUser(){
-      return homeService.currentUser().then( data=> {
-        this.currentUserId = data.userId;
+      return commonService.getBasicInfo().then(({currentUser})=> {
+        this.currentUserId = currentUser.userId;
       })
     },
   },

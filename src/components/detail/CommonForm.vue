@@ -42,7 +42,7 @@ import {
   getFormViewByUniqueId,
   saveAndCommitTask,
   getBasicInfo
-} from "service/common/commonService";
+} from "service/commonService";
 export default {
   components: {
     OtherPart

@@ -45,7 +45,7 @@
 
 <script>
   import {getAllUsers} from 'service/Directorys/userService'
-  import {getList} from 'service/common/commonService'
+  import {getList} from 'service/commonService'
   import listCommon from 'mixins/bizListCommon'
   // 映射表引入
   import Apps from '@/home/pages/apps/bizApp/maps/Apps'

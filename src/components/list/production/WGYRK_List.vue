@@ -19,7 +19,7 @@
 </template>
 
 <script>
-  import {getList} from 'service/common/commonService'
+  import {getList} from 'service/commonService'
   import listCommon from 'mixins/bizListCommon'
 
   export default {

@@ -80,7 +80,7 @@
 </template>
 <script>
 import { TransferDom, Picker, Popup, Group,XAddress, ChinaAddressV4Data, Icon, XInput, Datetime } from 'vux';
-import { getBaseInfoDataBase,getDictByType, getFormConfig, requestData, getFormViews } from 'service/common/commonService';
+import { getBaseInfoDataBase,getDictByType, getFormConfig, requestData, getFormViews } from 'service/commonService';
 import dealerService from 'service/dealerService'
 import RPicker from 'components/public/basicPicker';
 import common from 'mixins/common'

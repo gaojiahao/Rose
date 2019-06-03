@@ -36,7 +36,7 @@
 <script>
   import {dateFormat} from 'vux'
   import {getAppExampleDetails} from 'service/detailService'
-  import {getList} from 'service/common/commonService'
+  import {getList} from 'service/commonService'
   import {getListView} from 'service/detailService'
   import Apps from '../../maps/Apps'
   import relatedKey from './../../maps/related'

@@ -50,7 +50,7 @@
 <script>
   import {Icon, Popup, dateFormat} from 'vux'
   import {getManyVATBilling, getManyVATReceipt, getBillingApplication} from 'service/invoiceService'
-  import {requestData} from 'service/common/commonService'
+  import {requestData} from 'service/commonService'
   import RScroll from 'plugins/scroll/RScroll'
   import MSearch from 'components/search/search'
 import { constants } from 'crypto';
