@@ -51,7 +51,7 @@ export default {
     // 刷新better-scroll
     refresh() {
       this.$nextTick(() => {
-        this.detailScroll.refresh();
+        if(this.detailScroll != null)this.detailScroll.refresh();
       })
     },
     // 跳转到评论页面
@@ -152,8 +152,10 @@ export default {
     if (isGoList) {
       this.currentComponent = null;
       // 销毁better-scroll
-      this.detailScroll.destroy();
-      this.detailScroll = null;
+      if(this.detailScroll != null){
+        this.detailScroll.destroy();
+        this.detailScroll = null;
+      }
       // 销毁监听
       this.$event.$off('commentCount');
       from.meta.reload = true;
