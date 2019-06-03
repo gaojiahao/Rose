@@ -33,7 +33,7 @@ var component = {
       return {
          styleType:0,//0||1，折叠||展开
          title:null,
-         pageSize:5,
+         pageSize:1,
          visibleItemsLength:0,//
          hasToogleBar:false,
          editParts:[],

@@ -119,9 +119,9 @@ export default {
       });
     },
     //获取当前用户信息
-    getCurrentUser() {
+    getCurrentUser() {    
       return commonService.getBasicInfo().then(baseInfo => {
-        data = baseInfo.currentUser;
+        var data = baseInfo.currentUser;
         this.userInfo = {
           photo: data.photo, // 头像
           mobile: data.mobile, // 手机号
