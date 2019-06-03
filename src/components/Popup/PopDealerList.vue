@@ -105,7 +105,7 @@
 import {Icon, Popup, LoadMore, AlertModule, TransferDom, XInput, Group, Cell} from 'vux'
 import DSearch from 'components/search/search'
 import dealerService from 'service/dealerService'
-import {requestData} from 'service/common/commonService'
+import {requestData} from 'service/commonService'
 import BScroll from 'better-scroll'
 import PopContactList from 'components/Popup/dealer/PopContactList'
 import { constants } from 'crypto';

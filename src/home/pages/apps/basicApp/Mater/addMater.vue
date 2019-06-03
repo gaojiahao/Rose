@@ -65,7 +65,7 @@
 <script>
 // 请求引入
 import { save, update, findData } from 'service/materService'
-import { requestData, getFormViews, getFormConfig, getBaseInfoDataBase } from 'service/common/commonService'
+import { requestData, getFormViews, getFormConfig, getBaseInfoDataBase } from 'service/commonService'
 // 组件引入
 import RScroll from 'plugins/scroll/RScroll'
 import RPicker from 'components/public/basicPicker';

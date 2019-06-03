@@ -30,10 +30,8 @@ import { numberComma } from 'vux'
 import {
   isMyflow,
   getListId,
-  getListById,
   getSOList,
   getWorkFlow,
-  currentUser,
   getFromStatus,
   getAppExampleDetails
 } from "service/detailService";
@@ -42,7 +40,7 @@ import {
   getFormViewByUniqueId,
   saveAndCommitTask,
   getBasicInfo
-} from "service/common/commonService";
+} from "service/commonService";
 export default {
   components: {
     OtherPart
@@ -58,6 +56,7 @@ export default {
       //经过处理的经办人信息
       transactor: {},
       config:{},
+      biReferenceId:null,
       //经过处理的基本信息
       baseinfo: {},
       attachment:[],
@@ -68,7 +67,7 @@ export default {
     };
   },
   methods: {
-    // 获取listid
+    // 获取查看视图的listId
     getViewIdByTransCode(transCode) {
       return new Promise((resolve, reject) => {
         getListId(transCode).then(data => {
@@ -85,7 +84,8 @@ export default {
         });
       });
     },
-    async getViewIdByListId(){
+    //获取新建视图
+    async getViewIdByListId(){ 
        await getFormViews(this.listId).then(data => {
         for (let item of data) {
           if (item.viewType === 'submit') {
@@ -97,7 +97,8 @@ export default {
       })
     },
     handlerFormData(formData) {
-      var key, key1, item, list;
+      var key, key1, item, list,
+          singleFieldCts = this.singleFieldCts;
 
       for (key in formData) {
         item = formData[key];
@@ -108,7 +109,16 @@ export default {
             formData[key1] = item[key1];
             delete item[key1];
           }
-          formData[key] = list;
+
+          if(singleFieldCts.indexOf(key)!= -1){
+             item = list[0];
+             for (key1 in item) {
+                formData[key1] = item[key1];
+                delete item[key1];
+             }
+          } else {
+             formData[key] = list;
+          }    
         }
       }
       this.formData = formData;
@@ -132,6 +142,7 @@ export default {
     },
     async loadPage() {
       let { transCode,listId,viewId,model} = this.$route.query;
+
       if (transCode) {
         this.transCode = transCode;
         if(viewId){
@@ -141,13 +152,17 @@ export default {
           //加载查看视图
           await this.getViewIdByTransCode(transCode);
         }
-        await this.loadFormData(transCode);
-      } else if(listId) {
+        
+      } else if(listId) { //没有transCode,获取新建视图。
         this.listId = listId;
         await this.getViewIdByListId();
       }
+
       if(this.viewId){
           await this.loadFormCfg();
+          if (transCode) {
+            await this.loadFormData(transCode);
+          }
           this.$loading.hide();
           // 触发父组件的scroll刷新
           this.$emit('refresh-scroll');
@@ -169,8 +184,10 @@ export default {
       return getSOList({
         formViewUniqueId: this.viewId,
         transCode
-      }).then(({ formData = {}, attachment = [] }) => {
+      }).then(({ formData = {}, attachment = [], biReferenceId}) => {
         this.handlerFormData(formData);
+        this.attachment = attachment;
+        this.biReferenceId = biReferenceId;
       });
     },
     loadFormCfg() {
@@ -185,6 +202,7 @@ export default {
 
         if(config){
           let fieldSets = config.items,
+              singleFieldCts = [],
               reconfig = config.reconfig;
 
           if (reconfig) fieldSets.forEach(item => {
@@ -202,8 +220,13 @@ export default {
                   item = {...item,...reconfigData._prop}
                 }
               }
+            };
+            if(item.isMultiple == false && item.name){
+               singleFieldCts.push(item.name);
             }
+            
           });
+          this.singleFieldCts = singleFieldCts;
           this.config = data;
           console.log('this.config',this.config)
           this.fieldSets = fieldSets;

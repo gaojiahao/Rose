@@ -31,7 +31,7 @@
 
 <script>
   import {Icon, Popup, AlertModule, TransferDom} from 'vux'
-  import {getObjDealerByLabelName} from 'service/common/commonService'
+  import {getObjDealerByLabelName} from 'service/commonService'
   import RScroll from 'plugins/scroll/RScroll'
   import RSearch from 'components/search/search'
 

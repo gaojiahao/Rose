@@ -48,7 +48,7 @@
 
 <script>
   import {Icon, Popup, TransferDom, LoadMore} from 'vux'
-  import {getObjDealerByLabelName, requestData} from 'service/common/commonService'
+  import {getObjDealerByLabelName, requestData} from 'service/commonService'
   import RScroll from 'plugins/scroll/RScroll'
   import DSearch from 'components/search/search'
 

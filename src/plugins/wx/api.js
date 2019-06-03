@@ -1,4 +1,4 @@
-import {mediaUpload} from 'service/common/commonService';
+import {mediaUpload} from 'service/commonService';
 
 // 扫一扫
 export const scanQRCode = (options = {}) => {

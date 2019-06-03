@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { commitTask, transferTask } from 'service/common/commonService'
+import { commitTask, transferTask } from 'service/commonService'
 import { isMyflow } from 'service/detailService'
 import { Confirm } from 'vux'
 import PopUserList from 'components/Popup/PopUserList'

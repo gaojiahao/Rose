@@ -58,7 +58,7 @@
 
 <script>
 import {Icon, Popup,dateFormat} from 'vux'
-import {getList} from 'service/common/commonService'
+import {getList} from 'service/commonService'
 import {getListView} from 'service/detailService'
 import RScroll from 'plugins/scroll/RScroll'
 import MSearch from 'components/search/search'

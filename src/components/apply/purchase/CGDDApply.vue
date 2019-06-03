@@ -45,7 +45,7 @@ import {
   saveAndStartWf, 
   saveAndCommitTask, 
   getPriceFromProcurementContract
-} from 'service/common/commonService'
+} from 'service/commonService'
 // mixins 引入
 import common from 'mixins/applyCommon'
 // 组件引入

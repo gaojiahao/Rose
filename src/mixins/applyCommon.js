@@ -14,7 +14,7 @@ import {
   getFormConfig, 
   getBasicInfo, 
   getProcessStatus, 
-} from 'service/common/commonService'
+} from 'service/commonService'
 // 组件引入
 import UploadFile from 'components/upload/UploadFile'
 import MatterItem from 'components/apply/commonPart/MatterItem'

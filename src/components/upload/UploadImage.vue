@@ -17,7 +17,7 @@
 
 <script>
   import {Spinner} from 'vux'
-  import {upload,} from 'service/common/commonService';
+  import {upload,} from 'service/commonService';
   import Exif from 'exif-js'
 
   export default {

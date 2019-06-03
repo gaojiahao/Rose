@@ -56,6 +56,7 @@
 <script>
 // 接口引入
 import homeService from "service/homeservice";
+import commonService from "service/commonService";
 import tokenService from "service/tokenService";
 import { getMsgList } from "service/msgService";
 // 映射表引入
@@ -119,7 +120,8 @@ export default {
     },
     //获取当前用户信息
     getCurrentUser() {
-      return homeService.currentUser().then(data => {
+      return commonService.getBasicInfo().then(baseInfo => {
+        data = baseInfo.currentUser;
         this.userInfo = {
           photo: data.photo, // 头像
           mobile: data.mobile, // 手机号

@@ -131,7 +131,7 @@
     commitTask,
     getDictByType,
     submitAndCalc
-  } from 'service/common/commonService'
+  } from 'service/commonService'
   // mixins 引入
   import applyCommon from 'mixins/applyCommon'
   // 组件引入

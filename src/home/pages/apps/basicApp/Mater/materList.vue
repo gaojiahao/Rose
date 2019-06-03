@@ -40,7 +40,7 @@
 
 <script>
   import {Tab, Icon, TabItem,} from 'vux'
-  import {getList, getDictByType, getListViewById} from 'service/common/commonService'
+  import {getList, getDictByType, getListViewById} from 'service/commonService'
   import {getMatList} from 'service/materService'
   import {getAppDetail} from 'service/app-basic/appSettingService'
   import RScroll from 'plugins/scroll/RScroll'
