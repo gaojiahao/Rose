@@ -10,7 +10,7 @@ let rtext = Vue.component('r2Textfield',{
                 var fieldCode = this.cfg.fieldCode,
                     value = values[fieldCode];
 
-                this.hidden = value == null;
+                if(this.form.model == 'new')this.hidden = value == null;
             }
         }
     },
