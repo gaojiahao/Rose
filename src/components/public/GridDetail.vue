@@ -21,9 +21,9 @@
             </x-input>
           </div>
         </div>
-        <div class="matter-other">
-          <div class="matter_other_item" v-for="(other, index) in readOnlyParts" :key="index">
-            <span class="matter_other_title">{{other.text}}</span>
+        <div class="readonly-parts">
+          <div class="readonly-item" v-for="(other, index) in readOnlyParts" :key="index">
+            <span class="title">{{other.text}}</span>
             <span>{{item[other.fieldCode]}}</span>
           </div>
         </div>
@@ -207,7 +207,7 @@
   export default Vue.component('GridDetail',component)
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
   @import '~@/scss/color';
   .popup-matter-container {
     width: 100%;
@@ -302,17 +302,17 @@
     }
 
     /* 其他数据 */
-    .matter-other {
+    .readonly-parts {
       padding: 0 .15rem .24rem;
       background-color: #fff;
-      .matter_other_item {
+      .readonly-item {
         display: flex;
         justify-content: space-between;
-        padding-top: .12rem;
-        line-height: .14rem;
+        heigth: .5rem;
+        line-height: .5rem;
         font-size: .14rem;
       }
-      .matter_other_title {
+      .title {
         color: #999;
       }
     }
