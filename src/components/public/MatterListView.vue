@@ -3,6 +3,9 @@
   <div class="materiel_ct_list">
     <!-- 传入的物料是数组 -->
     <div class="mater_list" v-if="matterList">
+      <header class="mater_list_header">
+        <div class="mater_list_title vux-1px-l">{{cfg.cName}}明细</div>
+      </header>
       <matter-item :columns="columns" :item="item" v-for="(item, index) in matterList" :key='index' @on-show-more="onShowMore(item, index)"
                    v-show="showAllMatter || index < 3"></matter-item>
       <div class="matter-more-wrapper" v-show="matterList.length > 3 && !showAllMatter">
@@ -23,9 +26,8 @@ import {numberComma} from 'vux'
 // 方法引入
 import {toFixed} from '@/plugins/calc'
 import Vue from 'vue';
-import PopMatterDetail from 'components/Public/PopMatterDetail'
+import PopMatterDetail from 'components/public/PopMatterDetail'
 var component = {
-  name: 'MatterList',
   props: {
     values: {
       type: Object,
@@ -153,6 +155,23 @@ export default Vue.component('MatterListView',component)
     box-sizing: border-box;
     background-color: #fff;
     width: calc(100% - .2rem);
+    //padding: .15rem;
+    .mater_list_header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: .15rem 0 0.15rem 0.15rem;
+      .mater_list_title {
+        line-height: .16rem;
+        font-size: 16px;
+        font-weight: 600;
+        &:before {
+          left: -.15rem;
+          width: .08rem;
+          border-left: .08rem solid #3296FA;
+        }
+      }
+    }
     .title {
       color: #111;
       font-weight: bold;

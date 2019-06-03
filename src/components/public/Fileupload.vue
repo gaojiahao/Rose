@@ -1,7 +1,10 @@
 <template>
   <div class="upload-file-container" :class="{'no-upload': noUpload, 'vux-1px-t': noUpload}" :style="containStyle"
-       >
-    <p class="title" :style="titleStyle">附件</p>
+       v-if="(noUpload && defaultValue.length) || !noUpload">
+    <header class="upload-file-header">
+      <div class="upload-file-title vux-1px-l">{{cfg.cName}}</div>
+    </header>
+    <!-- <p class="title" :style="titleStyle">附件</p> -->
     <div class="upload-file-list">
       <div class="upload-file-item" v-for="(item, index) in files" :key="index">
         <template v-if="item.iconType === 'image'">
@@ -25,11 +28,10 @@
 
 <script>
   import Vue from 'vue';
-  import {deleteFile} from 'service/common/commonService';
+  import {deleteFile} from 'service/commonService';
   import {chooseImage, uploadImage} from 'plugins/wx/api'
 
   var component = {
-    name: "Fileupload",
     props: {
       // input框的Id
       id: {
@@ -63,6 +65,24 @@
       biReferenceId: {
         type: String,
         default: ''
+      },
+      values: {
+        type: Object,
+        default() {
+          return {}
+        }
+      },
+      cfg: {
+        type: Object,
+        default() {
+          return {}
+        }
+      },
+      form: {
+        type: Object,
+        default() {
+          return {}
+        }  
       }
     },
     data() {
@@ -187,6 +207,7 @@
       },
     },
     created() {
+      //console.log('form',this.form)
     }
   }
   export default Vue.component('Fileupload',component)
@@ -194,13 +215,27 @@
 
 <style scoped lang="scss">
   .upload-file-container {
-    // margin: .1rem 0;
-    background: #fff;
-    position: relative;
-    padding: .18rem .15rem;
-    box-sizing: border-box;
-    font-size: .14rem;
+    margin: .1rem;
+    padding: .15rem;
+    width: calc(100% - .2rem);
+    background-color: #fff;
     color: #333;
+    box-sizing: border-box;
+    .upload-file-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .upload-file-title {
+        line-height: .16rem;
+        font-size: 16px;
+        font-weight: 600;
+        &:before {
+          left: -.15rem;
+          width: .08rem;
+          border-left: .08rem solid #3296FA;
+        }
+      }
+    }
     &.no-upload {
       padding: .24rem .15rem .15rem;
       &:before {

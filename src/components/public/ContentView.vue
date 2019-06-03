@@ -31,7 +31,6 @@
 <script>
 import Vue from 'vue';
   var component = {
-    name: "ContentView",
     props: {
       values: {
         type: Object,

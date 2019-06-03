@@ -7,7 +7,7 @@
       </div>
       <header class="popup-header">其他信息</header>
       <r-scroll ref="bScroll">
-        <div class="matter-main">
+        <div class="matter-main" v-show="item.transObjCode || item.facilityObjCode">
           <img class="matter_img" :src="item.inventoryPic" alt="mater_img" @error="getMatterDefault(item)">
           <div class="matter_info">
             <div class="matter_name">
