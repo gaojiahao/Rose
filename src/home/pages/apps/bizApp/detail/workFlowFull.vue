@@ -35,7 +35,7 @@
 
 <script>
 import { getWorkFlow} from "service/detailService";
-import {currentUser} from 'service/homeservice';
+import homeService from 'service/homeservice';
 import { dateFormat } from "vux";
 import RScroll from "plugins/scroll/RScroll";
 
@@ -74,7 +74,7 @@ export default {
     },
     // 获取当前用户信息
     getCurrentUser() {
-      return currentUser().then(data => {
+      return homeService.currentUser().then(data => {
         this.currentUser = data;
       });
     },
