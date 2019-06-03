@@ -23,7 +23,7 @@ import {numberComma} from 'vux'
 // 方法引入
 import {toFixed} from '@/plugins/calc'
 import Vue from 'vue';
-import PopMatterDetail from 'components/Public/PopMatterDetail'
+import PopMatterDetail from 'components/public/PopMatterDetail'
 var component = {
   name: 'MatterList',
   props: {
