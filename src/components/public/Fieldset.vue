@@ -141,7 +141,8 @@ export default Vue.component("RFieldset", component);
   }
   .each_property {
     height: 0.3rem;
-    padding: 0.04rem 0;
+    padding: 0;
+    font-size: 0.13rem;
     line-height: 0.5rem;
     display: flex;
     align-items: center;
