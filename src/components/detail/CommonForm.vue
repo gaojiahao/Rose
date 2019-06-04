@@ -2,12 +2,15 @@
   <!--通用form组件-->
   <div class="detail_wrapper">
     <div class="basicPart">
-      <!-- 工作流 -->
-      <w-flow :formData="formData"/>
+      <!-- 工作流组件 -->
+      <w-flow :formData="formData" @getMyFlow="getMyFlow" @getWorkFlow="getWorkFlow" @getBasicInfo="getBasicInfo" />
+      <!-- 表单渲染 -->
       <r-fieldset-ct :cfg="fieldSets" :values="formData" v-if="fieldSets.length"/>
-      <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId"/>
-      <!-- 备注 -->
-      <!-- <other-part :other-info="formData" :attachment="attachment"></other-part> -->
+      <!-- 附件组件 -->
+      <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId" />
+      <!-- 审批组件 -->
+      <r2-action :code="transCode" :myFlow="myFlow" :workFlow="workFlow" :basicInfo="basicInfo" :agree-handler="agreeHandler"
+                :name="$route.query.name" @on-submit-success="submitSuccessCallback" />
     </div>
   </div>
 </template>
@@ -44,7 +47,10 @@ export default {
       biReferenceId: null,
       //经过处理的基本信息
       baseinfo: {},
-      attachment: []
+      attachment:[],
+      myFlow: [],
+      workFlow: [],
+      basicInfo: {},
     };
   },
   methods: {
@@ -220,7 +226,27 @@ export default {
           this.fieldSets = fieldSets;
         }
       });
-    }
+    },
+    getMyFlow(data) {
+      this.myFlow = data;
+    },
+    getWorkFlow(data) {
+      this.workFlow = data;
+    },
+    getBasicInfo(data) {
+      this.basicInfo = data;
+    },
+    // 同意的处理,提交数据校验
+    agreeHandler() {
+
+    },
+    // 同意、拒绝、撤回成功时的回调
+    submitSuccessCallback(val) {
+      let type = JSON.parse(val).type;
+      if (type !== 'revoke') {
+        this.$emit('change', true);
+      }
+    },
   },
   created() {
     this.loadPage();
