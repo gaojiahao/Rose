@@ -7,10 +7,7 @@ let rtext = Vue.component('r2Textfield',{
     watch:{
         values:{
             handler(values){
-                var fieldCode = this.cfg.fieldCode,
-                    value = values[fieldCode];
 
-                if(this.form.model == 'new')this.hidden = value == null;
             }
         }
     },

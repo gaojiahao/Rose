@@ -26,6 +26,7 @@ import ContentView from './components/public/ContentView'
 import { AlertPlugin, ConfirmPlugin, ToastPlugin, TransferDom, DatetimePlugin } from 'vux'
 import Loading from 'plugins/loading/pageLoad/loading'
 import HandleLoad from 'plugins/loading/handleLoad/handleLoading'
+import commonService from "service/commonService";
 
 Vue.use(Loading)
 Vue.use(VueRouter)
@@ -51,9 +52,11 @@ Vue.clone = function(a){
 router.afterEach(route => {
   document.title = route.meta.title || '';
 })
-
+commonService.initWebContext().then(data=>{
+  new Vue({
+    router,
+    render: h => h(App)
+  }).$mount('#app-box')
+});
 /* eslint-disable no-new */
-new Vue({
-  router,
-  render: h => h(App)
-}).$mount('#app-box')
+
