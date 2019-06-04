@@ -289,6 +289,7 @@ export default {
   },
   created() {
     this.loadPage();
+    this.fieldMap = {};
   }
 };
 </script>
