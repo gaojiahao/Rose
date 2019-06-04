@@ -3,14 +3,13 @@
   <div class="detail_wrapper">
     <div class="basicPart">
       <!-- 工作流 -->
-      <w-flow
-          :formData="formData"
-      ></w-flow>
+      <w-flow :formData="formData" />
       <r-fieldset-ct
         :cfg="fieldSets"
         :values="formData"
         v-if="fieldSets.length"
       />
+      <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId" />
       <!-- 备注 -->
       <!-- <other-part :other-info="formData" :attachment="attachment"></other-part> -->
     </div>

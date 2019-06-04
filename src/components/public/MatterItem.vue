@@ -193,6 +193,9 @@
         margin-right: 0.05rem;
       }
     }
+    .matter_info_item2 {
+      border-top: 1px solid #C7C7C7;
+    }
     .matter_detail {
       display: flex;
     }

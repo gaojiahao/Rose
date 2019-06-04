@@ -2,21 +2,21 @@
   <div class="upload-file-container" :class="{'no-upload': noUpload, 'vux-1px-t': noUpload}" :style="containStyle"
        v-if="(noUpload && defaultValue.length) || !noUpload">
     <header class="upload-file-header">
-      <div class="upload-file-title vux-1px-l">{{cfg.cName}}</div>
+      <div class="upload-file-title vux-1px-l">附件</div>
     </header>
     <!-- <p class="title" :style="titleStyle">附件</p> -->
     <div class="upload-file-list">
       <div class="upload-file-item" v-for="(item, index) in files" :key="index">
         <template v-if="item.iconType === 'image'">
-          <img @click.stop="preview(item)" class="img"
+          <img @click="downLoadFile(item)" @click.stop="preview(item)" class="img"
                :src="`/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`">
         </template>
         <template v-else>
-          {{item.attr1}}
+          <div @click="downLoadFile(item)">{{item.attr1}}</div>
         </template>
         <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="!noUpload"></i>
       </div>
-      <div class="upload-file-item" v-if="!noUpload" @click="chooseImage">
+      <div class="upload-file-item" @click="chooseFile">
         <div class="icon_container">
           <span class="icon-upload-add"></span>
           <span>添加附件</span>
@@ -37,13 +37,6 @@
       id: {
         type: String,
         default: 'upload-file'
-      },
-      // 默认值
-      defaultValue: {
-        type: Array,
-        default() {
-          return []
-        }
       },
       noUpload: {
         type: Boolean,
@@ -67,29 +60,24 @@
         default: ''
       },
       values: {
-        type: Object,
+        type: Array,
         default() {
           return {}
         }
       },
       cfg: {
-        type: Object,
+        type: Array,
         default() {
           return {}
         }
       },
-      form: {
-        type: Object,
-        default() {
-          return {}
-        }  
-      }
     },
     data() {
       return {
         files: [],
         file: null,
         showLoading: false,
+        defaultValue: {},
       }
     },
     watch: {
@@ -97,12 +85,17 @@
         handler() {
           this.setDefault();
         },
-        immediate: true
+        //immediate: true
       },
+      values: {
+        handler() {
+          this.defaultValue = this.values
+        }
+      }
     },
     methods: {
       // 选择图片
-      chooseImage() {
+      chooseFile() {
         let options = {
           count: 5, // 默认9
           defaultCameraMode: 'batch', //表示进入拍照界面的默认模式，目前有normal与batch两种选择，normal表示普通单拍模式，batch表示连拍模式，不传该参数则为normal模式。（注: 用户进入拍照界面仍然可自由切换两种模式）
@@ -175,6 +168,10 @@
           });
         }
       },
+      //下载文件
+      downLoadFile(item){
+        window.open('/H_roleplay-si/ds/download?url=' + item.attacthment);
+      },
       // 删除文件
       deleteFile(item) {
         this.$vux.confirm.show({
@@ -207,7 +204,7 @@
       },
     },
     created() {
-      //console.log('form',this.form)
+      this.defaultValue = this.values
     }
   }
   export default Vue.component('Fileupload',component)
