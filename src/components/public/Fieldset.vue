@@ -11,8 +11,10 @@
       </header>
       <div class="readOnlyPart" v-if="readOnlyParts.length && styleType == 0">
         <template v-for="(item, index) in readOnlyParts">
-          <span :key="index">{{item.fieldLabel}}：</span>
-          <span>{{values[item.fieldCode]||'无'}}</span>
+          <div class="item">
+            <span :key="index">{{item.fieldLabel}}：</span>
+            <span>{{values[item.fieldCode]||'无'}}</span>
+          </div>
         </template>
       </div>
       <template v-for="(item, index) in editParts">
@@ -69,7 +71,9 @@ var component = {
           // 当Grid组件只读为false时 各个字段的readOnly才能启用
           if (
             item.readOnly == true &&
-            item.hiddenInRun == false &&
+            (item.hiddenInRun === undefined ||
+              item.hiddenInRun === null ||
+              item.hiddenInRun === false) &&
             cfg.layout != "fit"
           ) {
             readOnlyParts.push(item);
@@ -133,10 +137,15 @@ export default Vue.component("RFieldset", component);
     line-height: 0.22rem;
     font-size: 0.12rem;
     span:nth-child(2n + 1) {
-      color: #999;
+      color: #aaa;
     }
     span:nth-child(2n) {
-      margin-right: 0.05rem;
+      font-weight: 400;
+      font-size: 0.13rem;
+    }
+    .item {
+      display: inline-flex;
+      margin-right: 0.2rem;
     }
   }
   .each_property {
