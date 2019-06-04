@@ -2,19 +2,24 @@
   <!-- 工作流 -->
   <div class="work-flow-container" v-if="fullWorkFlow.length" @click="goWorkFlowFull">
     <div class="work-flow-header">
-      <span class="work_flow_title vux-1px-l">工作流</span>
+      <span class="work_flow_title vux-1px-l">{{this.formData.transTypeName}}</span>
       <span class="check_more">
-        更多<i class="icon-right"></i>
+        查看工作流<i class="icon-right"></i>
       </span>
     </div>
-    <div class="work-flow-time">{{this.formData.transCode}}</div>
+    <div class="work-flow-status-wrapper">
+      <!-- <i class="icon-success"></i> -->
+      <span class="work-flow-text">
+        交易号：{{this.formData.transCode}} 当前状态：<span :class="[statusClass]">{{workFlowInfo.biStatus}}</span>
+      </span>
+    </div>
     <div class="work-flow-status-wrapper">
       <i class="icon-flow-time"></i>
       <span class="work-flow-text">
-        工作流已到{{currentStatus.nodeName}}，当前状态：<span :class="[statusClass]">{{workFlowInfo.biStatus}}</span>
+        工作流已到{{currentStatus.nodeName}}
       </span>
     </div>
-    <div class="work-flow-time">{{currentStatus.startTime}}</div>
+    <!-- <div class="work-flow-time">{{currentStatus.startTime}}</div> -->
   </div>
 </template>
 <script>
@@ -40,10 +45,22 @@ var component = {
       userName: '',
       isMyTask: false,
       workFlowInfo: {},
+      myFlow: {}
     }
   },
   computed: {
     statusClass() {
+      let {biStatus = ''} = this.workFlowInfo;
+      switch (biStatus) {
+        case '进行中':
+          return 'doing';
+        case '已失效':
+          return 'failure';
+        default:
+          return ''
+      }
+    },
+    biStatusClass() {
       let {biStatus = ''} = this.workFlowInfo;
       switch (biStatus) {
         case '进行中':
@@ -114,6 +131,7 @@ var component = {
       return getBasicInfo().then(data => {
         let {currentUser} = data;
         this.userName = `${currentUser.nickname}-${currentUser.userCode}`;
+        this.$emit('getBasicInfo',data);
       });  
     },
     getFlowAndActions() {
@@ -124,6 +142,8 @@ var component = {
             let {isMyTask = 0, actions = '', taskId, viewId} = flow;
             // 赋值 完整版工作流
             this.fullWorkFlow = this.workFlow;
+            this.$emit('getMyFlow',this.myFlow);
+            this.$emit('getWorkFlow',this.workFlow);
         });
     },
     workFlowHandler() {
