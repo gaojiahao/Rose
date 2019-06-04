@@ -374,6 +374,7 @@ export default {
   mediaUpload,
   getProcess,
   getDictByType,
+  getBasicInfo,
   submitAndCalc,
   getDictByValue,
   saveAndStartWf,

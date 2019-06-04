@@ -119,7 +119,7 @@ export default {
       });
     },
     //获取当前用户信息
-    getCurrentUser() {
+    getCurrentUser() {    
       return commonService.getBasicInfo().then(baseInfo => {
         var data = baseInfo.currentUser;
         this.userInfo = {
