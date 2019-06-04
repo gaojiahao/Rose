@@ -31,7 +31,6 @@
 <script>
 import Vue from 'vue';
   var component = {
-    name: "ContentView",
     props: {
       values: {
         type: Object,
@@ -76,6 +75,12 @@ import Vue from 'vue';
         this.activeIndex = index;
       }
     },
+    created () {
+      let name = this.cfg.name;
+      let data = this.values;
+      this.data = data && data[name];
+      this.data = this.data && this.data[0];
+    }
   }
   export default Vue.component('ContentView',component)
 </script>

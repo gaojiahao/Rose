@@ -6,8 +6,8 @@
       <span class="check_more">
         更多<i class="icon-right"></i>
       </span>
-
     </div>
+    <div class="work-flow-time">{{this.formData.transCode}}</div>
     <div class="work-flow-status-wrapper">
       <i class="icon-flow-time"></i>
       <span class="work-flow-text">
@@ -21,37 +21,25 @@
 import Vue from 'vue';
 import {Popup, Group, Icon, XButton, dateFormat} from 'vux'
 import RScroll from 'plugins/scroll/RScroll'
+import { isMyflow,getWorkFlow } from "service/detailService";
+import { getBasicInfo } from "service/commonService";
 var component = {
-  name: "WFlow",
   props: {
-    // 完整工作流
-    fullWorkFlow: {
-      type: Array,
-      default() {
-        return []
-      }
-    },
-    // 当前用户名-用户编码
-    userName: {
-      type: String,
-      default: ''
-    },
-    // 是否为我的任务
-    isMyTask: {
-      type: Boolean,
-      default: false
-    },
-    workFlowInfo: {
+    formData: {
       type: Object,
       default() {
         return {}
       }
-    }
+    },
   },
   data() {
     return {
       defaulImg: require('assets/ava01.png'),   // 默认图片1
       currentStatus: {},
+      fullWorkFlow: [],
+      userName: '',
+      isMyTask: false,
+      workFlowInfo: {},
     }
   },
   computed: {
@@ -68,6 +56,14 @@ var component = {
     }
   },
   watch: {
+    formData: {
+      handler() {
+        this.getFlowAndActions();
+        this.getBasicInfo();
+        this.workFlowInfoHandler();   
+        this.workFlowHandler();
+      }
+    },
     fullWorkFlow: {
       handler() {
         this.workFlowHandler();
@@ -79,6 +75,57 @@ var component = {
     Popup, Group, Icon, XButton, RScroll,
   },
   methods: {
+    isMyflow() {
+      return isMyflow({
+        _dc: Date.now(),
+        transCode: this.formData.transCode
+      });
+    },
+    getWorkFlow() {
+      return getWorkFlow({
+        _dc: Date.now(),
+        transCode: this.formData.transCode
+      })
+    },
+    // 处理简易版工作流数据
+    workFlowInfoHandler() {
+      this.workFlowInfo = {
+        biStatus: this.formData.biStatus,
+        transCode: this.formData.transCode,
+      };
+      switch (this.formData.biStatus) {
+        case '进行中':
+            let newkey = 'dyClass',
+            cokey = 'coClass';
+            this.workFlowInfo[newkey] = 'doing_work';
+            this.workFlowInfo[cokey] = 'doing_code';
+            break;
+        case '草稿':
+            newkey = 'dyClass';
+            this.workFlowInfo[newkey] = 'invalid_work';
+            break;
+        case '已失效':
+            newkey = 'dyClass';
+            this.workFlowInfo[newkey] = 'invalid_work';
+            break;
+      }
+    },
+    getBasicInfo() {
+      return getBasicInfo().then(data => {
+        let {currentUser} = data;
+        this.userName = `${currentUser.nickname}-${currentUser.userCode}`;
+      });  
+    },
+    getFlowAndActions() {
+        return Promise.all([this.isMyflow(), this.getWorkFlow()]).then(([data = {}, data2 = {}]) => {
+            this.myFlow = data.tableContent || [];
+            this.workFlow = data2.tableContent || [];
+            let [flow = {}] = this.myFlow;
+            let {isMyTask = 0, actions = '', taskId, viewId} = flow;
+            // 赋值 完整版工作流
+            this.fullWorkFlow = this.workFlow;
+        });
+    },
     workFlowHandler() {
       let [currentStatus = {}] = this.fullWorkFlow.slice(-1);
       for (let item of this.fullWorkFlow) {
@@ -102,6 +149,9 @@ var component = {
     dateFormat,
   },
   created() {
+    this.getFlowAndActions();
+    this.getBasicInfo();
+    this.workFlowInfoHandler();  
   }
 }
 export default Vue.component('WFlow',component)
@@ -157,7 +207,7 @@ export default Vue.component('WFlow',component)
     .work-flow-status-wrapper {
       display: flex;
       align-items: flex-start;
-      margin-top: .15rem;
+      margin-top: .1rem;
       line-height: .16rem;
       font-size: .14rem;
       /* 进行中 */

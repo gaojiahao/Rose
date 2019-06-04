@@ -2,44 +2,29 @@
   <!--通用form组件-->
   <div class="detail_wrapper">
     <div class="basicPart">
-      <!-- <baseinfo-view :values="baseinfo"></baseinfo-view> -->
-      <!-- 经办信息 （订单、主体等）TransactorView -->
-      <!-- <transactor-view :values="transactor"></transactor-view> -->
-      <r-fieldset-ct
-        :cfg="fieldSets"
-        :values="formData"
-        v-if="fieldSets.length"
-      />
       <!-- 工作流 -->
-      <w-flow
-          :work-flow-info="workFlowInfo"
-          :full-work-flow="fullWL"
-          :userName="userName"
-          :is-my-task="isMyTask"
-          :no-status="formData.biStatus"
-      ></w-flow>
+      <w-flow :formData="formData"/>
+      <r-fieldset-ct :cfg="fieldSets" :values="formData" v-if="fieldSets.length"/>
+      <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId"/>
       <!-- 备注 -->
       <!-- <other-part :other-info="formData" :attachment="attachment"></other-part> -->
     </div>
   </div>
 </template>
 <script>
-import OtherPart from 'components/detail/commonPart/OtherPart'
-import { numberComma } from 'vux'
+import OtherPart from "components/detail/commonPart/OtherPart";
+import { numberComma } from "vux";
 // 请求 引入
 import {
-  isMyflow,
   getListId,
   getSOList,
-  getWorkFlow,
   getFromStatus,
   getAppExampleDetails
 } from "service/detailService";
 import {
   getFormViews,
   getFormViewByUniqueId,
-  saveAndCommitTask,
-  getBasicInfo
+  saveAndCommitTask
 } from "service/commonService";
 export default {
   components: {
@@ -50,20 +35,16 @@ export default {
       transCode: "",
       listId: "",
       viewId: "",
-      model:null,
+      model: null,
       fieldSets: [],
       formData: {},
       //经过处理的经办人信息
       transactor: {},
-      config:{},
-      biReferenceId:null,
+      config: {},
+      biReferenceId: null,
       //经过处理的基本信息
       baseinfo: {},
-      attachment:[],
-      workFlowInfo: {},
-      fullWL: [],
-      userName: '',
-      isMyTask: false,
+      attachment: []
     };
   },
   methods: {
@@ -74,7 +55,7 @@ export default {
           if (data.length) {
             this.viewId = data[0].uniqueId;
             this.listId = data[0].listId;
-            this.model = "view"//查看视图
+            this.model = "view"; //查看视图
             resolve();
           } else {
             this.$vux.alert.show({
@@ -85,20 +66,23 @@ export default {
       });
     },
     //获取新建视图
-    async getViewIdByListId(){ 
-       await getFormViews(this.listId).then(data => {
+    async getViewIdByListId() {
+      await getFormViews(this.listId).then(data => {
         for (let item of data) {
-          if (item.viewType === 'submit') {
+          if (item.viewType === "submit") {
             this.viewId = item.uniqueId;
-            this.model = 'new';
+            this.model = "new";
             break;
           }
         }
-      })
+      });
     },
     handlerFormData(formData) {
-      var key, key1, item, list,
-          singleFieldCts = this.singleFieldCts;
+      var key,
+        key1,
+        item,
+        list,
+        singleFieldCts = this.singleFieldCts;
 
       for (key in formData) {
         item = formData[key];
@@ -110,15 +94,15 @@ export default {
             delete item[key1];
           }
 
-          if(singleFieldCts.indexOf(key)!= -1){
-             item = list[0];
-             for (key1 in item) {
-                formData[key1] = item[key1];
-                delete item[key1];
-             }
+          if (singleFieldCts.indexOf(key) != -1) {
+            item = list[0];
+            for (key1 in item) {
+              formData[key1] = item[key1];
+              delete item[key1];
+            }
           } else {
-             formData[key] = list;
-          }    
+            formData[key] = list;
+          }
         }
       }
       this.formData = formData;
@@ -130,7 +114,7 @@ export default {
         modifyBy: formData.modiferName,
         modifyAt: formData.modTime,
         status: formData.biStatus,
-        effectiveTime:formData.effectiveTime
+        effectiveTime: formData.effectiveTime
       };
       //mapping 经办人信息
       this.transactor = {
@@ -141,150 +125,101 @@ export default {
       };
     },
     async loadPage() {
-      let { transCode,listId,viewId,model} = this.$route.query;
+      let { transCode, listId, viewId, model } = this.$route.query;
 
       if (transCode) {
         this.transCode = transCode;
-        if(viewId){
-          this.viewId = viewId; 
-          this.model = model || 'edit';
-        }else {
+        if (viewId) {
+          this.viewId = viewId;
+          this.model = model || "edit";
+        } else {
           //加载查看视图
           await this.getViewIdByTransCode(transCode);
         }
-        
-      } else if(listId) { //没有transCode,获取新建视图。
+      } else if (listId) {
+        //没有transCode,获取新建视图。
         this.listId = listId;
         await this.getViewIdByListId();
       }
 
-      if(this.viewId){
-          await this.loadFormCfg();
-          if (transCode) {
-            await this.loadFormData(transCode);
-          }
-          this.$loading.hide();
-          // 触发父组件的scroll刷新
-          this.$emit('refresh-scroll');
+      if (this.viewId) {
+        await this.loadFormCfg();
+        if (transCode) {
+          await this.loadFormData(transCode);
+        }
+        this.$loading.hide();
+        // 触发父组件的scroll刷新
+        this.$emit("refresh-scroll");
       } else {
-          this.$vux.alert.show({
-              content: '抱歉，无法支持该应用的查看',
-              onHide: () => {
-                  this.$router.go(-1);
-              }
-          });
+        this.$vux.alert.show({
+          content: "抱歉，无法支持该应用的查看",
+          onHide: () => {
+            this.$router.go(-1);
+          }
+        });
       }
-      await this.getFlowAndActions();
-      await this.getBasicInfo();
-      await this.workFlowInfoHandler();
       // 触发父组件的scroll刷新
-      this.$emit('refresh-scroll');
+      this.$emit("refresh-scroll");
     },
     loadFormData(transCode) {
-      return getSOList({
-        formViewUniqueId: this.viewId,
-        transCode
-      }).then(({ formData = {}, attachment = [], biReferenceId}) => {
-        this.handlerFormData(formData);
-        this.attachment = attachment;
-        this.biReferenceId = biReferenceId;
-      });
+      var params = {
+          formViewUniqueId: this.viewId,
+          transCode
+        },
+        api = this.config.config.isBaseObject
+          ? this.config.config.baseObjectKey
+          : "formAPI";
+      return getSOList(params, api).then(
+        ({ formData = {}, attachment = [], biReferenceId }) => {
+          this.handlerFormData(formData);
+          this.attachment = attachment;
+          this.biReferenceId = biReferenceId;
+        }
+      );
     },
     loadFormCfg() {
       return getFormViewByUniqueId(this.viewId).then(data => {
-        let { appName,config, dataSource} = data;
-        try{
+        let { appName, config, dataSource } = data;
+        window.document.title = appName;
+        try {
           config = JSON.parse(config);
           data.config = config;
-        }catch(e){
+        } catch (e) {
           config = null;
         }
 
-        if(config){
+        if (config) {
           let fieldSets = config.items,
-              singleFieldCts = [],
-              reconfig = config.reconfig;
+            singleFieldCts = [],
+            reconfig = config.reconfig;
 
-          if (reconfig) fieldSets.forEach(item => {
-            if (item.formViewPartId) {
-              let reconfigData = reconfig[`_${item.formViewPartId}`];
+          if (reconfig)
+            fieldSets.forEach(item => {
+              if (item.formViewPartId) {
+                let reconfigData = reconfig[`_${item.formViewPartId}`];
 
-              if(reconfigData){
-                item.items =
-                  item.items &&
-                  item.items.map(cItem => {
-                    let matched = reconfigData[cItem.fieldCode] || {};
-                    return { ...cItem, ...matched };
-                });
-                if(reconfigData._prop){
-                  item = {...item,...reconfigData._prop}
+                if (reconfigData) {
+                  item.items =
+                    item.items &&
+                    item.items.map(cItem => {
+                      let matched = reconfigData[cItem.fieldCode] || {};
+                      return { ...cItem, ...matched };
+                    });
+                  if (reconfigData._prop) {
+                    item = { ...item, ...reconfigData._prop };
+                  }
                 }
               }
-            };
-            if(item.isMultiple == false && item.name){
-               singleFieldCts.push(item.name);
-            }
-            
-          });
+              if (item.isMultiple == false && item.name) {
+                singleFieldCts.push(item.name);
+              }
+            });
           this.singleFieldCts = singleFieldCts;
           this.config = data;
-          console.log('this.config',this.config)
+          console.log("this.config", this.config);
           this.fieldSets = fieldSets;
-      } 
-      });
-    },
-    isMyflow() {
-      return isMyflow({
-        _dc: Date.now(),
-        transCode: this.transCode
-      });
-    },
-    getWorkFlow() {
-      return getWorkFlow({
-        _dc: Date.now(),
-        transCode: this.transCode
-      })
-    },
-    // 处理简易版工作流数据
-    workFlowInfoHandler() {
-        this.workFlowInfo = {
-            biStatus: this.formData.biStatus,
-            transCode: this.formData.transCode,
-        };
-        switch (this.formData.biStatus) {
-            case '进行中':
-                let newkey = 'dyClass',
-                cokey = 'coClass';
-                this.workFlowInfo[newkey] = 'doing_work';
-                this.workFlowInfo[cokey] = 'doing_code';
-                break;
-            case '草稿':
-                newkey = 'dyClass';
-                this.workFlowInfo[newkey] = 'invalid_work';
-                break;
-            case '已失效':
-                newkey = 'dyClass';
-                this.workFlowInfo[newkey] = 'invalid_work';
-                break;
         }
-    },
-    getBasicInfo() {
-      return getBasicInfo().then(data => {
-        let {currentUser} = data;
-        // this.baseinfoConfig = data;
-        // this.userId = `${currentUser.userId}`;
-        this.userName = `${currentUser.nickname}-${currentUser.userCode}`;
-      });  
-    },
-    getFlowAndActions() {
-        return Promise.all([this.isMyflow(), this.getWorkFlow()]).then(([data = {}, data2 = {}]) => {
-            this.myFlow = data.tableContent || [];
-            this.workFlow = data2.tableContent || [];
-            let [flow = {}] = this.myFlow;
-            let {isMyTask = 0, actions = '', taskId, viewId} = flow;
-            // 赋值 完整版工作流
-            this.fullWL = this.workFlow;
-        });
+      });
     }
   },
   created() {
@@ -294,7 +229,7 @@ export default {
 };
 </script>
 <style>
-  .fieldSets{
-    background: #F8F8F8;
-  }
+.fieldSets {
+  background: #f8f8f8;
+}
 </style>

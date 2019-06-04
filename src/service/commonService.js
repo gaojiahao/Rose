@@ -383,5 +383,6 @@ export default {
   getObjDealerByLabelName,
   getUserList,
   transferTask,
-  getFormConfig
+  getFormConfig,
+  getBasicInfo
 }

@@ -1,160 +1,180 @@
 <template>
   <div class="r-fieldset">
     <div class="box">
-    <header v-show="cfg.cName">
+      <header v-show="cfg.cName">
         <div class="vux-1px-l">{{cfg.cName}}</div>
         <div class="basic_process_status">
-           <span v-if ="hasToogleBar" @click="toggleStyleType()" class = "barWrapp">
-              <i class="style-toogleBar" :class="styleType?'icon-up':'icon-down'"></i>
-           </span>
+          <span v-if="hasToogleBar" @click="toggleStyleType()" class="barWrapp">
+            <i class="style-toogleBar" :class="styleType?'icon-up':'icon-down'"></i>
+          </span>
         </div>
-    </header>
-    <div class="readOnlyPart" v-if="readOnlyParts.length && styleType == 0">
-      <template v-for="(item, index) in readOnlyParts">
-        <span :key="index">{{item.fieldLabel}}：</span><span>{{values[item.fieldCode]||'无'}}</span>
+      </header>
+      <div class="readOnlyPart" v-if="readOnlyParts.length && styleType == 0">
+        <template v-for="(item, index) in readOnlyParts">
+          <span :key="index">{{item.fieldLabel}}：</span>
+          <span>{{values[item.fieldCode]||'无'}}</span>
+        </template>
+      </div>
+      <template v-for="(item, index) in editParts">
+        <r2Textfield :cfg="item" :values="values" v-if="item.xtype == 'r2Textfield'" :key="index"/>
+        <r2Permilfield
+          :cfg="item"
+          :values="values"
+          v-if="item.xtype == 'r2Permilfield'"
+          :key="index"
+        />
+        <r2Datefield :cfg="item" :values="values" v-if="item.xtype == 'r2Datefield'" :key="index"/>
+        <r2Combofield
+          :cfg="item"
+          :values="values"
+          v-if="['r2Selector','r2Combo'].indexOf(item.xtype)!=-1"
+          :key="index"
+        />
+        <r-grid
+          :cfg="item"
+          :value="values[cfg.name]"
+          :form="form"
+          v-if="item.xtype.indexOf('Grid') != -1"
+          :key="index"
+        />
       </template>
     </div>
-    <template v-for="(item, index) in editParts" >
-       <r2Textfield :cfg="item" :values="values" v-if="item.xtype == 'r2Textfield'" :key="index"/>
-       <r2Permilfield :cfg="item" :values="values" v-if="item.xtype == 'r2Permilfield'" :key="index"/>
-       <r2Datefield :cfg="item" :values="values" v-if="item.xtype == 'r2Datefield'" :key="index"/>
-       <r2Combofield :cfg="item" :values="values" v-if="['r2Selector','r2Combo'].indexOf(item.xtype)!=-1" :key="index"/>
-       <r-grid :cfg="item" :value="values[cfg.name]" :form="form" v-if="item.xtype.indexOf('Grid') != -1" :key="index"/>
-    </template>
-    </div>
-    
   </div>
 </template>
 <script>
-import Vue from 'vue';
+import Vue from "vue";
 var component = {
-    props:['cfg','values','form'],
-    data(){
-      return {
-         styleType:0,//0||1，折叠||展开
-         title:null,
-         pageSize:1,
-         visibleItemsLength:0,//
-         hasToogleBar:false,
-         editParts:[],
-         readOnlyParts:[]
-      }
-    },
-    created:function(){
+  props: ["cfg", "values", "form"],
+  data() {
+    return {
+      styleType: 0, //0||1，折叠||展开
+      title: null,
+      pageSize: 5,
+      visibleItemsLength: 0, //
+      hasToogleBar: false,
+      editParts: [],
+      readOnlyParts: []
+    };
+  },
+  created: function() {},
+  watch: {
+    cfg: {
+      handler(cfg) {
+        // *部分应用* 物料详情在审批节点可以重新录入数据 此处进行数据分割
+        let { items = [] } = cfg,
+          formModel = this.form.model;
+        let readOnlyParts = [],
+          i = 0;
+        items.forEach(item => {
+          // 当Grid组件只读为false时 各个字段的readOnly才能启用
+          if (
+            item.readOnly == true &&
+            item.hiddenInRun == false &&
+            cfg.layout != "fit"
+          ) {
+            readOnlyParts.push(item);
+          }
+          if (!item.hiddenInRun) i++;
+        });
 
-    },
-    watch:{
-      cfg: {
-        handler(cfg) {
-          // *部分应用* 物料详情在审批节点可以重新录入数据 此处进行数据分割
-          let {items = []} = cfg,
-              formModel = this.form.model;
-          let readOnlyParts = [],
-              i = 0;
-          items.forEach(item => {
-            // 当Grid组件只读为false时 各个字段的readOnly才能启用
-            if (item.readOnly == true &&item.hiddenInRun == false&& cfg.layout != 'fit') {
-               readOnlyParts.push(item);
-            }
-            if(!item.hiddenInRun) i++;
-          });
+        this.editParts = items; // 可编辑部分
+        this.visibleItemsLength = i;
+        this.readOnlyParts = readOnlyParts; // 只读部分
 
-          this.editParts = items;   // 可编辑部分
-          this.visibleItemsLength = i;
-          this.readOnlyParts = readOnlyParts;   // 只读部分
-
-          if(formModel == 'new' || this.visibleItemsLength <= this.pageSize){
-            this.styleType = 1;
-          } else {
-            this.styleType = this.readOnlyParts.length > this.pageSize ? 0 : 1;
-          } 
-          this.hasToogleBar = !this.styleType;
-        },
-        immediate: true
-      }
-    },
-    methods:{
-      toggleStyleType(){
-         this.styleType = this.styleType ? 0 : 1;
-         this.$emit('change-styleType',this.styleType);
-      }
+        if (formModel == "new" || this.visibleItemsLength <= this.pageSize) {
+          this.styleType = 1;
+        } else {
+          this.styleType = this.readOnlyParts.length > this.pageSize ? 0 : 1;
+        }
+        this.hasToogleBar = !this.styleType;
+      },
+      immediate: true
     }
-}
-export default Vue.component('RFieldset',component)
+  },
+  methods: {
+    toggleStyleType() {
+      this.styleType = this.styleType ? 0 : 1;
+      this.$emit("change-styleType", this.styleType);
+    }
+  }
+};
+export default Vue.component("RFieldset", component);
 </script>
 
 <style lang="scss">
- @import '~@/scss/color';
-  .r-fieldset {
-    color: #333;
-    margin: .1rem;
-    border-radius: .04rem;
-    background-color: #fff;
-    width: calc(100% - .2rem);
-    .box{
-       padding:0.15rem;
-    }
-    header {
-      display: flex;
-      align-items: center;
-      margin-bottom:0.1rem;
-      justify-content: space-between;
-      div:first-child {
-        font-size: 16px;
-        font-weight: 600;
-        line-height: .16rem;
-        &:before {
-          left: -.15rem;
-          width: .08rem;
-          border-left: .08rem solid #3296FA;
-        }
+@import "~@/scss/color";
+.r-fieldset {
+  color: #333;
+  margin: 0.1rem;
+  border-radius: 0.04rem;
+  background-color: #fff;
+  width: calc(100% - 0.2rem);
+  .box {
+    padding: 0.15rem;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.1rem;
+    justify-content: space-between;
+    div:first-child {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 0.16rem;
+      &:before {
+        left: -0.15rem;
+        width: 0.08rem;
+        border-left: 0.08rem solid #3296fa;
       }
     }
-    
-    .readOnlyPart{
-      line-height: .22rem;
-      font-size: .12rem;
-      span:nth-child(2n+1){
-        color:#999;
+  }
+
+  .readOnlyPart {
+    line-height: 0.22rem;
+    font-size: 0.12rem;
+    span:nth-child(2n + 1) {
+      color: #999;
+    }
+    span:nth-child(2n) {
+      margin-right: 0.05rem;
+    }
+  }
+  .each_property {
+    height: 0.3rem;
+    padding: 0;
+    font-size: 0.13rem;
+    line-height: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    label {
+      color: #999;
+      &.required {
+        font-weight: bold;
+        color: $main_color;
       }
-      span:nth-child(2n){
-        margin-right:0.05rem;
-      }
     }
-    .each_property{
-        height: .5rem;
-        line-height: .5rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        label{
-            color:#999;
-            &.required{
-              font-weight: bold;
-              color: $main_color;
-            }
-        }
-        :after {
-          border-color: #e8e8e8;
-          left: 0;
-        }
-        input {
-          flex: 1;
-          font-size: .14rem;
-          margin-left: .05rem;
-          outline: none;
-          border: none;
-          text-align: right;
-        }
+    :after {
+      border-color: #e8e8e8;
+      left: 0;
     }
-    .barWrapp{
-       display:block;
-       width:0.3rem;
+    input {
+      flex: 1;
+      font-size: 0.14rem;
+      margin-left: 0.05rem;
+      outline: none;
+      border: none;
+      text-align: right;
     }
-    .style-toogleBar{
-      width: .14rem;
-      height: .08rem;
-      display:inline-block;
-    }
+  }
+  .barWrapp {
+    display: block;
+    width: 0.3rem;
+  }
+  .style-toogleBar {
+    width: 0.14rem;
+    height: 0.08rem;
+    display: inline-block;
+  }
 }
 </style>

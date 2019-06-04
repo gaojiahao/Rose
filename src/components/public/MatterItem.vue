@@ -1,9 +1,9 @@
 <template>
   <!-- 单个物料 (嵌套于matterList中) -->
-  <div class="matter-item-container" v-if="item.inventoryName_transObjCode">
-    <div class="order_code">
+  <div class="matter-item-container" v-if="item.inventoryName_transObjCode || item.facilityName_facilityObjCode">
+    <!-- <div class="order_code">
       <span class="order_num">{{item.transCode || item.transMatchedCode}}&nbsp;</span>
-    </div>
+    </div> -->
     <div class="matter-main">
       <img class="matter_img" :src="item.inventoryPic" alt="mater_img" @error="getMatterDefault(item)">
       <div class="matter_info">
@@ -51,10 +51,10 @@
       <div class="matter_info_item2">
           <div class="matter_detail2">
             <template v-for="(citem, index) in columns">
-              <span class="matter_item_title" :key="index" v-if=" index < 10">{{ citem.text }}：</span>
-              <span class="matter_item_value2" v-if=" index < 10">{{ item[citem.fieldCode] || '无'}}</span>
+              <span class="matter_item_title" :key="index" v-if=" index < 5">{{ citem.text }}:</span>
+              <span class="matter_item_value2" v-if=" index < 5">{{ item[citem.fieldCode] || '无'}}</span>
             </template>
-            <i class="icon-more" @click="clickMore" v-if="columns.length >=10"></i>
+            <i class="icon-more" @click="clickMore" v-if="columns.length >=5"></i>
           </div>
         </div>
     </div>  
@@ -133,7 +133,7 @@
 
 <style scoped lang="scss">
   .matter-item-container {
-    padding: .15rem;
+    padding: 0 0.15rem 0.15rem 0.15rem;
     color: #333;
     .matter-main {
       display: flex;
@@ -192,6 +192,9 @@
       .matter_item_value2{
         margin-right: 0.05rem;
       }
+    }
+    .matter_info_item2 {
+      border-top: 1px solid #C7C7C7;
     }
     .matter_detail {
       display: flex;

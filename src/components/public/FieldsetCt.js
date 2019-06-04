@@ -20,9 +20,11 @@ let RFieldsetCt = Vue.component('RFieldsetCt',{
 
            if(itemCfg.isMultiple == true){
                if(matterNames.indexOf(itemCfg.name)!= -1){
-                    xtype = 'MatterListView'
+                    //xtype = 'MatterListView'
                }
-               if(itemCfg.xtype == 'r2Fileupload')continue;
+               if(itemCfg.xtype == 'r2Fileupload')
+                    //xtype = 'Fileupload'
+               continue;
            }
            items.push(
                _c(xtype,{
