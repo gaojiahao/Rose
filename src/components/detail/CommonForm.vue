@@ -1,21 +1,35 @@
 <template>
   <!--通用form组件-->
-  <div class="detail_wrapper">
-    <div class="basicPart">
-      <!-- 工作流组件 -->
-      <w-flow :formData="formData" @getMyFlow="getMyFlow" @getWorkFlow="getWorkFlow" @getBasicInfo="getBasicInfo" />
-      <!-- 表单渲染 -->
-      <r-fieldset-ct :cfg="fieldSets" :values="formData" v-if="fieldSets.length"/>
-      <!-- 附件组件 -->
-      <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId" />
-      <!-- 审批组件 -->
-      <r2-action :code="transCode" :myFlow="myFlow" :workFlow="workFlow" :basicInfo="basicInfo" :agree-handler="agreeHandler"
-                :name="$route.query.name" @on-submit-success="submitSuccessCallback" />
+  <div class="detail_wrapper" :class="{pages:model != 'view'}">
+    <div class="form" :class="{scrollCt:model != 'view'}" ref="fill">
+      <div class='fill_wrapper'>
+        <!-- 工作流组件 -->
+        <w-flow :formData="formData" @getMyFlow="getMyFlow" @getWorkFlow="getWorkFlow" @getBasicInfo="getBasicInfo" />
+        <!-- 表单渲染 -->
+        <r-fieldset-ct :cfg="fieldSets" :values="formData" v-if="fieldSets.length"/>
+        <!-- 附件组件 -->
+        <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId" />
+        <!-- 审批组件 -->
+        <r2-action :code="transCode" :myFlow="myFlow" :workFlow="workFlow" :basicInfo="basicInfo" :agree-handler="agreeHandler"
+                  :name="$route.query.name" @on-submit-success="submitSuccessCallback" />
+      </div>
+    </div>
+    <!-- 底部确认栏 -->
+    <div class="count_mode vux-1px-t" v-if="model != 'view'">
+      <span class="count_num" v-if="false">
+        <!-- <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}} -->
+      </span>
+      <span class="count_btn stop" @click="stopOrder"
+            v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
+      <span class="count_btn" @click="submit">提交</span>
     </div>
   </div>
 </template>
 <script>
 // 请求 引入
+import platfrom from '@/plugins/platform/index'
+// 插件 引入
+import Bscroll from 'better-scroll'
 import {
   getListId,
   getSOList,
@@ -45,6 +59,7 @@ export default {
       baseinfo: {},
       attachment:[],
       myFlow: [],
+      btnInfo:{},
       workFlow: [],
       basicInfo: {},
     };
@@ -126,6 +141,32 @@ export default {
         entity: formData.handlerEntityName
       };
     },
+    initScroll(){
+      if(this.model == 'view'){
+        // 触发父组件的scroll刷新
+        this.$emit("refresh-scroll");
+        return;
+      }
+      this.$nextTick(() => {
+        this.fillBscroll = new Bscroll(this.$refs.fill, {
+          click: true
+        })
+      })
+      //解决android键盘收起input没有失去焦点，底部按钮遮挡输入框
+      if (platfrom.isAndroid) {
+        window.onresize= () => {
+          if (this.clientHeight > document.documentElement.clientHeight) {
+            //底部按钮隐藏
+              this.btnIsHide  = true;
+          }else {
+              this.btnIsHide = false;
+              if (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA") {
+                document.activeElement.blur();
+              }
+          }
+        }
+      }
+    },
     async loadPage() {
       let { transCode, listId, viewId, model } = this.$route.query;
 
@@ -150,8 +191,7 @@ export default {
           await this.loadFormData(transCode);
         }
         this.$loading.hide();
-        // 触发父组件的scroll刷新
-        this.$emit("refresh-scroll");
+        this.initScroll();
       } else {
         this.$vux.alert.show({
           content: "抱歉，无法支持该应用的查看",
@@ -236,6 +276,10 @@ export default {
     agreeHandler() {
 
     },
+    stopOrder(){},
+    submit(){
+
+    },
     // 同意、拒绝、撤回成功时的回调
     submitSuccessCallback(val) {
       let type = JSON.parse(val).type;
@@ -250,8 +294,118 @@ export default {
   }
 };
 </script>
-<style>
+<style lang="scss">
 .fieldSets {
   background: #f8f8f8;
+}
+.scrollCt {
+  z-index: 1;
+  overflow: hidden;
+  position: relative;
+  background: #F8F8F8;
+  height: calc(100% - .44rem);
+  -webkit-overflow-scrolling: touch;
+  .fill_wrapper{
+    overflow: hidden;
+  }
+}
+// 底部栏
+.count_mode {
+  // left: 0;
+  z-index: 99;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  height: .44rem;
+  position: absolute;
+  line-height: .44rem;
+  background: #fff;
+  .count_num {
+    flex: 2.5;
+    color: #5077aa;
+    font-size: .24rem;
+    padding-left: .1rem;
+    position: relative;
+    &.nine_up {
+      font-size: .2rem;
+    }
+    &.ten_up {
+      font-size: .16rem;
+    }
+    &.ele_up {
+      font-size: .12rem;
+      .taxAmount {
+        font-size: .1rem;
+      }
+    }
+    .total_price {
+      display: inline-block;
+      .symbol {
+        font-size: .14rem;
+      }
+    }
+    .taxAmount, .total-num {
+      color: #757575;
+      font-size: .1rem;
+      display: inline-block;
+    }
+  }
+  //全选
+  .all_checked{
+    font-size:0.16rem;
+    position: relative;
+    padding-left: 0.35rem;
+    box-sizing: border-box;
+    .vux-x-icon{
+      left:0.1rem;
+      top:50%;
+      position: absolute;
+      transform: translateY(-50%);
+      fill: #999;
+    }
+    .checked{
+      fill:#ea5455;
+    }
+
+  }
+  .count_btn {
+    flex: 1.5;
+    color: #fff;
+    text-align: center;
+    background: #3296FA;
+    &.stop {
+      color: #a1a1a1;
+      background: #dfdfdf;
+    }
+  }
+  .delete_btn {
+    @extend .count_btn;
+    background: #ea5455;
+  }
+}
+/* 没有金额的提交和终止按钮 */
+.btn-no-amt {
+  z-index: 99;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  height: .44rem;
+  position: absolute;
+  line-height: .44rem;
+  background: #fff;
+  display: flex;
+  .btn-item{
+    flex: 1;
+    background: #3296FA;
+    color: #fff;
+    text-align: center;
+    &.stop{
+      color: #a1a1a1;
+      background: #dfdfdf;
+    }
+  }
+}
+.vux-1px-t:before {
+  border-top: 1px solid #e8e8e8;
 }
 </style>
