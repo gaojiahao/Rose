@@ -23,7 +23,7 @@ export default {
       default: false
     }
   },
-  data () {
+  data() {
     return {
       page: 1,
       count: 0,
@@ -67,29 +67,29 @@ export default {
     }
   },
   components: {
-    RTab, RSort, RScroll, 
+    RTab, RSort, RScroll,
     addBtn, searchIcon, materListItem
   },
   methods: {
-    goDetail (item, index) {
+    goDetail(item, index) {
       if (this.clickVisited) return;
       // 交易号、应用名称等
       let { transCode } = item,
-          { name, listId } = this.$route.query,
-          { folder, fileName } = this.$route.params;
+        { name, listId } = this.$route.query,
+        { folder, fileName } = this.$route.params;
       // 高亮点击的列表
       this.clickVisited = true;
       item.visited = true;
-      this.$set(this.listData, index, {...item});
+      this.$set(this.listData, index, { ...item });
       let start = Date.now();
       const TRANSITION_TIME = 200; // 动画时间
       // 判断是否是重新提交，如果是，跳转到创建订单页面
-      isMyflow({transCode}).then(({tableContent}) => {
+      isMyflow({ transCode }).then(({ tableContent }) => {
         let jump = () => {
           let path = '';
           this.clickVisited = false;
           if (tableContent.length > 0) {
-            let {isMyTask, nodeName} = tableContent[0];
+            let { isMyTask, nodeName } = tableContent[0];
             if (isMyTask === 1 && nodeName === '重新提交') {
               path = `/fillform/${folder}/${fileName}`;
             } else {
@@ -116,19 +116,19 @@ export default {
       }).catch(e => {
         this.clickVisited = false;
         item.visited = false;
-        this.$set(this.listData, index, {...item});
+        this.$set(this.listData, index, { ...item });
       })
     },
-    goEdit () {
+    goEdit() {
       let { name, listId } = this.$route.query,
-          { folder, fileName } = this.$route.params;
+        { folder, fileName } = this.$route.params;
       this.$router.push({
         path: `/fillform/${folder}/${fileName}`,
         query: { name, listId }
       })
     },
     // 重置列表条件
-    resetCondition () {
+    resetCondition() {
       this.listData = [];
       this.page = 1;
       this.hasNext = true;
@@ -138,14 +138,14 @@ export default {
       })
     },
     // tab切换
-    tabClick (item, index) {
+    tabClick(item, index) {
       this.activeIndex = index;
       this.activeTab = item.status;
       this.resetCondition();
       this.getList();
     },
     //搜索
-    searchList ({val = '', property = ''}) {
+    searchList({ val = '', property = '' }) {
       this.serachVal = val;
       this.filterProperty = property;
       this.otherFilter = {};
@@ -155,7 +155,7 @@ export default {
       this.getList();
     },
     // 设置状态的class和显示的名称
-    setStatus (item) {
+    setStatus(item) {
       switch (item.biStatus) {
         case '已生效':
           item.whichIcon = 'icon-yishengxiao';
@@ -178,7 +178,7 @@ export default {
       }
     },
     // 获取默认图片
-    getDefaultImg (item) {
+    getDefaultImg(item) {
       let url = require('assets/wl_default03.png');
       if (item) {
         item.inventoryPic = url;
@@ -186,22 +186,22 @@ export default {
       return url
     },
     // 重置下拉刷新、上拉加载的状态
-    resetScroll () {
+    resetScroll() {
       this.$refs.bScroll.finishPullDown();
       this.$refs.bScroll.finishPullUp();
     },
     // 上拉加载
-    onPullingUp () {
+    onPullingUp() {
       this.page++;
       this.getList();
     },
     // 下拉刷新
-    onPullingDown () {
+    onPullingDown() {
       this.page = 1;
       this.getData(true);
     },
     // 重置数据
-    reloadData () {
+    reloadData() {
       this.serachVal = '';
       this.activeTab = '';
       this.activeIndex = 0;
@@ -210,14 +210,14 @@ export default {
       this.onPullingDown();
     },
     // 获取上次存储的列表总数量
-    getSession () {
+    getSession() {
       return new Promise(resolve => {
         this.total = sessionStorage.getItem(this.applyCode);
         resolve()
       })
     },
     // 获取订单数据
-    getList (noReset = false) {
+    getList(noReset = false) {
       let filter = [];
       // tab 切换
       if (this.activeTab) {
@@ -243,15 +243,15 @@ export default {
         ];
       }
       // 过滤
-      if (Object.keys(this.otherFilter).length){
+      if (Object.keys(this.otherFilter).length) {
         let keyArr = Object.keys(this.otherFilter);
-        for (let key in this.otherFilter){
+        for (let key in this.otherFilter) {
           let obj = {
             property: key,
             operator: 'in'
           }
           this.otherFilter[key].value.forEach((item, index) => {
-            let key = `value${index+1}`;
+            let key = `value${index + 1}`;
             obj[key] = item;
           })
           filter.push(obj);
@@ -268,12 +268,12 @@ export default {
         }
         filter.push(obj);
       }
-      return getSellOrderList(this.listId,{
+      return getSellOrderList(this.listId, {
         limit: this.limit,
         page: this.page,
         filter: JSON.stringify(filter),
         sort: JSON.stringify(this.sort),
-      }).then(({total = 0, instanceList = []}) => {
+      }).then(({ total = 0, instanceList = [] }) => {
         let [first = {}] = instanceList;
         let [firstDetail = {}] = first.detailItem || [];
         let picKeys = ['inventoryPic', 'inventoryPic_transObjCode', 'inventoryPic_outPutMatCode', 'facilityPic_facilityObjCode'];
@@ -357,7 +357,7 @@ export default {
         this.resetScroll();
       })
     },
-    async getData (noReset) {
+    async getData(noReset) {
       await this.getSession();
       if (noReset) {
         await this.getList(true).then(() => {
@@ -375,7 +375,7 @@ export default {
 
     },
     // 修改是否访问的状态
-    changeVisitedStatus () {
+    changeVisitedStatus() {
       let tmp = [...this.listData];
       setTimeout(() => {
         tmp.forEach(item => {
@@ -385,23 +385,23 @@ export default {
       this.listData = tmp;
     },
     // 排序
-    onSortList (val) {
+    onSortList(val) {
       this.sort = val.property ? [val] : [];
       this.resetCondition();
       this.getList();
     },
     // tab切换
-    onTabClick ({status = '', index = 0}) {
+    onTabClick({ status = '', index = 0 }) {
       this.activeIndex = index;
       this.activeTab = status;
       this.resetCondition();
       this.getList();
     },
     // 筛选过滤
-    onFilter (val) {
+    onFilter(val) {
       this.serachVal = '';
       this.$refs.search.clearVal();
-      if (!this.sort.length){
+      if (!this.sort.length) {
         this.sort = [
           {
             property: 'modTime',
@@ -417,14 +417,14 @@ export default {
     // 获取应用详情
     getAppDetail() {
       return getAppDetail(this.listId).then(([data = {}]) => {
-        let {action} = data;
+        let { action } = data;
         this.action = action;
       })
     },
   },
   filters: {
     // 过滤日期
-    filterTime (val) {
+    filterTime(val) {
       if (val) {
         val = dateFormat(val);
         let date = val.split(' ')[0];
@@ -442,13 +442,13 @@ export default {
      * */
     this.$loading.show();
     let { folder, fileName } = this.$route.params,
-        { name, listId, transCode } = this.$route.query;
+      { name, listId, transCode } = this.$route.query;
     // 当路由当中包含transCode
     if (transCode) {
-      isMyflow({transCode}).then(({tableContent}) => {
+      isMyflow({ transCode }).then(({ tableContent }) => {
         let path = '';
         if (tableContent.length > 0) {
-          let {isMyTask, nodeName} = tableContent[0];
+          let { isMyTask, nodeName } = tableContent[0];
           if (isMyTask === 1 && nodeName === '重新提交') {
             path = `/fillform/${folder}/${fileName}`;
           } else {
@@ -458,7 +458,7 @@ export default {
           path = `/detail/${folder}/${fileName}`;
         }
         this.$router.replace({
-          path, query: {name, listId, transCode}
+          path, query: { name, listId, transCode }
         })
       })
     }
@@ -482,7 +482,7 @@ export default {
         let shareInfo = {
           title: `点击查看${name}列表`,
           desc: `点击查看${name}列表，可创建新的订单`,
-          imgUrl : 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542276320183&di=ef11baa4ce65f2ba1aed2b214cf4dacd&imgtype=0&src=http://www.qqzhi.com/uploadpic/2014-09-26/101958658.jpg'
+          imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542276320183&di=ef11baa4ce65f2ba1aed2b214cf4dacd&imgtype=0&src=http://www.qqzhi.com/uploadpic/2014-09-26/101958658.jpg'
           // imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542258659397&di=ce722db1d3d4d79259a2b6cd4de9879b&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01851855f282cf6ac7251df8d15ea0.png%401280w_1l_2o_100sh.png'
           // imgUrl: `http://${document.domain}/H_roleplay-si/ds/download?url=/668466d5-f92d-445c-bd9d-410f4449fd94/ae5b6e81-ec16-4153-9dda-ba18246a73c2.jpg`
           // imgUrl : `http://${document.domain}/Hermes/static/assets/cg02.jpg`,
