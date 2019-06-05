@@ -245,9 +245,7 @@ export default {
     },
   },
   created() {
-    initWebContext().then(()=>{
-        this.loadPage();
-    })
+    this.loadPage();
     this.fieldMap = {};
   }
 };

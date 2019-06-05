@@ -11,6 +11,9 @@
 </template>
 
 <script>
+import {
+  initWebContext
+} from "service/commonService";
 import platfrom from '@/plugins/platform'
 export default {
   data(){
@@ -40,7 +43,9 @@ export default {
     if (to.query.id || to.query.groupId || to.query.colId || to.query.transCode){
       to.meta.title = `编辑${name}`;
     }
-    next();
+    initWebContext().then(()=>{
+        next();
+    })
   },
   created(){
     this.$loading.show();
