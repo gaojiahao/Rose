@@ -482,10 +482,7 @@ export default {
         let shareInfo = {
           title: `点击查看${name}列表`,
           desc: `点击查看${name}列表，可创建新的订单`,
-          imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542276320183&di=ef11baa4ce65f2ba1aed2b214cf4dacd&imgtype=0&src=http://www.qqzhi.com/uploadpic/2014-09-26/101958658.jpg'
-          // imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542258659397&di=ce722db1d3d4d79259a2b6cd4de9879b&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01851855f282cf6ac7251df8d15ea0.png%401280w_1l_2o_100sh.png'
-          // imgUrl: `http://${document.domain}/H_roleplay-si/ds/download?url=/668466d5-f92d-445c-bd9d-410f4449fd94/ae5b6e81-ec16-4153-9dda-ba18246a73c2.jpg`
-          // imgUrl : `http://${document.domain}/Hermes/static/assets/cg02.jpg`,
+          imgUrl: ''
         }
         shareContent(shareInfo);
       })
