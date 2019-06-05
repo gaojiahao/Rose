@@ -9,7 +9,8 @@ export default {
     },
     methods:{
         init:function(){
-            var id = this.cfg.id,
+            var cfg = this.cfg,
+                id = cfg.id,
                 fieldSet = this.$parent,
                 form = fieldSet.form;
 
@@ -17,6 +18,7 @@ export default {
             this.form = form;
             this.valueChangeKey = 'value-change-' + id;
             this.initVisible();
+            this.initDataSource(cfg.dataSource);
         },
         initVisible:function(){
             var cfg = this.cfg,
@@ -34,6 +36,38 @@ export default {
             }
             
         },
+        initDataSource:function(ds){
+            var value;
+            if(!ds) return;
+            if(ds.type == 'formData'){
+                this.initValueBind([ds.data]);
+            }else if(ds.type == 'contextData'){
+
+            }
+        },
+        initValueBind(valueBind){
+            var me = this,
+                cmp,
+                cmpId,
+                form = this.form,
+                i = 0,l = valueBind.length,
+                item,
+                valueField;
+            
+            for(;i<l;i++){
+                item = valueBind[i];
+                cmpId = item.contrl;
+                valueField = item.valueField;
+                cmp = form.fieldMap[cmpId];
+                form.$on('value-change-' + cmpId,(function(valueField){
+                    return function(){
+                       var arg = Array.prototype.slice.call(arguments);
+                       arg.unshift(valueField);
+                       me.valueBindChangeHandler.apply(me,arg);
+                    }
+                })(valueField));
+            } 
+        },
         onStyleTypeChange:function(type){
             if(this.cfg.hiddenInRun) return;
             this.hidden = !type;
@@ -46,5 +80,11 @@ export default {
         getExtraFieldValue:function(valueField){
             return values[cfg.fieldCode];
         },
+        valueBindChangeHandler(valueField,cmp){
+            var value = cmp.getExtraFieldValue(valueField);
+
+            this.setValue(value);
+            if(this.form.model == 'new' && this.cfg.readOnly == true)this.hidden = value == null;
+        }
     }
 }

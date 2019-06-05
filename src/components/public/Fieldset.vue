@@ -20,6 +20,14 @@
       </div>
       <template v-for="(item, index) in editParts">
         <r2Textfield :cfg="item" :values="values" v-if="item.xtype == 'r2Textfield'" :key="index"/>
+        <r2Textfield :cfg="item" :values="values" v-if="item.xtype == 'r2TextArea'" :key="index"/>
+        <!-- 暂时用textfield RNumber 还没有只读状态下的视图 -->
+        <r2Textfield
+          :cfg="item"
+          :values="values"
+          v-if="item.xtype == 'r2Numberfield'"
+          :key="index"
+        />
         <r2Permilfield
           :cfg="item"
           :values="values"
@@ -57,7 +65,7 @@ var component = {
       hasToogleBar: false,
       editParts: [],
       readOnlyParts: [],
-      data:[],
+      data: []
     };
   },
   created: function() {},
@@ -78,7 +86,7 @@ var component = {
     cfg: {
       handler(cfg) {
         // *部分应用* 物料详情在审批节点可以重新录入数据 此处进行数据分割
-        let { items = [],columns = [] } = cfg,
+        let { items = [], columns = [] } = cfg,
           formModel = this.form.model;
         let readOnlyParts = [],
           i = 0;
@@ -185,6 +193,8 @@ export default Vue.component("RFieldset", component);
     display: flex;
     align-items: center;
     justify-content: space-between;
+    white-space: nowrap;
+    overflow: hidden;
     label {
       color: #999;
       &.required {

@@ -1,5 +1,6 @@
 import $flyio from 'plugins/ajax'
-let baseInfo;
+let baseInfo,
+    WebContext = {};
 // 保存
 export let saveAndStartWf = (data = {}) => {
   return $flyio.ajax({
@@ -109,6 +110,8 @@ export let getBasicInfo = (data ={})=> {
         }).then(data=>{
           baseInfo = data;
           resolve(data);
+        }).catch(()=>{
+          reject();
         })
      } else {
        resolve(baseInfo);
@@ -227,7 +230,95 @@ export let getObjDealerByLabelName = (data = {}) => {
     }
   })
 };
+export let initWebContext = ()=>{
+  return new Promise((resolve, reject) => {
+    if(WebContext.currentUser){
+      return resolve();
+    }
+    getBasicInfo().then(baseInfo => {
+        let user = baseInfo && baseInfo.currentUser;
+        if (user) {
+          WebContext.currentUser = {
+              userId: user.userId,
+              name: user.nickname,
+              email: user.email,
+              gender: user.gender,
+              mobile: user.mobile,
+              photo: user.photo,
+              entityId: user.entityId,
+              entityName: user.entityName,
+              userCode: user.userCode,
+              isSysRoleList:user.isSysRoleList,
+              sysGroupList:user.sysGroupList,
+              depts: user.sysGroupList.filter(function (o) {
+                  return o.groupType === 'O';
+              }).map(function (o) {
+                  return {
+                      id: o.groupId,
+                      name: o.groupName,
+                      parentId: o.parentId
+                  };
+              }),
+              areas: user.sysGroupList.filter(function (o) {
+                  return o.groupType === 'A';
+              }).map(function (o) {
+                  return {
+                      id: o.groupId,
+                      name: o.groupName,
+                      parentId: o.parentId
+                  };
+              }),
+              roles: user.sysRoleList.filter(function (o) {
+                  return o.id != -1;
+              }).map(function (o) {
+                  return {
+                      id: o.id,
+                      name: o.name,
+                      parentId: o.parentId
+                  };
+              }),
+              isAdmin: Array.isArray(user.isSysRoleList) ? user.isSysRoleList.filter(function (o) {
+                  return o.id == 1;
+              }).length : false
+          };
+          if (user.enterpriseInfo){
+             WebContext.enterpriseInfo = user.enterpriseInfo;
+          }
+      }
+      resolve();
+    }).catch(e=>{
+      resolve();
+    }) 
+  })
+};
+export let getValuesByExp = (expression) => {
+  var fn = function () {
+      var ns = expression.split('.'),
+          objNs = 'WebContext.' + ns.shift(),
+          obj = eval(objNs);
 
+      while (ns.length && obj) {
+          objNs = objNs + '.' + ns.shift();
+          obj = eval(objNs);
+      }
+      return obj;
+  };
+
+  try {
+      if (/^currentUser/.test(expression) || /^listInfo/.test(expression)) {
+          return fn(expression);
+      } else if (/^date\.now$/i.test(expression)) {
+          return Ext.Date.format((new Date()), 'Y-m');
+      } else if (/^date\.currentDate$/i.test(expression)) {
+          return Ext.Date.format((new Date()), 'Y-m-d');
+      } else if (/^date\.currentDateTime$/i.test(expression)) {
+          return Ext.Date.format((new Date()), 'Y-m-d H:i:s');
+      }
+  } catch (ex) {
+      console.log(ex);
+      return null;
+  }
+};
 // 获取所有的经办人
 export let listUsers = (data = {}) => {
   return $flyio.ajax({
@@ -372,6 +463,8 @@ export default {
   getList,
   upload,
   mediaUpload,
+  initWebContext,
+  WebContext,
   getProcess,
   getDictByType,
   getBasicInfo,
@@ -383,6 +476,5 @@ export default {
   getObjDealerByLabelName,
   getUserList,
   transferTask,
-  getFormConfig,
-  getBasicInfo
+  getFormConfig
 }

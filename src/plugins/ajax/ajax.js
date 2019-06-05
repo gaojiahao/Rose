@@ -129,9 +129,14 @@ let Rxports = {
       }
       fly.request(params, params.data)
         .then( res => {
-          res && resolve(res.data);
+          if(res){
+            resolve(res.data);
+          } else {
+            reject();
+          }
         })
         .catch( err => {
+          reject();
           console.log('err:', err);
         })
     })
