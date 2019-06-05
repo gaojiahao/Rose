@@ -2,7 +2,6 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import FastClick from 'fastclick'
-import VueRouter from 'vue-router'
 import adapation from './common/adapation'
 import Swiper from './common/swiper-4.2.2.min.js'
 import RText from './components/public/RText'
@@ -30,7 +29,6 @@ import HandleLoad from 'plugins/loading/handleLoad/handleLoading'
 import commonService from "service/commonService";
 
 Vue.use(Loading)
-Vue.use(VueRouter)
 Vue.use(HandleLoad)
 Vue.use(ToastPlugin)
 Vue.use(AlertPlugin)
@@ -50,14 +48,12 @@ Vue.prototype.$event = new Vue();
 Vue.clone = function(a){
    return JSON.parse(JSON.stringify(a));
 };
-router.afterEach(route => {
-  document.title = route.meta.title || '';
+router.afterEach((to, from) => {
+  document.title = to.meta.title || '';
 })
-commonService.initWebContext().then(data=>{
-  new Vue({
-    router,
-    render: h => h(App)
-  }).$mount('#app-box')
-});
+new Vue({
+  router,
+  render: h => h(App)
+}).$mount('#app-box')
 /* eslint-disable no-new */
 

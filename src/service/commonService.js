@@ -110,6 +110,8 @@ export let getBasicInfo = (data ={})=> {
         }).then(data=>{
           baseInfo = data;
           resolve(data);
+        }).catch(()=>{
+          reject();
         })
      } else {
        resolve(baseInfo);
@@ -230,6 +232,9 @@ export let getObjDealerByLabelName = (data = {}) => {
 };
 export let initWebContext = ()=>{
   return new Promise((resolve, reject) => {
+    if(WebContext.currentUser){
+      return resolve();
+    }
     getBasicInfo().then(baseInfo => {
         let user = baseInfo && baseInfo.currentUser;
         if (user) {
@@ -281,7 +286,9 @@ export let initWebContext = ()=>{
           }
       }
       resolve();
-    })  
+    }).catch(e=>{
+      resolve();
+    }) 
   })
 };
 export let getValuesByExp = (expression) => {

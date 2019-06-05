@@ -25,6 +25,7 @@ import {
   getAppExampleDetails
 } from "service/detailService";
 import {
+  initWebContext,
   getFormViews,
   getFormViewByUniqueId,
   saveAndCommitTask
@@ -249,7 +250,9 @@ export default {
     },
   },
   created() {
-    this.loadPage();
+    initWebContext().then(()=>{
+        this.loadPage();
+    })
     this.fieldMap = {};
   }
 };
