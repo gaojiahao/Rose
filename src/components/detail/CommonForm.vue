@@ -15,8 +15,6 @@
   </div>
 </template>
 <script>
-import OtherPart from "components/detail/commonPart/OtherPart";
-import { numberComma } from "vux";
 // 请求 引入
 import {
   getListId,
@@ -31,9 +29,6 @@ import {
   saveAndCommitTask
 } from "service/commonService";
 export default {
-  components: {
-    OtherPart
-  },
   data() {
     return {
       transCode: "",
