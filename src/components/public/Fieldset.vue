@@ -13,7 +13,7 @@
         <template v-for="(item, index) in readOnlyParts">
           <div class="item">
             <span :key="index">{{item.fieldLabel}}：</span>
-            <span v-if="!item.text">{{values[item.fieldCode]||'无'}}</span>
+            <span v-if="!item.text">{{data[item.fieldCode]||values[item.fieldCode]||'无'}}</span>
             <span v-else>{{data[item.fieldCode]||'无'}}</span>
           </div>
         </template>
@@ -67,7 +67,12 @@ var component = {
         let name = this.cfg.name;
         let data = this.values;
         this.data = data && data[name];
-        this.data = (this.data && this.data[0]) || [];
+        this.data = (this.data && this.data[0]) || this.data || [];
+        // for (const key in this.data) {              // 去除对象内多余的空值key
+        //   if (this.data[key] === '' || this.data[key] === null || this.data[key] === undefined) {
+        //     delete this.data[key]
+        //   }
+        // }
       }
     },
     cfg: {

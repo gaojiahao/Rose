@@ -3,29 +3,32 @@
   <div class="detail_wrapper">
     <div class="basicPart">
       <!-- 工作流组件 -->
-      <w-flow :formData="formData" @getMyFlow="getMyFlow" @getWorkFlow="getWorkFlow" @getBasicInfo="getBasicInfo" />
+      <w-flow :formData="formData" :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask" />
       <!-- 表单渲染 -->
       <r-fieldset-ct :cfg="fieldSets" :values="formData" v-if="fieldSets.length"/>
       <!-- 附件组件 -->
       <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId" />
       <!-- 审批组件 -->
       <r2-action :code="transCode" :myFlow="myFlow" :workFlow="workFlow" :basicInfo="basicInfo" :agree-handler="agreeHandler"
-                :name="$route.query.name" @on-submit-success="submitSuccessCallback" />
+        :name="$route.query.name" @on-submit-success="submitSuccessCallback" />
     </div>
   </div>
 </template>
 <script>
 // 请求 引入
 import {
+  isMyflow,
   getListId,
   getSOList,
+  getWorkFlow,
   getFromStatus,
   getAppExampleDetails
 } from "service/detailService";
 import {
   getFormViews,
   getFormViewByUniqueId,
-  saveAndCommitTask
+  saveAndCommitTask,
+  getBasicInfo
 } from "service/commonService";
 export default {
   data() {
@@ -43,9 +46,13 @@ export default {
       //经过处理的基本信息
       baseinfo: {},
       attachment:[],
-      myFlow: [],
-      workFlow: [],
       basicInfo: {},
+      myFlow: [],
+      workFlowInfo: {},
+      fullWL: [],
+      userName: '',
+      isMyTask: false,
+      workFlow: [],
     };
   },
   methods: {
@@ -136,6 +143,8 @@ export default {
         } else {
           //加载查看视图
           await this.getViewIdByTransCode(transCode);
+          await this.getFlowAndActions();
+          await this.getBasicInfo();
         }
       } else if (listId) {
         //没有transCode,获取新建视图。
@@ -147,6 +156,7 @@ export default {
         await this.loadFormCfg();
         if (transCode) {
           await this.loadFormData(transCode);
+          await this.workFlowInfoHandler();
         }
         this.$loading.hide();
         // 触发父组件的scroll刷新
@@ -222,18 +232,65 @@ export default {
         }
       });
     },
-    getMyFlow(data) {
-      this.myFlow = data;
+    //是否我的工作流信息
+    isMyflow() {
+      return isMyflow({
+        _dc: Date.now(),
+        transCode: this.transCode
+      });
     },
-    getWorkFlow(data) {
-      this.workFlow = data;
+    //工作流信息
+    getWorkFlow() {
+      return getWorkFlow({
+        _dc: Date.now(),
+        transCode: this.transCode
+      })
     },
-    getBasicInfo(data) {
-      this.basicInfo = data;
+    // 处理简易版工作流数据
+    workFlowInfoHandler() {
+        this.workFlowInfo = {
+            biStatus: this.formData.biStatus,
+            transCode: this.formData.transCode,
+        };
+        switch (this.formData.biStatus) {
+            case '进行中':
+                let newkey = 'dyClass',
+                cokey = 'coClass';
+                this.workFlowInfo[newkey] = 'doing_work';
+                this.workFlowInfo[cokey] = 'doing_code';
+                break;
+            case '草稿':
+                newkey = 'dyClass';
+                this.workFlowInfo[newkey] = 'invalid_work';
+                break;
+            case '已失效':
+                newkey = 'dyClass';
+                this.workFlowInfo[newkey] = 'invalid_work';
+                break;
+        }
+    },
+    //表单信息
+    getBasicInfo() {
+      return getBasicInfo().then(data => {
+        let {currentUser} = data;
+        // this.baseinfoConfig = data;
+        // this.userId = `${currentUser.userId}`;
+        this.userName = `${currentUser.nickname}-${currentUser.userCode}`;
+        this.basicInfo = data;
+      });  
+    },
+    getFlowAndActions() {
+        return Promise.all([this.isMyflow(), this.getWorkFlow()]).then(([data = {}, data2 = {}]) => {
+            this.myFlow = data.tableContent || [];
+            this.workFlow = data2.tableContent || [];
+            let [flow = {}] = this.myFlow;
+            let {isMyTask = 0, actions = '', taskId, viewId} = flow;
+            // 赋值 完整版工作流
+            this.fullWL = this.workFlow;
+        });
     },
     // 同意的处理,提交数据校验
     agreeHandler() {
-
     },
     // 同意、拒绝、撤回成功时的回调
     submitSuccessCallback(val) {
