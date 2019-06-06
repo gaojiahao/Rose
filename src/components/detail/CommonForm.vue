@@ -4,7 +4,7 @@
     <div class="form" :class="{scrollCt:model != 'view'}" ref="fill">
       <div class='fill_wrapper'>
         <!-- 工作流组件 -->
-        <w-flow :formData="formData" :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask" />
+        <w-flow :formData="formData" :work-flow-info="workFlowInfo" :full-work-flow="workFlow" />
         <!-- 表单渲染 -->
         <r-fieldset-ct :cfg="fieldSets" :values="formData" v-if="fieldSets.length"/>
         <!-- 附件组件 -->
@@ -64,9 +64,7 @@ export default {
       basicInfo: {},
       myFlow: [],
       workFlowInfo: {},
-      fullWL: [],
       userName: '',
-      isMyTask: false,
       btnInfo:{},
       workFlow: [],
     };
@@ -198,7 +196,7 @@ export default {
         await this.loadFormCfg();
         if (transCode) {
           await this.loadFormData(transCode);
-          await this.workFlowInfoHandler();
+          //await this.workFlowInfoHandler();
         }
         this.$loading.hide();
         this.initScroll();
@@ -287,48 +285,19 @@ export default {
         transCode: this.transCode
       })
     },
-    // 处理简易版工作流数据
-    workFlowInfoHandler() {
-        this.workFlowInfo = {
-            biStatus: this.formData.biStatus,
-            transCode: this.formData.transCode,
-        };
-        switch (this.formData.biStatus) {
-            case '进行中':
-                let newkey = 'dyClass',
-                cokey = 'coClass';
-                this.workFlowInfo[newkey] = 'doing_work';
-                this.workFlowInfo[cokey] = 'doing_code';
-                break;
-            case '草稿':
-                newkey = 'dyClass';
-                this.workFlowInfo[newkey] = 'invalid_work';
-                break;
-            case '已失效':
-                newkey = 'dyClass';
-                this.workFlowInfo[newkey] = 'invalid_work';
-                break;
-        }
-    },
-    //表单信息
+    //系统登录基本信息
     getBasicInfo() {
       return getBasicInfo().then(data => {
         let {currentUser} = data;
-        // this.baseinfoConfig = data;
-        // this.userId = `${currentUser.userId}`;
         this.userName = `${currentUser.nickname}-${currentUser.userCode}`;
         this.basicInfo = data;
       });  
     },
     getFlowAndActions() {
-        return Promise.all([this.isMyflow(), this.getWorkFlow()]).then(([data = {}, data2 = {}]) => {
-            this.myFlow = data.tableContent || [];
-            this.workFlow = data2.tableContent || [];
-            let [flow = {}] = this.myFlow;
-            let {isMyTask = 0, actions = '', taskId, viewId} = flow;
-            // 赋值 完整版工作流
-            this.fullWL = this.workFlow;
-        });
+      return Promise.all([this.isMyflow(), this.getWorkFlow()]).then(([data = {}, data2 = {}]) => {
+        this.myFlow = data.tableContent || [];
+        this.workFlow = data2.tableContent || [];
+      });
     },
     // 同意的处理,提交数据校验
     agreeHandler() {

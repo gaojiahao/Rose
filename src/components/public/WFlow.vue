@@ -36,22 +36,6 @@ var component = {
         return {}
       }
     },
-    // 当前用户名-用户编码
-    userName: {
-      type: String,
-      default: ''
-    },
-    // 是否为我的任务
-    isMyTask: {
-      type: Boolean,
-      default: false
-    },
-    workFlowInfo: {
-      type: Object,
-      default() {
-        return {}
-      }
-    },
     fullWorkFlow: {
       type: Array,
       default() {
@@ -63,6 +47,7 @@ var component = {
     return {
       defaulImg: require('assets/ava01.png'),   // 默认图片1
       currentStatus: {},
+      workFlowInfo: {},
     }
   },
   computed: {
@@ -90,6 +75,11 @@ var component = {
     }
   },
   watch: {
+    formData: {
+      handler() {
+        this.workFlowInfoHandler();  
+      }
+    },
     fullWorkFlow: {
       handler() {
         this.workFlowHandler();
@@ -101,6 +91,29 @@ var component = {
     Popup, Group, Icon, XButton, RScroll,
   },
   methods: {
+    // 处理简易版工作流数据
+    workFlowInfoHandler() {
+      this.workFlowInfo = {
+        biStatus: this.formData.biStatus,
+        transCode: this.formData.transCode,
+      };
+      switch (this.formData.biStatus) {
+        case '进行中':
+          let newkey = 'dyClass',
+          cokey = 'coClass';
+          this.workFlowInfo[newkey] = 'doing_work';
+          this.workFlowInfo[cokey] = 'doing_code';
+          break;
+        case '草稿':
+          newkey = 'dyClass';
+          this.workFlowInfo[newkey] = 'invalid_work';
+          break;
+        case '已失效':
+          newkey = 'dyClass';
+          this.workFlowInfo[newkey] = 'invalid_work';
+          break;
+      }
+    },
     workFlowHandler() {
       let [currentStatus = {}] = this.fullWorkFlow.slice(-1);
       for (let item of this.fullWorkFlow) {
