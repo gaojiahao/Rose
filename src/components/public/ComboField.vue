@@ -21,9 +21,9 @@
                   </div>
                   <div class="info">
                     <template v-for="(field, index) in fields">
-                     <span :key='index'>{{field.v}}</span>
-                     <span>{{item[field.k] }}</span>
-                     </template>
+                       <span :key='index'>{{field.v}}</span>
+                       <span >{{item[field.k] }}</span>
+                    </template>
                   </div>
                </div>
             </div>
@@ -130,6 +130,20 @@ let  cfg = {
                }
             }
          },
+         checkValueOnLoad:function(listData){
+            var  value = this.getValue(),
+                 valueField = this.cfg.valueField,
+                 selection;
+
+            selection = listData.find(function(item){
+               return item[valueField] === value;
+            });
+            if(selection == null){
+               this.reSet();
+            }else{
+               this.selItem(selection);
+            }
+         },
          getExtraFieldValue:function(valueField){
             if(this.selection){
                return this.selection[valueField];
@@ -155,6 +169,7 @@ let  cfg = {
                this.$nextTick(() => {
                   this.$refs.bScroll.finishPullUp();
                });
+               this.$emit('load',this.listData);
                if(cb)cb();
             })
          },

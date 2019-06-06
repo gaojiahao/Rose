@@ -43,9 +43,12 @@ export default {
         },
         initDataSource:function(ds){
             if(!ds) return;
-            if(this.$options._componentTag != 'R2Combofield'){
+            if(!this.isCombo()){
                 this.initDefaultValue(ds);
             }
+        },
+        isCombo:function(){
+            return this.$options.name == 'R2Combofield';
         },
         initDefaultValue:function(cfg){
             var value;
@@ -55,7 +58,12 @@ export default {
             }else if(cfg.type == 'contextData'){
                 value = this.getContextData(cfg.data);
             }
-            if(value != null)this.setValue(value);
+            if(value != null){
+               this.setValue(value);
+               if(this.isCombo()){
+                   this.$once('load',this.checkValueOnLoad)
+               }
+            }
         },
         initValueBind(valueBind){
             var me = this,
@@ -88,6 +96,10 @@ export default {
             var cfg = this.cfg;
             Vue.set(this.form.formData,cfg.fieldCode,value);
             this.form.$emit(this.valueChangeKey,this);
+        },
+        getValue:function(){
+            var cfg = this.cfg;
+            return this.values[cfg.fieldCode];
         },
         getExtraFieldValue:function(valueField){
             return values[cfg.fieldCode];
