@@ -34,21 +34,17 @@
 
 <script>
 import Vue from 'vue';
-import { commitTask, transferTask } from 'service/commonService'
+import { commitTask, transferTask, WebContext } from 'service/commonService'
 import { isMyflow } from 'service/detailService'
 import { Confirm } from 'vux'
 import PopUserList from 'components/Popup/PopUserList'
 
 var component = {
   props: {
-    code: {
-      type: String,
-      default: ''
-    },
     myFlow: {
-      type: Array,
+      type: Object,
       default() {
-        return []
+        return {}
       }
     },
     workFlow: {
@@ -62,10 +58,6 @@ var component = {
       default() {
         return {}
       }
-    },
-    name: {
-      type: String,
-      default: ''
     },
     // 同意的处理
     agreeHandler: {
@@ -93,36 +85,31 @@ var component = {
       noOperation: true, 
       userId: '',
       isMine: false,
+      code: '',
+      name: '',
     }
   },
   watch: {
     myFlow: {
       handler(val) {
-        if(val.length) {
-          this.actions = val[0].actions;
+        if(val) {
+          this.actions = val.actions;
           this.actions = this.actions.split(',')
-          this.taskId = val[0].taskId;
+          this.taskId = val.taskId;
+          this.dealActionInof();
         }
       }
     },
-    basicInfo: {
-      handler() {
-        this.userId = this.$parent.basicInfo.currentUser.userId;
-        this.dealActionInof();
-      }
-    }
   },
   methods: {
     //处理撤回按钮的判断
     dealActionInof() {
       let myFlow = this.myFlow;
       let workFlow = this.workFlow;
-      let [flow = {}] = myFlow;
-      let {isMyTask = 0, actions = '', taskId, viewId} = flow;
+      let {isMyTask = 0, actions = '', taskId, viewId} = myFlow;
       let [createFlow = {}] = workFlow;
       let last = workFlow[workFlow.length - 1] || {};
       let operationList = ['同意', '不同意'];
-
       // 已终止
       if (last.status === '终止') return;
       // 经过审批则不能撤回
@@ -142,11 +129,6 @@ var component = {
       if (createFlow.isFirstNode == 0 && createFlow.startUserId == this.userId) { 
         this.isMine = true;
         this.actions.push('revoke')
-        // 如果没有审批操作，则删除拒绝，加入撤回
-        // if (this.noOperation) {
-        //   this.actions.push('revoke')
-        //   this.actions.splice(this.actions.findIndex(item => item === 'disagree'), 1, 'revoke');
-        // }
       }
       this.taskId = taskId;
       this.isMyTask = isMyTask === 1;
@@ -335,6 +317,9 @@ var component = {
     },
   },
   created () {
+    this.code = this.$parent.transCode;
+    this.userId = WebContext.currentUser.userId;
+    this.name = this.$route.query.name;
   }
 }
 export default Vue.component('R2Action',component)

@@ -27,6 +27,9 @@
 <script>
 // 插件 引入
 import Bscroll from 'better-scroll'
+import {
+  initWebContext
+} from "service/commonService";
 // 请求 引入
 import { isSubscribeByRelationKey, subscribeApp, unsubscribeApp, getUserList } from 'service/commentService'
 /* 引入微信相关 */
@@ -126,7 +129,9 @@ export default {
     },
   },
   created() {
-    this.initPage();
+    initWebContext().then(()=>{
+        this.initPage();
+    })
   },
   activated() {
     let reload = this.$route.meta.reload;

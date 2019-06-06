@@ -1,3 +1,7 @@
+import Vue from 'vue';
+import {
+    getValuesByExp
+} from "service/commonService";
 export default {
     data(){
         return {
@@ -18,6 +22,7 @@ export default {
             this.form = form;
             this.valueChangeKey = 'value-change-' + id;
             this.initVisible();
+            this.initDefaultValue(cfg.defaultValue);
             this.initDataSource(cfg.dataSource);
         },
         initVisible:function(){
@@ -37,12 +42,27 @@ export default {
             
         },
         initDataSource:function(ds){
-            var value;
             if(!ds) return;
-            if(ds.type == 'formData'){
-                this.initValueBind([ds.data]);
-            }else if(ds.type == 'contextData'){
-
+            if(!this.isCombo()){
+                this.initDefaultValue(ds);
+            }
+        },
+        isCombo:function(){
+            return this.$options.name == 'R2Combofield';
+        },
+        initDefaultValue:function(cfg){
+            var value;
+            if(!cfg) return;
+            if(cfg.type == 'formData'){
+                this.initValueBind([cfg.data]);
+            }else if(cfg.type == 'contextData'){
+                value = this.getContextData(cfg.data);
+            }
+            if(value != null){
+               this.setValue(value);
+               if(this.isCombo()){
+                   this.$once('load',this.checkValueOnLoad)
+               }
             }
         },
         initValueBind(valueBind){
@@ -74,11 +94,18 @@ export default {
         },
         setValue:function(value){
             var cfg = this.cfg;
-            this.form.formData[cfg.fieldCode] = value;
+            Vue.set(this.form.formData,cfg.fieldCode,value);
             this.form.$emit(this.valueChangeKey,this);
+        },
+        getValue:function(){
+            var cfg = this.cfg;
+            return this.values[cfg.fieldCode];
         },
         getExtraFieldValue:function(valueField){
             return values[cfg.fieldCode];
+        },
+        getContextData(express){
+            return getValuesByExp(express);
         },
         valueBindChangeHandler(valueField,cmp){
             var value = cmp.getExtraFieldValue(valueField);

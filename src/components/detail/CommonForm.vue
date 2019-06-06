@@ -4,14 +4,13 @@
     <div class="form" :class="{scrollCt:model != 'view'}" ref="fill">
       <div class='fill_wrapper'>
         <!-- 工作流组件 -->
-        <w-flow :formData="formData" :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask" />
+        <w-flow :formData="formData" :full-work-flow="workFlow"  v-if = "transCode"/>
         <!-- 表单渲染 -->
         <r-fieldset-ct :cfg="fieldSets" :values="formData" v-if="fieldSets.length"/>
         <!-- 附件组件 -->
         <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId" />
         <!-- 审批组件 -->
-        <r2-action :code="transCode" :myFlow="myFlow" :workFlow="workFlow" :basicInfo="basicInfo" :agree-handler="agreeHandler"
-          :name="$route.query.name" @on-submit-success="submitSuccessCallback" />
+        <r2-action :myFlow="taskInfo" :workFlow="workFlow" :agree-handler="agreeHandler" @on-submit-success="submitSuccessCallback" />
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -39,6 +38,7 @@ import {
   getAppExampleDetails
 } from "service/detailService";
 import {
+  WebContext,
   initWebContext,
   getFormViews,
   getFormViewByUniqueId,
@@ -48,9 +48,9 @@ import {
 export default {
   data() {
     return {
-      transCode: "",
-      listId: "",
-      viewId: "",
+      transCode: null,
+      listId: null,
+      viewId: null,
       model: null,
       fieldSets: [],
       formData: {},
@@ -63,10 +63,8 @@ export default {
       attachment:[],
       basicInfo: {},
       myFlow: [],
-      workFlowInfo: {},
-      fullWL: [],
+      taskInfo:null,
       userName: '',
-      isMyTask: false,
       btnInfo:{},
       workFlow: [],
     };
@@ -176,29 +174,32 @@ export default {
     },
     async loadPage() {
       let { transCode, listId, viewId, model } = this.$route.query;
-
+      /**获取视图信息**/
       if (transCode) {
         this.transCode = transCode;
-        if (viewId) {
+        if (viewId) {//编辑或修改会指定视图
           this.viewId = viewId;
           this.model = model || "edit";
-        } else {
-          //加载查看视图
-          await this.getViewIdByTransCode(transCode);
-          await this.getFlowAndActions();
-          await this.getBasicInfo();
+        } else { //查看或审批
+          await this.loadWorkFlowNodeInfo();//获取流程节点信息，如果当前用户是流程节点审批人，则加载审批视图。
+
+          if(this.viewId == null){//如果没有审批视图，则加载查看视图
+            //加载查看视图
+            await this.getViewIdByTransCode(transCode);
+          } 
         }
+        await this.getWorkFlow();
       } else if (listId) {
         //没有transCode,获取新建视图。
         this.listId = listId;
         await this.getViewIdByListId();
       }
-
+      //加载视图信息
       if (this.viewId) {
         await this.loadFormCfg();
         if (transCode) {
           await this.loadFormData(transCode);
-          await this.workFlowInfoHandler();
+          //await this.workFlowInfoHandler();
         }
         this.$loading.hide();
         this.initScroll();
@@ -210,8 +211,6 @@ export default {
           }
         });
       }
-      // 触发父组件的scroll刷新
-      this.$emit("refresh-scroll");
     },
     loadFormData(transCode) {
       var params = {
@@ -228,6 +227,28 @@ export default {
           this.biReferenceId = biReferenceId;
         }
       );
+    },
+    loadWorkFlowNodeInfo(){
+       return new Promise((resolve,reject)=>{
+           isMyflow({transCode:this.transCode}).then(rs=>{
+              var l = rs.dataCount,
+                  nodes = rs.tableContent,
+                  task;
+
+              while(l--){
+                  task = nodes[l];
+                  if (task.ASSIGNEE_ === WebContext.currentUser.userId.toString()
+                      || task.isMyTask  //当前节点是我的任务
+                      || (task.allowRecall && task.actions && task.actions.indexOf('recall') > -1)) { //当前节点允许撤回
+
+                      this.taskInfo = task;
+                      this.viewId = this.taskInfo.viewId;
+                      break;
+                  }
+              }
+              resolve();
+           })
+       })
     },
     loadFormCfg() {
       return getFormViewByUniqueId(this.viewId).then(data => {
@@ -282,53 +303,12 @@ export default {
     },
     //工作流信息
     getWorkFlow() {
-      return getWorkFlow({
+      getWorkFlow({
         _dc: Date.now(),
         transCode: this.transCode
+      }).then((data) => {
+        this.workFlow = data.tableContent || [];
       })
-    },
-    // 处理简易版工作流数据
-    workFlowInfoHandler() {
-        this.workFlowInfo = {
-            biStatus: this.formData.biStatus,
-            transCode: this.formData.transCode,
-        };
-        switch (this.formData.biStatus) {
-            case '进行中':
-                let newkey = 'dyClass',
-                cokey = 'coClass';
-                this.workFlowInfo[newkey] = 'doing_work';
-                this.workFlowInfo[cokey] = 'doing_code';
-                break;
-            case '草稿':
-                newkey = 'dyClass';
-                this.workFlowInfo[newkey] = 'invalid_work';
-                break;
-            case '已失效':
-                newkey = 'dyClass';
-                this.workFlowInfo[newkey] = 'invalid_work';
-                break;
-        }
-    },
-    //表单信息
-    getBasicInfo() {
-      return getBasicInfo().then(data => {
-        let {currentUser} = data;
-        // this.baseinfoConfig = data;
-        // this.userId = `${currentUser.userId}`;
-        this.userName = `${currentUser.nickname}-${currentUser.userCode}`;
-        this.basicInfo = data;
-      });  
-    },
-    getFlowAndActions() {
-        return Promise.all([this.isMyflow(), this.getWorkFlow()]).then(([data = {}, data2 = {}]) => {
-            this.myFlow = data.tableContent || [];
-            this.workFlow = data2.tableContent || [];
-            let [flow = {}] = this.myFlow;
-            let {isMyTask = 0, actions = '', taskId, viewId} = flow;
-            // 赋值 完整版工作流
-            this.fullWL = this.workFlow;
-        });
     },
     // 同意的处理,提交数据校验
     agreeHandler() {
