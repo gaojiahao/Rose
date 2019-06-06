@@ -4,7 +4,7 @@
     <div class="form" :class="{scrollCt:model != 'view'}" ref="fill">
       <div class='fill_wrapper'>
         <!-- 工作流组件 -->
-        <w-flow :formData="formData" :work-flow-info="workFlowInfo" :full-work-flow="workFlow" />
+        <w-flow :formData="formData" :full-work-flow="workFlow"  v-if = "transCode"/>
         <!-- 表单渲染 -->
         <r-fieldset-ct :cfg="fieldSets" :values="formData" v-if="fieldSets.length"/>
         <!-- 附件组件 -->
@@ -34,7 +34,6 @@ import {
   isMyflow,
   getListId,
   getSOList,
-  isMyflow,
   getWorkFlow,
   getFromStatus,
   getAppExampleDetails
