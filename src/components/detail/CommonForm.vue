@@ -10,8 +10,7 @@
         <!-- 附件组件 -->
         <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId" />
         <!-- 审批组件 -->
-        <r2-action :code="transCode" :myFlow="myFlow" :workFlow="workFlow" :basicInfo="basicInfo" :agree-handler="agreeHandler"
-          :name="$route.query.name" @on-submit-success="submitSuccessCallback" />
+        <r2-action :myFlow="taskInfo" :workFlow="workFlow" :agree-handler="agreeHandler" @on-submit-success="submitSuccessCallback" />
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -175,7 +174,6 @@ export default {
     },
     async loadPage() {
       let { transCode, listId, viewId, model } = this.$route.query;
-
       /**获取视图信息**/
       if (transCode) {
         this.transCode = transCode;
@@ -196,7 +194,6 @@ export default {
         this.listId = listId;
         await this.getViewIdByListId();
       }
-
       //加载视图信息
       if (this.viewId) {
         await this.loadFormCfg();
@@ -245,7 +242,7 @@ export default {
                       || (task.allowRecall && task.actions && task.actions.indexOf('recall') > -1)) { //当前节点允许撤回
 
                       this.taskInfo = task;
-                      this.viewId = taskInfo.viewId;
+                      this.viewId = this.taskInfo.viewId;
                       break;
                   }
               }
@@ -312,14 +309,6 @@ export default {
       }).then((data) => {
         this.workFlow = data.tableContent || [];
       })
-    },
-    //系统登录基本信息
-    getBasicInfo() {
-      return getBasicInfo().then(data => {
-        let {currentUser} = data;
-        this.userName = `${currentUser.nickname}-${currentUser.userCode}`;
-        this.basicInfo = data;
-      });  
     },
     // 同意的处理,提交数据校验
     agreeHandler() {
