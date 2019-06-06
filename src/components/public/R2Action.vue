@@ -102,9 +102,13 @@ var component = {
           this.actions = val[0].actions;
           this.actions = this.actions.split(',')
           this.taskId = val[0].taskId;
-          this.userId = this.basicInfo.currentUser.userId;
-          this.dealActionInof();
         }
+      }
+    },
+    basicInfo: {
+      handler() {
+        this.userId = this.$parent.basicInfo.currentUser.userId;
+        this.dealActionInof();
       }
     }
   },
@@ -331,7 +335,6 @@ var component = {
     },
   },
   created () {
-
   }
 }
 export default Vue.component('R2Action',component)

@@ -4,14 +4,14 @@
     <div class="form" :class="{scrollCt:model != 'view'}" ref="fill">
       <div class='fill_wrapper'>
         <!-- 工作流组件 -->
-        <w-flow :formData="formData" @getMyFlow="getMyFlow" @getWorkFlow="getWorkFlow" @getBasicInfo="getBasicInfo" />
+        <w-flow :formData="formData" :work-flow-info="workFlowInfo" :full-work-flow="workFlow" />
         <!-- 表单渲染 -->
         <r-fieldset-ct :cfg="fieldSets" :values="formData" v-if="fieldSets.length"/>
         <!-- 附件组件 -->
         <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId" />
         <!-- 审批组件 -->
         <r2-action :code="transCode" :myFlow="myFlow" :workFlow="workFlow" :basicInfo="basicInfo" :agree-handler="agreeHandler"
-                  :name="$route.query.name" @on-submit-success="submitSuccessCallback" />
+          :name="$route.query.name" @on-submit-success="submitSuccessCallback" />
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -31,9 +31,11 @@ import platfrom from '@/plugins/platform/index'
 // 插件 引入
 import Bscroll from 'better-scroll'
 import {
+  isMyflow,
   getListId,
   getSOList,
   isMyflow,
+  getWorkFlow,
   getFromStatus,
   getAppExampleDetails
 } from "service/detailService";
@@ -42,7 +44,8 @@ import {
   initWebContext,
   getFormViews,
   getFormViewByUniqueId,
-  saveAndCommitTask
+  saveAndCommitTask,
+  getBasicInfo
 } from "service/commonService";
 export default {
   data() {
@@ -60,11 +63,12 @@ export default {
       //经过处理的基本信息
       baseinfo: {},
       attachment:[],
+      basicInfo: {},
       myFlow: [],
       taskInfo:null,
+      userName: '',
       btnInfo:{},
       workFlow: [],
-      basicInfo: {},
     };
   },
   methods: {
@@ -187,6 +191,7 @@ export default {
             await this.getViewIdByTransCode(transCode);
           } 
         }
+        await this.getWorkFlow();
       } else if (listId) {
         //没有transCode,获取新建视图。
         this.listId = listId;
@@ -198,6 +203,7 @@ export default {
         await this.loadFormCfg();
         if (transCode) {
           await this.loadFormData(transCode);
+          //await this.workFlowInfoHandler();
         }
         this.$loading.hide();
         this.initScroll();
@@ -292,18 +298,32 @@ export default {
         }
       });
     },
-    getMyFlow(data) {
-      this.myFlow = data;
+    //是否我的工作流信息
+    isMyflow() {
+      return isMyflow({
+        _dc: Date.now(),
+        transCode: this.transCode
+      });
     },
-    getWorkFlow(data) {
-      this.workFlow = data;
+    //工作流信息
+    getWorkFlow() {
+      getWorkFlow({
+        _dc: Date.now(),
+        transCode: this.transCode
+      }).then((data) => {
+        this.workFlow = data.tableContent || [];
+      })
     },
-    getBasicInfo(data) {
-      this.basicInfo = data;
+    //系统登录基本信息
+    getBasicInfo() {
+      return getBasicInfo().then(data => {
+        let {currentUser} = data;
+        this.userName = `${currentUser.nickname}-${currentUser.userCode}`;
+        this.basicInfo = data;
+      });  
     },
     // 同意的处理,提交数据校验
     agreeHandler() {
-
     },
     stopOrder(){},
     submit(){

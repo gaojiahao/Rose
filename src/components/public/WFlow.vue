@@ -1,9 +1,9 @@
 <template>
   <!-- 工作流 -->
-  <div class="work-flow-container" v-if="fullWorkFlow.length" @click="goWorkFlowFull">
+  <div class="work-flow-container" @click="goWorkFlowFull">
     <div class="work-flow-header">
       <span class="work_flow_title vux-1px-l">{{this.formData.transTypeName}}</span>
-      <span class="check_more">
+      <span class="check_more" v-if="fullWorkFlow.length">
         查看工作流<i class="icon-right"></i>
       </span>
     </div>
@@ -13,7 +13,7 @@
         交易号：{{this.formData.transCode}} 当前状态：<span :class="[statusClass]">{{workFlowInfo.biStatus}}</span>
       </span>
     </div>
-    <div class="work-flow-status-wrapper">
+    <div class="work-flow-status-wrapper" v-if="fullWorkFlow.length">
       <i class="icon-flow-time"></i>
       <span class="work-flow-text">
         工作流已到{{currentStatus.nodeName}}
@@ -36,16 +36,18 @@ var component = {
         return {}
       }
     },
+    fullWorkFlow: {
+      type: Array,
+      default() {
+        return []
+      }
+    }
   },
   data() {
     return {
       defaulImg: require('assets/ava01.png'),   // 默认图片1
       currentStatus: {},
-      fullWorkFlow: [],
-      userName: '',
-      isMyTask: false,
       workFlowInfo: {},
-      myFlow: {}
     }
   },
   computed: {
@@ -75,10 +77,7 @@ var component = {
   watch: {
     formData: {
       handler() {
-        this.getFlowAndActions();
-        this.getBasicInfo();
-        this.workFlowInfoHandler();   
-        this.workFlowHandler();
+        this.workFlowInfoHandler();  
       }
     },
     fullWorkFlow: {
@@ -92,18 +91,6 @@ var component = {
     Popup, Group, Icon, XButton, RScroll,
   },
   methods: {
-    isMyflow() {
-      return isMyflow({
-        _dc: Date.now(),
-        transCode: this.formData.transCode
-      });
-    },
-    getWorkFlow() {
-      return getWorkFlow({
-        _dc: Date.now(),
-        transCode: this.formData.transCode
-      })
-    },
     // 处理简易版工作流数据
     workFlowInfoHandler() {
       this.workFlowInfo = {
@@ -112,39 +99,20 @@ var component = {
       };
       switch (this.formData.biStatus) {
         case '进行中':
-            let newkey = 'dyClass',
-            cokey = 'coClass';
-            this.workFlowInfo[newkey] = 'doing_work';
-            this.workFlowInfo[cokey] = 'doing_code';
-            break;
+          let newkey = 'dyClass',
+          cokey = 'coClass';
+          this.workFlowInfo[newkey] = 'doing_work';
+          this.workFlowInfo[cokey] = 'doing_code';
+          break;
         case '草稿':
-            newkey = 'dyClass';
-            this.workFlowInfo[newkey] = 'invalid_work';
-            break;
+          newkey = 'dyClass';
+          this.workFlowInfo[newkey] = 'invalid_work';
+          break;
         case '已失效':
-            newkey = 'dyClass';
-            this.workFlowInfo[newkey] = 'invalid_work';
-            break;
+          newkey = 'dyClass';
+          this.workFlowInfo[newkey] = 'invalid_work';
+          break;
       }
-    },
-    getBasicInfo() {
-      return getBasicInfo().then(data => {
-        let {currentUser} = data;
-        this.userName = `${currentUser.nickname}-${currentUser.userCode}`;
-        this.$emit('getBasicInfo',data);
-      });  
-    },
-    getFlowAndActions() {
-        return Promise.all([this.isMyflow(), this.getWorkFlow()]).then(([data = {}, data2 = {}]) => {
-            this.myFlow = data.tableContent || [];
-            this.workFlow = data2.tableContent || [];
-            let [flow = {}] = this.myFlow;
-            let {isMyTask = 0, actions = '', taskId, viewId} = flow;
-            // 赋值 完整版工作流
-            this.fullWorkFlow = this.workFlow;
-            this.$emit('getMyFlow',this.myFlow);
-            this.$emit('getWorkFlow',this.workFlow);
-        });
     },
     workFlowHandler() {
       let [currentStatus = {}] = this.fullWorkFlow.slice(-1);
@@ -169,9 +137,6 @@ var component = {
     dateFormat,
   },
   created() {
-    this.getFlowAndActions();
-    this.getBasicInfo();
-    this.workFlowInfoHandler();  
   }
 }
 export default Vue.component('WFlow',component)
