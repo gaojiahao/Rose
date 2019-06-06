@@ -33,10 +33,12 @@ import Bscroll from 'better-scroll'
 import {
   getListId,
   getSOList,
+  isMyflow,
   getFromStatus,
   getAppExampleDetails
 } from "service/detailService";
 import {
+  WebContext,
   initWebContext,
   getFormViews,
   getFormViewByUniqueId,
@@ -45,9 +47,9 @@ import {
 export default {
   data() {
     return {
-      transCode: "",
-      listId: "",
-      viewId: "",
+      transCode: null,
+      listId: null,
+      viewId: null,
       model: null,
       fieldSets: [],
       formData: {},
@@ -59,6 +61,7 @@ export default {
       baseinfo: {},
       attachment:[],
       myFlow: [],
+      taskInfo:null,
       btnInfo:{},
       workFlow: [],
       basicInfo: {},
@@ -170,14 +173,19 @@ export default {
     async loadPage() {
       let { transCode, listId, viewId, model } = this.$route.query;
 
+      /**获取视图信息**/
       if (transCode) {
         this.transCode = transCode;
-        if (viewId) {
+        if (viewId) {//编辑或修改会指定视图
           this.viewId = viewId;
           this.model = model || "edit";
-        } else {
-          //加载查看视图
-          await this.getViewIdByTransCode(transCode);
+        } else { //查看或审批
+          await this.loadWorkFlowNodeInfo();//获取流程节点信息，如果当前用户是流程节点审批人，则加载审批视图。
+
+          if(this.viewId == null){//如果没有审批视图，则加载查看视图
+            //加载查看视图
+            await this.getViewIdByTransCode(transCode);
+          } 
         }
       } else if (listId) {
         //没有transCode,获取新建视图。
@@ -185,6 +193,7 @@ export default {
         await this.getViewIdByListId();
       }
 
+      //加载视图信息
       if (this.viewId) {
         await this.loadFormCfg();
         if (transCode) {
@@ -200,8 +209,6 @@ export default {
           }
         });
       }
-      // 触发父组件的scroll刷新
-      this.$emit("refresh-scroll");
     },
     loadFormData(transCode) {
       var params = {
@@ -218,6 +225,28 @@ export default {
           this.biReferenceId = biReferenceId;
         }
       );
+    },
+    loadWorkFlowNodeInfo(){
+       return new Promise((resolve,reject)=>{
+           isMyflow({transCode:this.transCode}).then(rs=>{
+              var l = rs.dataCount,
+                  nodes = rs.tableContent,
+                  task;
+
+              while(l--){
+                  task = nodes[l];
+                  if (task.ASSIGNEE_ === WebContext.currentUser.userId.toString()
+                      || task.isMyTask  //当前节点是我的任务
+                      || (task.allowRecall && task.actions && task.actions.indexOf('recall') > -1)) { //当前节点允许撤回
+
+                      this.taskInfo = task;
+                      this.viewId = taskInfo.viewId;
+                      break;
+                  }
+              }
+              resolve();
+           })
+       })
     },
     loadFormCfg() {
       return getFormViewByUniqueId(this.viewId).then(data => {

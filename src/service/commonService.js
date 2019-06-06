@@ -1,6 +1,7 @@
 import $flyio from 'plugins/ajax'
-let baseInfo,
-    WebContext = {};
+import {dateFormat} from 'vux'
+let baseInfo;
+export let WebContext = {};
 // 保存
 export let saveAndStartWf = (data = {}) => {
   return $flyio.ajax({
@@ -308,11 +309,11 @@ export let getValuesByExp = (expression) => {
       if (/^currentUser/.test(expression) || /^listInfo/.test(expression)) {
           return fn(expression);
       } else if (/^date\.now$/i.test(expression)) {
-          return Ext.Date.format((new Date()), 'Y-m');
+          return dateFormat((new Date()), 'YYYY-MM');
       } else if (/^date\.currentDate$/i.test(expression)) {
-          return Ext.Date.format((new Date()), 'Y-m-d');
+          return dateFormat((new Date()), 'YYYY-MM-DD');
       } else if (/^date\.currentDateTime$/i.test(expression)) {
-          return Ext.Date.format((new Date()), 'Y-m-d H:i:s');
+          return dateFormat((new Date()), 'YYYY-MM-DD HH:mm:ss');
       }
   } catch (ex) {
       console.log(ex);

@@ -1,3 +1,7 @@
+import Vue from 'vue';
+import {
+    getValuesByExp
+} from "service/commonService";
 export default {
     data(){
         return {
@@ -18,6 +22,7 @@ export default {
             this.form = form;
             this.valueChangeKey = 'value-change-' + id;
             this.initVisible();
+            this.initDefaultValue(cfg.defaultValue);
             this.initDataSource(cfg.dataSource);
         },
         initVisible:function(){
@@ -37,13 +42,20 @@ export default {
             
         },
         initDataSource:function(ds){
-            var value;
             if(!ds) return;
-            if(ds.type == 'formData'){
-                this.initValueBind([ds.data]);
-            }else if(ds.type == 'contextData'){
-
+            if(this.$options._componentTag != 'R2Combofield'){
+                this.initDefaultValue(ds);
             }
+        },
+        initDefaultValue:function(cfg){
+            var value;
+            if(!cfg) return;
+            if(cfg.type == 'formData'){
+                this.initValueBind([cfg.data]);
+            }else if(cfg.type == 'contextData'){
+                value = this.getContextData(cfg.data);
+            }
+            if(value != null)this.setValue(value);
         },
         initValueBind(valueBind){
             var me = this,
@@ -74,11 +86,14 @@ export default {
         },
         setValue:function(value){
             var cfg = this.cfg;
-            this.form.formData[cfg.fieldCode] = value;
+            Vue.set(this.form.formData,cfg.fieldCode,value);
             this.form.$emit(this.valueChangeKey,this);
         },
         getExtraFieldValue:function(valueField){
             return values[cfg.fieldCode];
+        },
+        getContextData(express){
+            return getValuesByExp(express);
         },
         valueBindChangeHandler(valueField,cmp){
             var value = cmp.getExtraFieldValue(valueField);
