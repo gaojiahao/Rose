@@ -61,6 +61,7 @@ export default {
             if(value != null){
                this.setValue(value);
                if(this.isCombo()){
+                   this.searchValue = value;
                    this.$once('load',this.checkValueOnLoad)
                }
             }

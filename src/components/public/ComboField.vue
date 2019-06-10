@@ -9,7 +9,7 @@
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
-          <d-search @search="searchList" @turn-off="onHide" :isFill="true"></d-search>
+          <d-search @search="searchList" @turn-off="onHide" :isFill="true" :defaultValue="searchValue"></d-search>
           <!-- 往来列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
@@ -52,6 +52,7 @@ let  cfg = {
            limit: 50,
            showPop:false,
            store:null,
+           searchValue:null,
            listData:[],
            fields:[],//可以显示的列。
            hasNext: true,
@@ -153,12 +154,23 @@ let  cfg = {
          },
          load:function(cb){
             var store = this.store,
+               filter,
                data = {
                   limit: this.limit,
                   page: this.page,
                   start: (this.page - 1) * this.limit
                }
-
+            
+            if (this.searchValue) {
+               filter = [
+                  {
+                  operator: 'like',
+                  value: this.searchValue,
+                  property: this.cfg.displayField,
+                  }
+               ];
+               data.filter = JSON.stringify(filter);
+            };
             data = {...data,...store.params};
             $flyio.ajax({
                url: this.store.url,
@@ -212,8 +224,10 @@ let  cfg = {
             this.setValue(null);
          },
    
-         searchList(){
-            
+         searchList({value}){
+            this.searchValue = value;
+            this.page = 1;
+            this.load();
          },
          selItem(item){
             this.selection = item;
