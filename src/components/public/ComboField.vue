@@ -22,7 +22,7 @@
                   <div class="info">
                     <template v-for="(field, index) in fields">
                        <span :key='index'>{{field.v}}</span>
-                       <span >{{item[field.k] }}</span>
+                       <span>{{item[field.k] }}</span>
                     </template>
                   </div>
                </div>
@@ -44,7 +44,7 @@ let  cfg = {
      mixins:[fieldBase],
      props:['cfg','values'],
      components: {
-      Icon, Popup, DSearch, RScroll,
+         Icon, Popup, DSearch, RScroll
      },
      data(){
         return {
@@ -120,7 +120,7 @@ let  cfg = {
                         autoLoad = false;
                      }
                      store.params[key] = value;
-                     me.form.$on('value-change-'+contrlId,(function(paramKey,valueField){
+                     me.form.$on('value-change-' + contrlId,(function(paramKey,valueField){
                         return function(){
                            var arg = Array.prototype.slice.call(arguments);
                            arg.unshift(paramKey,valueField);
@@ -151,6 +151,10 @@ let  cfg = {
             } else {
                return null;
             }
+         },
+         initCombo(){
+            var cfg = this.cfg;
+            this.blankText = '请选择'+cfg.fieldLabel;
          },
          load:function(cb){
             var store = this.store,
@@ -257,6 +261,7 @@ let  cfg = {
          }
      },
      created(){
+        this.initCombo();
         this.buildStore();
      } 
 }

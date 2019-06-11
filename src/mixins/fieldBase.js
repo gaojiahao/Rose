@@ -5,7 +5,9 @@ import {
 export default {
     data(){
         return {
-            hidden:false
+            hidden:false,
+            disabled:false,
+            allowBlank:false
         }
     },
     created(){
@@ -21,9 +23,21 @@ export default {
             form.fieldMap[id] = this;
             this.form = form;
             this.valueChangeKey = 'value-change-' + id;
+            this.blankText = cfg.fieldLabel + '不能为空！'
+            this.initOption(cfg);
             this.initVisible();
             this.initDefaultValue(cfg.defaultValue);
             this.initDataSource(cfg.dataSource);
+        },
+        initOption(cfg){
+            var options = ['allowBlank','submitValue'],
+                l = options.length,
+                option;
+
+            while(l--){
+                option = options[l];
+                this[option] = cfg[option];
+            }
         },
         initVisible:function(){
             var cfg = this.cfg,
@@ -49,6 +63,10 @@ export default {
         },
         isCombo:function(){
             return this.$options.name == 'R2Combofield';
+        },
+        isValid : function() {
+            var me = this;
+            return me.disabled || me.getErrors().length == 0;
         },
         initDefaultValue:function(cfg){
             var value;
@@ -97,6 +115,19 @@ export default {
             var cfg = this.cfg;
             Vue.set(this.form.formData,cfg.fieldCode,value);
             this.form.$emit(this.valueChangeKey,this);
+        },
+        getErrors:function(){
+            var me = this,
+                value = me.getValue(),
+                errors = [];
+           
+            if(!me.allowBlank && value == null){
+                errors.push(me.blankText);
+                this.$vux.alert.show({
+                    content: me.blankText
+                });
+            }
+            return errors;
         },
         getValue:function(){
             var cfg = this.cfg;
