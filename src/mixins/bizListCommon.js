@@ -2,7 +2,7 @@
 import { dateFormat, numberComma } from 'vux'
 // 请求 引入
 import { isMyflow } from 'service/detailService'
-import { getAppDetail } from 'service/app-basic/appSettingService'
+import { getAppDetail, getListMobileView } from 'service/app-basic/appSettingService'
 import { getSellOrderList } from 'service/listService'
 // 组件 引入
 import RScroll from 'plugins/scroll/RScroll'
@@ -421,6 +421,25 @@ export default {
         this.action = action;
       })
     },
+    getListMobileView() {
+      var me = this;
+      me.fieldsObj = {};
+      return getListMobileView(me.listId).then(data => {
+        let viewRecord = data.tableContent[0];
+        if (viewRecord) {
+          me.viewConfig = JSON.parse(viewRecord.CONTENT);
+          me.viewConfig.fields.filter(it => {
+            return !it.isHidden;
+          }).forEach(it => {
+            let key = it.fieldCode;
+            if (it.parentCode) {
+              key = key + '_' + it.parentCode;
+            }
+            me.fieldsObj[key] = it.alias ? it.alias : it.fieldName;
+          });
+        }
+      });
+    }
   },
   filters: {
     // 过滤日期
@@ -469,6 +488,7 @@ export default {
     let { name, listId, transCode } = this.$route.query;
     this.listId = listId;
     this.getAppDetail();
+    this.getListMobileView();
     this.getData(false).then(() => {
       /*
       * 第一次进入页面成功之后 隐藏动画
