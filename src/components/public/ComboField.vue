@@ -9,7 +9,7 @@
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
-          <d-search @search="searchList" @turn-off="onHide" :isFill="true"></d-search>
+          <d-search @search="searchList" @turn-off="onHide" :isFill="true" :defaultValue="searchValue"></d-search>
           <!-- 往来列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
@@ -52,6 +52,7 @@ let  cfg = {
            limit: 50,
            showPop:false,
            store:null,
+           searchValue:null,
            listData:[],
            fields:[],//可以显示的列。
            hasNext: true,
@@ -153,12 +154,23 @@ let  cfg = {
          },
          load:function(cb){
             var store = this.store,
+               filter,
                data = {
                   limit: this.limit,
                   page: this.page,
                   start: (this.page - 1) * this.limit
                }
-
+            
+            if (this.searchValue) {
+               filter = [
+                  {
+                  operator: 'like',
+                  value: this.searchValue,
+                  property: this.cfg.displayField,
+                  }
+               ];
+               data.filter = JSON.stringify(filter);
+            };
             data = {...data,...store.params};
             $flyio.ajax({
                url: this.store.url,
@@ -212,8 +224,10 @@ let  cfg = {
             this.setValue(null);
          },
    
-         searchList(){
-            
+         searchList({val}){
+            this.searchValue = val;
+            this.page = 1;
+            this.load();
          },
          selItem(item){
             this.selection = item;
@@ -263,6 +277,9 @@ export default Vue.component('R2Combofield',cfg);
 }
 .trade_pop_part {
    background: #fff !important;
+   .trade_pop{
+      height:100%;
+   }
    // 列表容器
    .pop-list-container {
       width: 100%;
@@ -285,35 +302,6 @@ export default Vue.component('R2Combofield',cfg);
          box-shadow: 0 2px 10px 0 rgba(228, 228, 232, 0.5);
          &.selected {
          border: 1px solid $main_color;
-         }
-         // 列表主体
-         .pop-list-main {
-         flex: 1;
-         box-sizing: border-box;
-         display: flex;
-         //头像
-         .user-photo {
-            width: .4rem;
-            height: .4rem;
-            margin-right: .12rem;
-            img {
-               border-radius: 50%;
-               width: 100%;
-               height: 100%;
-            }
-         }
-         .user_name {
-            line-height: .16rem;
-            font-size: .16rem;
-            font-weight: 600;
-            margin-top: .04rem;
-         }
-         .user_code {
-            margin-top: .06rem;
-            line-height: .12rem;
-            color: #999;
-            font-size: .12rem;
-         }
          }
       }
    }
