@@ -24,7 +24,11 @@ export default {
       let { folder, fileName } = this.$route.params;
       this.folder = folder;
       try {
-        this.currentComponent = require(`components/list/${folder}/${fileName}_List.vue`).default;
+        if (fileName == "null") {
+          this.currentComponent = require(`components/list/CommonList.vue`).default;
+        } else {
+          this.currentComponent = require(`components/list/${folder}/${fileName}_List.vue`).default;
+        }
       } catch (e) {
         console.log(e);
         this.$vux.alert.show({

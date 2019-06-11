@@ -73,6 +73,15 @@ export let getAppDetail = (uniqueId = '') => {
   })
 };
 
+export let getListMobileView = (listId = '') => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getListMobileViewByListId',
+    data: {
+      listId
+    }
+  })
+};
+
 // 获取 更新日志列表
 export let getChangeLog = (data={}) => {
   return $flyio.ajax({

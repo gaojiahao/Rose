@@ -1,5 +1,5 @@
 <template>
-  <div class="pages" :class="{'no-add': !action.add}" ref="list">
+  <div class="pages" :class="{'no-add': true}" ref="list">
     <div class="content">
       <div class="list_top">
         <!-- 搜索栏 -->
@@ -17,15 +17,16 @@
         @on-pulling-down="onPullingDown"
         ref="bScroll"
       >
-        <mater-list-item
+        <ListItem
           :item="item"
+          :fieldsObj="fieldsObj"
           v-for="(item, index) in listData"
           :key="index"
           @click.native="goDetail(item, index)"
-        ></mater-list-item>
+        ></ListItem>
       </r-scroll>
     </div>
-    <add-btn :action="action" :goEdit="goEdit"></add-btn>
+    <!-- <add-btn :action="action" :goEdit="goEdit"></add-btn> -->
   </div>
 </template>
 
@@ -39,7 +40,6 @@ export default {
         { name: "已生效", status: "已生效" },
         { name: "进行中", status: "进行中" }
       ],
-      listViewID: 2558,
       filterList: [
         // 过滤列表
         {
