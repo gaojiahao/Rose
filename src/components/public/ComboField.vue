@@ -22,7 +22,7 @@
                   <div class="info">
                     <template v-for="(field, index) in fields">
                        <span :key='index'>{{field.v}}</span>
-                       <span >{{item[field.k] }}</span>
+                       <span>{{item[field.k] }}</span>
                     </template>
                   </div>
                </div>
@@ -44,7 +44,7 @@ let  cfg = {
      mixins:[fieldBase],
      props:['cfg','values'],
      components: {
-      Icon, Popup, DSearch, RScroll,
+         Icon, Popup, DSearch, RScroll
      },
      data(){
         return {
@@ -120,16 +120,19 @@ let  cfg = {
                         autoLoad = false;
                      }
                      store.params[key] = value;
-                     me.form.$on('value-change-'+contrlId,(function(paramKey,valueField){
+                     me.form.$on('value-change-' + contrlId,(function(paramKey,valueField){
                         return function(){
                            var arg = Array.prototype.slice.call(arguments);
                            arg.unshift(paramKey,valueField);
                            me.paramChangeHandler.apply(me,arg);
                         }
                      })(key,valueField));
+                  } else if(paramCfg.type == 'text'){
+                     store.params[key] = paramCfg.value;
                   }
                }
             }
+            
          },
          checkValueOnLoad:function(listData){
             var  value = this.getValue(),
@@ -151,6 +154,10 @@ let  cfg = {
             } else {
                return null;
             }
+         },
+         initCombo(){
+            var cfg = this.cfg;
+            this.blankText = '请选择'+cfg.fieldLabel;
          },
          load:function(cb){
             var store = this.store,
@@ -179,7 +186,9 @@ let  cfg = {
                this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
                this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
                this.$nextTick(() => {
-                  this.$refs.bScroll.finishPullUp();
+                   if (this.$refs.bScroll) {
+                     this.$refs.bScroll.finishPullUp();
+                   }
                });
                this.$emit('load',this.listData);
                if(cb)cb();
@@ -257,6 +266,7 @@ let  cfg = {
          }
      },
      created(){
+        this.initCombo();
         this.buildStore();
      } 
 }

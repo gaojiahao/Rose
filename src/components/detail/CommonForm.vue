@@ -41,6 +41,7 @@ import {
   WebContext,
   initWebContext,
   getFormViews,
+  loadModelCfg,
   getFormViewByUniqueId,
   saveAndCommitTask,
   getBasicInfo
@@ -70,6 +71,9 @@ export default {
     };
   },
   methods: {
+    // 同意的处理,提交数据校验
+    agreeHandler() {
+    },
     // 获取查看视图的listId
     getViewIdByTransCode(transCode) {
       return new Promise((resolve, reject) => {
@@ -98,6 +102,31 @@ export default {
           }
         }
       });
+    },
+    //工作流信息
+    getWorkFlow() {
+      getWorkFlow({
+        _dc: Date.now(),
+        transCode: this.transCode
+      }).then((data) => {
+        this.workFlow = data.tableContent || [];
+      })
+    },
+    getValues(){
+        var values = {},
+            fieldMap = this.fieldMap,
+            fieldCode,
+            id,field;
+       
+       for(id in fieldMap){
+           field = fieldMap[id];
+           if(field.submitValue){
+             fieldCode = field.cfg.fieldCode;
+              values[fieldCode] = field.getValue();
+           }
+       }
+
+       return values;
     },
     handlerFormData(formData) {
       var key,
@@ -176,6 +205,9 @@ export default {
       let { transCode, listId, viewId, model } = this.$route.query;
       /**获取视图信息**/
       if (transCode) {
+        if(listId){
+          this.listId = listId;
+        }
         this.transCode = transCode;
         if (viewId) {//编辑或修改会指定视图
           this.viewId = viewId;
@@ -197,6 +229,9 @@ export default {
       //加载视图信息
       if (this.viewId) {
         await this.loadFormCfg();
+        if(this.model != 'view'){
+          this.loadModelCfg(this.listId);
+        }
         if (transCode) {
           await this.loadFormData(transCode);
           //await this.workFlowInfoHandler();
@@ -252,8 +287,9 @@ export default {
     },
     loadFormCfg() {
       return getFormViewByUniqueId(this.viewId).then(data => {
-        let { appName, config, dataSource } = data;
+        let { appName, config, dataSource,listInfo} = data;
         window.document.title = appName;
+        WebContext.listInfo = listInfo;
         try {
           config = JSON.parse(config);
           data.config = config;
@@ -294,6 +330,24 @@ export default {
         }
       });
     },
+    loadModelCfg(listId){
+        var me =this;
+        loadModelCfg(listId).then((rs)=>{
+            var row,
+                apiCfgStr,
+                apiCfg = null;
+            if (rs.dataCount) {
+                row = rs.tableContent[0];
+                apiCfgStr = row && row.MODEL_CONFIG;
+                if (apiCfgStr) try {
+                    apiCfg = JSON.parse(apiCfgStr);
+                } catch (e) {
+                    apiCfg = null;
+                }
+                me.apiCfg = apiCfg;
+            }
+        });
+    },
     //是否我的工作流信息
     isMyflow() {
       return isMyflow({
@@ -301,21 +355,27 @@ export default {
         transCode: this.transCode
       });
     },
-    //工作流信息
-    getWorkFlow() {
-      getWorkFlow({
-        _dc: Date.now(),
-        transCode: this.transCode
-      }).then((data) => {
-        this.workFlow = data.tableContent || [];
-      })
-    },
-    // 同意的处理,提交数据校验
-    agreeHandler() {
+    isValid(){
+       var invalid = false,
+           fieldMap = this.fieldMap,
+           fieldCode,field;
+       
+       for(fieldCode in fieldMap){
+           field = fieldMap[fieldCode];
+           if(!field.isValid()){
+             invalid = true;
+             break;
+           }
+       }
+       return !invalid;
     },
     stopOrder(){},
     submit(){
-
+      var values;
+       if(this.isValid()){
+           values = this.getValues();
+           console.log(values);
+       }
     },
     // 同意、拒绝、撤回成功时的回调
     submitSuccessCallback(val) {

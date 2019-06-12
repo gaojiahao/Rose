@@ -1,7 +1,7 @@
 <template>
 <div v-show="!hidden" class="cell each_property vux-1px-b">
     <label :class="{'required':!cfg.allowBlank}">{{cfg.fieldLabel}}</label>
-    <input v-if="cfg.readOnly == false" :value="values[cfg.fieldCode]" placeholder="请输入">
+    <input v-if="cfg.readOnly == false" :value="values[cfg.fieldCode]" placeholder="请输入" type="date" @input="onInput"/>
     <span v-else >{{values[cfg.fieldCode]||'无'}}</span>
 </div>
 </template>
@@ -11,6 +11,12 @@ import fieldBase from 'mixins/fieldBase'
 let  cfg = {
      mixins:[fieldBase],
      props:['cfg','values'], 
+     methods:{
+         onInput:function(e){
+            var value = e.target.value;
+            this.setValue(value);
+         }
+     }
 }
 export default Vue.component('R2Datefield',cfg);
 </script>
