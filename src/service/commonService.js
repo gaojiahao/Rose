@@ -402,6 +402,14 @@ export let getFormViewByUniqueId = (uniqueId) =>{
     url: `/H_roleplay-si/form/${uniqueId}/view`
    })
 }
+export let loadModelCfg = (listId)=>{
+  return $flyio.ajax({
+    url: `/H_roleplay-si/ds/getModelConfigByListId`,
+    data:{
+      listId:listId
+    }
+   })
+}
 // 获取提交页面表单二次配置
 export let findConfigInfo = (viewId = '') => {
   return $flyio.ajax({

@@ -127,9 +127,12 @@ let  cfg = {
                            me.paramChangeHandler.apply(me,arg);
                         }
                      })(key,valueField));
+                  } else if(paramCfg.type == 'text'){
+                     store.params[key] = paramCfg.value;
                   }
                }
             }
+            
          },
          checkValueOnLoad:function(listData){
             var  value = this.getValue(),
@@ -183,7 +186,9 @@ let  cfg = {
                this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
                this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
                this.$nextTick(() => {
-                  this.$refs.bScroll.finishPullUp();
+                   if (this.$refs.bScroll) {
+                     this.$refs.bScroll.finishPullUp();
+                   }
                });
                this.$emit('load',this.listData);
                if(cb)cb();

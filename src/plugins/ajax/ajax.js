@@ -11,7 +11,7 @@ let qs = require('querystring');
 
 // reject处理
 let rejectError = (reject, message) => {
-  errHandle(message);
+  if(message)errHandle(message);
   return Promise.reject({ success: false, message });
 };
 
@@ -99,7 +99,7 @@ let Rxports = {
     return new Promise((resolve, reject) => {
       let params = {
         method: opts.type || opts.method || 'GET',
-        url: opts.url,
+        url: ensureUrl(opts.url),
         headers: {
           'Content-Type': opts.contentType || '*/*',
         },
@@ -168,7 +168,19 @@ let Rxports = {
     })
   }
 };
-
+function ensureUrl(url) {
+  if (/^\/H_roleplay-si/i.test(url)) {
+      return url;
+  } else if (/^\/R_roleplay-si/i.test(url)) {
+      return url.replace(/^\/R_roleplay-si/i, '/H_roleplay-si');
+  } else if (/^\/account-api/i.test(url)) {
+      return url;
+  } else if (/^\/corebiz-api/i.test(url)) {
+      return url;
+  } else {
+      return '/H_roleplay-si' + url;
+  }
+}
 export default Rxports;
 
 

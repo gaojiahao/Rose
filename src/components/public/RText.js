@@ -49,7 +49,9 @@ let rtext = Vue.component('r2Textfield', {
                                     event.currentTarget.select();
                                 },
                                 input: function (event) {
-                                    self.$emit('input', event.target.value)
+                                    var value = event.target.value;
+                                    self.setValue(value);
+                                    self.$emit('input', value)
                                 }
                             }
                         }

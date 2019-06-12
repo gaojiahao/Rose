@@ -41,6 +41,7 @@ import {
   WebContext,
   initWebContext,
   getFormViews,
+  loadModelCfg,
   getFormViewByUniqueId,
   saveAndCommitTask,
   getBasicInfo
@@ -204,6 +205,9 @@ export default {
       let { transCode, listId, viewId, model } = this.$route.query;
       /**获取视图信息**/
       if (transCode) {
+        if(listId){
+          this.listId = listId;
+        }
         this.transCode = transCode;
         if (viewId) {//编辑或修改会指定视图
           this.viewId = viewId;
@@ -225,6 +229,9 @@ export default {
       //加载视图信息
       if (this.viewId) {
         await this.loadFormCfg();
+        if(this.model != 'view'){
+          this.loadModelCfg(this.listId);
+        }
         if (transCode) {
           await this.loadFormData(transCode);
           //await this.workFlowInfoHandler();
@@ -322,6 +329,24 @@ export default {
           this.fieldSets = fieldSets;
         }
       });
+    },
+    loadModelCfg(listId){
+        var me =this;
+        loadModelCfg(listId).then((rs)=>{
+            var row,
+                apiCfgStr,
+                apiCfg = null;
+            if (rs.dataCount) {
+                row = rs.tableContent[0];
+                apiCfgStr = row && row.MODEL_CONFIG;
+                if (apiCfgStr) try {
+                    apiCfg = JSON.parse(apiCfgStr);
+                } catch (e) {
+                    apiCfg = null;
+                }
+                me.apiCfg = apiCfg;
+            }
+        });
     },
     //是否我的工作流信息
     isMyflow() {
