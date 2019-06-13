@@ -2,25 +2,25 @@
   <!-- 审批操作 -->
   <div class='handle_wrapper' v-if="!!actions.length">
     <div class="handle_btn">
-      <template v-for="item in actions">
-        <span class="btn_item" :class="item" @click="event(item)" v-if="actions.includes(item)">{{btnInfo[item]}}</span>
-      </template>
-      <!-- <span class="btn_item green_btn" @click="revoke" v-if="actions.includes('submit')">提交</span>
-      <span class="btn_item green_btn" @click="revoke" v-if="actions.includes('resubmit')">提交</span>
-      <span class="btn_item green_btn" @click="revoke" v-if="actions.includes('submitNew')">提交并新建</span>
-      <span class="btn_item green_btn" @click="revoke" v-if="actions.includes('draft')">保存草稿</span>
-      <span class="btn_item green_btn" @click="revoke" v-if="actions.includes('new')">新建</span>
-      <span class="btn_item green_btn" @click="revoke" v-if="actions.includes('copyNew')">复制并新建</span>
-      <span class="btn_item green_btn" @click="update" v-if="actions.includes('update')">修改</span>
-      <span class="btn_item yellow_btn" @click="revoke" v-if="actions.includes('revokeDraft')">撤销为草稿</span>
-      <span class="btn_item blue_btn" @click="update" v-if="actions.includes('file')">归档</span>
-      <span class="btn_item deep_green_btn" @click="update" v-if="actions.includes('reduction')">还原</span>
-      <span class="btn_item green_btn" @click="revoke" v-if="actions.includes('storage')">暂存</span>
-      <span class="btn_item deep_green_btn" @click="agree" v-if="actions.includes('agreement')">同意</span>
-      <span class="btn_item red_btn" @click="disagree" v-if="actions.includes('disagree')">拒绝</span>
-      <span class="btn_item default_btn" @click="transfer" v-if="actions.includes('transfer')">转办</span>
-      <span class="btn_item green_btn" @click="revoke" v-if="actions.includes('revoke')">撤回</span>
-      <span class="btn_item red_btn" @click="revoke" v-if="actions.includes('stop')">终止</span> -->
+      <!-- <template v-for="item in actions">
+        <span class="btn_item" :class="item" @click.stop="event(item)" v-if="actions.includes(item)">{{btnInfo[item]}}</span>
+      </template> -->
+      <span class="btn_item submit" @click="submit" v-if="actions.includes('submit')">提交</span>
+      <span class="btn_item resubmit" @click="resubmit" v-if="actions.includes('resubmit')">提交</span>
+      <span class="btn_item submitNew" @click="submitNew" v-if="actions.includes('submitNew')">提交并新建</span>
+      <span class="btn_item draft" @click="draft" v-if="actions.includes('draft')">保存草稿</span>
+      <span class="btn_item newFile" @click="newFile" v-if="actions.includes('newFile')">新建</span>
+      <span class="btn_item copyNew" @click="copyNew" v-if="actions.includes('copyNew')">复制并新建</span>
+      <span class="btn_item update" @click="update" v-if="actions.includes('update')">修改</span>
+      <span class="btn_item revokeDraft" @click="revokeDraft" v-if="actions.includes('revokeDraft')">撤销为草稿</span>
+      <span class="btn_item file" @click="file" v-if="actions.includes('file')">归档</span>
+      <span class="btn_item reduction" @click="reduction" v-if="actions.includes('reduction')">还原</span>
+      <span class="btn_item storage" @click="storage" v-if="actions.includes('storage')">暂存</span>
+      <span class="btn_item agreement" @click="agreement" v-if="actions.includes('agreement')">同意</span>
+      <span class="btn_item disagree" @click="disagree" v-if="actions.includes('disagree')">拒绝</span>
+      <span class="btn_item transfer" @click="transfer" v-if="actions.includes('transfer')">转办</span>
+      <span class="btn_item revoke" @click="revoke" v-if="actions.includes('revoke')">撤回</span>
+      <span class="btn_item stop" @click="stop" v-if="actions.includes('stop')">终止</span>
     </div>
     <pop-user-list :show="showUserList" :default-value="selectedUser" @sel-item="selUser"
                    v-model="showUserList" v-if="actions.includes('transfer')"></pop-user-list>
@@ -48,7 +48,7 @@
 
 <script>
 import Vue from 'vue';
-import { commitTask, transferTask, WebContext } from 'service/commonService'
+import { commitTask, transferTask, WebContext, undoDataByTransCodes } from 'service/commonService'
 import { isMyflow } from 'service/detailService'
 import { Confirm } from 'vux'
 import PopUserList from 'components/Popup/PopUserList'
@@ -78,6 +78,12 @@ var component = {
       type: Function,
       default: null
     },
+    formStatus: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
   },
   components: {
     Confirm,
@@ -96,13 +102,12 @@ var component = {
       showCommentWarn: false,
       taskId: '',
       actions: [],
-      noOperation: true, 
       userId: '',
-      isMine: false,
       code: '',
       name: '',
       model: '',
       btnInfo: {},
+      btnEvent: {},
     }
   },
   watch: {
@@ -151,20 +156,30 @@ var component = {
 
       actions = actions.split(',');
 
+      //应该用model判断按钮的
+
       //无工作流，提交页面
-      if(JSON.stringify(myFlow) == '{}' && this.code == '') {
+      if(JSON.stringify(myFlow) == '{}' && (this.code == '' || this.code === null)) {
         actions = ['submit', 'submitNew', 'draft'];   
-      } else if(JSON.stringify(myFlow) == '{}' && this.code) {
-        actions = ['new', 'copyNew', 'revokeDraft'];
-        if(workFlow.length = 0) {
-          actions.push('update')
-          //判断归档还原按钮？？
-        }   
+      } else if(JSON.stringify(myFlow) == '{}' && this.code && workFlow.length != 0) {
+        actions = ['newFile', 'copyNew'];
+      } else if(JSON.stringify(myFlow) == '{}' && this.code && workFlow.length == 0){
+        actions = ['newFile','copyNew'];
       } else {
-        actions.push('transfer')  
+        actions.push('transfer');
       }
+      if(last.STATUS != '终止' && JSON.stringify(last) != "{}") {
+        actions.push('revokeDraft')  
+      }
+      if(workFlow.length == 0) {
+        actions.push('update')
+        //判断归档还原按钮？？
+      } 
       // 已终止
-      if (last.status === '终止') return false;
+      if (last.STATUS == '终止') {
+        this.actions = actions;
+        return false
+      };
       //撤销判断
       if(last.isFirstNode === 1 && last.startUserId == this.userId) {
         actions.push('revoke'); 
@@ -172,7 +187,93 @@ var component = {
       this.taskId = taskId;
       this.isMyTask = isMyTask === 1;
       this.actions = actions;
-    },  
+    }, 
+    submit() {},
+    resubmit() {},
+    submitNew() {},
+    draft() {},
+    //新建
+    newFile() {
+      let { listId } = this.$route.query,
+          { folder, fileName } = this.$route.params;
+      
+      this.$router.push({
+        path: `/fillform/${folder}/null`,
+        query: {
+          listId,
+          name: this.name,
+        },
+      });
+    },
+    copyNew() {},
+    //撤销为草稿
+    revokeDraft() {
+      let data = {
+          transCode: this.code,
+      };
+      this.$vux.confirm.prompt('',{
+        title:'撤销原因',
+        onConfirm: (value) => {
+          this.undoDataByTransCodes({
+            data:data,
+            successMsg: '撤销成功',
+            value,
+            callback: () => {
+              let { listId } = this.$route.query,
+                  { folder, fileName } = this.$route.params;
+              this.$router.replace({
+                path: `/fillform/${folder}/null`,
+                query: {
+                  listId,
+                  name: this.name,
+                  transCode: this.code,
+                },
+              });
+            }
+          });
+        }
+      });
+    },
+    undoDataByTransCodes({data,successMsg,value,callback}) {
+      this.$HandleLoad.show();
+      return undoDataByTransCodes(data).then(data => {
+        this.$HandleLoad.hide();
+        let {success = false, message = '提交失败'} = data;
+        this.$vux.alert.show({
+          content: message,
+          onHide: () => {
+            if (success) {
+              if (callback) {
+                callback();
+              } else {
+                this.$router.go(0);
+              }
+            }
+          }
+        });
+      }).catch(e => {
+        this.$HandleLoad.hide();
+      });
+    },
+    file() {},
+    reduction() {},
+    storage() {},
+    //终止
+    stop() {
+      this.$vux.confirm.prompt('', {
+        title: '审判意见',
+        onConfirm: (value) => {
+          this.commitTask({
+            result: -1,
+            successMsg: '终止成功',
+            value: value,
+            callback: () => {
+              this.$router.go(0);
+            }
+          });
+        }
+      });  
+    },
     // 拒绝
     disagree() {
       this.$vux.confirm.prompt('', {
@@ -208,7 +309,7 @@ var component = {
       });
     },
     // 同意
-    agree() {
+    agreement() {
       if (this.agreeHandler && this.agreeHandler()) {
         return
       }
@@ -289,21 +390,15 @@ var component = {
     update() {
       let { listId } = this.$route.query,
           { folder, fileName } = this.$route.params;
-      this.$vux.confirm.show({
-        title: '温馨提示',
-        content: '即将进入修改页面，确认吗？',
-        onConfirm: () => {
-          this.$router.replace({
-            path: `/fillform/${folder}/${fileName}`,
-            query: {
-              listId,
-              name: this.name,
-              transCode: this.code,
-              isModify: true
-            },
-          });
-        }
-      }) 
+
+      this.$router.push({
+        path: `/detail/${folder}/null`,
+        query: {
+          listId,
+          name: this.name,
+          transCode: this.code,
+        },
+      });
     },
     // 转办
     transfer() {
@@ -356,7 +451,7 @@ var component = {
     this.userId = WebContext.currentUser.userId;
     this.name = this.$route.query.name;
     this.model = this.$parent.config.viewType;
-    this.btnActionInfo();
+    //this.btnActionInfo();
     this.dealActionInfo();
   }
 }
@@ -372,7 +467,8 @@ export default Vue.component('R2Action',component)
     // 审批操作
     .handle_btn {
       display: flex;
-      justify-content: flex-end;
+      flex-wrap: wrap;
+      // justify-content: flex-end;
       width: 100%;
       padding: 0 .1rem;
       line-height: .12rem;
@@ -388,11 +484,13 @@ export default Vue.component('R2Action',component)
         text-align: center;
         white-space: nowrap;
         border-radius: .04rem;
-        & + .btn_item {
-          margin-left: .1rem;
-        }
+        margin-left: .1rem;
+        margin-bottom: .1rem;
+        // & + .btn_item {
+        //   margin-left: .1rem;
+        // }
       }
-      .submit,.resubmit,.submitNew,.draft,.new,.copyNew,.update,.storage,.revoke {
+      .submit,.resubmit,.submitNew,.draft,.newFile,.copyNew,.update,.storage,.revoke {
         border-color: rgb(0, 150, 136);
         background-color: rgb(0, 150, 136);
         color: #fff;
