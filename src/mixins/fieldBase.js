@@ -17,6 +17,7 @@ export default {
         init:function(){
             var cfg = this.cfg,
                 id = cfg.id,
+                fieldCode = cfg.fieldCode,
                 fieldSet = this.$parent,
                 form = fieldSet.form;
 
@@ -25,6 +26,9 @@ export default {
             this.valueChangeKey = 'value-change-' + id;
             this.blankText = cfg.fieldLabel + '不能为空！'
             this.initOption(cfg);
+            if(cfg.wfParam){
+                form.wfParamFieldMap[cfg.wfParam] = fieldCode;
+            }
             this.initVisible();
             this.initDefaultValue(cfg.defaultValue);
             this.initDataSource(cfg.dataSource);
