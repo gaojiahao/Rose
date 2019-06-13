@@ -20,13 +20,14 @@
       </span>
       <span class="count_btn stop" @click="stopOrder"
             v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
-      <span class="count_btn" @click="submit">提交</span>
+      <span class="count_btn" @click="addFormData">提交</span>
     </div>
   </div>
 </template>
 <script>
 // 请求 引入
 import platfrom from '@/plugins/platform/index'
+import submitMethod  from 'mixins/formSubmit'
 // 插件 引入
 import Bscroll from 'better-scroll'
 import {
@@ -47,6 +48,7 @@ import {
   getBasicInfo
 } from "service/commonService";
 export default {
+  mixins:[submitMethod],
   data() {
     return {
       transCode: null,
@@ -57,7 +59,6 @@ export default {
       formData: {},
       //经过处理的经办人信息
       transactor: {},
-      config: {},
       biReferenceId: null,
       //经过处理的基本信息
       baseinfo: {},
@@ -74,6 +75,7 @@ export default {
     // 同意的处理,提交数据校验
     agreeHandler() {
     },
+    
     // 获取查看视图的listId
     getViewIdByTransCode(transCode) {
       return new Promise((resolve, reject) => {
@@ -111,22 +113,6 @@ export default {
       }).then((data) => {
         this.workFlow = data.tableContent || [];
       })
-    },
-    getValues(){
-        var values = {},
-            fieldMap = this.fieldMap,
-            fieldCode,
-            id,field;
-       
-       for(id in fieldMap){
-           field = fieldMap[id];
-           if(field.submitValue){
-             fieldCode = field.cfg.fieldCode;
-              values[fieldCode] = field.getValue();
-           }
-       }
-
-       return values;
     },
     handlerFormData(formData) {
       var key,
@@ -202,7 +188,7 @@ export default {
       }
     },
     async loadPage() {
-      let { transCode, listId, viewId, model } = this.$route.query;
+      let { transCode, listId, viewId, model} = this.$route.query;
       /**获取视图信息**/
       if (transCode) {
         if(listId){
@@ -252,8 +238,9 @@ export default {
           formViewUniqueId: this.viewId,
           transCode
         },
-        api = this.config.config.isBaseObject
-          ? this.config.config.baseObjectKey
+        config = this.viewInfo.config,
+        api = config.isBaseObject
+          ? config.baseObjectKey
           : "formAPI";
       return getSOList(params, api).then(
         ({ formData = {}, attachment = [], biReferenceId }) => {
@@ -287,9 +274,11 @@ export default {
     },
     loadFormCfg() {
       return getFormViewByUniqueId(this.viewId).then(data => {
-        let { appName, config, dataSource,listInfo} = data;
+        let { appName, config, dataSource,listInfo,formKey} = data;
+
         window.document.title = appName;
         WebContext.listInfo = listInfo;
+
         try {
           config = JSON.parse(config);
           data.config = config;
@@ -324,8 +313,9 @@ export default {
               }
             });
           this.singleFieldCts = singleFieldCts;
-          this.config = data;
-          console.log("this.config", this.config);
+          this.viewInfo = data;
+          this.formKey = formKey;
+          console.log("this.config", data);
           this.fieldSets = fieldSets;
         }
       });
@@ -370,13 +360,6 @@ export default {
        return !invalid;
     },
     stopOrder(){},
-    submit(){
-      var values;
-       if(this.isValid()){
-           values = this.getValues();
-           console.log(values);
-       }
-    },
     // 同意、拒绝、撤回成功时的回调
     submitSuccessCallback(val) {
       let type = JSON.parse(val).type;
@@ -386,8 +369,9 @@ export default {
     },
   },
   created() {
-    this.loadPage();
     this.fieldMap = {};
+    this.wfParamFieldMap = {};
+    this.loadPage();
   }
 };
 </script>
