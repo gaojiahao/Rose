@@ -125,9 +125,13 @@ export default {
 
       for (key in formData) {
         item = formData[key];
-        if (item && "object" === typeof item && "dataSet" in item) {
-          list = item.dataSet;
-          delete item.dataSet;
+        if (item && "object" == typeof(item)) {
+          if("dataSet" in item){
+             list = item.dataSet;
+             delete item.dataSet;
+          } else {
+             list = [];
+          }
           for (key1 in item) {
             formData[key1] = item[key1];
             delete item[key1];
@@ -139,6 +143,7 @@ export default {
               formData[key1] = item[key1];
               delete item[key1];
             }
+            delete formData[key];
           } else {
             formData[key] = list;
           }
