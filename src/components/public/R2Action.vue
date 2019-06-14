@@ -352,10 +352,12 @@ var component = {
     },
   },
   created () {
-    this.code = this.$parent.transCode;
+    var  form = this.$parent;
+
+    this.code = form.transCode;
     this.userId = WebContext.currentUser.userId;
     this.name = this.$route.query.name;
-    this.model = this.$parent.config.viewType;
+    this.model = form.viewInfo.viewType;
     this.btnActionInfo();
     this.dealActionInfo();
   }

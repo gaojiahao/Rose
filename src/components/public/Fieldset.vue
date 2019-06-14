@@ -68,7 +68,9 @@ var component = {
       data: []
     };
   },
-  created: function() {},
+  created: function() {
+     this.name = this.cfg.name;
+  },
   watch: {
     values: {
       handler() {
@@ -92,13 +94,7 @@ var component = {
           i = 0;
         items.forEach(item => {
           // 当Grid组件只读为false时 各个字段的readOnly才能启用
-          if (
-            item.readOnly == true &&
-            (item.hiddenInRun === undefined ||
-              item.hiddenInRun === null ||
-              item.hiddenInRun === false) &&
-            cfg.layout != "fit"
-          ) {
+          if (item.readOnly == true &&!item.hiddenInRun &&cfg.layout != "fit") {
             readOnlyParts.push(item);
           }
           if (!item.hiddenInRun) i++;
@@ -106,12 +102,7 @@ var component = {
         //重复项的配置
         columns.forEach(item => {
           // 当Grid组件只读为false时 各个字段的readOnly才能启用
-          if (
-            item.readOnly == true &&
-            (item.hidden === undefined ||
-              item.hidden === null ||
-              item.hidden === false)
-          ) {
+          if (item.readOnly == true &&!item.hidden) {
             item.fieldLabel = item.text;
             readOnlyParts.push(item);
           }
@@ -136,6 +127,21 @@ var component = {
     toggleStyleType() {
       this.styleType = this.styleType ? 0 : 1;
       this.$emit("change-styleType", this.styleType);
+    },
+    getValues(){
+      var items = this.$children,
+          i,l=items.length,
+          item,
+          values = {};
+      
+      for(i=0;i<l;i++){
+        item = items[i];
+        if (item.submitValue){
+            values[item.cfg.fieldCode] = item.getValue();
+        }
+      }
+
+      return values;
     }
   }
 };

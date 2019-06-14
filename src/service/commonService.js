@@ -1,7 +1,39 @@
 import $flyio from 'plugins/ajax'
 import {dateFormat} from 'vux'
 let baseInfo;
+
+exports.addBaseObject = (baseObjectKey,apiKey,data) =>{
+    return $flyio.postJSON({
+      url:['/', baseObjectKey, apiKey].join(''),
+      data:data
+    })
+}
+export let commitTask = (data = {}) => {
+  return $flyio.ajax({
+    type: 'POST',
+    contentType: 'application/x-www-form-urlencoded',
+    url: '/H_roleplay-si/flow/commitTask',
+    data
+  })
+}
+// 删除文件
+export let deleteFile = (id = '') => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/delete',
+    data: {
+      _dc: Date.now(),
+      id,
+      list: 'attachments'
+    }
+  })
+};
 export let WebContext = {};
+export let requestData = ({url = '', data = {}}) => {
+  return $flyio.ajax({
+    url,
+    data
+  })
+}
 // 保存
 export let saveAndStartWf = (data = {}) => {
   return $flyio.ajax({
@@ -31,7 +63,16 @@ export let submitAndCalc = (data = {}) => {
     data: data
   })
 };
-
+// 转办
+export let transferTask = (data = {}) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/flow/setAssignee',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
 // 修改(没有工作流)
 export let updateData = (data = {}) => {
   return $flyio.ajax({
@@ -49,14 +90,7 @@ export let update = (data = {}) => {
     data
   })
 }
-export let commitTask = (data = {}) => {
-  return $flyio.ajax({
-    type: 'POST',
-    contentType: 'application/x-www-form-urlencoded',
-    url: '/H_roleplay-si/flow/commitTask',
-    data
-  })
-}
+
 
 // 获取当前用户信息(基础对象调用)
 export let getBaseInfoDataBase = () => {
@@ -99,7 +133,7 @@ export let getBaseInfoDataBase = () => {
     })
   });
 };
-//获取baseinfo信息
+//获取baseinfo信息,界面全局信息
 export let getBasicInfo = (data ={})=> {
   return new Promise((resolve,reject)=>{
      if(baseInfo == null){
@@ -152,17 +186,7 @@ export let mediaUpload = ({mediaId = '', biReferenceId = ''}) => {
   })
 };
 
-// 删除文件
-export let deleteFile = (id = '') => {
-  return $flyio.ajax({
-    url: '/H_roleplay-si/ds/delete',
-    data: {
-      _dc: Date.now(),
-      id,
-      list: 'attachments'
-    }
-  })
-};
+
 
 // 获取加工属性
 export let getDictByType = (type = '', data = {}) => {
@@ -361,16 +385,7 @@ export let getUserList = (data = {}) => {
   })
 };
 
-// 转办
-export let transferTask = (data = {}) => {
-  return $flyio.ajax({
-    url: '/H_roleplay-si/flow/setAssignee',
-    data: {
-      _dc: Date.now(),
-      ...data,
-    }
-  })
-};
+
 // 获取数量上线和下线
 export let getPriceFromSalesContractAndPrice = (data = {}) => {
   return $flyio.ajax({
@@ -448,12 +463,7 @@ export let getModelConfigByListId = (listId = '') => {
 
 }
 
-export let requestData = ({url = '', data = {}}) => {
-  return $flyio.ajax({
-    url,
-    data
-  })
-}
+
 
 // 获取列表配置
 export let getListViewById = (uniqueId) => {
@@ -464,9 +474,6 @@ export let getListViewById = (uniqueId) => {
       uniqueId,
     }
   })
-}
-export let fieldSetFactory=(config)=>{
-    
 }
 export default {
   getList,

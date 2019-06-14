@@ -1,5 +1,3 @@
-// 请求插件引入
-const fly = new Fly();
 import Fly from 'flyio/dist/npm/fly'
 // 请求地址引入
 import tokenService from '../../service/tokenService'
@@ -8,6 +6,8 @@ import { AlertModule } from 'vux'
 import errHandle from 'plugins/errHandle'
 
 let qs = require('querystring');
+// 请求插件引入
+const fly = new Fly();
 
 // reject处理
 let rejectError = (reject, message) => {
@@ -148,7 +148,14 @@ let Rxports = {
       fly.post(opts.url, opts.data).then(res => resolve(res.data));
     })
   },
-
+  postJSON(opts = {}){
+    return this.ajax({
+      type: 'POST',
+      url: opts.url,
+      contentType:'application/json',
+      data: opts.data
+    })
+  },
   // 上传图片，单个文件
   upload({file = {}, biReferenceId = ''}) {
     // 创建form对象
