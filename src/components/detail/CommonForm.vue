@@ -10,7 +10,7 @@
         <!-- 附件组件 -->
         <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId" />
         <!-- 审批组件 -->
-        <r2-action v-if="showAction" :myFlow="taskInfo" :workFlow="workflows" :agree-handler="agreeHandler" @on-submit-success="submitSuccessCallback" />
+        <r2-action v-if="showAction" :myFlow="taskInfo" :workFlow="workflows" :agree-handler="agreeHandler" @on-submit-success="submitSuccessCallback" :formStatus="formStatus"/>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -70,6 +70,7 @@ export default {
       userName: '',
       btnInfo:{},
       workflows: [],
+      formStatus: [],
     };
   },
   methods: {
@@ -205,7 +206,8 @@ export default {
           if(this.viewId == null){//如果没有审批视图，则加载查看视图
             //加载查看视图
             await this.getViewIdByTransCode(transCode);
-          } 
+          }
+          await this.getFromStatus(); 
         }
         await this.getWorkFlow();
       } else if (listId) {
@@ -369,6 +371,17 @@ export default {
         this.$emit('change', true);
       }
     },
+    getFromStatus() {
+      var data = {
+          _dc: Date.now(),
+          transCode: this.transCode
+        };
+      return getFromStatus(data).then(
+        ({ tableContent = []}) => {
+          this.formStatus = tableContent;
+        }
+      );  
+    }
   },
   created() {
     this.fieldMap = {};

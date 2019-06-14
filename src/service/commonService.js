@@ -475,6 +475,16 @@ export let getListViewById = (uniqueId) => {
     }
   })
 }
+//撤销为草稿
+export let undoDataByTransCodes = (data = {}) => {
+  return $flyio.ajax({
+    type: 'POST',
+    contentType: 'application/x-www-form-urlencoded',
+    url: '/H_roleplay-si/formAPI/undo',
+    data
+  })
+}
+
 export default {
   getList,
   upload,
@@ -492,5 +502,6 @@ export default {
   getObjDealerByLabelName,
   getUserList,
   transferTask,
-  getFormConfig
+  getFormConfig,
+  undoDataByTransCodes
 }
