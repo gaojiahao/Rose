@@ -77,6 +77,7 @@ var component = {
           formModel = this.form.model;
         let readOnlyParts = [],
           i = 0;
+          
         items.forEach(item => {
           // 当Grid组件只读为false时 各个字段的readOnly才能启用
           if (item.readOnly == true &&!item.hiddenInRun &&cfg.layout != "fit") {
