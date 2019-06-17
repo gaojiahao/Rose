@@ -154,7 +154,7 @@ var component = {
           return;
         me.pushActions('draft');
       }
-      if (action.add && model != 'marking') {
+      if ((action.add && model != 'marking') || model == 'view') {
         me.addNewFormBtn();
         me.addCopyAndNewBtn();
       }
@@ -466,10 +466,12 @@ var component = {
     },
   },
   created () {
-    this.code = this.$parent.transCode || '';
+    var form = this.$parent;
+
+    this.code = form.transCode || '';
     this.userId = WebContext.currentUser.userId || '';
     this.name = this.$route.query.name || '';
-    this.model = this.$parent.model || '';
+    this.model = form.viewInfo.viewType || '';
     this.getListById();
     //我的流程，工作流为空（表单失效），执行一次
     this.dealActionInfo();  

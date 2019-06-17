@@ -13,8 +13,7 @@
         <template v-for="(item, index) in readOnlyParts">
           <div class="item">
             <span :key="index">{{item.fieldLabel}}：</span>
-            <span v-if="!item.text">{{data[item.fieldCode]||values[item.fieldCode]||'无'}}</span>
-            <span v-else>{{data[item.fieldCode]||'无'}}</span>
+            <span >{{values[item.fieldCode]||'无'}}</span>
           </div>
         </template>
       </div>
@@ -64,25 +63,13 @@ var component = {
       visibleItemsLength: 0, //
       hasToogleBar: false,
       editParts: [],
-      readOnlyParts: [],
-      data: []
+      readOnlyParts: []
     };
   },
-  created: function() {},
+  created: function() {
+     this.name = this.cfg.name;
+  },
   watch: {
-    values: {
-      handler() {
-        let name = this.cfg.name;
-        let data = this.values;
-        this.data = data && data[name];
-        this.data = (this.data && this.data[0]) || this.data || [];
-        // for (const key in this.data) {              // 去除对象内多余的空值key
-        //   if (this.data[key] === '' || this.data[key] === null || this.data[key] === undefined) {
-        //     delete this.data[key]
-        //   }
-        // }
-      }
-    },
     cfg: {
       handler(cfg) {
         // *部分应用* 物料详情在审批节点可以重新录入数据 此处进行数据分割
@@ -92,27 +79,7 @@ var component = {
           i = 0;
         items.forEach(item => {
           // 当Grid组件只读为false时 各个字段的readOnly才能启用
-          if (
-            item.readOnly == true &&
-            (item.hiddenInRun === undefined ||
-              item.hiddenInRun === null ||
-              item.hiddenInRun === false) &&
-            cfg.layout != "fit"
-          ) {
-            readOnlyParts.push(item);
-          }
-          if (!item.hiddenInRun) i++;
-        });
-        //重复项的配置
-        columns.forEach(item => {
-          // 当Grid组件只读为false时 各个字段的readOnly才能启用
-          if (
-            item.readOnly == true &&
-            (item.hidden === undefined ||
-              item.hidden === null ||
-              item.hidden === false)
-          ) {
-            item.fieldLabel = item.text;
+          if (item.readOnly == true &&!item.hiddenInRun &&cfg.layout != "fit") {
             readOnlyParts.push(item);
           }
           if (!item.hiddenInRun) i++;
@@ -136,6 +103,21 @@ var component = {
     toggleStyleType() {
       this.styleType = this.styleType ? 0 : 1;
       this.$emit("change-styleType", this.styleType);
+    },
+    getValues(){
+      var items = this.$children,
+          i,l=items.length,
+          item,
+          values = {};
+      
+      for(i=0;i<l;i++){
+        item = items[i];
+        if (item.submitValue){
+            values[item.cfg.fieldCode] = item.getValue();
+        }
+      }
+
+      return values;
     }
   }
 };

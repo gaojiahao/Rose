@@ -1,14 +1,18 @@
 import {
+ addBaseObject,
  saveAndStartWf,//保存并发起流程
  submitAndCalc//保存并计算
 } from "service/commonService";
-module.exports = {
+export default {
    methods:{
         addFormData: function () {
             var me = this,
                 isBaseObject = me.viewInfo.config.isBaseObject,
                 handler = this[isBaseObject?'addBaseObject':'addAppData'];
             
+            //表单校验
+            if (!me.isValid())return;
+
             this.$vux.confirm.show({
                 content: '确认提交?',
                 // 确定回调
@@ -24,20 +28,12 @@ module.exports = {
                 proCode,
                 approvalData,
                 wfPara = {},
-                isBindFlow = me.workflow.length > 0 ? true : false,
+                isBindFlow = me.workflows.length > 0 ? true : false,
                 submitHandler = isBindFlow ? saveAndStartWf : submitAndCalc,
                 values,
               //  uploadComp = me.formView.down('r2Fileupload'),
               //  files = uploadComp ? uploadComp.getR2Value() : null,
                 {relationKey} = me.$route.query;
-
-        
-
-            //表单校验
-            if (!me.isValid()){
-                me.$HandleLoad.hide();
-                return;
-            } 
 
             values = me.getValues();
             me.formData = me.formatValues(formData);
@@ -54,7 +50,7 @@ module.exports = {
             //     param.biReferenceId = uploadComp.biReferenceId;
             // }
             if (isBindFlow) {
-                proCode = me.workflow[0].procCode;
+                proCode = me.workflows[0].procCode;
                 wfPara[proCode] = me.approvalData(values);
                 param.wfPara = JSON.stringify(wfPara);
             } 
@@ -67,12 +63,12 @@ module.exports = {
         },
         addBaseObject(){
             var me = this,
-                values = me.formView.getValues(),
+                values = me.getBaseObjectValues(),
                 submitParam = {
                     listId: me.listId,
                     formData: values
                 },
-                isBindFlow = me.workflow.length > 0 ? true : false,
+                isBindFlow = me.workflows.length > 0 ? true : false,
                 approvalData,
                 proCode,
                 wfPara = {},
@@ -88,36 +84,21 @@ module.exports = {
 
             if (isBindFlow) {
                 proCode = me.workflows[0].procCode;
-                approvalData = me.formView.getApprovalData(values);
+                approvalData = me.getApprovalData(values);
                 wfPara[proCode] = approvalData;
                 submitParam.wfPara = JSON.stringify(wfPara);
                 apiKey = '/saveAndStartWf';
-            }
-
-            //表单校验
-
-            if (!me.isValid()) {
-                me.$HandleLoad.hide();
-                return;
             }
             // if (files && files.length) {
             //     submitParam.biReferenceId = uploadComp.biReferenceId;
             // }
 
-            console.log('----', submitParam);
-
-
-            me.dao.request(['/', baseObjectKey, apiKey].join(''), null, function (res) {
-                Ext.getBody().unmask();
-                var resopnse = me.handlerResopnse(res);
-                if (resopnse) {
-                    var submitFormView = r2.global.DAO.getFormViews(me.listId).filter(function (f) {
-                        return f.viewType === 'submit';
-                    });
-                    var url = '/Form/index.html?model=new&view=' + submitFormView[0].uniqueId + '&list=' + me.listId;
-                }
-
-            }, 'post', submitParam);
+            //console.log('----', submitParam);
+            addBaseObject(baseObjectKey, apiKey,submitParam).then(function(res) {
+                me.handlerResopnse(res);
+            }).catch(e => {
+                me.$HandleLoad.hide();
+            });
         },
         formatValues(values){
             var apiCfg = this.apiCfg,
@@ -192,10 +173,10 @@ module.exports = {
         },
         handlerResopnse(rs){
             let me = this,
-                {success = false, message = '提交失败'} = rs;
+                {success = false, message = '提交失败',transCode} = rs;
 
             this.$HandleLoad.hide()
-
+            if(transCode) me.transCode = transCode;
             if (success) {
                 message = '提交成功';
                 this.$emit('change', true);
@@ -237,7 +218,20 @@ module.exports = {
     
            return values;
         },
-    
+        getBaseObjectValues:function(){
+            var me = this,
+                values = {},
+                fieldsets =  me.$refs.fieldsetCt.$children,
+                i=0,l = fieldsets.length,fieldset;
+            
+            for(;i<l;i++){
+               fieldset = fieldsets[i];
+               name = fieldset.name;
+               values[name] = fieldset.getValues();
+            }
+
+            return values;
+        },
         getApprovalData(values){
             var approvalData = {},
                 paramKey,

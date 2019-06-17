@@ -4,13 +4,13 @@
     <div class="form" :class="{scrollCt:model != 'view'}" ref="fill">
       <div class='fill_wrapper'>
         <!-- 工作流组件 -->
-        <w-flow :formData="formData" :full-work-flow="workFlow"  v-if = "transCode"/>
+        <w-flow :formData="formData" :full-work-flow="workflows"  v-if = "transCode"/>
         <!-- 表单渲染 -->
-        <r-fieldset-ct :cfg="fieldSets" :values="formData" v-if="fieldSets.length"/>
+        <r-fieldset-ct :cfg="fieldSets" :values="formData" v-if="fieldSets.length" ref="fieldsetCt"/>
         <!-- 附件组件 -->
         <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId" />
         <!-- 审批组件 -->
-        <r2-action :myFlow="taskInfo" :workFlow="workFlow" :agree-handler="agreeHandler" @on-submit-success="submitSuccessCallback" :formStatus="formStatus"/>
+        <r2-action v-if="showAction" :myFlow="taskInfo" :workFlow="workflows" :agree-handler="agreeHandler" @on-submit-success="submitSuccessCallback" :formStatus="formStatus"/>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -66,9 +66,10 @@ export default {
       basicInfo: {},
       myFlow: [],
       taskInfo:null,
+      showAction:false,
       userName: '',
       btnInfo:{},
-      workFlow: [],
+      workflows: [],
       formStatus: [],
     };
   },
@@ -112,7 +113,7 @@ export default {
         _dc: Date.now(),
         transCode: this.transCode
       }).then((data) => {
-        this.workFlow = data.tableContent || [];
+        this.workflows = data.tableContent || [];
       })
     },
     handlerFormData(formData) {
@@ -124,9 +125,13 @@ export default {
 
       for (key in formData) {
         item = formData[key];
-        if (item && "object" === typeof item && "dataSet" in item) {
-          list = item.dataSet;
-          delete item.dataSet;
+        if (item && "object" == typeof(item)) {
+          if("dataSet" in item){
+             list = item.dataSet;
+             delete item.dataSet;
+          } else {
+             list = [];
+          }
           for (key1 in item) {
             formData[key1] = item[key1];
             delete item[key1];
@@ -138,6 +143,7 @@ export default {
               formData[key1] = item[key1];
               delete item[key1];
             }
+            delete formData[key];
           } else {
             formData[key] = list;
           }
@@ -217,6 +223,7 @@ export default {
       //加载视图信息
       if (this.viewId) {
         await this.loadFormCfg();
+        if(this.model != 'new')this.showAction = true;
         if(this.model != 'view'){
           this.loadModelCfg(this.listId);
         }
