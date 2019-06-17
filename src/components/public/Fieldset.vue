@@ -19,7 +19,8 @@
       </div>
       <template v-for="(item, index) in editParts">
         <r2Textfield :cfg="item" :values="values" v-if="item.xtype == 'r2Textfield'" :key="index"/>
-        <r2Textfield :cfg="item" :values="values" v-if="item.xtype == 'r2TextArea'" :key="index"/>
+        <!-- <r2Textfield :cfg="item" :values="values" v-if="item.xtype == 'r2TextArea'" :key="index"/> -->
+        <r2TextArea :cfg="item" :values="values" v-if="item.xtype == 'r2TextArea'" :key="index"/>
         <!-- 暂时用textfield RNumber 还没有只读状态下的视图 -->
         <r2Numberfield
           :cfg="item"

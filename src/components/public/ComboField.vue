@@ -20,10 +20,10 @@
                      <span class="label" v-if="cfg.valueField != cfg.displayField">{{item[cfg.valueField]}}</span>
                   </div>
                   <div class="info">
-                    <template v-for="(field, index) in fields">
-                       <span :key='index'>{{field.v}}</span>
-                       <span>{{item[field.k] }}</span>
-                    </template>
+                     <template v-for="(field, index) in fields">
+                        <span class="label" :key='index'>{{field.v}}</span>
+                        <span class="value">{{item[field.k] }}</span>
+                     </template>
                   </div>
                </div>
             </div>
@@ -311,7 +311,27 @@ export default Vue.component('R2Combofield',cfg);
          border-radius: .04rem;
          box-shadow: 0 2px 10px 0 rgba(228, 228, 232, 0.5);
          &.selected {
-         border: 1px solid $main_color;
+         border: 1px solid $main_color; 
+         }
+         .main {
+            .name {
+               .name {
+                  font-weight: bold;
+                  color: #3296FA;   
+               }
+            }
+            .info {
+               .label {
+                  font-size: .12rem;
+                  color: #999; 
+                  line-height: .12rem;  
+               }
+               .value {
+                  font-size: .12rem;
+                  margin-right: .1rem;
+                  line-height: .12rem;
+               } 
+            }
          }
       }
    }
