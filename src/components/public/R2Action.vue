@@ -2,20 +2,17 @@
   <!-- 审批操作 -->
   <div class='handle_wrapper' v-if="!!actions.length">
     <div class="handle_btn">
-      <!-- <template v-for="item in actions">
-        <span class="btn_item" :class="item" @click.stop="event(item)" v-if="actions.includes(item)">{{btnInfo[item]}}</span>
-      </template> -->
-      <span class="btn_item submit" @click="submit" v-if="actions.includes('submit')">提交</span>
       <span class="btn_item resubmit" @click="resubmit" v-if="actions.includes('resubmit')">提交</span>
       <span class="btn_item submitNew" @click="submitNew" v-if="actions.includes('submitNew')">提交并新建</span>
       <span class="btn_item draft" @click="draft" v-if="actions.includes('draft')">保存草稿</span>
       <span class="btn_item newFile" @click="newFile" v-if="actions.includes('newFile')">新建</span>
-      <span class="btn_item copyNew" @click="copyNew" v-if="actions.includes('copyNew')">复制并新建</span>
+      <!-- <span class="btn_item copyNew" @click="copyNew" v-if="actions.includes('copyNew')">复制并新建</span> -->
+      <span class="btn_item edit" @click="edit" v-if="actions.includes('edit')">编辑</span>
       <span class="btn_item update" @click="update" v-if="actions.includes('update')">修改</span>
       <span class="btn_item revokeDraft" @click="revokeDraft" v-if="actions.includes('revokeDraft')">撤销为草稿</span>
-      <span class="btn_item file" @click="file" v-if="actions.includes('file')">归档</span>
-      <span class="btn_item reduction" @click="reduction" v-if="actions.includes('reduction')">还原</span>
-      <span class="btn_item storage" @click="storage" v-if="actions.includes('storage')">暂存</span>
+      <!-- <span class="btn_item file" @click="file" v-if="actions.includes('file')">归档</span>
+      <span class="btn_item reduction" @click="reduction" v-if="actions.includes('reduction')">还原</span> -->
+      <!-- <span class="btn_item storage" @click="storage" v-if="actions.includes('storage')">暂存</span> -->
       <span class="btn_item agreement" @click="agreement" v-if="actions.includes('agreement')">同意</span>
       <span class="btn_item disagree" @click="disagree" v-if="actions.includes('disagree')">拒绝</span>
       <span class="btn_item transfer" @click="transfer" v-if="actions.includes('transfer')">转办</span>
@@ -49,7 +46,7 @@
 <script>
 import Vue from 'vue';
 import { commitTask, transferTask, WebContext, undoDataByTransCodes } from 'service/commonService'
-import { isMyflow } from 'service/detailService'
+import { isMyflow, getListById } from 'service/detailService'
 import { Confirm } from 'vux'
 import PopUserList from 'components/Popup/PopUserList'
 
@@ -100,14 +97,8 @@ var component = {
       },
       showTaskWarn: false,
       showCommentWarn: false,
-      taskId: '',
       actions: [],
-      userId: '',
-      code: '',
-      name: '',
-      model: '',
-      btnInfo: {},
-      btnEvent: {},
+      appAction: {},//应用权限
     }
   },
   watch: {
@@ -123,70 +114,92 @@ var component = {
       handler() {
         this.dealActionInfo();  
       }
-    }
+    },
   },
   methods: {
-    btnActionInfo() {
-      let obj = {
-        submit : '提交',
-        resubmit : '提交',
-        submitNew : '提交并新建',
-        draft : '保存草稿',
-        new : '新建',
-        copyNew : '复制并新建',
-        update : '修改',
-        revokeDraft : '撤销为草稿',
-        file : '归档',
-        reduction : '还原',
-        storage : '暂存',
-        agreement : '同意',
-        disagree : '拒绝',
-        transfer : '转办',
-        revoke : '撤回',
-        stop : '终止',
-      }
-      this.btnInfo = obj;
+    //加载应用权限
+    getListById() {
+      return getListById({ uniqueId: this.$parent.listId }).then(data => {
+        this.appAction = data[0].action;
+      })
+    },
+    pushActions(action) {
+      this.actions.push(action);
+    },
+    addNewFormBtn() {
+      this.actions.push('newFile');
+    },
+    addCopyAndNewBtn() {
+      this.actions.push('copyNew');  
     },
     //处理按钮的判断
     dealActionInfo() {
-      let myFlow = this.myFlow || {};
-      let workFlow = this.workFlow || [];
-      let {isMyTask = 0, actions = '', taskId, viewId ,allowRecall} = myFlow;
-      let last = workFlow[workFlow.length - 1] || {};
+      let me = this,
+          myFlow = me.myFlow || {},
+          workFlow = me.workFlow || [],
+          {isMyTask = 0, actions = '', taskId, viewId ,allowRecall} = myFlow,
+          last = workFlow[workFlow.length - 1] || {},
+          statusText = (me.formStatus[0] && me.formStatus[0].status) || '',
+          model = me.model,
+          action = me.appAction,
+          showAddModel = ['resubmit','submitNew'];  //新增模式按钮
 
       actions = actions.split(',');
 
-      //应该用model判断按钮的
-
-      //无工作流，提交页面
-      if(JSON.stringify(myFlow) == '{}' && (this.code == '' || this.code === null)) {
-        actions = ['submit', 'submitNew', 'draft'];   
-      } else if(JSON.stringify(myFlow) == '{}' && this.code && workFlow.length != 0) {
-        actions = ['newFile', 'copyNew'];
-      } else if(JSON.stringify(myFlow) == '{}' && this.code && workFlow.length == 0){
-        actions = ['newFile','copyNew'];
-      } else {
-        actions.push('transfer');
+      me.taskId = taskId;
+      me.isMyTask = isMyTask === 1;
+      if(me.code=='') {
+        me.actions = showAddModel;
+        if(model ==='revise') 
+          return;
+        me.pushActions('draft');
       }
-      if(last.STATUS != '终止' && JSON.stringify(last) != "{}") {
-        actions.push('revokeDraft')  
+      if ((action.add && model != 'marking') || model == 'view') {
+        me.addNewFormBtn();
+        me.addCopyAndNewBtn();
       }
-      if(workFlow.length == 0) {
-        actions.push('update')
-        //判断归档还原按钮？？
-      } 
-      // 已终止
-      if (last.STATUS == '终止') {
-        this.actions = actions;
-        return false
-      };
-      //撤销判断
+      if (statusText === '草稿' && model != 'edit') {
+        me.pushActions('edit')  
+      }
+      if (statusText === '已生效' && model != 'revise' && action.update) {
+        me.pushActions('update')
+      }
+      if (statusText === '已生效') {
+        me.pushActions('revokeDraft');
+      }
+      if(action.archive || action.whetherArchive) {
+        if(action.archive == 'true' || action.whetherArchive != 0) {
+          me.pushActions('file');  
+        }
+      }
+      if (statusText === '已归档') {
+            
+      }
+      if (actions.includes('updateDataCommitTask')) {
+        me.pushActions('resubmit');  
+      }
+      if (actions.includes('resubmit')) {
+        me.pushActions('resubmit');
+        me.pushActions('storage');
+      }
+      if(actions.includes('temporary') && !((me.actions).includes('storage'))) {
+        me.pushActions('storage');
+      }
+      if (actions.includes('agreement')) {
+        me.pushActions('agreement');
+      }
+      if (actions.includes('disagree')) {
+        me.pushActions('disagree');
+      }
+      if (actions.includes('stop')) {
+        me.pushActions('stop');
+      }
+      if(isMyTask) {
+        me.pushActions('transfer');
+      }
       if(last.isFirstNode === 1 && last.startUserId == this.userId) {
-        actions.push('revoke'); 
-      }
-      this.taskId = taskId;
-      this.isMyTask = isMyTask === 1;
-      this.actions = actions;
+        me.pushActions('revoke'); 
+      } 
     }, 
     submit() {},
     resubmit() {},
@@ -238,7 +251,12 @@ var component = {
       this.$HandleLoad.show();
       return undoDataByTransCodes(data).then(data => {
         this.$HandleLoad.hide();
-        let {success = false, message = '提交失败'} = data;
+        let {success = false, message = ''} = data;
+        if(success) {
+          message = successMsg;
+        } else {
+          message = '该应用暂不支持撤销！';
+        }
         this.$vux.alert.show({
           content: message,
           onHide: () => {
@@ -258,10 +276,11 @@ var component = {
     file() {},
     reduction() {},
     storage() {},
+    edit() {},
     //终止
     stop() {
       this.$vux.confirm.prompt('', {
-        title: '审判意见',
+        title: '审批意见',
         onConfirm: (value) => {
           this.commitTask({
             result: -1,
@@ -449,12 +468,13 @@ var component = {
   created () {
     var form = this.$parent;
 
-    this.code = form.transCode;
-    this.userId = WebContext.currentUser.userId;
-    this.name = this.$route.query.name;
-    this.model = form.viewInfo.viewType;
-    //this.btnActionInfo();
-    this.dealActionInfo();
+    this.code = form.transCode || '';
+    this.userId = WebContext.currentUser.userId || '';
+    this.name = this.$route.query.name || '';
+    this.model = form.viewInfo.viewType || '';
+    this.getListById();
+    //我的流程，工作流为空（表单失效），执行一次
+    this.dealActionInfo();  
   }
 }
 export default Vue.component('R2Action',component)
@@ -492,7 +512,7 @@ export default Vue.component('R2Action',component)
         //   margin-left: .1rem;
         // }
       }
-      .submit,.resubmit,.submitNew,.draft,.newFile,.copyNew,.update,.storage,.revoke {
+      .submit,.resubmit,.submitNew,.draft,.newFile,.copyNew,.update,.storage,.revoke,.edit {
         border-color: rgb(0, 150, 136);
         background-color: rgb(0, 150, 136);
         color: #fff;
