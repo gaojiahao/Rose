@@ -9,7 +9,7 @@ let saleReportService = {
         page: 1,
         start: 0,
         limit: 10000,
-        sort: JSON.stringify([{"property": "trans_detail_uncalc.bankCharge", "direction": "ASC"}]),
+        sort: JSON.stringify([{"property": "baseinfo.effectiveTime", "direction": "DESC"}]),
         ...data,
       }
     });

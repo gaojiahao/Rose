@@ -134,7 +134,7 @@
       },
       // 获取物料列表
       getList() {
-        let filter = [];
+        let filter = [{"operator":"like","value":"0","property":"trans_detail_uncalc.var1"}];
         //成品,商品,服务
         if (this.srhInpTx) {
           filter = [
