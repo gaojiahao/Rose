@@ -133,7 +133,8 @@ var component = {
       this.actions.push('copyNew');  
     },
     //处理按钮的判断
-    dealActionInfo() {
+    async dealActionInfo() {
+      await this.getListById();
       let me = this,
           myFlow = me.myFlow || {},
           workFlow = me.workFlow || [],
@@ -472,7 +473,7 @@ var component = {
     this.userId = WebContext.currentUser.userId || '';
     this.name = this.$route.query.name || '';
     this.model = form.viewInfo.viewType || '';
-    this.getListById();
+    //this.getListById();
     //我的流程，工作流为空（表单失效），执行一次
     this.dealActionInfo();  
   }
