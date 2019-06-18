@@ -138,7 +138,8 @@ export default {
             return this.values[cfg.fieldCode];
         },
         getExtraFieldValue:function(valueField){
-            return values[cfg.fieldCode];
+            var cfg = this.cfg;
+            return this.values[cfg.fieldCode];
         },
         getContextData(express){
             return getValuesByExp(express);
