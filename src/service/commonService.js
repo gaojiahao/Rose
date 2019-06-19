@@ -484,6 +484,24 @@ export let undoDataByTransCodes = (data = {}) => {
     data
   })
 }
+//归档
+export let archiveDataByTransCodes = (data ={}) => {
+  return $flyio.ajax({
+    type: 'POST',
+    contentType: 'application/x-www-form-urlencoded',
+    url: '/H_roleplay-si/archive/perform',
+    data
+  })  
+}
+//还原
+export let switchToEffectiveByTransCodes = (data = {}) => {
+  return $flyio.ajax({
+    type: 'POST',
+    contentType: 'application/x-www-form-urlencoded',
+    url: '/H_roleplay-si/archive/switchToEffective',
+    data
+  })
+}
 
 export default {
   getList,

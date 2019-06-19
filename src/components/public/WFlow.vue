@@ -7,11 +7,11 @@
         查看工作流<i class="icon-right"></i>
       </span>
     </div>
-    <div class="work-flow-status-wrapper">
-      <!-- <i class="icon-success"></i> -->
-      <span class="work-flow-text">
-        交易号：{{this.formData.transCode}} 当前状态：<span :class="[statusClass]">{{workFlowInfo.biStatus}}</span>
-      </span>
+    <div class="work-flow-status-wrapper hight-line">
+      <span>交易号：</span>
+      <span>{{this.formData.transCode}}</span>
+      <span>当前状态：</span>
+      <span :class="[statusClass]">{{workFlowInfo.biStatus}}</span>
     </div>
     <div class="work-flow-status-wrapper" v-if="fullWorkFlow.length">
       <i class="icon-flow-time"></i>
@@ -19,7 +19,6 @@
         工作流已到{{currentStatus.nodeName}}
       </span>
     </div>
-    <!-- <div class="work-flow-time">{{currentStatus.startTime}}</div> -->
   </div>
 </template>
 <script>
@@ -203,6 +202,13 @@ export default Vue.component('WFlow',component)
       .failure {
         color: #999;
       }
+    }
+    .hight-line {
+      color: #999;
+      span:nth-child(2n) {
+        color:#333;
+        margin-right: .1rem;
+      }  
     }
     .icon-flow-time {
       @extend %icon;

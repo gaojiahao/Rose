@@ -196,6 +196,7 @@ export default {
     },
     async loadPage() {
       let { transCode, listId, viewId, model} = this.$route.query;
+      this.$loading.show();
       /**获取视图信息**/
       if (transCode) {
         if(listId){

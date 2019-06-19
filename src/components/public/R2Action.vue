@@ -10,8 +10,8 @@
       <span class="btn_item edit" @click="edit" v-if="actions.includes('edit')">编辑</span>
       <span class="btn_item update" @click="update" v-if="actions.includes('update')">修改</span>
       <span class="btn_item revokeDraft" @click="revokeDraft" v-if="actions.includes('revokeDraft')">撤销为草稿</span>
-      <!-- <span class="btn_item file" @click="file" v-if="actions.includes('file')">归档</span>
-      <span class="btn_item reduction" @click="reduction" v-if="actions.includes('reduction')">还原</span> -->
+      <span class="btn_item file" @click="file" v-if="actions.includes('file')">归档</span>
+      <span class="btn_item reduction" @click="reduction" v-if="actions.includes('reduction')">还原</span>
       <!-- <span class="btn_item storage" @click="storage" v-if="actions.includes('storage')">暂存</span> -->
       <span class="btn_item agreement" @click="agreement" v-if="actions.includes('agreement')">同意</span>
       <span class="btn_item disagree" @click="disagree" v-if="actions.includes('disagree')">拒绝</span>
@@ -45,7 +45,7 @@
 
 <script>
 import Vue from 'vue';
-import { commitTask, transferTask, WebContext, undoDataByTransCodes } from 'service/commonService'
+import { commitTask, transferTask, WebContext, undoDataByTransCodes, archiveDataByTransCodes, switchToEffectiveByTransCodes } from 'service/commonService'
 import { isMyflow, getListById } from 'service/detailService'
 import { Confirm } from 'vux'
 import PopUserList from 'components/Popup/PopUserList'
@@ -98,6 +98,7 @@ var component = {
       showTaskWarn: false,
       showCommentWarn: false,
       actions: [],
+      listInfo: {},
       appAction: {},//应用权限
     }
   },
@@ -120,7 +121,8 @@ var component = {
     //加载应用权限
     getListById() {
       return getListById({ uniqueId: this.$parent.listId }).then(data => {
-        this.appAction = data[0].action;
+        this.listInfo = data[0];
+        this.appAction = this.listInfo.action;
       })
     },
     pushActions(action) {
@@ -142,6 +144,7 @@ var component = {
           last = workFlow[workFlow.length - 1] || {},
           statusText = (me.formStatus[0] && me.formStatus[0].status) || '',
           model = me.model,
+          listInfo = me.listInfo,
           action = me.appAction,
           showAddModel = ['resubmit','submitNew'];  //新增模式按钮
 
@@ -167,14 +170,12 @@ var component = {
       }
       if (statusText === '已生效') {
         me.pushActions('revokeDraft');
-      }
-      if(action.archive || action.whetherArchive) {
-        if(action.archive == 'true' || action.whetherArchive != 0) {
+        if(action.archive && listInfo.whetherArchive == 1) {
           me.pushActions('file');  
         }
       }
       if (statusText === '已归档') {
-            
+        me.pushActions('reduction');        
       }
       if (actions.includes('updateDataCommitTask')) {
         me.pushActions('resubmit');  
@@ -202,7 +203,6 @@ var component = {
         me.pushActions('revoke'); 
       } 
     }, 
-    submit() {},
     resubmit() {},
     submitNew() {},
     draft() {},
@@ -223,7 +223,7 @@ var component = {
     //撤销为草稿
     revokeDraft() {
       let data = {
-          transCode: this.code,
+          transCodes: this.code,
       };
       this.$vux.confirm.prompt('',{
         title:'撤销原因',
@@ -232,41 +232,20 @@ var component = {
             data:data,
             successMsg: '撤销成功',
             value,
-            callback: () => {
-              let { listId } = this.$route.query,
-                  { folder, fileName } = this.$route.params;
-              this.$router.replace({
-                path: `/fillform/${folder}/null`,
-                query: {
-                  listId,
-                  name: this.name,
-                  transCode: this.code,
-                },
-              });
-            }
           });
         }
       });
     },
-    undoDataByTransCodes({data,successMsg,value,callback}) {
+    undoDataByTransCodes({data,successMsg,value}) {
       this.$HandleLoad.show();
       return undoDataByTransCodes(data).then(data => {
         this.$HandleLoad.hide();
         let {success = false, message = ''} = data;
-        if(success) {
-          message = successMsg;
-        } else {
-          message = '该应用暂不支持撤销！';
-        }
         this.$vux.alert.show({
           content: message,
           onHide: () => {
             if (success) {
-              if (callback) {
-                callback();
-              } else {
-                this.$router.go(0);
-              }
+              this.$router.go(0);
             }
           }
         });
@@ -274,10 +253,87 @@ var component = {
         this.$HandleLoad.hide();
       });
     },
-    file() {},
-    reduction() {},
+    //归档
+    file() {
+      let data = {
+          transCodes: this.code,
+      };
+      this.$vux.confirm.show({
+        title:'确认归档?',
+        onConfirm: (value) => {
+          this.archiveDataByTransCodes({
+            data:data,
+            successMsg: '归档成功',
+            value,
+          });
+        }
+      });
+    },
+    archiveDataByTransCodes({data,successMsg,value}) {
+      this.$HandleLoad.show();
+      return archiveDataByTransCodes(data).then(data => {
+        this.$HandleLoad.hide();
+        let {success = false, message = ''} = data;
+        this.$vux.alert.show({
+          content: message,
+          onHide: () => {
+            if (success) {
+              this.$router.go(0);
+            }
+          }
+        });
+      }).catch(e => {
+        this.$HandleLoad.hide();
+      });      
+    },
+    //还原
+    reduction() {
+      let data = {
+          transCodes: this.code,
+      };
+      this.$vux.confirm.show({
+        title:'确认还原?',
+        onConfirm: (value) => {
+          this.switchToEffectiveByTransCodes({
+            data:data,
+            successMsg: '还原成功',
+            value,
+          });
+        }
+      });  
+    },
+    switchToEffectiveByTransCodes({data,successMsg,value}) {
+      this.$HandleLoad.show();
+      return switchToEffectiveByTransCodes(data).then(data => {
+        this.$HandleLoad.hide();
+        let {success = false, message = ''} = data;
+        this.$vux.alert.show({
+          content: message,
+          onHide: () => {
+            if (success) {
+              this.$router.go(0);
+            }
+          }
+        });
+      }).catch(e => {
+        this.$HandleLoad.hide();
+      });   
+    },
     storage() {},
-    edit() {},
+    //编辑
+    edit() {
+      let { listId } = this.$route.query,
+          { folder, fileName } = this.$route.params;
+
+      this.$router.push({
+        path: `/fillform/${folder}/null`,
+        query: {
+          listId,
+          name: this.name,
+          transCode: this.code,
+        },
+      });
+    },
     //终止
     stop() {
       this.$vux.confirm.prompt('', {
@@ -412,7 +468,7 @@ var component = {
           { folder, fileName } = this.$route.params;
 
       this.$router.push({
-        path: `/detail/${folder}/null`,
+        path: `/fillform/${folder}/null`,
         query: {
           listId,
           name: this.name,
@@ -473,7 +529,6 @@ var component = {
     this.userId = WebContext.currentUser.userId || '';
     this.name = this.$route.query.name || '';
     this.model = form.viewInfo.viewType || '';
-    //this.getListById();
     //我的流程，工作流为空（表单失效），执行一次
     this.dealActionInfo();  
   }
@@ -507,7 +562,7 @@ export default Vue.component('R2Action',component)
         text-align: center;
         white-space: nowrap;
         border-radius: .04rem;
-        margin-left: .1rem;
+        margin-right: .1rem;
         margin-bottom: .1rem;
         // & + .btn_item {
         //   margin-left: .1rem;
