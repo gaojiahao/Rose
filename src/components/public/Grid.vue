@@ -34,7 +34,9 @@
 <script>
 import Vue from "vue";
 import gridPicker from './GridPicker';
+import girdMix from 'mixins/grid'
 var component = {
+  mixins:[girdMix],
   components:{gridPicker},
   props: ["cfg", "values"],
   data() {
@@ -71,11 +73,11 @@ var component = {
           
        if(dataSourceBind){
          data[dataSourceBind.k] = row[dataSourceBind.v];
+         this.setValueBindValue(data,dataSourceBind.k,row);
        }
-       this.initDefaultValue(data);
+       this.setDefaultValue(data);
        return data;
     },
-    initDefaultValue(){},
     addMatter(){
       this.$refs.gridPicker.show();
     },
@@ -108,14 +110,18 @@ var component = {
   },
   created(){
     var cfg = this.cfg,
+        id = cfg.id,
         fieldSet = this.$parent,
         form = fieldSet.form,
         values = this.values,
         name = fieldSet.name;
 
+    form.fieldMap[id] = this;
     this.name = name;
     this.form = form;
     this.initDataSource(cfg);
+    this.initDefaultValueCfg();
+    this.initValueBindAndExpressionCfg();
   }
 };
 export default Vue.component("RGrid", component);
