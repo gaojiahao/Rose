@@ -78,7 +78,7 @@ export default {
             if(cfg.type == 'formData'){
                 this.initValueBind([cfg.data]);
             }else if(cfg.type == 'contextData'){
-                value = this.getContextData(cfg.data);
+                value = getValuesByExp(cfg.data);
             }
             if(value != null){
                this.setValue(value);
@@ -137,11 +137,8 @@ export default {
             var cfg = this.cfg;
             return this.values[cfg.fieldCode];
         },
-        getExtraFieldValue:function(valueField){
-            return values[cfg.fieldCode];
-        },
-        getContextData(express){
-            return getValuesByExp(express);
+        getExtraFieldValue:function(valueField){//combo 会覆盖这个方法
+            return this.getValue();
         },
         valueBindChangeHandler(valueField,cmp){
             var value = cmp.getExtraFieldValue(valueField);

@@ -43,8 +43,7 @@
         />
         <r-grid
           :cfg="item"
-          :value="values[cfg.name]"
-          :form="form"
+          :values="values[cfg.name]"
           v-if="item.xtype.indexOf('Grid') != -1"
           :key="index"
         />

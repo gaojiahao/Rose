@@ -16,6 +16,20 @@ export let commitTask = (data = {}) => {
     data
   })
 }
+export let convertDataType = function (editorType, value) {
+  if (!editorType) {
+      return value;
+  }
+  switch (editorType) {
+      case 'r2Numberfield':
+      case 'r2Percentfield':
+          value = parseFloat(value);
+          break;
+      default:
+          break;
+  }
+  return value;
+}
 // 删除文件
 export let deleteFile = (id = '') => {
   return $flyio.ajax({
@@ -504,6 +518,7 @@ export let switchToEffectiveByTransCodes = (data = {}) => {
 }
 
 export default {
+  convertDataType,
   getList,
   upload,
   mediaUpload,
