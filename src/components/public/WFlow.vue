@@ -1,9 +1,9 @@
 <template>
   <!-- 工作流 -->
-  <div class="work-flow-container" @click="goWorkFlowFull">
+  <div class="work-flow-container">
     <div class="work-flow-header">
       <span class="work_flow_title vux-1px-l">{{this.formData.transTypeName}}</span>
-      <span class="check_more" v-if="fullWorkFlow.length">
+      <span class="check_more" v-if="fullWorkFlow.length" @click="goWorkFlowFull">
         查看工作流<i class="icon-right"></i>
       </span>
     </div>
@@ -19,13 +19,15 @@
         工作流已到{{currentStatus.nodeName}}
       </span>
     </div>
+    <r-picker title="流程状态" v-if="statusList.length" :data="statusList" :value="nowStatus" v-model="nowStatus"></r-picker>
   </div>
 </template>
 <script>
 import Vue from 'vue';
-import {Popup, Group, Icon, XButton, dateFormat} from 'vux'
+import {Popup, Group, Icon, XButton, dateFormat, Picker, Toast} from 'vux'
 import RScroll from 'plugins/scroll/RScroll'
-import { isMyflow,getWorkFlow } from "service/detailService";
+import RPicker from 'components/public/basicPicker'
+import { isMyflow,getWorkFlow,getProcessStatusByListId,getStatusProcessByTransCode,updateProcessStatus} from "service/detailService";
 import { getBasicInfo } from "service/commonService";
 var component = {
   props: {
@@ -47,6 +49,9 @@ var component = {
       defaulImg: require('assets/ava01.png'),   // 默认图片1
       currentStatus: {},
       workFlowInfo: {},
+      statusList: [],
+      nowStatus: '',
+      show: false,
     }
   },
   computed: {
@@ -85,9 +90,15 @@ var component = {
       },
       immediate: true,
     },
+    nowStatus: {
+      handler(val,oldval) {
+        if(oldval != '')
+          this.updateProcessStatus(val);
+      } 
+    }
   },
   components: {
-    Popup, Group, Icon, XButton, RScroll,
+    Popup, Group, Icon, XButton, RScroll, Picker, RPicker, Toast
   },
   methods: {
     // 处理简易版工作流数据
@@ -131,11 +142,40 @@ var component = {
         }
       })
     },
+    getProcessStatusByListId() {
+      let data = {
+          listId : this.$parent.listId
+      };
+      return getProcessStatusByListId(data).then(({tableContent = []}) => {
+        for(let item of tableContent) {
+          this.statusList.push(item.fieldValue); 
+        }
+      });
+    },
+    getStatusProcessByTransCode() {
+      let data = {
+          transCode : this.$parent.transCode
+      };
+      return getStatusProcessByTransCode(data).then(data => {
+        this.nowStatus = data.processStatus;
+      });  
+    },
+    updateProcessStatus(val) {
+      let data = {
+          transCode : this.$parent.transCode,
+          processStatus: val
+      };
+      return updateProcessStatus(data).then(data => {
+        this.$vux.toast.text(data.message, 'top')  
+      });    
+    }
   },
   filters: {
     dateFormat,
   },
   created() {
+    this.getProcessStatusByListId();
+    this.getStatusProcessByTransCode();
   }
 }
 export default Vue.component('WFlow',component)
@@ -208,6 +248,55 @@ export default Vue.component('WFlow',component)
       span:nth-child(2n) {
         color:#333;
         margin-right: .1rem;
+      }  
+    }
+    .status-process {
+      display: flex;
+      font-size: .14rem;
+      line-height: .16rem;
+      justify-content: space-between;
+      margin-top: .1rem;
+      .work_flow_title {
+        line-height: .16rem;
+        font-size: 16px;
+        font-weight: 600;
+        &:before {
+          left: -.15rem;
+          width: .08rem;
+          border-left: .08rem solid #3296FA;
+        }
+      }
+      .change-status {
+        color: #999;
+        display: flex;
+        font-size: .12rem;
+      }
+      .icon-right {
+        width: .08rem;
+        height: .14rem;
+        margin-left: .04rem;
+        display: inline-block;
+      }
+    }
+    /deep/ .r-picker {
+      padding: .1rem 0 0 0;
+      font-size: .14rem;
+      background: #fff;
+      line-height: .14em;
+      color: #333;
+      .picker {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+      }
+      .picker label {
+        color:#999;
       }  
     }
     .icon-flow-time {

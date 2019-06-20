@@ -77,4 +77,35 @@ export let getFromStatus = (data = {}) => {
         data
     })
 }
+//获取所有流程状态
+export let getProcessStatusByListId = (data = {}) => {
+    return $flyio.ajax({
+        url: '/H_roleplay-si/ds/getProcessStatusByListId',
+        data: {
+            _dc: Date.now(),
+            ...data,
+        }
+    })
+}
+//获取当前流程状态
+export let getStatusProcessByTransCode = (data = {}) => {
+    return $flyio.ajax({
+        url: '/H_roleplay-si/trans/getStatusProcessByTransCode',
+        data: {
+            _dc: Date.now(),
+            ...data,
+        }
+    })
+}
+//更新流程状态
+export let updateProcessStatus = (data = {}) => {
+    return $flyio.ajax({
+        url: '/H_roleplay-si/formAPI/updateProcessStatus',
+        data: {
+            _dc: Date.now(),
+            ...data,
+        }
+    })
+}
+
 export default {}
