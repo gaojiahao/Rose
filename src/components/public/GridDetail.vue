@@ -1,8 +1,8 @@
 <template>
   <div v-transfer-dom>
     <popup
-      class="popup-matter-container"
-      :class="{'has-edit': hasEditPart, 'is-focus': btnIsHide}"
+      class="grid-detail-container"
+       :class="{'has-edit': hasEditPart, 'is-focus': btnIsHide}"
       height="80%"
       v-model="showPop"
       @on-show="onShow"
@@ -12,16 +12,24 @@
         <i class="icon-close" @click="hidePop"></i>
       </div>
       <r-scroll ref="bScroll">
+        <div class="readOnlyPart" v-if="readOnlyParts.length">
+          <template v-for="(item, index) in readOnlyParts">
+            <div class="item">
+              <span :key="index">{{item.text}}：</span>
+              <span >{{values[item.fieldCode]||'无'}}</span>
+            </div>
+          </template>
+        </div>
         <div class="matter-edit-part" v-if="hasEditPart">
           <div v-for="(eItem, eIndex) in editParts" :key="eIndex">
             <x-input
               class="vux-1px-b"
               type="number"
-              v-model.number="item[eItem.fieldCode]"
+              v-model.number="values[eItem.fieldCode]"
               text-align="right"
               placeholder="请输入"
               v-if="(eItem.editorType === 'r2Numberfield' || eItem.editorType === 'r2Percentfield' || eItem.editorType === 'r2Permilfield')"
-              @on-blur="checkAmt(item, eItem.fieldCode, item[eItem.fieldCode])"
+              @on-blur="checkAmt(item, eItem.fieldCode, values[eItem.fieldCode])"
               @on-focus="getFocus($event)"
             >
               <template slot="label">
@@ -30,13 +38,13 @@
             </x-input>
           </div>
         </div>
-        <div class="readonly-parts">
-          <div class="readonly-item" v-for="(other, index) in readOnlyParts" :key="index">
+        <div class="onlyView-parts" v-if="onlyViewParts.length">
+          <div class="onlyView-item" v-for="(other, index) in onlyViewParts" :key="index">
             <span class="title">{{other.text}}</span>
-            <span>{{item[other.fieldCode]}}</span>
+            <span>{{values[other.fieldCode]}}</span>
           </div>
         </div>
-        <div class="matter-date vux-1px-t" v-if="hasDate">
+        <!--div class="matter-date vux-1px-t" v-if="hasDate">
           <div class="matter_date_item" v-for="(date, index) in item.dates" :key="index">
             <span class="matter_date_title">{{date.text}}：</span>
             <span>{{date.value}}</span>
@@ -49,7 +57,7 @@
         >
           <div class="matter_comment_title">{{item.matterComment.text}}</div>
           <div class="matter_comment_value">{{item.matterComment.value}}</div>
-        </div>
+        </div-->
       </r-scroll>
       <div class="confirm_btn" @click="confirm" v-if="hasEditPart">
         <div class="confirm">确认</div>
@@ -66,20 +74,13 @@ import { toFixed } from "@/plugins/calc";
 
 var component = {
   props: {
-    show: {
-      type: Boolean,
-      default: false
+    show:{
+      type:Boolean
     },
-    item: {
+    values: {
       type: Object,
       default() {
         return {};
-      }
-    },
-    columns: {
-      type: Array,
-      default() {
-        return [];
       }
     },
     btnIsHide: {
@@ -101,32 +102,18 @@ var component = {
   data() {
     return {
       showPop: false,
+      readOnlyParts: [],
       editParts: [],
-      dates: [],
+      onlyViewParts:[],
       title: null,
-      titlekey: null,
-      readOnlyParts: []
+      titleKey: null,
+   
     };
   },
   computed: {
-    // 是否含时间块
-    hasDate() {
-      let { dates = [] } = this.item;
-      return dates && dates.length;
-    },
     // 是否有可编辑部分
     hasEditPart() {
       return !!this.editParts.length;
-    },
-    // 是否显示 产品规格
-    showSpec() {
-      let item = this.item;
-      let spec =
-        item.specification_transObjCode ||
-        item.specification_outPutMatCode ||
-        item.facilitySpecification_facilityObjCode ||
-        item.assMeasureDescription;
-      return !!spec;
     }
   },
   watch: {
@@ -138,38 +125,9 @@ var component = {
     },
     showPop: {
       handler(val) {
-        this.$emit("input", val);
+        this.$emit("input", val);//v-model
       },
       immediate: true
-    },
-    columns: {
-      handler(columns) {
-        // *部分应用* 物料详情在审批节点可以重新录入数据 此处进行数据分割
-        let editParts = [];
-        let readOnlyParts = [];
-        columns
-          .filter(it => {
-            return !it.hidden;
-          })
-          .forEach(item => {
-            // 当Grid组件只读为false时 各个字段的readOnly才能启用
-            if (item.r2GridXtype && !item.r2GridXtype.readOnly) {
-              item.readOnly ? readOnlyParts.push(item) : editParts.push(item);
-              return;
-            }
-            readOnlyParts.push(item);
-          });
-        this.editParts = editParts; // 可编辑部分
-        this.readOnlyParts = readOnlyParts; // 只读部分
-        this.titleKey = columns[0].fieldCode;
-      },
-      immediate: true,
-      deep: true
-    },
-    item: {
-      handler(detail) {
-        //
-      }
     }
   },
   methods: {
@@ -224,6 +182,37 @@ var component = {
     getFocus(e) {
       event.currentTarget.select();
     }
+  },
+  created(){
+     var grid = this.$parent,
+         cfg = grid.cfg,
+         columns = cfg.columns;
+     // *部分应用* 物料详情在审批节点可以重新录入数据 此处进行数据分割
+     if(cfg.readOnly){
+       this.onlyViewParts = columns
+          .filter(it => {
+            return !it.hidden;
+          });
+     } else {
+        let editParts = [];
+        let readOnlyParts = [];
+        columns
+          .filter(it => {
+            return !it.hidden;
+          })
+          .forEach(col => {
+            // 当Grid组件只读为false时 各个字段的readOnly才能启用
+            if (col.editorType) {
+               editParts.push(col);
+            }else{
+               readOnlyParts.push(col);
+            }
+          });
+        this.editParts = editParts; // 可编辑部分
+        this.readOnlyParts = readOnlyParts; // 只读部分
+     }
+        
+     this.titleKey = columns[0].fieldCode;
   }
 };
 export default Vue.component("GridDetail", component);
@@ -231,7 +220,7 @@ export default Vue.component("GridDetail", component);
 
 <style lang="scss">
 @import "~@/scss/color";
-.popup-matter-container {
+.grid-detail-container {
   width: 100%;
   color: #333;
   box-sizing: border-box;
@@ -277,55 +266,27 @@ export default Vue.component("GridDetail", component);
     height: calc(100% - 0.62rem);
   }
 
-  .matter-main {
-    display: flex;
-    padding: 0.24rem 0.15rem 0;
-    background-color: #fff;
-    .matter_img {
-      width: 0.9rem;
-      height: 0.9rem;
+  .readOnlyPart {
+    line-height: 0.22rem;
+    font-size: 0.12rem;
+    span:nth-child(2n + 1) {
+      color: #aaa;
     }
-    .matter_info {
-      flex: 1;
-      margin-left: 0.12rem;
+    span:nth-child(2n) {
+      font-weight: 400;
+      font-size: 0.13rem;
     }
-    .matter_name {
-      line-height: 0.24rem;
-      font-size: 0.16rem;
-      font-weight: 500;
-    }
-    .matter_info_item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 0.16rem;
-      line-height: 0.12rem;
-      font-size: 0.12rem;
-      & + .matter_info_item {
-        margin-top: 0.08rem;
-      }
-      &.flex-start {
-        justify-content: flex-start;
-        .matter_detail {
-          & + .matter_detail {
-            margin-left: 0.1rem;
-          }
-        }
-      }
-    }
-    .matter_detail {
-      display: flex;
-    }
-    .matter_item_title {
-      color: #999;
+    .item {
+      display: inline-flex;
+      margin-right: 0.2rem;
     }
   }
 
   /* 其他数据 */
-  .readonly-parts {
+  .onlyView-parts {
     padding: 0 0.15rem 0.24rem;
     background-color: #fff;
-    .readonly-item {
+    .onlyView-item {
       display: flex;
       justify-content: space-between;
       heigth: 0.5rem;
@@ -353,7 +314,7 @@ export default Vue.component("GridDetail", component);
   }
 
   /* 说明 */
-  .matter-comment {
+  .comment {
     padding: 0.24rem 0.15rem 0.19rem;
     background-color: #fff;
     .matter_comment_title {
@@ -369,7 +330,7 @@ export default Vue.component("GridDetail", component);
   }
 
   /* 编辑部分 */
-  .matter-edit-part {
+  .edit-part {
     margin: 0.1rem 0;
     background-color: #fff;
     color: #333;

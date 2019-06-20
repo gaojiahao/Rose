@@ -11,21 +11,22 @@
             <span>{{row[item.fieldCode]||'无'}}</span>
           </div>
         </template>
-        <div @click="onShowMore(row,rIndex)" class="show-more">
+        <div @click="onShowDetail(row,rIndex)" class="show-more">
           查看详情
           <i class="icon-more"></i>
         </div>
       </div><!--row-->
     </div>
-    <div v-else class="add_more"  @click="addMatter">
-        <span class="icon-add"></span>
-        <span class="add_text">新增更多物料</span>
-    </div>  
+    <div class="add-more-wrapper">
+      <div  class="add-more" v-if="!cfg.readOnly && cfg.allowMutilRow"  @click="addMatter">
+          <span class="icon-add"></span>
+          <span class="add_text">新增</span>
+      </div> 
+    </div> 
     <grid-picker ref="gridPicker" @on-select="addRecords"/>
     <grid-detail
       :show="showDetail"
-      :item="detail"
-      :columns="cfg.columns"
+      :values="detail"
       v-model="showDetail"
       @on-confirm="doDetailEdit"
     />
@@ -78,22 +79,23 @@ var component = {
        this.setDefaultValue(data);
        return data;
     },
+    hasDataSource:function(cfg){
+       return cfg.xtype != 'r2Grid';
+    },
     addMatter(){
       this.$refs.gridPicker.show();
     },
     initDataSource(cfg){
       var me = this,
-          dataSource = cfg.dataSource,
+          dataSource = me.hasDataSource(cfg) ? cfg.dataSource : findDs(cfg.columns),
           columns = cfg.columns;
 
-      if(!dataSource){
-        dataSource = findDs(cfg.columns);
-      }
-      this.dataSource = dataSource;
+      me.dataSource = dataSource;
       function findDs(columns){
         var i= 0,
             l = columns.length,
             col;
+
         for(i;i<l;i++){
           col = columns[i];
           if(col.editorType == 'r2Selector'){
@@ -103,7 +105,7 @@ var component = {
         }
       }
     },
-    onShowMore(row) {
+    onShowDetail(row) {
       this.detail = row;
       this.showDetail = true;
     }
@@ -164,5 +166,34 @@ export default Vue.component("RGrid", component);
 }
 .r-row:last-child {
   margin-bottom: 0rem;
+}
+.r-grid {
+  .add-more-wrapper{
+    width: 100%;
+    display: flex;
+    text-align: center;
+    position: relative;
+  }
+  .add-more {
+      display: flex;
+      color: #3296FA;
+      font-weight: bold;
+      text-align: center;
+      align-items: center;
+      margin: 0 auto .2rem;
+      border-radius: .15rem;
+      padding: .06rem .08rem;
+      border: 1px solid #3296FA;
+      .icon-add {
+        width: .14rem;
+        height: .14rem;
+        margin-right: .05rem;
+        box-sizing: border-box;
+      }
+      .add_text {
+        font-size: .12rem;
+        line-height: .12rem;
+      }
+    }
 }
 </style>
