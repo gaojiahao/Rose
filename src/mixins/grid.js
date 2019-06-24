@@ -5,7 +5,60 @@ import {
 } from "service/commonService";
 
 export default {
+    data() {
+        return {
+            isEdit:false,
+            selection:[]
+        };
+    },
     methods:{
+        checkAll(){
+           // 如果已全部选中 则清除所有选中状态
+            if (this.selection.length === this.values.length) {
+                this.selection = [];
+            }else{
+                this.selection = this.values.map((item, index) => index);
+            }
+           
+        },
+        doDelete:function(){
+            this.$vux.confirm.show({
+                content: '确认删除?',
+                // 确定回调
+                onConfirm:()=>{
+                    var selection = this.selection,
+                        rowIndex,
+                        newValues = [];
+
+                    this.values.forEach((row,rowIndex)=>{
+                        if(selection.indexOf(rowIndex) == -1){
+                            newValues.push(row);
+                        }
+                    })
+                    this.setValue(newValues);
+                    this.isEdit = false;
+                }
+            });
+        },
+        doDetailEdit(data) {
+            var value = util.clone(data);
+            this.$set(this.values,this.detailRowNumer,data);
+        },
+        delClick(rowIndex){
+           var selection = this.selection, 
+               index;
+           
+           if(selection.length){
+               index = selection.indexOf(rowIndex);
+               if(index != -1){
+                   selection.splice(index,1);
+               }else{
+                   selection.push(rowIndex);
+               }
+           } else {
+               selection.push(rowIndex);
+           }
+        },
         getComponentByCfg:function(cfg){
            if(cfg.contrl){
                return this.form.fieldMap[cfg.contrl];
@@ -85,6 +138,15 @@ export default {
             } else {
                 me.setValue([]);
             }
+        },
+        isChecked(rowIndex){
+            return this.selection.indexOf(rowIndex) != -1;
+        },
+        isCheckAll(){
+           return this.values && this.values.length == this.selection.length;
+        },
+        isValid(){
+            return false;
         },
         initDefaultValueCfg: function () {
             var me = this,
@@ -350,6 +412,10 @@ export default {
                 });
             }   
 
+        },
+        toggleEditStatus(){
+            this.isEdit = !this.isEdit;
+            this.selection = [];
         }
     }
 }

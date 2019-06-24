@@ -1,36 +1,65 @@
 <template>
   <div class="r-grid">
-    <div class="r-row-ct" v-if="values && values.length">
-      <div class="r-row vux-1px-b"  v-for="(row,rIndex) in values" :key="rIndex">
-        <template
-          v-for="(item, index) in cfg.columns"
-          class="cell when-is-right"
-        >
-          <div class="item" v-if="item.hidden == false" :key="index">
-            <span >{{item.text}}：</span>
-            <span>{{row[item.fieldCode]||'无'}}</span>
-          </div>
-        </template>
-        <div @click="onShowDetail(row,rIndex)" class="show-more">
-          查看详情
-          <i class="icon-more"></i>
+    <!-- 没有选择物料 -->
+    <template v-if="!values || values.length == 0">
+      <div class="no-data-header" @click="addMatter">
+        <div class="title">{{listTitle||'物料'}}列表</div>
+        <div class="seleted_icon">
+          请选择<span class="icon-right"></span>
         </div>
-      </div><!--row-->
-    </div>
-    <div class="add-more-wrapper">
-      <div  class="add-more" v-if="!cfg.readOnly && cfg.allowMutilRow"  @click="addMatter">
-          <span class="icon-add"></span>
-          <span class="add_text">新增</span>
+      </div>
+    </template>
+    <!-- 已经选择了物料 -->
+    <template v-else>
+      <div class="has-data-header" @click="toggleEditStatus">
+        <div class="title">{{listTitle||'物料'}}列表</div>
+        <div class='edit' v-if='!isEdit'>管理</div>
+        <div class='edit' v-else>完成</div>
+      </div>
+    </template>
+      <div class="r-row-ct">
+        <div class="r-row"  v-for="(row,rIndex) in values" :key="rIndex" :class="{row_delete : isEdit,'vux-1px-b' : rIndex < values.length - 1 }">
+          <template v-for="(item, index) in cfg.columns" class="cell when-is-right">
+            <div class="item" v-if="item.hidden == false" :key="index">
+              <span >{{item.text}}：</span>
+              <span>{{row[item.fieldCode]||'无'}}</span>
+            </div>
+          </template>
+          <div @click="onShowDetail(row,rIndex)" class="show-more" v-show="!isEdit">
+            查看详情
+            <i class="icon-more"></i>
+          </div>
+          <div class='delete_icon' @click="delClick(rIndex)" v-if='isEdit'>
+            <x-icon type="ios-checkmark" size="20" class="checked" v-show="isChecked(rIndex)"></x-icon>
+            <x-icon type="ios-circle-outline" size="20" v-show="!isChecked(rIndex)"></x-icon>
+          </div>
+        </div><!--row-->
+      </div>
+      <div class="add-more-wrapper" v-if="!cfg.readOnly && cfg.allowMutilRow && values &&values.length && !isEdit">
+        <div  class="add-more"   @click="addMatter">
+            <span class="icon-add"></span>
+            <span class="add_text">新增</span>
+        </div> 
       </div> 
-    </div> 
-    <grid-picker ref="gridPicker" @on-select="addRecords"/>
+      
+  
+    <grid-picker v-if="!cfg.readOnly" ref="gridPicker" @on-select="addRecords"/>
+    <div class = "grid-detail-wrapper"  v-if="showDetail">
     <grid-detail
-      :show="showDetail"
-      :values="detail"
-      v-model="showDetail"
-      @on-confirm="doDetailEdit"
+        v-model="showDetail"
+        @on-confirm="doDetailEdit"
     />
-  </div>
+    </div>
+    <div class="count_mode grid-manger-wrapper vux-1px-t" :class="{btn_hide : btnIsHide}" v-show="isEdit" v-transfer-dom>
+      <div class='count_num all_checked' @click="checkAll">
+        <x-icon type="ios-circle-outline" size="20" class='outline'
+              v-show="!isCheckAll()"></x-icon>
+        <x-icon type="ios-checkmark" size="20" class="checked" v-show="isCheckAll()"></x-icon>
+        全选
+      </div>
+      <div class='delete_btn' @click="doDelete">删除</div>
+    </div>
+  </div><!--grid-->
 </template>
 <script>
 import Vue from "vue";
@@ -39,15 +68,15 @@ import girdMix from 'mixins/grid'
 var component = {
   mixins:[girdMix],
   components:{gridPicker},
-  props: ["cfg", "values"],
+  props: ["cfg", "values","btnIsHide"],
   data() {
     return {
       showDetail: false,
+      listTitle:'',
       detail: {}
     };
   },
   methods: {
-    doDetailEdit() {},
     checkAmt() {},
     setValue:function(value){
       this.$set(this.form.formData,this.name,value);
@@ -105,8 +134,9 @@ var component = {
         }
       }
     },
-    onShowDetail(row) {
+    onShowDetail(row,rowIndex) {
       this.detail = row;
+      this.detailRowNumer = rowIndex;
       this.showDetail = true;
     }
   },
@@ -161,13 +191,57 @@ export default Vue.component("RGrid", component);
     margin-right: 0.2rem;
   }
 }
-.r-row:first-child {
-  margin-top: 0rem;
+.row_delete{
+  position: relative;
+  padding-left: 0.3rem;
 }
-.r-row:last-child {
-  margin-bottom: 0rem;
+.delete_icon{
+  left: 0;
+  top: 50%;
+  height: 20px;
+  fill: #999;
+  position: absolute;
+  transform: translateY(-50%);
+  .checked{
+    fill: #FA7138;
+  }
 }
 .r-grid {
+  // 没有物料title样式
+  .no-data-header {
+    display: flex;
+    padding: .18rem 0;
+    font-size: .14rem;
+    line-height: .14rem;
+    justify-content: space-between;
+    .title{
+      color: #3296FA;
+      font-weight: bold;
+    }
+    .seleted_icon {
+      display: flex;
+      align-items: center;
+      .icon-right {
+        width: .08rem;
+        height: .14rem;
+        margin-left: .1rem;
+      }
+    }
+  }
+  // 有物料的title的样式
+  .has-data-header {
+    display: flex;
+    padding: .2rem 0 .1rem;
+    line-height: .14rem;
+    justify-content: space-between;
+    .title {
+      color: #696969;
+    }
+    .edit {
+      color: #333;
+    }
+
+  }
   .add-more-wrapper{
     width: 100%;
     display: flex;
@@ -194,6 +268,10 @@ export default Vue.component("RGrid", component);
         font-size: .12rem;
         line-height: .12rem;
       }
-    }
+  }
+  
+}
+.grid-manger-wrapper{
+    z-index: 100;
 }
 </style>

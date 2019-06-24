@@ -202,6 +202,9 @@ export default {
                 });
             }
         },
+        setValue(fieldCode,value){
+            this.$set(this.formData,fieldCode,value);
+        },
         getValues(){
             var values = {},
                 fieldMap = this.fieldMap,

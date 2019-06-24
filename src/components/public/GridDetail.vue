@@ -6,6 +6,7 @@
       height="80%"
       v-model="showPop"
       @on-show="onShow"
+      @on-hide="onHide"
     >
       <div class="popup-top">
         <header class="popup-header">详细信息</header>
@@ -20,22 +21,9 @@
             </div>
           </template>
         </div>
-        <div class="matter-edit-part" v-if="hasEditPart">
-          <div v-for="(eItem, eIndex) in editParts" :key="eIndex">
-            <x-input
-              class="vux-1px-b"
-              type="number"
-              v-model.number="values[eItem.fieldCode]"
-              text-align="right"
-              placeholder="请输入"
-              v-if="(eItem.editorType === 'r2Numberfield' || eItem.editorType === 'r2Percentfield' || eItem.editorType === 'r2Permilfield')"
-              @on-blur="checkAmt(item, eItem.fieldCode, values[eItem.fieldCode])"
-              @on-focus="getFocus($event)"
-            >
-              <template slot="label">
-                <span :class="{required: !eItem.allowBlank}">{{eItem.text}}</span>
-              </template>
-            </x-input>
+        <div class="edit-part" v-if="hasEditPart">
+          <div class="r-fieldset">
+            <grid-field-factory :cfg ="col" :values="values" v-for="(col, eIndex) in editParts" :key="eIndex"/>
           </div>
         </div>
         <div class="onlyView-parts" v-if="onlyViewParts.length">
@@ -68,21 +56,16 @@
 
 <script>
 import Vue from "vue";
+import girdDetailMix from 'mixins/gridDetail'
 import { XInput, numberComma, Popup } from "vux";
+import gridFieldFactory from './GridFieldFactory';
 import RScroll from "plugins/scroll/RScroll";
 import { toFixed } from "@/plugins/calc";
+import { setTimeout } from "timers";
 
 var component = {
+  mixins:[girdDetailMix],
   props: {
-    show:{
-      type:Boolean
-    },
-    values: {
-      type: Object,
-      default() {
-        return {};
-      }
-    },
     btnIsHide: {
       type: Boolean,
       default: false
@@ -97,37 +80,24 @@ var component = {
   components: {
     Popup,
     RScroll,
+    gridFieldFactory,
     XInput
   },
   data() {
     return {
-      showPop: false,
+      showPop: true,
+      values:{},
       readOnlyParts: [],
       editParts: [],
       onlyViewParts:[],
       title: null,
       titleKey: null,
-   
     };
   },
   computed: {
     // 是否有可编辑部分
     hasEditPart() {
       return !!this.editParts.length;
-    }
-  },
-  watch: {
-    show: {
-      handler(val) {
-        this.showPop = val;
-      },
-      immediate: true
-    },
-    showPop: {
-      handler(val) {
-        this.$emit("input", val);//v-model
-      },
-      immediate: true
     }
   },
   methods: {
@@ -149,6 +119,11 @@ var component = {
         this.clientHeight = document.documentElement.clientHeight;
       });
     },
+    onHide(){
+       setTimeout(()=>{
+           this.$emit('input', false);
+       },500)
+    },
     // 隐藏弹窗
     hidePop() {
       this.showPop = false;
@@ -156,17 +131,15 @@ var component = {
     // 确定修改
     confirm() {
       let warn = "";
-      let matter = this.item;
+      let values = this.values;
       this.editParts.every(eItem => {
-        let val = matter[eItem.fieldCode];
+        let val = values[eItem.fieldCode];
         if (!eItem.allowBlank) {
-          // if ((Array.isArray(val) && !val.length) || !val) {
           if (!val && val !== 0) {
             warn = eItem.text + "不能为空";
             return false;
           }
         }
-        matter[eItem.fieldCode] = val;
         return true;
       });
       if (warn) {
@@ -175,12 +148,8 @@ var component = {
         });
         return;
       }
-      this.$emit("on-confirm", matter);
+      this.$emit("on-confirm", values);
       this.showPop = false;
-    },
-    //输入框获取焦点时内容选中
-    getFocus(e) {
-      event.currentTarget.select();
     }
   },
   created(){
@@ -202,7 +171,7 @@ var component = {
           })
           .forEach(col => {
             // 当Grid组件只读为false时 各个字段的readOnly才能启用
-            if (col.editorType) {
+            if (col.editorType && col.readOnly == false) {
                editParts.push(col);
             }else{
                readOnlyParts.push(col);
@@ -211,8 +180,11 @@ var component = {
         this.editParts = editParts; // 可编辑部分
         this.readOnlyParts = readOnlyParts; // 只读部分
      }
-        
+    
+     this.grid = grid;
      this.titleKey = columns[0].fieldCode;
+     this.fieldMap = [];
+     this.setValues(grid.detail);
   }
 };
 export default Vue.component("GridDetail", component);
@@ -227,7 +199,7 @@ export default Vue.component("GridDetail", component);
   background-color: #f6f6f6;
   &.has-edit {
     .scroll-container {
-      height: calc(100% - 1.32rem);
+      height: calc(100% - 0.9rem);
     }
   }
   &.is-focus {
@@ -267,8 +239,11 @@ export default Vue.component("GridDetail", component);
   }
 
   .readOnlyPart {
+    padding:.15rem;
+    background-color: #fff;
     line-height: 0.22rem;
     font-size: 0.12rem;
+    margin-bottom:0.1rem;
     span:nth-child(2n + 1) {
       color: #aaa;
     }
@@ -282,6 +257,9 @@ export default Vue.component("GridDetail", component);
     }
   }
 
+  .edit-part{
+    color:#fff;
+  }
   /* 其他数据 */
   .onlyView-parts {
     padding: 0 0.15rem 0.24rem;
