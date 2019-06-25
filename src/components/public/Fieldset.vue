@@ -1,7 +1,7 @@
 <template>
   <div class="r-fieldset">
-    <div class="box">
-      <header v-show="cfg.cName">
+    <div class="box" :class="{muti:cfg.isMultiple}">
+      <header v-show="!cfg.isMultiple">
         <div class="vux-1px-l">{{cfg.cName}}</div>
         <div class="basic_process_status">
           <span v-if="hasToogleBar" @click="toggleStyleType()" class="barWrapp">
@@ -73,28 +73,32 @@ var component = {
       handler(cfg) {
         // *部分应用* 物料详情在审批节点可以重新录入数据 此处进行数据分割
         let { items = [], columns = [] } = cfg,
-          formModel = this.form.model;
+            formModel = this.form.model;
+
         let readOnlyParts = [],
-          i = 0;
+            i = 0;
           
-        items.forEach(item => {
-          // 当Grid组件只读为false时 各个字段的readOnly才能启用
-          if (item.readOnly == true &&!item.hiddenInRun &&cfg.layout != "fit") {
-            readOnlyParts.push(item);
-          }
-          if (!item.hiddenInRun) i++;
-        });
+        if(cfg.layout != "fit"){
 
-        this.editParts = items; // 可编辑部分
-        this.visibleItemsLength = i;
-        this.readOnlyParts = readOnlyParts; // 只读部分
+            items.forEach(item => {
+              if (item.readOnly == true &&!item.hiddenInRun) {
+                readOnlyParts.push(item);
+              }
+              if (!item.hiddenInRun) i++;
+            });
 
-        if (formModel == "new" || this.visibleItemsLength <= this.pageSize) {
-          this.styleType = 1;
-        } else {
-          this.styleType = this.readOnlyParts.length > this.pageSize ? 0 : 1;
+            this.visibleItemsLength = i;
+            this.readOnlyParts = readOnlyParts; // 只读部分
+
+            if (formModel == "new" || this.visibleItemsLength <= this.pageSize) {
+              this.styleType = 1;
+            } else {
+              this.styleType = this.readOnlyParts.length > this.pageSize ? 0 : 1;
+            }
+            this.hasToogleBar = !this.styleType;
         }
-        this.hasToogleBar = !this.styleType;
+
+        this.editParts = items; // 可编辑部分   
       },
       immediate: true
     }
@@ -134,7 +138,11 @@ export default Vue.component("RFieldset", component);
   width: calc(100% - 0.2rem);
   .box {
     padding: 0.15rem;
+    &.muti{
+      padding: 0 0.15rem;
+    }
   }
+  
   header {
     display: flex;
     align-items: center;

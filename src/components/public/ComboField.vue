@@ -115,18 +115,20 @@ let  cfg = {
                      contrlId = paramCfg.value.contrl;
                      valueField = paramCfg.value.valueField;
                      contrl = me.form.fieldMap[contrlId];
-                     value = contrl.getExtraFieldValue(valueField);
-                     if(value == null){
-                        autoLoad = false;
+                     if(contrl){
+                         value = contrl.getExtraFieldValue(valueField);
+                         if(value == null){
+                            autoLoad = false;
+                         }
+                         store.params[key] = value;
+                         me.form.$on('value-change-' + contrlId,(function(paramKey,valueField){
+                           return function(){
+                              var arg = Array.prototype.slice.call(arguments);
+                              arg.unshift(paramKey,valueField);
+                              me.paramChangeHandler.apply(me,arg);
+                           }
+                         })(key,valueField));
                      }
-                     store.params[key] = value;
-                     me.form.$on('value-change-' + contrlId,(function(paramKey,valueField){
-                        return function(){
-                           var arg = Array.prototype.slice.call(arguments);
-                           arg.unshift(paramKey,valueField);
-                           me.paramChangeHandler.apply(me,arg);
-                        }
-                     })(key,valueField));
                   } else if(paramCfg.type == 'text'){
                      store.params[key] = paramCfg.value;
                   }

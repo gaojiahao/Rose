@@ -117,7 +117,7 @@ export default {
         },
         setValue:function(value){
             var cfg = this.cfg;
-            Vue.set(this.form.formData,cfg.fieldCode,value);
+            this.form.setValue(cfg.fieldCode,value);
             this.form.$emit(this.valueChangeKey,this);
         },
         getErrors:function(){
@@ -139,6 +139,10 @@ export default {
         },
         getExtraFieldValue:function(valueField){//combo 会覆盖这个方法
             return this.getValue();
+        },
+        //输入框获取焦点时内容选中
+        getFocus(e) {
+            event.currentTarget.select();
         },
         valueBindChangeHandler(valueField,cmp){
             var value = cmp.getExtraFieldValue(valueField);

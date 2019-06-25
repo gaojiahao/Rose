@@ -1,4 +1,5 @@
 <template>
+<!--改造一半的物料详情-->
   <div v-transfer-dom>
     <popup class="popup-matter-container" :class="{'has-edit': hasEditPart, 'is-focus': btnIsHide}" height="80%"
            v-model="showPop">

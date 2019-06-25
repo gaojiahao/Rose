@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import { compileToFunctions } from 'vue-template-compiler';
 
 let RFieldsetCt = Vue.component('RFieldsetCt', {
     props: ['cfg', 'values'],
