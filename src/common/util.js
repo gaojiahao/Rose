@@ -78,5 +78,95 @@ export default{
             if (v === undefined) break;
         }
         return v;
-    }
+    },
+    dateAdd:function(date, interval, value) {
+        var utilDate = this,
+            d = utilDate.clone(date),
+            base = 0,
+            day, decimalValue;
+ 
+        if (!interval || value === 0) {
+            return d;
+        }
+ 
+        decimalValue = value - parseInt(value, 10);
+        value = parseInt(value, 10);
+ 
+        if (value) {
+            switch(interval.toLowerCase()) {
+                case utilDate.MILLI:
+                    d.setTime(d.getTime() + value);
+                    break;
+                case utilDate.SECOND:
+                    d.setTime(d.getTime() + value * 1000);
+                    break;
+                case utilDate.MINUTE:
+                    d.setTime(d.getTime() + value * 60 * 1000);
+                    break;
+                case utilDate.HOUR:
+                    d.setTime(d.getTime() + value * 60 * 60 * 1000);
+                    break;
+                case utilDate.DAY:
+                    d.setTime(d.getTime() + value * 24 * 60 * 60 * 1000);
+                    break;
+                case utilDate.MONTH:
+                    day = date.getDate();
+                    if (day > 28) {
+                        day = Math.min(day, utilDate.getLastDateOfMonth(utilDate.add(utilDate.getFirstDateOfMonth(date), utilDate.MONTH, value)).getDate());
+                    }
+                    d.setDate(day);
+                    d.setMonth(date.getMonth() + value);
+                    break;
+                case utilDate.YEAR:
+                    day = date.getDate();
+                    if (day > 28) {
+                        day = Math.min(day, utilDate.getLastDateOfMonth(utilDate.add(utilDate.getFirstDateOfMonth(date), utilDate.YEAR, value)).getDate());
+                    }
+                    d.setDate(day);
+                    d.setFullYear(date.getFullYear() + value);
+                    break;
+            }
+        }
+ 
+        if (decimalValue) {
+            switch (interval.toLowerCase()) {
+                case utilDate.MILLI:    base = 1;               break;
+                case utilDate.SECOND:   base = 1000;            break;
+                case utilDate.MINUTE:   base = 1000*60;         break;
+                case utilDate.HOUR:     base = 1000*60*60;      break;
+                case utilDate.DAY:      base = 1000*60*60*24;   break;
+ 
+                case utilDate.MONTH:
+                    day = utilDate.getDaysInMonth(d);
+                    base = 1000*60*60*24*day;
+                    break;
+ 
+                case utilDate.YEAR:
+                    day = (utilDate.isLeapYear(d) ? 366 : 365);
+                    base = 1000*60*60*24*day;
+                    break;
+            }
+            if (base) {
+                d.setTime(d.getTime() + base * decimalValue); 
+            }
+        }
+ 
+        return d;
+    },
+    correctFloat:function(n) {
+        return parseFloat(n.toPrecision(14));
+    },
+    round:function(value, precision) {
+        var result = Number(value);
+        if (typeof precision === 'number') {
+            precision = Math.pow(10, precision);
+            result = Math.round(value * precision) / precision;
+        } else if (precision === undefined) {
+            result = Math.round(result);
+        }
+        return result;
+    },
+    DAY : "d",
+    MONTH : "mo",
+    YEAR : "y",
 }

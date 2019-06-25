@@ -204,7 +204,7 @@ export default {
             columns.forEach(function (column) {
                 var ds = column.valueBind || column.defaultValue || column.dataSource, //除了valueBind，其他的都是在做向前兼容,
                     expression = util.trim(column.expression),
-                    dataIndex = column.fieldCode,
+                    fieldCode = column.fieldCode,
                     cfg,
                     dsDataIndex,
                     dsArr;
@@ -217,7 +217,7 @@ export default {
                             cfg = {
                                 valueField: ds.data.valueField,
                                 editorType: column.editorType,
-                                dataIndex: dataIndex
+                                fieldCode: fieldCode
                             };
                             if (dsDataIndex) {
                                 if (valueBindCfg[dsDataIndex]) {
@@ -405,7 +405,7 @@ export default {
 
                     try {
                         value = util.isArray(valueField) ? util.getValueByNs(extra, valueField) : eval('extra' + valueField);
-                        data[cfg.dataIndex]= convertDataType(cfg.editorType, value);
+                        data[cfg.fieldCode]= convertDataType(cfg.editorType, value);
                     } catch (ex) {
                         console.warn(ex);
                     }
