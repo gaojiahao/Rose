@@ -4,6 +4,7 @@ import router from './router'
 import FastClick from 'fastclick'
 import adapation from './common/adapation'
 import Swiper from './common/swiper-4.2.2.min.js'
+import VueTouch from 'vue-touch'
 import RText from './components/public/RText'
 import RDateField from './components/public/DateField'
 import RPermilField from './components/public/PermilField'
@@ -25,6 +26,7 @@ import WFlow from './components/public/WFlow'
 import Fileupload from './components/public/Fileupload'
 import ContentView from './components/public/ContentView'
 import R2Action from './components/public/R2Action'
+import SlideBar from './components/public/SlideBar'
 import ListItem from './components/public/ListItem'
 import { AlertPlugin, ConfirmPlugin, ToastPlugin, TransferDom, DatetimePlugin } from 'vux'
 import Loading from 'plugins/loading/pageLoad/loading'
@@ -37,6 +39,7 @@ Vue.use(ToastPlugin)
 Vue.use(AlertPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(DatetimePlugin)
+Vue.use(VueTouch,{name:'v-touch'})
 Vue.directive('transfer-dom', TransferDom)
 
 Vue.prototype.Swiper = Swiper;
