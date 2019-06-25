@@ -1,14 +1,17 @@
 <template>
   <div class="pages">
     <div class="detail-container" :class="{'has-comment': hasComment}" ref='detail'>
-      <component
-        :is='currentComponent'
-        @change='modifyRoute'
-        @refresh-scroll="refresh"
-        @subscribeChange="setSubscribe"
-        ref="detailComponent">
-      </component>
+      <!-- <v-touch @swipeleft="swiperleft" @swiperight="swiperright" class="wrapper"> -->
+        <component
+          :is='currentComponent'
+          @change='modifyRoute'
+          @refresh-scroll="refresh"
+          @subscribeChange="setSubscribe"
+          ref="detailComponent">
+        </component>
+      <!-- </v-touch> -->
     </div>
+    <slideBar :isRellyShow="isRellyShow"></slideBar>
     <div class="detail-comment-container vux-1px-t" v-if="hasComment">
       <div class="concern" @click="goConcern">
         <span class="icon icon-heart" v-if="isConcern === 0"></span>
@@ -45,6 +48,7 @@ export default {
       hasComment: true, // 是否展示底部评论栏
       isConcern : 0, // 是否关注，0 未关注，1已关注
       concernCount : 0, //关注人数
+      isRellyShow:false,
     }
   },
   methods: {
@@ -127,6 +131,12 @@ export default {
         });
       } 
     },
+    swiperleft: function () {
+      this.isRellyShow = false;
+    },
+    swiperright: function () {
+      this.isRellyShow = true;
+    }
   },
   created() {
     initWebContext().then(()=>{
@@ -175,6 +185,10 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+  .wrapper {
+    //height: 100%;
+    // overflow: hidden;
+  }
   .vux-1px-t:before {
     border-color: #e8e8e8;
   }
