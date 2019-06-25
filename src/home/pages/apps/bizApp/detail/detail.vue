@@ -1,7 +1,7 @@
 <template>
   <div class="pages">
     <div class="detail-container" :class="{'has-comment': hasComment}" ref='detail'>
-      <v-touch @swipeleft="swiperleft" @swiperight="swiperright" class="wrapper">
+      <!-- <v-touch @swipeleft="swiperleft" @swiperight="swiperright" class="wrapper"> -->
         <component
           :is='currentComponent'
           @change='modifyRoute'
@@ -9,7 +9,7 @@
           @subscribeChange="setSubscribe"
           ref="detailComponent">
         </component>
-      </v-touch>
+      <!-- </v-touch> -->
     </div>
     <slideBar :isRellyShow="isRellyShow"></slideBar>
     <div class="detail-comment-container vux-1px-t" v-if="hasComment">
