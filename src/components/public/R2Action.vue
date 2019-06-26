@@ -70,11 +70,6 @@ var component = {
         return {}
       }
     },
-    // 同意的处理
-    agreeHandler: {
-      type: Function,
-      default: null
-    },
     formStatus: {
       type: Array,
       default() {
@@ -386,9 +381,6 @@ var component = {
     },
     // 同意
     agreement() {
-      if (this.agreeHandler && this.agreeHandler()) {
-        return
-      }
       this.$vux.confirm.prompt('', {
         title: '审批意见',
         onConfirm: (value) => {

@@ -183,7 +183,8 @@ var component = {
     
      this.grid = grid;
      this.titleKey = columns[0].fieldCode;
-     this.fieldMap = [];
+     this.initFieldMap();
+     this.initValueBind(this.grid.valueBindCfg);
      this.setValues(grid.detail);
   }
 };
@@ -195,6 +196,7 @@ export default Vue.component("GridDetail", component);
 .grid-detail-container {
   width: 100%;
   color: #333;
+  z-index: 500;
   box-sizing: border-box;
   background-color: #f6f6f6;
   &.has-edit {

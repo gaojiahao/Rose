@@ -121,13 +121,15 @@ let  cfg = {
                             autoLoad = false;
                          }
                          store.params[key] = value;
-                         me.form.$on('value-change-' + contrlId,(function(paramKey,valueField){
-                           return function(){
-                              var arg = Array.prototype.slice.call(arguments);
-                              arg.unshift(paramKey,valueField);
-                              me.paramChangeHandler.apply(me,arg);
-                           }
-                         })(key,valueField));
+                         if(!me.isGridEditor()){
+                             me.form.$on('value-change-' + contrlId,(function(paramKey,valueField){
+                                 return function(){
+                                    var arg = Array.prototype.slice.call(arguments);
+                                    arg.unshift(paramKey,valueField);
+                                    me.paramChangeHandler.apply(me,arg);
+                                 }
+                             })(key,valueField));
+                         } 
                      }
                   } else if(paramCfg.type == 'text'){
                      store.params[key] = paramCfg.value;

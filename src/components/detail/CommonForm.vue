@@ -10,7 +10,7 @@
         <!-- 附件组件 -->
         <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId" />
         <!-- 审批组件 -->
-        <r2-action v-if="showAction" :myFlow="taskInfo" :workFlow="workflows" :agree-handler="agreeHandler" @on-submit-success="submitSuccessCallback" :formStatus="formStatus"/>
+        <r2-action v-if="showAction" :myFlow="taskInfo" :workFlow="workflows" :formStatus="formStatus"/>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -74,10 +74,6 @@ export default {
     };
   },
   methods: {
-    // 同意的处理,提交数据校验
-    agreeHandler() {
-    },
-    
     // 获取查看视图的listId
     getViewIdByTransCode(transCode) {
       return new Promise((resolve, reject) => {
@@ -370,13 +366,6 @@ export default {
        return !invalid;
     },
     stopOrder(){},
-    // 同意、拒绝、撤回成功时的回调
-    submitSuccessCallback(val) {
-      let type = JSON.parse(val).type;
-      if (type !== 'revoke') {
-        this.$emit('change', true);
-      }
-    },
     getFromStatus() {
       var data = {
           _dc: Date.now(),

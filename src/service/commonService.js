@@ -23,7 +23,7 @@ export let convertDataType = function (editorType, value) {
   switch (editorType) {
       case 'r2Numberfield':
       case 'r2Percentfield':
-          value = parseFloat(value);
+          value = isNaN(value) ? value : parseFloat(value);
           break;
       default:
           break;
