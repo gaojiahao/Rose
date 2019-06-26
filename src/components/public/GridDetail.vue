@@ -56,6 +56,7 @@
 
 <script>
 import Vue from "vue";
+import dao from 'plugins/ajax'
 import girdDetailMix from 'mixins/gridDetail'
 import { XInput, numberComma, Popup } from "vux";
 import gridFieldFactory from './GridFieldFactory';
@@ -182,6 +183,8 @@ var component = {
      }
     
      this.grid = grid;
+     this.form = grid.form;
+     this.dao = dao;//执行公式时调用
      this.titleKey = columns[0].fieldCode;
      this.initFieldMap();
      this.initValueBind(this.grid.valueBindCfg);

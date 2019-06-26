@@ -16,7 +16,7 @@ export default {
         },
         setValues(values){
             this.values = util.clone(values);
-            this.record = new Record(this.values);
+            this.record = new Record(this.values,this);
         },
         executeExpression(editorFieldCode){
             var me = this,
@@ -37,7 +37,7 @@ export default {
             
             if (expressionCfg) for (i = 0, l = expressionCfg.length; i < l; i++) {
                 cfg = expressionCfg[i];
-                dataIndex = cfg.col.dataIndex;
+                dataIndex = cfg.col.fieldCode;
                 if (editorFieldCode == dataIndex) continue; //当前编辑字段，不重新计算。
                 if (cfg.type == 'calc') {
                     cfg = CalcToCmd(cfg);
@@ -46,12 +46,12 @@ export default {
                     try {
                         num = util.round(util.correctFloat(eval(cfg.cmd)), cfg.col.decimalPrecision);
                         num = (Number.isNaN(num) || (num === Infinity)) ? 0 : num;
-                        record.set(cfg.col.dataIndex, convertDataType(cfg.col.editorType, num));
+                        record.set(dataIndex, convertDataType(cfg.col.editorType, num));
                     } catch (ex) {
                         console.warn(ex);
                     }
                 } else if (cfg.type == 'fn') {
-                    num = cfg.fn.call(me, record, changeDataIndex);
+                    num = cfg.fn.call(me, record, editorFieldCode);
                     if (num != null && !isNaN(num) && cfg.col.decimalPrecision != null) num = util.round(num, cfg.col.decimalPrecision);
                     if (num != null) record.set(dataIndex, convertDataType(cfg.col.editorType, num));
                 }
@@ -84,7 +84,8 @@ export default {
                 fieldMap = grid.form.fieldMap,
                 fieldId;
 
-            this.fieldMap = [];
+            this.fieldMap = {};
+            this.fields = {};
             for(fieldId in fieldMap){
                 this.fieldMap[fieldId] = fieldMap[fieldId];
             }
@@ -134,6 +135,11 @@ export default {
                 }
             }
             return values;
+        },
+        registField(field){
+            var cfg = field.cfg;
+
+            this.fieldMap[cfg.id] = this.fields[cfg.fieldCode] = field;
         }
       }
    }

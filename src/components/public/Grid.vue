@@ -13,8 +13,10 @@
     <template v-else>
       <div class="has-data-header" @click="toggleEditStatus">
         <div class="title">{{listTitle||'物料'}}列表</div>
-        <div class='edit' v-if='!isEdit'>管理</div>
-        <div class='edit' v-else>完成</div>
+        <div v-if = "!cfg.readOnly">
+          <div class='edit' v-if='!isEdit'>管理</div>
+          <div class='edit' v-else>完成</div>
+        </div>
       </div>
     </template>
       <div class="r-row-ct">

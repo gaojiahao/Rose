@@ -191,7 +191,8 @@ export default {
       }
     },
     async loadPage() {
-      let { transCode, listId, viewId, model} = this.$route.query;
+      let { transCode, listId, viewId, model,debug} = this.$route.query;
+      if(debug) window.isDebug = true;
       this.$loading.show();
       /**获取视图信息**/
       if (transCode) {
@@ -379,7 +380,8 @@ export default {
     }
   },
   created() {
-    this.fieldMap = {};
+    this.fieldMap = {};//id;
+    this.fields = {};//fieldCode
     this.wfParamFieldMap = {};
     this.loadPage();
   }

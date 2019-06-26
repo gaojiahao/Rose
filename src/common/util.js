@@ -51,7 +51,7 @@ export default{
     isEmpty: function(value, allowEmptyString) {
         return (value == null) || (!allowEmptyString ? value === '' : false) || (this.isArray(value) && value.length === 0)||(this.isObject(value) && this.isObjectEmpty(value));
     },
-    trim: String.prototype.trim || function(string) {
+    trim: function(string) {
         if (string) {
             string = string.replace(trimRegex, "");
         }

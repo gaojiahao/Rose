@@ -246,6 +246,12 @@ export default {
                 approvalData[paramKey] = values[fieldCode];
             }
             return approvalData;
+        },
+        registField(field){
+            var cfg = field.cfg;
+
+            this.fieldMap[cfg.id] = this.fields[cfg.fieldCode] = field;
         }
+        
    }
 }
