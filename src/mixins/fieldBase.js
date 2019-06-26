@@ -68,6 +68,9 @@ export default {
         isCombo:function(){
             return this.$options.name == 'R2Combofield';
         },
+        isGridEditor:function(){
+            return this.cfg.inGrid == true;
+        },
         isValid : function() {
             var me = this;
             return me.disabled || me.getErrors().length == 0;
@@ -117,7 +120,8 @@ export default {
         },
         setValue:function(value){
             var cfg = this.cfg;
-            this.form.setValue(cfg.fieldCode,value);
+            this.form.$emit('before-'+this.valueChangeKey,this);
+            this.form.setValue(cfg.fieldCode,value,this);
             this.form.$emit(this.valueChangeKey,this);
         },
         getErrors:function(){
