@@ -1,15 +1,16 @@
 <template>
   <div class="pages">
     <div class="detail-container" :class="{'has-comment': hasComment}" ref='detail'>
-      <!-- <v-touch @swipeleft="swiperleft" @swiperight="swiperright" class="wrapper"> -->
+      <v-touch @swipeleft="swiperleft" @swiperight="swiperright" class="wrapper" :class="{'wrapper2': isShow}">
         <component
           :is='currentComponent'
           @change='modifyRoute'
           @refresh-scroll="refresh"
           @subscribeChange="setSubscribe"
+          @slideStatus="slideStatus"
           ref="detailComponent">
         </component>
-      <!-- </v-touch> -->
+      </v-touch>
     </div>
     <slideBar :isRellyShow="isRellyShow"></slideBar>
     <div class="detail-comment-container vux-1px-t" v-if="hasComment">
@@ -49,6 +50,7 @@ export default {
       isConcern : 0, // 是否关注，0 未关注，1已关注
       concernCount : 0, //关注人数
       isRellyShow:false,
+      isShow:false,
     }
   },
   methods: {
@@ -136,6 +138,13 @@ export default {
     },
     swiperright: function () {
       this.isRellyShow = true;
+    },
+    slideStatus(data) {
+      if(data == 'view') {
+        this.isShow = false;
+      } else {
+        this.isShow = true;
+      }
     }
   },
   created() {
@@ -186,8 +195,12 @@ export default {
 
 <style lang='scss' scoped>
   .wrapper {
-    //height: 100%;
+
+  }
+  .wrapper2 {
+    height: 100%;
     // overflow: hidden;
+    z-index: 11;
   }
   .vux-1px-t:before {
     border-color: #e8e8e8;
