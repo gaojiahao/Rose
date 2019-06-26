@@ -44,9 +44,7 @@
           </div>
         </div>
         <basic-app :BasicApps="BasicApps"></basic-app>
-        <bus-app
-          :BusApps="BusApps"
-        ></bus-app>
+        <bus-app :BusApps="BusApps"></bus-app>
       </div>
     </div>
     <div class="close-part" v-show="showDrop" @click="showDrop = false"></div>
@@ -81,9 +79,9 @@ export default {
   },
   components: { busApp, basicApp },
   methods: {
-     initData:async function(){
+    initData: async function() {
       this.$loading.show();
-        //获取当前用户
+      //获取当前用户
       await this.getCurrentUser();
       // 获取首页应用列表
       await this.initMenu();
@@ -119,7 +117,7 @@ export default {
       });
     },
     //获取当前用户信息
-    getCurrentUser() {    
+    getCurrentUser() {
       return commonService.getBasicInfo().then(baseInfo => {
         var data = baseInfo.currentUser;
         this.userInfo = {
@@ -141,12 +139,20 @@ export default {
           });
       });
     },
-    initMenu(){
-        return homeService.getMeau().then(res => {
+    // 获取应用icon
+    getDefaultIcon(item) {
+      let url = require("assets/defaultApp.png");
+      if (item) {
+        item.icon = url;
+      }
+      return url;
+    },
+    initMenu() {
+      return homeService.getMeau().then(res => {
         let BUSobj = this.BUSobj;
 
         for (let val of res) {
-          BUSobj[val.text] = [];//分类
+          BUSobj[val.text] = []; //分类
 
           //item 应用
           for (let item of val.children) {
@@ -157,7 +163,7 @@ export default {
               this.BasicApps.push(item);
             }
             // 处理 业务应用
-            if (item.packagePath) {
+            if (!item.children) {
               // 获取 应用类型ID 对应相应文件夹
               item.fileID = val.id;
               // 处理 应用图标
@@ -177,7 +183,7 @@ export default {
             // 如果应用里面 存在分类
             if (item.children) {
               for (let childItem of item.children) {
-                if (childItem.packagePath) {
+                if (true || childItem.packagePath) {
                   childItem.fileID = val.id;
                   childItem.icon = childItem.icon
                     ? `${childItem.icon}`
@@ -196,7 +202,7 @@ export default {
             }
           }
 
-          if (val.folder) {
+          if (true || val.folder) {
             this.BusApps.push({
               id: val.id,
               name: val.text,
@@ -234,12 +240,12 @@ export default {
       }
     }
   },
-  activated(){
-     if(this.BusApps.length == 0){
-       this.initData();
-     } else {
-       this.$loading.hide();
-     }
+  activated() {
+    if (this.BusApps.length == 0) {
+      this.initData();
+    } else {
+      this.$loading.hide();
+    }
   },
   mounted() {
     this.homeScroll = new Bscroll(this.$refs.home, {
