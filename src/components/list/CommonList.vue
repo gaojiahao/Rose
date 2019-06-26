@@ -26,7 +26,7 @@
         ></ListItem>
       </r-scroll>
     </div>
-    <!-- <add-btn :action="action" :goEdit="goEdit"></add-btn> -->
+    <add-btn :action="action" :goEdit="goEdit"></add-btn>
   </div>
 </template>
 

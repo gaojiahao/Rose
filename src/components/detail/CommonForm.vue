@@ -73,6 +73,13 @@ export default {
       formStatus: [],
     };
   },
+  watch : {
+    model: {
+      handler(val) {
+        this.$emit('slideStatus',val);
+      }
+    }
+  },
   methods: {
     // 获取查看视图的listId
     getViewIdByTransCode(transCode) {
@@ -384,6 +391,7 @@ export default {
     this.fields = {};//fieldCode
     this.wfParamFieldMap = {};
     this.loadPage();
+    this.$emit('slideStatus',this.model);
   }
 };
 </script>

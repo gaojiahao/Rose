@@ -16,6 +16,7 @@ import LIST from '../pages/apps/bizApp/list/list'
 import FILLFORM from '../pages/apps/bizApp/fillForm/fillForm'
 import DETAIL from '../pages/apps/bizApp/detail/detail'
 import WORKFLOWFULL from '../pages/apps/bizApp/detail/workFlowFull'
+import AUTOSUBJECT from '../pages/apps/bizApp/detail/autoSubject'
 import RELATED from '../pages/apps/bizApp/detail/related/related'
 import COMMENTLIST from '@/home/pages/apps/bizApp/comment/commentList'
 
@@ -73,6 +74,7 @@ export default [
     component:WORKFLOWFULL,
     meta:{ title:'工作流列表' }
   },
+
   {
     path:'/appDetail/:listId',
     name:'APPDETAIL',

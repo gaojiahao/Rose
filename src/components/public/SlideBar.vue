@@ -3,8 +3,8 @@
         <div class="side-content" v-show="isRellyShow && transCode">
             <div class="side-content-wrap">
                 <div class="box"><span><img src='../../assets/slideBar-home.png'></span><span>基本信息</span></div>
-                <div class="box"><span><img src='../../assets/slideBar-history.png'></span><span>变更历史</span></div>
-                <div class="box"><span><img src='../../assets/view-subject.png'></span><span>自动分录</span></div>
+                <div class="box" ><span><img src='../../assets/slideBar-history.png'></span><span>变更历史</span></div>
+                <div class="box" @click="autoSubject"><span><img src='../../assets/view-subject.png'></span><span>自动分录</span></div>
                 <div class="box"><span><img src='../../assets/mubiao.png'></span><span>执行力分析</span></div>
                 <template v-for="(item,index) in appExample">
                     <div class="box" :key="index"><span><img :src=item.icon></span><span>{{item.listName}}</span></div>
@@ -43,6 +43,16 @@ let  component = {
                 this.appExample = data.relevantItems;
             });  
         },
+        autoSubject() {
+            //let {transCode = ''} = this.workFlowInfo;
+            this.$router.push({
+                path: '/autoSubject',
+                query: {
+                    listId,
+                    transCode,
+                }
+            })
+        }
     },
     created () {
         this.transCode = this.$route.query.transCode;
