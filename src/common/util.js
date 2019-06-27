@@ -169,4 +169,13 @@ export default{
     DAY : "d",
     MONTH : "mo",
     YEAR : "y",
+    each:function(items,fn){
+        var i = 0,l = items.length,
+            rs;
+
+        for(;i<l;i++){
+            rs = fn(items[i],i,items);
+            if(rs == false)break;
+        }
+    }
 }

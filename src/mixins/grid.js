@@ -252,8 +252,17 @@ export default {
         isCheckAll(){
            return this.values && this.values.length == this.selection.length;
         },
-        isValid(){
-            return false;
+        isValid:function(){
+            var me = this,
+                value = me.getValue();
+
+            if(value == null || value.length == 0){
+                me.$vux.alert.show({
+                    content: '请选择' + (me.listTitle||'物料')
+                });
+                return false;
+            }
+            return me.validateData(value,me.cfg.columns);
         },
         initDefaultValueCfg: function () {
             var me = this,
@@ -510,6 +519,129 @@ export default {
         toggleEditStatus(){
             this.isEdit = !this.isEdit;
             this.selection = [];
-        }
+        },
+        validateData:function(value,columns){
+            var me = this,
+                columnHash = {},
+                disallowBlankCols = [],
+                numberVerifyCols = [],
+                fnValiCols = [],
+                fnError,
+                errorMsgArr = [],
+                eqHash = {
+                    '>': '大于',
+                    '<': '小于',
+                    '==': '等于',
+                    '!=': '不等于'
+                },
+                conditionMap = {
+                    eq: ['!='],
+                    lt: ['>', '=='],
+                    gt: ['<', '=='],
+                    lteq: ['>'],
+                    gteq: ['<']
+                },
+                eqErrorKey,
+                releColumn,
+                nowColmn = '',
+                numVerReleColmn = '',
+                nowData = '',
+                numData = '',
+                validResult = true,
+                validateFn,
+                getData = function (col, record) {
+                    if (col.editorType != "r2Datefield") {
+                        return record.data[col.fieldCode];
+                    } else {
+                        return Date((record.data[col.fieldCode]).replace(/-/g, '/')).getTime();
+                    }
+                };
+    
+            (function (columns) {
+                var i,
+                    l = columns.length,
+                    column,
+                    dataIndex;
+
+                for (i = 0; i < l; i++) {
+                    column = columns[i];
+                    dataIndex = column.fieldCode;
+                    if (dataIndex) {
+                        columnHash[dataIndex] = column;
+                    }
+                    if (column.allowBlank == false) {
+                        disallowBlankCols.push(column);
+                    }
+                    if (column.numberVerify) {
+                        numberVerifyCols.push(column);
+                    }
+                    if (column.validateFn) {
+                        fnValiCols.push(column);
+                    }
+                }
+            })(columns);
+    
+            util.each(value,function (row, index) {
+                var record = new Record(row,me);
+
+                util.each(disallowBlankCols,function (col) {
+                    if (util.isEmpty(row[col.fieldCode])) {
+                        errorMsgArr.push('重复项第【' + (index + 1) + '】项的【' + col.text + '】未填写!');
+                        validResult = false;
+                        return false;
+                    }
+                });
+                if (validResult) {
+                    util.each(fnValiCols, function (col) {
+                        validateFn = col.validateFn;
+                        if ((fnError = validateFn.call(me, record, record.get(col.fieldCode)))) {
+                            validResult = false;
+                            errorMsgArr.push('重复项中第【' + (index + 1) + '】行【' + col.text + '】' + fnError);
+                            return false;
+                        }
+                    });
+                } else {
+                    return false;
+                }
+
+                if (validResult) {
+                    util.each(numberVerifyCols, function (col) {
+                        var i,l,conditions,
+                            key,
+                            numberVerify = col.numberVerify;
+
+                        nowColmn = col.text;
+                        if (col.numVerReleCol) {
+                            eqErrorKey = null;
+                            nowData = getData(col, record);
+                            releColumn = columnHash[col.numVerReleCol];
+                            numVerReleColmn = releColumn.text;
+                            numData = getData(releColumn, record);
+
+                            conditions = conditionMap[numberVerify];
+                            for (i = 0, l = conditions.length; i < l; i++) {
+                                key = conditions[i];
+                                if (eval('nowData ' + key + ' numData')) {
+                                    validResult = false;
+                                    errorMsgArr.push('重复项中第【' + (index + 1) + '】行【' + nowColmn + '】输入值' + eqHash[k] + '【' + numVerReleColmn + '】');
+                                    return false;
+                                }
+                            }
+                           
+                        } else {
+                            errorMsgArr.push('【' + nowColmn + '】未配置校验关联列');
+                            validResult = false;
+                            return false;
+                        }
+                    });
+                } else {
+                    return false;
+                }
+            });
+            if (errorMsgArr.length)me.$vux.alert.show({
+                content: errorMsgArr.join('</br>')
+            });
+            return validResult;
+        },
     }
 }
