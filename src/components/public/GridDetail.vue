@@ -2,7 +2,7 @@
   <div v-transfer-dom>
     <popup
       class="grid-detail-container"
-       :class="{'has-edit': hasEditPart, 'is-focus': btnIsHide}"
+      :class="{'has-edit': hasEditPart, 'is-focus': btnIsHide}"
       height="80%"
       v-model="showPop"
       @on-show="onShow"
@@ -17,13 +17,18 @@
           <template v-for="(item, index) in readOnlyParts">
             <div class="item">
               <span :key="index">{{item.text}}：</span>
-              <span >{{values[item.fieldCode]||'无'}}</span>
+              <span>{{values[item.fieldCode]||'无'}}</span>
             </div>
           </template>
         </div>
         <div class="edit-part" v-if="hasEditPart">
           <div class="r-fieldset">
-            <grid-field-factory :cfg ="col" :values="values" v-for="(col, eIndex) in editParts" :key="eIndex"/>
+            <grid-field-factory
+              :cfg="col"
+              :values="values"
+              v-for="(col, eIndex) in editParts"
+              :key="eIndex"
+            />
           </div>
         </div>
         <div class="onlyView-parts" v-if="onlyViewParts.length">
@@ -56,15 +61,15 @@
 
 <script>
 import Vue from "vue";
-import girdDetailMix from 'mixins/gridDetail'
+import girdDetailMix from "mixins/gridDetail";
 import { XInput, numberComma, Popup } from "vux";
-import gridFieldFactory from './GridFieldFactory';
+import gridFieldFactory from "./GridFieldFactory";
 import RScroll from "plugins/scroll/RScroll";
 import { toFixed } from "@/plugins/calc";
 import { setTimeout } from "timers";
 
 var component = {
-  mixins:[girdDetailMix],
+  mixins: [girdDetailMix],
   props: {
     btnIsHide: {
       type: Boolean,
@@ -86,12 +91,12 @@ var component = {
   data() {
     return {
       showPop: true,
-      values:{},
+      values: {},
       readOnlyParts: [],
       editParts: [],
-      onlyViewParts:[],
+      onlyViewParts: [],
       title: null,
-      titleKey: null,
+      titleKey: null
     };
   },
   computed: {
@@ -119,10 +124,10 @@ var component = {
         this.clientHeight = document.documentElement.clientHeight;
       });
     },
-    onHide(){
-       setTimeout(()=>{
-           this.$emit('input', false);
-       },500)
+    onHide() {
+      setTimeout(() => {
+        this.$emit("input", false);
+      }, 500);
     },
     // 隐藏弹窗
     hidePop() {
@@ -152,40 +157,39 @@ var component = {
       this.showPop = false;
     }
   },
-  created(){
-     var grid = this.$parent,
-         cfg = grid.cfg,
-         columns = cfg.columns;
-     // *部分应用* 物料详情在审批节点可以重新录入数据 此处进行数据分割
-     if(cfg.readOnly){
-       this.onlyViewParts = columns
-          .filter(it => {
-            return !it.hidden;
-          });
-     } else {
-        let editParts = [];
-        let readOnlyParts = [];
-        columns
-          .filter(it => {
-            return !it.hidden;
-          })
-          .forEach(col => {
-            // 当Grid组件只读为false时 各个字段的readOnly才能启用
-            if (col.editorType && col.readOnly == false) {
-               editParts.push(col);
-            }else{
-               readOnlyParts.push(col);
-            }
-          });
-        this.editParts = editParts; // 可编辑部分
-        this.readOnlyParts = readOnlyParts; // 只读部分
-     }
-    
-     this.grid = grid;
-     this.titleKey = columns[0].fieldCode;
-     this.initFieldMap();
-     this.initValueBind(this.grid.valueBindCfg);
-     this.setValues(grid.detail);
+  created() {
+    var grid = this.$parent,
+      cfg = grid.cfg,
+      columns = cfg.columns;
+    // *部分应用* 物料详情在审批节点可以重新录入数据 此处进行数据分割
+    if (cfg.readOnly) {
+      this.onlyViewParts = columns.filter(it => {
+        return !it.hidden;
+      });
+    } else {
+      let editParts = [];
+      let readOnlyParts = [];
+      columns
+        .filter(it => {
+          return !it.hidden;
+        })
+        .forEach(col => {
+          // 当Grid组件只读为false时 各个字段的readOnly才能启用
+          if (col.editorType && col.readOnly == false) {
+            editParts.push(col);
+          } else {
+            readOnlyParts.push(col);
+          }
+        });
+      this.editParts = editParts; // 可编辑部分
+      this.readOnlyParts = readOnlyParts; // 只读部分
+    }
+
+    this.grid = grid;
+    this.titleKey = columns[0].fieldCode;
+    this.initFieldMap();
+    this.initValueBind(this.grid.valueBindCfg);
+    this.setValues(grid.detail);
   }
 };
 export default Vue.component("GridDetail", component);
@@ -241,11 +245,11 @@ export default Vue.component("GridDetail", component);
   }
 
   .readOnlyPart {
-    padding:.15rem;
+    padding: 0.15rem;
     background-color: #fff;
     line-height: 0.22rem;
     font-size: 0.12rem;
-    margin-bottom:0.1rem;
+    margin-bottom: 0.1rem;
     span:nth-child(2n + 1) {
       color: #aaa;
     }
@@ -259,8 +263,8 @@ export default Vue.component("GridDetail", component);
     }
   }
 
-  .edit-part{
-    color:#fff;
+  .edit-part {
+    color: #fff;
   }
   /* 其他数据 */
   .onlyView-parts {

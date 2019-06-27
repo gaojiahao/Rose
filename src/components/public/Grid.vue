@@ -5,7 +5,8 @@
       <div class="no-data-header" @click="addMatter">
         <div class="title">{{listTitle||'物料'}}列表</div>
         <div class="seleted_icon">
-          请选择<span class="icon-right"></span>
+          请选择
+          <span class="icon-right"></span>
         </div>
       </div>
     </template>
@@ -13,140 +14,159 @@
     <template v-else>
       <div class="has-data-header" @click="toggleEditStatus">
         <div class="title">{{listTitle||'物料'}}列表</div>
-        <div class='edit' v-if='!isEdit'>管理</div>
-        <div class='edit' v-else>完成</div>
+        <div class="edit" v-if="!isEdit">管理</div>
+        <div class="edit" v-else>完成</div>
       </div>
     </template>
-      <div class="r-row-ct">
-        <div class="r-row"  v-for="(row,rIndex) in values" :key="rIndex" :class="{row_delete : isEdit,'vux-1px-b' : rIndex < values.length - 1 }">
-          <template v-for="(item, index) in cfg.columns" class="cell when-is-right">
-            <div class="item" v-if="item.hidden == false" :key="index">
-              <span >{{item.text}}：</span>
-              <span>{{row[item.fieldCode]||'无'}}</span>
-            </div>
-          </template>
-          <div @click="onShowDetail(row,rIndex)" class="show-more" v-show="!isEdit">
-            查看详情
-            <i class="icon-more"></i>
+    <div class="r-row-ct">
+      <div
+        class="r-row"
+        v-for="(row,rIndex) in values"
+        :key="rIndex"
+        :class="{row_delete : isEdit,'vux-1px-b' : rIndex < values.length - 1 }"
+      >
+        <template v-for="(item, index) in cfg.columns" class="cell when-is-right">
+          <div class="item" v-if="item.hidden == false" :key="index">
+            <span>{{item.text}}：</span>
+            <span>{{row[item.fieldCode]||'无'}}</span>
           </div>
-          <div class='delete_icon' @click="delClick(rIndex)" v-if='isEdit'>
-            <x-icon type="ios-checkmark" size="20" class="checked" v-show="isChecked(rIndex)"></x-icon>
-            <x-icon type="ios-circle-outline" size="20" v-show="!isChecked(rIndex)"></x-icon>
-          </div>
-        </div><!--row-->
+        </template>
+        <div @click="onShowDetail(row,rIndex)" class="show-more" v-show="!isEdit">
+          查看详情
+          <i class="icon-more"></i>
+        </div>
+        <div class="delete_icon" @click="delClick(rIndex)" v-if="isEdit">
+          <x-icon type="ios-checkmark" size="20" class="checked" v-show="isChecked(rIndex)"></x-icon>
+          <x-icon type="ios-circle-outline" size="20" v-show="!isChecked(rIndex)"></x-icon>
+        </div>
       </div>
-      <div class="add-more-wrapper" v-if="!cfg.readOnly && cfg.allowMutilRow && values &&values.length && !isEdit">
-        <div  class="add-more"   @click="addMatter">
-            <span class="icon-add"></span>
-            <span class="add_text">新增</span>
-        </div> 
-      </div> 
-      
-  
+      <!--row-->
+    </div>
+    <div
+      class="add-more-wrapper"
+      v-if="!cfg.readOnly && cfg.allowMutilRow && values &&values.length && !isEdit"
+    >
+      <div class="add-more" @click="addMatter">
+        <span class="icon-add"></span>
+        <span class="add_text">新增</span>
+      </div>
+    </div>
+
     <grid-picker v-if="!cfg.readOnly" ref="gridPicker" @on-select="addRecords"/>
-    <div class = "grid-detail-wrapper"  v-if="showDetail">
-    <grid-detail
-        v-model="showDetail"
-        @on-confirm="doDetailEdit"
-    />
+    <div class="grid-detail-wrapper" v-if="showDetail">
+      <grid-detail v-model="showDetail" @on-confirm="doDetailEdit"/>
     </div>
-    <div class="count_mode grid-manger-wrapper vux-1px-t" :class="{btn_hide : btnIsHide}" v-show="isEdit" v-transfer-dom>
-      <div class='count_num all_checked' @click="checkAll">
-        <x-icon type="ios-circle-outline" size="20" class='outline'
-              v-show="!isCheckAll()"></x-icon>
-        <x-icon type="ios-checkmark" size="20" class="checked" v-show="isCheckAll()"></x-icon>
-        全选
+    <div
+      class="count_mode grid-manger-wrapper vux-1px-t"
+      :class="{btn_hide : btnIsHide}"
+      v-show="isEdit"
+      v-transfer-dom
+    >
+      <div class="count_num all_checked" @click="checkAll">
+        <x-icon type="ios-circle-outline" size="20" class="outline" v-show="!isCheckAll()"></x-icon>
+        <x-icon type="ios-checkmark" size="20" class="checked" v-show="isCheckAll()"></x-icon>全选
       </div>
-      <div class='delete_btn' @click="doDelete">删除</div>
+      <div class="delete_btn" @click="doDelete">删除</div>
     </div>
-  </div><!--grid-->
+  </div>
+  <!--grid-->
 </template>
+
+
+
 <script>
 import Vue from "vue";
-import gridPicker from './GridPicker';
-import girdMix from 'mixins/grid'
+import gridPicker from "./GridPicker";
+import girdMix from "mixins/grid";
 var component = {
-  mixins:[girdMix],
-  components:{gridPicker},
-  props: ["cfg", "values","btnIsHide"],
+  mixins: [girdMix],
+  components: { gridPicker },
+  props: ["cfg", "values", "btnIsHide"],
   data() {
     return {
       showDetail: false,
-      listTitle:'',
+      listTitle: "",
       detail: {}
     };
   },
   methods: {
     checkAmt() {},
-    setValue:function(value){
-      this.$set(this.form.formData,this.name,value);
+    setValue: function(value) {
+      this.$set(this.form.formData, this.name, value);
     },
-    getValue:function(){
-       return this.form.formData[this.name];
+    getValue: function() {
+      return this.form.formData[this.name];
     },
-    addRecords:function(selection){
-      var value = this.getValue()||[],
-          record, 
-          row,i=0,l = selection.length;
-  
-      for(i;i<l;i++){
+    addRecords: function(selection) {
+      var value = this.getValue() || [],
+        record,
+        row,
+        i = 0,
+        l = selection.length;
+
+      for (i; i < l; i++) {
         row = selection[i];
         record = this.createRecord(row);
         value.push(record);
       }
       this.setValue(value);
     },
-    createRecord:function(row){
-       var me = this,
-           data = {},
-           dataSourceBind = this.dataSourceBind;
-          
-       if(dataSourceBind){
-         data[dataSourceBind.k] = row[dataSourceBind.v];
-         this.setValueBindValue(data,dataSourceBind.k,row);
-       }
-       this.setDefaultValue(data);
-       return data;
+    createRecord: function(row) {
+      var me = this,
+        data = {},
+        dataSourceBind = this.dataSourceBind;
+
+      if (dataSourceBind) {
+        data[dataSourceBind.k] = row[dataSourceBind.v];
+        this.setValueBindValue(data, dataSourceBind.k, row);
+      }
+      this.setDefaultValue(data);
+      return data;
     },
-    hasDataSource:function(cfg){
-       return cfg.xtype != 'r2Grid';
+    hasDataSource: function(cfg) {
+      return cfg.xtype != "r2Grid";
     },
-    addMatter(){
+    addMatter() {
       this.$refs.gridPicker.show();
     },
-    initDataSource(cfg){
+    initDataSource(cfg) {
       var me = this,
-          dataSource = me.hasDataSource(cfg) ? cfg.dataSource : findDs(cfg.columns),
-          columns = cfg.columns;
+        dataSource = me.hasDataSource(cfg)
+          ? cfg.dataSource
+          : findDs(cfg.columns),
+        columns = cfg.columns;
 
       me.dataSource = dataSource;
-      function findDs(columns){
-        var i= 0,
-            l = columns.length,
-            col;
+      function findDs(columns) {
+        var i = 0,
+          l = columns.length,
+          col;
 
-        for(i;i<l;i++){
+        for (i; i < l; i++) {
           col = columns[i];
-          if(col.editorType == 'r2Selector'){
-             me.dataSourceBind = {k:col.fieldCode,v:col.valueField};
-             return {...col.dataSource.data,...{cols:col.proertyContext.dataSourceCols}}
+          if (col.editorType == "r2Selector") {
+            me.dataSourceBind = { k: col.fieldCode, v: col.valueField };
+            return {
+              ...col.dataSource.data,
+              ...{ cols: col.proertyContext.dataSourceCols }
+            };
           }
         }
       }
     },
-    onShowDetail(row,rowIndex) {
+    onShowDetail(row, rowIndex) {
       this.detail = row;
       this.detailRowNumer = rowIndex;
       this.showDetail = true;
     }
   },
-  created(){
+  created() {
     var cfg = this.cfg,
-        id = cfg.id,
-        fieldSet = this.$parent,
-        form = fieldSet.form,
-        values = this.values,
-        name = fieldSet.name;
+      id = cfg.id,
+      fieldSet = this.$parent,
+      form = fieldSet.form,
+      values = this.values,
+      name = fieldSet.name;
 
     form.fieldMap[id] = this;
     this.name = name;
@@ -191,48 +211,48 @@ export default Vue.component("RGrid", component);
     margin-right: 0.2rem;
   }
 }
-.row_delete{
+.row_delete {
   position: relative;
   padding-left: 0.3rem;
 }
-.delete_icon{
+.delete_icon {
   left: 0;
   top: 50%;
   height: 20px;
   fill: #999;
   position: absolute;
   transform: translateY(-50%);
-  .checked{
-    fill: #FA7138;
+  .checked {
+    fill: #fa7138;
   }
 }
 .r-grid {
   // 没有物料title样式
   .no-data-header {
     display: flex;
-    padding: .18rem 0;
-    font-size: .14rem;
-    line-height: .14rem;
+    padding: 0.18rem 0;
+    font-size: 0.14rem;
+    line-height: 0.14rem;
     justify-content: space-between;
-    .title{
-      color: #3296FA;
+    .title {
+      color: #3296fa;
       font-weight: bold;
     }
     .seleted_icon {
       display: flex;
       align-items: center;
       .icon-right {
-        width: .08rem;
-        height: .14rem;
-        margin-left: .1rem;
+        width: 0.08rem;
+        height: 0.14rem;
+        margin-left: 0.1rem;
       }
     }
   }
   // 有物料的title的样式
   .has-data-header {
     display: flex;
-    padding: .2rem 0 .1rem;
-    line-height: .14rem;
+    padding: 0.2rem 0 0.1rem;
+    line-height: 0.14rem;
     justify-content: space-between;
     .title {
       color: #696969;
@@ -240,38 +260,36 @@ export default Vue.component("RGrid", component);
     .edit {
       color: #333;
     }
-
   }
-  .add-more-wrapper{
+  .add-more-wrapper {
     width: 100%;
     display: flex;
     text-align: center;
     position: relative;
   }
   .add-more {
-      display: flex;
-      color: #3296FA;
-      font-weight: bold;
-      text-align: center;
-      align-items: center;
-      margin: 0 auto .2rem;
-      border-radius: .15rem;
-      padding: .06rem .08rem;
-      border: 1px solid #3296FA;
-      .icon-add {
-        width: .14rem;
-        height: .14rem;
-        margin-right: .05rem;
-        box-sizing: border-box;
-      }
-      .add_text {
-        font-size: .12rem;
-        line-height: .12rem;
-      }
+    display: flex;
+    color: #3296fa;
+    font-weight: bold;
+    text-align: center;
+    align-items: center;
+    margin: 0 auto 0.2rem;
+    border-radius: 0.15rem;
+    padding: 0.06rem 0.08rem;
+    border: 1px solid #3296fa;
+    .icon-add {
+      width: 0.14rem;
+      height: 0.14rem;
+      margin-right: 0.05rem;
+      box-sizing: border-box;
+    }
+    .add_text {
+      font-size: 0.12rem;
+      line-height: 0.12rem;
+    }
   }
-  
 }
-.grid-manger-wrapper{
-    z-index: 100;
+.grid-manger-wrapper {
+  z-index: 100;
 }
 </style>
