@@ -65,6 +65,7 @@
 </template>
 <script>
 import Vue from "vue";
+import dao from 'plugins/ajax'
 import gridPicker from './GridPicker';
 import girdMix from 'mixins/grid'
 var component = {
@@ -85,30 +86,6 @@ var component = {
     },
     getValue:function(){
        return this.form.formData[this.name];
-    },
-    addRecords:function(selection){
-      var value = this.getValue()||[],
-          record, 
-          row,i=0,l = selection.length;
-  
-      for(i;i<l;i++){
-        row = selection[i];
-        record = this.createRecord(row);
-        value.push(record);
-      }
-      this.setValue(value);
-    },
-    createRecord:function(row){
-       var me = this,
-           data = {},
-           dataSourceBind = this.dataSourceBind;
-          
-       if(dataSourceBind){
-         data[dataSourceBind.k] = row[dataSourceBind.v];
-         this.setValueBindValue(data,dataSourceBind.k,row);
-       }
-       this.setDefaultValue(data);
-       return data;
     },
     hasDataSource:function(cfg){
        return cfg.xtype != 'r2Grid';
@@ -153,6 +130,7 @@ var component = {
     form.fieldMap[id] = this;
     this.name = name;
     this.form = form;
+    this.dao = dao;//执行公式用;
     this.initDataSource(cfg);
     this.initDefaultValueCfg();
     this.initValueBindAndExpressionCfg();
