@@ -51,7 +51,7 @@ export default{
     isEmpty: function(value, allowEmptyString) {
         return (value == null) || (!allowEmptyString ? value === '' : false) || (this.isArray(value) && value.length === 0)||(this.isObject(value) && this.isObjectEmpty(value));
     },
-    trim: String.prototype.trim || function(string) {
+    trim: function(string) {
         if (string) {
             string = string.replace(trimRegex, "");
         }
@@ -169,4 +169,13 @@ export default{
     DAY : "d",
     MONTH : "mo",
     YEAR : "y",
+    each:function(items,fn){
+        var i = 0,l = items.length,
+            rs;
+
+        for(;i<l;i++){
+            rs = fn(items[i],i,items);
+            if(rs == false)break;
+        }
+    }
 }

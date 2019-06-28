@@ -1,4 +1,5 @@
 import util from '@/common/util';
+import Record from '@/common/record';
 import {
     getValuesByExp,
     convertDataType
@@ -12,6 +13,34 @@ export default {
         };
     },
     methods:{
+        addRecords:function(selection){
+            var value = this.getValue()||[],
+                record, 
+                row,i=0,l = selection.length;
+        
+            for(i;i<l;i++){
+              row = selection[i];
+              record = this.createRecord(row);
+              value.push(record.data);
+            }
+            this.setValue(value);
+        },
+        createRecord:function(row){
+             var me = this,
+                 data = {},
+                 record = new Record(data,me),
+                 editorFieldCode,
+                 dataSourceBind = this.dataSourceBind;
+                
+             this.setDefaultValue(record);
+             if(dataSourceBind){
+               editorFieldCode = dataSourceBind.k;
+               data[editorFieldCode] = row[dataSourceBind.v];
+               this.setValueBindValue(record,editorFieldCode,row);
+             }
+             me.executeExpression(record,editorFieldCode);
+             return record;
+        },
         checkAll(){
            // 如果已全部选中 则清除所有选中状态
             if (this.selection.length === this.values.length) {
@@ -58,6 +87,67 @@ export default {
            } else {
                selection.push(rowIndex);
            }
+        },
+        executeExpression(record,editorFieldCode){
+            var me = this,
+                expressionCfg = me.expressionCfg,
+                i, l,
+                num,
+                cfg,
+                dataIndex,
+                changeFieldCodes = record.getChanges(),
+                getNumber = function (fieldCode) {
+                    var form = me.form;
+                    return Number(form.getValues()[fieldCode]);
+                },
+                loanDay = function (qty, date) {
+                    return util.dateAdd((new Date(date)), util.DAY, 0 - Number(qty));
+                };
+    
+            
+            if (expressionCfg) for (i = 0, l = expressionCfg.length; i < l; i++) {
+                cfg = expressionCfg[i];
+                dataIndex = cfg.col.fieldCode;
+                if (editorFieldCode == dataIndex || dataIndex in changeFieldCodes) continue; //当前编辑字段，不重新计算。
+                if (cfg.type == 'calc') {
+                    cfg = CalcToCmd(cfg);
+                }
+                if (cfg.type == 'cmd') {
+                    try {
+                        num = util.round(util.correctFloat(eval(cfg.cmd)), cfg.col.decimalPrecision);
+                        num = (Number.isNaN(num) || (num === Infinity)) ? 0 : num;
+                        record.set(dataIndex, convertDataType(cfg.col.editorType, num));
+                    } catch (ex) {
+                        console.warn(ex);
+                    }
+                } else if (cfg.type == 'fn') {
+                    num = cfg.fn.call(me, record, editorFieldCode);
+                    if (num != null && !isNaN(num) && cfg.col.decimalPrecision != null) num = util.round(num, cfg.col.decimalPrecision);
+                    if (num != null) record.set(dataIndex, convertDataType(cfg.col.editorType, num));
+                }
+            }
+
+            function CalcToCmd(cfg) {
+                var changeItems = record.getChanges(),
+                    v1,
+                    v2;
+    
+                if (cfg.v1 in changeItems || cfg.v2 in changeItems) {
+                    v1 = record.get(cfg.v1);
+                    v2 = record.get(cfg.v2);
+                    v1 = v1 == +v1 ? v1 : 0;
+                    v2 = v2 == +v2 ? v2 : 0;
+                    //设置计算结果
+                    if (v2 != 0 || cfg.symbol != '/') {
+                        return {
+                            type: 'cmd',
+                            cmd: v1 + cfg.symbol + v2,
+                            col: cfg.col
+                        };
+                    }
+                }
+                return cfg;
+            }
         },
         getComponentByCfg:function(cfg){
            if(cfg.contrl){
@@ -124,6 +214,23 @@ export default {
                 loopfn(changeDataIndex);
             }
         },
+        handlerValueBind:function(record,selection,editorFieldCode,cfgArr){
+            var extra = {};
+
+            extra[editorFieldCode + '.extraData'] = util.clone(selection);
+            cfgArr.forEach(function (cfg) {
+                var valueField = cfg.valueField,
+                    targetFieldCode = cfg.fieldCode,
+                    value;
+
+                try {
+                    value = util.isArray(valueField) ? util.getValueByNs(extra, valueField) : eval('extra' + valueField);
+                    record.set(targetFieldCode,convertDataType(cfg.editorType, value));
+                } catch (ex) {
+                    console.warn(ex);
+                }
+            });
+        },
         handleOutParamChange: function (bindCmp, column) {
             var me = this,
                 values = me.getValues(),
@@ -145,8 +252,17 @@ export default {
         isCheckAll(){
            return this.values && this.values.length == this.selection.length;
         },
-        isValid(){
-            return false;
+        isValid:function(){
+            var me = this,
+                value = me.getValue();
+
+            if(value == null || value.length == 0){
+                me.$vux.alert.show({
+                    content: '请选择' + (me.listTitle||'物料')
+                });
+                return false;
+            }
+            return me.validateData(value,me.cfg.columns);
         },
         initDefaultValueCfg: function () {
             var me = this,
@@ -378,7 +494,7 @@ export default {
                 //me.handleParamChange(row);//处理数据变化
             });
         },
-        setDefaultValue(data){
+        setDefaultValue(record){
             var me = this,
                 cols = me.defaultValueCfgArr,
                 cfg,
@@ -387,35 +503,145 @@ export default {
             cols.forEach(function (c) {
                  cfg = util.isString(c.defaultValue) ? JSON.parse(c.defaultValue) : c.defaultValue;
                  value = me.getValueByConfig(cfg);
-                 data[c.fieldCode] = convertDataType(c.editorType, value);
+                 record.set(c.fieldCode,convertDataType(c.editorType, value));
             });
         },
-        setValueBindValue(data,fieldCode,row){
+        setValueBindValue(record,editorFieldCode,selection){
             var me = this,
                 valuebind = me.valueBindCfg,
-                extra = {},
                 cfgArr;
 
-            if (valuebind && fieldCode in valuebind) {
-                extra[fieldCode + '.extraData'] = util.clone(row);
-                cfgArr = valuebind[fieldCode];
-                cfgArr.forEach(function (cfg) {
-                    var valueField = cfg.valueField,
-                        value;
-
-                    try {
-                        value = util.isArray(valueField) ? util.getValueByNs(extra, valueField) : eval('extra' + valueField);
-                        data[cfg.fieldCode]= convertDataType(cfg.editorType, value);
-                    } catch (ex) {
-                        console.warn(ex);
-                    }
-                });
+            if (valuebind && editorFieldCode in valuebind) {
+                cfgArr = valuebind[editorFieldCode];
+                me.handlerValueBind(record,selection,editorFieldCode,cfgArr);
             }   
-
         },
         toggleEditStatus(){
             this.isEdit = !this.isEdit;
             this.selection = [];
-        }
+        },
+        validateData:function(value,columns){
+            var me = this,
+                columnHash = {},
+                disallowBlankCols = [],
+                numberVerifyCols = [],
+                fnValiCols = [],
+                fnError,
+                errorMsgArr = [],
+                eqHash = {
+                    '>': '大于',
+                    '<': '小于',
+                    '==': '等于',
+                    '!=': '不等于'
+                },
+                conditionMap = {
+                    eq: ['!='],
+                    lt: ['>', '=='],
+                    gt: ['<', '=='],
+                    lteq: ['>'],
+                    gteq: ['<']
+                },
+                eqErrorKey,
+                releColumn,
+                nowColmn = '',
+                numVerReleColmn = '',
+                nowData = '',
+                numData = '',
+                validResult = true,
+                validateFn,
+                getData = function (col, record) {
+                    if (col.editorType != "r2Datefield") {
+                        return record.data[col.fieldCode];
+                    } else {
+                        return Date((record.data[col.fieldCode]).replace(/-/g, '/')).getTime();
+                    }
+                };
+    
+            (function (columns) {
+                var i,
+                    l = columns.length,
+                    column,
+                    dataIndex;
+
+                for (i = 0; i < l; i++) {
+                    column = columns[i];
+                    dataIndex = column.fieldCode;
+                    if (dataIndex) {
+                        columnHash[dataIndex] = column;
+                    }
+                    if (column.allowBlank == false) {
+                        disallowBlankCols.push(column);
+                    }
+                    if (column.numberVerify) {
+                        numberVerifyCols.push(column);
+                    }
+                    if (column.validateFn) {
+                        fnValiCols.push(column);
+                    }
+                }
+            })(columns);
+    
+            util.each(value,function (row, index) {
+                var record = new Record(row,me);
+
+                util.each(disallowBlankCols,function (col) {
+                    if (util.isEmpty(row[col.fieldCode])) {
+                        errorMsgArr.push('重复项第【' + (index + 1) + '】项的【' + col.text + '】未填写!');
+                        validResult = false;
+                        return false;
+                    }
+                });
+                if (validResult) {
+                    util.each(fnValiCols, function (col) {
+                        validateFn = col.validateFn;
+                        if ((fnError = validateFn.call(me, record, record.get(col.fieldCode)))) {
+                            validResult = false;
+                            errorMsgArr.push('重复项中第【' + (index + 1) + '】行【' + col.text + '】' + fnError);
+                            return false;
+                        }
+                    });
+                } else {
+                    return false;
+                }
+
+                if (validResult) {
+                    util.each(numberVerifyCols, function (col) {
+                        var i,l,conditions,
+                            key,
+                            numberVerify = col.numberVerify;
+
+                        nowColmn = col.text;
+                        if (col.numVerReleCol) {
+                            eqErrorKey = null;
+                            nowData = getData(col, record);
+                            releColumn = columnHash[col.numVerReleCol];
+                            numVerReleColmn = releColumn.text;
+                            numData = getData(releColumn, record);
+
+                            conditions = conditionMap[numberVerify];
+                            for (i = 0, l = conditions.length; i < l; i++) {
+                                key = conditions[i];
+                                if (eval('nowData ' + key + ' numData')) {
+                                    validResult = false;
+                                    errorMsgArr.push('重复项中第【' + (index + 1) + '】行【' + nowColmn + '】输入值' + eqHash[k] + '【' + numVerReleColmn + '】');
+                                    return false;
+                                }
+                            }
+                           
+                        } else {
+                            errorMsgArr.push('【' + nowColmn + '】未配置校验关联列');
+                            validResult = false;
+                            return false;
+                        }
+                    });
+                } else {
+                    return false;
+                }
+            });
+            if (errorMsgArr.length)me.$vux.alert.show({
+                content: errorMsgArr.join('</br>')
+            });
+            return validResult;
+        },
     }
 }

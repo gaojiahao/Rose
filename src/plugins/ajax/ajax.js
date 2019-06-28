@@ -156,6 +156,47 @@ let Rxports = {
       data: opts.data
     })
   },
+  request:function (url,data){
+    var xmlhttp = new XMLHttpRequest(),
+        params = parseParam(data),
+        token = tokenService.getToken(),
+        rs;
+
+    url = ensureUrl(url);
+    if(params.length){
+       url += (url.indexOf("?") === -1 ? "?" : "&") + params.join("&");
+    }
+    xmlhttp.onreadystatechange=function()
+    {
+    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+      {
+         if(xmlhttp.responseText){
+           rs = JSON.parse(xmlhttp.responseText);
+         }else{
+           rs = {};
+         }
+         
+      }
+    }
+    if (token) {
+       xmlhttp.open("GET",ensureUrl(url),false);
+       xmlhttp.setRequestHeader('Authorization', token);
+       xmlhttp.setRequestHeader("Content-Type","application/json;charset=utf-8");
+       xmlhttp.send();
+    }
+
+    return rs;
+    function parseParam(data){
+       var param = [];
+       for(var key in data){
+         param.push([key,encode(data[key])].join('='));
+       }
+       return param;
+    }
+    function encode(val) {
+      return encodeURIComponent(val).replace(/%40/gi, '@').replace(/%3A/gi, ':').replace(/%24/g, '$').replace(/%2C/gi, ',').replace(/%20/g, '+').replace(/%5B/gi, '[').replace(/%5D/gi, ']');
+    }
+  },
   // 上传图片，单个文件
   upload({file = {}, biReferenceId = ''}) {
     // 创建form对象

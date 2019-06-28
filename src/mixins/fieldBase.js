@@ -21,8 +21,8 @@ export default {
                 fieldSet = this.$parent,
                 form = fieldSet.form;
 
-            form.fieldMap[id] = this;
             this.form = form;
+            this.form.registField(this);
             this.valueChangeKey = 'value-change-' + id;
             this.blankText = cfg.fieldLabel + '不能为空！'
             this.initOption(cfg);

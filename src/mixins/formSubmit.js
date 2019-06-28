@@ -28,6 +28,7 @@ export default {
                 proCode,
                 approvalData,
                 wfPara = {},
+                param,
                 isBindFlow = me.workflows.length > 0 ? true : false,
                 submitHandler = isBindFlow ? saveAndStartWf : submitAndCalc,
                 values,
@@ -36,7 +37,7 @@ export default {
                 {relationKey} = me.$route.query;
 
             values = me.getValues();
-            me.formData = me.formatValues(formData);
+            formData = me.formatValues(values);
             param = {
                 listId: me.listId,
                 biComment: formData.biComment,
@@ -123,7 +124,7 @@ export default {
             }
             return root;
             function insetValueIntoRoot(fieldCode,value){
-                var fieldCfg = fieldCfgHash[fieldCode];
+                var fieldCfg = fieldCfgHash[fieldCode],
                     isList = fieldCfg && fieldCfg.isList,
                     groupBoxStr = fieldCfg && fieldCfg.fieldContainer;
                 
@@ -246,6 +247,12 @@ export default {
                 approvalData[paramKey] = values[fieldCode];
             }
             return approvalData;
+        },
+        registField(field){
+            var cfg = field.cfg;
+
+            this.fieldMap[cfg.id] = this.fields[cfg.fieldCode] = field;
         }
+        
    }
 }
