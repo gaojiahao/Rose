@@ -12,7 +12,7 @@
         </component>
       </v-touch>
     </div>
-    <slideBar :isRellyShow="isRellyShow"></slideBar>
+    <slideBar :isRellyShow="isRellyShow" @swiperleft="swiperleft"></slideBar>
     <div class="detail-comment-container vux-1px-t" v-if="hasComment">
       <div class="concern" @click="goConcern">
         <span class="icon icon-heart" v-if="isConcern === 0"></span>
@@ -133,10 +133,10 @@ export default {
         });
       } 
     },
-    swiperleft: function () {
+    swiperleft() {
       this.isRellyShow = false;
     },
-    swiperright: function () {
+    swiperright() {
       this.isRellyShow = true;
     },
     slideStatus(data) {
