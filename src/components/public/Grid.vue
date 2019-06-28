@@ -2,7 +2,7 @@
   <div class="r-grid">
     <!-- 没有选择物料 -->
     <template v-if="!values || values.length == 0">
-      <div class="no-data-header" @click="addMatter">
+      <div class="no-data-header" @click="showGridPicker">
         <div class="title">{{listTitle||'物料'}}列表</div>
         <div class="seleted_icon">
           请选择
@@ -14,9 +14,9 @@
     <template v-else>
       <div class="has-data-header" @click="toggleEditStatus">
         <div class="title">{{listTitle||'物料'}}列表</div>
-        <div v-if = "!cfg.readOnly">
-          <div class='edit' v-if='!isEdit'>管理</div>
-          <div class='edit' v-else>完成</div>
+        <div v-if="!cfg.readOnly">
+          <div class="edit" v-if="!isEdit">管理</div>
+          <div class="edit" v-else>完成</div>
         </div>
       </div>
     </template>
@@ -48,7 +48,7 @@
       class="add-more-wrapper"
       v-if="!cfg.readOnly && cfg.allowMutilRow && values &&values.length && !isEdit"
     >
-      <div class="add-more" @click="addMatter">
+      <div class="add-more" @click="showGridPicker">
         <span class="icon-add"></span>
         <span class="add_text">新增</span>
       </div>
@@ -78,9 +78,9 @@
 
 <script>
 import Vue from "vue";
-import dao from 'plugins/ajax'
-import gridPicker from './GridPicker';
-import girdMix from 'mixins/grid'
+import dao from "plugins/ajax";
+import gridPicker from "./GridPicker";
+import girdMix from "mixins/grid";
 var component = {
   mixins: [girdMix],
   components: { gridPicker },
@@ -100,10 +100,10 @@ var component = {
     getValue: function() {
       return this.form.formData[this.name];
     },
-    hasDataSource:function(cfg){
-       return cfg.xtype != 'r2Grid';
+    hasDataSource: function(cfg) {
+      return cfg.xtype != "r2Grid";
     },
-    addMatter() {
+    showGridPicker() {
       this.$refs.gridPicker.show();
     },
     initDataSource(cfg) {
@@ -148,7 +148,7 @@ var component = {
     form.fieldMap[id] = this;
     this.name = name;
     this.form = form;
-    this.dao = dao;//执行公式用;
+    this.dao = dao; //执行公式用;
     this.initDataSource(cfg);
     this.initDefaultValueCfg();
     this.initValueBindAndExpressionCfg();

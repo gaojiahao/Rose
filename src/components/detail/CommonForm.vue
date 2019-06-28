@@ -2,15 +2,25 @@
   <!--通用form组件-->
   <div class="detail_wrapper" :class="{pages:model != 'view'}">
     <div class="form" :class="{scrollCt:model != 'view'}" ref="fill">
-      <div class='fill_wrapper'>
+      <div class="fill_wrapper">
         <!-- 工作流组件 -->
-        <w-flow :formData="formData" :full-work-flow="workflows"  v-if = "transCode"/>
+        <w-flow :formData="formData" :full-work-flow="workflows" v-if="transCode"/>
         <!-- 表单渲染 -->
-        <r-fieldset-ct :cfg="fieldSets" :values="formData" v-if="fieldSets.length" ref="fieldsetCt"/>
+        <r-fieldset-ct
+          :cfg="fieldSets"
+          :values="formData"
+          v-if="fieldSets.length"
+          ref="fieldsetCt"
+        />
         <!-- 附件组件 -->
-        <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId" />
+        <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId"/>
         <!-- 审批组件 -->
-        <r2-action v-if="showAction" :myFlow="taskInfo" :workFlow="workflows" :formStatus="formStatus"/>
+        <r2-action
+          v-if="showAction"
+          :myFlow="taskInfo"
+          :workFlow="workflows"
+          :formStatus="formStatus"
+        />
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -18,18 +28,21 @@
       <span class="count_num" v-if="false">
         <!-- <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}} -->
       </span>
-      <span class="count_btn stop" @click="stopOrder"
-            v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
+      <span
+        class="count_btn stop"
+        @click="stopOrder"
+        v-if="btnInfo.isMyTask === 1 && btnInfo.actions.indexOf('stop')>=0"
+      >终止</span>
       <span class="count_btn" @click="addFormData">提交</span>
     </div>
   </div>
 </template>
 <script>
 // 请求 引入
-import platfrom from '@/plugins/platform/index'
-import submitMethod  from 'mixins/formSubmit'
+import platfrom from "@/plugins/platform/index";
+import submitMethod from "mixins/formSubmit";
 // 插件 引入
-import Bscroll from 'better-scroll'
+import Bscroll from "better-scroll";
 import {
   isMyflow,
   getListId,
@@ -48,7 +61,7 @@ import {
   getBasicInfo
 } from "service/commonService";
 export default {
-  mixins:[submitMethod],
+  mixins: [submitMethod],
   data() {
     return {
       transCode: null,
@@ -62,21 +75,21 @@ export default {
       biReferenceId: null,
       //经过处理的基本信息
       baseinfo: {},
-      attachment:[],
+      attachment: [],
       basicInfo: {},
       myFlow: [],
-      taskInfo:null,
-      showAction:false,
-      userName: '',
-      btnInfo:{},
+      taskInfo: null,
+      showAction: false,
+      userName: "",
+      btnInfo: {},
       workflows: [],
-      formStatus: [],
+      formStatus: []
     };
   },
-  watch : {
+  watch: {
     model: {
       handler(val) {
-        this.$emit('slideStatus',val);
+        this.$emit("slideStatus", val);
       }
     }
   },
@@ -115,9 +128,9 @@ export default {
       getWorkFlow({
         _dc: Date.now(),
         transCode: this.transCode
-      }).then((data) => {
+      }).then(data => {
         this.workflows = data.tableContent || [];
-      })
+      });
     },
     handlerFormData(formData) {
       var key,
@@ -128,12 +141,12 @@ export default {
 
       for (key in formData) {
         item = formData[key];
-        if (item && "object" == typeof(item)) {
-          if("dataSet" in item){
-             list = item.dataSet;
-             delete item.dataSet;
+        if (item && "object" == typeof item) {
+          if ("dataSet" in item) {
+            list = item.dataSet;
+            delete item.dataSet;
           } else {
-             list = [];
+            list = [];
           }
           for (key1 in item) {
             formData[key1] = item[key1];
@@ -171,8 +184,8 @@ export default {
         entity: formData.handlerEntityName
       };
     },
-    initScroll(){
-      if(this.model == 'view'){
+    initScroll() {
+      if (this.model == "view") {
         // 触发父组件的scroll刷新
         this.$emit("refresh-scroll");
         return;
@@ -180,44 +193,50 @@ export default {
       this.$nextTick(() => {
         this.fillBscroll = new Bscroll(this.$refs.fill, {
           click: true
-        })
-      })
+        });
+      });
       //解决android键盘收起input没有失去焦点，底部按钮遮挡输入框
       if (platfrom.isAndroid) {
-        window.onresize= () => {
+        window.onresize = () => {
           if (this.clientHeight > document.documentElement.clientHeight) {
             //底部按钮隐藏
-              this.btnIsHide  = true;
-          }else {
-              this.btnIsHide = false;
-              if (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA") {
-                document.activeElement.blur();
-              }
+            this.btnIsHide = true;
+          } else {
+            this.btnIsHide = false;
+            if (
+              document.activeElement.tagName === "INPUT" ||
+              document.activeElement.tagName === "TEXTAREA"
+            ) {
+              document.activeElement.blur();
+            }
           }
-        }
+        };
       }
     },
     async loadPage() {
-      let { transCode, listId, viewId, model,debug} = this.$route.query;
-      if(debug) window.isDebug = true;
+      let { transCode, listId, viewId, model, debug } = this.$route.query;
+      if (debug) window.isDebug = true;
       this.$loading.show();
       /**获取视图信息**/
       if (transCode) {
-        if(listId){
+        if (listId) {
           this.listId = listId;
         }
         this.transCode = transCode;
-        if (viewId) {//编辑或修改会指定视图
+        if (viewId) {
+          //编辑或修改会指定视图
           this.viewId = viewId;
           this.model = model || "edit";
-        } else { //查看或审批
-          await this.loadWorkFlowNodeInfo();//获取流程节点信息，如果当前用户是流程节点审批人，则加载审批视图。
+        } else {
+          //查看或审批
+          await this.loadWorkFlowNodeInfo(); //获取流程节点信息，如果当前用户是流程节点审批人，则加载审批视图。
 
-          if(this.viewId == null){//如果没有审批视图，则加载查看视图
+          if (this.viewId == null) {
+            //如果没有审批视图，则加载查看视图
             //加载查看视图
             await this.getViewIdByTransCode(transCode);
           }
-          await this.getFromStatus(); 
+          await this.getFromStatus();
         }
         await this.getWorkFlow();
       } else if (listId) {
@@ -228,8 +247,8 @@ export default {
       //加载视图信息
       if (this.viewId) {
         await this.loadFormCfg();
-        if(this.model != 'new')this.showAction = true;
-        if(this.model != 'view'){
+        if (this.model != "new") this.showAction = true;
+        if (this.model != "view") {
           this.loadModelCfg(this.listId);
         }
         if (transCode) {
@@ -253,9 +272,7 @@ export default {
           transCode
         },
         config = this.viewInfo.config,
-        api = config.isBaseObject
-          ? config.baseObjectKey
-          : "formAPI";
+        api = config.isBaseObject ? config.baseObjectKey : "formAPI";
       return getSOList(params, api).then(
         ({ formData = {}, attachment = [], biReferenceId }) => {
           this.handlerFormData(formData);
@@ -264,31 +281,36 @@ export default {
         }
       );
     },
-    loadWorkFlowNodeInfo(){
-       return new Promise((resolve,reject)=>{
-           isMyflow({transCode:this.transCode}).then(rs=>{
-              var l = rs.dataCount,
-                  nodes = rs.tableContent,
-                  task;
+    loadWorkFlowNodeInfo() {
+      return new Promise((resolve, reject) => {
+        isMyflow({ transCode: this.transCode }).then(rs => {
+          var l = rs.dataCount,
+            nodes = rs.tableContent,
+            task;
 
-              while(l--){
-                  task = nodes[l];
-                  if (task.ASSIGNEE_ === WebContext.currentUser.userId.toString()
-                      || task.isMyTask  //当前节点是我的任务
-                      || (task.allowRecall && task.actions && task.actions.indexOf('recall') > -1)) { //当前节点允许撤回
+          while (l--) {
+            task = nodes[l];
+            if (
+              task.ASSIGNEE_ === WebContext.currentUser.userId.toString() ||
+              task.isMyTask || //当前节点是我的任务
+              (task.allowRecall &&
+                task.actions &&
+                task.actions.indexOf("recall") > -1)
+            ) {
+              //当前节点允许撤回
 
-                      this.taskInfo = task;
-                      this.viewId = this.taskInfo.viewId;
-                      break;
-                  }
-              }
-              resolve();
-           })
-       })
+              this.taskInfo = task;
+              this.viewId = this.taskInfo.viewId;
+              break;
+            }
+          }
+          resolve();
+        });
+      });
     },
     loadFormCfg() {
       return getFormViewByUniqueId(this.viewId).then(data => {
-        let { appName, config, dataSource,listInfo,formKey} = data;
+        let { appName, config, dataSource, listInfo, formKey } = data;
 
         window.document.title = appName;
         WebContext.listInfo = listInfo;
@@ -299,8 +321,18 @@ export default {
         } catch (e) {
           config = null;
         }
+        if (dataSource) {
+          try {
+            dataSource = JSON.parse(dataSource);
+            data.dataSource = dataSource;
+          } catch (e) {
+            dataSource = null;
+          }
+        }
 
         if (config) {
+          dataSource && this.setAccountDataSource(config, dataSource);
+
           let fieldSets = config.items,
             singleFieldCts = [],
             reconfig = config.reconfig;
@@ -334,23 +366,39 @@ export default {
         }
       });
     },
-    loadModelCfg(listId){
-        var me =this;
-        loadModelCfg(listId).then((rs)=>{
-            var row,
-                apiCfgStr,
-                apiCfg = null;
-            if (rs.dataCount) {
-                row = rs.tableContent[0];
-                apiCfgStr = row && row.MODEL_CONFIG;
-                if (apiCfgStr) try {
-                    apiCfg = JSON.parse(apiCfgStr);
-                } catch (e) {
-                    apiCfg = null;
-                }
-                me.apiCfg = apiCfg;
+    setAccountDataSource: function(config, dataSource) {
+      var dsMap = {};
+      dataSource.forEach(function(item) {
+        dsMap[item.dataSet] = item.dataSource.source;
+      });
+      config.items.map(function(fieldSet) {
+        var grid;
+        if (fieldSet.isMultiple && fieldSet.xtype == "r2FieldSet") {
+          grid = fieldSet.items[0];
+          if (grid && grid.xtype == "r2AccountGrid" && dsMap[fieldSet.name]) {
+            grid.dataSource = JSON.parse(dsMap[fieldSet.name]);
+          }
+        }
+      });
+    },
+    loadModelCfg(listId) {
+      var me = this;
+      loadModelCfg(listId).then(rs => {
+        var row,
+          apiCfgStr,
+          apiCfg = null;
+        if (rs.dataCount) {
+          row = rs.tableContent[0];
+          apiCfgStr = row && row.MODEL_CONFIG;
+          if (apiCfgStr)
+            try {
+              apiCfg = JSON.parse(apiCfgStr);
+            } catch (e) {
+              apiCfg = null;
             }
-        });
+          me.apiCfg = apiCfg;
+        }
+      });
     },
     //是否我的工作流信息
     isMyflow() {
@@ -359,39 +407,38 @@ export default {
         transCode: this.transCode
       });
     },
-    isValid(){
-       var invalid = false,
-           fieldMap = this.fieldMap,
-           fieldCode,field;
-       
-       for(fieldCode in fieldMap){
-           field = fieldMap[fieldCode];
-           if(!field.isValid()){
-             invalid = true;
-             break;
-           }
-       }
-       return !invalid;
+    isValid() {
+      var invalid = false,
+        fieldMap = this.fieldMap,
+        fieldCode,
+        field;
+
+      for (fieldCode in fieldMap) {
+        field = fieldMap[fieldCode];
+        if (!field.isValid()) {
+          invalid = true;
+          break;
+        }
+      }
+      return !invalid;
     },
-    stopOrder(){},
+    stopOrder() {},
     getFromStatus() {
       var data = {
-          _dc: Date.now(),
-          transCode: this.transCode
-        };
-      return getFromStatus(data).then(
-        ({ tableContent = []}) => {
-          this.formStatus = tableContent;
-        }
-      );  
+        _dc: Date.now(),
+        transCode: this.transCode
+      };
+      return getFromStatus(data).then(({ tableContent = [] }) => {
+        this.formStatus = tableContent;
+      });
     }
   },
   created() {
-    this.fieldMap = {};//id;
-    this.fields = {};//fieldCode
+    this.fieldMap = {}; //id;
+    this.fields = {}; //fieldCode
     this.wfParamFieldMap = {};
     this.loadPage();
-    this.$emit('slideStatus',this.model);
+    this.$emit("slideStatus", this.model);
   }
 };
 </script>
@@ -403,10 +450,10 @@ export default {
   z-index: 1;
   overflow: hidden;
   position: relative;
-  background: #F8F8F8;
-  height: calc(100% - .44rem);
+  background: #f8f8f8;
+  height: calc(100% - 0.44rem);
   -webkit-overflow-scrolling: touch;
-  .fill_wrapper{
+  .fill_wrapper {
     overflow: hidden;
   }
 }
@@ -417,63 +464,63 @@ export default {
   bottom: 0;
   width: 100%;
   display: flex;
-  height: .44rem;
+  height: 0.44rem;
   position: absolute;
-  line-height: .44rem;
+  line-height: 0.44rem;
   background: #fff;
   .count_num {
     flex: 2.5;
     color: #5077aa;
-    font-size: .24rem;
-    padding-left: .1rem;
+    font-size: 0.24rem;
+    padding-left: 0.1rem;
     position: relative;
     &.nine_up {
-      font-size: .2rem;
+      font-size: 0.2rem;
     }
     &.ten_up {
-      font-size: .16rem;
+      font-size: 0.16rem;
     }
     &.ele_up {
-      font-size: .12rem;
+      font-size: 0.12rem;
       .taxAmount {
-        font-size: .1rem;
+        font-size: 0.1rem;
       }
     }
     .total_price {
       display: inline-block;
       .symbol {
-        font-size: .14rem;
+        font-size: 0.14rem;
       }
     }
-    .taxAmount, .total-num {
+    .taxAmount,
+    .total-num {
       color: #757575;
-      font-size: .1rem;
+      font-size: 0.1rem;
       display: inline-block;
     }
   }
   //全选
-  .all_checked{
-    font-size:0.16rem;
+  .all_checked {
+    font-size: 0.16rem;
     position: relative;
     padding-left: 0.35rem;
     box-sizing: border-box;
-    .vux-x-icon{
-      left:0.1rem;
-      top:50%;
+    .vux-x-icon {
+      left: 0.1rem;
+      top: 50%;
       position: absolute;
       transform: translateY(-50%);
       fill: #999;
     }
-    .checked{
-      fill:#ea5455;
+    .checked {
+      fill: #ea5455;
     }
-
   }
   .count_btn {
     flex: 1.5;
     color: #fff;
     text-align: center;
-    background: #3296FA;
+    background: #3296fa;
     &.stop {
       color: #a1a1a1;
       background: #dfdfdf;
@@ -490,17 +537,17 @@ export default {
   bottom: 0;
   width: 100%;
   display: flex;
-  height: .44rem;
+  height: 0.44rem;
   position: absolute;
-  line-height: .44rem;
+  line-height: 0.44rem;
   background: #fff;
   display: flex;
-  .btn-item{
+  .btn-item {
     flex: 1;
-    background: #3296FA;
+    background: #3296fa;
     color: #fff;
     text-align: center;
-    &.stop{
+    &.stop {
       color: #a1a1a1;
       background: #dfdfdf;
     }
