@@ -1,21 +1,26 @@
 <template>
     <transition name="slide-fade">
-        <div class="side-content" v-show="isRellyShow && transCode">
+        <div class="side-content" v-show="show && transCode">
             <div class="side-content-wrap">
-                <div class="box"><span><img src='../../assets/slideBar-home.png'></span><span>基本信息</span></div>
-                <div class="box" ><span><img src='../../assets/slideBar-history.png'></span><span>变更历史</span></div>
+                <div class="box" @click="goDetail"><span><img src='../../assets/slideBar-home.png'></span><span>基本信息</span></div>
+                <!-- <div class="box" ><span><img src='../../assets/slideBar-history.png'></span><span>变更历史</span></div> -->
                 <div class="box" @click="autoSubject"><span><img src='../../assets/view-subject.png'></span><span>自动分录</span></div>
-                <div class="box"><span><img src='../../assets/mubiao.png'></span><span>执行力分析</span></div>
+                <!-- <div class="box"><span><img src='../../assets/mubiao.png'></span><span>执行力分析</span></div> -->
                 <template v-for="(item,index) in appExample">
-                    <div class="box" :key="index"><span><img :src=item.icon></span><span>{{item.listName}}</span></div>
+                    <div class="box" :key="index" @click="goAppExample(item)">
+                        <span><img :src=item.icon></span>
+                        <span>{{item.listName}}</span>
+                        <badge :text=item.itemCount v-if="item.itemCount"></badge>
+                    </div>
                 </template>
             </div>     
-        </div>    
+        </div> 
     </transition>
 </template>
 
 <script>
 import Vue from 'vue'
+import { Badge } from 'vux'
 import { getAppExampleDetails } from "service/detailService";
 let  component = {
     props: {
@@ -24,13 +29,24 @@ let  component = {
             default: false,
         },
     },
+    components: {
+      Badge,  
+    },
     data(){
         return {
             appExample:{},
             transCode:'',
             listId:'',
+            show: false,
         }
 
+    },
+    watch: {
+        isRellyShow: {
+            handler (val) {
+                this.show = val;
+            }
+        }  
     },
     methods: {
         getAppExampleDetails() {
@@ -43,15 +59,35 @@ let  component = {
                 this.appExample = data.relevantItems;
             });  
         },
+        goDetail() {
+            this.$router.push({
+                path: '/detail/null/null',
+                query: {
+                    name: 'null',
+                    listId: this.listId,
+                    transCode: this.transCode,
+                }
+            });
+            this.$emit('swiperleft');
+        },
         autoSubject() {
-            //let {transCode = ''} = this.workFlowInfo;
             this.$router.push({
                 path: '/autoSubject',
                 query: {
-                    listId,
-                    transCode,
+                    listId: this.listId,
+                    transCode: this.transCode,
                 }
             })
+        },
+        goAppExample(item) {
+            this.$router.push({
+                path: '/detail/AppExampleForm',
+                query: {
+                    listId: item.listId,
+                    transCode: item.content,
+                }
+            });
+            this.$emit('swiperleft');
         }
     },
     created () {
