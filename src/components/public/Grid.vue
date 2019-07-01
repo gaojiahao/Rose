@@ -107,13 +107,7 @@ var component = {
       this.$refs.gridPicker.show();
     },
     initDataSource(cfg) {
-      var me = this,
-        dataSource = me.hasDataSource(cfg)
-          ? cfg.dataSource
-          : findDs(cfg.columns),
-        columns = cfg.columns;
-
-      me.dataSource = dataSource;
+      var me = this;
       function findDs(columns) {
         var i = 0,
           l = columns.length,
@@ -130,6 +124,22 @@ var component = {
           }
         }
       }
+      function processDs(columns) {
+        var i = 0,
+          l = columns.length,
+          col;
+        for (i; i < l; i++) {
+          col = columns[i];
+          if (col.editorType == "r2Selector") {
+            me.dataSourceBind = { k: col.fieldCode, v: col.valueField };
+            return;
+          }
+        }
+      }
+      me.hasDataSource(cfg)
+        ? //适配 r2AccountGrid
+          (processDs(cfg.columns), (me.dataSource = cfg.dataSource))
+        : (me.dataSource = findDs(cfg.columns));
     },
     onShowDetail(row, rowIndex) {
       this.detail = row;

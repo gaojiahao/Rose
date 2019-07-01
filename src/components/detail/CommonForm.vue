@@ -331,6 +331,7 @@ export default {
         }
 
         if (config) {
+          //适配表单级数据源，PC目前应用于r2AccountGrid表格
           dataSource && this.setAccountDataSource(config, dataSource);
 
           let fieldSets = config.items,
