@@ -149,6 +149,33 @@ export default {
                 return cfg;
             }
         },
+        getSubmitData:function(){
+            var values = this.getValue(),
+                data = {dataSet:[]},
+                columns = this.cfg.columns,
+                submitFieldCodes =  columns.filter(function (c) {
+                    return c.submitValue;
+                }).map(function(c){ return c.fieldCode }),
+                newValue = data.dataSet,
+                key,
+                value,
+                newRow;
+
+            values.map(function(row){
+                newRow = {};
+                util.each(submitFieldCodes,function(key){
+                    value = row[key];
+                    if(typeof value == 'undefined'){
+                        newRow[key] = null;
+                    }else if(typeof value != 'object'){
+                        newRow[key] = row[key];
+                    }
+                });
+                newValue.push(newRow);
+            })
+
+            return data;
+        },
         getComponentByCfg:function(cfg){
            if(cfg.contrl){
                return this.form.fieldMap[cfg.contrl];

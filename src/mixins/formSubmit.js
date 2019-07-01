@@ -42,7 +42,7 @@ export default {
                 listId: me.listId,
                 biComment: formData.biComment,
                 formKey: me.formKey,
-                formData: JSON.stringify(me.formData)
+                formData: JSON.stringify(formData)
             }
             if (relationKey) {
                 param.relationKey = relationKey;
@@ -114,8 +114,9 @@ export default {
             if(fieldCfgHash){
                 for(fieldCode in values){
                     value = values[fieldCode];
-                    if(value && value.dataSheet){ //grid or bom
-                        root[fieldCode] = value;
+                    if(value && value.dataSet){ //grid or bom
+                        root[fieldCode] = root[fieldCode]||{};
+                        root[fieldCode].dataSet = value.dataSet;
                     } else {
                         insetValueIntoRoot(fieldCode,value);
                     }
@@ -209,14 +210,30 @@ export default {
         getValues(){
             var values = {},
                 fieldMap = this.fieldMap,
+                isGrid,
+                value,
                 fieldCode,
+                containerCode,
                 id,field;
            
+           this.disableFieldset = [];
            for(id in fieldMap){
                field = fieldMap[id];
-               if(field.submitValue){
-                 fieldCode = field.cfg.fieldCode;
-                  values[fieldCode] = field.getValue();
+               isGrid = !!field.cfg.columns;
+               
+               if(!isGrid){
+                    if(field.submitValue){  
+                        fieldCode = field.cfg.fieldCode;   
+                        value = field.getSubmitData(); 
+                        values[fieldCode] = value == null ? null : value;
+                    } 
+               } else {
+                   containerCode = field.containerCode;
+                   if(field.submitValue){
+                        values[containerCode] = field.getSubmitData();
+                   } else {
+                        this.disableFieldset.push(containerCode);
+                   }
                }
            }
     

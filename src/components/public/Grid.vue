@@ -158,7 +158,9 @@ var component = {
     form.fieldMap[id] = this;
     this.name = name;
     this.form = form;
-    this.dao = dao; //执行公式用;
+    this.submitValue = fieldSet.cfg.submitValue;
+    this.containerCode = fieldSet.cfg.name;
+    this.dao = dao;//执行公式用;
     this.initDataSource(cfg);
     this.initDefaultValueCfg();
     this.initValueBindAndExpressionCfg();
