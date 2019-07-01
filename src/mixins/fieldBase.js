@@ -141,6 +141,9 @@ export default {
             var cfg = this.cfg;
             return this.values[cfg.fieldCode];
         },
+        getSubmitData:function(){
+            return this.getValue();
+        },
         getExtraFieldValue:function(valueField){//combo 会覆盖这个方法
             return this.getValue();
         },
