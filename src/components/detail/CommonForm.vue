@@ -33,7 +33,7 @@
         @click="stopOrder"
         v-if="btnInfo.isMyTask === 1 && btnInfo.actions.indexOf('stop')>=0"
       >终止</span>
-      <span class="count_btn" @click="addFormData">提交</span>
+      <span class="count_btn" @click="submit">提交</span>
     </div>
   </div>
 </template>
@@ -112,7 +112,7 @@ export default {
       });
     },
     //获取新建视图
-    async getViewIdByListId() {
+    async getNewViewIdByListId() {
       await getFormViews(this.listId).then(data => {
         for (let item of data) {
           if (item.viewType === "submit") {
@@ -242,13 +242,14 @@ export default {
       } else if (listId) {
         //没有transCode,获取新建视图。
         this.listId = listId;
-        await this.getViewIdByListId();
+        await this.getNewViewIdByListId();
       }
       //加载视图信息
       if (this.viewId) {
         await this.loadFormCfg();
         if (this.model != "new") this.showAction = true;
         if (this.model != "view") {
+          //加载数据模型
           this.loadModelCfg(this.listId);
         }
         if (transCode) {
@@ -334,30 +335,30 @@ export default {
           dataSource && this.setAccountDataSource(config, dataSource);
 
           let fieldSets = config.items,
-            singleFieldCts = [],
-            reconfig = config.reconfig;
+              singleFieldCts = [],
+              reconfig = config.reconfig||{};
 
-          if (reconfig)
-            fieldSets.forEach(item => {
-              if (item.formViewPartId) {
-                let reconfigData = reconfig[`_${item.formViewPartId}`];
+          fieldSets.forEach(item => {
+            if (item.formViewPartId) {
+              let reconfigData = reconfig[`_${item.formViewPartId}`];
 
-                if (reconfigData) {
-                  item.items =
-                    item.items &&
-                    item.items.map(cItem => {
-                      let matched = reconfigData[cItem.fieldCode] || {};
-                      return { ...cItem, ...matched };
-                    });
-                  if (reconfigData._prop) {
-                    item = { ...item, ...reconfigData._prop };
-                  }
+              if (reconfigData) {
+                item.items =
+                  item.items &&
+                  item.items.map(cItem => {
+                    let matched = reconfigData[cItem.fieldCode] || {};
+                    return { ...cItem, ...matched };
+                  });
+                if (reconfigData._prop) {
+                  item = { ...item, ...reconfigData._prop };
                 }
               }
-              if (item.isMultiple == false && item.name) {
-                singleFieldCts.push(item.name);
-              }
-            });
+            }
+            if (item.isMultiple == false && item.name) {
+              singleFieldCts.push(item.name);
+            }
+          });
+
           this.singleFieldCts = singleFieldCts;
           this.viewInfo = data;
           this.formKey = formKey;

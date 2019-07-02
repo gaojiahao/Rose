@@ -1,32 +1,15 @@
 import {
  addBaseObject,
  saveAndStartWf,//保存并发起流程
- submitAndCalc//保存并计算
+ submitAndCalc,//保存并计算
+ updateAppData//更新数据
 } from "service/commonService";
 export default {
    methods:{
-        addFormData: function () {
-            var me = this,
-                isBaseObject = me.viewInfo.config.isBaseObject,
-                handler = this[isBaseObject?'addBaseObject':'addAppData'];
-            
-            //表单校验
-            if (!me.isValid())return;
-
-            this.$vux.confirm.show({
-                content: '确认提交?',
-                // 确定回调
-                onConfirm: () => {
-                    this.$HandleLoad.show();
-                    handler();
-                }
-            });
-        },
         addAppData(){
             var me = this,
                 formData,
                 proCode,
-                approvalData,
                 wfPara = {},
                 param,
                 isBindFlow = me.workflows.length > 0 ? true : false,
@@ -204,6 +187,25 @@ export default {
                 });
             }
         },
+        submit(){
+            var me = this,
+                oprationType = me.model == 'new' ? 'add' : 'update',
+                isBaseObject = me.viewInfo.config.isBaseObject,
+                oprationObj = isBaseObject?'BaseObject':'AppData',
+                handler = this[oprationType+oprationObj];
+            
+            //表单校验
+            if (!me.isValid())return;
+
+            this.$vux.confirm.show({
+                content: '确认提交?',
+                // 确定回调
+                onConfirm: () => {
+                    this.$HandleLoad.show();
+                    handler();
+                }
+            });
+        },
         setValue(fieldCode,value){
             this.$set(this.formData,fieldCode,value);
         },
@@ -269,7 +271,39 @@ export default {
             var cfg = field.cfg;
 
             this.fieldMap[cfg.id] = this.fields[cfg.fieldCode] = field;
+        },
+        updateAppData:function(){
+            var me = this,
+                values = me.getValues(),
+                formData = me.formatValues(values),
+                isBindFlow = me.workflows.length > 0 ? true : false,
+                //没有流程的修改有两种情况：1.草稿，编辑并进行计算updateAndCalc 2.已生效要修改:updateData
+                //有流程的修改有三种情况：1.草稿，编辑并发起流程2.驳回的，不走这个接口。3.有流程已生效的:updateData
+                oprationType = me.model == 'revise' ? 'updateData':(isBindFlow ? 'updateAndStartWf' : 'updateAndCalc'),
+                wfPara = {},
+                proCode,
+                param = {
+                    listId: me.listId,
+                    biComment: formData.biComment,
+                    formKey: me.formKey,
+                    biReferenceId: me.biReferenceId,
+                    formData: JSON.stringify(formData)
+                };
+
+            if (isBindFlow) {
+                proCode = me.workflows[0].procCode;
+                wfPara[proCode] = me.approvalData(values);
+                param.wfPara = JSON.stringify(wfPara);
+            }
+            //3.提交表单数据
+            updateAppData(oprationType,param).then((res)=>{
+                me.handlerResopnse(res);
+            }).catch(e => {
+                this.$HandleLoad.hide();
+            });
+        },
+        updateBaseObject:function(){
+            
         }
-        
    }
 }
