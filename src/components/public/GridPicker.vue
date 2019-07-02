@@ -39,16 +39,18 @@
                 <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
               </div>
               <div class="mater_main">
-                <!-- 物料名称 -->
+                <!-- 明细名称 -->
                 <div class="mater_name">{{item.inventoryName || item.invName || item.facilityName}}</div>
-                <!-- 物料基本信息 -->
+                <!-- 明细基本信息 -->
                 <div class="matter_info">
-                  <div class="matter_info_item" v-for="(fItem, fIndex) in cols" :key="fIndex">
-                    <span class="matter_info_title">{{fItem.v}}:</span>
-                    <span
-                      class="matter_info_value"
-                    >{{item[fItem.k] != null && item[fItem.k] !== "" ? item[fItem.k] : "无" }}</span>
-                  </div>
+                  <template v-for="(fItem, fIndex) in cols">
+                    <div class="matter_info_item" :key="fIndex" v-if="!fItem.h">
+                      <span class="matter_info_title">{{fItem.v}}:</span>
+                      <span
+                        class="matter_info_value"
+                      >{{item[fItem.k] != null && item[fItem.k] !== "" ? item[fItem.k] : "无" }}</span>
+                    </div>
+                  </template>
                 </div>
               </div>
             </div>
@@ -75,7 +77,7 @@ import { requestData } from "service/commonService";
 import RScroll from "plugins/scroll/RScroll";
 import MSearch from "components/search/search";
 import { constants } from "crypto";
-import { debug } from 'util';
+import { debug } from "util";
 
 export default {
   name: "GridPicker",
