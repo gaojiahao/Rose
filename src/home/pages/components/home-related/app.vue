@@ -1,5 +1,5 @@
  <template>
-   <div v-if="app.text" :class="cls" @click="$emit('app-click')">
+   <div v-if="app.text" :class="cls" @click="goList()">
         <div class="app_img">
         <img :src='app.icon' @error="getDefaultIcon(app)">
         </div>
@@ -11,7 +11,7 @@
 </template>
 <script>
 export default {
-    props:['app','cls'],
+    props:['app','cls','folder'],
     methods:{
         // 设置默认图片
         getDefaultIcon(app) {
@@ -23,6 +23,22 @@ export default {
         },
         goAppDetail(listId) {
             this.$router.push({ path: `/appDetail/${listId}` });
+        },
+        goList() {
+            var folder = this.folder,
+                app = this.app,
+                fileName = app.packagePath,
+                name = app.text,
+                listId = app.listId,
+                url = app.url||'';
+
+            if(listId == null && url.indexOf('list/') == 0){
+                listId = url.substr(5);
+            }
+            this.$router.push({
+                path: `/list/${folder}/${fileName}`,
+                query: { name, listId }
+            });
         }
     }
 }

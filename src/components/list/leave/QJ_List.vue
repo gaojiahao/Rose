@@ -65,8 +65,6 @@
   import listCommon from 'mixins/bizListCommon'
   import { dateFormat } from 'vux'
   import { accAdd, accMul } from 'plugins/calc/decimalsAdd'
-  // 映射表引入
-  import Apps from '@/home/pages/apps/bizApp/maps/Apps'
 
   export default {
     name: 'QJ_List',

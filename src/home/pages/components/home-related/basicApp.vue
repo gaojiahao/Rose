@@ -16,7 +16,7 @@
 
 <script>
 import app from './app';
-import basicMap from "homePage/maps/basic";
+import basicMap from "homePage/apps/basicApp/maps/basic";
 let swiper;
 export default {
   components:{app},
@@ -28,8 +28,19 @@ export default {
   },
   methods:{
     // 基础应用
-    goBasic(item) {
-      this.$router.push({ path: `${basicMap[item]}` });
+    goBasic(listId) {
+      var path = basicMap[listId];
+      if(path){
+        this.$router.push({ path: path });
+      } else {
+        this.$router.push({
+          path:'/list/null/null',
+          query:{
+            listId
+          }
+        });
+      }
+      
     }
   }
 }
