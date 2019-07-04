@@ -160,8 +160,13 @@ let  cfg = {
             }
          },
          initCombo(){
-            var cfg = this.cfg;
+            var cfg = this.cfg,
+                value = this.getValue();
             this.blankText = '请选择'+cfg.fieldLabel;
+            if(value != null && cfg.xtype != 'r2Combo'){
+                this.searchValue = ''+value;
+                this.$once('load',this.checkValueOnLoad)
+            }
          },
          load:function(cb){
             var store = this.store,

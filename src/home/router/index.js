@@ -57,13 +57,19 @@ export default [
   },
 
   {
-    path:'/fillform/:folder/:fileName',
+    path:'/fillform/:listId/:viewId/:transCode',
+    name:'FILLFORM',
+    component:FILLFORM,
+    meta:{ title:'编辑新内容' }
+  },
+  {
+    path:'/fillform/:listId/:viewId',
     name:'FILLFORM',
     component:FILLFORM,
     meta:{ title:'填写新内容' }
   },
   {
-    path:'/detail/:folder/:fileName',
+    path:'/detail/:listId/:viewId/:transCode',
     name:'DETAIL',
     component:DETAIL,
     meta:{ title:'订单详情', keepAlive: true}

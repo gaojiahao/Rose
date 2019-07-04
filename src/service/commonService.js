@@ -506,6 +506,12 @@ export let updateAppData = (opration,data = {}) => {
     data
   })
 }
+exports.updateBaseObject = (baseObjectKey,apiKey,data) =>{
+  return $flyio.postJSON({
+    url:['/', baseObjectKey, apiKey].join(''),
+    data:data
+  })
+}
 //归档
 export let archiveDataByTransCodes = (data ={}) => {
   return $flyio.ajax({

@@ -15,6 +15,7 @@ import {
   initWebContext
 } from "service/commonService";
 import platfrom from '@/plugins/platform'
+import { setTimeout } from 'timers';
 export default {
   data(){
     return {
@@ -49,8 +50,7 @@ export default {
   },
   created(){
     this.$loading.show();
-    let { transCode } = this.$route.query,
-        { folder, fileName } = this.$route.params;
+    let { transCode,folder,fileName } = this.$route.query;
     if (transCode){
       this.transCode = transCode;
     }
@@ -88,6 +88,10 @@ export default {
     //删除缓存的往来信息
     if (to.name === "LIST"){
       sessionStorage.removeItem('DEALERLIST_SELITEMS');
+    }else if(from.name == 'FILLFORM'){
+      setTimeout(function(){
+        fillPage.reload && fillPage.reload();
+      },0)
     }
     //离开数据保存为草稿
     if (to.name === "LIST" && keys && !this.transCode && !this.submitSuccess){
@@ -104,6 +108,7 @@ export default {
       })
       return
     }
+
     next()
 
   },

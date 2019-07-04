@@ -211,19 +211,6 @@ var component = {
     resubmit() {},
     submitNew() {},
     draft() {},
-    //新建
-    newFile() {
-      let { listId } = this.$route.query,
-          { folder, fileName } = this.$route.params;
-      
-      this.$router.push({
-        path: `/fillform/${folder}/null`,
-        query: {
-          listId,
-          name: this.name,
-        },
-      });
-    },
     copyNew() {},
     //撤销为草稿
     revokeDraft() {
@@ -452,8 +439,8 @@ var component = {
     },
     showViewModel(model) {//new||view||edit||revise
       let me = this,
-          { listId } = this.$route.query,
-          { folder, fileName } = this.$route.params;
+          { folder, fileName} = this.$route.query,
+          { listId } = this.$route.params;
      
       getFormViews(listId).then(data=>{
           var viewIdMap = {},
@@ -473,12 +460,10 @@ var component = {
           }
           if(viewId){
               me.$router.push({
-                path: '/' + wrapper +'/' + folder + '/null',
+                path: '/' + wrapper +'/' + listId + '/' + viewId +  (model == 'new' ? '': '/' +me.code),
                 query: {
-                  listId,
                   model,
-                  viewId,
-                  transCode: model == 'new' ? undefined : me.code
+                  folder: folder, fileName:fileName
                 },
               });
           } else {

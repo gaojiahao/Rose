@@ -102,8 +102,7 @@ export default {
     },
     // 初始化页面
     initPage(){
-      let { transCode } = this.$route.query,
-          { folder, fileName } = this.$route.params;
+      let { transCode,folder, fileName} = this.$route.query;
       this.hasComment = !!transCode;
       this.transCode = transCode;
       try {

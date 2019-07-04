@@ -9,7 +9,7 @@
         <r-fieldset-ct
           :cfg="fieldSets"
           :values="formData"
-          v-if="fieldSets.length"
+          v-if="loaded"
           ref="fieldsetCt"
         />
         <!-- 附件组件 -->
@@ -68,6 +68,7 @@ export default {
       listId: null,
       viewId: null,
       model: null,
+      loaded:false,
       fieldSets: [],
       formData: {},
       //经过处理的经办人信息
@@ -214,7 +215,10 @@ export default {
       }
     },
     async loadPage() {
-      let { transCode, listId, viewId, model, debug } = this.$route.query;
+      let { model, debug } = this.$route.query,
+          { listId,transCode, viewId} = this.$route.params;
+      
+      viewId = viewId == '0' ? null : viewId;
       if (debug) window.isDebug = true;
       this.$loading.show();
       /**获取视图信息**/
@@ -257,6 +261,7 @@ export default {
           //await this.workFlowInfoHandler();
         }
         this.$loading.hide();
+        this.loaded = true;
         this.initScroll();
       } else {
         this.$vux.alert.show({
@@ -433,14 +438,23 @@ export default {
       return getFromStatus(data).then(({ tableContent = [] }) => {
         this.formStatus = tableContent;
       });
+    },
+    init(){
+         this.fieldMap = {}; //id;
+         this.fields = {}; //fieldCode
+         this.wfParamFieldMap = {};
+         this.loadPage();
+         this.$emit("slideStatus", this.model);
+    },
+    reload(){
+      this.loaded = this.showAction =  false;
+      this.transCode = this.listId = this.viewId = this.model = null;
+      this.formData = {};
+      this.init();
     }
   },
   created() {
-    this.fieldMap = {}; //id;
-    this.fields = {}; //fieldCode
-    this.wfParamFieldMap = {};
-    this.loadPage();
-    this.$emit("slideStatus", this.model);
+    this.init();
   }
 };
 </script>

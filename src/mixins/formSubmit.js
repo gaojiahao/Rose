@@ -1,5 +1,6 @@
 import {
  addBaseObject,
+ updateBaseObject,
  saveAndStartWf,//保存并发起流程
  submitAndCalc,//保存并计算
  updateAppData//更新数据
@@ -8,10 +9,16 @@ export default {
    methods:{
         addAppData(){
             var me = this,
-                formData,
+                values = me.getValues(),
+                formData = me.formatValues(values),
                 proCode,
                 wfPara = {},
-                param,
+                param = {
+                    listId: me.listId,
+                    biComment: formData.biComment,
+                    formKey: me.formKey,
+                    formData: JSON.stringify(formData)
+                },
                 isBindFlow = me.workflows.length > 0 ? true : false,
                 submitHandler = isBindFlow ? saveAndStartWf : submitAndCalc,
                 values,
@@ -19,14 +26,6 @@ export default {
               //  files = uploadComp ? uploadComp.getR2Value() : null,
                 {relationKey} = me.$route.query;
 
-            values = me.getValues();
-            formData = me.formatValues(values);
-            param = {
-                listId: me.listId,
-                biComment: formData.biComment,
-                formKey: me.formKey,
-                formData: JSON.stringify(formData)
-            }
             if (relationKey) {
                 param.relationKey = relationKey;
             }
@@ -303,7 +302,34 @@ export default {
             });
         },
         updateBaseObject:function(){
-            
+            var me = this,
+                values = me.getBaseObjectValues(),
+                proCode,
+                submitParam = {
+                    listId: me.listId,
+                    formData: values,
+                    wfPara: null,
+                    biReferenceId: me.biReferenceId
+                },
+                isBindFlow = me.workflows.length > 0 ? true : false,
+                wfPara = {},
+                approvalData,
+                apiKey = '/updateAndEffective',
+                baseObjectKey = me.viewInfo.config.baseObjectKey;
+
+            if (isBindFlow) {
+                proCode = me.workflows[0].procCode;
+                approvalData = me.getApprovalData(values);
+                wfPara[proCode] = approvalData;
+                submitParam.wfPara = JSON.stringify(wfPara);
+                apiKey = '/updateAndStartWf';
+            }
+
+            updateBaseObject(baseObjectKey, apiKey,submitParam).then(function(res) {
+                me.handlerResopnse(res);
+            }).catch(e => {
+                me.$HandleLoad.hide();
+            });
         }
    }
 }
