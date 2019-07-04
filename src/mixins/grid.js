@@ -8,240 +8,55 @@ import {
 export default {
     data() {
         return {
-            isEdit:false,
-            selection:[]
+            isEdit: false,
+            selection: []
         };
     },
-    methods:{
-        addRecords:function(selection){
-            var value = this.getValue()||[],
-                record, 
-                row,i=0,l = selection.length;
-        
-            for(i;i<l;i++){
-              row = selection[i];
-              record = this.createRecord(row);
-              value.push(record.data);
+    methods: {
+        addRecords: function (selection) {
+            var value = this.getValue() || [],
+                record,
+                row, i = 0, l = selection.length;
+
+            for (i; i < l; i++) {
+                row = selection[i];
+                record = this.createRecord(row);
+                value.push(record.data);
             }
             this.setValue(value);
         },
-        createRecord:function(row){
-             var me = this,
-                 data = {},
-                 record = new Record(data,me),
-                 editorFieldCode,
-                 dataSourceBind = this.dataSourceBind;
-                
-             this.setDefaultValue(record);
-             if(dataSourceBind){
-               editorFieldCode = dataSourceBind.k;
-               data[editorFieldCode] = row[dataSourceBind.v];
-               this.setValueBindValue(record,editorFieldCode,row);
-             }
-             me.executeExpression(record,editorFieldCode);
-             return record;
-        },
-        checkAll(){
-           // 如果已全部选中 则清除所有选中状态
-            if (this.selection.length === this.values.length) {
-                this.selection = [];
-            }else{
-                this.selection = this.values.map((item, index) => index);
-            }
-           
-        },
-        doDelete:function(){
-            this.$vux.confirm.show({
-                content: '确认删除?',
-                // 确定回调
-                onConfirm:()=>{
-                    var selection = this.selection,
-                        rowIndex,
-                        newValues = [];
-
-                    this.values.forEach((row,rowIndex)=>{
-                        if(selection.indexOf(rowIndex) == -1){
-                            newValues.push(row);
-                        }
-                    })
-                    this.setValue(newValues);
-                    this.isEdit = false;
-                }
-            });
-        },
-        doDetailEdit(data) {
-            var value = util.clone(data);
-            this.$set(this.values,this.detailRowNumer,data);
-        },
-        delClick(rowIndex){
-           var selection = this.selection, 
-               index;
-           
-           if(selection.length){
-               index = selection.indexOf(rowIndex);
-               if(index != -1){
-                   selection.splice(index,1);
-               }else{
-                   selection.push(rowIndex);
-               }
-           } else {
-               selection.push(rowIndex);
-           }
-        },
-        executeExpression(record,editorFieldCode){
+        createRecord: function (row) {
             var me = this,
-                expressionCfg = me.expressionCfg,
-                i, l,
-                num,
-                cfg,
-                dataIndex,
-                changeFieldCodes = record.getChanges(),
-                getNumber = function (fieldCode) {
-                    var form = me.form;
-                    return Number(form.getValues()[fieldCode]);
-                },
-                loanDay = function (qty, date) {
-                    return util.dateAdd((new Date(date)), util.DAY, 0 - Number(qty));
-                };
-    
-            
-            if (expressionCfg) for (i = 0, l = expressionCfg.length; i < l; i++) {
-                cfg = expressionCfg[i];
-                dataIndex = cfg.col.fieldCode;
-                if (editorFieldCode == dataIndex || dataIndex in changeFieldCodes) continue; //当前编辑字段，不重新计算。
-                if (cfg.type == 'calc') {
-                    cfg = CalcToCmd(cfg);
-                }
-                if (cfg.type == 'cmd') {
-                    try {
-                        num = util.round(util.correctFloat(eval(cfg.cmd)), cfg.col.decimalPrecision);
-                        num = (Number.isNaN(num) || (num === Infinity)) ? 0 : num;
-                        record.set(dataIndex, convertDataType(cfg.col.editorType, num));
-                    } catch (ex) {
-                        console.warn(ex);
-                    }
-                } else if (cfg.type == 'fn') {
-                    num = cfg.fn.call(me, record, editorFieldCode);
-                    if (num != null && !isNaN(num) && cfg.col.decimalPrecision != null) num = util.round(num, cfg.col.decimalPrecision);
-                    if (num != null) record.set(dataIndex, convertDataType(cfg.col.editorType, num));
-                }
+                data = {},
+                record = new Record(data, me),
+                editorFieldCode,
+                dataSourceBind = this.dataSourceBind;
+
+            this.setDefaultValue(record);
+            if (dataSourceBind) {
+                editorFieldCode = dataSourceBind.k;
+                data[editorFieldCode] = row[dataSourceBind.v];
+                this.setValueBindValue(record, editorFieldCode, row);
             }
-
-            function CalcToCmd(cfg) {
-                var changeItems = record.getChanges(),
-                    v1,
-                    v2;
-    
-                if (cfg.v1 in changeItems || cfg.v2 in changeItems) {
-                    v1 = record.get(cfg.v1);
-                    v2 = record.get(cfg.v2);
-                    v1 = v1 == +v1 ? v1 : 0;
-                    v2 = v2 == +v2 ? v2 : 0;
-                    //设置计算结果
-                    if (v2 != 0 || cfg.symbol != '/') {
-                        return {
-                            type: 'cmd',
-                            cmd: v1 + cfg.symbol + v2,
-                            col: cfg.col
-                        };
-                    }
-                }
-                return cfg;
-            }
+            me.executeExpression(record, editorFieldCode);
+            return record;
         },
-        getSubmitData:function(){
-            var values = this.getValue(),
-                data = {dataSet:[]},
-                columns = this.cfg.columns,
-                submitFieldCodes =  columns.filter(function (c) {
-                    return c.submitValue;
-                }).map(function(c){ return c.fieldCode }),
-                newValue = data.dataSet,
-                key,
-                value,
-                newRow;
-
-            values.map(function(row){
-                newRow = {};
-                util.each(submitFieldCodes,function(key){
-                    value = row[key];
-                    if(typeof value == 'undefined'){
-                        newRow[key] = null;
-                    }else if(typeof value != 'object'){
-                        newRow[key] = row[key];
-                    }
-                });
-                newValue.push(newRow);
-            })
-
-            return data;
-        },
-        getComponentByCfg:function(cfg){
-           if(cfg.contrl){
-               return this.form.fieldMap[cfg.contrl];
-           }
-        },
-        getValueByConfig(cfg){
-            var value,
-                cmp;
-
-            if(cfg.type == 'formData'){
-                cmp = this.getComponentByCfg(cfg.data);
-                if(cmp) value = cmp.getExtraFieldValue(cfg.data.valueField);
-            }else if(cfg.type == 'contextData'){
-                value = getValuesByExp(cfg.data);
-            } else if(cfg.type == 'staticData'){
-                value = cfg.data[0];
-            }
-            return value;
-        },
-        /**
-         * 处理重复项参数关联，当一个记录中的参数字段变化时，
-         * 清空数据源用到该字段做参数的字段。
-         * @author xinghua.shi
-         */
-        handleParamChange: function (record) {
+        setValueBindValue(record, editorFieldCode, selection) {
             var me = this,
-                paramColumns = me.paramColumns,
+                //疑惑
                 valuebind = me.valueBindCfg,
-                editorDataIndexs,
-                editorDataIndex,
-                changeDataIndex,
-                l,
-                i,
-                changes,
-                loopfn = function (changeDataIndex) {
-                    if (changeDataIndex in paramColumns) {
-                        editorDataIndexs = paramColumns[changeDataIndex];//用该列做参数的编辑器列的"dataIndex数组"
-                        for (i = 0, l = editorDataIndexs.length; i < l; i++) {
-                            editorDataIndex = editorDataIndexs[i];
-                            if (editorDataIndex in changes) continue;//如果编辑器所在列的值已经发生变化，则不再做清空操作。
-                            if (record.get(editorDataIndex) != null) {
-                                record.set(editorDataIndex, undefined);
-                                //同时清空“值绑定”到该编辑器的列
-                                if (valuebind && editorDataIndex in valuebind) {
-                                    cfgArr = valuebind[editorDataIndex];
-                                    Ext.each(cfgArr, function (cfg) {
-                                        if(record.get(cfg.dataIndex) != null){
-                                            record.set(cfg.dataIndex,undefined);
-                                            loopfn(cfg.dataIndex);
-                                        }
-                                        
-                                    })
-                                }    
-                                loopfn(editorDataIndex);
-                            }
-                        }
-                    }
-                };
+                cfgArr;
 
-            if (!paramColumns) return;
-            changes = record.getChanges();
-            for (changeDataIndex in changes) {
-                loopfn(changeDataIndex);
+            //疑惑
+            if (valuebind && editorFieldCode in valuebind) {
+                cfgArr = valuebind[editorFieldCode];
+                me.handlerValueBind(record, selection, editorFieldCode, cfgArr);
+            } else if (me.cfg.dataIndexMap) {
+                //适配AccountGrid
+                me.handlerValueBindByIndexMap(record, selection, me.cfg.dataIndexMap);
             }
         },
-        handlerValueBind:function(record,selection,editorFieldCode,cfgArr){
+        handlerValueBind: function (record, selection, editorFieldCode, cfgArr) {
             var extra = {};
 
             extra[editorFieldCode + '.extraData'] = util.clone(selection);
@@ -252,86 +67,17 @@ export default {
 
                 try {
                     value = util.isArray(valueField) ? util.getValueByNs(extra, valueField) : eval('extra' + valueField);
-                    record.set(targetFieldCode,convertDataType(cfg.editorType, value));
+                    record.set(targetFieldCode, convertDataType(cfg.editorType, value));
                 } catch (ex) {
                     console.warn(ex);
                 }
             });
         },
-        handleOutParamChange: function (bindCmp, column) {
-            var me = this,
-                values = me.getValues(),
-                dataIndex = column.fieldCode;
-
-            if (bindCmp.changeEventSource == 'setVal') return;
-            if (column.selectionModel == 'SINGLE') {
-                //dataIndex
-                if(values)values.forEach(function (rec) {
-                    me.$set(rec,dataIndex, undefined);
-                });
-            } else {
-                me.setValue([]);
+        handlerValueBindByIndexMap: function (record, selection, map) {
+            var extra = util.clone(selection);
+            for (let k in map) {
+                record.set(k, extra[map[k]]);
             }
-        },
-        isChecked(rowIndex){
-            return this.selection.indexOf(rowIndex) != -1;
-        },
-        isCheckAll(){
-           return this.values && this.values.length == this.selection.length;
-        },
-        isValid:function(){
-            var me = this,
-                value = me.getValue();
-
-            if(value == null || value.length == 0){
-                me.$vux.alert.show({
-                    content: '请选择' + (me.listTitle||'物料')
-                });
-                return false;
-            }
-            return me.validateData(value,me.cfg.columns);
-        },
-        initDefaultValueCfg: function () {
-            var me = this,
-                cfg = me.cfg,
-                form = me.form,
-                gridId = cfg.id,
-                cfgArr = [],
-                columns = cfg.columns;
-            //如果grid里面的控件引用的表单里面其他的控件，当表单里面其他的控件发生变化时，需要更新grid里面的值
-            columns.forEach(function (c) {
-                var cfg,
-                    cmp,
-                    cmpId;
-
-                if (c.defaultValue) {
-                    try {
-                        cfg = util.isString(c.defaultValue) ? JSON.parse(c.defaultValue) : c.defaultValue;
-                    } catch (e) {
-                        return;
-                    }
-
-                    if (cfg && cfg.type == 'formData') {
-                        cmp = me.getComponentByCfg(cfg.data);
-                        cmpId = cmp.cfg.id;
-
-                        if (cmp && cmpId != gridId) {
-                            form.$on('value-change-' + cmpId,function (cmp, e) {
-                                var value = '';
-                                if (cmp == null || cmp.changeEventSource == 'setVal') return;
-                                value = cmp.getExtraFieldValue(cfg.data.valueField);
-                                me.resetDefaultValue(c.fieldCode,value);
-                            });
-                            cfgArr.push(c);
-                        }
-                    } else {
-                        cfgArr.push(c);
-                    }
-
-                }
-
-            });
-            me.defaultValueCfgArr = cfgArr;
         },
         initValueBindAndExpressionCfg: function () {
             var me = this,
@@ -352,16 +98,17 @@ export default {
                     dsDataIndex,
                     dsArr;
 
-                if ( !util.isEmpty(ds)) {
+                if (!util.isEmpty(ds)) {
                     dsArr = util.isArray(ds) ? ds : [ds];
                     dsArr.forEach(function (ds) {
-                        if (ds.type === 'formData' && ds.data.contrl === me.cfg.id) {
+                        if ((ds.type === 'formData' && ds.data.contrl === me.cfg.id)) {
                             dsDataIndex = ds.data.dataIndex;
                             cfg = {
                                 valueField: ds.data.valueField,
                                 editorType: column.editorType,
                                 fieldCode: fieldCode
                             };
+                            //TODO：AccountGrid是利用字段进行映射的，不是通过Column进行bind的
                             if (dsDataIndex) {
                                 if (valueBindCfg[dsDataIndex]) {
                                     valueBindCfg[dsDataIndex].push(cfg);
@@ -459,6 +206,281 @@ export default {
                 }
             }
         },
+        checkAll() {
+            // 如果已全部选中 则清除所有选中状态
+            if (this.selection.length === this.values.length) {
+                this.selection = [];
+            } else {
+                this.selection = this.values.map((item, index) => index);
+            }
+
+        },
+        doDelete: function () {
+            this.$vux.confirm.show({
+                content: '确认删除?',
+                // 确定回调
+                onConfirm: () => {
+                    var selection = this.selection,
+                        rowIndex,
+                        newValues = [];
+
+                    this.values.forEach((row, rowIndex) => {
+                        if (selection.indexOf(rowIndex) == -1) {
+                            newValues.push(row);
+                        }
+                    })
+                    this.setValue(newValues);
+                    this.isEdit = false;
+                }
+            });
+        },
+        doDetailEdit(data) {
+            var value = util.clone(data);
+            this.$set(this.values, this.detailRowNumer, data);
+        },
+        delClick(rowIndex) {
+            var selection = this.selection,
+                index;
+
+            if (selection.length) {
+                index = selection.indexOf(rowIndex);
+                if (index != -1) {
+                    selection.splice(index, 1);
+                } else {
+                    selection.push(rowIndex);
+                }
+            } else {
+                selection.push(rowIndex);
+            }
+        },
+        executeExpression(record, editorFieldCode) {
+            var me = this,
+                expressionCfg = me.expressionCfg,
+                i, l,
+                num,
+                cfg,
+                dataIndex,
+                changeFieldCodes = record.getChanges(),
+                getNumber = function (fieldCode) {
+                    var form = me.form;
+                    return Number(form.getValues()[fieldCode]);
+                },
+                loanDay = function (qty, date) {
+                    return util.dateAdd((new Date(date)), util.DAY, 0 - Number(qty));
+                };
+
+
+            if (expressionCfg) for (i = 0, l = expressionCfg.length; i < l; i++) {
+                cfg = expressionCfg[i];
+                dataIndex = cfg.col.fieldCode;
+                if (editorFieldCode == dataIndex || dataIndex in changeFieldCodes) continue; //当前编辑字段，不重新计算。
+                if (cfg.type == 'calc') {
+                    cfg = CalcToCmd(cfg);
+                }
+                if (cfg.type == 'cmd') {
+                    try {
+                        num = util.round(util.correctFloat(eval(cfg.cmd)), cfg.col.decimalPrecision);
+                        num = (Number.isNaN(num) || (num === Infinity)) ? 0 : num;
+                        record.set(dataIndex, convertDataType(cfg.col.editorType, num));
+                    } catch (ex) {
+                        console.warn(ex);
+                    }
+                } else if (cfg.type == 'fn') {
+                    num = cfg.fn.call(me, record, editorFieldCode);
+                    if (num != null && !isNaN(num) && cfg.col.decimalPrecision != null) num = util.round(num, cfg.col.decimalPrecision);
+                    if (num != null) record.set(dataIndex, convertDataType(cfg.col.editorType, num));
+                }
+            }
+
+            function CalcToCmd(cfg) {
+                var changeItems = record.getChanges(),
+                    v1,
+                    v2;
+
+                if (cfg.v1 in changeItems || cfg.v2 in changeItems) {
+                    v1 = record.get(cfg.v1);
+                    v2 = record.get(cfg.v2);
+                    v1 = v1 == +v1 ? v1 : 0;
+                    v2 = v2 == +v2 ? v2 : 0;
+                    //设置计算结果
+                    if (v2 != 0 || cfg.symbol != '/') {
+                        return {
+                            type: 'cmd',
+                            cmd: v1 + cfg.symbol + v2,
+                            col: cfg.col
+                        };
+                    }
+                }
+                return cfg;
+            }
+        },
+        getSubmitData: function () {
+            var values = this.getValue(),
+                data = { dataSet: [] },
+                columns = this.cfg.columns,
+                submitFieldCodes = columns.filter(function (c) {
+                    return c.submitValue;
+                }).map(function (c) { return c.fieldCode }),
+                newValue = data.dataSet,
+                key,
+                value,
+                newRow;
+
+            values.map(function (row) {
+                newRow = {};
+                util.each(submitFieldCodes, function (key) {
+                    value = row[key];
+                    if (typeof value == 'undefined') {
+                        newRow[key] = null;
+                    } else if (typeof value != 'object') {
+                        newRow[key] = row[key];
+                    }
+                });
+                newValue.push(newRow);
+            })
+
+            return data;
+        },
+        getComponentByCfg: function (cfg) {
+            if (cfg.contrl) {
+                return this.form.fieldMap[cfg.contrl];
+            }
+        },
+        getValueByConfig(cfg) {
+            var value,
+                cmp;
+
+            if (cfg.type == 'formData') {
+                cmp = this.getComponentByCfg(cfg.data);
+                if (cmp) value = cmp.getExtraFieldValue(cfg.data.valueField);
+            } else if (cfg.type == 'contextData') {
+                value = getValuesByExp(cfg.data);
+            } else if (cfg.type == 'staticData') {
+                value = cfg.data[0];
+            }
+            return value;
+        },
+        /**
+         * 处理重复项参数关联，当一个记录中的参数字段变化时，
+         * 清空数据源用到该字段做参数的字段。
+         * @author xinghua.shi
+         */
+        handleParamChange: function (record) {
+            var me = this,
+                paramColumns = me.paramColumns,
+                valuebind = me.valueBindCfg,
+                editorDataIndexs,
+                editorDataIndex,
+                changeDataIndex,
+                l,
+                i,
+                changes,
+                loopfn = function (changeDataIndex) {
+                    if (changeDataIndex in paramColumns) {
+                        editorDataIndexs = paramColumns[changeDataIndex];//用该列做参数的编辑器列的"dataIndex数组"
+                        for (i = 0, l = editorDataIndexs.length; i < l; i++) {
+                            editorDataIndex = editorDataIndexs[i];
+                            if (editorDataIndex in changes) continue;//如果编辑器所在列的值已经发生变化，则不再做清空操作。
+                            if (record.get(editorDataIndex) != null) {
+                                record.set(editorDataIndex, undefined);
+                                //同时清空“值绑定”到该编辑器的列
+                                if (valuebind && editorDataIndex in valuebind) {
+                                    cfgArr = valuebind[editorDataIndex];
+                                    Ext.each(cfgArr, function (cfg) {
+                                        if (record.get(cfg.dataIndex) != null) {
+                                            record.set(cfg.dataIndex, undefined);
+                                            loopfn(cfg.dataIndex);
+                                        }
+
+                                    })
+                                }
+                                loopfn(editorDataIndex);
+                            }
+                        }
+                    }
+                };
+
+            if (!paramColumns) return;
+            changes = record.getChanges();
+            for (changeDataIndex in changes) {
+                loopfn(changeDataIndex);
+            }
+        },
+        handleOutParamChange: function (bindCmp, column) {
+            var me = this,
+                values = me.getValues(),
+                dataIndex = column.fieldCode;
+
+            if (bindCmp.changeEventSource == 'setVal') return;
+            if (column.selectionModel == 'SINGLE') {
+                //dataIndex
+                if (values) values.forEach(function (rec) {
+                    me.$set(rec, dataIndex, undefined);
+                });
+            } else {
+                me.setValue([]);
+            }
+        },
+        isChecked(rowIndex) {
+            return this.selection.indexOf(rowIndex) != -1;
+        },
+        isCheckAll() {
+            return this.values && this.values.length == this.selection.length;
+        },
+        isValid: function () {
+            var me = this,
+                value = me.getValue();
+
+            if (value == null || value.length == 0) {
+                me.$vux.alert.show({
+                    content: '请选择' + (me.listTitle || '物料')
+                });
+                return false;
+            }
+            return me.validateData(value, me.cfg.columns);
+        },
+        initDefaultValueCfg: function () {
+            var me = this,
+                cfg = me.cfg,
+                form = me.form,
+                gridId = cfg.id,
+                cfgArr = [],
+                columns = cfg.columns;
+            //如果grid里面的控件引用的表单里面其他的控件，当表单里面其他的控件发生变化时，需要更新grid里面的值
+            columns.forEach(function (c) {
+                var cfg,
+                    cmp,
+                    cmpId;
+
+                if (c.defaultValue) {
+                    try {
+                        cfg = util.isString(c.defaultValue) ? JSON.parse(c.defaultValue) : c.defaultValue;
+                    } catch (e) {
+                        return;
+                    }
+
+                    if (cfg && cfg.type == 'formData') {
+                        cmp = me.getComponentByCfg(cfg.data);
+                        cmpId = cmp.cfg.id;
+
+                        if (cmp && cmpId != gridId) {
+                            form.$on('value-change-' + cmpId, function (cmp, e) {
+                                var value = '';
+                                if (cmp == null || cmp.changeEventSource == 'setVal') return;
+                                value = cmp.getExtraFieldValue(cfg.data.valueField);
+                                me.resetDefaultValue(c.fieldCode, value);
+                            });
+                            cfgArr.push(c);
+                        }
+                    } else {
+                        cfgArr.push(c);
+                    }
+
+                }
+
+            });
+            me.defaultValueCfgArr = cfgArr;
+        },
         initEditorParamsCfg: function () {
             var me = this,
                 cfg = me.cfg,
@@ -512,42 +534,32 @@ export default {
                 me.paramColumns = paramColumns;
             }
         },
-        resetDefaultValue(fieldCode,value){
+        resetDefaultValue(fieldCode, value) {
             var me = this,
                 values = me.getValue();
 
-            if(values)values.forEach(function (row) {
-                me.$set(row,fieldCode, value);
+            if (values) values.forEach(function (row) {
+                me.$set(row, fieldCode, value);
                 //me.handleParamChange(row);//处理数据变化
             });
         },
-        setDefaultValue(record){
+        setDefaultValue(record) {
             var me = this,
                 cols = me.defaultValueCfgArr,
                 cfg,
                 value;
-               
+
             cols.forEach(function (c) {
-                 cfg = util.isString(c.defaultValue) ? JSON.parse(c.defaultValue) : c.defaultValue;
-                 value = me.getValueByConfig(cfg);
-                 record.set(c.fieldCode,convertDataType(c.editorType, value));
+                cfg = util.isString(c.defaultValue) ? JSON.parse(c.defaultValue) : c.defaultValue;
+                value = me.getValueByConfig(cfg);
+                record.set(c.fieldCode, convertDataType(c.editorType, value));
             });
         },
-        setValueBindValue(record,editorFieldCode,selection){
-            var me = this,
-                valuebind = me.valueBindCfg,
-                cfgArr;
-
-            if (valuebind && editorFieldCode in valuebind) {
-                cfgArr = valuebind[editorFieldCode];
-                me.handlerValueBind(record,selection,editorFieldCode,cfgArr);
-            }   
-        },
-        toggleEditStatus(){
+        toggleEditStatus() {
             this.isEdit = !this.isEdit;
             this.selection = [];
         },
-        validateData:function(value,columns){
+        validateData: function (value, columns) {
             var me = this,
                 columnHash = {},
                 disallowBlankCols = [],
@@ -583,7 +595,7 @@ export default {
                         return Date((record.data[col.fieldCode]).replace(/-/g, '/')).getTime();
                     }
                 };
-    
+
             (function (columns) {
                 var i,
                     l = columns.length,
@@ -607,11 +619,11 @@ export default {
                     }
                 }
             })(columns);
-    
-            util.each(value,function (row, index) {
-                var record = new Record(row,me);
 
-                util.each(disallowBlankCols,function (col) {
+            util.each(value, function (row, index) {
+                var record = new Record(row, me);
+
+                util.each(disallowBlankCols, function (col) {
                     if (util.isEmpty(row[col.fieldCode])) {
                         errorMsgArr.push('重复项第【' + (index + 1) + '】项的【' + col.text + '】未填写!');
                         validResult = false;
@@ -633,7 +645,7 @@ export default {
 
                 if (validResult) {
                     util.each(numberVerifyCols, function (col) {
-                        var i,l,conditions,
+                        var i, l, conditions,
                             key,
                             numberVerify = col.numberVerify;
 
@@ -654,7 +666,7 @@ export default {
                                     return false;
                                 }
                             }
-                           
+
                         } else {
                             errorMsgArr.push('【' + nowColmn + '】未配置校验关联列');
                             validResult = false;
@@ -665,7 +677,7 @@ export default {
                     return false;
                 }
             });
-            if (errorMsgArr.length)me.$vux.alert.show({
+            if (errorMsgArr.length) me.$vux.alert.show({
                 content: errorMsgArr.join('</br>')
             });
             return validResult;
