@@ -10,6 +10,7 @@
     </div>
 </template>
 <script>
+import basicMap from "homePage/apps/basicApp/maps/basic";
 export default {
     props:['app','cls','folder'],
     methods:{
@@ -25,20 +26,26 @@ export default {
             this.$router.push({ path: `/appDetail/${listId}` });
         },
         goList() {
-            var folder = this.folder,
+            var folder = this.folder||null,
                 app = this.app,
                 fileName = app.packagePath,
                 name = app.text,
                 listId = app.listId,
-                url = app.url||'';
+                url = app.url||'',
+                path;
 
             if(listId == null && url.indexOf('list/') == 0){
                 listId = url.substr(5);
             }
-            this.$router.push({
-                path: `/list/${folder}/${fileName}`,
-                query: { name, listId }
-            });
+            path = basicMap[listId];
+            if(path){
+                this.$router.push({ path: path });
+            } else{
+                this.$router.push({
+                    path: `/list/${folder}/${fileName}`,
+                    query: { name, listId }
+                });
+            }
         }
     }
 }

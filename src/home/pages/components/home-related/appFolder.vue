@@ -5,7 +5,7 @@
         <p>{{item.name}}</p>
       </div>
       <div class="app-list">
-        <app
+        <appMenu
           :app="app"
           cls="indval_app"
           :folder="item.folder"
@@ -25,7 +25,7 @@
             <span>{{app.childName}}</span>
           </div>
           <div class="child_apps_list">
-            <app
+            <appMenu
               :app="child"
               cls="child_apps"
               :folder="item.folder"
@@ -40,9 +40,9 @@
   </div>
 </template>
 <script>
-import app from "./app";
+import appMenu from "./appMenu";
 export default {
-  components: { app },
+  components: { appMenu },
   props: {
     item: Object
   },

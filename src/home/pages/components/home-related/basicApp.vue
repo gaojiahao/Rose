@@ -5,8 +5,7 @@
           <p>基础对象</p>
         </div>
         <div class="app-list">
-          <app :app="app" cls="indval_app"
-              @app-click="goBasic(app.listId)"
+          <appMenu :app="app" cls="indval_app"
               v-for='(app, index) of BasicApps'
               :key='index'/>
         </div>
@@ -15,32 +14,15 @@
 </template>
 
 <script>
-import app from './app';
-import basicMap from "homePage/apps/basicApp/maps/basic";
+import appMenu from './appMenu';
+
 let swiper;
 export default {
-  components:{app},
+  components:{appMenu},
   props: {
     BasicApps: {
       type : Array,
       require: true
-    }
-  },
-  methods:{
-    // 基础应用
-    goBasic(listId) {
-      var path = basicMap[listId];
-      if(path){
-        this.$router.push({ path: path });
-      } else {
-        this.$router.push({
-          path:'/list/null/null',
-          query:{
-            listId
-          }
-        });
-      }
-      
     }
   }
 }
