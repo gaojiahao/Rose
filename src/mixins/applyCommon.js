@@ -1007,7 +1007,8 @@ export default {
     }
   },
   created() {
-    let { name, listId, transCode, isModify = false, relationKey } = this.$route.query;
+    let { name, transCode, isModify = false, relationKey } = this.$route.query,
+        {listId} = this.$route.params;
     
     register(); // 注册wx-js-sdk
     
