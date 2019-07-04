@@ -175,13 +175,14 @@ export default {
                 }
             });
             function judgePage(){
-                let {name} = me.$route.query;
-                let {folder} = me.$route.params;
+                let {name,folder,fileName} = me.$route.query;
                 me.$router.replace({
-                    path: `/detail/${folder}/null`,
+                    path: `/detail/${me.listId}/0`,
                     query: {
-                        listId:me.listId,
-                        transCode: me.transCode
+                        folder,
+                        name,
+                        fileName,
+                        transCode:me.transCode
                     }
                 });
             }

@@ -215,8 +215,8 @@ export default {
       }
     },
     async loadPage() {
-      let { model, debug } = this.$route.query,
-          { listId,transCode, viewId} = this.$route.params;
+      let { model, debug,transCode} = this.$route.query,
+          { listId, viewId} = this.$route.params;
       
       viewId = viewId == '0' ? null : viewId;
       if (debug) window.isDebug = true;
@@ -283,7 +283,7 @@ export default {
         ({ formData = {}, attachment = [], biReferenceId }) => {
           this.handlerFormData(formData);
           this.attachment = attachment;
-          this.biReferenceId = biReferenceId;
+          this.biReferenceId = formData.biReferenceId;
         }
       );
     },

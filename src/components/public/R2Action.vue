@@ -459,11 +459,12 @@ var component = {
             viewId = viewIdMap[viewType];
           }
           if(viewId){
-              me.$router.push({
-                path: '/' + wrapper +'/' + listId + '/' + viewId +  (model == 'new' ? '': '/' +me.code),
+              me.$router.replace({
+                path: '/' + wrapper +'/' + listId + '/' + viewId ,
                 query: {
                   model,
-                  folder: folder, fileName:fileName
+                  folder: folder, fileName:fileName,
+                  transCode:me.code
                 },
               });
           } else {

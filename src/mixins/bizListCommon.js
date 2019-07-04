@@ -91,18 +91,19 @@ export default {
           if (tableContent.length > 0) {
             let { isMyTask, nodeName } = tableContent[0];
             if (isMyTask === 1 && nodeName === '重新提交') {
-              path = `/fillform/${listId}/0/${transCode}`;
+              path = `/fillform/${listId}/0`;
             } else {
-              path = `/detail/${listId}/0/${transCode}`;
+              path = `/detail/${listId}/0`;
             }
           } else {
-            path = `/detail/${listId}/0/${transCode}`;
+            path = `/detail/${listId}/0`;
           }
           this.$router.push({
             path,
             query: { name, 
-              folder:folder||undefined,
-              fileName:fileName||undefined
+              folder,
+              fileName,
+              transCode
             }
           })
         };

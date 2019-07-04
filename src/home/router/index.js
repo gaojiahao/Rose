@@ -55,13 +55,6 @@ export default [
     component:LIST,
     meta:{ title:'列表', keepAlive: true},
   },
-
-  {
-    path:'/fillform/:listId/:viewId/:transCode',
-    name:'FILLFORM',
-    component:FILLFORM,
-    meta:{ title:'编辑新内容' }
-  },
   {
     path:'/fillform/:listId/:viewId',
     name:'FILLFORM',
@@ -69,7 +62,7 @@ export default [
     meta:{ title:'填写新内容' }
   },
   {
-    path:'/detail/:listId/:viewId/:transCode',
+    path:'/detail/:listId/:viewId',
     name:'DETAIL',
     component:DETAIL,
     meta:{ title:'订单详情', keepAlive: true}
