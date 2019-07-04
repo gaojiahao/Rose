@@ -184,8 +184,10 @@ export default {
       this.showPop = false;
       let { folder, file } = this.idInfo;
       this.$router.push({
-        path: `/detail/${folder}/${fileName}`,
+        path: `/detail/0/${fileName}`,
         query: {
+          fileName:file,
+          folder,
           name: item.transTypeName,
           transCode: item.transCode,
           fromRalted: true

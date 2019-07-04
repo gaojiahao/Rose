@@ -180,13 +180,13 @@ export default {
     },
     // 新增
     goEdit() {
-      let { name, listId } = this.$route.query,
-          { folder, fileName } = this.$route.params;
+      let { name,folder, fileName } = this.$route.query,
+          { listId } = this.$route.params;
       this.$router.push({
-        path: `/fillform/${folder}/${fileName}`,
+        path: `/fillform/${listId}/${fileName}`,
         query: {
           name, 
-          listId,
+          folder, fileName,
           jobType: this.activeName
         }
       })

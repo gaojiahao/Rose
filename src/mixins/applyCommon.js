@@ -873,12 +873,14 @@ export default {
         this.$router.go(-1);
       }
       else {
-        let {name} = this.$route.query;
-        let {folder, fileName} = this.$route.params;
+        let {name,folder, fileName} = this.$route.query;
+        let {listId} = this.$route.params;
         this.$router.replace({
-          path: `/detail/${folder}/${fileName}`,
+          path: `/detail/${listId}/0`,
           query: {
             name,
+            folder,
+            fileName,
             transCode: this.transCode
           }
         });

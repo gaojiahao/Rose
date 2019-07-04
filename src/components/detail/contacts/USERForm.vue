@@ -82,11 +82,11 @@ export default {
     },
     // 编辑
     goEdit(){
-      let { name } = this.$route.query,
-          { folder, fileName } = this.$route.params;
+      let { name,folder, fileName } = this.$route.query;
+      
       this.$router.push({
         path: `/fillForm/${folder}/${fileName}`,
-        query: { name, colId: this.colId }
+        query: { name, colId: this.colId,folder, fileName }
       })
     },
     // 获取应用详情

@@ -105,7 +105,7 @@
       goDetail(item, rItem) {
         let {parentNav, listId} = item;
         this.$router.push({
-          path: `/detail/${parentNav}/${listId}`,
+          path: `/detail/${listId}/0`,
           query: {
             name: rItem.transTypeName,
             transCode: rItem.transCode,
@@ -118,10 +118,12 @@
         let {uniqueId} = this.$route.query;
         let {parentNav: folder, file, transName} = item;
         this.$router.push({
-          path: `/fillform/${folder}/${fileName}`,
+          path: `/fillform/0/${fileName}`,
           query: {
             name: transName,
             uniqueId,
+            folder,
+            fileName,
             relationKey: this.transCode
           }
         })

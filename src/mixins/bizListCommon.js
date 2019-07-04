@@ -124,11 +124,11 @@ export default {
       })
     },
     goEdit() {
-      let { name, listId } = this.$route.query,
-        { folder, fileName } = this.$route.params;
+      let { name, folder, fileName } = this.$route.query,
+        { listId } = this.$route.params;
       this.$router.push({
-        path: `/fillform/${folder}/${fileName}`,
-        query: { name, listId }
+        path: `/fillform/${listId}/0`,
+        query: { name,folder, fileName }
       })
     },
     // 重置列表条件
@@ -464,8 +464,8 @@ export default {
      * 此处是判断——跳转至详情页还是提交页面
      * */
     this.$loading.show();
-    let { folder, fileName } = this.$route.params,
-      { name, listId, transCode } = this.$route.query;
+    let { listId} = this.$route.params,
+      { name, folder, fileName, transCode } = this.$route.query;
     // 当路由当中包含transCode
     if (transCode) {
       isMyflow({ transCode }).then(({ tableContent }) => {
@@ -473,15 +473,15 @@ export default {
         if (tableContent.length > 0) {
           let { isMyTask, nodeName } = tableContent[0];
           if (isMyTask === 1 && nodeName === '重新提交') {
-            path = `/fillform/${folder}/${fileName}`;
+            path = `/fillform/${listId}/0`;
           } else {
-            path = `/detail/${folder}/${fileName}`;
+            path = `/detail/${listId}/0`;
           }
         } else {
-          path = `/detail/${folder}/${fileName}`;
+          path = `/detail/${listId}/0`;
         }
         this.$router.replace({
-          path, query: { name, listId, transCode }
+          path, query: { name, folder,fileName,transCode }
         })
       })
     }

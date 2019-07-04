@@ -319,7 +319,11 @@ export default {
         name: listName,
         transCode: RELATION_KEY
       };
-      let path = `/detail/${folder}/${packagePath}`;
+      let path = `/detail/0/${packagePath}`;
+      query = {
+        folder,
+        fileName:packagePath,
+      };
       let { status } = this.tabList[this.activeIndex];
       // 判断是否在滑动swiper中
       if (this.isMovingSwiper) {

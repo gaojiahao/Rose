@@ -106,7 +106,7 @@ export default {
     // 前往详情
     goDetail(item, index) {
       let {folder, fileName} = this.$route.params;
-      this.RouterChange(item, index, `/detail/${folder}/${fileName}`);
+      this.RouterChange(item, index, /${fileName}`);
     },
     getList(noReset = false) {
       let filter = [];

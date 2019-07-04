@@ -339,14 +339,14 @@ var component = {
             value: value,
             callback: () => {
               // 当某个节点审批为自己 如果用户点击了拒绝 则需要判断情况 决定是否回到重新提交页面
-              let { folder, fileName } = this.$route.params,
-                  { name, listId, transCode } = this.$route.query;
+              let {  listId} = this.$route.params,
+                  { name,folder, fileName, transCode } = this.$route.query;
               isMyflow({transCode: this.code}).then(({tableContent}) => {
                 let path = '';
                 if (tableContent.length > 0) {
                   let {isMyTask, nodeName} = tableContent[0];
                   if (isMyTask === 1 && nodeName === '重新提交') {
-                    path = `/fillform/${folder}/${fileName}`;
+                    path = `/fillform/listId/0`;
                   } else {
                     this.$router.go(0);
                   }
@@ -354,7 +354,7 @@ var component = {
                   this.$router.go(0);
                 }
                 this.$router.replace({
-                  path, query: {name, listId, transCode}
+                  path, query: {name, folder,fileName,transCode}
                 })
               })
             }
@@ -388,9 +388,9 @@ var component = {
               let { listId } = this.$route.query,
                   { folder, fileName } = this.$route.params;
               this.$router.replace({
-                path: `/fillform/${folder}/${fileName}`,
+                path: `/fillform/${listId}/0`,
                 query: {
-                  listId,
+                  fileName,folder,
                   name: this.name,
                   transCode: this.code,
                 },

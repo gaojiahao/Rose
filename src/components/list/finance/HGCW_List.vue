@@ -32,11 +32,12 @@ export default {
   },
   methods: {
     goDetail(item) {
-      let { folder, fileName } = this.$route.params;
+      let { folder, fileName } = this.$route.query;
       this.$router.push({
-        path: `/detail/${folder}/${fileName}`,
+        path: `/detail/0/${fileName}`,
         query: {
-          code: item.code,
+          trancode: item.code,
+          folder, fileName,
           name: item.title
         }
       })
