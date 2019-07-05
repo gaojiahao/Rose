@@ -58,7 +58,7 @@ import commonService from "service/commonService";
 import tokenService from "service/tokenService";
 import { getMsgList } from "service/msgService";
 // 映射表引入
-import basicMap from "./maps/basic";
+import basicMap from "./apps/basicApp/maps/basic";
 // 组件引入
 import busApp from "homePage/components/home-related/busAppList"; // 业务应用
 import basicApp from "homePage/components/home-related/basicApp"; // 基础应用
@@ -157,7 +157,7 @@ export default {
           //item 应用
           for (let item of val.children) {
             // 基础对象应用需 根据映射表 单独处理
-            if (basicMap[item.listId]) {
+            if (val.text == '基础对象' || basicMap[item.listId]) {
               // 图片处理
               item.icon = item.icon ? `${item.icon}` : "";
               this.BasicApps.push(item);

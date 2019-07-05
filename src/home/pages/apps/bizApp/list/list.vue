@@ -67,7 +67,7 @@ export default {
     });
   },
   beforeRouteEnter(to, from, next) {
-    let { name, transCode } = to.query;
+    let { name = "", transCode } = to.query;
     // 合规财务报表的title不需要重定义
     if (name.includes("合规")) {
       to.meta.title = name;

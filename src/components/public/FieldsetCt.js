@@ -69,6 +69,9 @@ let RFieldsetCt = Vue.component('RFieldsetCt', {
 
             cfg.cName = text;
         }
+    },
+    created(){
+        this.form = this.$parent;
     }
 });
 export default RFieldsetCt

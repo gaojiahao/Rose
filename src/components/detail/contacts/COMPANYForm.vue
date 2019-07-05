@@ -103,11 +103,11 @@ export default {
     },
     // 编辑
     goEdit(){
-      let { name, groupId } = this.$route.query,
-          { folder, fileName } = this.$route.params;
+      let { name, groupId,folder, fileName} = this.$route.query,
+          {  } = this.$route.params;
       this.$router.push({
-        path: `/fillForm/${folder}/${fileName}`,
-        query: { name, groupId }
+        path: `/fillForm/0/0`,
+        query: { name, groupId,folder, fileName }
       })
     }
   },

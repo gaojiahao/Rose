@@ -5,55 +5,47 @@
         <p>{{item.name}}</p>
       </div>
       <div class="app-list">
-        <app
+        <appMenu
           :app="app"
           cls="indval_app"
-          @app-click="goList(item.folder, app.packagePath, app.text, app.listId )"
+          :folder="item.folder"
           v-for="(app, index) of item.appList"
           :key="index"
         />
       </div>
-      <div class="child-list">
+      <div class="child-list" >
+        <template  v-for="(app, index) of item.appList">
         <div
           v-if="app.childName"
           class="each_child"
-          v-for="(app, index) of item.appList"
-          :key="index"
+         :key="index"
         >
           <div class="child_name">
             <span class="circle"></span>
             <span>{{app.childName}}</span>
           </div>
           <div class="child_apps_list">
-            <app
+            <appMenu
               :app="child"
               cls="child_apps"
-              @app-click="goList(item.folder, child.packagePath, child.text, child.listId)"
+              :folder="item.folder"
               v-for="(child, inx) of app.childList"
               :key="inx"
             />
           </div>
         </div>
-      </div>
+        </template>
+      </div><!-- app-list-->
     </div>
   </div>
 </template>
 <script>
-import app from "./app";
+import appMenu from "./appMenu";
 export default {
-  components: { app },
+  components: { appMenu },
   props: {
     item: Object
   },
-  methods: {
-    // 前往列表
-    goList(folder, fileName, name, listId) {
-      this.$router.push({
-        path: `/list/${folder}/${fileName}`,
-        query: { name, listId }
-      });
-    }
-  }
 };
 </script>
 <style lang='scss'>

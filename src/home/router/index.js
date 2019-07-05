@@ -56,15 +56,14 @@ export default [
     component:LIST,
     meta:{ title:'列表', keepAlive: true},
   },
-
   {
-    path:'/fillform/:folder/:fileName',
+    path:'/fillform/:listId/:viewId',
     name:'FILLFORM',
     component:FILLFORM,
     meta:{ title:'填写新内容' }
   },
   {
-    path:'/detail/:folder/:fileName',
+    path:'/detail/:listId/:viewId',
     name:'DETAIL',
     component:DETAIL,
     meta:{ title:'订单详情', keepAlive: true}

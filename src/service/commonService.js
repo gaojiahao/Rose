@@ -498,6 +498,20 @@ export let undoDataByTransCodes = (data = {}) => {
     data
   })
 }
+export let updateAppData = (opration,data = {}) => {
+  return $flyio.ajax({
+    type: 'POST',
+    contentType: 'application/x-www-form-urlencoded',
+    url: '/H_roleplay-si/formAPI/' + opration,
+    data
+  })
+}
+exports.updateBaseObject = (baseObjectKey,apiKey,data) =>{
+  return $flyio.postJSON({
+    url:['/', baseObjectKey, apiKey].join(''),
+    data:data
+  })
+}
 //归档
 export let archiveDataByTransCodes = (data ={}) => {
   return $flyio.ajax({

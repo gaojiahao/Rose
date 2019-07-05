@@ -1,34 +1,24 @@
 import {
  addBaseObject,
+ updateBaseObject,
  saveAndStartWf,//保存并发起流程
- submitAndCalc//保存并计算
+ submitAndCalc,//保存并计算
+ updateAppData//更新数据
 } from "service/commonService";
 export default {
    methods:{
-        addFormData: function () {
-            var me = this,
-                isBaseObject = me.viewInfo.config.isBaseObject,
-                handler = this[isBaseObject?'addBaseObject':'addAppData'];
-            
-            //表单校验
-            if (!me.isValid())return;
-
-            this.$vux.confirm.show({
-                content: '确认提交?',
-                // 确定回调
-                onConfirm: () => {
-                    this.$HandleLoad.show();
-                    handler();
-                }
-            });
-        },
         addAppData(){
             var me = this,
-                formData,
+                values = me.getValues(),
+                formData = me.formatValues(values),
                 proCode,
-                approvalData,
                 wfPara = {},
-                param,
+                param = {
+                    listId: me.listId,
+                    biComment: formData.biComment,
+                    formKey: me.formKey,
+                    formData: JSON.stringify(formData)
+                },
                 isBindFlow = me.workflows.length > 0 ? true : false,
                 submitHandler = isBindFlow ? saveAndStartWf : submitAndCalc,
                 values,
@@ -36,14 +26,6 @@ export default {
               //  files = uploadComp ? uploadComp.getR2Value() : null,
                 {relationKey} = me.$route.query;
 
-            values = me.getValues();
-            formData = me.formatValues(values);
-            param = {
-                listId: me.listId,
-                biComment: formData.biComment,
-                formKey: me.formKey,
-                formData: JSON.stringify(me.formData)
-            }
             if (relationKey) {
                 param.relationKey = relationKey;
             }
@@ -114,8 +96,9 @@ export default {
             if(fieldCfgHash){
                 for(fieldCode in values){
                     value = values[fieldCode];
-                    if(value && value.dataSheet){ //grid or bom
-                        root[fieldCode] = value;
+                    if(value && value.dataSet){ //grid or bom
+                        root[fieldCode] = root[fieldCode]||{};
+                        root[fieldCode].dataSet = value.dataSet;
                     } else {
                         insetValueIntoRoot(fieldCode,value);
                     }
@@ -192,16 +175,36 @@ export default {
                 }
             });
             function judgePage(){
-                let {name} = me.$route.query;
-                let {folder} = me.$route.params;
+                let {name,folder,fileName} = me.$route.query;
                 me.$router.replace({
-                    path: `/detail/${folder}/null`,
+                    path: `/detail/${me.listId}/0`,
                     query: {
-                        listId:me.listId,
-                        transCode: me.transCode
+                        folder,
+                        name,
+                        fileName,
+                        transCode:me.transCode
                     }
                 });
             }
+        },
+        submit(){
+            var me = this,
+                oprationType = me.model == 'new' ? 'add' : 'update',
+                isBaseObject = me.viewInfo.config.isBaseObject,
+                oprationObj = isBaseObject?'BaseObject':'AppData',
+                handler = this[oprationType+oprationObj];
+            
+            //表单校验
+            if (!me.isValid())return;
+
+            this.$vux.confirm.show({
+                content: '确认提交?',
+                // 确定回调
+                onConfirm: () => {
+                    this.$HandleLoad.show();
+                    handler();
+                }
+            });
         },
         setValue(fieldCode,value){
             this.$set(this.formData,fieldCode,value);
@@ -209,14 +212,30 @@ export default {
         getValues(){
             var values = {},
                 fieldMap = this.fieldMap,
+                isGrid,
+                value,
                 fieldCode,
+                containerCode,
                 id,field;
            
+           this.disableFieldset = [];
            for(id in fieldMap){
                field = fieldMap[id];
-               if(field.submitValue){
-                 fieldCode = field.cfg.fieldCode;
-                  values[fieldCode] = field.getValue();
+               isGrid = !!field.cfg.columns;
+               
+               if(!isGrid){
+                    if(field.submitValue){  
+                        fieldCode = field.cfg.fieldCode;   
+                        value = field.getSubmitData(); 
+                        values[fieldCode] = value == null ? null : value;
+                    } 
+               } else {
+                   containerCode = field.containerCode;
+                   if(field.submitValue){
+                        values[containerCode] = field.getSubmitData();
+                   } else {
+                        this.disableFieldset.push(containerCode);
+                   }
                }
            }
     
@@ -252,7 +271,66 @@ export default {
             var cfg = field.cfg;
 
             this.fieldMap[cfg.id] = this.fields[cfg.fieldCode] = field;
+        },
+        updateAppData:function(){
+            var me = this,
+                values = me.getValues(),
+                formData = me.formatValues(values),
+                isBindFlow = me.workflows.length > 0 ? true : false,
+                //没有流程的修改有两种情况：1.草稿，编辑并进行计算updateAndCalc 2.已生效要修改:updateData
+                //有流程的修改有三种情况：1.草稿，编辑并发起流程2.驳回的，不走这个接口。3.有流程已生效的:updateData
+                oprationType = me.model == 'revise' ? 'updateData':(isBindFlow ? 'updateAndStartWf' : 'updateAndCalc'),
+                wfPara = {},
+                proCode,
+                param = {
+                    listId: me.listId,
+                    biComment: formData.biComment,
+                    formKey: me.formKey,
+                    biReferenceId: me.biReferenceId,
+                    formData: JSON.stringify(formData)
+                };
+
+            if (isBindFlow) {
+                proCode = me.workflows[0].procCode;
+                wfPara[proCode] = me.approvalData(values);
+                param.wfPara = JSON.stringify(wfPara);
+            }
+            //3.提交表单数据
+            updateAppData(oprationType,param).then((res)=>{
+                me.handlerResopnse(res);
+            }).catch(e => {
+                this.$HandleLoad.hide();
+            });
+        },
+        updateBaseObject:function(){
+            var me = this,
+                values = me.getBaseObjectValues(),
+                proCode,
+                submitParam = {
+                    listId: me.listId,
+                    formData: values,
+                    wfPara: null,
+                    biReferenceId: me.biReferenceId
+                },
+                isBindFlow = me.workflows.length > 0 ? true : false,
+                wfPara = {},
+                approvalData,
+                apiKey = '/updateAndEffective',
+                baseObjectKey = me.viewInfo.config.baseObjectKey;
+
+            if (isBindFlow) {
+                proCode = me.workflows[0].procCode;
+                approvalData = me.getApprovalData(values);
+                wfPara[proCode] = approvalData;
+                submitParam.wfPara = JSON.stringify(wfPara);
+                apiKey = '/updateAndStartWf';
+            }
+
+            updateBaseObject(baseObjectKey, apiKey,submitParam).then(function(res) {
+                me.handlerResopnse(res);
+            }).catch(e => {
+                me.$HandleLoad.hide();
+            });
         }
-        
    }
 }

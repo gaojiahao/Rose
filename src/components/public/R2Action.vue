@@ -5,10 +5,10 @@
       <span class="btn_item resubmit" @click="resubmit" v-if="actions.includes('resubmit')">提交</span>
       <span class="btn_item submitNew" @click="submitNew" v-if="actions.includes('submitNew')">提交并新建</span>
       <span class="btn_item draft" @click="draft" v-if="actions.includes('draft')">保存草稿</span>
-      <span class="btn_item newFile" @click="newFile" v-if="actions.includes('newFile')">新建</span>
+      <span class="btn_item newFile" @click="showViewModel('new')" v-if="actions.includes('newFile')">新建</span>
       <!-- <span class="btn_item copyNew" @click="copyNew" v-if="actions.includes('copyNew')">复制并新建</span> -->
-      <span class="btn_item edit" @click="edit" v-if="actions.includes('edit')">编辑</span>
-      <span class="btn_item update" @click="update" v-if="actions.includes('update')">修改</span>
+      <span class="btn_item edit" @click="showViewModel('edit')" v-if="actions.includes('edit')">编辑</span>
+      <span class="btn_item update" @click="showViewModel('revise')" v-if="actions.includes('revise')">修改</span>
       <span class="btn_item revokeDraft" @click="revokeDraft" v-if="actions.includes('revokeDraft')">撤销为草稿</span>
       <span class="btn_item file" @click="file" v-if="actions.includes('file')">归档</span>
       <span class="btn_item reduction" @click="reduction" v-if="actions.includes('reduction')">还原</span>
@@ -45,7 +45,15 @@
 
 <script>
 import Vue from 'vue';
-import { commitTask, transferTask, WebContext, undoDataByTransCodes, archiveDataByTransCodes, switchToEffectiveByTransCodes } from 'service/commonService'
+import { 
+  commitTask, 
+  transferTask, 
+  WebContext, 
+  undoDataByTransCodes, 
+  archiveDataByTransCodes, 
+  switchToEffectiveByTransCodes,
+  getFormViews,
+} from 'service/commonService'
 import { isMyflow, getListById } from 'service/detailService'
 import { Confirm } from 'vux'
 import PopUserList from 'components/Popup/PopUserList'
@@ -141,18 +149,20 @@ var component = {
           model = me.model,
           listInfo = me.listInfo,
           action = me.appAction,
-          showAddModel = ['resubmit','submitNew'];  //新增模式按钮
+          addModelActions = ['resubmit','submitNew'];  //新增模式按钮
 
       actions = actions.split(',');
 
       me.taskId = taskId;
       me.isMyTask = isMyTask === 1;
+
       if(me.code=='') {
-        me.actions = showAddModel;
+        me.actions = addModelActions;
         if(model ==='revise') 
           return;
         me.pushActions('draft');
       }
+
       if ((action.add && model != 'marking') || model == 'view') {
         me.addNewFormBtn();
         me.addCopyAndNewBtn();
@@ -161,7 +171,7 @@ var component = {
         me.pushActions('edit')  
       }
       if (statusText === '已生效' && model != 'revise' && action.update) {
-        me.pushActions('update')
+        me.pushActions('revise')
       }
       if (statusText === '已生效') {
         me.pushActions('revokeDraft');
@@ -201,19 +211,6 @@ var component = {
     resubmit() {},
     submitNew() {},
     draft() {},
-    //新建
-    newFile() {
-      let { listId } = this.$route.query,
-          { folder, fileName } = this.$route.params;
-      
-      this.$router.push({
-        path: `/fillform/${folder}/null`,
-        query: {
-          listId,
-          name: this.name,
-        },
-      });
-    },
     copyNew() {},
     //撤销为草稿
     revokeDraft() {
@@ -315,20 +312,6 @@ var component = {
       });   
     },
     storage() {},
-    //编辑
-    edit() {
-      let { listId } = this.$route.query,
-          { folder, fileName } = this.$route.params;
-
-      this.$router.push({
-        path: `/fillform/${folder}/null`,
-        query: {
-          listId,
-          name: this.name,
-          transCode: this.code,
-        },
-      });
-    },
     //终止
     stop() {
       this.$vux.confirm.prompt('', {
@@ -356,14 +339,14 @@ var component = {
             value: value,
             callback: () => {
               // 当某个节点审批为自己 如果用户点击了拒绝 则需要判断情况 决定是否回到重新提交页面
-              let { folder, fileName } = this.$route.params,
-                  { name, listId, transCode } = this.$route.query;
+              let {  listId} = this.$route.params,
+                  { name,folder, fileName, transCode } = this.$route.query;
               isMyflow({transCode: this.code}).then(({tableContent}) => {
                 let path = '';
                 if (tableContent.length > 0) {
                   let {isMyTask, nodeName} = tableContent[0];
                   if (isMyTask === 1 && nodeName === '重新提交') {
-                    path = `/fillform/${folder}/${fileName}`;
+                    path = `/fillform/listId/0`;
                   } else {
                     this.$router.go(0);
                   }
@@ -371,7 +354,7 @@ var component = {
                   this.$router.go(0);
                 }
                 this.$router.replace({
-                  path, query: {name, listId, transCode}
+                  path, query: {name, folder,fileName,transCode}
                 })
               })
             }
@@ -405,9 +388,9 @@ var component = {
               let { listId } = this.$route.query,
                   { folder, fileName } = this.$route.params;
               this.$router.replace({
-                path: `/fillform/${folder}/${fileName}`,
+                path: `/fillform/${listId}/0`,
                 query: {
-                  listId,
+                  fileName,folder,
                   name: this.name,
                   transCode: this.code,
                 },
@@ -454,18 +437,39 @@ var component = {
         this.$HandleLoad.hide();
       });
     },
-    // 修改
-    update() {
-      let { listId } = this.$route.query,
-          { folder, fileName } = this.$route.params;
+    showViewModel(model) {//new||view||edit||revise
+      let me = this,
+          { folder, fileName} = this.$route.query,
+          { listId } = this.$route.params;
+     
+      getFormViews(listId).then(data=>{
+          var viewIdMap = {},
+              wrapper = model == 'view' ? 'detail':'fillform',
+              viewType,
+              query,
+              viewId;
 
-      this.$router.push({
-        path: `/fillform/${folder}/null`,
-        query: {
-          listId,
-          name: this.name,
-          transCode: this.code,
-        },
+          data.map(function(v){
+              viewIdMap[v.viewType] = v.uniqueId;
+          });
+          if(model == 'edit'){
+            viewId = viewIdMap['revise'] || viewIdMap['submit'];
+          } else {
+            viewType  = model == 'new' ? 'submit' : model;
+            viewId = viewIdMap[viewType];
+          }
+          if(viewId){
+              me.$router.replace({
+                path: '/' + wrapper +'/' + listId + '/' + viewId ,
+                query: {
+                  model,
+                  folder: folder, fileName:fileName,
+                  transCode:me.code
+                },
+              });
+          } else {
+
+          }
       });
     },
     // 转办

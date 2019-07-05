@@ -53,7 +53,7 @@
 <script>
 import Vue from "vue";
 var component = {
-  props: ["cfg", "values", "form"],
+  props: ["cfg", "values"],
   data() {
     return {
       styleType: 0, //0||1，折叠||展开
@@ -67,12 +67,18 @@ var component = {
   },
   created: function() {
      this.name = this.cfg.name;
+     this.form = this.$parent.form;
+     this.buildItems();
   },
-  watch: {
-    cfg: {
-      handler(cfg) {
-        // *部分应用* 物料详情在审批节点可以重新录入数据 此处进行数据分割
-        let { items = [], columns = [] } = cfg,
+  methods: {
+    toggleStyleType() {
+      this.styleType = this.styleType ? 0 : 1;
+      this.$emit("change-styleType", this.styleType);
+    },
+    buildItems(){
+       // *部分应用* 物料详情在审批节点可以重新录入数据 此处进行数据分割
+        let cfg = this.cfg,
+            { items = [], columns = [] } = cfg,
             formModel = this.form.model;
 
         let readOnlyParts = [],
@@ -98,15 +104,7 @@ var component = {
             this.hasToogleBar = !this.styleType;
         }
 
-        this.editParts = items; // 可编辑部分   
-      },
-      immediate: true
-    }
-  },
-  methods: {
-    toggleStyleType() {
-      this.styleType = this.styleType ? 0 : 1;
-      this.$emit("change-styleType", this.styleType);
+        this.editParts = items; // 可编辑部分 
     },
     getValues(){
       var items = this.$children,

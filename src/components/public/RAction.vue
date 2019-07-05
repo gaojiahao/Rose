@@ -94,14 +94,14 @@ export default {
             value: value,
             callback: () => {
               // 当某个节点审批为自己 如果用户点击了拒绝 则需要判断情况 决定是否回到重新提交页面
-              let { folder, fileName } = this.$route.params,
-                  { name, listId, transCode } = this.$route.query;
+              let {listId} = this.$route.params,
+                  { name, folder, fileName , transCode } = this.$route.query;
               isMyflow({transCode: this.code}).then(({tableContent}) => {
                 let path = '';
                 if (tableContent.length > 0) {
                   let {isMyTask, nodeName} = tableContent[0];
                   if (isMyTask === 1 && nodeName === '重新提交') {
-                    path = `/fillform/${folder}/${fileName}`;
+                    path = `/fillform/${listId}/0`;
                   } else {
                     this.$router.go(0);
                   }
@@ -109,7 +109,7 @@ export default {
                   this.$router.go(0);
                 }
                 this.$router.replace({
-                  path, query: {name, listId, transCode}
+                  path, query: {name, folder, fileName,transCode}
                 })
               })
             }
@@ -143,12 +143,13 @@ export default {
             successMsg: '撤回成功',
             value,
             callback: () => {
-              let { listId } = this.$route.query,
-                  { folder, fileName } = this.$route.params;
+              let { folder, fileName } = this.$route.query,
+                  { listId } = this.$route.params;
               this.$router.replace({
-                path: `/fillform/${folder}/${fileName}`,
+                path: `/fillform/${listId}/0`,
                 query: {
-                  listId,
+                  folder,
+                  fileName,
                   name: this.name,
                   transCode: this.code,
                 },
@@ -197,16 +198,17 @@ export default {
     },
     // 修改
     update() {
-      let { listId } = this.$route.query,
-          { folder, fileName } = this.$route.params;
+      let { folder, fileName } = this.$route.query,
+          { listId } = this.$route.params;
       this.$vux.confirm.show({
         title: '温馨提示',
         content: '即将进入修改页面，确认吗？',
         onConfirm: () => {
           this.$router.replace({
-            path: `/fillform/${folder}/${fileName}`,
+            path: `/fillform/${listId}/0`,
             query: {
-              listId,
+              fileName,
+              folder,
               name: this.name,
               transCode: this.code,
               isModify: true

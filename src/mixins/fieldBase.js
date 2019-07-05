@@ -30,7 +30,7 @@ export default {
                 form.wfParamFieldMap[cfg.wfParam] = fieldCode;
             }
             this.initVisible();
-            this.initDefaultValue(cfg.defaultValue);
+            if(form.model == 'new')this.initDefaultValue(cfg.defaultValue);
             this.initDataSource(cfg.dataSource);
         },
         initOption(cfg){
@@ -85,10 +85,6 @@ export default {
             }
             if(value != null){
                this.setValue(value);
-               if(this.isCombo()){
-                   this.searchValue = value;
-                   this.$once('load',this.checkValueOnLoad)
-               }
             }
         },
         initValueBind(valueBind){
@@ -140,6 +136,9 @@ export default {
         getValue:function(){
             var cfg = this.cfg;
             return this.values[cfg.fieldCode];
+        },
+        getSubmitData:function(){
+            return this.getValue();
         },
         getExtraFieldValue:function(valueField){//combo 会覆盖这个方法
             return this.getValue();

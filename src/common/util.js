@@ -68,6 +68,9 @@ export default{
     clone:function(a){
         return JSON.parse(JSON.stringify(a));
     },
+    correctFloat:function(n) {
+        return parseFloat(n.toPrecision(14));
+    },
     getValueByNs: function (obj, ns) {
         var nsArr = this.isArray(ns) ? ns : ns.split('.'),
             l = nsArr.length,
