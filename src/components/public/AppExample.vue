@@ -1,5 +1,5 @@
 <template>
-    <div class='app_example_fill_wrapper'>
+    <div class='app_example_fill_wrapper' v-show="showTab">
         <div class="fieldSets">
             <template v-for="(values, index) in listValues">
                 <div class="r-fieldset">
@@ -35,7 +35,16 @@ import { getList } from 'service/listService'
 
 var component = {
     props: {
-
+        showTab : {
+            type: Boolean,
+            default: false,
+        },
+        tabData: {
+            type: Object,
+            default() {
+                return {}
+            }
+        }
     },
     components: {
     },
@@ -49,11 +58,21 @@ var component = {
             listValues: [],
         }
     },
+    watch: {
+        tabData: {
+            handler(val) {
+                this.transCode = val.content;
+                this.appListId = val.listId;
+                if(this.transCode) {
+                    this.getListView();
+                }
+            }
+        }    
+    },
     methods: {
         getListView() {
             let data = {
                 listId : this.appListId
-
             };
             return getListView(data).then(data => {
                 for(let i=0; i<data.length; i++) {
@@ -84,12 +103,12 @@ var component = {
             });
         },
         getList() {
-            let transCode = this.$route.query.transCode;
+            let transCode = this.transCode;
             let arr = [];
             for(let item of transCode) {
                 arr.push(item.transCode);
             }
-            arr = arr.join(',')
+            arr = arr.join(',');
             let filter = [{
                 property: 'transCode',
                 operator: 'in',
@@ -103,6 +122,7 @@ var component = {
                 this.listValues = data.tableContent;
             });    
         },
+        //跳转到相应的交易号详情
         goDetail(transCode) {
             if(transCode) {
                 this.$router.push({
@@ -117,12 +137,10 @@ var component = {
         }
     },
     created () {
-        this.appListId = this.$route.query.listId;
-        this.transCode = this.$route.query.transCode;
-        this.getListView();
+        
     }
 }
-export default Vue.component('AppExampleForm',component);
+export default Vue.component('AppExample',component);
 </script>
 <style lang='scss'>
 #app {
