@@ -88,7 +88,7 @@ export default {
     //删除缓存的往来信息
     if (to.name === "LIST"){
       sessionStorage.removeItem('DEALERLIST_SELITEMS');
-    }else if(from.name == 'FILLFORM'){
+    }else if(to.name == 'FILLFORM'){
       setTimeout(function(){
         fillPage.reload && fillPage.reload();
       },0)

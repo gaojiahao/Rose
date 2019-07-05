@@ -464,7 +464,7 @@ var component = {
                 query: {
                   model,
                   folder: folder, fileName:fileName,
-                  transCode:me.code
+                  transCode: model == 'new' ? undefined : me.code
                 },
               });
           } else {

@@ -108,6 +108,12 @@ var component = {
     },
     initDataSource(cfg) {
       var me = this;
+      
+      me.hasDataSource(cfg)
+        ? //适配 r2AccountGrid
+          (processDs(cfg.columns), (me.dataSource = cfg.dataSource))
+        : (me.dataSource = findDs(cfg.columns));
+
       function findDs(columns) {
         var i = 0,
           l = columns.length,
@@ -136,10 +142,6 @@ var component = {
           }
         }
       }
-      me.hasDataSource(cfg)
-        ? //适配 r2AccountGrid
-          (processDs(cfg.columns), (me.dataSource = cfg.dataSource))
-        : (me.dataSource = findDs(cfg.columns));
     },
     onShowDetail(row, rowIndex) {
       this.detail = row;
