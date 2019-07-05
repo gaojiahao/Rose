@@ -15,8 +15,6 @@ import WAREHOUSEDETAIL from '../pages/apps/basicApp/warehouse/warehouseDetail'
 import LIST from '../pages/apps/bizApp/list/list'
 import FILLFORM from '../pages/apps/bizApp/fillForm/fillForm'
 import DETAIL from '../pages/apps/bizApp/detail/detail'
-import AutoSubjectForm from '@/components/detail/AutoSubjectForm'
-import APPExampleForm from '@/components/detail/AppExampleForm'
 import WORKFLOWFULL from '../pages/apps/bizApp/detail/workFlowFull'
 import RELATED from '../pages/apps/bizApp/detail/related/related'
 import COMMENTLIST from '@/home/pages/apps/bizApp/comment/commentList'
@@ -67,18 +65,6 @@ export default [
     name:'DETAIL',
     component:DETAIL,
     meta:{ title:'订单详情', keepAlive: true}
-  },
-  {
-    path:'/detail/AutoSubjectForm',
-    name:'AutoSubjectForm',
-    component:AutoSubjectForm,
-    meta:{ title:'自动分录' }
-  },
-  {
-    path:'/detail/AppExampleForm',
-    name:'APPExampleForm',
-    component:APPExampleForm,
-    meta:{ title:'相关实例' }
   },
   {
     path:'/workFlowFull',
