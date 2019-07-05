@@ -124,7 +124,8 @@ export default {
       })
     },
     goEdit() {
-      let { name, folder, fileName,listId} = this.$route.query;
+      let { name,listId} = this.$route.query,
+      { folder, fileName } = this.$route.params;
       this.$router.push({
         path: `/fillform/${listId}/0`,
         query: { name,folder, fileName }
