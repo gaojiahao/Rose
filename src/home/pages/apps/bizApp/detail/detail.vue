@@ -8,11 +8,14 @@
           @refresh-scroll="refresh"
           @subscribeChange="setSubscribe"
           @slideStatus="slideStatus"
+          :showTab="showTab['comm']"
           ref="detailComponent">
         </component>
+        <auto-subject :showTab="showTab['subject']"></auto-subject>
+        <app-example :showTab="showTab['example']" :tabData="tabData['example']"></app-example>
       </v-touch>
     </div>
-    <slideBar :isRellyShow="isRellyShow" @swiperleft="swiperleft"></slideBar>
+    <slideBar :showSlide="showSlide" @swiperleft="swiperleft" @goTab="goTab" :appExample="appExample" :autoSubjectCount="autoSubjectCount"></slideBar>
     <div class="detail-comment-container vux-1px-t" v-if="hasComment">
       <div class="concern" @click="goConcern">
         <span class="icon icon-heart" v-if="isConcern === 0"></span>
@@ -36,12 +39,15 @@ import {
 } from "service/commonService";
 // 请求 引入
 import { isSubscribeByRelationKey, subscribeApp, unsubscribeApp, getUserList } from 'service/commentService'
+import { getAppExampleDetails,getAutoSubjectCount } from "service/detailService";
 /* 引入微信相关 */
 import {register} from 'plugins/wx'
+import { constants } from 'crypto';
 export default {
   data() {
     return {
       transCode: '',
+      listId: '',
       currentComponent: '',
       submitSuccess: false,
       detailScroll: null,
@@ -49,8 +55,18 @@ export default {
       hasComment: true, // 是否展示底部评论栏
       isConcern : 0, // 是否关注，0 未关注，1已关注
       concernCount : 0, //关注人数
-      isRellyShow:false,
+      showSlide:false,
       isShow:false,
+      showTab: {
+        'comm': true,
+        'subject': false,
+        'example': false,
+      },
+      tabData: {
+        'example': {}
+      },
+      appExample: [],
+      autoSubjectCount: 0,
     }
   },
   methods: {
@@ -102,12 +118,15 @@ export default {
     },
     // 初始化页面
     initPage(){
-      let { transCode,folder, fileName} = this.$route.query;
+      let { transCode,folder,fileName,listId} = this.$route.query;
       this.hasComment = !!transCode;
       this.transCode = transCode;
+      this.listId = listId;
       try {
         if(fileName == 'null'){
             this.currentComponent = require(`components/detail/CommonForm.vue`).default;
+            this.getAppExampleDetails();
+            this.getAutoSubjectCount();
         } else {
             this.currentComponent = require(`components/detail/${folder}/${fileName}Form.vue`).default;
         }
@@ -132,19 +151,54 @@ export default {
         });
       } 
     },
+    //关闭侧滑菜单
     swiperleft() {
-      this.isRellyShow = false;
+      this.showSlide = false;
     },
+    //打开侧滑菜单
     swiperright() {
-      this.isRellyShow = true;
+      this.showSlide = true;
     },
+    //由于视图的样式不同，导致侧滑菜单也要不同样式
     slideStatus(data) {
       if(data == 'view') {
         this.isShow = false;
       } else {
         this.isShow = true;
       }
-    }
+    },
+    //侧滑菜单切换tab
+    goTab(val) {
+      for(let item in this.showTab) {
+        if(item == val.name) {
+          this.showTab[item] = true;
+          if(val.name=='example') {
+            this.tabData[item] = val.data;
+          }
+        } else {
+          this.showTab[item] = false;
+        }
+      }
+    },
+    //获取相关实例count
+    getAppExampleDetails() {
+      let data = {
+        transCode : this.transCode,
+        listId : this.listId
+      };
+      return getAppExampleDetails(data).then(data => {
+        this.appExample = data.relevantItems;
+      });  
+    },
+    //获取自动分录count
+    getAutoSubjectCount() {
+      let data = {
+          trans_code: this.transCode,
+      };
+      return getAutoSubjectCount(data).then(data => {
+          this.autoSubjectCount = data.data.count;
+      });    
+    },
   },
   created() {
     initWebContext().then(()=>{

@@ -1,6 +1,6 @@
 <template>
   <!--通用form组件-->
-  <div class="detail_wrapper" :class="{pages:model != 'view'}">
+  <div class="detail_wrapper" :class="{pages:model != 'view'}" v-show="showTab">
     <div class="form" :class="{scrollCt:model != 'view'}" ref="fill">
       <div class="fill_wrapper">
         <!-- 工作流组件 -->
@@ -61,6 +61,12 @@ import {
   getBasicInfo
 } from "service/commonService";
 export default {
+  props: {
+    showTab: {
+      type: Boolean,
+      default: true,
+    },
+  },
   mixins: [submitMethod],
   data() {
     return {
@@ -92,7 +98,10 @@ export default {
       handler(val) {
         this.$emit("slideStatus", val);
       }
-    }
+    },
+    // '$route' (to, from) {
+    //   console.log('路由变化了')
+    // }
   },
   methods: {
     // 获取查看视图的listId

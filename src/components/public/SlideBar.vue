@@ -1,32 +1,48 @@
 <template>
-    <transition name="slide-fade">
-        <div class="side-content" v-show="show && transCode">
-            <div class="side-content-wrap">
-                <div class="box" @click="goDetail"><span><img src='../../assets/slideBar-home.png'></span><span>基本信息</span></div>
-                <!-- <div class="box" ><span><img src='../../assets/slideBar-history.png'></span><span>变更历史</span></div> -->
-                <div class="box" @click="autoSubject"><span><img src='../../assets/view-subject.png'></span><span>自动分录</span></div>
-                <!-- <div class="box"><span><img src='../../assets/mubiao.png'></span><span>执行力分析</span></div> -->
-                <template v-for="(item,index) in appExample">
-                    <div class="box" :key="index" @click="goAppExample(item)">
-                        <span><img :src=item.icon></span>
-                        <span>{{item.listName}}</span>
-                        <badge :text=item.itemCount v-if="item.itemCount"></badge>
+    <div>
+        <transition name="slide-fade">
+            <div class="side-content" v-show="show && transCode">
+                <div class="side-content-wrap">
+                    <div class="box" @click="goDetail"><span><img src='../../assets/slideBar-home.png'></span><span>基本信息</span></div>
+                    <!-- <div class="box" ><span><img src='../../assets/slideBar-history.png'></span><span>变更历史</span></div> -->
+                    <div class="box" @click="autoSubject">
+                        <span><img src='../../assets/view-subject.png'></span>
+                        <span>自动分录</span>
+                        <badge :text="autoSubjectCount" v-if="autoSubjectCount"></badge>
                     </div>
-                </template>
-            </div>     
-        </div> 
-    </transition>
+                    <!-- <div class="box"><span><img src='../../assets/mubiao.png'></span><span>执行力分析</span></div> -->
+                    <template v-for="(item,index) in appExample">
+                        <div class="box" :key="index" @click="goAppExample(item)">
+                            <span><img :src=item.icon></span>
+                            <span>{{item.listName}}</span>
+                            <badge :text=item.itemCount v-if="item.itemCount"></badge>
+                        </div>
+                    </template>
+                </div>     
+            </div> 
+        </transition>
+    </div>
 </template>
 
 <script>
 import Vue from 'vue'
 import { Badge } from 'vux'
-import { getAppExampleDetails } from "service/detailService";
+import { getAppExampleDetails,getAutoSubjectCount } from "service/detailService";
 let  component = {
     props: {
-        isRellyShow: {
+        showSlide: {
             type: Boolean,
             default: false,
+        },
+        appExample: {
+            type: Array,
+            default() {
+                return []
+            }
+        },
+        autoSubjectCount: {
+            type: Number,
+            default: 0,
         },
     },
     components: {
@@ -34,21 +50,50 @@ let  component = {
     },
     data(){
         return {
-            appExample:{},
             transCode:'',
             listId:'',
             show: false,
+            showAppExampleForm: false,
         }
 
     },
     watch: {
-        isRellyShow: {
+        showSlide: {
             handler (val) {
                 this.show = val;
             }
-        }  
+        }
     },
     methods: {
+        //切换到详情页
+        goDetail() {
+            this.$emit('swiperleft');
+            this.$emit('goTab',{'name':'comm'});
+        },
+        //切换到自动分录
+        autoSubject() {
+            this.$emit('swiperleft');
+            this.$emit('goTab',{'name':'subject'});
+        },
+        //切换到相关实例
+        goAppExample(item) {
+            if(!item.itemCount) {
+                this.$emit('swiperleft');
+                return
+            }
+            this.$emit('swiperleft');
+            this.$emit('goTab',{'name':'example','data':item});
+        },
+        //获取自动分录count
+        getAutoSubjectCount() {
+            let data = {
+                trans_code: this.transCode,
+            };
+            return getAutoSubjectCount(data).then(data => {
+                this.autoSubjectCount = data.data.count;
+            });    
+        },
+        //获取相关实例count
         getAppExampleDetails() {
             let data = {
                 transCode : this.transCode,
@@ -59,43 +104,9 @@ let  component = {
                 this.appExample = data.relevantItems;
             });  
         },
-        goDetail() {
-            this.$router.push({
-                path: '/detail/null/null',
-                query: {
-                    name: 'null',
-                    listId: this.listId,
-                    transCode: this.transCode,
-                }
-            });
-            this.$emit('swiperleft');
-        },
-        autoSubject() {
-            this.$router.push({
-                path: '/autoSubject',
-                query: {
-                    listId: this.listId,
-                    transCode: this.transCode,
-                }
-            })
-        },
-        goAppExample(item) {
-            this.$router.push({
-                path: '/detail/AppExampleForm',
-                query: {
-                    listId: item.listId,
-                    transCode: item.content,
-                }
-            });
-            this.$emit('swiperleft');
-        }
     },
     created () {
         this.transCode = this.$route.query.transCode;
-        this.listId = this.$route.query.listId;
-        if(this.transCode && this.listId) {
-            this.getAppExampleDetails();
-        }
     }
 }
 export default Vue.component('SlideBar',component);

@@ -107,5 +107,15 @@ export let updateProcessStatus = (data = {}) => {
         }
     })
 }
+//获取科目分录数量
+export let getAutoSubjectCount = (data = {}) => {
+    return $flyio.ajax({
+        url: '/corebiz-api/subject/getAutoSubjectCount',
+        data: {
+            _dc: Date.now(),
+            ...data,
+        }
+    })
+}
 
 export default {}
