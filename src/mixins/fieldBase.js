@@ -47,9 +47,10 @@ export default {
             var cfg = this.cfg,
                 fieldSet = this.$parent,
                 form = this.form,
+                hasValueBind = cfg.dataSource && cfg.dataSource.type == "formData",
                 values = this.values;
             
-            if(form.model == 'new' && values[cfg.fieldCode] == null && cfg.readOnly == true){
+            if(form.model == 'new' && values[cfg.fieldCode] == null && cfg.readOnly == true && hasValueBind && cfg.allowBlank == true){
                 this.hidden = true;
             } else if(fieldSet.styleType == 0 && cfg.readOnly == true){
                 this.hidden = true;

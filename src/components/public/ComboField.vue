@@ -69,6 +69,8 @@ let  cfg = {
 
             if(ds.type == 'remoteData'){
                this.buildRemoteStore(ds);
+            } else if(ds.type == 'staticData'){
+               this.buildStaticDataStore(ds.data);
             }
          },
          buildRemoteStore(ds){
@@ -137,6 +139,16 @@ let  cfg = {
                }
             }
             
+         },
+         buildStaticDataStore(data){
+             var listData = [];
+             data.forEach(function(text){
+                 listData.push({
+                    text:text
+                 })
+             });
+             this.listData = listData;
+             this.hasNext = false;
          },
          checkValueOnLoad:function(listData){
             var  value = this.getValue(),

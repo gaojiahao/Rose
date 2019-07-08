@@ -1,8 +1,8 @@
 <template>
 <div v-show="!hidden" class="cell each_property vux-1px-b">
     <label :class="{'required':!cfg.allowBlank}">{{cfg.fieldLabel}}</label>
-    <input type="text" v-if="cfg.readOnly == false" :value="values[cfg.fieldCode]" placeholder="请输入" @blur="onInput" />
-    <span v-else >{{values[cfg.fieldCode]||'无'}}</span>
+    <input type="number" v-if="cfg.readOnly == false" :value="values[cfg.fieldCode]" placeholder="请输入" @blur="onInput" />
+    <span v-else >{{values[cfg.fieldCode] == null ? '无' : values[cfg.fieldCode]}}</span>
 </div>
 </template>
 <script>
@@ -15,18 +15,18 @@ let cfg = {
     mixins: [fieldBase],
     props:['cfg','values'], 
     watch: {
-      num: {
-        handler(val) {
-          this.currentNum = val;
-        }
-      }
+      // num: {
+      //   handler(val) {
+      //     this.currentNum = this.unNumberComma(val);
+      //   }
+      // }
     },
     methods:{
       onInput:function(e){
         var value = e.target.value;
-        value = this.unNumberComma(value);
-        value = numberComma(value);
-        e.target.value = value;
+        // value = this.unNumberComma(value);
+        // value = numberComma(value);
+        // e.target.value = value;
         this.setValue(value);
       },
       getNum(val) {
