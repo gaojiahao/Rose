@@ -103,6 +103,16 @@ export default {
     //   console.log('路由变化了')
     // }
   },
+  computed:{ //测试公式
+    //  test(){
+    //    var order = this.formData.order,
+    //        num = 0;
+    //    if(order)order.forEach(function(row){
+    //        if(row.tdAmount)num += +row.tdAmount;
+    //    });
+    //    return num;
+    //  },
+  },
   methods: {
     // 获取查看视图的listId
     getViewIdByTransCode(transCode) {

@@ -37,175 +37,15 @@ export default {
                 editorFieldCode = dataSourceBind.k;
                 data[editorFieldCode] = row[dataSourceBind.v];
                 this.setValueBindValue(record, editorFieldCode, row);
+            } else if (me.cfg.dataIndexMap) {
+                //适配AccountGrid
+                me.handlerValueBindByIndexMap(record, row, me.cfg.dataIndexMap);
             }
             me.executeExpression(record, editorFieldCode);
             return record;
         },
-        setValueBindValue(record, editorFieldCode, selection) {
-            var me = this,
-                //疑惑
-                valuebind = me.valueBindCfg,
-                cfgArr;
-
-            //疑惑
-            if (valuebind && editorFieldCode in valuebind) {
-                cfgArr = valuebind[editorFieldCode];
-                me.handlerValueBind(record, selection, editorFieldCode, cfgArr);
-            } else if (me.cfg.dataIndexMap) {
-                //适配AccountGrid
-                me.handlerValueBindByIndexMap(record, selection, me.cfg.dataIndexMap);
-            }
-        },
-        handlerValueBind: function (record, selection, editorFieldCode, cfgArr) {
-            var extra = {};
-
-            extra[editorFieldCode + '.extraData'] = util.clone(selection);
-            cfgArr.forEach(function (cfg) {
-                var valueField = cfg.valueField,
-                    targetFieldCode = cfg.fieldCode,
-                    value;
-
-                try {
-                    value = util.isArray(valueField) ? util.getValueByNs(extra, valueField) : eval('extra' + valueField);
-                    record.set(targetFieldCode, convertDataType(cfg.editorType, value));
-                } catch (ex) {
-                    console.warn(ex);
-                }
-            });
-        },
-        handlerValueBindByIndexMap: function (record, selection, map) {
-            var extra = util.clone(selection);
-            for (let k in map) {
-                record.set(k, extra[map[k]]);
-            }
-        },
-        initValueBindAndExpressionCfg: function () {
-            var me = this,
-                cfg = me.cfg,
-                reg = /\[([\u4e00-\u9fa5]|[\w|#.])*\]|(getNumber\('\w*'\)|loanDay|max|min|,|\/|\*|\+|-|\?|>|<|:|\d|\(|\))/gi,
-                regForCalc = /^\[(\w+)\]([+-/*])\[(\w+)\]$/,
-                valueBindCfg = {},
-                expressionCfg = [],
-                columns = cfg.columns;
-
-            //xing 提交时也可以只读
-            if ((cfg.readOnly || cfg.allowEdit == false) && cfg.xtype != 'r2AutoLoadGrid') return;
-            columns.forEach(function (column) {
-                var ds = column.valueBind || column.defaultValue || column.dataSource, //除了valueBind，其他的都是在做向前兼容,
-                    expression = util.trim(column.expression),
-                    fieldCode = column.fieldCode,
-                    cfg,
-                    dsDataIndex,
-                    dsArr;
-
-                if (!util.isEmpty(ds)) {
-                    dsArr = util.isArray(ds) ? ds : [ds];
-                    dsArr.forEach(function (ds) {
-                        if ((ds.type === 'formData' && ds.data.contrl === me.cfg.id)) {
-                            dsDataIndex = ds.data.dataIndex;
-                            cfg = {
-                                valueField: ds.data.valueField,
-                                editorType: column.editorType,
-                                fieldCode: fieldCode
-                            };
-                            //TODO：AccountGrid是利用字段进行映射的，不是通过Column进行bind的
-                            if (dsDataIndex) {
-                                if (valueBindCfg[dsDataIndex]) {
-                                    valueBindCfg[dsDataIndex].push(cfg);
-                                } else {
-                                    valueBindCfg[dsDataIndex] = [cfg];
-                                }
-                            } else {
-                                console.log(column.text + '数据源设置中缺少dataIndex');
-                            }
-
-                        }
-                    })
-                }
-                if (!util.isEmpty(expression)) {
-                    expression = parseExpression(expression, column);
-                    if (expression) {
-                        expressionCfg.push(expression);
-                    }
-                }
-            });
-
-            if (!util.isObjectEmpty(valueBindCfg)) {
-                me.valueBindCfg = valueBindCfg;
-            }
-            if (expressionCfg.length) {
-                me.expressionCfg = expressionCfg;
-            }
-
-            function parseExpression(expression, col) {
-                var cmd,
-                    fn,
-                    _t,
-                    matchRs,
-                    isCalcDate;
-
-                if (expression.indexOf('logic@') > -1) {
-                    cmd = 'record.' + expression.replace('logic@', '');
-                    return {
-                        type: 'cmd',
-                        cmd: cmd,
-                        col: col
-                    }
-                } else if (expression.indexOf('function') == 0) {
-                    try {
-                        fn = eval('(' + expression + ')');
-                    } catch (e) {
-                        console.log(col.text + '计算公式', e);
-                    }
-                    if (fn && util.isFunction(fn)) {
-                        if (window.isDebug) console.log(col.text + '公式', fn);
-                        return {
-                            type: 'fn',
-                            fn: fn,
-                            col: col
-                        }
-                    }
-                } else if (regForCalc.test(expression)) {
-                    matchRs = regForCalc.exec(expression);
-                    if (window.isDebug) console.log(col.text, expression);
-                    if (matchRs[0] == expression) {
-                        return {
-                            type: 'calc',
-                            col: col,
-                            symbol: matchRs[2],
-                            v1: matchRs[1],
-                            v2: matchRs[3]
-                        };
-                    }
-                } else {
-                    isCalcDate = expression.indexOf('calcDate@') > -1,
-                        /**
-                         * isCalcDate 判断是否是日期计算 加前缀 'calcDate@'
-                         */
-                        isCalcDate && (expression = expression.replace('calcDate@', ''));
-                    _t = expression.match(reg);
-                    if (_t) {
-                        cmd = _t.map(function (o) {
-                            if (o.indexOf('[') > -1) {
-                                var start = isCalcDate ? 'new Date(' : '',
-                                    end = isCalcDate ? ')' : '';
-                                o = start + 'record.data["' + o.substring(1);
-                                o = o.replace(']', '"]') + end;
-                                return o;
-                            } else {
-                                return o;
-                            }
-                        }).join('');
-                        isCalcDate && (cmd = '(' + cmd + ') / 86400000');
-                        return {
-                            type: 'cmd',
-                            cmd: cmd,
-                            col: col
-                        }
-                    }
-                }
-            }
-        },
+        
+        
         checkAll() {
             // 如果已全部选中 则清除所有选中状态
             if (this.selection.length === this.values.length) {
@@ -408,19 +248,42 @@ export default {
         },
         handleOutParamChange: function (bindCmp, column) {
             var me = this,
-                values = me.getValues(),
+                values = me.getValue(),
                 dataIndex = column.fieldCode;
 
             if (bindCmp.changeEventSource == 'setVal') return;
-            if (column.selectionModel == 'SINGLE') {
-                //dataIndex
-                if (values) values.forEach(function (rec) {
-                    me.$set(rec, dataIndex, undefined);
-                });
-            } else {
-                me.setValue([]);
+            if (values) values.forEach(function (rec) {
+                me.$set(rec, dataIndex, undefined);
+            });
+        },
+        handlerValueBind: function (record, selection, editorFieldCode, cfgArr,gridDetail) {
+            var extra = {};
+
+            extra[editorFieldCode + '.extraData'] = util.clone(selection);
+            cfgArr.forEach(function (cfg) {
+                var valueField = cfg.valueField,
+                    targetFieldCode = cfg.fieldCode,
+                    value;
+
+                try {
+                    value = util.isArray(valueField) ? util.getValueByNs(extra, valueField) : eval('extra' + valueField);
+                    value = convertDataType(cfg.editorType, value);
+                    record.set(targetFieldCode, value);
+                    if(gridDetail){
+                        gridDetail.$emit('field-change-'+targetFieldCode,gridDetail,value);
+                    }
+                } catch (ex) {
+                    console.warn(ex);
+                }
+            });
+        },
+        handlerValueBindByIndexMap: function (record, selection, map) {
+            var extra = util.clone(selection);
+            for (let k in map) {
+                record.set(k, extra[map[k]]);
             }
         },
+        
         isChecked(rowIndex) {
             return this.selection.indexOf(rowIndex) != -1;
         },
@@ -485,53 +348,165 @@ export default {
             var me = this,
                 cfg = me.cfg,
                 editorTypes = ['r2Combo', 'r2Selector', 'r2SelectorPlus'],
-                paramColumns = {},
                 columns = cfg.columns;
 
             if (cfg.readOnly) return;
             columns.forEach(function (column) {
-                var params = {},
-                    paramKey,
+                var paramKey,
                     paramCfgMap,
                     paramCfg,
                     dataIndex,
                     contrl,
                     ds = column.dataSource;
 
-                if (column.editorType && ~editorTypes.indexOf(column.editorType) && column.editor && ds && ds.data) {
+                if (column.editorType && ~editorTypes.indexOf(column.editorType) && ds && ds.data) {
                     paramCfgMap = ds.data.params;
                     for (paramKey in paramCfgMap) {
                         paramCfg = paramCfgMap[paramKey];
                         if (paramCfg.type == 'contrl') {
-                            contrl = me.getReferenceComponent(paramCfg.value);
+                            contrl = me.getComponentByCfg(paramCfg.value);
                             if (contrl == me) {
-                                params[paramKey] = paramCfg.value.valueField;
-                                dataIndex = paramCfg.value.dataIndex;
-                                if (dataIndex) {
-                                    if (paramColumns[dataIndex]) {
-                                        paramColumns[dataIndex].push(column.dataIndex);
-                                    } else {
-                                        paramColumns[dataIndex] = [column.dataIndex];
-                                    }
-                                }
+
                             } else if (contrl != null) {
-                                me.mon(contrl, 'change', me.handleOutParamChange, me, {
-                                    args: [contrl, column]
-                                });
+                                me.form.$on("value-change-" + contrl.cfg.id,
+                                (function(contrl, column) {
+                                    return function() {
+                                      var arg = Array.prototype.slice.call(arguments);
+                                      arg.unshift(contrl, column);
+                                      me.handleOutParamChange.apply(me, arg);
+                                    };
+                                })(contrl, column));
                             }
                         }
                     }
-                    if (!util.isObjectEmpty(params)) {
-                        column.columnRalationParams = params;
+                }
+            });
+        },
+        initValueBindAndExpressionCfg: function () {
+            var me = this,
+                cfg = me.cfg,
+                reg = /\[([\u4e00-\u9fa5]|[\w|#.])*\]|(getNumber\('\w*'\)|loanDay|max|min|,|\/|\*|\+|-|\?|>|<|:|\d|\(|\))/gi,
+                regForCalc = /^\[(\w+)\]([+-/*])\[(\w+)\]$/,
+                valueBindCfg = {},
+                expressionCfg = [],
+                columns = cfg.columns;
+
+            //xing 提交时也可以只读
+            if ((cfg.readOnly || cfg.allowEdit == false) && cfg.xtype != 'r2AutoLoadGrid') return;
+            columns.forEach(function (column) {
+                var ds = column.valueBind || column.defaultValue || column.dataSource, //除了valueBind，其他的都是在做向前兼容,
+                    expression = util.trim(column.expression),
+                    fieldCode = column.fieldCode,
+                    cfg,
+                    dsDataIndex,
+                    dsArr;
+
+                if (!util.isEmpty(ds)) {
+                    dsArr = util.isArray(ds) ? ds : [ds];
+                    dsArr.forEach(function (ds) {
+                        if ((ds.type === 'formData' && ds.data.contrl === me.cfg.id)) {
+                            dsDataIndex = ds.data.dataIndex;
+                            cfg = {
+                                valueField: ds.data.valueField,
+                                editorType: column.editorType,
+                                fieldCode: fieldCode
+                            };
+                            //TODO：AccountGrid是利用字段进行映射的，不是通过Column进行bind的
+                            if (dsDataIndex) {
+                                if (valueBindCfg[dsDataIndex]) {
+                                    valueBindCfg[dsDataIndex].push(cfg);
+                                } else {
+                                    valueBindCfg[dsDataIndex] = [cfg];
+                                }
+                            } else {
+                                console.log(column.text + '数据源设置中缺少dataIndex');
+                            }
+
+                        }
+                    })
+                }
+                if (!util.isEmpty(expression)) {
+                    expression = parseExpression(expression, column);
+                    if (expression) {
+                        expressionCfg.push(expression);
                     }
                 }
             });
-            /*
-            *参数关联时，如果参数列（字段）的数据映射（dataindex)记录整体下来，
-            *当参数列的值变化时，清空当前记录（record）中使用到该字段值做为参数的字段映射对应的值。
-            */
-            if (!util.isObjectEmpty(paramColumns)) {
-                me.paramColumns = paramColumns;
+
+            if (!util.isObjectEmpty(valueBindCfg)) {
+                me.valueBindCfg = valueBindCfg;
+            }
+            if (expressionCfg.length) {
+                me.expressionCfg = expressionCfg;
+            }
+
+            function parseExpression(expression, col) {
+                var cmd,
+                    fn,
+                    _t,
+                    matchRs,
+                    isCalcDate;
+
+                if (expression.indexOf('logic@') > -1) {
+                    cmd = 'record.' + expression.replace('logic@', '');
+                    return {
+                        type: 'cmd',
+                        cmd: cmd,
+                        col: col
+                    }
+                } else if (expression.indexOf('function') == 0) {
+                    try {
+                        fn = eval('(' + expression + ')');
+                    } catch (e) {
+                        console.log(col.text + '计算公式', e);
+                    }
+                    if (fn && util.isFunction(fn)) {
+                        if (window.isDebug) console.log(col.text + '公式', fn);
+                        return {
+                            type: 'fn',
+                            fn: fn,
+                            col: col
+                        }
+                    }
+                } else if (regForCalc.test(expression)) {
+                    matchRs = regForCalc.exec(expression);
+                    if (window.isDebug) console.log(col.text, expression);
+                    if (matchRs[0] == expression) {
+                        return {
+                            type: 'calc',
+                            col: col,
+                            symbol: matchRs[2],
+                            v1: matchRs[1],
+                            v2: matchRs[3]
+                        };
+                    }
+                } else {
+                    isCalcDate = expression.indexOf('calcDate@') > -1,
+                        /**
+                         * isCalcDate 判断是否是日期计算 加前缀 'calcDate@'
+                         */
+                        isCalcDate && (expression = expression.replace('calcDate@', ''));
+                    _t = expression.match(reg);
+                    if (_t) {
+                        cmd = _t.map(function (o) {
+                            if (o.indexOf('[') > -1) {
+                                var start = isCalcDate ? 'new Date(' : '',
+                                    end = isCalcDate ? ')' : '';
+                                o = start + 'record.data["' + o.substring(1);
+                                o = o.replace(']', '"]') + end;
+                                return o;
+                            } else {
+                                return o;
+                            }
+                        }).join('');
+                        isCalcDate && (cmd = '(' + cmd + ') / 86400000');
+                        return {
+                            type: 'cmd',
+                            cmd: cmd,
+                            col: col
+                        }
+                    }
+                }
             }
         },
         resetDefaultValue(fieldCode, value) {
@@ -542,6 +517,18 @@ export default {
                 me.$set(row, fieldCode, value);
                 //me.handleParamChange(row);//处理数据变化
             });
+        },
+        setValueBindValue(record, editorFieldCode, selection) {
+            var me = this,
+                //疑惑
+                valuebind = me.valueBindCfg,
+                cfgArr;
+
+            //疑惑
+            if (valuebind && editorFieldCode in valuebind) {
+                cfgArr = valuebind[editorFieldCode];
+                me.handlerValueBind(record, selection, editorFieldCode, cfgArr);
+            } 
         },
         setDefaultValue(record) {
             var me = this,

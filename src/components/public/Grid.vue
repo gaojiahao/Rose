@@ -56,7 +56,7 @@
 
     <grid-picker v-if="!cfg.readOnly" ref="gridPicker" @on-select="addRecords"/>
     <div class="grid-detail-wrapper" v-if="showDetail">
-      <grid-detail v-model="showDetail" @on-confirm="doDetailEdit"/>
+      <grid-detail v-model="showDetail" @on-confirm="doDetailEdit" ref="gridDetail"/>
     </div>
     <div
       class="count_mode grid-manger-wrapper vux-1px-t"
@@ -158,6 +158,7 @@ var component = {
       name = fieldSet.name;
 
     form.fieldMap[id] = this;
+    this.isGrid = true;
     this.name = name;
     this.form = form;
     this.submitValue = fieldSet.cfg.submitValue;
@@ -166,6 +167,7 @@ var component = {
     this.initDataSource(cfg);
     this.initDefaultValueCfg();
     this.initValueBindAndExpressionCfg();
+    this.initEditorParamsCfg();
   }
 };
 export default Vue.component("RGrid", component);

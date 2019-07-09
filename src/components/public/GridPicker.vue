@@ -29,10 +29,6 @@
             :key="index"
             @click.stop="selThis(item, index)"
           >
-            <div class="order-code" v-if="item.transCode && !item.transCode.includes(',')">
-              <span class="order_title">{{orderTitle}}：</span>
-              <span class="order_num">{{item.transCode}}</span>
-            </div>
             <div class="order-matter">
               <i class="icon" :class="[showSelIcon(item) ? 'icon-selected' : 'icon-no-select']"></i>
               <div class="mater_img">
@@ -225,10 +221,15 @@ export default {
         if (params)
           for (key in params) {
             paramCfg = params[key];
-            if (paramCfg.type == "contrl") {
-              contrlId = paramCfg.value.contrl;
+            if (paramCfg.type == "contrl" || paramCfg.type == 'control') {
+              if(paramCfg.type == "contrl"){
+                   contrlId = paramCfg.value.contrl;
+                   contrl = me.form.fieldMap[contrlId];
+              }else{
+                  contrl = me.form.fields[paramCfg.value.fieldCode];
+                  contrlId = contrl.cfg.id;
+              }
               valueField = paramCfg.value.valueField;
-              contrl = me.form.fieldMap[contrlId];
               value = contrl.getExtraFieldValue(valueField);
               if (value == null) {
                 autoLoad = false;
@@ -298,15 +299,18 @@ export default {
     },
     paramChangeHandler(paramKey, valueField, control) {
       var value = control.getExtraFieldValue(valueField),
-        store = this.store,
-        key;
+          store = this.store,
+          oldValue = store.params[paramKey],
+          key;
 
+      if(value === oldValue)return;
       if (value != null) {
         store.params[paramKey] = value;
       }
       for (key in store.params) {
         if (store.params[key] == null) return;
       }
+      this.grid.setValue([]);
       this.data = [];
       this.page = 1;
       this.requestData();
@@ -348,6 +352,7 @@ export default {
   },
   created() {
     this.form = this.$parent.form;
+    this.grid = this.$parent;
     this.initStore();
     this.setDefaultValue();
   }

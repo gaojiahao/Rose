@@ -9,6 +9,7 @@
 import Vue from 'vue'
 import {toFixed} from '@/plugins/calc'
 import fieldBase from 'mixins/fieldBase'
+import { debug } from 'util';
 let cfg = {
     mixins: [fieldBase],
     props:['cfg','values'], 
@@ -29,6 +30,12 @@ let cfg = {
       getNum(val) {
         return Math.abs(toFixed(val, 2));
       }
+    },
+    created(){
+      // var that = this;
+      // if(this.cfg.fieldCode == 'thenAlreadyAmnt')this.form.$watch('test',(value)=>{
+      //    that.setValue(value);
+      // })
     }
 }
 export default Vue.component('r2Permilfield',cfg);
