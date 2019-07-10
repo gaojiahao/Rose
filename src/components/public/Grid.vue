@@ -46,7 +46,7 @@
     </div>
     <div
       class="add-more-wrapper"
-      v-if="!cfg.readOnly && cfg.allowMutilRow && values &&values.length && !isEdit"
+      v-if="!cfg.readOnly && (cfg.allowMutilRow ||cfg.allowAddorDel) && values &&values.length && !isEdit"
     >
       <div class="add-more" @click="showGridPicker">
         <span class="icon-add"></span>
@@ -109,10 +109,10 @@ var component = {
     initDataSource(cfg) {
       var me = this;
       
-      me.hasDataSource(cfg)
+      me.dataSource = me.hasDataSource(cfg)
         ? //适配 r2AccountGrid
-          (processDs(cfg.columns), (me.dataSource = cfg.dataSource))
-        : (me.dataSource = findDs(cfg.columns));
+          cfg.dataSource
+        : findDs(cfg.columns);
 
       function findDs(columns) {
         var i = 0,
@@ -127,18 +127,6 @@ var component = {
               ...col.dataSource.data,
               ...{ cols: col.proertyContext.dataSourceCols }
             };
-          }
-        }
-      }
-      function processDs(columns) {
-        var i = 0,
-          l = columns.length,
-          col;
-        for (i; i < l; i++) {
-          col = columns[i];
-          if (col.editorType == "r2Selector") {
-            me.dataSourceBind = { k: col.fieldCode, v: col.valueField };
-            return;
           }
         }
       }

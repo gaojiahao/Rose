@@ -126,9 +126,13 @@ export default {
                         console.warn(ex);
                     }
                 } else if (cfg.type == 'fn') {
-                    num = cfg.fn.call(me, record, editorFieldCode);
-                    if (num != null && !isNaN(num) && cfg.col.decimalPrecision != null) num = util.round(num, cfg.col.decimalPrecision);
-                    if (num != null) record.set(dataIndex, convertDataType(cfg.col.editorType, num));
+                    try{
+                        num = cfg.fn.call(me, record, editorFieldCode);
+                        if (num != null && !isNaN(num) && cfg.col.decimalPrecision != null) num = util.round(num, cfg.col.decimalPrecision);
+                        if (num != null) record.set(dataIndex, convertDataType(cfg.col.editorType, num));
+                    } catch (ex) {
+                        console.warn(ex);
+                    }
                 }
             }
 
@@ -214,50 +218,68 @@ export default {
                 changeDataIndex,
                 l,
                 i,
-                changes,
-                loopfn = function (changeDataIndex) {
-                    if (changeDataIndex in paramColumns) {
-                        editorDataIndexs = paramColumns[changeDataIndex];//用该列做参数的编辑器列的"dataIndex数组"
-                        for (i = 0, l = editorDataIndexs.length; i < l; i++) {
-                            editorDataIndex = editorDataIndexs[i];
-                            if (editorDataIndex in changes) continue;//如果编辑器所在列的值已经发生变化，则不再做清空操作。
-                            if (record.get(editorDataIndex) != null) {
-                                record.set(editorDataIndex, undefined);
-                                //同时清空“值绑定”到该编辑器的列
-                                if (valuebind && editorDataIndex in valuebind) {
-                                    cfgArr = valuebind[editorDataIndex];
-                                    Ext.each(cfgArr, function (cfg) {
-                                        if (record.get(cfg.dataIndex) != null) {
-                                            record.set(cfg.dataIndex, undefined);
-                                            loopfn(cfg.dataIndex);
-                                        }
+                changes;
 
-                                    })
-                                }
-                                loopfn(editorDataIndex);
-                            }
-                        }
-                    }
-                };
-
-            if (!paramColumns) return;
+            if (!paramColumns && valuebind == null) return;
             changes = record.getChanges();
             for (changeDataIndex in changes) {
                 loopfn(changeDataIndex);
+            }
+            function loopfn(changeDataIndex) {
+                var cfgArr;
+
+                if (changeDataIndex in paramColumns) {
+                    editorDataIndexs = paramColumns[changeDataIndex];//用该列做参数的编辑器列的"dataIndex数组"
+                    for (i = 0, l = editorDataIndexs.length; i < l; i++) {
+                        editorDataIndex = editorDataIndexs[i];
+                        if (editorDataIndex in changes) continue;//如果编辑器所在列的值已经发生变化，则不再做清空操作。
+                        if (record.get(editorDataIndex) != null) {
+                            record.set(editorDataIndex, undefined);
+                            loopfn(editorDataIndex);
+                        }
+                    }
+                }
+                //同时清空“值绑定”到该编辑器的列
+                if (record.get(changeDataIndex) == null && valuebind && changeDataIndex in valuebind) {
+                    cfgArr = valuebind[changeDataIndex];
+                    util.each(cfgArr, function (cfg) {
+                        if (record.get(cfg.fieldCode) != null) {
+                            record.set(cfg.fieldCode, undefined);
+                            loopfn(cfg.fieldCode);
+                        }
+
+                    })
+                }
             }
         },
         handleOutParamChange: function (bindCmp, column) {
             var me = this,
                 values = me.getValue(),
+                record,
                 dataIndex = column.fieldCode;
 
             if (bindCmp.changeEventSource == 'setVal') return;
-            if (values) values.forEach(function (rec) {
-                me.$set(rec, dataIndex, undefined);
+            if (values) values.forEach(function (data) {
+                record = new Record(data, me);
+                record.set(dataIndex, undefined);
+                me.handleParamChange(record);
+            });
+        },
+        //默认值来自单一项的值时，处理单一项值发生改变的情况
+        handleDefaultValueChange(fieldCode, value) {
+            var me = this,
+                values = me.getValue();
+
+            if (values) values.forEach(function (data) {
+                record = new Record(data, me);
+                record.set(fieldCode, value);
+                //处理数据变化
+                me.handleParamChange(record);
             });
         },
         handlerValueBind: function (record, selection, editorFieldCode, cfgArr,gridDetail) {
-            var extra = {};
+            var extra = {},
+                isEdit = !!gridDetail;
 
             extra[editorFieldCode + '.extraData'] = util.clone(selection);
             cfgArr.forEach(function (cfg) {
@@ -270,12 +292,19 @@ export default {
                     value = convertDataType(cfg.editorType, value);
                     record.set(targetFieldCode, value);
                     if(gridDetail){
-                        gridDetail.$emit('field-change-'+targetFieldCode,gridDetail,value);
+                        setTimeout(function(){
+                            //放到下一个执行队列的原因是，保障值清空先进行，重新加载数据后执行，可以再设置一个默认值。
+                            gridDetail.$emit('field-change-'+targetFieldCode,gridDetail,value);
+                        },0)
+                        
                     }
                 } catch (ex) {
                     console.warn(ex);
                 }
             });
+            if(isEdit){
+                this.handleParamChange(record);
+            }
         },
         handlerValueBindByIndexMap: function (record, selection, map) {
             var extra = util.clone(selection);
@@ -331,7 +360,7 @@ export default {
                                 var value = '';
                                 if (cmp == null || cmp.changeEventSource == 'setVal') return;
                                 value = cmp.getExtraFieldValue(cfg.data.valueField);
-                                me.resetDefaultValue(c.fieldCode, value);
+                                me.handleDefaultValueChange(c.fieldCode, value);
                             });
                             cfgArr.push(c);
                         }
@@ -347,6 +376,7 @@ export default {
         initEditorParamsCfg: function () {
             var me = this,
                 cfg = me.cfg,
+                paramColumns = {},
                 editorTypes = ['r2Combo', 'r2Selector', 'r2SelectorPlus'],
                 columns = cfg.columns;
 
@@ -366,7 +396,15 @@ export default {
                         if (paramCfg.type == 'contrl') {
                             contrl = me.getComponentByCfg(paramCfg.value);
                             if (contrl == me) {
-
+                                //当参数改变时，清空当前列的值。
+                                dataIndex = paramCfg.value.dataIndex;
+                                if (dataIndex) {
+                                    if (paramColumns[dataIndex]) {
+                                        paramColumns[dataIndex].push(column.fieldCode);
+                                    } else {
+                                        paramColumns[dataIndex] = [column.fieldCode];
+                                    }
+                                }
                             } else if (contrl != null) {
                                 me.form.$on("value-change-" + contrl.cfg.id,
                                 (function(contrl, column) {
@@ -381,6 +419,13 @@ export default {
                     }
                 }
             });
+             /*
+            *参数关联时，如果参数列（字段）的数据映射（dataindex)记录整体下来，
+            *当参数列的值变化时，清空当前记录（record）中使用到该字段值做为参数的字段映射对应的值。
+            */
+            if (!util.isObjectEmpty(paramColumns)) {
+                me.paramColumns = paramColumns;
+            }
         },
         initValueBindAndExpressionCfg: function () {
             var me = this,
@@ -509,15 +554,7 @@ export default {
                 }
             }
         },
-        resetDefaultValue(fieldCode, value) {
-            var me = this,
-                values = me.getValue();
-
-            if (values) values.forEach(function (row) {
-                me.$set(row, fieldCode, value);
-                //me.handleParamChange(row);//处理数据变化
-            });
-        },
+      
         setValueBindValue(record, editorFieldCode, selection) {
             var me = this,
                 //疑惑
