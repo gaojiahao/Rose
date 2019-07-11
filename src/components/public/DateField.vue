@@ -55,10 +55,6 @@ let cfg = {
             else 
                 return ;
         },
-        //设置默认值
-        setDefaultValue:function() {
-
-        },
         //开始日期
         startDateFieldCfg:function(val) {
             let Id,

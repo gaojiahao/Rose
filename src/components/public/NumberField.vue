@@ -9,7 +9,6 @@
 import Vue from 'vue'
 import {numberComma} from 'vux'
 import fieldBase from 'mixins/fieldBase'
-import util from '@/common/util'
 import { toFixed } from '@/plugins/calc'
 let  cfg = {
     mixins: [fieldBase],
@@ -53,36 +52,6 @@ let  cfg = {
             }
             return true;
         },
-        //设置默认值
-        setDefaultValue: function () {
-            var me = this,
-                defaultValue = me.cfg.defaultValue,
-                typeToHanlderMap = {
-                    staticData:'getStaticData',
-                    remoteData:'getRemoteData',
-                    formData:'getFormData',
-                    contextData:'getContextData',
-                    getParam:'getGetParam',
-                    firstItem:'getFirstItem'
-                },
-                handler,
-                ds;
-
-            if (!util.isEmpty(defaultValue)) {
-                try {
-                    ds = util.isString(defaultValue) ? JSON.parse(defaultValue) : defaultValue;
-                } catch (ex) {
-                    var msg = '【' + me.cfg.fieldLabel + '】' + '解析默认值的时候出错，不是合法的默认值配置。';
-                    console.log(msg);
-                }
-                if (ds){
-                    handler = typeToHanlderMap[ds.type];
-                    if (handler) {
-                        return defaultValue.data[0];
-                    }
-                } 
-            }
-        },
         //校验关联字段
         numberVerSel() {
 
@@ -101,6 +70,7 @@ let  cfg = {
         }
     },
     created () {
+        
     }
 }
 export default Vue.component('r2Numberfield',cfg);
