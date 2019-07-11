@@ -101,8 +101,6 @@ let  cfg = {
         }
     },
     created () {
-        //设置默认值
-        this.setValue(this.setDefaultValue());
     }
 }
 export default Vue.component('r2Numberfield',cfg);

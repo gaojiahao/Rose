@@ -109,6 +109,7 @@ let  cfg = {
                      valueField,
                      contrl,
                      value,
+                     isParamInRow,
                      contrlId;
 
                 if(params)for(key in params){
@@ -118,27 +119,34 @@ let  cfg = {
                      valueField = paramCfg.value.valueField;
                      contrl = me.form.fieldMap[contrlId];
                      if(contrl){
-                         value = contrl.getExtraFieldValue(valueField);
-                         if(value == null){
-                            autoLoad = false;
-                         }
-                         store.params[key] = value;
-                         if(!me.isGridEditor()){
-                             me.form.$on('value-change-' + contrlId,(function(paramKey,valueField){
+                        value = me.getContrlParamValue(contrl,valueField);
+                        if(value == null){
+                           autoLoad = false;
+                        }
+                        store.params[key] = value;
+                        if(!me.isGridEditor()){
+                           me.form.$on('value-change-' + contrlId,(function(paramKey,valueField){
                                  return function(){
                                     var arg = Array.prototype.slice.call(arguments);
                                     arg.unshift(paramKey,valueField);
                                     me.paramChangeHandler.apply(me,arg);
                                  }
-                             })(key,valueField));
-                         } 
+                           })(key,valueField));
+                        } else if(contrl.isGrid == true){
+                           me.form.$on('field-change-' + paramCfg.value.dataIndex,(function(paramKey,valueField){
+                                 return function(){
+                                    var arg = Array.prototype.slice.call(arguments);
+                                    arg.unshift(paramKey,valueField);
+                                    me.paramChangeHandler.apply(me,arg);
+                                 }
+                           })(key,valueField))
+                        }
                      }
                   } else if(paramCfg.type == 'text'){
                      store.params[key] = paramCfg.value;
                   }
                }
             }
-            
          },
          buildStaticDataStore(data){
              var listData = [];
@@ -170,6 +178,9 @@ let  cfg = {
             } else {
                return null;
             }
+         },
+         getContrlParamValue:function(contrl,valueField){
+            return contrl.isGrid == true ? this.form.getRowParam(valueField) : contrl.getExtraFieldValue(valueField)
          },
          initCombo(){
             var cfg = this.cfg,
@@ -234,7 +245,7 @@ let  cfg = {
             this.showPop = false;
          },
          paramChangeHandler:function(paramKey,valueField,control){
-            var value = control.getExtraFieldValue(valueField),
+            var value = this.getContrlParamValue(control,valueField),
                 store = this.store,
                 key;
 

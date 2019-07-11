@@ -61,6 +61,7 @@
 
 <script>
 import Vue from "vue";
+import util from '@/common/util';
 import girdDetailMix from "mixins/gridDetail";
 import { XInput, numberComma, Popup } from "vux";
 import gridFieldFactory from "./GridFieldFactory";
@@ -113,6 +114,10 @@ var component = {
         item.inventoryPic = url;
       }
       return url;
+    },
+    getRowParam:function(paramField){
+       var paramData = this.values;
+       return util.isArray(paramField) ? util.getValueByNs(paramData, paramField) : eval('paramData' + paramField);
     },
     onShow() {
       this.$nextTick(() => {

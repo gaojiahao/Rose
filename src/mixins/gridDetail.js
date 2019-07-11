@@ -44,7 +44,7 @@ export default {
                 me.$on('before-value-change-column-' + fieldCode,function(editor){
                     var record = me.record;
 
-                    me.grid.handlerValueBind(record,editor.selection,fieldCode,cfgArr);
+                    me.grid.handlerValueBind(record,editor.selection,fieldCode,cfgArr,me);
                 });
             }
         },
