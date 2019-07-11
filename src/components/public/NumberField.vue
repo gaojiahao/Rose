@@ -22,33 +22,19 @@ let  cfg = {
     methods:{
         onInput:function(e){
             var value = e.target.value;
-            value = this.unNumberComma(value);
-            value = numberComma(value);
+            value = this.getNum(value);
             e.target.value = value;
             this.setValue(value);
         },
         getNum(val) {
             return Math.abs(toFixed(val, 2));
         },
-        //千分符转浮点型
-        unNumberComma(value) {
-            value = value.replace(/,/g,'');
-            value = Number(value);
-            value = this.getNum(value);
-            return value;
-        },
         //覆盖fieldBase的校验方法
         isValid:function(){
             var me = this,
                 cfg = me.cfg,
                 value = me.getValue();
-                
-            if((!cfg.readOnly) && (!cfg.hiddenInRun) && cfg.submitValue) {
-              if(util.isString(value)) {
-                value = this.unNumberComma(value);
-                this.setValue(value);
-              }
-            }
+
             return (me.disabled || me.getErrors().length == 0) && me.getMaxValue();
         },
         //校验最大值
@@ -107,6 +93,10 @@ let  cfg = {
         },
         //绑定
         r2Bind() {
+
+        },
+        //值关联
+        valueBind() {
 
         }
     },

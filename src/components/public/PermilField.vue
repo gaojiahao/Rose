@@ -1,7 +1,7 @@
 <template>
 <div v-show="!hidden" class="cell each_property vux-1px-b">
     <label :class="{'required':!cfg.allowBlank}">{{cfg.fieldLabel}}</label>
-    <input type="number" v-if="cfg.readOnly == false" :value="values[cfg.fieldCode]" placeholder="请输入" @blur="onInput" />
+    <input type="text" v-if="cfg.readOnly == false" :value="values[cfg.fieldCode]" placeholder="请输入" @blur="onInput" />
     <span v-else >{{values[cfg.fieldCode] == null ? '无' : values[cfg.fieldCode]}}</span>
 </div>
 </template>
@@ -24,9 +24,9 @@ let cfg = {
     methods:{
       onInput:function(e){
         var value = e.target.value;
-        // value = this.unNumberComma(value);
-        // value = numberComma(value);
-        // e.target.value = value;
+        value = this.unNumberComma(value);
+        value = numberComma(value);
+        e.target.value = value;
         this.setValue(value);
       },
       getNum(val) {
@@ -84,6 +84,22 @@ let cfg = {
           } 
         }
       },
+      //校验关联字段
+      numberVerSel() {
+
+      },
+      //校验数值关系
+      numberVerify() {
+
+      },
+      //绑定
+      r2Bind() {
+
+      },
+      //值关联
+      valueBind() {
+
+      }
     },
     created () {
       //设置默认值
