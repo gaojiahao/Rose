@@ -3,6 +3,7 @@ var objectPrototype = Object.prototype,
     trimRegex = /^[\x09\x0a\x0b\x0c\x0d\x20\xa0\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u2028\u2029\u202f\u205f\u3000]+|[\x09\x0a\x0b\x0c\x0d\x20\xa0\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u2028\u2029\u202f\u205f\u3000]+$/g;
 
 export default{
+    emptyFn:function(){},
     isDefined: function(value) {
         return typeof value !== 'undefined';
     },
@@ -168,6 +169,45 @@ export default{
             result = Math.round(result);
         }
         return result;
+    },
+    setFormulas(vm,computed){
+        var watchers = vm._computedWatchers || (vm._computedWatchers = Object.create(null)),
+            Watcher = vm.$parent._watcher.constructor,
+            Dep = vm.$data.__ob__.dep.constructor,
+            getter,
+            noop = this.emptyFn,
+            computedWatcherOptions = {lazy:true};
+
+        for (var key in computed) {
+            getter = computed[key];
+            
+            watchers[key] = new Watcher(
+                vm,
+                getter || noop,
+                noop,
+                computedWatcherOptions
+            );
+        }
+
+        if (!(key in vm)) {
+           Object.defineProperty(vm, key, {get:createComputedGetter(key),set:this.emptyFn});
+        } else {
+            console.log('公式' + key + '已经定义过了')
+        }
+        function createComputedGetter (key) {
+            return function computedGetter () {
+                var watcher = this._computedWatchers && this._computedWatchers[key];
+                if (watcher) {
+                    if (watcher.dirty) {
+                        watcher.evaluate();
+                    }
+                    if (Dep.target) {
+                        watcher.depend();
+                    }
+                    return watcher.value
+                }
+            }
+        }
     },
     DAY : "d",
     MONTH : "mo",

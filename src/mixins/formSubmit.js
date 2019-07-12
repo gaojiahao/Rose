@@ -5,6 +5,7 @@ import {
  submitAndCalc,//保存并计算
  updateAppData//更新数据
 } from "service/commonService";
+import util from '@/common/util';
 export default {
    methods:{
         addAppData(){
@@ -205,6 +206,18 @@ export default {
                     handler();
                 }
             });
+        },
+        initComputed:function(){
+            // util.setFormulas(this,{
+            //     test(){
+            //         var order = this.formData.order,
+            //             num = 0;
+            //         if(order)order.forEach(function(row){
+            //             if(row.tdAmount)num += +row.tdAmount;
+            //         });
+            //         return num;
+            //     }
+            // })
         },
         setValue(fieldCode,value){
             this.$set(this.formData,fieldCode,value);
