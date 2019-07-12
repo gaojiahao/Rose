@@ -1,14 +1,18 @@
 <template>
   <!--搜索选择器-->
-  <div class="search_selector">
+  <div class="search_selector" :style="{borderBottom:borderBottom}">
     <div class="each_info vux-1px-b" @click="showPop = true">
-      <div class="title">{{ title }}</div>
+      <div v-if="!isRequired" class="title">{{ title }}</div>
+      <div v-else style="color:#e4393c" class="title">{{ title }}</div>
       <div class="mode">
         <span
           class="mode_content"
-          v-for="(item, index) of selectItems"
+          v-for="(item, index) of confirmItems"
           :key="index"
-        >{{ item[listName] }}</span>
+          :style="{marginLeft:'.08rem'}">
+          {{ item[listName] }}
+          <b :style="{marginLeft:'-5px'}" @click.stop="deleteSelectItems(item,index)"><icon type="cancel"></icon></b>
+        </span>
         <span class="icon-right"></span>
       </div>
     </div>
@@ -56,6 +60,9 @@
               </div>
             </div>
           </r-scroll>
+          <div class="pop_btn" @click="confirmSelect">
+            <x-button type="primary">确定</x-button>
+          </div>
         </div>
       </popup>
     </div>
@@ -64,12 +71,12 @@
 
 <script>
 // vux 引入
-import { Popup, TransferDom, LoadMore, CheckIcon } from "vux";
+import { Popup, TransferDom, LoadMore, CheckIcon, XButton, Icon } from "vux";
 
 import DSearch from "components/search/search";
 import RScroll from "plugins/scroll/RScroll";
 // 请求 引入
-  import { listSearchSelectorData } from 'service/commonService'
+import { listSearchSelectorData } from 'service/commonService'
 export default {
   props: {
     title: {
@@ -82,11 +89,15 @@ export default {
     },
     listID: {
       type: [String, Number],
-      default: "userCode"
+      default: "userId"
     },
     API: {
         type: String,
-        default: 'ds/listUsers'
+        default: 'ds/getAllUsers'
+    },
+    isRequired: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -94,6 +105,7 @@ export default {
       searchContent: "",
       showPop: false,
       hasNext: true,
+      confirmItems: [],
       selectItems: [],
       listData: [],
       scrollOptions: {
@@ -104,10 +116,33 @@ export default {
       limit: 50
     };
   },
-  components: { DSearch, Popup, TransferDom, LoadMore, RScroll, CheckIcon },
+  components: { 
+    DSearch, 
+    Popup, 
+    TransferDom, 
+    LoadMore, 
+    RScroll, 
+    CheckIcon, 
+    XButton,
+    Icon 
+  },
+  computed: {
+    borderBottom() {
+      if(this.isRequired){
+        return `1px solid #e4393c`;
+      }else{
+        return `1px solid #e8e8e8`;
+      }
+      
+    }
+  },
+  watch: {},
   methods: {
     // 弹窗展示时调用
     onShow() {
+      this.page = 1;
+      this.getlistDatas();
+      this.confirmItems.length === 0 && (this.selectItems = []);
       this.$nextTick(() => {
         if (this.$refs.bScroll) {
           this.$refs.bScroll.refresh();
@@ -131,24 +166,21 @@ export default {
       this.page++;
       this.getlistDatas();
     },
-    // 判断是否展示选中图标
-    showSelIcon(sItem) {
-        let selectName = [];
-        this.selectItems.forEach(val => {
-            selectName.push(val[this.listName]);
-        })
-      return selectName.indexOf(sItem[this.listName]) > -1;
-    },
     // 获取 默认图片
     getDefaultImg(item) {
       let url =
-        item.gender === "男"
+        item.gender === 1
           ? require("assets/ava01.png")
           : require("assets/ava02.png");
       if (item) {
         item.photo = url;
       }
       return url;
+    },
+    //删除选择的目标
+    deleteSelectItems(item, index) {
+      this.confirmItems.splice(index,1);
+      this.$emit('getSelectData', this.confirmItems);
     },
     // 选择目标
     selectThis(sItem, sIndex) {
@@ -162,6 +194,11 @@ export default {
             return cur;
         }, []);
     },
+    confirmSelect() {
+      this.confirmItems = this.selectItems;
+      this.$emit('getSelectData', this.confirmItems);
+      this.onHide();
+    },
     // 请求列表数据
     getlistDatas() {
         let filter = [];
@@ -173,15 +210,18 @@ export default {
         return listSearchSelectorData(this.API, {
             limit: this.limit,
             page: this.page,
-            start: (this.page - 1) * this.limit,
             filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
             this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
             tableContent.forEach(val => {
-                val.selected = false;
+              val.selected = false; 
+              this.confirmItems.forEach(item => {
+                if(val[this.listName] === item[this.listName]){
+                  val.selected = true;
+                }
+              })
             })
             this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
-            
             this.$nextTick(() => {
                 this.$refs.bScroll.finishPullUp();
             })
@@ -196,20 +236,22 @@ export default {
 
 <style lang='scss' scoped>
 @import "~@/scss/color";
+* {
+    touch-action: pan-y;
+}
 .search_selector {
-  background-color: #fff;
-  margin: 0px 10px;
+  // border-bottom: 1px solid #e8e8e8;
   .each_info {
-    height: 0.5rem;
-    line-height: 0.5rem;
+    min-height: 0.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     .title {
-      color: #999;
-      font-size: 0.14rem;
+      color: #4e9cec;
+      font-weight: bold;
+      font-size: 0.15rem;
       margin-right: 0.1rem;
-      margin-left: 0.13rem;
+      margin-left: 0.15rem;
       &.required {
         font-weight: bold;
         color: $main_color;
@@ -236,6 +278,11 @@ export default {
   .trade_pop {
     height: 100%;
     overflow: hidden;
+    .pop_btn{
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
     // 顶部
     .title {
       position: relative;
