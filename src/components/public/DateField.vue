@@ -93,14 +93,6 @@ let cfg = {
             }
             return format;
         },
-        //值绑定
-        r2Bind:function() {
-
-        },
-        //关联值
-        valueBind:function () {
-
-        },
     },
     created () {
 

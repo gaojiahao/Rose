@@ -54,25 +54,9 @@ let cfg = {
 
         return me.disabled || me.getErrors().length == 0;
       },
-      //校验关联字段
-      numberVerSel() {
-
-      },
-      //校验数值关系
-      numberVerify() {
-
-      },
-      //绑定
-      r2Bind() {
-
-      },
-      //值关联
-      valueBind() {
-
-      }
     },
     created () {
-      
+
     }
 }
 export default Vue.component('r2Permilfield',cfg);
