@@ -83,6 +83,8 @@ export default {
                 this.initValueBind([cfg.data]);
             }else if(cfg.type == 'contextData'){
                 value = getValuesByExp(cfg.data);
+            }else if(cfg.type == 'staticData') {
+                value = cfg.data[0];
             }
             if(value != null){
                this.setValue(value);
@@ -153,6 +155,6 @@ export default {
 
             this.setValue(value);
             if(this.form.model == 'new' && this.cfg.readOnly == true)this.hidden = value == null;
-        }
+        } 
     }
 }

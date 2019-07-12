@@ -5,6 +5,7 @@ let cmp = Vue.component('GridFieldFactory', {
     render: function (_c) {
         var cfg = this.cfg,
             newCfg = {
+                ...cfg,
                 id:'column-'+cfg.fieldCode,
                 xtype:cfg.editorType,
                 fieldCode:cfg.fieldCode,

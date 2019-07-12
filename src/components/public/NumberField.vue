@@ -9,7 +9,6 @@
 import Vue from 'vue'
 import {numberComma} from 'vux'
 import fieldBase from 'mixins/fieldBase'
-import util from '@/common/util'
 import { toFixed } from '@/plugins/calc'
 let  cfg = {
     mixins: [fieldBase],
@@ -22,34 +21,31 @@ let  cfg = {
     methods:{
         onInput:function(e){
             var value = e.target.value;
-            value = this.unNumberComma(value);
-            value = numberComma(value);
+            value = this.getNum(value);
             e.target.value = value;
             this.setValue(value);
+            if(this.dealColumn()) {
+                value = this.getMinAndMaxOfValue();
+                e.target.value = value;
+                this.setValue(value);
+            }
         },
         getNum(val) {
             return Math.abs(toFixed(val, 2));
-        },
-        //千分符转浮点型
-        unNumberComma(value) {
-            value = value.replace(/,/g,'');
-            value = Number(value);
-            value = this.getNum(value);
-            return value;
         },
         //覆盖fieldBase的校验方法
         isValid:function(){
             var me = this,
                 cfg = me.cfg,
                 value = me.getValue();
-                
-            if((!cfg.readOnly) && (!cfg.hiddenInRun) && cfg.submitValue) {
-              if(util.isString(value)) {
-                value = this.unNumberComma(value);
-                this.setValue(value);
-              }
-            }
+
             return (me.disabled || me.getErrors().length == 0) && me.getMaxValue();
+        },
+        //判断是重复项的日期还是单一项的日期
+        dealColumn:function() {
+            if(this.$parent.cfg.xtype == 'r2GridColumn') {
+                return true;    
+            }
         },
         //校验最大值
         getMaxValue:function(){
@@ -67,50 +63,29 @@ let  cfg = {
             }
             return true;
         },
-        //设置默认值
-        setDefaultValue: function () {
+        //校验最大，小值
+        getMinAndMaxOfValue:function(){
             var me = this,
-                defaultValue = me.cfg.defaultValue,
-                typeToHanlderMap = {
-                    staticData:'getStaticData',
-                    remoteData:'getRemoteData',
-                    formData:'getFormData',
-                    contextData:'getContextData',
-                    getParam:'getGetParam',
-                    firstItem:'getFirstItem'
-                },
-                handler,
-                ds;
-
-            if (!util.isEmpty(defaultValue)) {
-                try {
-                    ds = util.isString(defaultValue) ? JSON.parse(defaultValue) : defaultValue;
-                } catch (ex) {
-                    var msg = '【' + me.cfg.fieldLabel + '】' + '解析默认值的时候出错，不是合法的默认值配置。';
-                    console.log(msg);
+                maxValue = me.cfg.maxValue,
+                minValue = me.cfg.minValue,
+                value = me.getValue();
+            if(maxValue){
+                if(value > maxValue) {
+                    value = maxValue;
+                    this.$vux.toast.text(me.cfg.fieldLabel + "最大值为" + maxValue, 'middle')
                 }
-                if (ds){
-                    handler = typeToHanlderMap[ds.type];
-                    if (handler) {
-                        return defaultValue.data[0];
-                    }
-                } 
             }
+            if(minValue) {
+                if(value < minValue) {
+                    value = minValue;
+                    this.$vux.toast.text(me.cfg.fieldLabel + "最小值为" + minValue, 'middle')
+                }
+            }
+            return value;
         },
-        //校验关联字段
-        numberVerSel() {
-
-        },
-        //校验数值关系
-        numberVerify() {
-
-        },
-        //绑定
-        r2Bind() {
-
-        }
     },
     created () {
+
     }
 }
 export default Vue.component('r2Numberfield',cfg);
