@@ -56,10 +56,6 @@ let cfg = {
       },
     },
     created () {
-    //  var that = this;
-    //   if(this.cfg.fieldCode == 'thenAlreadyAmnt')this.form.$watch('test',(value)=>{
-    //      that.setValue(value);
-    //   })
     }
 }
 export default Vue.component('r2Permilfield',cfg);

@@ -2,6 +2,7 @@ import Vue from 'vue';
 import {
     getValuesByExp
 } from "service/commonService";
+import util from '@/common/util';
 export default {
     data(){
         return {
@@ -30,6 +31,7 @@ export default {
                 form.wfParamFieldMap[cfg.wfParam] = fieldCode;
             }
             this.initVisible();
+            this.initWatch(cfg.watch);
             if(form.model == 'new')this.initDefaultValue(cfg.defaultValue);
             this.initDataSource(cfg.dataSource);
         },
@@ -64,6 +66,40 @@ export default {
             if(!ds) return;
             if(!this.isCombo()){
                 this.initDefaultValue(ds);
+            }
+        },
+        initWatch(watch){
+            var me = this,
+                cfgArr;
+
+            if(!watch) return;
+            try{
+                cfgArr = JSON.parse(watch);
+            }catch(e){
+                console.log('watch解析bug');
+                return null;
+            }
+            util.each(cfgArr,(cfg)=>{
+                var key = cfg.computed,
+                    bind = util.trim(cfg.bind),
+                    fn;
+                
+                if(bind){
+                    fn = createBindFn(bind);
+                }else{
+                    try{
+                        fn = eval('('+ cfg.fn +')');
+                    } catch(e) {
+                        console.log('watch[' + key +']语法bug');
+                    }
+                }
+                this.form.$watch(key,fn);
+            });
+ 
+            function createBindFn(bind){
+                return function(value){
+                   me['set'+ bind[0].toUpperCase()+bind.substr(1)](value);
+                }
             }
         },
         isCombo:function(){

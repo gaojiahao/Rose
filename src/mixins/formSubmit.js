@@ -208,16 +208,35 @@ export default {
             });
         },
         initComputed:function(){
-            // util.setFormulas(this,{
-            //     test(){
-            //         var order = this.formData.order,
-            //             num = 0;
-            //         if(order)order.forEach(function(row){
-            //             if(row.tdAmount)num += +row.tdAmount;
-            //         });
-            //         return num;
-            //     }
-            // })
+            var computed = parseComputed(this.viewInfo.config.formComputed);
+
+            if(computed)util.setFormulas(this,computed);
+
+            function parseComputed(cfg){
+                var cfgArr,
+                    computed = {};
+
+                if(!cfg) return null;
+
+                try{
+                    cfgArr = JSON.parse(cfg);
+                }catch(e){
+                    console.log('公式解析bug');
+                    return null;
+                }
+                util.each(cfgArr,(cfg)=>{
+                    var key = cfg.key,
+                        fn;
+
+                    try{
+                        fn = eval('('+ cfg.fn +')');
+                        computed[key] = fn;
+                    } catch(e) {
+                        console.log('公式[' + key +']语法bug');
+                    }
+                });
+                return computed;
+            }
         },
         setValue(fieldCode,value){
             this.$set(this.formData,fieldCode,value);

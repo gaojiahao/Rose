@@ -376,6 +376,7 @@ export default {
 
           this.singleFieldCts = singleFieldCts;
           this.viewInfo = data;
+          this.initComputed();
           this.formKey = formKey;
           console.log("this.config", data);
           this.fieldSets = fieldSets;
@@ -453,7 +454,6 @@ export default {
          this.fields = {}; //fieldCode
          this.wfParamFieldMap = {};
          this.loadPage();
-         this.initComputed();
          this.$emit("slideStatus", this.model);
     },
     reload(){
