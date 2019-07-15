@@ -30,6 +30,10 @@
   background: url('~assets/iconfont/add.png');
   background-size: cover;
 }
+.icon-empty {
+  background: url('~assets/iconfont/empty-box.png');
+  background-size: cover;
+}
 .icon-dealer {
   background: url('~assets/iconfont/dealer.png');
   background-size: cover;
@@ -82,6 +86,11 @@
 
 .icon-dialog {
   background: url('~assets/iconfont/dialog.png');
+  background-size: cover;
+}
+
+.icon-log {
+  background: url('~assets/iconfont/task4.png');
   background-size: cover;
 }
 

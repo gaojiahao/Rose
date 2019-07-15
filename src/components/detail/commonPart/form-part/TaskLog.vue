@@ -1,67 +1,71 @@
 <template>
   <!--任务日志-->
-  <div class="task_log">
-    <div class="task_log_header">
-      <b>任务日志</b>
-    </div>
-    <div class="task_log_status">
-      <check-icon
-        type="plain" 
-        :value.sync="taskLog.logStatus">
-        {{ taskLog.logStatus?'已办':'待办' }}
-      </check-icon>
-    </div>
-    <div class="task_log_user">
-      <search-selector 
-        :title="'员工'" 
-        @getSelectData="getSelectData" 
-        :isRequired="isUserRequired">
-      </search-selector>
-    </div>
-    <div class="task_log_title" :style="{borderColor:istitleRequired?'#e4393c':'#e8e8e8'}">
-      <x-input ref="taskLogTitle" :max="100" v-model="logTitle">
-        <span 
-          slot="label" 
-          :style="{fontWeight:'bold',color:istitleRequired?'#e4393c':'#4e9cec'}">
-          标题
-        </span>
-      </x-input>
-    </div>
-    <div class="task_log_type">
-      <popup-picker v-if="taskLog.logType.length>0" :data="logTypelist" v-model="taskLog.logType" placeholder="请选择">
-        <span slot="title" :style="{color:'#4e9cec',fontWeight:'bold'}">类型</span>
-      </popup-picker>
-    </div>
-    <div class="task_log_date">
-      <datetime title="日期" v-model="taskLog.taskDate"></datetime>
-    </div>
-    <div class="task_log_hour">
-      <x-number 
-        v-model="taskLog.logDeclarationHours" 
-        fillable 
-        :max='24' 
-        :min="0.1" 
-        :step="0.1" 
-        title="申报工时"
-        button-style="round"></x-number>
-    </div>
-    <div class="task_log_comment">
-      <x-textarea 
-        :max="200" 
-        v-model="taskLog.comments" 
-        placeholder="请输入您特别想要备注的信息">
-      </x-textarea>
-    </div>
-    <div class="task_log_footer">
-      <x-button type="primary" @click.native="submitLog">提交</x-button>
+  <div class="task_container">
+    <div class="task_log">
+      <div class="task_log_header">
+        <b>任务日志</b>
+      </div>
+      <div class="task_log_status">
+        <check-icon
+          type="plain" 
+          :value.sync="taskLog.logStatus">
+          {{ taskLog.logStatus?'已办':'待办' }}
+        </check-icon>
+      </div>
+      <div class="task_log_user">
+        <search-selector 
+          :title="'员工'" 
+          @getSelectData="getSelectData" 
+          :isRequired="isUserRequired">
+        </search-selector>
+      </div>
+      <div class="task_log_title" :style="{borderColor:istitleRequired?'#e4393c':'#e8e8e8'}">
+        <x-input ref="taskLogTitle" :max="100" v-model="logTitle">
+          <span 
+            slot="label" 
+            :style="{fontWeight:'bold',color:istitleRequired?'#e4393c':'#4e9cec'}">
+            标题
+          </span>
+        </x-input>
+      </div>
+      <div class="task_log_type">
+        <popup-picker v-if="taskLog.logType.length>0" :data="logTypelist" v-model="taskLog.logType" placeholder="请选择">
+          <span slot="title" :style="{color:'#4e9cec',fontWeight:'bold'}">类型</span>
+        </popup-picker>
+      </div>
+      <div class="task_log_date">
+        <datetime title="日期" v-model="taskLog.taskDate"></datetime>
+      </div>
+      <div class="task_log_hour">
+        <x-number 
+          v-model="taskLog.logDeclarationHours" 
+          fillable 
+          :max='24' 
+          :min="0.1" 
+          :step="0.1" 
+          title="申报工时"
+          button-style="round"></x-number>
+      </div>
+      <div class="task_log_comment">
+        <x-textarea 
+          :max="200" 
+          v-model="taskLog.comments" 
+          placeholder="请输入您特别想要备注的信息">
+        </x-textarea>
+      </div>
+      <div class="task_log_footer">
+        <x-button type="primary" @click.native="submitLog">提交</x-button>
+      </div>
     </div>
   </div>
+  
 </template>
 
 <script>
 import { CheckIcon, XInput, PopupPicker, Datetime, XNumber, XTextarea, XButton, Toast } from 'vux'
 
 import { getTaskLogType, saveTaskLog } from 'service/projectService'
+import { initWebContext } from 'service/commonService'
 import WebContext from 'service/commonService'
 
 import SearchSelector from './FormSearchSelector'
@@ -146,7 +150,7 @@ export default {
                     logTitle: this.logTitle,
                     taskDate: this.taskLog.taskDate,
                     logDeclarationHours: this.taskLog.logDeclarationHours,
-                    relTransCode: this.$route.query.transCode,
+                    relTransCode: this.$route.params.transCode,
                     logType: this.taskLog.logType[0]
                 },
                 comment:{
@@ -160,8 +164,15 @@ export default {
               this.$vux.alert.show({
                 title: "提示",
                 content: "提交成功！",
-                onHide () {
+                onHide: () => {
                   //跳转到日志列表
+                  this.$router.push({
+                    path: '/taskLog',
+                    query: {
+                      listId: this.$route.params.listId,
+                      transCode: this.$route.params.transCode
+                    }
+                  })
                 }
               });
             }else{
@@ -198,8 +209,11 @@ export default {
     }
   },
   created() {
-    this.taskLog.taskDate = this.formatDate(new Date());
-    this.getLogType()
+    initWebContext().then(()=>{
+        this.taskLog.taskDate = this.formatDate(new Date());
+        this.getLogType()
+    })
+    
   }
 }
 </script>
@@ -207,9 +221,9 @@ export default {
 <style lang='scss' scoped>
   .task_log{
     color: #999;
-    padding: .1rem .1rem;
+    padding: .1rem;
     background-color: #fff;
-    margin: 0px 10px;
+    margin: .1rem;
     &_header{
       font-size: .17rem;
     }
@@ -240,5 +254,13 @@ export default {
       font-weight: bold;
       padding: .03rem 0rem;
     }
+  }
+  .task_container{
+    z-index: 1;
+    height: 100%;
+    overflow: auto;
+    position:relative;
+    background: #f8f8f8;
+    -webkit-overflow-scrolling: touch;
   }
 </style>

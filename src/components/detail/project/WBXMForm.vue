@@ -8,10 +8,6 @@
       <only-word :config="otherConfig" :info="approval"></only-word>
       <!-- 备注 -->
       <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
-      <!-- 任务日志 -->
-      <task-log></task-log>
-      <!-- 任务日志列表 -->
-      <task-log-list></task-log-list>
       <!-- 操作栏 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -31,8 +27,7 @@ import onlyWord from 'components/detail/commonPart/form-part/onlyWord'
 import detailCommon from 'mixins/detailCommon'
 // 插件引入
 import {accMul} from 'plugins/calc/decimalsAdd'
-import TaskLog from 'components/detail/commonPart/form-part/TaskLog'
-import TaskLogList from 'components/detail/commonPart/form-part/TaskLogList'
+
 
 export default {
   data() {
@@ -47,7 +42,7 @@ export default {
     }
   },
   mixins: [detailCommon],
-  components: { Cell, Group, RAction, onlyWord, TaskLog, TaskLogList },
+  components: { Cell, Group, RAction, onlyWord },
   methods: {
     // 获取详情
     getOrderList(transCode = '') {

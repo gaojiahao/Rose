@@ -17,14 +17,22 @@
     </div>
     <slideBar :showSlide="showSlide" @swiperleft="swiperleft" @goTab="goTab" :appExample="appExample" :autoSubjectCount="autoSubjectCount"></slideBar>
     <div class="detail-comment-container vux-1px-t" v-if="hasComment">
+      <!-- 关注 -->
       <div class="concern" @click="goConcern">
         <span class="icon icon-heart" v-if="isConcern === 0"></span>
         <span class="icon icon-heart-fill" v-else></span>
+        <div class="heart-desc">{{ isConcern === 0 ? '关注' : '取消关注' }}</div>
       </div>
       <!-- 评论 -->
       <div class="operation" @click="goDiscuss">
         <span class="icon icon-dialog"></span>
-        <span class="count">{{commentCount || ''}}</span>
+        <span class="count">{{commentCount || 0}}</span>
+        <div class="dialog-desc">评论</div>
+      </div>
+      <!-- 日志 -->
+      <div class="task" @click="goTaskLogList">
+        <span class="icon icon-log"></span>
+        <div class="task-desc">日志</div>
       </div>
     </div>
   </div>
@@ -91,6 +99,16 @@ export default {
     // 设置是否已经关注该订单
     setSubscribe(val){
       this.isConcern = +val;
+    },
+    //打开任务日志列表
+    goTaskLogList() {
+      this.$router.push({
+        path: '/taskLog',
+        query: {
+          listId: this.$route.params.listId,
+          transCode: this.transCode
+        }
+      })
     },
     // 关注或取关
     goConcern() {
@@ -270,14 +288,14 @@ export default {
       overflow: hidden;
       // background: #FFF;
       &.has-comment {
-        height: calc(100% - .44rem);
+        height: calc(100% - .5rem);
       }
     }
     .detail-comment-container {
       display: flex;
       justify-content: space-around;
       align-items: center;
-      height: .44rem;
+      height: .5rem;
       background-color: #fafafa;
       color: #999;
       &:before {
@@ -298,20 +316,30 @@ export default {
       }
       /** 关注 */
       .concern{
-        display: flex;
-        justify-content: center;
-        align-items: center;
         .icon-xihuan{
           color: #c93d1b;
         }
+        .heart-desc{
+          font-size: .1rem;
+          margin-top: -.06rem;
+        }
       }
       .operation {
-        display: flex;
-        align-items: center;
+        .dialog-desc{
+          font-size: .1rem;
+          margin-top: -.06rem;
+        }
       }
       .count{
         margin-left: .04rem;
         font-size: .12rem;
+      }
+      .task{
+        .task-desc{
+          font-size: .1rem;
+          margin-top: -.06rem;
+          margin-left: -.03rem;
+        }
       }
     }
   }
