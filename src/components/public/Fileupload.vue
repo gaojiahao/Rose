@@ -16,7 +16,8 @@
         </template>
         <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="!noUpload"></i>
       </div>
-      <div class="upload-file-item" @click="chooseFile">
+      <input @change="commUploadFile()" type="file" ref="uFile" v-show="false"/>
+      <div class="upload-file-item" @click="dealUploadDev">
         <div class="icon_container">
           <span class="icon-upload-add"></span>
           <span>添加附件</span>
@@ -30,6 +31,8 @@
   import Vue from 'vue';
   import {deleteFile} from 'service/commonService';
   import {chooseImage, uploadImage} from 'plugins/wx/api'
+  import uploadFile from '@/plugins/ajax'
+  import {isIOS,isIPhone,isIPad,isAndroid,isPC,isQYWX} from '@/plugins/platform/index'
 
   var component = {
     props: {
@@ -94,6 +97,19 @@
       }
     },
     methods: {
+      dealUploadDev() {
+        const ua = navigator.userAgent.toLowerCase();
+        console.log(ua)
+        if(isIOS || isIPhone || isIPad || isAndroid || isPC) {
+          console.log('comm upload');
+          this.clickUpload();
+          //this.commUploadFile();
+        }
+        if(isQYWX) {
+          console.log('wx upload')
+          this.chooseFile();
+        }
+      },
       // 选择图片
       chooseFile() {
         let options = {
@@ -187,6 +203,33 @@
             })
           },
         })
+      },
+      //模拟文件上传事件
+      clickUpload() {
+        this.$refs.uFile.dispatchEvent(new MouseEvent('click'));
+      },
+      //通用上传文件
+      commUploadFile() {
+        let files = this.$refs.uFile.files[0];
+        if(files) {
+          return uploadFile.upload({
+            file: files,
+            biReferenceId: this.biReferenceId,
+          }).then(({data = [], success = true, message = ''}) => {
+            if(success) {
+              let arr = {
+                attacthment: data[0].attacthment,
+                attr1: data[0].attr1,
+                attr2: data[0].attr2,
+                iconType: this.judgeFileType(data[0].attr1),
+                id: data[0].id,
+                referenceId: data[0].biReferenceId,
+                status: 1,
+              };
+              this.files.push(arr);
+            }
+          });
+        }
       },
       // 上传文件
       upload(localId) {
