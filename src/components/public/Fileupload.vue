@@ -98,17 +98,15 @@
     },
     methods: {
       dealUploadDev() {
-        const ua = navigator.userAgent.toLowerCase();
-        console.log(ua)
         if(isIOS || isIPhone || isIPad || isAndroid || isPC) {
-          console.log('comm upload');
           this.clickUpload();
-          //this.commUploadFile();
+          return ;
         }
         if(isQYWX) {
-          console.log('wx upload')
           this.chooseFile();
+          return ;
         }
+        this.clickUpload();
       },
       // 选择图片
       chooseFile() {
