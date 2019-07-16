@@ -6,39 +6,51 @@
             <span>总工时：<b>{{ logHours }}</b></span>
             <span :style="{marginLeft:'15px'}">总成本：<b>{{ logCosts }}</b></span>
         </div>
-        <div class="task_list_content">
-            <div class="list_container" v-for="(list,index) of logList" :key="index">
-                <div class="list_left">
-                    <img :src="list.photo" @error="getDefaultImg(list)">
-                </div>
-                <div class="list_right">
-                    <div class="list_right_title">
-                        <check-icon 
-                            type="plain" 
-                            @click.native="handlerChangeLogStatus(list)" 
-                            :value.sync="list.logStatus==='已办'?true:false">
-                        </check-icon>
-                        <b>{{ list.logTitle }}</b>
-                    </div>
-                    <div class="list_right_detail">
-                        <b class="detail_name">{{ list.handlerName?list.handlerName:'未知' }}</b>
-                        <span class="detail_date">{{ list.taskDate }}</span>
-                        <span class="detail_hour">{{ list.logDeclarationHours }}小时</span>
-                        <span class="detail_type">{{ list.logType }}</span>
-                    </div>
-                    <div class="list_right_comment">
-                        {{ list.comment }}
-                    </div>
-                </div>
-            </div>
-            <div class="empty_data" v-if="logList.length===0">
-              <span class="icon icon-empty"></span>
-              <h3 :style="{color:'#999'}">暂无数据</h3>
-            </div>
-        </div>
+        <r-scroll
+            class="pop-list-container"
+            :options="scrollOptions"
+            :has-next="hasNext"
+            :no-data="!hasNext && !logList.length"
+            @on-pulling-up="onPullingUp"
+            ref="bScroll">
+          <div class="task_list_content">
+              <div class="list_container" v-for="(list,index) of logList" :key="index">
+                  <div class="list_left">
+                      <img :src="list.photo" @error="getDefaultImg(list)">
+                  </div>
+                  <div class="list_right">
+                      <div class="list_right_title">
+                          <check-icon 
+                              type="plain" 
+                              @click.native="handlerChangeLogStatus(list)" 
+                              :value.sync="list.logStatus==='已办'?true:false">
+                          </check-icon>
+                          <b>{{ list.logTitle }}</b>
+                      </div>
+                      <div class="list_right_detail">
+                          <b class="detail_name">{{ list.handlerName?list.handlerName:'未知' }}</b>
+                          <span class="detail_date">{{ list.taskDate }}</span>
+                          <span class="detail_hour">{{ list.logDeclarationHours }}小时</span>
+                          <span class="detail_type">{{ list.logType }}</span>
+                      </div>
+                      <div class="list_right_comment">
+                          {{ list.comment }}
+                      </div>
+                  </div>
+              </div>
+              <div class="empty_data" v-if="logList.length===0">
+                <span class="icon icon-empty"></span>
+              </div>
+          </div>
+        </r-scroll>
       </div>
       <div class="task_footer" v-if="$route.name !== 'TASKLOG'">
-        <x-button plain type="primary" @click.native="addTaskLog">新增</x-button>
+        <x-button plain type="primary" @click.native="addTaskLog">
+          <span slot="default">
+            <span class="icon icon-add-task"></span>
+            新增
+          </span>
+        </x-button>
       </div>
       <router-view></router-view>
   </div>
@@ -57,9 +69,14 @@ export default {
       logHours: 0,
       logCosts: 0,
       logStatus: true,
+      hasNext: true,
       pageSize: 10,
       currentPage: 1,
-      logList: []
+      logList: [],
+      scrollOptions: {
+        click: true,
+        pullUpLoad: true
+      },
     }
   },
   components: { CheckIcon, XButton, RScroll },
@@ -69,10 +86,11 @@ export default {
     }
   },
   methods: {
-    getLogList() {
+    getLogList(isDown) {
         this.$loading.show();
         getTaskLogList(this.$route.query.transCode,this.currentPage,this.pageSize).then(res => {
-            this.logList = res.tableContent;
+            this.hasNext = res.dataCount > (this.currentPage - 1) * this.pageSize + res.tableContent.length;
+            this.logList = this.currentPage === 1 ? res.tableContent : [...this.logList,...res.tableContent];
             this.logCosts = res.logCosts && numberComma(res.logCosts);
             this.logHours = res.logHours;
             this.$loading.hide();
@@ -155,9 +173,13 @@ export default {
       padding: .1rem .1rem;
       background-color: #fff;
       margin: .1rem;
+      height: 100%;
+      .pop-list-container{
+        height: calc(100% - 100px);
+      }
       &_sum{
           border-bottom: 1px solid #e8e8e8;
-          padding-bottom: .03rem;
+          padding: .05rem;
       }
       &_content{
           .empty_data{
@@ -223,6 +245,13 @@ export default {
     width: 90%;
     padding: .1rem;
     margin: .1rem .1rem 0rem .1rem;
+    .icon-add-task{
+      width: .2rem;
+      height: .2rem;
+      display: inline-block;
+      margin-bottom: -.03rem;
+      margin-right: .05rem;
+    }
   }
   .task_container{
     z-index: 1;

@@ -24,13 +24,13 @@
         <div class="heart-desc">{{ isConcern === 0 ? '关注' : '取消关注' }}</div>
       </div>
       <!-- 评论 -->
-      <div class="operation" @click="goDiscuss">
+      <div class="operation" @click="goDiscuss" v-if="isDiscuss">
         <span class="icon icon-dialog"></span>
         <span class="count">{{commentCount || 0}}</span>
         <div class="dialog-desc">评论</div>
       </div>
       <!-- 日志 -->
-      <div class="task" @click="goTaskLogList">
+      <div class="task" @click="goTaskLogList" v-if="isTaskLog">
         <span class="icon icon-log"></span>
         <div class="task-desc">日志</div>
       </div>
@@ -47,7 +47,7 @@ import {
 } from "service/commonService";
 // 请求 引入
 import { isSubscribeByRelationKey, subscribeApp, unsubscribeApp, getUserList } from 'service/commentService'
-import { getAppExampleDetails,getAutoSubjectCount } from "service/detailService";
+import { getAppExampleDetails,getAutoSubjectCount,getAppFeaturesData } from "service/detailService";
 /* 引入微信相关 */
 import {register} from 'plugins/wx'
 import { constants } from 'crypto';
@@ -58,6 +58,8 @@ export default {
       listId: '',
       currentComponent: '',
       submitSuccess: false,
+      isDiscuss: false,
+      isTaskLog: false,
       detailScroll: null,
       commentCount: 0,
       hasComment: true, // 是否展示底部评论栏
@@ -217,8 +219,34 @@ export default {
           this.autoSubjectCount = data.data.count;
       });    
     },
+    //获取应用特性管理数据
+    getAppFeature() {
+      getAppFeaturesData(this.$route.params.listId).then(res => {
+        if(res.success){
+          res.data.forEach(val => {
+            if(val.status === '1'){
+              if(val.title === '评论'){
+                  this.isDiscuss = true;
+              }
+              if(val.title === '工作日志'){
+                  //工作日志控件
+                  if (this.$route.params.listId !=='2750a13d-295d-4776-9673-290c51bfc568') {     
+                      this.isTaskLog = true;
+                  }
+              }
+            }
+          })
+        }else{
+          this.$vux.alert.show({
+            title: "错误",
+            content: res.message
+          });
+        }
+      })
+    }
   },
   created() {
+    this.getAppFeature();
     initWebContext().then(()=>{
         this.initPage();
     })
@@ -321,7 +349,7 @@ export default {
         }
         .heart-desc{
           font-size: .1rem;
-          margin-top: -.06rem;
+          margin-top: -.05rem;
         }
       }
       .operation {
@@ -331,7 +359,6 @@ export default {
         }
       }
       .count{
-        margin-left: .04rem;
         font-size: .12rem;
       }
       .task{

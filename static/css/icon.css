@@ -30,6 +30,10 @@
   background: url('~assets/iconfont/add.png');
   background-size: cover;
 }
+.icon-add-task {
+  background: url('~assets/iconfont/taskAdd.png');
+  background-size: cover;
+}
 .icon-empty {
   background: url('~assets/iconfont/empty-box.png');
   background-size: cover;
