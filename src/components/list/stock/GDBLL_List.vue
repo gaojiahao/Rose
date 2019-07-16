@@ -1,4 +1,4 @@
-<template>
+ <template>
   <div class="pages" :class="{'no-add': !action.add}" ref='list'>
     <div class='content'>
       <div class="list_top">
