@@ -1,22 +1,21 @@
 <template>
     <div class='app_example_fill_wrapper' v-show="showTab">
         <div class="fieldSets">
+            <div class="r-fieldset">
+                <div class="box">
+                    <header>
+                        <div class="vux-1px-l">{{this.tabData.listName}}</div>
+                    </header>
+                </div>
+            </div>
             <template v-for="(values, index) in listValues">
                 <div class="r-fieldset">
                     <div class="box">
-                        <!-- <header>
-                            <div class="vux-1px-l">实例</div>
-                            <div class="basic_process_status">
-                                <span class="barWrapp">
-                                    <i class="style-toogleBar"></i>
-                                </span>
-                            </div>
-                        </header> -->
                         <div class="readOnlyPart">
                             <template v-for="(fileds, index) in listFields">
                                 <div class="item">
                                     <span :key="index">{{fileds.fieldName}}：</span>
-                                    <span :class="{atvice:fileds.fieldCode == 'transCode'}" v-if="fileds.fieldTempName='超链接'" @click="goDetail(values[fileds.fieldCode])">{{values[fileds.fieldCode]||'无'}}</span>
+                                    <span :class="{atvice:fileds.fieldCode == 'transCode'}" v-if="fileds.fieldCode == 'transCode'" @click="goDetail(values[fileds.fieldCode])">{{values[fileds.fieldCode]||'无'}}</span>
                                     <span v-else>{{values[fileds.fieldCode]||'无'}}</span>
                                 </div>
                             </template>
@@ -125,16 +124,19 @@ var component = {
         //跳转到相应的交易号详情
         goDetail(transCode) {
             if(transCode) {
+                let listId = this.tabData.listId;
+                let path = `/detail/${listId}/0`;
                 this.$router.push({
-                    path: '/detail/null/null',
+                    path: path,
                     query: {
                         name: 'null',
-                        listId: 'null',
+                        folder: 'null',
+                        fileName: 'null',
                         transCode: transCode,
                     }
                 });
             }
-        }
+        },
     },
     created () {
         
@@ -147,12 +149,6 @@ export default Vue.component('AppExample',component);
     background: #F8F8F8FF;    
 }
 .app_example_fill_wrapper   {
-    // top: 0;
-    // left: 0;
-    // width: 100%;
-    // height: 100%;
-    // overflow: hidden;
-    // position: absolute;
     .fieldSets {
         background: #F8F8F8FF;
         .r-fieldset {

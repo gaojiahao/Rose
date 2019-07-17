@@ -76,6 +76,15 @@ var component = {
             manageData: {}//管理会计数据包
         }
     },
+    watch: {
+        showTab: {
+            handler(val) {
+                if(val) {
+                    this.getAccount();
+                }
+            }
+        }
+    },
     methods: {
         onChangeTab(item) {
             this.changeTab = item;
@@ -141,13 +150,13 @@ var component = {
     },
     created () {
         this.transCode = this.$route.query.transCode;
-        this.getAccount();
+        // this.getAccount();
     }    
 }
 export default Vue.component('AutoSubject',component);
 </script>
 <style lang='scss'>
-.auto_subject_fill_wrapper   {
+.auto_subject_fill_wrapper  {
     .fieldSets {
         background: #F8F8F8FF;
         .r-fieldset {
@@ -168,7 +177,7 @@ export default Vue.component('AutoSubject',component);
                     }
                     span:nth-child(2n) {
                         font-weight: 400;
-                        font-size: 0.12rem;
+                        font-size: 0.13rem;
                         margin-left: .1rem;
                     }
                     .item {
