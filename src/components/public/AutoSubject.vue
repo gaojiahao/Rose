@@ -2,7 +2,7 @@
     <div class='auto_subject_fill_wrapper' v-show="showTab">
         <div class="tabSets">
             <tab :line-width=2 active-color='#3296fa' v-model="index">
-                <tab-item class="vux-center" :selected="changeTab === item" v-for="(item, index) in list" @click="changeTab = item" :key="index">{{item}}</tab-item>
+                <tab-item class="vux-center" :selected="changeTab===item" v-for="(item, index) in list" @on-item-click="onChangeTab(item)" :key="index">{{item}}</tab-item>
             </tab>
             <div class="fieldSets">
                 <div class="r-fieldset">
@@ -12,23 +12,15 @@
                         </header>
                     </div>
                 </div>
-                <div class="r-fieldset">
+                <div class="r-fieldset" v-for="(value, index) in financeData.data">
                     <div class="box">
                         <div class="readOnlyPart">
-                            <div class="item">
-                                <span>111</span>
-                                <span>222</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="r-fieldset">
-                    <div class="box">
-                        <div class="readOnlyPart">
-                            <div class="item">
-                                <span>111</span>
-                                <span>222</span>
-                            </div>
+                            <template v-for="(item, index) in financeModel.model">
+                                <div class="item" :key= index v-if="!item.hidden">
+                                    <span>{{item.text}}</span>
+                                    <span>{{value[item.field]}}</span>
+                                </div>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -39,23 +31,15 @@
                         </header>
                     </div>
                 </div>
-                <div class="r-fieldset">
+                <div class="r-fieldset" v-for="(value, index) in manageData.data">
                     <div class="box">
                         <div class="readOnlyPart">
-                            <div class="item">
-                                <span>444</span>
-                                <span>555</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="r-fieldset">
-                    <div class="box">
-                        <div class="readOnlyPart">
-                            <div class="item">
-                                <span>666</span>
-                                <span>777</span>
-                            </div>
+                            <template v-for="(item, index) in manageModel.model">
+                                <div class="item" :key= index v-if="!item.hidden">
+                                    <span>{{item.text}}</span>
+                                    <span>{{value[item.field]}}</span>
+                                </div>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -86,38 +70,74 @@ var component = {
             transCode: '',
             view_id: 'view_13',
             view_type: '',
-            financeAccountData: {
-
-            },//财务会计数据包
-            manageAccountData: {
-
-            }//管理会计数据包
+            financeModel: {},
+            financeData: {},//财务会计数据包
+            manageModel: {},
+            manageData: {}//管理会计数据包
         }
     },
     methods: {
-        getAccount() {
+        onChangeTab(item) {
+            this.changeTab = item;
+            this.getAccount();
+        },
+        async getAccount() {
             let view_id = '';
-            if(this.changeTab=='财务会计') {
-                view_id = 'view_3'; 
-            } else {
-                view_id = 'view_13';     
-            }
-            let data = {
+    
+            let data1 = {
                 _dc: Date.now(),
-                view_id: view_id,
+                view_id: 'view_3',
                 active_type: 'automatic',
                 trans_code: this.transCode,
                 view_scope: 'model',
                 op: 'queryAll',
                 view_type: this.view_type
             }
-            this.getView(data);    
+            let data2 = {
+                _dc: Date.now(),
+                view_id: 'view_3',
+                active_type: 'automatic',
+                trans_code: this.transCode,
+                view_scope: 'data',
+                op: 'queryAll',
+                view_type: this.view_type    
+            }
+            let data3 = {
+                _dc: Date.now(),
+                view_id: 'view_13',
+                active_type: 'automatic',
+                trans_code: this.transCode,
+                view_scope: 'model',
+                op: 'queryAll',
+                view_type: this.view_type    
+            }
+            let data4 = {
+                _dc: Date.now(),
+                view_id: 'view_13',
+                active_type: 'automatic',
+                trans_code: this.transCode,
+                view_scope: 'data',
+                op: 'queryAll',
+                view_type: this.view_type    
+            }
+            if(this.changeTab=='财务会计') {
+                this.financeModel = await this.getView(data1);
+                this.financeData = await this.getView(data2);
+                this.manageModel = await this.getView(data3); 
+                this.manageData = await this.getView(data4);
+            } else {
+                data1.view_id = 'view_managerAccountAutomaticEntry';
+                data1.active_type = 'automatic';
+                data2.view_id = 'view_managerAccountAutomaticEntry';
+                data2.active_type = 'automatic';
+
+                this.financeModel = await this.getView(data1);
+                this.financeData = await this.getView(data2);
+            }
         },
         getView(data) {
-            return getView(data).then(data => {
-               // console.log(data);
-            });
-        },  
+            return getView(data);
+        },
     },
     created () {
         this.transCode = this.$route.query.transCode;
@@ -127,21 +147,14 @@ var component = {
 export default Vue.component('AutoSubject',component);
 </script>
 <style lang='scss'>
-// #app {
-//     background: #F8F8F8FF;    
-// }
-// .tabSets {
-//     padding: 0.1rem;
-// }
 .auto_subject_fill_wrapper   {
     .fieldSets {
         background: #F8F8F8FF;
         .r-fieldset {
             color: #333;
-            // margin: 0 0 0.1rem 0;
             border-radius: 0.04rem;
             background-color: #fff;
-            width: 100%;
+            width: calc(100% - 0.2rem);
             .box {
                 padding: 0.15rem;
                 &.muti{
@@ -155,7 +168,8 @@ export default Vue.component('AutoSubject',component);
                     }
                     span:nth-child(2n) {
                         font-weight: 400;
-                        font-size: 0.13rem;
+                        font-size: 0.12rem;
+                        margin-left: .1rem;
                     }
                     .item {
                         display: inline-flex;
