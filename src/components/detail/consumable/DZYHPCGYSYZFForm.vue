@@ -9,7 +9,7 @@
                  :no-status="orderInfo.biStatus"></work-flow>
       <contact-part :contact-info="dealerInfo" :configs="dealerConfig"></contact-part>
       <!-- 物料列表 -->
-      <matter-list :order-list='orderList' :order-title="orderTitle" @on-show-more="onShowMore"></matter-list>
+      <matter-list :order-list='orderList' :order-title="orderTitle"></matter-list>
       <!-- 资金账户可编辑-->
       <pop-cash-list :default-value="cashInfo" @sel-item="selCash" request="3" :params="cashParams"
                      v-show="otherConfig.length &&  !isEditAdmout" required>
@@ -42,8 +42,6 @@
       <!-- 备注 -->
       <other-part :other-info="orderInfo" :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"
                   :attachment="attachment"></other-part>
-      <!-- 物料详情 -->
-      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions" :agree-handler="agreeHandler"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>

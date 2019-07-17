@@ -5,8 +5,8 @@ export let getWorkFlow = (data = {}) => {
     return $flyio.ajax({
         url: '/H_roleplay-si/ds/listTaskLogByTransCode',
         data: {
-          _dc: Date.now(),
-          ...data,
+            _dc: Date.now(),
+            ...data,
         }
     })
 }
@@ -20,45 +20,37 @@ export let isMyflow = (data = {}) => {
 //获取listId
 export let getListId = (transCode = '') => {
     return $flyio.ajax({
-        url:`/H_roleplay-si/ds/list/getFormByTransCode?transCode=${transCode}`,
+        url: `/H_roleplay-si/ds/list/getFormByTransCode?transCode=${transCode}`,
 
     })
 }
 // 获取表单详情
-export let getSOList = (data = {}) => {
+export let getSOList = (data = {}, api = 'formAPI') => {
     return $flyio.ajax({
-        url: '/H_roleplay-si/formAPI/findData',
+        url: '/H_roleplay-si/' + api + '/findData',
         data
     })
 }
-// 获取当前用户
-export let currentUser = (_dc = '') => {
-    return $flyio.ajax({
-        url: '/H_roleplay-si/userInfo/currentUser',
-        _dc
-    })
-}
-
 // 获取物料价格
 export let getSaleQuotePrice = (data = {}) => {
-  return $flyio.ajax({
-    type: 'POST',
-    contentType: 'application/x-www-form-urlencoded',
-    url: '/H_roleplay-si/ds/getSaleQuotePrice',
-    data: data
-  })
+    return $flyio.ajax({
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded',
+        url: '/H_roleplay-si/ds/getSaleQuotePrice',
+        data: data
+    })
 };
 // 获取相关实例分类
 export let getAppExampleDetails = (data = {}) => {
     return $flyio.ajax({
-        url:'/H_roleplay-si/trans/getAppExampleDetails',
+        url: '/H_roleplay-si/trans/getAppExampleDetails',
         data
     })
 }
 // 获取相关实例应用的视图
 export let getListView = (data = {}) => {
     return $flyio.ajax({
-        url:'/H_roleplay-si/ds/list/getListViews',
+        url: '/H_roleplay-si/ds/list/getListViews',
         data
     })
 }
@@ -75,14 +67,65 @@ export let findAllJobLog = (transCode = '') => {
 }
 export let getListById = (data = {}) => {
     return $flyio.ajax({
-        url:'/H_roleplay-si/ds/list/getListById',
+        url: '/H_roleplay-si/ds/list/getListById',
         data
     })
 }
-export let getFromStatus = (data ={}) => {
+export let getFromStatus = (data = {}) => {
     return $flyio.ajax({
-        url:'/H_roleplay-si/ds/getFromStatusByTransCode',
+        url: '/H_roleplay-si/ds/getFromStatusByTransCode',
         data
     })
 }
-export default{}
+//获取所有流程状态
+export let getProcessStatusByListId = (data = {}) => {
+    return $flyio.ajax({
+        url: '/H_roleplay-si/ds/getProcessStatusByListId',
+        data: {
+            _dc: Date.now(),
+            ...data,
+        }
+    })
+}
+//获取当前流程状态
+export let getStatusProcessByTransCode = (data = {}) => {
+    return $flyio.ajax({
+        url: '/H_roleplay-si/trans/getStatusProcessByTransCode',
+        data: {
+            _dc: Date.now(),
+            ...data,
+        }
+    })
+}
+//更新流程状态
+export let updateProcessStatus = (data = {}) => {
+    return $flyio.ajax({
+        url: '/H_roleplay-si/formAPI/updateProcessStatus',
+        data: {
+            _dc: Date.now(),
+            ...data,
+        }
+    })
+}
+//获取科目分录数量
+export let getAutoSubjectCount = (data = {}) => {
+    return $flyio.ajax({
+        url: '/corebiz-api/subject/getAutoSubjectCount',
+        data: {
+            _dc: Date.now(),
+            ...data,
+        }
+    })
+}
+
+// 获取应用特性管理数据
+export let getAppFeaturesData = (listId) => {
+    return $flyio.ajax({
+        url: '/H_roleplay-si/app/feature/list',
+        data: {
+            listId: listId
+        }
+    })
+}
+
+export default {}

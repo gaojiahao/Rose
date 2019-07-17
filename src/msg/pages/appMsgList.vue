@@ -98,16 +98,18 @@ export default {
           if (tableContent.length > 0) {
             let {isMyTask, nodeName} = tableContent[0];
             if (isMyTask === 1 && nodeName === '重新提交') {
-              path = `/fillform/${folder}/${packagePath}`;
+              path = `/fillform/${listId}/0`;
             } else {
-              path = `/detail/${folder}/${packagePath}`;
+              path = `/detail/${listId}/0`;
             }
           } else {
-            path = `/detail/${folder}/${packagePath}`;
+            path = `/detail/${listId}/0`;
           }
           let query = {
             listId,
             name: title,
+            folder,
+            fileName:packagePath,
             transCode : item.businessKey,
           }
           this.$router.push({

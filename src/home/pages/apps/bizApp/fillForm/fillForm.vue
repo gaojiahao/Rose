@@ -11,7 +11,11 @@
 </template>
 
 <script>
+import {
+  initWebContext
+} from "service/commonService";
 import platfrom from '@/plugins/platform'
+import { setTimeout } from 'timers';
 export default {
   data(){
     return {
@@ -40,16 +44,32 @@ export default {
     if (to.query.id || to.query.groupId || to.query.colId || to.query.transCode){
       to.meta.title = `编辑${name}`;
     }
-    next();
+    initWebContext().then(()=>{
+        next();
+    })
   },
   created(){
     this.$loading.show();
-    let { transCode } = this.$route.query,
-        { folder, fileName } = this.$route.params;
+    let { transCode,folder,fileName } = this.$route.query;
     if (transCode){
       this.transCode = transCode;
     }
-    this.currentComponent = require(`components/apply/${folder}/${fileName}Apply.vue`).default;
+    try {
+      if(fileName == 'null'){
+          this.currentComponent = require(`components/detail/CommonForm.vue`).default;
+      } else {
+          this.currentComponent = require(`components/apply/${folder}/${fileName}Apply.vue`).default;
+      }
+    }catch (e) {
+      console.log(e);
+      this.$vux.alert.show({
+        content: '抱歉，无法支持该应用的查看',
+        onHide: () => {
+          this.$router.go(-1);
+        }
+      });
+    } 
+
   },
   beforeRouteLeave(to, from, next) {
     let fillPage = this.$refs.fillPage;
@@ -68,6 +88,10 @@ export default {
     //删除缓存的往来信息
     if (to.name === "LIST"){
       sessionStorage.removeItem('DEALERLIST_SELITEMS');
+    }else if(to.name == 'FILLFORM'){
+      setTimeout(function(){
+        fillPage.reload && fillPage.reload();
+      },0)
     }
     //离开数据保存为草稿
     if (to.name === "LIST" && keys && !this.transCode && !this.submitSuccess){
@@ -84,6 +108,7 @@ export default {
       })
       return
     }
+
     next()
 
   },

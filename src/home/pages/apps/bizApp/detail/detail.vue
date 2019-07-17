@@ -1,23 +1,38 @@
 <template>
   <div class="pages">
     <div class="detail-container" :class="{'has-comment': hasComment}" ref='detail'>
-      <component
-        :is='currentComponent'
-        @change='modifyRoute'
-        @refresh-scroll="refresh"
-        @subscribeChange="setSubscribe"
-        ref="detailComponent">
-      </component>
+      <v-touch @swipeleft="swiperleft" @swiperight="swiperright" class="wrapper" :class="{'wrapper2': isShow}">
+        <component
+          :is='currentComponent'
+          @change='modifyRoute'
+          @refresh-scroll="refresh"
+          @subscribeChange="setSubscribe"
+          @slideStatus="slideStatus"
+          :showTab="showTab['comm']"
+          ref="detailComponent">
+        </component>
+        <auto-subject :showTab="showTab['subject']"></auto-subject>
+        <app-example :showTab="showTab['example']" :tabData="tabData['example']"></app-example>
+      </v-touch>
     </div>
+    <slideBar :showSlide="showSlide" @swiperleft="swiperleft" @goTab="goTab" :appExample="appExample" :autoSubjectCount="autoSubjectCount"></slideBar>
     <div class="detail-comment-container vux-1px-t" v-if="hasComment">
+      <!-- 关注 -->
       <div class="concern" @click="goConcern">
         <span class="icon icon-heart" v-if="isConcern === 0"></span>
         <span class="icon icon-heart-fill" v-else></span>
+        <div class="heart-desc">{{ isConcern === 0 ? '关注' : '取消关注' }}</div>
       </div>
       <!-- 评论 -->
-      <div class="operation" @click="goDiscuss">
+      <div class="operation" @click="goDiscuss" v-if="isDiscuss">
         <span class="icon icon-dialog"></span>
-        <span class="count">{{commentCount || ''}}</span>
+        <span class="count">{{commentCount || 0}}</span>
+        <div class="dialog-desc">评论</div>
+      </div>
+      <!-- 日志 -->
+      <div class="task" @click="goTaskLogList" v-if="isTaskLog">
+        <span class="icon icon-log"></span>
+        <div class="task-desc">日志</div>
       </div>
     </div>
   </div>
@@ -27,21 +42,41 @@
 <script>
 // 插件 引入
 import Bscroll from 'better-scroll'
+import {
+  initWebContext
+} from "service/commonService";
 // 请求 引入
 import { isSubscribeByRelationKey, subscribeApp, unsubscribeApp, getUserList } from 'service/commentService'
+import { getAppExampleDetails,getAutoSubjectCount,getAppFeaturesData } from "service/detailService";
 /* 引入微信相关 */
 import {register} from 'plugins/wx'
+import { constants } from 'crypto';
 export default {
   data() {
     return {
       transCode: '',
+      listId: '',
       currentComponent: '',
       submitSuccess: false,
+      isDiscuss: false,
+      isTaskLog: false,
       detailScroll: null,
       commentCount: 0,
       hasComment: true, // 是否展示底部评论栏
       isConcern : 0, // 是否关注，0 未关注，1已关注
       concernCount : 0, //关注人数
+      showSlide:false,
+      isShow:false,
+      showTab: {
+        'comm': true,
+        'subject': false,
+        'example': false,
+      },
+      tabData: {
+        'example': {}
+      },
+      appExample: [],
+      autoSubjectCount: 0,
     }
   },
   methods: {
@@ -51,7 +86,7 @@ export default {
     // 刷新better-scroll
     refresh() {
       this.$nextTick(() => {
-        this.detailScroll.refresh();
+        if(this.detailScroll != null)this.detailScroll.refresh();
       })
     },
     // 跳转到评论页面
@@ -66,6 +101,16 @@ export default {
     // 设置是否已经关注该订单
     setSubscribe(val){
       this.isConcern = +val;
+    },
+    //打开任务日志列表
+    goTaskLogList() {
+      this.$router.push({
+        path: '/taskLog',
+        query: {
+          listId: this.$route.params.listId,
+          transCode: this.transCode
+        }
+      })
     },
     // 关注或取关
     goConcern() {
@@ -93,19 +138,28 @@ export default {
     },
     // 初始化页面
     initPage(){
-      let { transCode } = this.$route.query,
-          { folder, fileName } = this.$route.params;
+      let { transCode,folder,fileName,listId} = this.$route.query;
       this.hasComment = !!transCode;
       this.transCode = transCode;
+      this.listId = listId;
       try {
         if(fileName == 'null'){
             this.currentComponent = require(`components/detail/CommonForm.vue`).default;
+            this.getAppExampleDetails();
+            this.getAutoSubjectCount();
         } else {
             this.currentComponent = require(`components/detail/${folder}/${fileName}Form.vue`).default;
         }
         // 监听详情页传回来的 ‘评论’
         this.$event.$on('commentCount', (val) => {
           this.commentCount = val;
+        })
+        this.$nextTick(() => {
+          if (!this.detailScroll) {
+            this.detailScroll = new Bscroll(this.$refs.detail, {
+              click: true,
+            })
+          }
         })
       } catch (e) {
         console.log(e);
@@ -115,18 +169,87 @@ export default {
             this.$router.go(-1);
           }
         });
+      } 
+    },
+    //关闭侧滑菜单
+    swiperleft() {
+      this.showSlide = false;
+    },
+    //打开侧滑菜单
+    swiperright() {
+      this.showSlide = true;
+    },
+    //由于视图的样式不同，导致侧滑菜单也要不同样式
+    slideStatus(data) {
+      if(data == 'view') {
+        this.isShow = false;
+      } else {
+        this.isShow = true;
       }
-      this.$nextTick(() => {
-        if (!this.detailScroll) {
-          this.detailScroll = new Bscroll(this.$refs.detail, {
-            click: true,
+    },
+    //侧滑菜单切换tab
+    goTab(val) {
+      for(let item in this.showTab) {
+        if(item == val.name) {
+          this.showTab[item] = true;
+          if(val.name=='example') {
+            this.tabData[item] = val.data;
+          }
+        } else {
+          this.showTab[item] = false;
+        }
+      }
+    },
+    //获取相关实例count
+    getAppExampleDetails() {
+      let data = {
+        transCode : this.transCode,
+        listId : this.listId
+      };
+      return getAppExampleDetails(data).then(data => {
+        this.appExample = data.relevantItems;
+      });  
+    },
+    //获取自动分录count
+    getAutoSubjectCount() {
+      let data = {
+          trans_code: this.transCode,
+      };
+      return getAutoSubjectCount(data).then(data => {
+          this.autoSubjectCount = data.data.count;
+      });    
+    },
+    //获取应用特性管理数据
+    getAppFeature() {
+      getAppFeaturesData(this.$route.params.listId).then(res => {
+        if(res.success){
+          res.data.forEach(val => {
+            if(val.status === '1'){
+              if(val.title === '评论'){
+                  this.isDiscuss = true;
+              }
+              if(val.title === '工作日志'){
+                  //工作日志控件
+                  if (this.$route.params.listId !=='2750a13d-295d-4776-9673-290c51bfc568') {     
+                      this.isTaskLog = true;
+                  }
+              }
+            }
           })
+        }else{
+          this.$vux.alert.show({
+            title: "错误",
+            content: res.message
+          });
         }
       })
-    },
+    }
   },
   created() {
-    this.initPage();
+    this.getAppFeature();
+    initWebContext().then(()=>{
+        this.initPage();
+    })
   },
   activated() {
     let reload = this.$route.meta.reload;
@@ -152,8 +275,10 @@ export default {
     if (isGoList) {
       this.currentComponent = null;
       // 销毁better-scroll
-      this.detailScroll.destroy();
-      this.detailScroll = null;
+      if(this.detailScroll != null){
+        this.detailScroll.destroy();
+        this.detailScroll = null;
+      }
       // 销毁监听
       this.$event.$off('commentCount');
       from.meta.reload = true;
@@ -168,6 +293,14 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+  .wrapper {
+
+  }
+  .wrapper2 {
+    height: 100%;
+    // overflow: hidden;
+    z-index: 11;
+  }
   .vux-1px-t:before {
     border-color: #e8e8e8;
   }
@@ -183,14 +316,14 @@ export default {
       overflow: hidden;
       // background: #FFF;
       &.has-comment {
-        height: calc(100% - .44rem);
+        height: calc(100% - .5rem);
       }
     }
     .detail-comment-container {
       display: flex;
       justify-content: space-around;
       align-items: center;
-      height: .44rem;
+      height: .5rem;
       background-color: #fafafa;
       color: #999;
       &:before {
@@ -211,20 +344,29 @@ export default {
       }
       /** 关注 */
       .concern{
-        display: flex;
-        justify-content: center;
-        align-items: center;
         .icon-xihuan{
           color: #c93d1b;
         }
+        .heart-desc{
+          font-size: .1rem;
+          margin-top: -.05rem;
+        }
       }
       .operation {
-        display: flex;
-        align-items: center;
+        .dialog-desc{
+          font-size: .1rem;
+          margin-top: -.06rem;
+        }
       }
       .count{
-        margin-left: .04rem;
         font-size: .12rem;
+      }
+      .task{
+        .task-desc{
+          font-size: .1rem;
+          margin-top: -.06rem;
+          margin-left: -.03rem;
+        }
       }
     }
   }

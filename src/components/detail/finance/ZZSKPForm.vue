@@ -12,12 +12,10 @@
       <!-- 发票等部分 -->
       <only-word :config="otherConfig" :info="orderInfo"></only-word>
       <!-- 物料列表 -->
-      <matter-list :order-list="orderList" :order-title="orderTitle" @on-show-more="onShowMore"></matter-list>
+      <matter-list :order-list="orderList" :order-title="orderTitle"></matter-list>
       <!-- 备注 -->
       <other-part :other-info="orderInfo" :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"
                   :attachment="attachment"></other-part>
-      <!-- 物料详情 -->
-      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>

@@ -76,7 +76,7 @@
     saveAndStartWf,
     saveAndCommitTask,
     requestData
-  } from 'service/common/commonService'
+  } from 'service/commonService'
   import { getSOList } from 'service/detailService'
   // mixins 引入
   import ApplyCommon from 'mixins/applyCommon'

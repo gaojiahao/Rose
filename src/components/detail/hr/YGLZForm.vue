@@ -75,13 +75,13 @@ export default {
     // 跳转到编辑页面
     goEdit() {
       // 交易号、应用名称等
-      let { folder, fileName } = this.$route.params,
-          { name } = this.$route.query;
+      let { name,folder, fileName} = this.$route.query;
       this.$router.push({
-        path: `/fillform/${folder}/${fileName}`,
+        path: `/fillform/0/${fileName}`,
         query: {
           name, 
-          transCode: this.transCode
+          transCode: this.transCode,
+          folder, fileName
         }
       })
     },

@@ -107,7 +107,7 @@
 // vux组件引入
 import { XTextarea,XSwitch } from 'vux'
 // 请求 引入
-import { saveAndStartWf, saveAndCommitTask, submitAndCalc, updateData } from 'service/common/commonService'
+import { saveAndStartWf, saveAndCommitTask, submitAndCalc, updateData } from 'service/commonService'
 import { getBomWorkCheck } from 'service/Product/gdService'
 import { getSOList } from 'service/detailService'
 // mixins 引入

@@ -66,9 +66,9 @@
 </template>
 <script>
 import {TransferDom, Picker, Popup, Group, XAddress, ChinaAddressV4Data, Icon, Cell, Datetime} from 'vux';
-import {getBaseInfoDataBase, getFormConfig, requestData, getFormViews} from 'service/common/commonService';
+import {getBaseInfoDataBase, getFormConfig, requestData, getFormViews} from 'service/commonService';
 import {save, update, getwarehouseInfo, getDepartMentWage} from 'service/warehouseService'
-import {getDictByType, getObjDealerByLabelName} from 'service/common/commonService'
+import {getDictByType, getObjDealerByLabelName} from 'service/commonService'
 import RPicker from 'components/public/basicPicker';
 import RScroll from 'plugins/scroll/RScroll'
 import common from 'mixins/common'

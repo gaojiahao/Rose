@@ -133,7 +133,7 @@
   // 请求 引入
   import { getSOList } from 'service/detailService'
   import { getJGDDBom } from 'service/materService'
-  import { saveAndStartWf, saveAndCommitTask, submitAndCalc } from 'service/common/commonService'
+  import { saveAndStartWf, saveAndCommitTask, submitAndCalc } from 'service/commonService'
   // mixins 引入
   import applyCommon from 'mixins/applyCommon'
   // 组件引入

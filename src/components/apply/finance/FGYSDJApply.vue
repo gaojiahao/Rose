@@ -1,4 +1,5 @@
 <template>
+<!--供应商预付歀-->
   <div class="pages fgysqk-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
@@ -92,7 +93,7 @@
   } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/common/commonService'
+  import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
   import {findProjectApproval} from 'service/projectService'
   // mixins 引入
   import ApplyCommon from 'mixins/applyCommon'

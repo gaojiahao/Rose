@@ -1,20 +1,22 @@
 import { querystring } from 'vux'
 import { corpid, secret, agentid, redirect_uri } from '@/plugins/ajax/conf'
+import {isPC,isQYWX,} from '@/plugins/platform/index'
 import Fly from 'flyio/dist/npm/fly'
 import * as dd from 'dingtalk-jsapi'
 import router from '../router';
 
 const fly = new Fly();
+const storage = window[isPC ? 'localStorage' : 'sessionStorage'];
 const ROSE_TOKEN_KEY = 'ROSE_LOGIN_TOKEN';
 
 let tokenService = {
   // 清除token
   clean() {
-    window.sessionStorage.removeItem(ROSE_TOKEN_KEY);
+    storage.removeItem(ROSE_TOKEN_KEY);
   },
   // 设置token
   setToken(data) {
-    window.sessionStorage.setItem(ROSE_TOKEN_KEY, JSON.stringify({
+    storage.setItem(ROSE_TOKEN_KEY, JSON.stringify({
       entityId: data.entityId,
       token: data.token,
       name: data.name,
@@ -27,8 +29,9 @@ let tokenService = {
     }));
   },
   // 获取token
-  getToken() {
-    let token = JSON.parse(window.sessionStorage.getItem(ROSE_TOKEN_KEY)) || {};
+  getToken(all) {
+    let token = JSON.parse(storage.getItem(ROSE_TOKEN_KEY)) || {};
+    if(all)return token;
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
     if (token['token']) {
       let timestamp = token.timestamp;
@@ -49,8 +52,6 @@ let tokenService = {
     this.clean();
     let query = querystring.parse(location.search.slice(1));
     let code = query.code;
-    // 是否为企业微信客户端
-    let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
 
     // 根据环境不同 调用不同的登录接口
     if (isQYWX) {

@@ -56,7 +56,7 @@
 // vux 引入
 import { XTextarea, Datetime } from 'vux'
 // 请求 引入
-import { updateData, requestData, submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/common/commonService'
+import { updateData, requestData, submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
 import { getSOList } from 'service/detailService'
 // mixins 引入
 import ApplyCommon from 'mixins/applyCommon'

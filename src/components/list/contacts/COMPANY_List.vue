@@ -79,7 +79,7 @@ export default {
       this.resetCondition();
       this.getList();
     },
-    RouterChange(item, index, path) {
+    RouterChange(item, index,folder,fileName) {
       if (this.clickVisited) {
         return
       }
@@ -94,10 +94,10 @@ export default {
       setTimeout(() => {
         this.clickVisited = false;
         this.$router.push({
-          path, 
+          path:'/detail/' + listId + '/0', 
           query: {
             name, 
-            listId,
+            folder,fileName,
             groupId
           }
         })
@@ -106,7 +106,7 @@ export default {
     // 前往详情
     goDetail(item, index) {
       let {folder, fileName} = this.$route.params;
-      this.RouterChange(item, index, `/detail/${folder}/${fileName}`);
+      this.RouterChange(item, index, folder,fileName);
     },
     getList(noReset = false) {
       let filter = [];

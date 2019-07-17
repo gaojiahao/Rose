@@ -48,7 +48,7 @@
   // vux 引入
   import {Popup, TransferDom, LoadMore} from 'vux'
   // 请求 引入
-  import {listUsers, getGroupByUserId, getRoleByUserId} from 'service/common/commonService'
+  import {listUsers, getGroupByUserId, getRoleByUserId} from 'service/commonService'
   // 组件 引入
   import RScroll from 'plugins/scroll/RScroll'
   import DSearch from 'components/search/search'
@@ -197,7 +197,7 @@
         this.selItems.handlerRoleName = val;
         this.roleList.forEach(item => {
           if (item.name === val) {
-            this.selItems.handlerRole = item.userGroupId;
+            this.selItems.handlerRole = item.id;
             return false;
           }
         });
@@ -285,7 +285,7 @@
           this.groupList.push({
             ...item,
             name: item.userGroupName,
-            value: item.userGroupName,
+            value: item.userGroupName
           })
         });
       },
@@ -295,8 +295,7 @@
         this.userRoleList.forEach(item => {
           this.roleList.push({
             ...item,
-            name: item.userGroupName,
-            value: item.userGroupName,
+            value: item.name,
           })
         });
       },
@@ -329,8 +328,8 @@
           tableContent.forEach(item => {
             this.roleList.push({
               ...item,
-              name: item.userGroupName,
               value: item.userGroupName,
+              name:item.userGroupName
             })
           });
           if (tableContent.length && this.isSetInitial) {

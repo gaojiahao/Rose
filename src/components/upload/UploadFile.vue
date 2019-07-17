@@ -24,7 +24,7 @@
 </template>
 
 <script>
-  import {deleteFile} from 'service/common/commonService';
+  import {deleteFile} from 'service/commonService';
   import {chooseImage, uploadImage} from 'plugins/wx/api'
 
   export default {

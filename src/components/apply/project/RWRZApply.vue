@@ -73,7 +73,7 @@
   } from 'vux'
   // 请求 引入
   import { jobLog, saveJobLog } from 'service/projectService'
-  import { getDictByType, getDictByValue, requestData, update} from 'service/common/commonService'
+  import { getDictByType, getDictByValue, requestData, update} from 'service/commonService'
   // mixins 引入
   import ApplyCommon from 'mixins/applyCommon'
   import common from '@/mixins/common'

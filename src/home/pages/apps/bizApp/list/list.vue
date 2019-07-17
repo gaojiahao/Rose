@@ -1,38 +1,38 @@
 <template>
   <div class="inPage">
-    <component
-      :is='currentComponent'
-      :refresh-request='isrefresh'
-      ref='list'>
-    </component>
+    <component :is="currentComponent" :refresh-request="isrefresh" ref="list"></component>
   </div>
 </template>
 
 <script>
 export default {
-  data(){
+  data() {
     return {
-      folder :'',
-      currentComponent : '',
-      isrefresh : false,
-    }
+      folder: "",
+      currentComponent: "",
+      isrefresh: false
+    };
   },
   methods: {
     initPage() {
       /*
-      * folder => 应用类型文件夹
-      * fileName => 应用名称.vue 
-      */    
+       * folder => 应用类型文件夹
+       * fileName => 应用名称.vue
+       */
+
       this.$loading.show();
       let { folder, fileName } = this.$route.params;
       this.folder = folder;
       try {
-        this.currentComponent = require(`components/list/${folder}/${fileName}_List.vue`).default;
-      }
-      catch(e) {
+        if (fileName == "null") {
+          this.currentComponent = require(`components/list/CommonList.vue`).default;
+        } else {
+          this.currentComponent = require(`components/list/${folder}/${fileName}_List.vue`).default;
+        }
+      } catch (e) {
         console.log(e);
         this.$vux.alert.show({
-          content: '抱歉，无法支持该应用的查看',
+          content: "抱歉，无法支持该应用的查看",
           onHide: () => {
             this.$router.go(-1);
           }
@@ -40,12 +40,12 @@ export default {
       }
     }
   },
-  created(){
+  created() {
     this.initPage();
   },
   activated() {
     let listPage = this.$refs.list,
-        reload = this.$route.meta.reload;
+      reload = this.$route.meta.reload;
     // 是否需要刷新列表
     if (reload) {
       let { folder, fileName } = this.$route.params;
@@ -64,33 +64,31 @@ export default {
         listPage.changeVisitedStatus && listPage.changeVisitedStatus();
         listPage.$refs.bScroll && listPage.$refs.bScroll.refresh();
       }
-    })  
+    });
   },
-  beforeRouteEnter (to, from, next) {
-    let { name, transCode } = to.query;
+  beforeRouteEnter(to, from, next) {
+    let { name = "", transCode } = to.query;
     // 合规财务报表的title不需要重定义
-    if (name.includes('合规')){
+    if (name.includes("合规")) {
       to.meta.title = name;
       next();
-    }
-    else if (transCode) {
-      to.meta.title = '加载中...';
-    }
-    else {
-      to.meta.title = name + '列表';
+    } else if (transCode) {
+      to.meta.title = "加载中...";
+    } else {
+      to.meta.title = name + "-测试版";
     }
     next();
-  },  
-  beforeRouteLeave (to, from, next) {
+  },
+  beforeRouteLeave(to, from, next) {
     let { path } = to;
-    if (path === '/home'){
+    if (path === "/home") {
       this.$loading.hide();
       this.currentComponent = null;
       from.meta.reload = true;
     }
     next();
-  },
-}
+  }
+};
 </script>
 
 <style lang='scss'>

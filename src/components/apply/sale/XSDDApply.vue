@@ -39,7 +39,7 @@
 import { dateFormat, numberComma, XTextarea } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { saveAndStartWf, saveAndCommitTask, submitAndCalc, getPriceFromSalesContractAndPrice, updateData} from 'service/common/commonService'
+import { saveAndStartWf, saveAndCommitTask, submitAndCalc, getPriceFromSalesContractAndPrice, updateData} from 'service/commonService'
 // mixins 引入
 import common from 'mixins/applyCommon'
 // 组件引入
@@ -63,11 +63,14 @@ export default {
         }, {
           name: '物料编码',
           value: 'inventoryCode',
+        }, {
+          name: '销售合同号',
+          value: 'transCode',
         }
       ],
       customPrice: '',  //缓存用户自定义的单价
       formData: {},
-      selItems: {},
+      selItems: {},//编辑时的选择中项的容器
       orderList: {},
       dealerInfo: {},
       contactInfo: {},
@@ -276,6 +279,14 @@ export default {
     },
     // 选择要删除的物料
     delClick(sItem, index, key) {
+      // let arr = this.selItems;
+      // let delIndex = arr.findIndex(item => item === index);
+      // //若存在重复的 则清除
+      // if (delIndex !== -1) {
+      //   arr.splice(delIndex, 1);
+      //   return;
+      // }
+      // arr.push(index);
       let arr = this.selItems[key];
       if (arr) {
         let delIndex = arr.findIndex(item => item === index);
@@ -289,44 +300,22 @@ export default {
       else {
         this.$set(this.selItems, key, [index])
       }
+      
     },
     // 删除的选中状态
     showSelIcon(sItem, index) {
-      if (sItem.transCode) {
-        return this.selItems[sItem.transCode] && this.selItems[sItem.transCode].findIndex(item => item === index) !== -1;
-      }
-      else {
-        return this.checkList.includes(index);
-      }
+      // var key = sItem.transCode ? sItem.transCode:'noCode';
+      // return this.selItems[key].includes(index);
+      return this.checkList.includes(index);;
     },
     // 全选
     checkAll() {
       // 如果已全部选中 则清除所有选中状态
-      if (this.checkList.length === this.matterList.length) {
-        this.selItems = {};
+      if (this.selItems.length === this.matterList.length) {
+        this.selItems = [];
         return
       }
-      // 针对物料列表中的数据进行处理
-      let selItems = {};
-      for (let key in this.orderList) {
-        this.orderList[key].forEach((item, index) => {
-          // 存在交易号时 key等于交易号
-          if (item.transCode) {
-            if (!selItems[item.transCode]) {
-              selItems[item.transCode] = [];
-            }
-            selItems[item.transCode].push(index)
-          }
-          // 不存在时 key为 'noCode'
-          else {
-            if (!selItems['noCode']) {
-              selItems['noCode'] = []
-            }
-            selItems['noCode'].push(index);
-          }
-        })
-      }
-      this.selItems = selItems;
+      this.selItems = this.matterList.map((item, index) => index);
     },
     // 删除选中的
     deleteCheckd() {
@@ -342,7 +331,6 @@ export default {
 
           // 被选中删除的物料
           let selItems = this.selItems, checkList = this.checkList;
-          
           for (let key in this.selItems) {
             // 当没有对应的交易单号
             if (key === 'noCode') {
@@ -524,15 +512,16 @@ export default {
           ...dealer,
           dealerCode: dealer.dealerDebit,
           dealerLabelName: dealer.drDealerLabel,
-          dealerName: dealer.dealerName_dealerDebit,
+          dealerName: formData.inPut.dealerName_dealerDebit,
           province: dealer.province_dealerDebit,
           city: dealer.city_dealerDebit,
           county: dealer.county_dealerDebit,
-          address: dealer.address_dealerDebit,
+          address: formData.inPut.address_dealerDebit,
           drDealerPaymentTerm: formData.order.drDealerPaymentTerm, // 结算方式
           drDealerLogisticsTerms: formData.drDealerLogisticsTerms, //物流条件
           daysOfAccount: formData.order.daysOfAccount,
         };
+        this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
         order.dataSet.map(item => {
           let orderListKey = item.transCode ? item.transCode : 'noCode';
           item = {

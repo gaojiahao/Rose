@@ -37,7 +37,7 @@
 import { XTextarea, dateFormat } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { submitAndCalc, saveAndStartWf, saveAndCommitTask, updateData} from 'service/common/commonService'
+import { submitAndCalc, saveAndStartWf, saveAndCommitTask, updateData} from 'service/commonService'
 // mixins 引入
 import ApplyCommon from 'mixins/applyCommon'
 // 组件引入
@@ -75,7 +75,7 @@ export default {
           name: '物料编码',
           value: 'inventoryCode',
         }, {
-          name: '申请单',
+          name: '入库单号',
           value: 'transCode',
         }
       ]

@@ -64,7 +64,7 @@
   import { XTextarea, numberComma, dateFormat} from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask, getDictByType, updateData} from 'service/common/commonService'
+  import {submitAndCalc, saveAndStartWf, saveAndCommitTask, getDictByType, updateData} from 'service/commonService'
   import {getEmployeeBal} from 'service/costService'
   // mixins 引入
   import common from 'mixins/applyCommon'

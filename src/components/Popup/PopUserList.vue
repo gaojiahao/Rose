@@ -29,7 +29,7 @@
 
 <script>
   import {Icon, Popup} from 'vux'
-  import {getUserList} from 'service/common/commonService'
+  import {getUserList} from 'service/commonService'
   import RScroll from 'plugins/scroll/RScroll'
   import RSearch from 'components/search/search'
 

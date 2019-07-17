@@ -1,4 +1,5 @@
 <template>
+<!--加工订单-->
   <div class="detail_wrapper nbjdgg-detail-container">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
 

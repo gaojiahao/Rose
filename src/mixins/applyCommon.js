@@ -1,5 +1,6 @@
 // 请求引入
 import { getAppDetail } from 'service/app-basic/appSettingService'
+import tokenService from 'service/tokenService'
 import {
   isMyflow, 
   getListId, 
@@ -11,9 +12,9 @@ import {
   requestData, 
   getFormViews,
   getFormConfig, 
-  getBaseInfoData, 
+  getBasicInfo, 
   getProcessStatus, 
-} from 'service/common/commonService'
+} from 'service/commonService'
 // 组件引入
 import UploadFile from 'components/upload/UploadFile'
 import MatterItem from 'components/apply/commonPart/MatterItem'
@@ -704,7 +705,10 @@ export default {
     },
     // 获取用户基本信息
     getBaseInfoData() {
-      getBaseInfoData().then(({handleORG, userRoleList, ...basicUserInfo}) => {
+      getBasicInfo().then(({currentUser}) => {
+        let handleORG = currentUser.sysDeptList,
+            userRoleList = currentUser.sysRoleList;
+
         this.handleORG = handleORG;
         this.userRoleList = userRoleList;
 
@@ -727,13 +731,13 @@ export default {
         }
         else {
           defaultUserInfo = {
-            handler: basicUserInfo.userId,  // 用户id
-            handlerName: basicUserInfo.nickname,  //用户名称
+            handler: currentUser.userId,  // 用户id
+            handlerName: currentUser.nickname,  //用户名称
             handlerUnit: firstORG.groupId,  // 用户组织id
             handlerUnitName: firstORG.groupName,  // 用户组织名称
-            handlerRole: firstRole.roleId || '',  // 用户职位id
-            handlerRoleName: firstRole.roleName || '',  // 用户职位名称
-            userCode: basicUserInfo.userCode, // 用户工号
+            handlerRole: firstRole.id || '',  // 用户职位id
+            handlerRoleName: firstRole.name || '',  // 用户职位名称
+            userCode: currentUser.userCode, // 用户工号
           }
         }
 
@@ -869,12 +873,14 @@ export default {
         this.$router.go(-1);
       }
       else {
-        let {name} = this.$route.query;
-        let {folder, fileName} = this.$route.params;
+        let {name,folder, fileName} = this.$route.query;
+        let {listId} = this.$route.params;
         this.$router.replace({
-          path: `/detail/${folder}/${fileName}`,
+          path: `/detail/${listId}/0`,
           query: {
             name,
+            folder,
+            fileName,
             transCode: this.transCode
           }
         });
@@ -919,6 +925,7 @@ export default {
       item.noTaxAmount = toFixed(accMul(price, tdQty));
       item.taxAmount = toFixed(accMul(item.noTaxAmount, taxRate));
       item.tdAmount = toFixed(accAdd(item.noTaxAmount, item.taxAmount));
+      item.assistQty = toFixed(accDiv(item.qty,item.invSubUnitMulti));
     },
     // 将物料配置拆分成属性和可编辑部分
     splitConfig(editMatterPop, editMatterPopConfig) {
@@ -965,9 +972,9 @@ export default {
           'dealerCreditContactInformation'
         ];
         // 处理将数据源配置在data中的情况
-        if (dataSource) {
-          this.handleAccountDS(dataSource,matterCols);
-        }
+        //if (dataSource) {
+        // this.handleAccountDS(dataSource,matterCols);
+        //}
         console.log('config:', config);
         let {dealerConfig,matterConfig,otherConfig,baseinfoExtConfig,fundConfig} = this.handleCfg(config,reconfig);
         
@@ -976,7 +983,9 @@ export default {
         this.handleOtherCfg(otherConfig);
         this.handleBaseinfoExtCfg(baseinfoExtConfig,dealerFilter);
         this.handleFundCfg(fundConfig);
-
+        if (dataSource) {
+          this.handleAccountDS(dataSource,matterCols);
+        }
       })
     },
     // 处理配置中数据请求
@@ -998,7 +1007,8 @@ export default {
     }
   },
   created() {
-    let { name, listId, transCode, isModify = false, relationKey } = this.$route.query;
+    let { name, transCode, isModify = false, relationKey } = this.$route.query,
+        {listId} = this.$route.params;
     
     register(); // 注册wx-js-sdk
     
@@ -1007,8 +1017,8 @@ export default {
     this.isModify = isModify;
 
     // 获取本地保存的当前的主体
-    let data = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
-    if (data) this.entity.dealerName = JSON.parse(data).entityId;
+    let data = tokenService.getToken(true);
+    if (data) this.entity.dealerName = data.entityId;
     // 请求页面的数据
     (async () => {
       await this.getFormViewInfo();

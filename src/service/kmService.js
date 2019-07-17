@@ -36,5 +36,17 @@ export let getProfit = () => {
     url: '/account-api/account/getProfitForMobile',
   })
 };
-
+//获取自动分录数据 view_id 区分会计类科目与非会计类科目
+export let prolxyGetAutomaticEntry = (data = {}) => {
+  return  $flyio.ajax({
+      url: '/account-api/account/getView',
+      //view_id: view_id,
+      active_type: 'automatic',
+      //trans_code: transCode,
+      view_scope: 'modelAndData',
+      op: 'queryAll',
+      //view_type: view_type
+      data
+  })
+};
 export default {}

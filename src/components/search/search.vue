@@ -28,6 +28,9 @@
   export default {
     name: 'RSearch',
     props: {
+      defaultValue:{
+        type:String
+      },
       isFill: {//是否为提交页面
         type: Boolean,
         default: false
@@ -64,6 +67,10 @@
     components: {
       Icon,
       RDropdown,
+    },
+    created(){
+      var defaultValue = this.defaultValue;
+      if(defaultValue)this.srhInpTx = defaultValue;
     },
     methods: {
       getValue(e) {
