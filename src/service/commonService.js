@@ -358,6 +358,13 @@ export let getValuesByExp = (expression) => {
       return null;
   }
 };
+// 获取搜索选择器数据
+export let listSearchSelectorData = (URL, data = {}) => {
+  return $flyio.ajax({
+    url: `/H_roleplay-si/${URL}`,
+    data
+  })
+}
 // 获取所有的经办人
 export let listUsers = (data = {}) => {
   return $flyio.ajax({

@@ -19,9 +19,13 @@
                       v-model="ProjectApproval[item.fieldCode]" :required="!item.allowBlank"
                       v-if="item.xtype === 'r2Combo' || item.xtype === 'r2Selector'"></r-picker>
               <!-- 输入框（文字） -->
-              <r-text :cfg="item" v-if="item.xtype === 'r2Textfield'" v-model="ProjectApproval[item.fieldCode]" :values="ProjectApproval"/>
+              <!-- <r-text :cfg="item" v-if="item.xtype === 'r2Textfield'" v-model="ProjectApproval[item.fieldCode]" :values="ProjectApproval"></x-input> -->
+              <div class='each_property' v-if="item.xtype === 'r2Textfield'">
+                <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
+                <input type='text' v-model="ProjectApproval[item.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
+              </div>
               <!-- 输入框（数字） -->
-              <div class='each_property ' v-if="item.xtype === 'r2Numberfield' || item.xtype === 'r2Permilfield'">
+              <div class='each_property' v-if="item.xtype === 'r2Numberfield' || item.xtype === 'r2Permilfield'">
                 <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
                 <input type='number' v-model.number="ProjectApproval[item.fieldCode]" placeholder="请输入" class='property_val' 
                        @focus="getFocus($event)" @blur="checkAmt(ProjectApproval, item.fieldCode, ProjectApproval[item.fieldCode])"/>
@@ -59,7 +63,7 @@
   //内部项目
   // vux组件引入
   import {
-    XTextarea, dateFormat
+    XTextarea, dateFormat, XInput
   } from 'vux'
   // 请求 引入
   import { saveProjectApproval, findProjectApproval } from 'service/projectService'
@@ -78,7 +82,7 @@
   export default {
     mixins: [ApplyCommon, common],
     components: {
-      RPicker, PopBaseinfo, XTextarea, PopManagerList, OpButton
+      RPicker, PopBaseinfo, XTextarea, PopManagerList, OpButton, XInput
     },
     data() {
       return {

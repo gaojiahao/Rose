@@ -118,4 +118,14 @@ export let getAutoSubjectCount = (data = {}) => {
     })
 }
 
+// 获取应用特性管理数据
+export let getAppFeaturesData = (listId) => {
+    return $flyio.ajax({
+        url: '/H_roleplay-si/app/feature/list',
+        data: {
+            listId: listId
+        }
+    })
+}
+
 export default {}
