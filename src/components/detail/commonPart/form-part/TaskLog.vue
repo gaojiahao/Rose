@@ -29,7 +29,11 @@
         </x-input>
       </div>
       <div class="task_log_type">
-        <popup-picker v-if="taskLog.logType.length>0" :data="logTypelist" v-model="taskLog.logType" placeholder="请选择">
+        <popup-picker 
+          v-if="taskLog.logType.length>0" 
+          :data="logTypelist" 
+          v-model="taskLog.logType" 
+          placeholder="请选择">
           <span slot="title" :style="{color:'#4e9cec',fontWeight:'bold'}">类型</span>
         </popup-picker>
       </div>
@@ -128,7 +132,7 @@ export default {
         this.isUserRequired = true;
       }else{
         formdata = {
-            listId: this.$route.params.listId,
+            listId: '2750a13d-295d-4776-9673-290c51bfc568',
             wfParam:null,
             userIds:this.selectUsers,
             formData:{
@@ -209,7 +213,7 @@ export default {
     }
   },
   created() {
-    initWebContext().then(()=>{
+    initWebContext().then(() => {
         this.taskLog.taskDate = this.formatDate(new Date());
         this.getLogType()
     })

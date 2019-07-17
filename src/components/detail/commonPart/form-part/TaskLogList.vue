@@ -1,5 +1,5 @@
 <template>
-  <!--任务日志-->
+  <!--任务日志列表-->
   <div class="task_container">
       <div class="task_list" v-if="$route.name !== 'TASKLOG'">
         <div class="task_list_sum">
@@ -120,12 +120,17 @@ export default {
     },
     handlerUpdateLogStatus(log){
       let { taskDate } = log;
-      if(log.logStatus === '已办' && new Date(log.taskDate) >new Date()){
+      if(log.logStatus === '已办' && new Date(log.taskDate) > new Date()){
         taskDate = this.formatDate(new Date());
       }
       updateLogStatus(log.jobLogId,log.transCode,log.logStatus,taskDate).then(res=>{
         if(res.success){
           this.$vux.toast.text(res.message);
+        }else{
+          this.$vux.alert.show({
+            title: "错误",
+            content: res.message
+          });
         }
       })
     },

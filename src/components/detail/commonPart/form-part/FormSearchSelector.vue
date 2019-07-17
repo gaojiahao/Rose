@@ -36,7 +36,8 @@
             <div
               class="pop-mater-list-item"
               v-for="(item, index) in listData"
-              :key='index'>
+              :key='index'
+              @click="selectThis(item, index)">
               <div class="pop-list-main ">
                   <div>
                     <!-- 头像 -->
@@ -54,7 +55,7 @@
                     </div>
                   </div>
                   <!-- 选择icon -->
-                  <div class="selected-icon" @click="selectThis(item, index)">
+                  <div class="selected-icon">
                       <check-icon :value="item.selected"></check-icon>
                   </div>
               </div>
@@ -105,15 +106,15 @@ export default {
       searchContent: "",
       showPop: false,
       hasNext: true,
+      page: 1,
+      limit: 50,
       confirmItems: [],
       selectItems: [],
       listData: [],
       scrollOptions: {
         click: true,
         pullUpLoad: true
-      },
-      page: 1,
-      limit: 50
+      }
     };
   },
   components: { 
@@ -187,7 +188,7 @@ export default {
         let obj = {};
         this.listData[sIndex].selected = !sItem.selected
         this.listData[sIndex].selected && this.selectItems.push(sItem);
-        this.selectItems = this.selectItems.filter(item => {return item.selected;})
+        this.selectItems = this.selectItems.filter(item => { return item.selected; })
         //数组去重
         this.selectItems = this.selectItems.reduce((cur, next) => {
             obj[next[this.listName]] ? "" : (obj[next[this.listName]] = true && cur.push(next));
@@ -221,6 +222,7 @@ export default {
                 }
               })
             })
+
             this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
             this.$nextTick(() => {
                 this.$refs.bScroll.finishPullUp();
