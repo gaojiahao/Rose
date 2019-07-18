@@ -79,6 +79,25 @@ export default {
       autoSubjectCount: 0,
     }
   },
+  watch: {
+    //路由监听,解决返回后的tab不在详情页
+    $route: {
+      handler: function(val, oldVal){
+        this.intTab();
+        if(val.name == oldVal.name) {
+          if(val.query.transCode != oldVal.query.transCode) {
+            this.getAppFeature();
+            initWebContext().then(()=>{
+                this.initPage();
+            });
+            this.refresh();
+          }
+        }
+      },
+      // 深度观察监听
+      deep: true
+    }
+  },
   methods: {
     modifyRoute(val) {
       this.submitSuccess = val;
@@ -199,6 +218,16 @@ export default {
           this.showTab[item] = false;
         }
       }
+    },
+    //初始化tab
+    intTab() {
+      for(let item in this.showTab) {
+        if(item == 'comm') {
+          this.showTab[item] = true;
+        } else {
+          this.showTab[item] = false;
+        }
+      }  
     },
     //获取相关实例count
     getAppExampleDetails() {
