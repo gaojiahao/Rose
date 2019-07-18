@@ -128,7 +128,7 @@ export default {
       { folder, fileName } = this.$route.params;
       this.$router.push({
         path: `/fillform/${listId}/0`,
-        query: { name,folder, fileName }
+        query: { name,folder,listId,fileName }
       })
     },
     // 重置列表条件

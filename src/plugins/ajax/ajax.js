@@ -198,19 +198,21 @@ let Rxports = {
     }
   },
   // 上传图片，单个文件
-  upload({file = {}, biReferenceId = ''}) {
+  upload(data) {
     // 创建form对象
     let param = new FormData(); 
     // 通过append向form对象添加数据
-    param.append('file', file);  
+    param.append('file', data.file);  
     // 添加form表单中其他数据
-    if (biReferenceId) {
-      param.append('biReferenceId', biReferenceId); 
+    if (data.biReferenceId) {
+      param.append('biReferenceId', data.biReferenceId); 
     }
+    let token = tokenService.getToken(true);
     return this.post({
       url: '/H_roleplay-si/ds/upload',
       headers: {
         'Content-Type': 'multipart/form-data',
+        'Authorization': token.token
       },
       data: param
     })

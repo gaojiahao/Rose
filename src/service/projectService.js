@@ -201,4 +201,47 @@ export let getProjectBotTask = (data) => {
   })
 };
 
+// 数据字典获取任务日志类型
+export let getTaskLogType = (type) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/base/dict/getListByValue',
+    data: {
+      value: type
+    }
+  })
+};
+
+// 数据字典获取任务日志类型
+export let saveTaskLog = (data) => {
+  return $flyio.post({
+    url: '/H_roleplay-si/jobLog/batchSave',
+    data
+  })
+};
+
+// 获取任务日志列表数据
+export let getTaskLogList = (transCode,currentPage,pageSize) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/jobLog/findAllJobLog',
+    data: {
+      transCode: transCode,
+      pageIndex: currentPage,
+      pageSize: pageSize
+    }
+  })
+};
+
+// 修改任务日志列表状态
+export let updateLogStatus = (jobLogId, transCode, processStatus, taskDate) => {
+  return $flyio.post({
+    url: '/H_roleplay-si/jobLog/updateLogStatus',
+    data: {
+      jobLogId: jobLogId,
+      transCode: transCode,
+      taskDate: taskDate,
+      processStatus: processStatus
+    }
+  })
+};
+
 export default {}
