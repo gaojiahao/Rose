@@ -12,6 +12,11 @@
         <div class="tips">{{-pullDownTop > 30 ? '下拉刷新' : '释放刷新'}}</div>
       </div>
     </slot>
+    <div class="el-fade-in">
+      <div class="page-component-up" @click="scrollToTop" v-show="toTopShow">
+        <span class="icon icon-scroll-top"></span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -47,6 +52,9 @@
         hasRefresh: false,
         refreshDone: false, // 是否刷新完成
         pullDownTop: -PULL_DOWN_REFRESH_HEIGHT,
+        xScrollValue: 0,
+        yScrollValue: 0,
+        toTopShow: false,
       }
     },
     computed: {
@@ -58,6 +66,16 @@
         return tip;
       }
     },
+    watch:{
+      yScrollValue: {
+        handler(val) {
+          if(Math.abs(val) > 1000)
+            this.toTopShow = true;
+          else if (Math.abs(val) < 1000) 
+            this.toTopShow = false;
+        } 
+      }  
+  },
     methods: {
       // 初始化滚动
       _initScroll() {
@@ -94,6 +112,7 @@
           });
           // 下拉的时候展示下拉刷新的图标
           this.bScroll.on('scroll', ({x, y}) => {
+            this.yScrollValue = y;
             if (y > 0) {
               if (y > PULL_DOWN_REFRESH_HEIGHT) {
                 this.pullDownTop = 0;
@@ -151,6 +170,12 @@
         this.bScroll.destroy();
         this.bScroll = null;
       },
+      scrollToTop() {
+        this.$nextTick(() => {
+          this.bScroll.scrollTo(0, 0, 400);
+          this.resetPullDown();
+        })
+      },
     },
     created() {
       this._initScroll();
@@ -194,4 +219,40 @@
   .weui-toast {
     background: rgba(17, 17, 17, 0.5);
   }
+  .page-component-up{
+    /* background-color: #409eff; */
+  position: fixed;
+  right: .1rem;
+  bottom: .8rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  cursor: pointer;
+  -webkit-transition: .3s;
+  -o-transition: .3s;
+  transition: .3s;
+  /* -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5); */
+  /* box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5); */
+  z-index: 200;
+  span {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+  }
+  .el-icon-caret-top{
+    color: #fff;
+    display: block;
+    line-height: 40px;
+    text-align: center;
+    font-size: 18px;
+  }
+  p{
+    display: none;
+    text-align: center;
+    color: #fff;
+  }
+  &:hover{
+    opacity: .8;
+  }
+}
 </style>

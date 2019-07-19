@@ -237,3 +237,7 @@
   background: url('~assets/iconfont/icon_bianji.png');
   background-size: cover;
 }
+.icon-scroll-top{
+  background: url('~assets/iconfont/scrollTop.png');
+  background-size: cover;
+}
