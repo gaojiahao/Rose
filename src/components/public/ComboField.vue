@@ -105,6 +105,7 @@ let  cfg = {
 
             function setParams(params){
                 var  paramCfg,
+                     reg = /\{([\w|\.])*}/ig,
                      key,
                      valueField,
                      contrl,
@@ -143,7 +144,11 @@ let  cfg = {
                         }
                      }
                   } else if(paramCfg.type == 'text'){
-                     store.params[key] = paramCfg.value;
+                     value = paramCfg.value;
+                     if (value.match(reg)) {
+                        value = me.getRegParam(value,reg);
+                     }
+                     store.params[key] = value;
                   }
                }
             }

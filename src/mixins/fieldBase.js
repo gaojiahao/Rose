@@ -176,6 +176,12 @@ export default {
             var cfg = this.cfg;
             return this.values[cfg.fieldCode];
         },
+        getRegParam:function(value,reg){
+            return value.replace(reg, function (str) {
+                var ns = str.substr(1, str.length - 2);
+                return getValuesByExp(ns);
+            })
+        },
         getSubmitData:function(){
             return this.getValue();
         },

@@ -35,7 +35,7 @@ export default {
             // }
             if (isBindFlow) {
                 proCode = me.workflows[0].procCode;
-                wfPara[proCode] = me.approvalData(values);
+                wfPara[proCode] = me.getApprovalData(values);
                 param.wfPara = JSON.stringify(wfPara);
             } 
             //3.提交表单数据
@@ -236,7 +236,7 @@ export default {
 
                     try{
                         fn = eval('('+ cfg.fn +')');
-                        console.log(key,fn);
+                        if(window.isDebug)console.log(key,fn);
                         computed[key] = fn;
                     } catch(e) {
                         console.log('公式[' + key +']语法bug');
@@ -328,7 +328,7 @@ export default {
 
             if (isBindFlow) {
                 proCode = me.workflows[0].procCode;
-                wfPara[proCode] = me.approvalData(values);
+                wfPara[proCode] = me.getApprovalData(values);
                 param.wfPara = JSON.stringify(wfPara);
             }
             //3.提交表单数据
