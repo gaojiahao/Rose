@@ -15,3 +15,11 @@ export let getWhbyStoragelocation = (data = {}) => {
       data
     })
   }
+
+//通过箱码获取仓库信息
+export let getPickingOutByBoxCode = (data = {}) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getPickingOutByBoxCode',
+    data
+  })
+}
