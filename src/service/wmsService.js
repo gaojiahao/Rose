@@ -23,3 +23,9 @@ export let getPickingOutByBoxCode = (data = {}) => {
     data
   })
 }
+
+//撤销为草稿
+export let revocation = (data = {}) =>{
+
+}
+
