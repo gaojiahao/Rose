@@ -93,7 +93,7 @@ export default {
                         console.log('watch[' + key +']语法bug');
                     }
                 }
-                this.form.$watch(key,fn);
+                this.form.$watch(key,fn,{immediate:true});
             });
  
             function createBindFn(bind){

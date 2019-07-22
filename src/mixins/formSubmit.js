@@ -86,7 +86,8 @@ export default {
         },
         formatValues(values){
             var apiCfg = this.apiCfg,
-                disableFieldset = this.disableFieldset||[],
+                disableFieldset = [],
+                fieldsets = this.$refs.fieldsetCt.$children,
                 fieldCfgHash = apiCfg && apiCfg.groupCfg,
                 fieldCfg,
                 isList,
@@ -94,6 +95,11 @@ export default {
                 fieldCode,
                 value;
         
+            //防止单一项映射进不提交的重复项容器。
+            fieldsets.map(function(fieldset){
+                if(!fieldset.submitValue)disableFieldset.push(fieldset.cfg.name);
+            })
+
             if(fieldCfgHash){
                 for(fieldCode in values){
                     value = values[fieldCode];
@@ -230,6 +236,7 @@ export default {
 
                     try{
                         fn = eval('('+ cfg.fn +')');
+                        console.log(key,fn);
                         computed[key] = fn;
                     } catch(e) {
                         console.log('公式[' + key +']语法bug');
@@ -249,8 +256,7 @@ export default {
                 fieldCode,
                 containerCode,
                 id,field;
-           
-           this.disableFieldset = [];
+
            for(id in fieldMap){
                field = fieldMap[id];
                isGrid = !!field.cfg.columns;
@@ -263,10 +269,8 @@ export default {
                     } 
                } else {
                    containerCode = field.containerCode;
-                   if(field.submitValue){
+                   if(field.$parent.submitValue){
                         values[containerCode] = field.getSubmitData();
-                   } else {
-                        this.disableFieldset.push(containerCode);
                    }
                }
            }
