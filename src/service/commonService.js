@@ -290,7 +290,7 @@ export let initWebContext = ()=>{
               isSysRoleList:user.isSysRoleList,
               sysGroupList:user.sysGroupList,
               depts: user.sysGroupList.filter(function (o) {
-                  return o.groupType === 'O';
+                  return o.groupType != 'C';
               }).map(function (o) {
                   return {
                       id: o.groupId,
