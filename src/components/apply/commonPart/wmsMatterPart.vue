@@ -13,7 +13,7 @@
                         <flexbox justify="space-between">
                             <flexbox-item :span="6"><div >{{mat.inventoryName}}({{mat.inventoryCode}})</div></flexbox-item>
                             <flexbox-item ><div >{{getGroupInfo(mat).all}}</div></flexbox-item>
-                            <flexbox-item ><div >{{getGroupInfo(mat).todo}}</div></flexbox-item>
+                            <flexbox-item ><div >{{getGroupInfo(mat).done}}</div></flexbox-item>
                             <x-icon type="ios-arrow-up" v-if="mat.expend && mat.boxCodes.length>0" size="24" @click.native="mat.expend=!mat.expend"></x-icon>
                             <x-icon type="ios-arrow-down" v-if="!mat.expend && mat.boxCodes.length>0" size="24" @click.native="mat.expend=!mat.expend"></x-icon>
                         </flexbox>

@@ -14,4 +14,10 @@ export let getWhbyStoragelocation = (data = {}) => {
       url: '/H_roleplay-si/ds/getParentWh',
       data
     })
-  }
+}
+
+//撤销为草稿
+export let revocation = (data = {}) =>{
+
+}
+
