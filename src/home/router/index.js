@@ -18,6 +18,8 @@ import DETAIL from '../pages/apps/bizApp/detail/detail'
 import WORKFLOWFULL from '../pages/apps/bizApp/detail/workFlowFull'
 import RELATED from '../pages/apps/bizApp/detail/related/related'
 import COMMENTLIST from '@/home/pages/apps/bizApp/comment/commentList'
+import TASKLOGLIST from 'components/detail/commonPart/form-part/TaskLogList'
+import TASKLOG from 'components/detail/commonPart/form-part/TaskLog'
 
 //应用详情
 import APPDETAIL from '../pages/apps/bizApp/appDetail/appDetail.vue'
@@ -41,6 +43,20 @@ export default [
     name: 'COMMENTLIST',
     component: COMMENTLIST,
     meta: { title: '评论' }
+  },
+  {
+    path: '/taskLog',
+    name: 'TASKLOGLIST',
+    component: TASKLOGLIST,
+    meta: { title: '任务日志列表' },
+    children:[
+      {
+        path: 'add',
+        name: 'TASKLOG',
+        component: TASKLOG,
+        meta:{ title:'新增任务日志' }
+      }
+    ]
   },
   {
     path:'/related/:listId',
