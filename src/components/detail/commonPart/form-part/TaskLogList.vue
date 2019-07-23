@@ -12,6 +12,7 @@
             :has-next="hasNext"
             :no-data="!hasNext && !logList.length"
             @on-pulling-up="onPullingUp"
+            @on-pulling-down="onPullingDown"
             ref="bScroll">
           <div class="task_list_content">
               <div class="list_container" v-for="(list,index) of logList" :key="index">
@@ -72,10 +73,12 @@ export default {
       hasNext: true,
       pageSize: 10,
       currentPage: 1,
+      total: 0,
       logList: [],
       scrollOptions: {
         click: true,
-        pullUpLoad: true
+        pullUpLoad: true,
+        pullDownRefresh: true
       },
     }
   },
@@ -89,17 +92,41 @@ export default {
     getLogList(isDown) {
         this.$loading.show();
         getTaskLogList(this.$route.query.transCode,this.currentPage,this.pageSize).then(res => {
+            this.total = res.dataCount;
             this.hasNext = res.dataCount > (this.currentPage - 1) * this.pageSize + res.tableContent.length;
             this.logList = this.currentPage === 1 ? res.tableContent : [...this.logList,...res.tableContent];
             this.logCosts = res.logCosts && numberComma(res.logCosts);
             this.logHours = res.logHours;
             this.$loading.hide();
+            if(isDown){
+              let text = "";
+              if (this.total) {
+                text = res.dataCount - this.total === 0 ? '暂无新数据' : text = `新增${res.dataCount - this.total}条数据`;
+                this.$vux.toast.show({
+                  text: text,
+                  position: 'top',
+                  width: '50%',
+                  type: "text",
+                  time: 700
+                })
+              }
+              this.$nextTick(() => {
+                this.$refs.bScroll.finishPullDown().then(() => {
+                  this.$refs.bScroll.finishPullUp();
+                });
+              })
+            }
         })
     },
     // 上拉加载
     onPullingUp() {
       this.currentPage++;
       this.getLogList();
+    },
+    // 下拉刷新
+    onPullingDown() {
+      this.currentPage = 1;
+      this.getLogList(true);
     },
     /**
    * 更新日志状态
@@ -181,12 +208,15 @@ export default {
       height: 100%;
       .pop-list-container{
         height: calc(100% - 100px);
+        box-sizing: border-box;
+        position: relative;
       }
       &_sum{
           border-bottom: 1px solid #e8e8e8;
           padding: .05rem;
       }
       &_content{
+          box-sizing: border-box;
           .empty_data{
             text-align: center;
             padding: 1rem 0rem;

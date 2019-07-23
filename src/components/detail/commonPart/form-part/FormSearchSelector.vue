@@ -39,7 +39,7 @@
               :key='index'
               @click="selectThis(item, index)">
               <div class="pop-list-main ">
-                  <div>
+                  <div :style="{display: 'flex'}">
                     <!-- 头像 -->
                     <div class="user-photo">
                     <img
@@ -51,7 +51,7 @@
                     <!-- 名字 -->
                     <div class="user_name">{{ item[listName] }}</div>
                     <!-- ID -->
-                    <div class="user_code" v-if="item[listID]">{{ item[listID] }}</div>
+                    <div class="user_code">{{ item.groupName}}</div>
                     </div>
                   </div>
                   <!-- 选择icon -->
@@ -336,6 +336,8 @@ export default {
           }
           .pop-list-info{
               display: inline-block;
+              width: 2.3rem;
+              overflow: hidden;
           }
           .user_name {
             line-height: 0.16rem;

@@ -35,7 +35,7 @@ export default {
             // }
             if (isBindFlow) {
                 proCode = me.workflows[0].procCode;
-                wfPara[proCode] = me.approvalData(values);
+                wfPara[proCode] = me.getApprovalData(values);
                 param.wfPara = JSON.stringify(wfPara);
             } 
             //3.提交表单数据
@@ -86,7 +86,8 @@ export default {
         },
         formatValues(values){
             var apiCfg = this.apiCfg,
-                disableFieldset = this.disableFieldset||[],
+                disableFieldset = [],
+                fieldsets = this.$refs.fieldsetCt.$children,
                 fieldCfgHash = apiCfg && apiCfg.groupCfg,
                 fieldCfg,
                 isList,
@@ -94,6 +95,11 @@ export default {
                 fieldCode,
                 value;
         
+            //防止单一项映射进不提交的重复项容器。
+            fieldsets.map(function(fieldset){
+                if(!fieldset.submitValue)disableFieldset.push(fieldset.cfg.name);
+            })
+
             if(fieldCfgHash){
                 for(fieldCode in values){
                     value = values[fieldCode];
@@ -208,16 +214,36 @@ export default {
             });
         },
         initComputed:function(){
-            // util.setFormulas(this,{
-            //     test(){
-            //         var order = this.formData.order,
-            //             num = 0;
-            //         if(order)order.forEach(function(row){
-            //             if(row.tdAmount)num += +row.tdAmount;
-            //         });
-            //         return num;
-            //     }
-            // })
+            var computed = parseComputed(this.viewInfo.config.formComputed);
+
+            if(computed)util.setFormulas(this,computed);
+
+            function parseComputed(cfg){
+                var cfgArr,
+                    computed = {};
+
+                if(!cfg) return null;
+
+                try{
+                    cfgArr = JSON.parse(cfg);
+                }catch(e){
+                    console.log('公式解析bug');
+                    return null;
+                }
+                util.each(cfgArr,(cfg)=>{
+                    var key = cfg.key,
+                        fn;
+
+                    try{
+                        fn = eval('('+ cfg.fn +')');
+                        if(window.isDebug)console.log(key,fn);
+                        computed[key] = fn;
+                    } catch(e) {
+                        console.log('公式[' + key +']语法bug');
+                    }
+                });
+                return computed;
+            }
         },
         setValue(fieldCode,value){
             this.$set(this.formData,fieldCode,value);
@@ -230,8 +256,7 @@ export default {
                 fieldCode,
                 containerCode,
                 id,field;
-           
-           this.disableFieldset = [];
+
            for(id in fieldMap){
                field = fieldMap[id];
                isGrid = !!field.cfg.columns;
@@ -244,10 +269,8 @@ export default {
                     } 
                } else {
                    containerCode = field.containerCode;
-                   if(field.submitValue){
+                   if(field.$parent.submitValue){
                         values[containerCode] = field.getSubmitData();
-                   } else {
-                        this.disableFieldset.push(containerCode);
                    }
                }
            }
@@ -305,7 +328,7 @@ export default {
 
             if (isBindFlow) {
                 proCode = me.workflows[0].procCode;
-                wfPara[proCode] = me.approvalData(values);
+                wfPara[proCode] = me.getApprovalData(values);
                 param.wfPara = JSON.stringify(wfPara);
             }
             //3.提交表单数据

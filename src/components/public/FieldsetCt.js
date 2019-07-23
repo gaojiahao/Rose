@@ -15,7 +15,7 @@ let RFieldsetCt = Vue.component('RFieldsetCt', {
             itemCfg = fieldsets[i];
             xtype = 'RFieldset';//'ContentView';
 
-            if (!itemCfg.CName) this.setFieldCName(itemCfg);
+            if (!itemCfg.cName) this.setFieldCName(itemCfg);
 
             if (itemCfg.isMultiple == true) {
                 if (matterNames.indexOf(itemCfg.name) != -1) {
@@ -56,7 +56,7 @@ let RFieldsetCt = Vue.component('RFieldsetCt', {
                     text = firstField && firstField.fieldLabel;
             } else {
                 columns = cfg.columns || cfg.items[0].columns;
-                text = columns ? columns[0].text : '';
+                text = columns ? findText(columns) : '';
             }
 
             if (text) for (i = 0, l = titleArr.length; i < l; i++) {
@@ -68,6 +68,16 @@ let RFieldsetCt = Vue.component('RFieldsetCt', {
             }
 
             cfg.cName = text;
+
+            function findText(arr){
+                var i,l,item;
+                for (i = 0, l = arr.length; i < l; i++) {
+                    item = arr[i];
+                    if (!item.hidden) {
+                       return item.text;
+                    }
+                }
+            }
         }
     },
     created(){

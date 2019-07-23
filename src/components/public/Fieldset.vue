@@ -1,5 +1,5 @@
 <template>
-  <div v-if = "cfg.hiddenInRun == false" class="r-fieldset">
+  <div v-if = "!hidden" class="r-fieldset">
     <div class="box" :class="{muti:cfg.isMultiple}">
       <header v-show="!cfg.isMultiple">
         <div class="vux-1px-l">{{cfg.cName}}</div>
@@ -11,8 +11,8 @@
       </header>
       <div class="readOnlyPart" v-if="readOnlyParts.length && styleType == 0">
         <template v-for="(item, index) in readOnlyParts">
-          <div class="item">
-            <span :key="index">{{item.fieldLabel}}：</span>
+          <div class="item" :key="index">
+            <span >{{item.fieldLabel}}：</span>
             <span >{{values[item.fieldCode]||'无'}}</span>
           </div>
         </template>
@@ -52,10 +52,13 @@
 </template>
 <script>
 import Vue from "vue";
+import util from '@/common/util';
 var component = {
   props: ["cfg", "values"],
   data() {
     return {
+      hidden:false,
+      submitValue:true,
       styleType: 0, //0||1，折叠||展开
       title: null,
       pageSize: 5,
@@ -66,15 +69,16 @@ var component = {
     };
   },
   created: function() {
-     this.name = this.cfg.name;
+     var cfg = this.cfg;
+
+     this.name = cfg.name;
+     this.hidden = cfg.hiddenInRun;
+     this.submitValue = cfg.submitValue;
      this.form = this.$parent.form;
      this.buildItems();
+     this.initWatch(cfg.watch);
   },
   methods: {
-    toggleStyleType() {
-      this.styleType = this.styleType ? 0 : 1;
-      this.$emit("change-styleType", this.styleType);
-    },
     buildItems(){
        // *部分应用* 物料详情在审批节点可以重新录入数据 此处进行数据分割
         let cfg = this.cfg,
@@ -120,7 +124,51 @@ var component = {
       }
 
       return values;
-    }
+    },
+    initWatch(watch){
+        var me = this,
+            cfgArr;
+
+        if(!watch) return;
+        try{
+            cfgArr = JSON.parse(watch);
+        }catch(e){
+            console.log('watch解析bug');
+            return null;
+        }
+        util.each(cfgArr,(cfg)=>{
+            var key = cfg.computed,
+                bind = util.trim(cfg.bind),
+                fn;
+            
+            if(bind){
+                fn = createBindFn(bind);
+            }else{
+                try{
+                    fn = eval('('+ cfg.fn +')');
+                } catch(e) {
+                    console.log('watch[' + key +']语法bug');
+                }
+            }
+            this.form.$watch(key,fn,{immediate:true});
+        });
+
+        function createBindFn(bind){
+            return function(value){
+                me['set'+ bind[0].toUpperCase()+bind.substr(1)](value);
+            }
+        }
+    },
+    setHidden(hidden){
+       this.hidden = hidden;
+    },
+    setSubmitValue(submitValue){
+      this.submitValue = submitValue;
+    },
+    toggleStyleType() {
+      this.styleType = this.styleType ? 0 : 1;
+      this.$emit("change-styleType", this.styleType);
+    },
   }
 };
 export default Vue.component("RFieldset", component);
