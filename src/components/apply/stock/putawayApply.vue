@@ -304,6 +304,7 @@ export default {
             if(!this.scanCodeInfo.spCode){
                 this.showTost = true;
                 this.tostText = '请先扫库位!'
+                this.scanCodeInfo.boxCode = '';
                 return;
             }
 
@@ -311,7 +312,8 @@ export default {
 
             if(this.scanCodeInfo.boxCode.split('-').length !=5){
                 this.showTost = true;
-                this.tostText = '箱码不复合规则，请重新扫码!'
+                this.tostText = '箱码不复合规则，请重新扫码!';
+                this.scanCodeInfo.boxCode = '';
                 this.$refs.boxCode.focus();
                 return;
             }
@@ -319,6 +321,7 @@ export default {
             if(this.boxCodesMap[this.scanCodeInfo.boxCode]){
                 this.showTost = true;
                 this.tostText = '该箱码已经扫过啦，请不要重复扫码哦!';
+                this.scanCodeInfo.boxCode = '';
                 this.$refs.boxCode.focus();
                 return;
             }
@@ -336,12 +339,16 @@ export default {
                     onConfirm: () => {
                         this.matters = [];
                         this.handlerSetMatters(()=>{
-                            this.handlerAddBoxCodeToMatter(matCode,boxRule)
+                            this.handlerAddBoxCodeToMatter(matCode,boxRule);
+                            this.scanCodeInfo.boxCode = '';
+                            this.$refs.boxCode.focus();
                         });
                         
                     },
                     onCancel:() =>{
                         this.scanCodeInfo.postCode = this.postCode;
+                        this.scanCodeInfo.boxCode = '';
+                        this.$refs.boxCode.focus();
                     }
                 })
 
@@ -351,13 +358,16 @@ export default {
                 //如果是第一次扫箱码，需通过仓库以及申请单号获取待上架的物料
                 if(!this.postCode){
                     this.handlerSetMatters(()=>{
-                            this.handlerAddBoxCodeToMatter(matCode,boxRule)
+                            this.handlerAddBoxCodeToMatter(matCode,boxRule);
+                            this.scanCodeInfo.boxCode = '';
+                            this.$refs.boxCode.focus();
                         });
                 }else{
                     this.handlerAddBoxCodeToMatter(matCode,boxRule);
+                    this.scanCodeInfo.boxCode = '';
+                    this.$refs.boxCode.focus();
                 }
-
-                this.$refs.boxCode.focus();
+                
             }
         },
         //往物料分组上添加箱码数据
@@ -645,97 +655,5 @@ export default {
     }
 }
 
-.materiel-wrapper{
-    padding: 0 .15rem;
-    font-size: .14rem;
-    position: relative;
-    background: #FFF;
-    margin-bottom: .1rem;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    .header{
-        height: .30rem;
-        margin: .15rem 0 0 0;
-        line-height: .30rem;
-        color: #696969;
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-        -webkit-box-pack: justify;
-        -ms-flex-pack: justify;
-        justify-content: space-between;
-    }
-    .materiels{
-        padding: 0.2em;
-        font-size: 14px;
-        .materiel-item{
-            .materiel-info{
-                font-weight: 600;
-            }
-            .box-codes{
-                font-size: 12px;
-                color: #696969;
-                .mater_delete{
-                    position: relative;
-                    padding-left: 0.3rem;
-                }
-                .box-code{
-                    width: 100%;
-                    display: -webkit-box;
-                    display: -ms-flexbox;
-                    display: flex;
-                    padding-top: .05rem;
-                    -webkit-box-sizing: border-box;
-                    box-sizing: border-box;
-                    -webkit-box-pack: justify;
-                    -ms-flex-pack: justify;
-                    justify-content: space-between;
-                    
-                    .matter-img {
-                        width: .75rem;
-                        height: .75rem;
-                        display: inline-block;
-                        img {
-                            width: 100%;
-                            max-height: 100%;
-                        }
-                    }
-                    .matter-info{
-                        -webkit-box-flex: 1;
-                        -ms-flex: 1;
-                        flex: 1;
-                        position: relative;
-                        margin-left: .12rem;
-                        padding-bottom: .15rem;
-                        .box-operate{
-                            display: flex;
-                            padding-top: .10rem;
-                            -webkit-box-sizing: border-box;
-                            box-sizing: border-box;
-                            -webkit-box-pack: justify;
-                            -ms-flex-pack: justify;
-                            justify-content: space-between;
-                        }
-                    }
-                }
-            }
-            .delete_icon{
-                left: 0;
-                top: 30%;
-                height: 20px;
-                fill: #999;
-                position: absolute;
-                transform: translateY(-50%);
-                .checked{
-                    fill: #FA7138;
-                }
-            }
-        }
-        
-        
-    }
-}
 </style>
 
