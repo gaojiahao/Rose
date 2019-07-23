@@ -12,9 +12,10 @@
                                 v-model="scanCodeInfo.spCode" 
                                 placeholder="请扫码" 
                                 style="ime-mode:disabled"
+                                @keypress="noPermitInput($event)"
                                 @change="handlerSetSpinfo"
                                 class='property_val' 
-                                @blur="handerOnBlur(($event))"
+                                @blur="handerOnBlur($event)"
                                 @focus="handerOnFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
                         </div>
@@ -129,6 +130,10 @@ export default {
         Toast
     },
     methods:{
+        noPermitInput(e){
+            var evt = window.event || e ;  
+            evt.preventDefault();
+        },
         handerOnBlur(e){
             event.currentTarget.nextElementSibling.style['color'] = '';
             event.currentTarget.nextElementSibling.style['fontWeight'] = '';
