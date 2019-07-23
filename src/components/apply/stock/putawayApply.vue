@@ -305,7 +305,7 @@ export default {
             if(!this.scanCodeInfo.spCode){
                 this.showTost = true;
                 this.tostText = '请先扫库位!'
-                this.scanCodeInfo.spCode = '';
+                this.scanCodeInfo.boxCode = '';
                 return;
             }
 
@@ -314,7 +314,7 @@ export default {
             if(this.scanCodeInfo.boxCode.split('-').length !=5){
                 this.showTost = true;
                 this.tostText = '箱码不复合规则，请重新扫码!';
-                this.scanCodeInfo.spCode = '';
+                this.scanCodeInfo.boxCode = '';
                 this.$refs.boxCode.focus();
                 return;
             }
@@ -322,7 +322,7 @@ export default {
             if(this.boxCodesMap[this.scanCodeInfo.boxCode]){
                 this.showTost = true;
                 this.tostText = '该箱码已经扫过啦，请不要重复扫码哦!';
-                this.scanCodeInfo.spCode = '';
+                this.scanCodeInfo.boxCode = '';
                 this.$refs.boxCode.focus();
                 return;
             }
@@ -341,13 +341,13 @@ export default {
                         this.matters = [];
                         this.handlerSetMatters(()=>{
                             this.handlerAddBoxCodeToMatter(matCode,boxRule);
-                            this.scanCodeInfo.spCode = '';
+                            this.scanCodeInfo.boxCode = '';
                         });
                         
                     },
                     onCancel:() =>{
                         this.scanCodeInfo.postCode = this.postCode;
-                        this.scanCodeInfo.spCode = '';
+                        this.scanCodeInfo.boxCode = '';
                     }
                 })
 
@@ -358,12 +358,12 @@ export default {
                 if(!this.postCode){
                     this.handlerSetMatters(()=>{
                             this.handlerAddBoxCodeToMatter(matCode,boxRule);
-                            this.scanCodeInfo.spCode = '';
+                            this.scanCodeInfo.boxCode = '';
                             this.$refs.boxCode.focus();
                         });
                 }else{
                     this.handlerAddBoxCodeToMatter(matCode,boxRule);
-                    this.scanCodeInfo.spCode = '';
+                    this.scanCodeInfo.boxCode = '';
                     this.$refs.boxCode.focus();
                 }
                 
