@@ -12,7 +12,6 @@
                                 v-model="scanCodeInfo.spCode" 
                                 placeholder="请扫码" 
                                 style="ime-mode:disabled"
-                                @keypress="noPermitInput($event)"
                                 @change="handlerSetSpinfo"
                                 class='property_val' 
                                 @blur="handerOnBlur($event)"
@@ -130,19 +129,16 @@ export default {
         Toast
     },
     methods:{
-        noPermitInput(e){
-            var evt = window.event || e ;  
-            evt.preventDefault();
-        },
         handerOnBlur(e){
-            event.currentTarget.nextElementSibling.style['color'] = '';
-            event.currentTarget.nextElementSibling.style['fontWeight'] = '';
+            e.currentTarget.nextElementSibling.style['color'] = '';
+            e.currentTarget.nextElementSibling.style['fontWeight'] = '';
         },
         // 输入框获取焦点，内容选中
         handerOnFocus(e) {
-            event.currentTarget.select();
-            event.currentTarget.nextElementSibling.style['color'] = '#3296FA';
-            event.currentTarget.nextElementSibling.style['fontWeight'] = 'bold';
+            e.currentTarget.select();
+            e.currentTarget.nextElementSibling.style['color'] = '#3296FA';
+            e.currentTarget.nextElementSibling.style['fontWeight'] = 'bold';
+            e.preventDefault();
         },
         //扫库位以确定库位信息
         handlerSetSpinfo(){
