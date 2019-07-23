@@ -20,6 +20,16 @@ let homeService = {
             url: '/H_roleplay-si/changeEntity',
             data: data
           })
+    },
+    //搜索菜单
+    getMenuLeafAndTaskByText(data = {}) {
+        return $flyio.ajax({
+            type: 'GET',
+            contentType: 'application/x-www-form-urlencoded',
+            url: '/H_roleplay-si/ds/getMenuLeafAndTaskByText',
+            data: data
+        })
     }
+
 }
 export default homeService

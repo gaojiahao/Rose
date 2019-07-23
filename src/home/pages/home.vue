@@ -43,8 +43,25 @@
             </div>
           </div>
         </div>
-        <basic-app :BasicApps="BasicApps"></basic-app>
-        <bus-app :BusApps="BusApps"></bus-app>
+        <div class="list_top">
+          <div class='search'>
+            <form class="search_part" :class="'has-filter'" action="">
+              <i class="icon icon-search"></i>
+              <input ref="searchInp" class="srh_inp" type="search" autocomplete="off"
+                    placeholder="应用名称" @input='getSearchValue($event)' :value='searchValue'>
+              <div class="pop_cfm" @click="searchMeau">搜索</div>
+              <i class="icon-clear clear_icon" @click="clearSearch"></i>
+            </form>
+          </div>
+        </div>
+        <search-app :searchApps="searchApps" v-show="searchAppShow"></search-app>
+        <basic-app :BasicApps="BasicApps" v-show="busAppShow"></basic-app>
+        <bus-app :BusApps="BusApps" v-show="basicAppShow"></bus-app>
+      </div>
+      <div class="el-fade-in">
+        <div class="page-component-up" @click="scrollToTop" v-show="toTopShow">
+          <span class="icon icon-scroll-top"></span>
+        </div>
       </div>
     </div>
     <div class="close-part" v-show="showDrop" @click="showDrop = false"></div>
@@ -62,8 +79,10 @@ import basicMap from "./apps/basicApp/maps/basic";
 // 组件引入
 import busApp from "homePage/components/home-related/busAppList"; // 业务应用
 import basicApp from "homePage/components/home-related/basicApp"; // 基础应用
+import searchApp from "homePage/components/home-related/searchApp"; // 搜索应用
 // 插件引入
 import Bscroll from "better-scroll";
+import { constants } from 'crypto';
 export default {
   data() {
     return {
@@ -74,10 +93,17 @@ export default {
       BasicApps: [], // 基础对象
       entityList: [], // 主体列表
       showDrop: false, // 是否显示主体下拉选择
-      homeScroll: null // 滑动实例
+      homeScroll: null, // 滑动实例
+      searchValue: '',
+      searchAppShow: false,
+      busAppShow: true,
+      basicAppShow: true,
+      searchApps: [],
+      yScrollValue: 0,
+      toTopShow:false
     };
   },
-  components: { busApp, basicApp },
+  components: { busApp, basicApp , searchApp },
   methods: {
     initData: async function() {
       this.$loading.show();
@@ -149,69 +175,72 @@ export default {
     },
     initMenu() {
       return homeService.getMeau().then(res => {
-        let BUSobj = this.BUSobj;
+        this.dealMeau(res);  
+      });
+    },
+    dealMeau(res) {
+      let BUSobj = this.BUSobj;
 
-        for (let val of res) {
-          BUSobj[val.text] = []; //分类
+      for (let val of res) {
+        BUSobj[val.text] = []; //分类
 
-          //item 应用
-          for (let item of val.children) {
-            // 基础对象应用需 根据映射表 单独处理
-            if (val.text == '基础对象' || basicMap[item.listId]) {
-              // 图片处理
-              item.icon = item.icon ? `${item.icon}` : "";
-              this.BasicApps.push(item);
+        //item 应用
+        for (let item of val.children) {
+          // 基础对象应用需 根据映射表 单独处理
+          if (val.text == '基础对象' || basicMap[item.listId]) {
+            // 图片处理
+            item.icon = item.icon ? `${item.icon}` : "";
+            this.BasicApps.push(item);
+          }
+          // 处理 业务应用
+          if (!item.children) {
+            // 获取 应用类型ID 对应相应文件夹
+            item.fileID = val.id;
+            // 处理 应用图标
+            if (item.icon) {
+              item.icon.includes("download")
+                ? // 用户自定义上传 应用icon
+                  (item.icon = `${location.origin}${item.icon}`)
+                : // 系统自带图标
+                  (item.icon = `${item.icon}`);
+            } else {
+              // 初始化应用图标
+              this.getDefaultIcon();
             }
-            // 处理 业务应用
-            if (!item.children) {
-              // 获取 应用类型ID 对应相应文件夹
-              item.fileID = val.id;
-              // 处理 应用图标
-              if (item.icon) {
-                item.icon.includes("download")
-                  ? // 用户自定义上传 应用icon
-                    (item.icon = `${location.origin}${item.icon}`)
-                  : // 系统自带图标
-                    (item.icon = `${item.icon}`);
-              } else {
-                // 初始化应用图标
-                this.getDefaultIcon();
-              }
-              // 归类到相应的小数组
-              BUSobj[val.text].push(item);
-            }
-            // 如果应用里面 存在分类
-            if (item.children) {
-              for (let childItem of item.children) {
-                if (true || childItem.packagePath) {
-                  childItem.fileID = val.id;
-                  childItem.icon = childItem.icon
-                    ? `${childItem.icon}`
-                    : this.getDefaultIcon();
-                  if (!BUSobj[val.text][item.text]) {
-                    this.$set(BUSobj[val.text], item.text, {
-                      childId: item.id,
-                      childName: item.text,
-                      childList: [childItem]
-                    });
-                  } else {
-                    BUSobj[val.text][item.text].childList.push(childItem);
-                  }
+            // 归类到相应的小数组
+            BUSobj[val.text].push(item);
+          }
+          // 如果应用里面 存在分类
+          if (item.children) {
+            for (let childItem of item.children) {
+              if (true || childItem.packagePath) {
+                childItem.fileID = val.id;
+                childItem.icon = childItem.icon
+                  ? `${childItem.icon}`
+                  : this.getDefaultIcon();
+                if (!BUSobj[val.text][item.text]) {
+                  this.$set(BUSobj[val.text], item.text, {
+                    childId: item.id,
+                    childName: item.text,
+                    childList: [childItem]
+                  });
+                } else {
+                  BUSobj[val.text][item.text].childList.push(childItem);
                 }
               }
             }
           }
-
-          if (true || val.folder) {
-            this.BusApps.push({
-              id: val.id,
-              name: val.text,
-              folder: val.folder,
-              appList: { ...BUSobj[val.text] }
-            });
-          }
         }
-      });
+
+        if (true || val.folder) {
+          this.BusApps.push({
+            id: val.id,
+            name: val.text,
+            folder: val.folder,
+            appList: { ...BUSobj[val.text] }
+          });
+        }
+      }
     },
     // 选择单条记录
     dropItemClick(item) {
@@ -228,7 +257,43 @@ export default {
           location.reload();
         }
       });
-    }
+    },
+    //获取搜索值
+    getSearchValue(e) {
+      this.searchValue = e.target.value;
+    },
+    //搜索 菜单
+    searchMeau () {
+      this.busAppShow = false;
+      this.basicAppShow = false;
+      this.searchAppShow = true;
+
+      let data = {
+        _dc: Date.now(),
+        text: this.searchValue,
+      };
+      if(!data.text) {
+        this.searchAppShow = false;
+        this.busAppShow = true;
+        this.basicAppShow = true;
+        return ;
+      }
+      return homeService.getMenuLeafAndTaskByText(data).then(data => {
+        this.searchApps = data;  
+      });
+    },
+    //清除菜单
+    clearSearch() {
+      this.searchAppShow = false;
+      this.busAppShow = true;
+      this.basicAppShow = true;
+      this.searchValue = '';
+      this.searchApps = [];
+    },
+    //滚动到顶部
+    scrollToTop() {
+      this.homeScroll.scrollTo(0, 0, 400);
+    },
   },
   watch: {
     $route: {
@@ -237,6 +302,14 @@ export default {
         if (val.name === "HOME") {
           this.homeScroll.refresh();
         }
+      }
+    },
+    yScrollValue: {
+      handler(val) {
+        if(Math.abs(val)>1000)
+          this.toTopShow = true;
+        else if(Math.abs(val)<1000)
+          this.toTopShow = false; 
       }
     }
   },
@@ -249,8 +322,13 @@ export default {
   },
   mounted() {
     this.homeScroll = new Bscroll(this.$refs.home, {
-      click: true
-    });
+        click: true,
+        pullUpLoad: true,
+        pullDownRefresh: true,
+      });
+    this.homeScroll.on('scroll', ({x, y}) => {
+      this.yScrollValue = y;
+    })
   }
 };
 </script>
@@ -265,6 +343,42 @@ export default {
   overflow: hidden;
   .wrapper {
     padding-bottom: 0.1rem;
+  }
+  .page-component-up{
+      /* background-color: #409eff; */
+    position: fixed;
+    right: .1rem;
+    bottom: .6rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    cursor: pointer;
+    -webkit-transition: .3s;
+    -o-transition: .3s;
+    transition: .3s;
+    /* -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5); */
+    /* box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5); */
+    z-index: 200;
+    span {
+      width: 40px;
+      height: 40px;
+      display: inline-block;
+    }
+    .el-icon-caret-top{
+      color: #fff;
+      display: block;
+      line-height: 40px;
+      text-align: center;
+      font-size: 18px;
+    }
+    p{
+      display: none;
+      text-align: center;
+      color: #fff;
+    }
+    &:hover{
+      opacity: .8;
+    }
   }
 }
 .close-part {
@@ -432,6 +546,87 @@ export default {
   .active {
     color: #006dff;
     font-weight: bold;
+  }
+}
+.list_top {
+  width: 100%;
+}
+.search {
+  width: 100%;
+  padding: .08rem 0;
+  .search_part {
+    width: 100%;
+    display: flex;
+    height: .34rem;
+    position: relative;
+    line-height: .34rem;
+    box-sizing: border-box;
+    // 搜索输入框
+    .srh_inp {
+      flex: 1;
+      border: none;
+      outline: none;
+      color: #333;
+      appearance: none;
+      font-size: .14rem;
+      margin-left: .15rem;
+      padding-left: .35rem;
+      border-radius: .2rem;
+      background: #F6F6F6;
+      -webkit-appearance: none;
+      &::-webkit-search-cancel-button {
+        display: none;
+      }
+    }
+    // 搜索 按钮
+    .pop_cfm {
+      color: #999;
+      font-size: .14rem;
+      margin: 0 .15rem 0 .12rem;
+    }
+    // 返回 按钮
+    .pop_cancel {
+      color: #fc3c3c;
+    }
+    // 搜索icon
+    .icon {
+      top: 50%;
+      z-index: 1;
+      left: .25rem;
+      width: .14rem;
+      height: .16rem;
+      fill: #2d2d2d;
+      position: absolute;
+      transform: translate(0, -50%);
+    }
+    // 清除icon
+    .clear_icon {
+      top: 50%;
+      right: .64rem;
+      width: .18rem;
+      height: .18rem;
+      display: block;
+      font-size: .12rem;
+      line-height: .3rem;
+      text-align: center;
+      position: absolute;
+      transform: translate(0, -50%);
+    }
+  }
+  .search_filter {
+    left: 0;
+    bottom: 0;
+    top: .49rem;
+    width: 100%;
+    z-index: 100;
+    font-size: .14rem;
+    position: absolute;
+    overflow: hidden;
+    .layer {
+      opacity: .5;
+      height: 100%;
+      background: #000;
+    }
   }
 }
 </style>
