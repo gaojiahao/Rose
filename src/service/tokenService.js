@@ -53,8 +53,12 @@ let tokenService = {
     let query = querystring.parse(location.search.slice(1));
     let code = query.code;
 
+    // let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
+    let isQYWX = true;
+    alert('登录入口');
     // 根据环境不同 调用不同的登录接口
     if (isQYWX) {
+      alert('是企业微信');
       if(code != null){
         return this.QYWXLogin();
       } else {
@@ -112,10 +116,12 @@ let tokenService = {
   // 企业微信登录，默认返回token
   QYWXLogin(key = 'token') {
     console.log('进入企业微信了')
+    alert('进入企业微信了');
     return new Promise((resolve, reject) => {
       let query = querystring.parse(location.search.slice(1));
       let code = query.code || '';
       fly.get(`/H_roleplay-si/wxLogin?code=${code}&state=1&corpsecret=${secret}`).then((res) => {
+        alert('登录成功');
         let data = res.data;
         this.setToken({
           key1: data.key1 || '',

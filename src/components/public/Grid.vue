@@ -3,7 +3,7 @@
     <!-- 没有选择物料 -->
     <template v-if="!values || values.length == 0">
       <div class="no-data-header" @click="showGridPicker">
-        <div class="title">{{listTitle||'物料'}}列表</div>
+        <div class="title">{{listTitle||'物料列表'}}</div>
         <div class="seleted_icon">
           请选择
           <span class="icon-right"></span>
@@ -13,7 +13,7 @@
     <!-- 已经选择了物料 -->
     <template v-else>
       <div class="has-data-header" @click="toggleEditStatus">
-        <div class="title">{{listTitle||'物料'}}列表</div>
+        <div class="title">{{listTitle||'物料列表'}}</div>
         <div v-if="!cfg.readOnly">
           <div class="edit" v-if="!isEdit">管理</div>
           <div class="edit" v-else>完成</div>
@@ -148,8 +148,8 @@ var component = {
     form.fieldMap[id] = this;
     this.isGrid = true;
     this.name = name;
+    this.listTitle = fieldSet.cfg.cName;
     this.form = form;
-    this.submitValue = fieldSet.cfg.submitValue;
     this.containerCode = fieldSet.cfg.name;
     this.dao = dao;//执行公式用;
     this.initDataSource(cfg);

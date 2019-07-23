@@ -187,13 +187,13 @@ export default{
                 noop,
                 computedWatcherOptions
             );
+            if (!(key in vm)) {
+                Object.defineProperty(vm, key, {get:createComputedGetter(key),set:this.emptyFn});
+             } else {
+                 console.log('公式' + key + '已经定义过了')
+             }
         }
 
-        if (!(key in vm)) {
-           Object.defineProperty(vm, key, {get:createComputedGetter(key),set:this.emptyFn});
-        } else {
-            console.log('公式' + key + '已经定义过了')
-        }
         function createComputedGetter (key) {
             return function computedGetter () {
                 var watcher = this._computedWatchers && this._computedWatchers[key];

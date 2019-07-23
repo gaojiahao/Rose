@@ -28,6 +28,7 @@ import detailCommon from 'mixins/detailCommon'
 // 插件引入
 import {accMul} from 'plugins/calc/decimalsAdd'
 
+
 export default {
   data() {
     return {

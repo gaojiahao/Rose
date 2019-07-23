@@ -4,10 +4,6 @@
     <div class="basicPart swiper-container task-form">
       <div class="swiper-wrapper">
         <div class="swiper-slide">
-          <div class="related_tips" @click="goSumbitTask">
-            <span>有新的任务日志需要提交？</span>
-            <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
-          </div>
           <!-- 经办信息 （订单、主体等） -->
           <basic-info :work-flow-info="orderInfo" :order-info="orderInfo"></basic-info>
           <!-- 项目任务信息 -->

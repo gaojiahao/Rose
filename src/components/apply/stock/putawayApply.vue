@@ -357,10 +357,6 @@ export default {
                     this.handlerAddBoxCodeToMatter(matCode,boxRule);
                 }
 
-                
-
-                // this.scanCodeInfo.boxCode = '';
-                // this.scanCodeInfo.postCode = '';
                 this.$refs.boxCode.focus();
             }
         },
