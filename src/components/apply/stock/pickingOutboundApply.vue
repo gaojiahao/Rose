@@ -5,6 +5,18 @@
                 <div class="scanCodeInfo">
                     <div class="vux-1px-t">
                         <div class='each_property' >
+                            <label class="required">申请单号</label>
+                            <input 
+                                type='text' 
+                                v-model="scanCodeInfo.postCode" 
+                                placeholder="请扫码" 
+                                class='property_val' 
+                                @focus="getFocus($event)" />
+                            <i class="iconfont">&#xe661;</i>
+                        </div>
+                    </div>
+                    <div class="vux-1px-t">
+                        <div class='each_property' >
                             <label class="required">货品箱码</label>
                             <input 
                                 ref='boxCode'
@@ -12,19 +24,6 @@
                                 v-model="scanCodeInfo.boxCode" 
                                 placeholder="请扫码" 
                                 @change="handlerSetMattersBox"
-                                class='property_val' 
-                                @focus="getFocus($event)" />
-                            <i class="iconfont">&#xe661;</i>
-                        </div>
-                    </div>
-                     <div class="vux-1px-t">
-                        <div class='each_property' >
-                            <label >申请单号</label>
-                            <input 
-                                type='text' 
-                                v-model="scanCodeInfo.postCode" 
-                                placeholder="请扫码" 
-                                readonly
                                 class='property_val' 
                                 @focus="getFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
@@ -39,8 +38,7 @@
                     :handlerSelectItem="handlerSelectItem"
                     :showSelIcon="showSelIcon"
                     :handlerChangeState="handlerChangeState"    
-                    :getGroupInfo="getGroupInfo"
-                    >
+                    :getGroupInfo="getGroupInfo">
                 </wms-matter-part>
             </div>
         </div>
@@ -55,7 +53,13 @@
 
         <toast 
             v-model="showTost" 
-            type="text" :time="800" is-show-mask :text="tostText" position="top" width="20em" ></toast>
+            type="text" 
+            :time="800" 
+            is-show-mask 
+            :text="tostText" 
+            position="top" 
+            width="20em" >
+        </toast>
     </div>
 </template>
 
@@ -71,7 +75,7 @@ import {
     submitAndCalc, 
     getPriceFromSalesContractAndPrice, 
     updateData} from 'service/commonService'
-import { getStorageShelf, getWhbyStoragelocation,getPickingOutByBoxCode } from 'service/wmsService'
+import { getPickingOutByBoxCode } from 'service/wmsService'
 import WebContext from 'service/commonService'
 
 // 插件引入
@@ -112,8 +116,8 @@ export default {
         },
         isCheckAll(){
             let iNum = 0;
-            this.matters.map(m=>{
-                m.boxCodes.map(b=>{
+            this.matters.map(m => {
+                m.boxCodes.map(b => {
                     iNum++;
                 });
             });
@@ -131,8 +135,8 @@ export default {
                 return;
             }
             this.selItems = [];
-            this.matters.map((m,mIdx)=>{
-                 m.boxCodes.map((b,bIdx)=> {
+            this.matters.map((m,mIdx) => {
+                 m.boxCodes.map((b,bIdx) => {
                     this.selItems.push( mIdx+'_'+ bIdx);
                 });
             });
@@ -144,13 +148,13 @@ export default {
                 onConfirm: () => {
                     console.log('====',this.selItems);
                 // 被选中删除的物料
-                this.selItems.map(sel=>{
+                this.selItems.map(sel => {
                     let mIdx,bIdx;
                     mIdx = Number(sel.split('_')[0]);
                     bIdx = Number(sel.split('_')[1]);
-                    this.matters  = this.matters.filter((mat,matIdx)=>{
+                    this.matters  = this.matters.filter((mat,matIdx) => {
                         if(matIdx === mIdx){
-                            mat.boxCodes  = mat.boxCodes.filter((box,boxIdx)=>{
+                            mat.boxCodes  = mat.boxCodes.filter((box,boxIdx) => {
                                 return boxIdx !== bIdx;
                             });
                         }
@@ -179,8 +183,8 @@ export default {
         },
         getGroupInfo(mat){
             let done = 0; 
-            mat.boxCodes.map(b=>{
-                done += b.tdQty;
+            mat.boxCodes.map(b => {
+                done += 1;
             });
 
             return {
@@ -189,33 +193,15 @@ export default {
                 todo:mat.thenQtyBal - done
             }
         },
-        //通过箱码获取仓库信息
-        getWarehouse(){
-            getPickingOutByBoxCode({
-                boxCode:this.scanCodeInfo.boxCode
-            }).then(res=>{
-                if(res.dataCount===0){
-                    this.showTost = true;
-                    this.tostText = '该箱码未绑定仓库，请绑定后再扫!';
-                    this.scanCodeInfo.boxCode = '';
-                }else{
-                    this.warehouse = {
-                        ...res.tableContent[0],
-                        boxCode:this.scanCodeInfo.boxCode
-                    }
-                }
-            })
-        },
         handlerSetMatters(callback){
-            debugger
             let params = {
                 boxCode:this.scanCodeInfo.boxCode,
                 transCode: this.scanCodeInfo.postCode
             };
 
             let materielMap = {};
-            getPickingOutByBoxCode(params).then(res=>{
-                res.tableContent.map(m=>{
+            getPickingOutByBoxCode(params).then(res => {
+                res.tableContent.map(m => {
                     materielMap[m.inventoryCode] = m;
                 });
                 for(var k in materielMap){
@@ -230,28 +216,39 @@ export default {
                         assMeasureUnit: mat.measureUnit,
                         assMeasureDescription: mat.specification,
                         assMeasureScale: mat.invSubUnitMulti,
-                        warehouseName_storehouseInCode: mat.storehouseInCode,
-                        storehouseInCode: mat.storehouseInCode,
+                        warehouseName: mat.warehouseName,
+                        storehouseInCode: mat.storehouseCode,
                         thenTotalQtyBal: mat.thenTotalQtyBal,//待上架
                         thenLockQty: mat.thenLockQty,//已上架
                         thenQtyBal: mat.thenQtyBal,//
-                        tdQty: mat.tdQty,//本次上架
-                        assistQty:  mat.tdQty/mat.measureUnit,
+                        tdQty: 1,//本次上架
+                        assistQty:  1/mat.measureUnit,
                         keepingDays_transObjCode: 1,
                         batchNo: mat.batchNo,
                         productionDate: mat.productionDate,
                         comment: '',
                         boxCodes:[]
                     });
+                    this.warehouse = {
+                        warehouseName: mat.warehouseName,
+                        whOutCode: mat.whOutCode
+                    };
                 }
                 this.postCode = this.scanCodeInfo.postCode;
                 callback && callback();
             });
         },
         handlerSetMattersBox(){
+            if(!this.scanCodeInfo.postCode) {
+                this.showTost = true;
+                this.tostText = '请先扫申请单号!';
+                this.scanCodeInfo.boxCode = "";
+                return;
+            };
+
             if(!this.scanCodeInfo.boxCode) return;
 
-            if(this.scanCodeInfo.boxCode.split('_').length !=5){
+            if(this.scanCodeInfo.boxCode.split('-').length !=5){
                 this.showTost = true;
                 this.tostText = '箱码不符合规则，请重新扫码!'
                 this.$refs.boxCode.focus();
@@ -268,7 +265,7 @@ export default {
             //记录已扫码信息,防止重复扫码
             this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;
 
-            let [postCode,matCode,batchNo,boxRule] = this.scanCodeInfo.boxCode.split('_');
+            let [postCode,matCode,batchNo,boxRule] = this.scanCodeInfo.boxCode.split('-');
 
             //箱码所属申请单号不一致，并且上一次扫码的申请单号有待上架数据
             if(this.postCode && this.postCode != postCode && this.matters.length>0){
@@ -277,44 +274,29 @@ export default {
                     // 确定回调
                     onConfirm: () => {
                         this.matters = [];
-                        this.handlerSetMatters(()=>{
+                        this.handlerSetMatters(() => {
                             this.handlerAddBoxCodeToMatter(matCode,boxRule)
                         });
-                        
-                    },
-                    onCancel:() =>{
-                        this.scanCodeInfo.postCode = this.postCode;
                     }
                 })
-
             }else{
-                this.scanCodeInfo.postCode = postCode;
-
-                //如果是第一次扫箱码，需通过仓库以及申请单号获取待上架的物料
-                if(!this.postCode){
-                    this.handlerSetMatters(()=>{
-                            this.handlerAddBoxCodeToMatter(matCode,boxRule)
-                        });
-                }else{
-                    this.handlerAddBoxCodeToMatter(matCode,boxRule);
+                //如果是第一次扫箱码，需通过申请单号获取待上架的物料
+                if(this.scanCodeInfo.postCode){
+                    this.handlerSetMatters(() => {
+                        this.handlerAddBoxCodeToMatter(matCode,boxRule)
+                    });
                 }
-
-                
-
-                // this.scanCodeInfo.boxCode = '';
-                // this.scanCodeInfo.postCode = '';
                 this.$refs.boxCode.focus();
             }
         },
         //往物料分组上添加箱码数据
         handlerAddBoxCodeToMatter(matCode,boxRule){
-            this.matters.map(mat=>{
+            this.matters.map(mat => {
                 let temMat = Object.assign({},mat);
                 delete temMat.boxCodes;
                 mat.inventoryCode === matCode && mat.boxCodes.push({
                     ...temMat,
                     boxCode: this.scanCodeInfo.boxCode,
-                    warehouseName :this.warehouse.warehouseName,
                     postCode:this.postCode,
                     boxRule:boxRule,
                     tdQty:Number(boxRule),
@@ -323,8 +305,22 @@ export default {
         },
         getDataSet(){
             let dataSet = [];
-            this.matters.map(mat=>{
-                mat.boxCodes.map(box=>{
+            let keyMap = {
+                "transObjCode": "outPutMatCode",
+                "inventoryName": "inventoryName_outPutMatCode",
+                "assMeasureDescription": "specification_outPutMatCode",
+                "assMeasureUnit": "measureUnit_outPutMatCode",
+                "storehouseInCode": "storehouseOutCode"
+            };
+            this.matters.map(mat => {
+                mat.boxCodes.map(box => {
+                    for(let k in box){
+                        let newKey = keyMap[k];
+                        if(newKey){
+                            box[newKey] = box[k];
+                            delete box[k];
+                        }
+                    }
                     dataSet.push({
                        ...box
                     });
@@ -355,16 +351,16 @@ export default {
                         biProcessStatus:null,
                         containerOutWarehouseManager:'',
                         biComment:'',
-                        inPut:{
-                            containerCodeOut:this.warehouse.warehouseCode,
-                            warehouseName_containerCodeOut: this.warehouse.warehouseName_containerCodeOut,
-                            warehouseType_containerCodeOut: this.warehouse.warehouseType_containerCodeOut,
-                            warehouseAddress_containerCodeOut: this.warehouse.warehouseAddress_containerCodeOut,
+                        outPut:{
+                            containerCodeOut: this.warehouse.whOutCode,
+                            warehouseName_containerCodeOut: this.warehouse.warehouseName,
+                            warehouseType_containerCodeOut: this.warehouse.warehouseType,
+                            warehouseAddress_containerCodeOut: this.warehouse.warehouseAddress,
                             dataSet:this.getDataSet()
                         }
                     };
 
-                    let submitData={
+                    let submitData = {
                         listId: this.$route.params.listId,
                         biComment: '',
                         formData:JSON.stringify(formData)
@@ -388,7 +384,6 @@ export default {
         }
     },
     mounted(){
-        debugger
         this.$loading.hide();
         this.$nextTick(() => {
             this.fillBscroll = new Bscroll(this.$refs.fill, {click: true})
