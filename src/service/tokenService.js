@@ -54,12 +54,10 @@ let tokenService = {
     let code = query.code;
 
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
-    alert('登录入口');
+    
     // 根据环境不同 调用不同的登录接口
     if (isQYWX) {
-      alert('是企业微信');
       if(code != null){
-        alert('QYWXLogin');
         return this.QYWXLogin();
       } else {
         window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redirect_uri}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
@@ -116,16 +114,11 @@ let tokenService = {
   // 企业微信登录，默认返回token
   QYWXLogin(key = 'token') {
     console.log('进入企业微信了')
-    alert('进入企业微信了');
     return new Promise((resolve, reject) => {
       let query = querystring.parse(location.search.slice(1));
       let code = query.code || '';
-      alert('secret',secret);
-      alert('code',code);
-      alert(code);
-      
       fly.get(`/H_roleplay-si/wxLogin?code=${code}&state=1&corpsecret=${secret}`).then((res) => {
-          alert('回调消息+////'+res.message+'////' + res.success);
+        alert(res.data);
         let data = res.data;
         this.setToken({
           key1: data.key1 || '',
