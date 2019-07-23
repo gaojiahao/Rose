@@ -48,7 +48,6 @@
                     
                 </div>
                 <wms-matter-part 
-                    ref='matters'
                     title='上架明细'
                     :matterModifyClass="matterModifyClass"
                     :matters="matters"
@@ -342,12 +341,14 @@ export default {
                         this.handlerSetMatters(()=>{
                             this.handlerAddBoxCodeToMatter(matCode,boxRule);
                             this.scanCodeInfo.boxCode = '';
+                            this.$refs.boxCode.focus();
                         });
                         
                     },
                     onCancel:() =>{
                         this.scanCodeInfo.postCode = this.postCode;
                         this.scanCodeInfo.boxCode = '';
+                        this.$refs.boxCode.focus();
                     }
                 })
 
@@ -583,7 +584,7 @@ export default {
     mounted(){
         this.$loading.hide();
         this.$nextTick(() => {
-            this.fillBscroll = new Bscroll(this.$refs.matters, {click: true})
+            this.fillBscroll = new Bscroll(this.$refs.fill, {click: true})
         })
        
         //扫库位码后确定的仓库信息
