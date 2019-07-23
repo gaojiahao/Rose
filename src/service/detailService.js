@@ -10,6 +10,15 @@ export let getWorkFlow = (data = {}) => {
         }
     })
 }
+//根据listId获取流程信息
+export let getWorkFlowByListId = (listId)=>{
+    return $flyio.ajax({
+        url: '/ds/list/getProcessByListId',
+        data: {
+            listId
+        }
+    })
+}
 // 判断工作流节点是否与<我>有关
 export let isMyflow = (data = {}) => {
     return $flyio.ajax({

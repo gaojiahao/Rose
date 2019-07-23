@@ -48,6 +48,7 @@ import {
   getListId,
   getSOList,
   getWorkFlow,
+  getWorkFlowByListId,
   getFromStatus,
   getAppExampleDetails
 } from "service/detailService";
@@ -141,6 +142,11 @@ export default {
       }).then(data => {
         this.workflows = data.tableContent || [];
       });
+    },
+    getWorkFlowByListId(){
+      getWorkFlowByListId(this.listId).then(data => {
+        this.workflows = data || [];
+      })
     },
     handlerFormData(formData) {
       var key,
@@ -256,6 +262,7 @@ export default {
         //没有transCode,获取新建视图。
         this.listId = listId;
         await this.getNewViewIdByListId();
+        await this.getWorkFlowByListId();
       }
       //加载视图信息
       if (this.viewId) {
@@ -328,6 +335,7 @@ export default {
         let { appName, config, dataSource, listInfo, formKey } = data;
 
         window.document.title = appName;
+        listInfo.uniqueId = this.listId;
         WebContext.listInfo = listInfo;
 
         try {
@@ -376,6 +384,7 @@ export default {
 
           this.singleFieldCts = singleFieldCts;
           this.viewInfo = data;
+          this.initComputed();
           this.formKey = formKey;
           console.log("this.config", data);
           this.fieldSets = fieldSets;
@@ -453,7 +462,6 @@ export default {
          this.fields = {}; //fieldCode
          this.wfParamFieldMap = {};
          this.loadPage();
-         this.initComputed();
          this.$emit("slideStatus", this.model);
     },
     reload(){
