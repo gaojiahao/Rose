@@ -184,7 +184,7 @@ export default {
         getGroupInfo(mat){
             let done = 0; 
             mat.boxCodes.map(b => {
-                done += 1;
+                done += mat.tdQty;
             });
 
             return {
@@ -213,16 +213,18 @@ export default {
                         inventoryCode:mat.inventoryCode,
                         inventoryName:mat.inventoryName,
                         tdProcessing: mat.processing,
-                        assMeasureUnit: mat.measureUnit,
-                        assMeasureDescription: mat.specification,
+                        assMeasureUnit: mat.invSubUnitName,
+                        assMeasureDescription: mat.invSubUnitComment,
                         assMeasureScale: mat.invSubUnitMulti,
                         warehouseName: mat.warehouseName,
+                        boxRule: mat.boxRule,
                         storehouseInCode: mat.storehouseCode,
+                        whOutCode: mat.whOutCode,
                         thenTotalQtyBal: mat.thenTotalQtyBal,//待上架
                         thenLockQty: mat.thenLockQty,//已上架
                         thenQtyBal: mat.thenQtyBal,//
-                        tdQty: 1,//本次上架
-                        assistQty:  1/mat.measureUnit,
+                        tdQty: mat.boxQtyBal,//本次出库
+                        assistQty:  mat.boxQtyBal/mat.invSubUnitMulti,
                         keepingDays_transObjCode: 1,
                         batchNo: mat.batchNo,
                         productionDate: mat.productionDate,
@@ -298,8 +300,7 @@ export default {
                     ...temMat,
                     boxCode: this.scanCodeInfo.boxCode,
                     postCode:this.postCode,
-                    boxRule:boxRule,
-                    tdQty:Number(boxRule),
+                    tdQty:temMat.boxRule,
                 });
             });
         },
