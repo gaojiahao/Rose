@@ -119,6 +119,7 @@ let tokenService = {
       let code = query.code || '';
       fly.get(`/H_roleplay-si/wxLogin?code=${code}&state=1&corpsecret=${secret}`).then((res) => {
         let data = res.data;
+        alert(data.token);
         this.setToken({
           key1: data.key1 || '',
           active: data.active || '',
