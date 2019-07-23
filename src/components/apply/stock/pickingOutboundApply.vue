@@ -277,16 +277,25 @@ export default {
                     onConfirm: () => {
                         this.matters = [];
                         this.handlerSetMatters(() => {
-                            this.handlerAddBoxCodeToMatter(matCode,boxRule)
+                            this.handlerAddBoxCodeToMatter(matCode,boxRule);
+                            this.scanCodeInfo.boxCode = '';
                         });
+                    },
+                    onCancel:() =>{
+                        this.scanCodeInfo.postCode = this.postCode;
+                        this.scanCodeInfo.boxCode = '';
                     }
                 })
             }else{
                 //如果是第一次扫箱码，需通过申请单号获取待上架的物料
-                if(this.scanCodeInfo.postCode){
+                if(this.postCode){
                     this.handlerSetMatters(() => {
-                        this.handlerAddBoxCodeToMatter(matCode,boxRule)
+                        this.handlerAddBoxCodeToMatter(matCode,boxRule);
+                        this.scanCodeInfo.boxCode = '';
                     });
+                }else{
+                    this.handlerAddBoxCodeToMatter(matCode,boxRule);
+                    this.scanCodeInfo.boxCode = '';
                 }
                 this.$refs.boxCode.focus();
             }
