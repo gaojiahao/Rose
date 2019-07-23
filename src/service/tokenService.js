@@ -53,13 +53,13 @@ let tokenService = {
     let query = querystring.parse(location.search.slice(1));
     let code = query.code;
 
-    // let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
-    let isQYWX = true;
+    let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
     alert('登录入口');
     // 根据环境不同 调用不同的登录接口
     if (isQYWX) {
       alert('是企业微信');
       if(code != null){
+        alert('QYWXLogin');
         return this.QYWXLogin();
       } else {
         window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redirect_uri}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
@@ -123,7 +123,7 @@ let tokenService = {
       alert('secret',secret);
       
       fly.get(`/H_roleplay-si/wxLogin?code=${code}&state=1&corpsecret=${secret}`).then((res) => {
-        alert('登录成功',JSON.parse(res));
+        alert('登录成功',res);
         if(!res.success){
           alert('回调消息',res.message);
         }
