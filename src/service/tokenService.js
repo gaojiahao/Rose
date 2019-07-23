@@ -120,8 +120,10 @@ let tokenService = {
     return new Promise((resolve, reject) => {
       let query = querystring.parse(location.search.slice(1));
       let code = query.code || '';
+      alert('secret',secret);
+      
       fly.get(`/H_roleplay-si/wxLogin?code=${code}&state=1&corpsecret=${secret}`).then((res) => {
-        alert('登录成功',JSON.parse(res.data));
+        alert('登录成功',JSON.parse(res.success));
         let data = res.data;
         this.setToken({
           key1: data.key1 || '',
