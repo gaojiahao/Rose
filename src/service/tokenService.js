@@ -125,9 +125,7 @@ let tokenService = {
       alert(code);
       
       fly.get(`/H_roleplay-si/wxLogin?code=${code}&state=1&corpsecret=${secret}`).then((res) => {
-        if(!res.success){
-          alert('回调消息+////'+res.message);
-        }
+          alert('回调消息+////'+res.message+'////' + res.success);
         let data = res.data;
         this.setToken({
           key1: data.key1 || '',
