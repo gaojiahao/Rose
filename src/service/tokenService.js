@@ -121,6 +121,8 @@ let tokenService = {
       let query = querystring.parse(location.search.slice(1));
       let code = query.code || '';
       alert('secret',secret);
+      alert('code',code);
+      alert(code);
       
       fly.get(`/H_roleplay-si/wxLogin?code=${code}&state=1&corpsecret=${secret}`).then((res) => {
         alert('登录成功',res);
