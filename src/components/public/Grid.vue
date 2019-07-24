@@ -27,13 +27,17 @@
         :key="rIndex"
         :class="{row_delete : isEdit,'vux-1px-b' : rIndex < values.length - 1 }"
       >
+        <div class="edit-btn-wrapper">
+         <span class="icon-matter-bianji" @click.stop="onShowDetail(row,rIndex)" v-show="!isEdit && !cfg.readOnly"></span>
+         </div>
         <template v-for="(item, index) in cfg.columns" class="cell when-is-right">
+         
           <div class="item" v-if="item.hidden == false" :key="index">
             <span>{{item.text}}：</span>
             <span>{{row[item.fieldCode]||'无'}}</span>
           </div>
         </template>
-        <div @click="onShowDetail(row,rIndex)" class="show-more" v-show="!isEdit">
+        <div @click.stop="onShowDetail(row,rIndex)" class="show-more" v-show="!isEdit && cfg.readOnly">
           查看详情
           <i class="icon-more"></i>
         </div>
@@ -179,14 +183,24 @@ export default Vue.component("RGrid", component);
   &.vux-1px-b:last-child:after {
     border: none;
   }
+  .edit-btn-wrapper{
+    position: relative;
+  }
+  .icon-matter-bianji {
+    width: .28rem;
+    height: .28rem;
+    position: absolute;
+    right: 0;
+    top: .03rem;
+  }
   .show-more {
     text-align: right;
     color: blue;
-  }
-  .icon-more {
-    display: inline-block;
-    width: 0.2rem;
-    height: 0.04rem;
+    .icon-more {
+      display: inline-block;
+      width: 0.2rem;
+      height: 0.04rem;
+    }
   }
   .item {
     display: inline-flex;

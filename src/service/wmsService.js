@@ -24,6 +24,14 @@ export let getPickingOutByBoxCode = (data = {}) => {
   })
 }
 
+//获取库位存货
+export let  getLocationOfinventory =  (data = {}) =>{
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getSumInvBalance_STCK',
+    data
+  })
+}
+
 //撤销为草稿
 export let revocation = (data = {}) =>{
 
