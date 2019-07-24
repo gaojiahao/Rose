@@ -13,6 +13,7 @@
                                 placeholder="请扫码" 
                                 @change="handlerSetSpinfo"
                                 class='property_val' 
+                                @click="handerClickSpCodeDiv"
                                 @blur="handerOnBlur(($event))"
                                 @focus="handerOnFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
@@ -74,7 +75,7 @@ import {
     submitAndCalc, 
     getPriceFromSalesContractAndPrice, 
     updateData} from 'service/commonService'
-import { getStorageShelf, getWhbyStoragelocation } from 'service/wmsService'
+import {  getWhbyStoragelocation,getLocationOfinventory } from 'service/wmsService'
 import WebContext from 'service/commonService'
 import { getSOList } from 'service/detailService'
 
@@ -113,6 +114,11 @@ export default {
         Toast
     },
     methods:{
+        handerClickSpCodeDiv(e){
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        },
         handerOnBlur(e){
             event.currentTarget.nextElementSibling.style['color'] = '';
             event.currentTarget.nextElementSibling.style['fontWeight'] = '';
@@ -122,7 +128,6 @@ export default {
             event.currentTarget.select();
             event.currentTarget.nextElementSibling.style['color'] = '#3296FA';
             event.currentTarget.nextElementSibling.style['fontWeight'] = 'bold';
-            // document.activeElement.blur();
         },
         //扫库位以确定库位信息
         handlerSetSpinfo(){
@@ -139,7 +144,7 @@ export default {
                             //重新获取仓库信息
                             //清空箱码，申请单号信息
                             //清空待上架物料
-                            this.getWarehouse();
+                            this.getWarehouse(this.handlerSetMatters);
                             this.scanCodeInfo.boxCode = '';
                             this.matters = [];
                         },
@@ -149,7 +154,7 @@ export default {
                     })
                 }
             }else{
-                this.getWarehouse();
+                this.getWarehouse(this.handlerSetMatters);
             }
             
         },
@@ -235,17 +240,17 @@ export default {
                 todo:mat.thenQtyBal - done
             }
         },
-        handlerSetMatters(callback){
+        handlerSetMatters(){
             let params = {
                 whCode: this.warehouse.warehouseCode,
+                storehouseCode:this.scanCodeInfo.spCode,
                 page: 1,
                 start: 0,
-                limit: 1000,
-                filter: JSON.stringify([{"operator":"like","value":'',"property":"transCode"}])
+                limit: 1000
             };
 
             let materielMap = {};
-            getStorageShelf(params).then(res=>{
+            getLocationOfinventory(params).then(res=>{
                 res.tableContent.map(m=>{
                     materielMap[m.inventoryCode] = m;
                 });
@@ -259,13 +264,13 @@ export default {
                         inventoryName:mat.inventoryName,
                         tdProcessing: mat.processing,
                         assMeasureUnit: mat.measureUnit,
-                        assMeasureDescription: mat.specification,
+                        specification: mat.specification,
                         assMeasureScale: mat.invSubUnitMulti,
                         warehouseName_storehouseInCode: mat.storehouseInCode,
                         storehouseInCode: mat.storehouseInCode,
-                        thenTotalQtyBal: mat.thenTotalQtyBal,//待上架
+                        thenTotalQtyBal: mat.storehouseQtyBal,//账面数
                         thenLockQty: mat.thenLockQty,//已上架
-                        thenQtyBal: mat.thenQtyBal,//
+                        thenQtyBal: mat.storehouseQtyBal,//
                         tdQty: mat.tdQty,//本次上架
                         assistQty:  mat.tdQty/mat.measureUnit,
                         keepingDays_transObjCode: 1,
@@ -275,7 +280,6 @@ export default {
                         boxCodes:[]
                     });
                 }
-                callback && callback();
             });
         },
        /**
@@ -313,6 +317,10 @@ export default {
 
             //记录已扫码信息,防止重复扫码
             this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;
+
+            let [postCode,matCode,batchNo,boxRule] = this.scanCodeInfo.boxCode.split('-');
+
+            this.handlerAddBoxCodeToMatter(matCode,boxRule);
 
         },
         //往物料分组上添加箱码数据
@@ -440,7 +448,6 @@ export default {
                 this.biReferenceId = formData.biReferenceId;
 
                 this.scanCodeInfo.spCode = inPut.dataSet[0]['storehouseInCode'];
-                this.getWarehouse();
                 
                 inPut.dataSet.map(box=>{
                     if(!materielMap[box.transObjCode]){
@@ -486,8 +493,8 @@ export default {
 
             })
         },
-         //通过库位编码获取仓库信息
-        getWarehouse(){
+        //通过库位编码获取仓库信息
+        getWarehouse(callback){
             getWhbyStoragelocation({
                 location:this.scanCodeInfo.spCode
             }).then(res=>{
@@ -501,6 +508,8 @@ export default {
                         spCode:this.scanCodeInfo.spCode
                     }
                     this.$refs.boxCode.focus();
+
+                    callback && callback();
                 }
             })
         },

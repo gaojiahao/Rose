@@ -498,7 +498,6 @@ export default {
                 this.biReferenceId = formData.biReferenceId;
 
                 this.scanCodeInfo.spCode = inPut.dataSet[0]['storehouseInCode'];
-                this.getWarehouse();
                 
                 inPut.dataSet.map(box=>{
                     if(!materielMap[box.transObjCode]){
