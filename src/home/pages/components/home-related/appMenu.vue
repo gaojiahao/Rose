@@ -28,8 +28,8 @@ export default {
         goList() {
             var folder = this.folder||null,
                 app = this.app,
-                fileName = app.packagePath,
-                name = app.text,
+                fileName = app.packagePath||null,
+                name = app.text||null,
                 listId = app.listId,
                 url = app.url||'',
                 path;
