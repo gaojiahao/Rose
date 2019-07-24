@@ -138,7 +138,6 @@ export default {
             e.currentTarget.select();
             e.currentTarget.nextElementSibling.style['color'] = '#3296FA';
             e.currentTarget.nextElementSibling.style['fontWeight'] = 'bold';
-            document.activeElement.blur();
         },
         //扫库位以确定库位信息
         handlerSetSpinfo(){
