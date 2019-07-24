@@ -373,6 +373,7 @@ export default {
       }
       /** 关注 */
       .concern{
+        text-align: center;
         .icon-xihuan{
           color: #c93d1b;
         }
