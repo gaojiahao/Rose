@@ -4,16 +4,16 @@
             <div class="wrapper">
                 <div class="scanCodeInfo">
                     <div class="vux-1px-t">
-                        <div class='each_property' @click="handerClickSpCodeDiv">
+                        <div class='each_property' >
                             <label class="required">盘点仓位</label>
                             <input 
                                 type='text' 
                                 ref='spCode'
                                 v-model="scanCodeInfo.spCode" 
                                 placeholder="请扫码" 
-                                style="pointer-events: none;"
                                 @change="handlerSetSpinfo"
                                 class='property_val' 
+                                @click="handerClickSpCodeDiv"
                                 @blur="handerOnBlur(($event))"
                                 @focus="handerOnFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
@@ -114,8 +114,10 @@ export default {
         Toast
     },
     methods:{
-        handerClickSpCodeDiv(){
-            this.$refs.spCode.focus();
+        handerClickSpCodeDiv(e){
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
         },
         handerOnBlur(e){
             event.currentTarget.nextElementSibling.style['color'] = '';
