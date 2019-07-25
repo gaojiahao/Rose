@@ -185,7 +185,7 @@ export default Vue.component('AppExample',component);
     }
 }
 .tabs {
-    display: none;
+    // display: none;
 }
 </style>
 
