@@ -128,7 +128,8 @@ var component = {
       let [currentStatus = {}] = this.fullWorkFlow.slice(-1);
       for (let item of this.fullWorkFlow) {
         // 去除名字中的空格
-        item.userName = item.userName.replace(/\s*/g, "");
+        if(item.userName)
+          item.userName = item.userName.replace(/\s*/g, "");
       }
       this.currentStatus = currentStatus;
     },
