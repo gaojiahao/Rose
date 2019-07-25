@@ -34,7 +34,7 @@
                             </p>
                             <div class="box-operate">
                                 <div>
-                                    <div v-html="getSpecialInfo(box)"></div>
+                                    <div v-if="getSpecialInfo" v-html="getSpecialInfo(box)"></div>
                                 </div>
                                 <div></div>
                                 <div>
