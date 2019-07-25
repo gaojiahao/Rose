@@ -1,9 +1,9 @@
 <template>
      <div class="materiel-wrapper">
-        <div class="header" @click="handlerChangeState">
+        <div class="header" >
             <div>{{title}}</div>
-            <div v-if="!matterModifyClass">编辑</div>
-            <div v-if="matterModifyClass">完成</div>
+            <div v-if="!matterModifyClass" @click="handlerChangeState">编辑</div>
+            <div v-if="matterModifyClass" @click="handlerChangeState">完成</div>
         </div>
         <ul class="materiels">
             <li class="materiel-item" 
@@ -28,11 +28,14 @@
                         </div>
                         <div class="matter-info">
                             <div >{{box.boxCode}}</div>
-                            <span>{{box.warehouseName}}/{{box.storehouseInCode}}</span>
-                            <span>{{box.specification}}</span>
-                            <div >{{box.postCode}}</div>
+                            <p v-for="(value,key) in  matterInfoConfig" :key="key">
+                                <label>{{value}}:</label>
+                                {{box[key]}}
+                            </p>
                             <div class="box-operate">
-                                <div></div>
+                                <div>
+                                    <div v-html="getSpecialInfo(box)"></div>
+                                </div>
                                 <div></div>
                                 <div>
                                     <r-number :num="box.tdQty" v-model="box.tdQty"></r-number>
@@ -70,6 +73,16 @@ export default {
             type:String,
             default:''
         },
+        matterInfoConfig:{
+            type:Object,
+            default(){
+                return {
+                    warehouseName:"仓库名称",
+                    storehouseInCode:"库位编码",
+                    specification:"规格"
+                }
+            }
+        },
         // 是否处于编辑物料状态
         matterModifyClass: {
             type: Boolean,
@@ -96,7 +109,10 @@ export default {
         },
         getGroupInfo:{
             type:Function
-        }
+        },
+        getSpecialInfo:{
+            type:Function
+        } 
     },
     components:{
         RNumber,
@@ -143,6 +159,7 @@ export default {
         .materiel-item{
             .materiel-info{
                 font-weight: 600;
+               
             }
             .box-codes{
                 font-size: 12px;
@@ -181,7 +198,6 @@ export default {
                         padding-bottom: .15rem;
                         .box-operate{
                             display: flex;
-                            padding-top: .10rem;
                             -webkit-box-sizing: border-box;
                             box-sizing: border-box;
                             -webkit-box-pack: justify;
