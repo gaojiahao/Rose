@@ -48,7 +48,7 @@
             <form class="search_part" :class="'has-filter'" action="">
               <i class="icon icon-search"></i>
               <input ref="searchInp" class="srh_inp" type="search" autocomplete="off"
-                    placeholder="应用名称" @input='getSearchValue($event)' :value='searchValue'>
+                    placeholder="应用名称" @input='getSearchValue($event)' :value='searchValue' @keydown="searchMeau2($event)">
               <div class="pop_cfm" @click="searchMeau">搜索</div>
               <i class="icon-clear clear_icon" @click="clearSearch"></i>
             </form>
@@ -136,7 +136,7 @@ export default {
       return getMsgList().then(data => {
         if (data.dataCount > 99) {
           newsNumber = "99+";
-          return;
+          //return;
         }
         newsNumber = data.dataCount;
         this.$event.$emit("badgeNum", newsNumber);
@@ -282,6 +282,27 @@ export default {
         this.searchApps = data;  
       });
     },
+    searchMeau2 (ev) {
+      if(ev.keyCode == 13) {
+        this.busAppShow = false;
+        this.basicAppShow = false;
+        this.searchAppShow = true;
+
+        let data = {
+          _dc: Date.now(),
+          text: this.searchValue,
+        };
+        if(!data.text) {
+          this.searchAppShow = false;
+          this.busAppShow = true;
+          this.basicAppShow = true;
+          return ;
+        }
+        return homeService.getMenuLeafAndTaskByText(data).then(data => {
+          this.searchApps = data;  
+        });
+      }
+    },
     //清除菜单
     clearSearch() {
       this.searchAppShow = false;
@@ -341,6 +362,7 @@ export default {
   width: 100%;
   height: calc(100% - 0.49rem);
   overflow: hidden;
+  background-color: #fff;
   .wrapper {
     padding-bottom: 0.1rem;
   }
@@ -550,6 +572,7 @@ export default {
 }
 .list_top {
   width: 100%;
+  background-color: #fff;
 }
 .search {
   width: 100%;
