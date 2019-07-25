@@ -274,6 +274,7 @@ export default {
                         inventoryCode:mat.inventoryCode,
                         inventoryName:mat.inventoryName,
                         tdProcessing: mat.processing,
+                        specification:mat.specification,
                         assMeasureUnit: mat.measureUnit,
                         assMeasureDescription: mat.specification,
                         assMeasureScale: mat.invSubUnitMulti,
@@ -340,6 +341,7 @@ export default {
                     // 确定回调
                     onConfirm: () => {
                         this.matters = [];
+                        this.scanCodeInfo.postCode = postCode;
                         this.handlerSetMatters(()=>{
                             this.handlerAddBoxCodeToMatter(matCode,boxRule);
                             this.scanCodeInfo.boxCode = '';
@@ -455,7 +457,8 @@ export default {
                             this.$HandleLoad.hide();
                         })
                     }else{
-                         submitAndCalc(submitData).then(data => {
+                        delete submitData.biReferenceId;
+                        submitAndCalc(submitData).then(data => {
                             this.$HandleLoad.hide()
                             let {success = false, message = '提交失败'} = data;
                             if (success) {

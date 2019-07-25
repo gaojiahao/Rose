@@ -190,6 +190,6 @@ export default Vue.component('AutoSubject',component);
     }
 }
 .tabs {
-    display: none;
+    // display: none;
 }
 </style>

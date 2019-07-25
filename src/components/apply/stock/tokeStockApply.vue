@@ -13,7 +13,6 @@
                                 placeholder="请扫码" 
                                 @change="handlerSetSpinfo"
                                 class='property_val' 
-                                @click="handerClickSpCodeDiv"
                                 @blur="handerOnBlur(($event))"
                                 @focus="handerOnFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
@@ -43,6 +42,8 @@
                     :showSelIcon="showSelIcon"
                     :handlerChangeState="handlerChangeState"    
                     :getGroupInfo="getGroupInfo"
+                    :getSpecialInfo="getSpecialInfo"
+                    :matterInfoConfig="matterInfoConfig"
                     >
                 </wms-matter-part>
             </div>
@@ -75,7 +76,7 @@ import {
     submitAndCalc, 
     getPriceFromSalesContractAndPrice, 
     updateData} from 'service/commonService'
-import {  getWhbyStoragelocation,getLocationOfinventory } from 'service/wmsService'
+import {  getWhbyStoragelocation,getLocationOfinventory,getInventoryInfoByMatCode} from 'service/wmsService'
 import WebContext from 'service/commonService'
 import { getSOList } from 'service/detailService'
 
@@ -95,7 +96,13 @@ export default {
             btnIsHide:false,
             showTost:false,
             tostText:'',
-            formViewUniqueId: 'a1bccaee-37a8-4786-bbf4-e9cee9fbd081', // 修改时的UniqueId
+            formViewUniqueId: 'a1bccaee-37a8-4786-bbf4-e9cee9fbd081', // 修改时的UniqueId,
+            matterInfoConfig:{
+                warehouseName:"仓库名称",
+                storehouseInCode:"库位编码",
+                specification:"规格",
+                boxCodeBal:"箱码存货"
+            }
         }
     },
     computed: {
@@ -114,11 +121,6 @@ export default {
         Toast
     },
     methods:{
-        handerClickSpCodeDiv(e){
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-        },
         handerOnBlur(e){
             event.currentTarget.nextElementSibling.style['color'] = '';
             event.currentTarget.nextElementSibling.style['fontWeight'] = '';
@@ -231,14 +233,18 @@ export default {
         getGroupInfo(mat){
             let done = 0; 
             mat.boxCodes.map(b=>{
-                done+= b.tdQty;
+                done += b.tdQty;
             });
 
             return {
-                all:mat.thenQtyBal,
+                all:mat.storehouseQtyBal,
                 done:done,
-                todo:mat.thenQtyBal - done
+                todo:mat.storehouseQtyBal - done
             }
+        },
+        getSpecialInfo(box){
+            var differenceNum = box.boxCodeBal - box.tdQty;
+            return `<span class="specialInfo">差异:<strong class="differenceNum">${differenceNum}</strong></span>`
         },
         handlerSetMatters(){
             let params = {
@@ -252,42 +258,41 @@ export default {
             let materielMap = {};
             getLocationOfinventory(params).then(res=>{
                 res.tableContent.map(m=>{
-                    materielMap[m.inventoryCode] = m;
+                    if(materielMap[m.inventoryCode]){
+                        materielMap[m.inventoryCode].boxCodes.push({
+                            ...m,
+                            warehouseName:this.warehouse.warehouseName,
+                            storehouseInCode:this.scanCodeInfo.spCode,
+                            tdQty: 0
+                        });
+                        //往账面箱码记录
+                        this.paperBoxCodesMap[m.boxCode] = m; 
+                    }else{
+                        materielMap[m.inventoryCode] = {
+                            ...m,
+                            boxCodes:[{
+                                ...m,
+                                warehouseName:this.warehouse.warehouseName,
+                                storehouseInCode:this.scanCodeInfo.spCode,
+                                tdQty: 0
+                            }]
+                        };
+                        //往账面箱码记录
+                        this.paperBoxCodesMap[m.boxCode] = m; 
+                    }
                 });
                 for(var k in materielMap){
                     let mat = materielMap[k];
                     this.matters.push({
                         expend:true,
-                        transMatchedCode: mat.transCode,
-                        transObjCode: mat.inventoryCode,
-                        inventoryCode:mat.inventoryCode,
-                        inventoryName:mat.inventoryName,
-                        tdProcessing: mat.processing,
-                        assMeasureUnit: mat.measureUnit,
-                        specification: mat.specification,
-                        assMeasureScale: mat.invSubUnitMulti,
-                        warehouseName_storehouseInCode: mat.storehouseInCode,
-                        storehouseInCode: mat.storehouseInCode,
-                        thenTotalQtyBal: mat.storehouseQtyBal,//账面数
-                        thenLockQty: mat.thenLockQty,//已上架
-                        thenQtyBal: mat.storehouseQtyBal,//
-                        tdQty: mat.tdQty,//本次上架
-                        assistQty:  mat.tdQty/mat.measureUnit,
-                        keepingDays_transObjCode: 1,
-                        batchNo: mat.batchNo,
-                        productionDate: mat.productionDate,
-                        comment: '',
-                        boxCodes:[]
+                        ...mat
                     });
                 }
             });
         },
        /**
         * 扫箱码
-        * 箱码规则 申请单号-物料编码-生产日期-批次号-序号
-        * 通过解析箱码获取申请单号等信息
-        * 如果是第一次扫码，则会通过申请单号、以及仓库信息、获取待上架的物料
-        * 如果不是第一次扫码，则在相应的物料下添加箱码
+        * 
         */
         handlerSetMattersBox(){
             if(!this.scanCodeInfo.spCode){
@@ -315,35 +320,100 @@ export default {
                 return;
             }
 
-            //记录已扫码信息,防止重复扫码
-            this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;
-
-            let [postCode,matCode,batchNo,boxRule] = this.scanCodeInfo.boxCode.split('-');
-
-            this.handlerAddBoxCodeToMatter(matCode,boxRule);
-
-        },
-        //往物料分组上添加箱码数据
-        handlerAddBoxCodeToMatter(matCode,boxRule){
-            this.matters.map(mat=>{
-                let temMat = Object.assign({},mat);
-                delete temMat.boxCodes;
-                mat.inventoryCode === matCode && mat.boxCodes.push({
-                    ...temMat,
-                    boxCode: this.scanCodeInfo.boxCode,
-                    warehouseName :this.warehouse.warehouseName,
-                    storehouseInCode:this.scanCodeInfo.spCode,
-                    boxRule:boxRule,
-                    tdQty:Number(boxRule),
+            //当前扫的箱码，不在账面余额上，分为两种情况处理
+            //1、作盘盈处理
+            //2、追查数据，作理货单
+            if(!this.paperBoxCodesMap[this.scanCodeInfo.boxCode]){
+                this.$vux.confirm.show({
+                    content:`此箱码不在账面余额,建议您追查此箱码的账面数据,
+                        根据追查结果做<strong style="color:red;">理货单</strong>或<strong style="color:red;">盘盈</strong>处理,
+                        您此次点击确认,将做<strong style="color:red;">盘盈</strong>处理,点击取消不做任何处理!`,
+                    onConfirm:()=>{
+                        this.addInventoryProfit();
+                    },
+                    onCancel:()=>{
+                        
+                    }
                 });
+            }else{
+                //记录已扫码信息,防止重复扫码
+                this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;
+
+                let [postCode,matCode,batchNo,boxRule] = this.scanCodeInfo.boxCode.split('-');
+
+                this.matters.map(mat=>{
+                    mat.inventoryCode === matCode && mat.boxCodes.map(box=>{
+                        if(box.boxCode === this.scanCodeInfo.boxCode) 
+                            box.tdQty =Number(box.boxCodeBal);
+                    });
+                });
+                this.scanCodeInfo.boxCode = '';
+            }
+        },
+        //添加存货盘盈数据
+        addInventoryProfit(){
+            let [postCode,matCode,batchNo,boxRule] = this.scanCodeInfo.boxCode.split('-');
+            let isProfit = false;
+            this.matters.map(mat=>{
+                if(mat.inventoryCode === matCode){
+                    mat.boxCodes.splice(0,0,{
+                        ...mat,
+                        boxCode: this.scanCodeInfo.boxCode,
+                        warehouseName:this.warehouse.warehouseName,
+                        storehouseInCode:this.scanCodeInfo.spCode,
+                        tdQty:Number(boxRule)
+                    });
+                    isProfit = true;
+                    this.scanCodeInfo.boxCode = '';
+                }
             });
+
+            if(!isProfit){
+                getInventoryInfoByMatCode({
+                    matCode:matCode
+                }).then(res=>{
+                    if(res.dataCount>0){
+                        let mat = res.tableContent[0]
+                        this.matters.splice(0,0,{
+                            ...mat,
+                            storehouseQtyBal:0,
+                            expend:true,
+                            boxCodes:[{
+                                ...mat,
+                                boxCode: this.scanCodeInfo.boxCode,
+                                warehouseName:this.warehouse.warehouseName,
+                                storehouseInCode:this.scanCodeInfo.spCode,
+                                tdQty:Number(boxRule)
+                            }]
+                        });
+                        this.scanCodeInfo.boxCode = '';
+                    }else{
+                        this.showTost = true;
+                        this.tostText = '此箱码没有对应的物料信息!';
+                        this.scanCodeInfo.boxCode = '';
+                    }
+                });
+            }
         },
         getDataSet(){
             let dataSet = [];
             this.matters.map(mat=>{
                 mat.boxCodes.map(box=>{
                     dataSet.push({
-                       ...box
+                        transObjCode: box.inventoryCode,
+                        tdProcessing: box.processing,
+                        assMeasureUnit: box.assMeasureUnit,
+                        assMeasureScale: null,
+                        boxCode: box.boxCode,
+                        boxRule: box.boxRule,
+                        thenTotalQtyStock: box.thenTotalQtyStock,
+                        thenLockQtyStock: box.thenLockQtyStock,
+                        thenQtyStock: box.thenQtyStock,
+                        assistQty: 0,
+                        locationStock: box.locationStock,
+                        tdQty: box.tdQty,
+                        lockQty: box.lockQty,
+                        differenceNum: box.boxCodeBal - box.tdQty
                     });
                 });
             });
@@ -405,6 +475,8 @@ export default {
                             this.$HandleLoad.hide();
                         })
                     }else{
+                        delete submitData.biReferenceId;
+
                          submitAndCalc(submitData).then(data => {
                             this.$HandleLoad.hide()
                             let {success = false, message = '提交失败'} = data;
@@ -448,7 +520,8 @@ export default {
                 this.biReferenceId = formData.biReferenceId;
 
                 this.scanCodeInfo.spCode = inPut.dataSet[0]['storehouseInCode'];
-                
+                //修改时，通过库位信息获取仓库信息
+                this.getWarehouse();
                 inPut.dataSet.map(box=>{
                     if(!materielMap[box.transObjCode]){
                         materielMap[box.transObjCode] = {
@@ -546,6 +619,8 @@ export default {
 
         //已扫箱码信息集合
         this.boxCodesMap = {};
+        //账面应扫箱码
+        this.paperBoxCodesMap = {};
         this.$refs.spCode.focus();
         if(this.$route.query.transCode){
             this.transCode = this.$route.query.transCode;
@@ -605,6 +680,14 @@ export default {
       /deep/ .weui-textarea {
         text-align: right;
       }
+    }
+}
+
+.wrapper{
+    .specialInfo{
+        .differenceNum{
+            color: #3296FA;
+        }
     }
 }
 

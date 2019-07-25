@@ -33,6 +33,8 @@ export default {
             this.initVisible();
             this.initWatch(cfg.watch);
             if(form.model == 'new')this.initDefaultValue(cfg.defaultValue);
+            if(cfg.valueBind != "" && typeof(cfg.valueBind)=='object')
+                this.initDefaultValue(cfg.valueBind[0]);
             this.initDataSource(cfg.dataSource);
         },
         initOption(cfg){
