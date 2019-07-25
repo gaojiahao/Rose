@@ -45,7 +45,7 @@
         </div>
         <div class="list_top">
           <div class='search'>
-            <form class="search_part" :class="'has-filter'" action="">
+            <form class="search_part" :class="'has-filter'" @submit.prevent="formSubmit" action="javascript:return true">
               <i class="icon icon-search"></i>
               <input ref="searchInp" class="srh_inp" type="search" autocomplete="off"
                     placeholder="应用名称" @input='getSearchValue($event)' :value='searchValue' @keydown="searchMeau2($event)">
@@ -302,6 +302,9 @@ export default {
           this.searchApps = data;  
         });
       }
+    },
+    formSubmit () {
+      return false
     },
     //清除菜单
     clearSearch() {
