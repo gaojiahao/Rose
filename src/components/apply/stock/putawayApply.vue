@@ -455,7 +455,8 @@ export default {
                             this.$HandleLoad.hide();
                         })
                     }else{
-                         submitAndCalc(submitData).then(data => {
+                        delete submitData.biReferenceId;
+                        submitAndCalc(submitData).then(data => {
                             this.$HandleLoad.hide()
                             let {success = false, message = '提交失败'} = data;
                             if (success) {
