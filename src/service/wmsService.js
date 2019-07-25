@@ -41,6 +41,8 @@ export let  releaseSortingOrder =  (transCode, matCode) =>{
       matCode: matCode
     }
   })
+}
+
 //通过物料编码获取物料信息
 export let  getInventoryInfoByMatCode = (data ={}) =>{
   return $flyio.ajax({
