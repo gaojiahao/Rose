@@ -140,7 +140,7 @@ export default {
         },
         // 输入框获取焦点，内容选中
         handerOnFocus(e) {
-            e.currentTarget.select();
+            event.currentTarget.select();
             e.currentTarget.nextElementSibling.style['color'] = '#3296FA';
             e.currentTarget.nextElementSibling.style['fontWeight'] = 'bold';
         },
@@ -586,6 +586,7 @@ export default {
                     this.showTost = true;
                     this.tostText = '该库位未绑定仓库，请绑定后再扫!';
                     this.scanCodeInfo.spCode = '';
+                    this.$refs.spCode.focus();
                 }else{
                     this.warehouse = {
                         ...res.tableContent[0],
