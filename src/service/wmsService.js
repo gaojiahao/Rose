@@ -32,6 +32,17 @@ export let  getLocationOfinventory =  (data = {}) =>{
   })
 }
 
+//拣货入库新增提交后调用
+export let  releaseSortingOrder =  (transCode, matCode) =>{
+  return $flyio.post({
+    url: '/H_roleplay-si/wms/releaseSortingOrder',
+    data: {
+      transCode: transCode,
+      matCode: matCode
+    }
+  })
+}
+
 //通过物料编码获取物料信息
 export let  getInventoryInfoByMatCode = (data ={}) =>{
   return $flyio.ajax({
