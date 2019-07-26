@@ -13,7 +13,6 @@
                                 placeholder="请扫码" 
                                 @change="handlerSetSpinfo"
                                 class='property_val' 
-                                @blur="handerOnBlur($event)"
                                 @focus="handerOnFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
                         </div>
@@ -28,7 +27,6 @@
                                 placeholder="请扫码" 
                                 @change="handlerSetMattersBox"
                                 class='property_val' 
-                                 @blur="handerOnBlur(($event))"
                                 @focus="handerOnFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
                         </div>
@@ -133,15 +131,9 @@ export default {
         Toast
     },
     methods:{
-        handerOnBlur(e){
-            e.currentTarget.nextElementSibling.style['color'] = '';
-            e.currentTarget.nextElementSibling.style['fontWeight'] = '';
-        },
         // 输入框获取焦点，内容选中
         handerOnFocus(e) {
             event.currentTarget.select();
-            e.currentTarget.nextElementSibling.style['color'] = '#3296FA';
-            e.currentTarget.nextElementSibling.style['fontWeight'] = 'bold';
         },
         //扫库位以确定库位信息
         handlerSetSpinfo(){
