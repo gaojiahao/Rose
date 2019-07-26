@@ -580,8 +580,11 @@ export default {
             });
         },
         toggleEditStatus() {
-            this.isEdit = !this.isEdit;
-            this.selection = [];
+            if(this.cfg.readOnly == false){
+                this.isEdit = !this.isEdit;
+                this.selection = [];
+            }
+            
         },
         validateData: function (value, columns) {
             var me = this,
