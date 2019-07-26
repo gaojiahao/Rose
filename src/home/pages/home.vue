@@ -45,11 +45,11 @@
         </div>
         <div class="list_top">
           <div class='search'>
-            <form class="search_part" :class="'has-filter'" action="">
+            <form class="search_part" :class="'has-filter'" action="" @submit.prevent= "searchMenu">
               <i class="icon icon-search"></i>
               <input ref="searchInp" class="srh_inp" type="search" autocomplete="off"
                     placeholder="应用名称" @input='getSearchValue($event)' :value='searchValue'>
-              <div class="pop_cfm" @click="searchMeau">搜索</div>
+              <div class="pop_cfm" @click="searchMenu">搜索</div>
               <i class="icon-clear clear_icon" @click="clearSearch"></i>
             </form>
           </div>
@@ -263,7 +263,7 @@ export default {
       this.searchValue = e.target.value;
     },
     //搜索 菜单
-    searchMeau () {
+    searchMenu () {
       this.busAppShow = false;
       this.basicAppShow = false;
       this.searchAppShow = true;
