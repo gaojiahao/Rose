@@ -47,7 +47,6 @@
                             <i class="iconfont">&#xe661;</i>
                         </div>
                     </div>
-                    
                 </div>
                 <wms-matter-part 
                     title='上架明细'
@@ -57,6 +56,7 @@
                     :showSelIcon="showSelIcon"
                     :handlerChangeState="handlerChangeState"    
                     :getGroupInfo="getGroupInfo"
+                    :matterInfoConfig="matterInfoConfig"
                     >
                 </wms-matter-part>
             </div>
@@ -69,10 +69,8 @@
             @on-check-all="handlerCheckAll"
             @on-delete="handlerDeleteCheckd">
         </op-button>
-
-        <toast 
-            v-model="showTost" 
-            type="text" :time="800" is-show-mask :text="tostText" position="top" width="20em" ></toast>
+        <!-- 提示信息 -->
+        <toast  v-model="showTost" type="text" :time="800" is-show-mask :text="tostText" position="top" width="20em" ></toast>
     </div>
 </template>
 
@@ -111,6 +109,13 @@ export default {
             showTost:false,
             tostText:'',
             formViewUniqueId: 'a1bccaee-37a8-4786-bbf4-e9cee9fbd081', // 修改时的UniqueId
+            matterInfoConfig:{
+                warehouseName:"仓库名称",
+                storehouseInCode:"库位编码",
+                specification:"规格",
+                batchNo:"批次号",
+                productionDate:"生产日期"
+            },
         }
     },
     computed: {
@@ -244,24 +249,34 @@ export default {
             mat.boxCodes.map(b=>{
                 done+= b.tdQty;
             });
-
             return {
                 all:mat.thenQtyBal,
                 done:done,
                 todo:mat.thenQtyBal - done
             }
         },
+        groupSumByFileds(a,f,v,k){
+            let s = 0;
+            a.map(i=>{
+                if(i[f] === v) s+=i[k];
+            });
+            return s;
+        },
         handlerSetMatters(callback){
             let params = {
                 whCode: this.warehouse.warehouseCode,
                 page: 1,
                 start: 0,
-                limit: 1000,
+                limit: 10000,
                 filter: JSON.stringify([{"operator":"like","value":this.scanCodeInfo.postCode,"property":"transCode"}])
             };
 
             let materielMap = {};
             getStorageShelf(params).then(res=>{
+                //循环待上架明细数据
+                //往物料集合(materielMap)注册，唯一键为物料编码，作为页面分组使用数据
+                this.shelfList = res.tableContent;
+                
                 res.tableContent.map(m=>{
                     materielMap[m.inventoryCode] = m;
                 });
@@ -269,26 +284,11 @@ export default {
                     let mat = materielMap[k];
                     this.matters.push({
                         expend:true,
-                        transMatchedCode: mat.transCode,
-                        transObjCode: mat.inventoryCode,
                         inventoryCode:mat.inventoryCode,
                         inventoryName:mat.inventoryName,
-                        tdProcessing: mat.processing,
-                        specification:mat.specification,
-                        assMeasureUnit: mat.measureUnit,
-                        assMeasureDescription: mat.specification,
-                        assMeasureScale: mat.invSubUnitMulti,
-                        warehouseName_storehouseInCode: mat.storehouseInCode,
-                        storehouseInCode: mat.storehouseInCode,
-                        thenTotalQtyBal: mat.thenTotalQtyBal,//待上架
-                        thenLockQty: mat.thenLockQty,//已上架
-                        thenQtyBal: mat.thenQtyBal,//
-                        tdQty: mat.tdQty,//本次上架
-                        assistQty:  mat.tdQty/mat.measureUnit,
-                        keepingDays_transObjCode: 1,
-                        batchNo: mat.batchNo,
-                        productionDate: mat.productionDate,
-                        comment: '',
+                        thenTotalQtyBal: this.groupSumByFileds(this.shelfList,'inventoryCode',mat.inventoryCode,'thenTotalQtyBal'),//预入库数量
+                        thenLockQty:this.groupSumByFileds(this.shelfList,'inventoryCode',mat.inventoryCode,'thenLockQty'),//已上架数量
+                        thenQtyBal: this.groupSumByFileds(this.shelfList,'inventoryCode',mat.inventoryCode,'thenQtyBal'),//待上架数量
                         boxCodes:[]
                     });
                 }
@@ -313,7 +313,7 @@ export default {
 
             if(!this.scanCodeInfo.boxCode) return;
 
-            if(this.scanCodeInfo.boxCode.split('-').length !=5){
+            if(this.scanCodeInfo.boxCode.split('-').length !=4){
                 this.showTost = true;
                 this.tostText = '箱码不复合规则，请重新扫码!';
                 this.scanCodeInfo.boxCode = '';
@@ -332,7 +332,12 @@ export default {
             //记录已扫码信息,防止重复扫码
             this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;
 
-            let [postCode,matCode,batchNo,boxRule] = this.scanCodeInfo.boxCode.split('-');
+            //post 申请单号
+            //idx 申请单对应物料的明细ID
+            //batchNo 批次号
+            //boxRule 箱规则
+            let [postCode,idx,boxRule] = this.scanCodeInfo.boxCode.split('-');
+            idx = Number(idx);
 
             //箱码所属申请单号不一致，并且上一次扫码的申请单号有待上架数据
             if(this.postCode && this.postCode != postCode && this.matters.length>0){
@@ -343,7 +348,7 @@ export default {
                         this.matters = [];
                         this.scanCodeInfo.postCode = postCode;
                         this.handlerSetMatters(()=>{
-                            this.handlerAddBoxCodeToMatter(matCode,boxRule);
+                            this.handlerAddBoxCodeToMatter(idx,boxRule);
                             this.scanCodeInfo.boxCode = '';
                             this.$refs.boxCode.focus();
                         });
@@ -362,12 +367,12 @@ export default {
                 //如果是第一次扫箱码，需通过仓库以及申请单号获取待上架的物料
                 if(!this.postCode){
                     this.handlerSetMatters(()=>{
-                            this.handlerAddBoxCodeToMatter(matCode,boxRule);
-                            this.scanCodeInfo.boxCode = '';
-                            this.$refs.boxCode.focus();
-                        });
+                        this.handlerAddBoxCodeToMatter(idx,boxRule);
+                        this.scanCodeInfo.boxCode = '';
+                        this.$refs.boxCode.focus();
+                    });
                 }else{
-                    this.handlerAddBoxCodeToMatter(matCode,boxRule);
+                    this.handlerAddBoxCodeToMatter(idx,boxRule);
                     this.scanCodeInfo.boxCode = '';
                     this.$refs.boxCode.focus();
                 }
@@ -375,19 +380,26 @@ export default {
             }
         },
         //往物料分组上添加箱码数据
-        handlerAddBoxCodeToMatter(matCode,boxRule){
-            this.matters.map(mat=>{
+        handlerAddBoxCodeToMatter(idx,boxRule){
+            this.shelfList.map(mat=>{
                 let temMat = Object.assign({},mat);
                 delete temMat.boxCodes;
-                mat.inventoryCode === matCode && mat.boxCodes.push({
-                    ...temMat,
-                    boxCode: this.scanCodeInfo.boxCode,
-                    warehouseName :this.warehouse.warehouseName,
-                    storehouseInCode:this.scanCodeInfo.spCode,
-                    postCode:this.postCode,
-                    boxRule:boxRule,
-                    tdQty:Number(boxRule),
-                });
+                if(mat.idx === idx){
+                    this.matters.map(m=>{
+                        if(m.inventoryCode === mat.inventoryCode){
+                            m.boxCodes.push({
+                                ...temMat,
+                                boxCode: this.scanCodeInfo.boxCode,
+                                warehouseName :this.warehouse.warehouseName,
+                                storehouseInCode:this.scanCodeInfo.spCode,
+                                postCode:this.postCode,
+                                boxRule:boxRule,
+                                tdQty:Number(boxRule),
+                            });
+                        }
+                    });
+                }
+                
             });
         },
         getDataSet(){
@@ -395,7 +407,24 @@ export default {
             this.matters.map(mat=>{
                 mat.boxCodes.map(box=>{
                     dataSet.push({
-                       ...box
+                        transMatchedCode: box.transCode,//被核销交易号
+                        transObjCode: box.inventoryCode,//物料编码
+                        tdProcessing:box.processing,//加工属性
+                        assMeasureUnit: box.invSubUnitName,//采购单位
+                        assMeasureDescription: box.invSubUnitComment,//产品规格
+                        assMeasureScale: box.invSubUnitMulti,//主计倍数
+                        boxCode: box.boxCode,
+                        boxRule: box.boxRule,
+                        warehouseName_storehouseInCode: '',//库区名称
+                        storehouseInCode: box.storehouseInCode,
+                        thenTotalQtyBal: box.thenTotalQtyBal,
+                        thenLockQty: box.thenLockQty,
+                        thenQtyBal: box.thenQtyBal,
+                        tdQty: box.tdQty,
+                        assistQty: box.tdQty/box.invSubUnitMulti,
+                        keepingDays_transObjCode: box.keepingDays,
+                        batchNo: box.batchNo,
+                        productionDate: box.productionDate
                     });
                 });
             });
@@ -598,6 +627,13 @@ export default {
         this.postCode = '';
         //已扫箱码信息集合
         this.boxCodesMap = {};
+
+        //待上架明细
+        //key 申请单明细ID
+        //value 明细数据
+        this.shelfList = {};
+
+
         this.$refs.spCode.focus();
         if(this.$route.query.transCode){
             this.transCode = this.$route.query.transCode;

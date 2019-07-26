@@ -75,11 +75,11 @@ import {
     saveAndCommitTask, 
     submitAndCalc, 
     getPriceFromSalesContractAndPrice, 
+    getProcess,
     updateData} from 'service/commonService'
 import {  getWhbyStoragelocation,getLocationOfinventory,getInventoryInfoByMatCode} from 'service/wmsService'
 import WebContext from 'service/commonService'
 import { getSOList } from 'service/detailService'
-
 // 插件引入
 import Bscroll from 'better-scroll'
 import { debug, debuglog } from 'util';
@@ -243,8 +243,11 @@ export default {
             }
         },
         getSpecialInfo(box){
-            var differenceNum = box.boxCodeBal - box.tdQty;
-            return `<span class="specialInfo">差异:<strong class="differenceNum">${differenceNum}</strong></span>`
+            var differenceNum = box.tdQty - box.boxCodeBal;
+            return `<span class="specialInfo">差异<strong class="differenceNum" style="
+                    margin-left: 0.2rem;
+                    color:${differenceNum!=0?'#3296FA':'#696969'}
+                ">${differenceNum}</strong></span>`
         },
         handlerSetMatters(){
             let params = {
@@ -330,9 +333,7 @@ export default {
                         您此次点击确认,将做<strong style="color:red;">盘盈</strong>处理,点击取消不做任何处理!`,
                     onConfirm:()=>{
                         this.addInventoryProfit();
-                    },
-                    onCancel:()=>{
-                        
+                        this.$refs.boxCode.focus();
                     }
                 });
             }else{
@@ -348,6 +349,7 @@ export default {
                     });
                 });
                 this.scanCodeInfo.boxCode = '';
+                this.$refs.boxCode.focus();
             }
         },
         //添加存货盘盈数据
@@ -361,6 +363,7 @@ export default {
                         boxCode: this.scanCodeInfo.boxCode,
                         warehouseName:this.warehouse.warehouseName,
                         storehouseInCode:this.scanCodeInfo.spCode,
+                        boxCodeBal:Number(boxRule),
                         tdQty:Number(boxRule)
                     });
                     isProfit = true;
@@ -383,6 +386,7 @@ export default {
                                 boxCode: this.scanCodeInfo.boxCode,
                                 warehouseName:this.warehouse.warehouseName,
                                 storehouseInCode:this.scanCodeInfo.spCode,
+                                boxCodeBal:0,
                                 tdQty:Number(boxRule)
                             }]
                         });
@@ -400,20 +404,21 @@ export default {
             this.matters.map(mat=>{
                 mat.boxCodes.map(box=>{
                     dataSet.push({
-                        transObjCode: box.inventoryCode,
-                        tdProcessing: box.processing,
-                        assMeasureUnit: box.assMeasureUnit,
+                        transObjCode: box.inventoryCode,//物料编码
+                        tdProcessing: box.processing,//加工属性
+                        assMeasureUnit: box.assMeasureUnit,//计量单位
                         assMeasureScale: null,
-                        boxCode: box.boxCode,
-                        boxRule: box.boxRule,
-                        thenTotalQtyStock: box.thenTotalQtyStock,
-                        thenLockQtyStock: box.thenLockQtyStock,
-                        thenQtyStock: box.thenQtyStock,
+                        boxCode: box.boxCode,//箱码
+                        boxRule: box.boxRule,//箱规
+                        storehouseInCode:box.storehouseInCode,//库位编码
+                        thenTotalQtyStock: box.qtyBal,//库存余额
+                        thenLockQtyStock: box.qtyLock,//计划占用
+                        thenQtyStock: box.safeStock,//可用库存
                         assistQty: 0,
-                        locationStock: box.locationStock,
-                        tdQty: box.tdQty,
-                        lockQty: box.lockQty,
-                        differenceNum: box.boxCodeBal - box.tdQty
+                        locationStock: box.storehouseQtyBal,//库位存货
+                        tdQty: box.tdQty,//盘点数量
+                        lockQty: box.boxCodeBal,//箱码库存
+                        differenceNum:box.tdQty - box.boxCodeBal
                     });
                 });
             });
@@ -606,6 +611,12 @@ export default {
                 });
             }
         },
+        // 获取工作流的processCode
+        async getProcess() {
+            await  getProcess(this.$route.params.listId).then(([data = {}]) => {
+                this.processCode = data.processCode || '';
+            })
+        }
     },
     mounted(){
         this.$loading.hide();
@@ -628,6 +639,7 @@ export default {
             this.biReferenceId = '';
             this.isModify = true;
         }
+
     }
 }
 </script>
@@ -680,14 +692,6 @@ export default {
       /deep/ .weui-textarea {
         text-align: right;
       }
-    }
-}
-
-.wrapper{
-    .specialInfo{
-        .differenceNum{
-            color: #3296FA;
-        }
     }
 }
 
