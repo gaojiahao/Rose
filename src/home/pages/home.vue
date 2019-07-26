@@ -45,11 +45,11 @@
         </div>
         <div class="list_top">
           <div class='search'>
-            <form class="search_part" :class="'has-filter'" @submit.prevent="formSubmit" action="javascript:return true">
+            <form class="search_part" :class="'has-filter'" @submit.prevent="searchMenu" action="">
               <i class="icon icon-search"></i>
               <input ref="searchInp" class="srh_inp" type="search" autocomplete="off"
-                    placeholder="应用名称" @input='getSearchValue($event)' :value='searchValue' @keydown="searchMeau2($event)">
-              <div class="pop_cfm" @click="searchMeau">搜索</div>
+                    placeholder="应用名称" @input='getSearchValue($event)' :value='searchValue'>
+              <div class="pop_cfm" @click="searchMenu">搜索</div>
               <i class="icon-clear clear_icon" @click="clearSearch"></i>
             </form>
           </div>
@@ -175,10 +175,10 @@ export default {
     },
     initMenu() {
       return homeService.getMeau().then(res => {
-        this.dealMeau(res);  
+        this.dealMenu(res);  
       });
     },
-    dealMeau(res) {
+    dealMenu(res) {
       let BUSobj = this.BUSobj;
 
       for (let val of res) {
@@ -263,7 +263,7 @@ export default {
       this.searchValue = e.target.value;
     },
     //搜索 菜单
-    searchMeau () {
+    searchMenu () {
       this.busAppShow = false;
       this.basicAppShow = false;
       this.searchAppShow = true;
@@ -281,30 +281,6 @@ export default {
       return homeService.getMenuLeafAndTaskByText(data).then(data => {
         this.searchApps = data;  
       });
-    },
-    searchMeau2 (ev) {
-      if(ev.keyCode == 13) {
-        this.busAppShow = false;
-        this.basicAppShow = false;
-        this.searchAppShow = true;
-
-        let data = {
-          _dc: Date.now(),
-          text: this.searchValue,
-        };
-        if(!data.text) {
-          this.searchAppShow = false;
-          this.busAppShow = true;
-          this.basicAppShow = true;
-          return ;
-        }
-        return homeService.getMenuLeafAndTaskByText(data).then(data => {
-          this.searchApps = data;  
-        });
-      }
-    },
-    formSubmit () {
-      return false
     },
     //清除菜单
     clearSearch() {
