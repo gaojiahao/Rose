@@ -14,9 +14,10 @@
                                 style="ime-mode:disabled"
                                 @change="handlerSetSpinfo"
                                 class='property_val' 
-                                @blur="handerOnBlur($event)"
                                 @focus="handerOnFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
+                                <!-- @blur="handerOnBlur($event)" -->
+
                         </div>
                     </div>
                     <div class="vux-1px-t">
@@ -141,11 +142,13 @@ export default {
         // 输入框获取焦点，内容选中
         handerOnFocus(e) {
             event.currentTarget.select();
-            e.currentTarget.nextElementSibling.style['color'] = '#3296FA';
-            e.currentTarget.nextElementSibling.style['fontWeight'] = 'bold';
+            // e.currentTarget.nextElementSibling.style['color'] = '#3296FA';
+            // e.currentTarget.nextElementSibling.style['fontWeight'] = 'bold';
         },
         //扫库位以确定库位信息
         handlerSetSpinfo(){
+            this.showTost = true;
+            this.tostText ='asdasd';
             if(!this.scanCodeInfo.spCode) return;
 
             //如果已经扫库位码，获取到正确的仓库信息,并且已经扫了箱码
