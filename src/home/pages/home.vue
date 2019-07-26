@@ -136,7 +136,7 @@ export default {
       return getMsgList().then(data => {
         if (data.dataCount > 99) {
           newsNumber = "99+";
-          return;
+          //return;
         }
         newsNumber = data.dataCount;
         this.$event.$emit("badgeNum", newsNumber);
@@ -341,6 +341,7 @@ export default {
   width: 100%;
   height: calc(100% - 0.49rem);
   overflow: hidden;
+  background-color: #fff;
   .wrapper {
     padding-bottom: 0.1rem;
   }
@@ -550,6 +551,7 @@ export default {
 }
 .list_top {
   width: 100%;
+  background-color: #fff;
 }
 .search {
   width: 100%;

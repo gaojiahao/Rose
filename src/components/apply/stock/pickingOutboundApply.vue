@@ -75,7 +75,7 @@ import {
     submitAndCalc, 
     getPriceFromSalesContractAndPrice, 
     updateData} from 'service/commonService'
-import { getPickingOutByBoxCode } from 'service/wmsService'
+import { getPickingOutByBoxCode, releaseSortingOrder } from 'service/wmsService'
 import WebContext from 'service/commonService'
 
 // 插件引入
@@ -288,7 +288,7 @@ export default {
                 })
             }else{
                 //如果是第一次扫箱码，需通过申请单号获取待上架的物料
-                if(this.postCode){
+                if(!this.postCode){
                     this.handlerSetMatters(() => {
                         this.handlerAddBoxCodeToMatter(matCode,boxRule);
                         this.scanCodeInfo.boxCode = '';
@@ -374,14 +374,21 @@ export default {
                         listId: this.$route.params.listId,
                         biComment: '',
                         formData:JSON.stringify(formData)
-                    };
+                    }, matCodeCollection  = [];
+
+                    formData.outPut.dataSet.forEach(val => {
+                        matCodeCollection.push(val.inventoryCode);
+                    })
 
                     submitAndCalc(submitData).then(data => {
                         this.$HandleLoad.hide()
                         let {success = false, message = '提交失败'} = data;
+                        
                         if (success) {
                             message = '提交成功';
-                            // this.$emit('change', true);
+                            releaseSortingOrder(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res => {
+                                
+                            })
                         }
                         this.$vux.alert.show({
                             content: message
