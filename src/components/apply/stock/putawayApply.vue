@@ -577,9 +577,11 @@ export default {
         },
          //通过库位编码获取仓库信息
         getWarehouse(){
+            this.$loading.show();
             getWhbyStoragelocation({
                 location:this.scanCodeInfo.spCode
             }).then(res=>{
+                this.$loading.hide();
                 if(res.dataCount===0){
                     this.showTost = true;
                     this.tostText = '该库位未绑定仓库，请绑定后再扫!';
