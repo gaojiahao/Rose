@@ -12,7 +12,7 @@
                                 v-model="scanCodeInfo.spCode" 
                                 placeholder="请扫码" 
                                 style="ime-mode:disabled"
-                                @change="handlerSetSpinfo"
+                                @change.native="handlerSetSpinfo"
                                 class='property_val' 
                                 @focus="handerOnFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
