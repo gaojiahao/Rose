@@ -175,10 +175,10 @@ export default {
     },
     initMenu() {
       return homeService.getMeau().then(res => {
-        this.dealMeau(res);  
+        this.dealMenu(res);  
       });
     },
-    dealMeau(res) {
+    dealMenu(res) {
       let BUSobj = this.BUSobj;
 
       for (let val of res) {
