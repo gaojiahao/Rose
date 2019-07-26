@@ -1,5 +1,5 @@
 <template>
-  <div class="r-row">
+  <div class="list-item">
     <template v-for="(value,index) in fieldsObj">
       <div class="item">
         <span :key="index">{{value}}：</span>
@@ -15,7 +15,7 @@ export default Vue.component("ListItem", {
 });
 </script>
 <style lang="scss">
-.r-row {
+.list-item {
   color: #333;
   overflow: hidden;
   font-size: 0.12rem;
