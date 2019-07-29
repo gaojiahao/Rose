@@ -88,10 +88,6 @@ export default {
     //删除缓存的往来信息
     if (to.name === "LIST"){
       sessionStorage.removeItem('DEALERLIST_SELITEMS');
-    }else if(to.name == 'FILLFORM'){
-      setTimeout(function(){
-        fillPage.reload && fillPage.reload();
-      },0)
     }
     //离开数据保存为草稿
     if (to.name === "LIST" && keys && !this.transCode && !this.submitSuccess){
@@ -112,6 +108,13 @@ export default {
     next()
 
   },
+  beforeRouteUpdate(to, from, next){
+    let fillPage = this.$refs.fillPage;
+    setTimeout(function(){
+      fillPage.reload && fillPage.reload();
+    })
+    next();
+  }
 }
 </script>
 

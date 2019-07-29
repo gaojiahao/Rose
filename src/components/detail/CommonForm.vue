@@ -386,7 +386,7 @@ export default {
           this.viewInfo = data;
           this.initComputed();
           this.formKey = formKey;
-          console.log("this.config", data);
+          //console.log("this.config", data);
           this.fieldSets = fieldSets;
         }
       });

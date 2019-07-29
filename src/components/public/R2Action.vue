@@ -2,7 +2,7 @@
   <!-- 审批操作 -->
   <div class='handle_wrapper' v-if="!!actions.length">
     <div class="handle_btn">
-      <span class="btn_item resubmit" @click="resubmit" v-if="actions.includes('resubmit')">提交</span>
+      <!--span class="btn_item resubmit" @click="resubmit" v-if="actions.includes('resubmit')">提交</span-->
       <span class="btn_item submitNew" @click="submitNew" v-if="actions.includes('submitNew')">提交并新建</span>
       <span class="btn_item draft" @click="draft" v-if="actions.includes('draft')">保存草稿</span>
       <span class="btn_item newFile" @click="showViewModel('new')" v-if="actions.includes('newFile')">新建</span>
@@ -204,9 +204,13 @@ var component = {
       if(isMyTask) {
         me.pushActions('transfer');
       }
-      if(last.isFirstNode === 1 && last.startUserId == this.userId) {
+      if(last.isFirstNode === 1 && last.startUserId == this.userId &&  last.endTime == null) {
+        me.taskId = last.taskId;
         me.pushActions('revoke'); 
       } 
+      if(myFlow.actions && myFlow.actions.indexOf('recall') > -1 && myFlow.allowRecall){
+        me.pushActions('revoke'); 
+      }
     }, 
     resubmit() {},
     submitNew() {},
@@ -385,8 +389,7 @@ var component = {
             successMsg: '撤回成功',
             value,
             callback: () => {
-              let { listId } = this.$route.query,
-                  { folder, fileName } = this.$route.params;
+              let { folder, fileName,listId} = this.$route.params;
               this.$router.replace({
                 path: `/fillform/${listId}/0`,
                 query: {
