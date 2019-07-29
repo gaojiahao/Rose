@@ -1,7 +1,7 @@
 <template>
   <div class="r-grid">
     <!-- 没有选择物料 -->
-    <template v-if="!values || values.length == 0">
+    <template v-if="(!values || values.length == 0)&& cfg.readOnly == false">
       <div class="no-data-header" @click="showGridPicker">
         <div class="title">{{listTitle||'物料列表'}}</div>
         <div class="seleted_icon">
@@ -45,8 +45,10 @@
           <x-icon type="ios-checkmark" size="20" class="checked" v-show="isChecked(rIndex)"></x-icon>
           <x-icon type="ios-circle-outline" size="20" v-show="!isChecked(rIndex)"></x-icon>
         </div>
+        
       </div>
       <!--row-->
+      <div v-show="!values || values.length == 0" class="no-data">无</div>
     </div>
     <div
       class="add-more-wrapper"
@@ -221,6 +223,9 @@ export default Vue.component("RGrid", component);
   .checked {
     fill: #fa7138;
   }
+}
+.no-data{
+  text-align:center;
 }
 .r-grid {
   // 没有物料title样式

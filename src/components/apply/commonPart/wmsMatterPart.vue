@@ -2,70 +2,78 @@
      <div class="materiel-wrapper">
         <div class="header" >
             <div>{{title}}</div>
-            <div v-if="!matterModifyClass" @click="handlerChangeState">编辑</div>
-            <div v-if="matterModifyClass" @click="handlerChangeState">完成</div>
+            <div>
+                <span v-if="!matterModifyClass" @click="handlerChangeState">编辑</span>
+                <span v-if="matterModifyClass" @click="handlerChangeState">完成</span>
+                <x-icon type="ios-arrow-up" v-if="allExpend &&matters.length>0" size="20" @click.native="handlerChangeExpendState"></x-icon>
+                <x-icon type="ios-arrow-down" v-if="!allExpend &&matters.length>0" size="20" @click.native="handlerChangeExpendState"></x-icon>
+            </div>
         </div>
-        <ul class="materiels">
-            <li class="materiel-item" 
-                v-for="(mat,matIdx) in matters" 
-                :key="matIdx">
-                    <div class="materiel-info">
-                        <flexbox justify="space-between">
-                            <flexbox-item :span="6"><div >{{mat.inventoryName}}({{mat.inventoryCode}})</div></flexbox-item>
-                            <flexbox-item ><div >{{getGroupInfo(mat).all}}</div></flexbox-item>
-                            <flexbox-item ><div >{{getGroupInfo(mat).done}}</div></flexbox-item>
-                            <x-icon type="ios-arrow-up" v-if="mat.expend && mat.boxCodes.length>0" size="24" @click.native="mat.expend=!mat.expend"></x-icon>
-                            <x-icon type="ios-arrow-down" v-if="!mat.expend && mat.boxCodes.length>0" size="24" @click.native="mat.expend=!mat.expend"></x-icon>
-                        </flexbox>
-                    </div>
-                <ul class="box-codes" v-if="mat.expend">
-                    <li class="box-code"  
-                        :class="{mater_delete : matterModifyClass}"
-                        v-for="(box,boxIdx) in mat.boxCodes" 
-                        :key="boxIdx">
-                        <div class="matter-img">
-                            <img  src='/static/img/wl_default03.5d8842b.png'>
+        <ul class="materiels" >
+            <div>
+                <li class="materiel-item" 
+                    v-for="(mat,matIdx) in matters" 
+                    :key="matIdx">
+                        <div class="materiel-info">
+                            <flexbox justify="space-between">
+                                <flexbox-item :span="6"><div >{{mat.inventoryName}}({{mat.inventoryCode}})</div></flexbox-item>
+                                <flexbox-item ><div >{{getGroupInfo(mat).all}}</div></flexbox-item>
+                                <flexbox-item ><div >{{getGroupInfo(mat).done}}</div></flexbox-item>
+                                <x-icon type="ios-arrow-up" v-if="mat.expend && mat.boxCodes.length>0" size="20" @click.native="mat.expend=!mat.expend"></x-icon>
+                                <x-icon type="ios-arrow-down" v-if="!mat.expend && mat.boxCodes.length>0" size="20" @click.native="mat.expend=!mat.expend"></x-icon>
+                            </flexbox>
                         </div>
-                        <div class="matter-info">
-                            <div >{{box.boxCode}}</div>
-                            <p v-for="(value,key) in  matterInfoConfig" :key="key">
-                                <label>{{value}}:</label>
-                                {{box[key]}}
-                            </p>
-                            <div class="box-operate">
-                                <div>
-                                    <div v-if="getSpecialInfo" v-html="getSpecialInfo(box)"></div>
-                                </div>
-                                <div></div>
-                                <div>
-                                    <r-number :num="box.tdQty" v-model="box.tdQty"></r-number>
+                    <ul class="box-codes" v-if="mat.expend">
+                        <li class="box-code"  
+                            :class="{mater_delete : matterModifyClass}"
+                            v-for="(box,boxIdx) in mat.boxCodes" 
+                            :key="boxIdx">
+                            <div class="matter-img">
+                                <img  src='/static/img/wl_default03.5d8842b.png'>
+                            </div>
+                            <div class="matter-info">
+                                <div >{{box.boxCode}}</div>
+                                <p v-for="(value,key) in  matterInfoConfig" :key="key">
+                                    <label>{{value}}:</label>
+                                    {{box[key]}}
+                                </p>
+                                <div class="box-operate">
+                                    <div>
+                                        <div v-if="getSpecialInfo" v-html="getSpecialInfo(box)"></div>
+                                    </div>
+                                    <div></div>
+                                    <div>
+                                        <r-number :num="box.tdQty" v-model="box.tdQty"></r-number>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class='delete_icon' 
-                            @click="handlerSelectItem(box, matIdx+'_'+ boxIdx)" 
-                            v-if='matterModifyClass'>
-                            <x-icon 
-                                type="ios-checkmark" 
-                                size="20" 
-                                class="checked" 
-                                v-show="showSelIcon( matIdx+'_'+ boxIdx)"></x-icon>
-                            <x-icon 
-                                type="ios-circle-outline" 
-                                size="20" 
-                                v-show="!showSelIcon( matIdx+'_'+ boxIdx)"></x-icon>
-                        </div>
-    
-                    </li>
-                </ul>
-            </li>
+                            <div class='delete_icon' 
+                                @click="handlerSelectItem(box, matIdx+'_'+ boxIdx)" 
+                                v-if='matterModifyClass'>
+                                <x-icon 
+                                    type="ios-checkmark" 
+                                    size="20" 
+                                    class="checked" 
+                                    v-show="showSelIcon( matIdx+'_'+ boxIdx)"></x-icon>
+                                <x-icon 
+                                    type="ios-circle-outline" 
+                                    size="20" 
+                                    v-show="!showSelIcon( matIdx+'_'+ boxIdx)"></x-icon>
+                            </div>
+        
+                        </li>
+                    </ul>
+                </li>
+            </div>
         </ul>
     </div>
 </template>
 <script>
 import { Flexbox, FlexboxItem} from 'vux'
 import RNumber from 'components/public/RNumber'
+// 插件引入
+import Bscroll from 'better-scroll'
 export default {
     name:'WmsMatterPart',
     props:{
@@ -119,13 +127,19 @@ export default {
         Flexbox, 
         FlexboxItem
     },
-    // methods:{
-    //     getGroupInfo(mat){
-    //         return {
-    //             todo:30000
-    //         }
-    //     }
-    // }
+    data(){
+        return {
+            allExpend:false
+        }
+    },
+    methods:{
+        handlerChangeExpendState(){
+            this.allExpend = !this.allExpend;
+            this.matters.map(mat=>{
+                mat.expend = this.allExpend;
+            });
+        }
+    }
 }
 </script>
 
@@ -139,7 +153,9 @@ export default {
     margin-bottom: .1rem;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
+    height: 100%;
     .header{
+        padding-right: 0.2em;
         height: .30rem;
         margin: .15rem 0 0 0;
         line-height: .30rem;
@@ -156,6 +172,7 @@ export default {
     .materiels{
         padding: 0.2em;
         font-size: 14px;
+        height: 100%;
         .materiel-item{
             .materiel-info{
                 font-weight: 600;

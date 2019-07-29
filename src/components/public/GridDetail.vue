@@ -1,5 +1,5 @@
 <template>
-  <div v-transfer-dom>
+  <div v-transfer-dom class="grid-detail">
     <popup
       class="grid-detail-container"
       :class="{'has-edit': hasEditPart, 'is-focus': btnIsHide}"
@@ -37,20 +37,6 @@
             <span>{{values[other.fieldCode]}}</span>
           </div>
         </div>
-        <!--div class="matter-date vux-1px-t" v-if="hasDate">
-          <div class="matter_date_item" v-for="(date, index) in item.dates" :key="index">
-            <span class="matter_date_title">{{date.text}}：</span>
-            <span>{{date.value}}</span>
-          </div>
-        </div>
-        <div
-          class="matter-comment"
-          :class="{'vux-1px-t': !hasDate}"
-          v-if="item.matterComment && item.matterComment.text"
-        >
-          <div class="matter_comment_title">{{item.matterComment.text}}</div>
-          <div class="matter_comment_value">{{item.matterComment.value}}</div>
-        </div-->
       </r-scroll>
       <div class="confirm_btn" @click="confirm" v-if="hasEditPart">
         <div class="confirm">确认</div>
