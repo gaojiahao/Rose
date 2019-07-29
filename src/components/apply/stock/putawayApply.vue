@@ -5,15 +5,29 @@
                 <div class="scanCodeInfo">
                     <div class="vux-1px-t">
                         <div class='each_property' >
+                            <label class="required">申请单号</label>
+                            <input 
+                                type='text' 
+                                v-model="scanCodeInfo.postCode" 
+                                placeholder="请扫码" 
+                                ref='postCode'
+                                class='property_val' 
+                                @change="handlerScanPostCode"
+                                @focus="handleOnFocus($event)" />
+                            <i class="iconfont">&#xe661;</i>
+                        </div>
+                    </div>
+                    <div class="vux-1px-t">
+                        <div class='each_property' >
                             <label class="required">入库仓位</label>
                             <input 
                                 type='text' 
                                 ref='spCode'
                                 v-model="scanCodeInfo.spCode" 
                                 placeholder="请扫码" 
-                                @change="handlerSetSpinfo"
+                                @change="handlerScanSpinfo"
                                 class='property_val' 
-                                @focus="handerOnFocus($event)" />
+                                @focus="handleOnFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
                         </div>
                     </div>
@@ -25,25 +39,13 @@
                                 type='text' 
                                 v-model="scanCodeInfo.boxCode" 
                                 placeholder="请扫码" 
-                                @change="handlerSetMattersBox"
+                                @change="handlerScanBoxCode"
                                 class='property_val' 
-                                @focus="handerOnFocus($event)" />
+                                @focus="handleOnFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
                         </div>
                     </div>
-                     <div class="vux-1px-t">
-                        <div class='each_property' >
-                            <label >申请单号</label>
-                            <input 
-                                type='text' 
-                                v-model="scanCodeInfo.postCode" 
-                                placeholder="请扫码" 
-                                readonly
-                                class='property_val' 
-                                @focus="handerOnFocus($event)" />
-                            <i class="iconfont">&#xe661;</i>
-                        </div>
-                    </div>
+                    
                 </div>
                 <wms-matter-part 
                     title='上架明细'
@@ -132,38 +134,106 @@ export default {
     },
     methods:{
         // 输入框获取焦点，内容选中
-        handerOnFocus(e) {
+        handleOnFocus(e) {
             event.currentTarget.select();
         },
+        //扫申请单号
+        handlerScanPostCode(){
+            if(!this.scanCodeInfo.postCode) return;
+
+            if(this.postCode && this.scanCodeInfo.postCode != this.postCode && this.matters.length>0){
+                this.$vux.confirm.show({
+                    content: '当前扫的申请单号与前面扫的申请单号不一致，是否更换？以重新获取待上架数据',
+                    // 确定回调
+                    onConfirm: () => {
+                        this.postCode = this.scanCodeInfo.postCode;
+                        this.scanCodeInfo.spCode = '';
+                        this.warehouse = undefined;
+                        this.matters = [];
+                        this.boxCodesMap = {};
+                        this.shelfList = [];
+                    },
+                    onCancel:() =>{
+                        this.scanCodeInfo.postCode = this.postCode;
+                        this.$refs.spCode.focus();
+                    }
+                })
+            }else{
+                this.postCode = this.scanCodeInfo.postCode;
+                this.$refs.spCode.focus();
+            }
+        },
         //扫库位以确定库位信息
-        handlerSetSpinfo(){
+        //通过申请单号+仓库编码获取待上架物料
+        handlerScanSpinfo(){
             if(!this.scanCodeInfo.spCode) return;
 
-            //如果已经扫库位码，获取到正确的仓库信息,并且已经扫了箱码
-            if(this.warehouse && this.matters.length>0){
-                if(this.scanCodeInfo.spCode != this.warehouse.spCode){
-                    this.$vux.confirm.show({
-                        content: '确定要变更仓位?如果确定，待上架物料将会清空',
-                        // 确定回调
-                        onConfirm: () => {
-                            //变换仓位
-                            //重新获取仓库信息
-                            //清空箱码，申请单号信息
-                            //清空待上架物料
-                            this.getWarehouse();
-                            this.scanCodeInfo.boxCode = '';
-                            this.scanCodeInfo.postCode = '';
-                            this.matters = [];
-                        },
-                        onCancel:() =>{
-                            this.scanCodeInfo.spCode = this.warehouse.spCode;
+            getWhbyStoragelocation({
+                location:this.scanCodeInfo.spCode
+            }).then(res=>{
+                
+                if(!res.dataCount){
+                    this.showTost = true;
+                    this.tostText = '该库位未绑定仓库，请绑定后再扫!';
+                    this.scanCodeInfo.spCode = '';
+                    this.$refs.spCode.focus();
+                }else{
+                    let warehouse = res.tableContent[0];
+                    
+                    if(this.warehouse){
+                        //如果已经存在仓库信息，需要拿最新扫的库位编码，找到对应的仓库，看是否与当前的仓库对应
+                        //如果库位不在该仓库下，则最新扫的库位编码无效
+                        //否则，就更换当前库位信息
+                        if(warehouse.warehouseCode === this.warehouse.warehouseCode){
+                            this.warehouse.spCode = this.scanCodeInfo.spCode;
+                            this.$refs.boxCode.focus();
+                        }else{
+                            this.showTost = true;
+                            this.tostText = '该库位与入库申请单选定的仓库不一致，请重新扫码!';
+                            this.scanCodeInfo.spCode = '';
+                            this.$refs.spCode.focus();
                         }
-                    })
+                    }else{
+                        this.handlerSetMatters(warehouse.warehouseCode,this.scanCodeInfo.postCode,res=>{
+                            if(!res.dataCount){
+                                this.showTost = true;
+                                this.tostText = '该库位与入库申请单选定的仓库不一致，请重新扫码!';
+                                this.scanCodeInfo.spCode = '';
+                                this.$refs.spCode.focus();
+                            }else{
+                                //记录当前仓库&库位信息
+                                this.warehouse = {
+                                    ...warehouse,
+                                    spCode:this.scanCodeInfo.spCode
+                                };
+                                this.$refs.boxCode.focus();
+                            }
+                        });
+                    }
                 }
-            }else{
-                this.getWarehouse();
-            }
+            })
             
+        },
+         /**
+        * 扫箱码
+        */
+        handlerScanBoxCode(){
+            
+            if(!this.handlerCheckBoxCode())  return;
+
+            //记录已扫码信息,防止重复扫码
+            this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;
+
+            //idx 申请单对应物料的明细ID
+            //boxRule 箱规
+            //boxSeq 箱码序列号
+            let [idx,boxRule,boxSeq] = this.scanCodeInfo.boxCode.split('-');
+            idx = Number(idx);
+
+            this.handlerAddBoxCodeToMatter(idx,boxRule);
+            this.scanCodeInfo.boxCode = '';
+            this.$refs.boxCode.focus();
+
         },
         isCheckAll(){
             let iNum = 0;
@@ -253,13 +323,13 @@ export default {
             });
             return s;
         },
-        handlerSetMatters(callback){
+        handlerSetMatters(warehouseCode,postCode,callback){
             let params = {
-                whCode: this.warehouse.warehouseCode,
+                whCode: warehouseCode,
                 page: 1,
                 start: 0,
                 limit: 10000,
-                filter: JSON.stringify([{"operator":"like","value":this.scanCodeInfo.postCode,"property":"transCode"}])
+                filter: JSON.stringify([{"operator":"like","value":postCode,"property":"transCode"}])
             };
 
             let materielMap = {};
@@ -284,32 +354,26 @@ export default {
                     });
                 }
                 this.postCode = this.scanCodeInfo.postCode;
-                callback && callback();
+                callback && callback(res);
             });
         },
-       /**
-        * 扫箱码
-        * 箱码规则 申请单号-物料编码-生产日期-批次号-序号
-        * 通过解析箱码获取申请单号等信息
-        * 如果是第一次扫码，则会通过申请单号、以及仓库信息、获取待上架的物料
-        * 如果不是第一次扫码，则在相应的物料下添加箱码
-        */
-        handlerSetMattersBox(){
+        //校验箱码
+        handlerCheckBoxCode(){
             if(!this.scanCodeInfo.spCode){
                 this.showTost = true;
                 this.tostText = '请先扫库位!'
                 this.scanCodeInfo.boxCode = '';
-                return;
+                return false;
             }
 
             if(!this.scanCodeInfo.boxCode) return;
 
-            if(this.scanCodeInfo.boxCode.split('-').length !=4){
+            if(this.scanCodeInfo.boxCode.split('-').length !=3){
                 this.showTost = true;
                 this.tostText = '箱码不复合规则，请重新扫码!';
                 this.scanCodeInfo.boxCode = '';
                 this.$refs.boxCode.focus();
-                return;
+                return false;
             }
 
             if(this.boxCodesMap[this.scanCodeInfo.boxCode]){
@@ -317,58 +381,26 @@ export default {
                 this.tostText = '该箱码已经扫过啦，请不要重复扫码哦!';
                 this.scanCodeInfo.boxCode = '';
                 this.$refs.boxCode.focus();
-                return;
+                return false;
             }
 
-            //记录已扫码信息,防止重复扫码
-            this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;
-
-            //post 申请单号
-            //idx 申请单对应物料的明细ID
-            //batchNo 批次号
-            //boxRule 箱规则
-            let [postCode,idx,boxRule] = this.scanCodeInfo.boxCode.split('-');
+            let boxCodeFlag = false;
+            let [idx,boxRule,boxSeq] = this.scanCodeInfo.boxCode.split('-');
             idx = Number(idx);
 
-            //箱码所属申请单号不一致，并且上一次扫码的申请单号有待上架数据
-            if(this.postCode && this.postCode != postCode && this.matters.length>0){
-                this.$vux.confirm.show({
-                    content: '当前扫的箱码与前面扫的箱码所属的申请单号不一致，是否切换单据数据，以重新获取待上架数据？',
-                    // 确定回调
-                    onConfirm: () => {
-                        this.matters = [];
-                        this.scanCodeInfo.postCode = postCode;
-                        this.handlerSetMatters(()=>{
-                            this.handlerAddBoxCodeToMatter(idx,boxRule);
-                            this.scanCodeInfo.boxCode = '';
-                            this.$refs.boxCode.focus();
-                        });
-                        
-                    },
-                    onCancel:() =>{
-                        this.scanCodeInfo.postCode = this.postCode;
-                        this.scanCodeInfo.boxCode = '';
-                        this.$refs.boxCode.focus();
-                    }
-                })
+            this.shelfList.map(mat=>{
+                if(mat.idx === idx) boxCodeFlag  =true;
+            });
 
-            }else{
-                this.scanCodeInfo.postCode = postCode;
-
-                //如果是第一次扫箱码，需通过仓库以及申请单号获取待上架的物料
-                if(!this.postCode){
-                    this.handlerSetMatters(()=>{
-                        this.handlerAddBoxCodeToMatter(idx,boxRule);
-                        this.scanCodeInfo.boxCode = '';
-                        this.$refs.boxCode.focus();
-                    });
-                }else{
-                    this.handlerAddBoxCodeToMatter(idx,boxRule);
-                    this.scanCodeInfo.boxCode = '';
-                    this.$refs.boxCode.focus();
-                }
-                
+            if(!boxCodeFlag){
+                this.showTost = true;
+                this.tostText = '此箱码与申请单数据不匹配，请重新扫码!';
+                this.scanCodeInfo.boxCode = '';
+                this.$refs.boxCode.focus();
+                return false;
             }
+
+            return true;
         },
         //往物料分组上添加箱码数据
         handlerAddBoxCodeToMatter(idx,boxRule){
@@ -566,27 +598,6 @@ export default {
 
             })
         },
-         //通过库位编码获取仓库信息
-        getWarehouse(){
-            this.$loading.show();
-            getWhbyStoragelocation({
-                location:this.scanCodeInfo.spCode
-            }).then(res=>{
-                this.$loading.hide();
-                if(res.dataCount===0){
-                    this.showTost = true;
-                    this.tostText = '该库位未绑定仓库，请绑定后再扫!';
-                    this.scanCodeInfo.spCode = '';
-                    this.$refs.spCode.focus();
-                }else{
-                    this.warehouse = {
-                        ...res.tableContent[0],
-                        spCode:this.scanCodeInfo.spCode
-                    }
-                    this.$refs.boxCode.focus();
-                }
-            })
-        },
         // 判断是返回上一页还是跳转详情页
         judgePage() {
             // 在企业微信的提醒中打开重新提交页面history为1，此时终止成功则跳转详情页
@@ -616,19 +627,15 @@ export default {
        
         //扫库位码后确定的仓库信息
         //扫库位码后切换库位的判断依据
-        this.warehouse = {};
+        this.warehouse = undefined;
         //扫箱码后确定的申请单号信息
         this.postCode = '';
         //已扫箱码信息集合
         this.boxCodesMap = {};
-
         //待上架明细
-        //key 申请单明细ID
-        //value 明细数据
-        this.shelfList = {};
+        this.shelfList = undefined;
 
-
-        this.$refs.spCode.focus();
+        this.$refs.postCode.focus();
         if(this.$route.query.transCode){
             this.transCode = this.$route.query.transCode;
             this.getFormData();

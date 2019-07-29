@@ -307,7 +307,7 @@ export default {
 
             if(!this.scanCodeInfo.boxCode) return;
 
-            if(this.scanCodeInfo.boxCode.split('-').length !=5){
+            if(this.scanCodeInfo.boxCode.split('-').length !=4){
                 this.showTost = true;
                 this.tostText = '箱码不复合规则，请重新扫码!';
                 this.scanCodeInfo.boxCode = '';
