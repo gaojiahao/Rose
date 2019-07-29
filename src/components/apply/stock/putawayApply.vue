@@ -13,7 +13,7 @@
                                 ref='postCode'
                                 class='property_val' 
                                 @change="handlerScanPostCode"
-                                @focus="handleOnFocus($event)" />
+                                 />
                             <i class="iconfont">&#xe661;</i>
                         </div>
                     </div>
@@ -139,6 +139,8 @@ export default {
         },
         //扫申请单号
         handlerScanPostCode(){
+            this.tostText='执行change'
+            this.showTost=true;
             if(!this.scanCodeInfo.postCode) return;
 
             if(this.postCode && this.scanCodeInfo.postCode != this.postCode && this.matters.length>0){
