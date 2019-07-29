@@ -273,20 +273,23 @@ export default {
                         let mIdx,bIdx;
                         mIdx = Number(sel.split('_')[0]);
                         bIdx = Number(sel.split('_')[1]);
-                    this.matters.map((mat,matIdx)=>{
+                        this.matters.map((mat,matIdx)=>{
                             if(matIdx === mIdx){
                                 mat.boxCodes.map((box,boxIdx)=>{
-                                    box.isDelete = true;
-                                    delete this.boxCodesMap[box.boxCode];
+                                    if(boxIdx === bIdx){
+                                        box.isDelete = true;
+                                        delete this.boxCodesMap[box.boxCode];
+                                    }
                                 });
                             }
                         });
-
-                        this.matters = this.matters.filter(mat=>{
-                            mat.boxCodes = mat.boxCodes.filter(box=> !box.isDelete);
-                            return true;
-                        })
                     });
+
+                    this.matters = this.matters.filter(mat=>{
+                        mat.boxCodes = mat.boxCodes.filter(box=> !box.isDelete);
+                        return true;
+                    })
+                    
                     this.selItems = [];
                     this.matterModifyClass = false;
                 }

@@ -5,8 +5,8 @@
             <div>
                 <span v-if="!matterModifyClass" @click="handlerChangeState">编辑</span>
                 <span v-if="matterModifyClass" @click="handlerChangeState">完成</span>
-                <x-icon type="ios-arrow-up" v-if="allExpend &&matters.length>0" size="16" @click.native="handlerChangeExpendState"></x-icon>
-                <x-icon type="ios-arrow-down" v-if="!allExpend &&matters.length>0" size="16" @click.native="handlerChangeExpendState"></x-icon>
+                <x-icon type="ios-arrow-up" v-if="allExpend &&matters.length>0" size="20" @click.native="handlerChangeExpendState"></x-icon>
+                <x-icon type="ios-arrow-down" v-if="!allExpend &&matters.length>0" size="20" @click.native="handlerChangeExpendState"></x-icon>
             </div>
         </div>
         <ul class="materiels" >
@@ -19,8 +19,8 @@
                                 <flexbox-item :span="6"><div >{{mat.inventoryName}}({{mat.inventoryCode}})</div></flexbox-item>
                                 <flexbox-item ><div >{{getGroupInfo(mat).all}}</div></flexbox-item>
                                 <flexbox-item ><div >{{getGroupInfo(mat).done}}</div></flexbox-item>
-                                <x-icon type="ios-arrow-up" v-if="mat.expend && mat.boxCodes.length>0" size="16" @click.native="mat.expend=!mat.expend"></x-icon>
-                                <x-icon type="ios-arrow-down" v-if="!mat.expend && mat.boxCodes.length>0" size="16" @click.native="mat.expend=!mat.expend"></x-icon>
+                                <x-icon type="ios-arrow-up" v-if="mat.expend && mat.boxCodes.length>0" size="20" @click.native="mat.expend=!mat.expend"></x-icon>
+                                <x-icon type="ios-arrow-down" v-if="!mat.expend && mat.boxCodes.length>0" size="20" @click.native="mat.expend=!mat.expend"></x-icon>
                             </flexbox>
                         </div>
                     <ul class="box-codes" v-if="mat.expend">
