@@ -15,7 +15,6 @@
                                 v-on:input="handlerScanPostCode"
                                 @focus="handleOnFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
-                                <!-- @change="handlerScanPostCode" -->
 
                         </div>
                     </div>
@@ -27,7 +26,7 @@
                                 ref='spCode'
                                 v-model="scanCodeInfo.spCode" 
                                 placeholder="请扫码" 
-                                @change="handlerScanSpinfo"
+                                v-on:input="handlerScanSpinfo"
                                 class='property_val' 
                                 @focus="handleOnFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
@@ -41,7 +40,7 @@
                                 type='text' 
                                 v-model="scanCodeInfo.boxCode" 
                                 placeholder="请扫码" 
-                                @change="handlerScanBoxCode"
+                                v-on:input="handlerScanBoxCode"
                                 class='property_val' 
                                 @focus="handleOnFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
@@ -141,8 +140,6 @@ export default {
         },
         //扫申请单号
         handlerScanPostCode(){
-            this.tostText='执行change'
-            this.showTost=true;
             if(!this.scanCodeInfo.postCode) return;
 
             if(this.postCode && this.scanCodeInfo.postCode != this.postCode && this.matters.length>0){
