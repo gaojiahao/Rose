@@ -74,6 +74,7 @@ export let findAllJobLog = (transCode = '') => {
         }
     })
 }
+//获取业务信息
 export let getListById = (data = {}) => {
     return $flyio.ajax({
         url: '/H_roleplay-si/ds/list/getListById',

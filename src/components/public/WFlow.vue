@@ -153,6 +153,7 @@ var component = {
         }
       });
     },
+    //获取流程状态
     getStatusProcessByTransCode() {
       let data = {
           transCode : this.$parent.transCode

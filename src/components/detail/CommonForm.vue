@@ -4,7 +4,7 @@
     <div class="form" :class="{scrollCt:model != 'view'}" ref="fill">
       <div class="fill_wrapper">
         <!-- 工作流组件 -->
-        <w-flow :formData="formData" :full-work-flow="workflows" v-if="transCode"/>
+        <w-flow :formData="formData" :full-work-flow="workflowLogs" v-if="transCode"/>
         <!-- 表单渲染 -->
         <r-fieldset-ct
           :cfg="fieldSets"
@@ -17,8 +17,7 @@
         <!-- 审批组件 -->
         <r2-action
           v-if="showAction"
-          :myFlow="taskInfo"
-          :workFlow="workflows"
+          :workFlowLogs="workflowLogs"
           :formStatus="formStatus"
         />
       </div>
@@ -31,7 +30,7 @@
       <span
         class="count_btn stop"
         @click="stopOrder"
-        v-if="btnInfo.isMyTask === 1 && btnInfo.actions.indexOf('stop')>=0"
+        v-if="taskInfo.isMyTask === 1 && taskInfo.actions.indexOf('stop')>=0"
       >终止</span>
       <span class="count_btn" @click="submit">提交</span>
     </div>
@@ -85,12 +84,11 @@ export default {
       baseinfo: {},
       attachment: [],
       basicInfo: {},
-      myFlow: [],
-      taskInfo: null,
+      taskInfo: {},
       showAction: false,
       userName: "",
-      btnInfo: {},
       workflows: [],
+      workflowLogs:[],
       formStatus: []
     };
   },
@@ -134,13 +132,13 @@ export default {
         }
       });
     },
-    //工作流信息
-    getWorkFlow() {
+    //工作流日志信息
+    getWorkFlowLogs() {
       getWorkFlow({
         _dc: Date.now(),
         transCode: this.transCode
       }).then(data => {
-        this.workflows = data.tableContent || [];
+        this.workflowLogs = data.tableContent || [];
       });
     },
     getWorkFlowByListId(){
@@ -257,13 +255,15 @@ export default {
           }
           await this.getFromStatus();
         }
-        await this.getWorkFlow();
+        await this.getWorkFlowLogs(); //工作流日志
+        
       } else if (listId) {
         //没有transCode,获取新建视图。
         this.listId = listId;
         await this.getNewViewIdByListId();
-        await this.getWorkFlowByListId();
       }
+      //加载工作流信息
+      await this.getWorkFlowByListId();
       //加载视图信息
       if (this.viewId) {
         await this.loadFormCfg();
@@ -323,6 +323,7 @@ export default {
 
               this.taskInfo = task;
               this.viewId = this.taskInfo.viewId;
+              this.model = 'flow'
               break;
             }
           }
