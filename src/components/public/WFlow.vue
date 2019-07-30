@@ -27,7 +27,7 @@ import Vue from 'vue';
 import {Popup, Group, Icon, XButton, dateFormat, Picker, Toast} from 'vux'
 import RScroll from 'plugins/scroll/RScroll'
 import RPicker from 'components/public/basicPicker'
-import { isMyflow,getWorkFlow,getProcessStatusByListId,getStatusProcessByTransCode,updateProcessStatus} from "service/detailService";
+import { isMyflow,getProcessStatusByListId,getStatusProcessByTransCode,updateProcessStatus} from "service/detailService";
 import { getBasicInfo } from "service/commonService";
 var component = {
   props: {

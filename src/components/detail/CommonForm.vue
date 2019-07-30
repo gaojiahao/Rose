@@ -46,7 +46,7 @@ import {
   isMyflow,
   getListId,
   getSOList,
-  getWorkFlow,
+  listTaskLogByTransCode,
   getWorkFlowByListId,
   getFromStatus,
   getAppExampleDetails
@@ -56,9 +56,7 @@ import {
   initWebContext,
   getFormViews,
   loadModelCfg,
-  getFormViewByUniqueId,
-  saveAndCommitTask,
-  getBasicInfo
+  getFormViewByUniqueId
 } from "service/commonService";
 export default {
   props: {
@@ -83,13 +81,11 @@ export default {
       //经过处理的基本信息
       baseinfo: {},
       attachment: [],
-      basicInfo: {},
       taskInfo: {},
       showAction: false,
-      userName: "",
       workflows: [],
       workflowLogs:[],
-      formStatus: []
+      formStatus: []//表单状态,是否草稿
     };
   },
   watch: {
@@ -134,7 +130,7 @@ export default {
     },
     //工作流日志信息
     getWorkFlowLogs() {
-      getWorkFlow({
+      listTaskLogByTransCode({
         _dc: Date.now(),
         transCode: this.transCode
       }).then(data => {
