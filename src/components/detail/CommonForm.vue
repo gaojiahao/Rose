@@ -23,7 +23,7 @@
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class="count_mode vux-1px-t" v-if="model != 'view'">
+    <div class="count_mode vux-1px-t" v-if="model != 'view'" v-show="showKeyboard == false">
       <span class="count_num" v-if="false">
         <!-- <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}} -->
       </span>
@@ -74,6 +74,7 @@ export default {
       model: null,
       loaded:false,
       fieldSets: [],
+      showKeyboard:false,
       formData: {},
       //经过处理的经办人信息
       transactor: {},
@@ -195,6 +196,7 @@ export default {
       };
     },
     initScroll() {
+      var originHeight = document.documentElement.clientHeight;
       if (this.model == "view") {
         // 触发父组件的scroll刷新
         this.$emit("refresh-scroll");
@@ -208,16 +210,15 @@ export default {
       //解决android键盘收起input没有失去焦点，底部按钮遮挡输入框
       if (platfrom.isAndroid) {
         window.onresize = () => {
-          if (this.clientHeight > document.documentElement.clientHeight) {
+          var activeElement = document.activeElement,
+              showKeyboard = originHeight > document.documentElement.clientHeight;
+ 
+          this.showKeyboard = showKeyboard;
+          this.$emit('keyboardToggle',showKeyboard);
+          if (showKeyboard == false) {
             //底部按钮隐藏
-            this.btnIsHide = true;
-          } else {
-            this.btnIsHide = false;
-            if (
-              document.activeElement.tagName === "INPUT" ||
-              document.activeElement.tagName === "TEXTAREA"
-            ) {
-              document.activeElement.blur();
+            if (~["INPUT", "TEXTAREA"].indexOf(activeElement.tagName)) {
+               activeElement.blur();
             }
           }
         };
@@ -229,7 +230,7 @@ export default {
       
       viewId = viewId == '0' ? null : viewId;
       listId =  ~['undefined','0'].indexOf(listId) ? null :listId;
-      
+
       this.$loading.show();
       /**获取视图信息**/
       if (transCode) {
@@ -287,11 +288,12 @@ export default {
     },
     loadFormData(transCode) {
       var params = {
-          formViewUniqueId: this.viewId,
-          transCode
-        },
-        config = this.viewInfo.config,
-        api = config.isBaseObject ? config.baseObjectKey : "formAPI";
+            formViewUniqueId: this.viewId,
+            transCode
+          },
+          config = this.viewInfo.config,
+          api = config.isBaseObject ? config.baseObjectKey : "formAPI";
+
       return getSOList(params, api).then(
         ({ formData = {}, attachment = [], biReferenceId }) => {
           this.handlerFormData(formData);
