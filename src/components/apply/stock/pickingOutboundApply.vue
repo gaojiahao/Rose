@@ -198,6 +198,7 @@ export default {
                     });
                 })
             })
+            this.$refs.boxCode.focus();
         },
         // 选中物料
         handlerSelectItem(sItem, index) {
