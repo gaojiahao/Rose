@@ -16,6 +16,7 @@ import {
 } from "service/commonService";
 import platfrom from '@/plugins/platform'
 import { setTimeout } from 'timers';
+import { fileURLToPath } from 'url';
 export default {
   data(){
     return {
@@ -55,7 +56,7 @@ export default {
       this.transCode = transCode;
     }
     try {
-      if(fileName == 'null'){
+      if(fileName == 'null' || fileName == null){
           this.currentComponent = require(`components/detail/CommonForm.vue`).default;
       } else {
           this.currentComponent = require(`components/apply/${folder}/${fileName}Apply.vue`).default;

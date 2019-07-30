@@ -27,11 +27,11 @@
       <span class="count_num" v-if="false">
         <!-- <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}} -->
       </span>
-      <span
+      <!--span
         class="count_btn stop"
         @click="stopOrder"
         v-if="taskInfo.isMyTask === 1 && taskInfo.actions.indexOf('stop')>=0"
-      >终止</span>
+      >终止</span-->
       <span class="count_btn" @click="submit">提交</span>
     </div>
   </div>
@@ -228,7 +228,8 @@ export default {
           { listId, viewId} = this.$route.params;
       
       viewId = viewId == '0' ? null : viewId;
-      if (debug) window.isDebug = true;
+      listId =  ~['undefined','0'].indexOf(listId) ? null :listId;
+      
       this.$loading.show();
       /**获取视图信息**/
       if (transCode) {
