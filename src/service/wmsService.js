@@ -44,11 +44,21 @@ export let  releaseSortingOrder =  (transCode, matCode) =>{
 }
 
 //通过物料编码获取物料信息
-export let  getInventoryInfoByMatCode = (data ={}) =>{
+export let  getInventoryInfoByBoxCode = (data ={}) =>{
   return $flyio.ajax({
-    url: '/H_roleplay-si/ds/getInventoryInfoByMatCode',
+    url: '/H_roleplay-si/ds/getInventoryInfoByBoxCode',
     data
   }) 
+}
+
+//获取拣货入库待拣货数据
+export let  getForPickingData =  (transCode) =>{
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getPickingOutByTransCode',
+    data: {
+      transCode: transCode
+    }
+  })
 }
 
 //撤销为草稿

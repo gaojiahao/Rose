@@ -11,10 +11,9 @@
                                 ref='spCode'
                                 v-model="scanCodeInfo.spCode" 
                                 placeholder="请扫码" 
-                                @change="handlerSetSpinfo"
+                                v-on:input="handlerScanSpinfo"
                                 class='property_val' 
-                                @blur="handerOnBlur(($event))"
-                                @focus="handerOnFocus($event)" />
+                                @focus="handlerOnFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
                         </div>
                     </div>
@@ -26,10 +25,9 @@
                                 type='text' 
                                 v-model="scanCodeInfo.boxCode" 
                                 placeholder="请扫码" 
-                                @change="handlerSetMattersBox"
+                                v-on:input="handlerScanBoxCode"
                                 class='property_val' 
-                                 @blur="handerOnBlur(($event))"
-                                @focus="handerOnFocus($event)" />
+                                @focus="handlerOnFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
                         </div>
                     </div>
@@ -59,7 +57,7 @@
 
         <toast 
             v-model="showTost" 
-            type="text" :time="800" is-show-mask :text="tostText" position="top" width="20em" ></toast>
+            type="text" :time="1000" is-show-mask :text="tostText" position="top" width="20em" ></toast>
     </div>
 </template>
 
@@ -77,7 +75,7 @@ import {
     getPriceFromSalesContractAndPrice, 
     getProcess,
     updateData} from 'service/commonService'
-import {  getWhbyStoragelocation,getLocationOfinventory,getInventoryInfoByMatCode} from 'service/wmsService'
+import {  getWhbyStoragelocation,getLocationOfinventory,getInventoryInfoByBoxCode} from 'service/wmsService'
 import WebContext from 'service/commonService'
 import { getSOList } from 'service/detailService'
 // 插件引入
@@ -121,25 +119,19 @@ export default {
         Toast
     },
     methods:{
-        handerOnBlur(e){
-            event.currentTarget.nextElementSibling.style['color'] = '';
-            event.currentTarget.nextElementSibling.style['fontWeight'] = '';
-        },
         // 输入框获取焦点，内容选中
-        handerOnFocus(e) {
+        handlerOnFocus(e) {
             event.currentTarget.select();
-            event.currentTarget.nextElementSibling.style['color'] = '#3296FA';
-            event.currentTarget.nextElementSibling.style['fontWeight'] = 'bold';
         },
         //扫库位以确定库位信息
-        handlerSetSpinfo(){
+        handlerScanSpinfo(){
             if(!this.scanCodeInfo.spCode) return;
 
             //如果已经扫库位码，获取到正确的仓库信息,并且已经扫了箱码
             if(this.warehouse && this.matters.length>0){
                 if(this.scanCodeInfo.spCode != this.warehouse.spCode){
                     this.$vux.confirm.show({
-                        content: '确定要变更仓位?如果确定，待上架物料将会清空',
+                        content: '确定要变更仓位?如果确定，存货明细将会清空哦',
                         // 确定回调
                         onConfirm: () => {
                             //变换仓位
@@ -197,11 +189,13 @@ export default {
                         let mIdx,bIdx;
                         mIdx = Number(sel.split('_')[0]);
                         bIdx = Number(sel.split('_')[1]);
-                    this.matters.map((mat,matIdx)=>{
+                        this.matters.map((mat,matIdx)=>{
                             if(matIdx === mIdx){
                                 mat.boxCodes.map((box,boxIdx)=>{
-                                    box.isDelete = true;
-                                    delete this.boxCodesMap[box.boxCode];
+                                    if(boxIdx === bIdx){
+                                        box.isDelete = true;
+                                        delete this.boxCodesMap[box.boxCode];
+                                    }
                                 });
                             }
                         });
@@ -255,7 +249,7 @@ export default {
                 storehouseCode:this.scanCodeInfo.spCode,
                 page: 1,
                 start: 0,
-                limit: 1000
+                limit: 10000
             };
 
             let materielMap = {};
@@ -297,7 +291,7 @@ export default {
         * 扫箱码
         * 
         */
-        handlerSetMattersBox(){
+        handlerScanBoxCode(){
             if(!this.scanCodeInfo.spCode){
                 this.showTost = true;
                 this.tostText = '请先扫库位!'
@@ -307,7 +301,7 @@ export default {
 
             if(!this.scanCodeInfo.boxCode) return;
 
-            if(this.scanCodeInfo.boxCode.split('-').length !=4){
+            if(this.scanCodeInfo.boxCode.split('-').length !=3){
                 this.showTost = true;
                 this.tostText = '箱码不复合规则，请重新扫码!';
                 this.scanCodeInfo.boxCode = '';
@@ -340,12 +334,13 @@ export default {
                 //记录已扫码信息,防止重复扫码
                 this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;
 
-                let [postCode,matCode,batchNo,boxRule] = this.scanCodeInfo.boxCode.split('-');
+                let [bIdx,boxRule,boxSeq] = this.scanCodeInfo.boxCode.split('-');
 
                 this.matters.map(mat=>{
-                    mat.inventoryCode === matCode && mat.boxCodes.map(box=>{
-                        if(box.boxCode === this.scanCodeInfo.boxCode) 
+                    mat.boxCodes.map(box=>{
+                        if(box.boxCode === this.scanCodeInfo.boxCode){
                             box.tdQty =Number(box.boxCodeBal);
+                        }
                     });
                 });
                 this.scanCodeInfo.boxCode = '';
@@ -354,50 +349,34 @@ export default {
         },
         //添加存货盘盈数据
         addInventoryProfit(){
-            let [postCode,matCode,batchNo,boxRule] = this.scanCodeInfo.boxCode.split('-');
-            let isProfit = false;
-            this.matters.map(mat=>{
-                if(mat.inventoryCode === matCode){
-                    mat.boxCodes.splice(0,0,{
+            let [bIdx,boxRule,boxSeq] = this.scanCodeInfo.boxCode.split('-');
+
+            getInventoryInfoByBoxCode({
+                boxCode:this.scanCodeInfo.boxCode
+            }).then(res=>{
+                if(res.dataCount>0){
+                    let mat = res.tableContent[0];
+                    this.matters.unshift({
                         ...mat,
-                        boxCode: this.scanCodeInfo.boxCode,
-                        warehouseName:this.warehouse.warehouseName,
-                        storehouseInCode:this.scanCodeInfo.spCode,
-                        boxCodeBal:Number(boxRule),
-                        tdQty:Number(boxRule)
+                        storehouseQtyBal:0,
+                        expend:true,
+                        boxCodes:[{
+                            ...mat,
+                            boxCode: this.scanCodeInfo.boxCode,
+                            warehouseName:this.warehouse.warehouseName,
+                            storehouseInCode:this.scanCodeInfo.spCode,
+                            boxCodeBal:0,
+                            tdQty:Number(boxRule)
+                        }]
                     });
-                    isProfit = true;
+                    this.scanCodeInfo.boxCode = '';
+                }else{
+                    this.showTost = true;
+                    this.tostText = '此箱码没有对应的物料信息!';
                     this.scanCodeInfo.boxCode = '';
                 }
             });
-
-            if(!isProfit){
-                getInventoryInfoByMatCode({
-                    matCode:matCode
-                }).then(res=>{
-                    if(res.dataCount>0){
-                        let mat = res.tableContent[0]
-                        this.matters.splice(0,0,{
-                            ...mat,
-                            storehouseQtyBal:0,
-                            expend:true,
-                            boxCodes:[{
-                                ...mat,
-                                boxCode: this.scanCodeInfo.boxCode,
-                                warehouseName:this.warehouse.warehouseName,
-                                storehouseInCode:this.scanCodeInfo.spCode,
-                                boxCodeBal:0,
-                                tdQty:Number(boxRule)
-                            }]
-                        });
-                        this.scanCodeInfo.boxCode = '';
-                    }else{
-                        this.showTost = true;
-                        this.tostText = '此箱码没有对应的物料信息!';
-                        this.scanCodeInfo.boxCode = '';
-                    }
-                });
-            }
+            
         },
         getDataSet(){
             let dataSet = [];
@@ -431,7 +410,6 @@ export default {
                 // 确定回调
                 onConfirm: () => {
                     const currentUser = WebContext.WebContext.currentUser;
-                    let data={};
                     let formData={
                         handlerName: currentUser.name,
                         handlerUnitName: currentUser.depts && currentUser.depts[0] ? currentUser.depts[0].name : '',
@@ -458,51 +436,42 @@ export default {
                         biReferenceId:this.biReferenceId,
                         formData:JSON.stringify(formData),
                     };
+                    let opeartion = submitAndCalc;
 
-                   
-                    if(this.isModify){
-                        updateData(submitData).then(data => {
-                            this.$HandleLoad.hide()
-                            let {success = false, message = '提交失败'} = data;
-                            if (success) {
-                                message = '提交成功';
-                                // this.$emit('change', true);
-                            }
-                            this.$vux.alert.show({
-                                content: message,
-                                onHide: () => {
-                                    if (success) {
-                                    this.judgePage();
-                                    }
-                                }
-                            });
-                        }).catch(e => {
-                            this.$HandleLoad.hide();
-                        })
-                    }else{
-                        delete submitData.biReferenceId;
-
-                         submitAndCalc(submitData).then(data => {
-                            this.$HandleLoad.hide()
-                            let {success = false, message = '提交失败'} = data;
-                            if (success) {
-                                message = '提交成功';
-                                // this.$emit('change', true);
-                            }
-                            this.$vux.alert.show({
-                                content: message,
-                                onHide: () => {
-                                    if (success) {
-                                    this.judgePage();
-                                    }
-                                }
-                            });
-                        }).catch(e => {
-                            this.$HandleLoad.hide();
-                        })
+                    if(this.processCode){
+                        opeartion = saveAndStartWf;
+                        submitData.wfPara = JSON.stringify({[this.processCode]:{createBy:currentUser.userId}});
                     }
                    
+                    if(this.isModify){
+                        opeartion = submitAndCalc;
+                    }else{
+                        delete submitData.biReferenceId;
+                    }
+
+                    this.saveData(opeartion,submitData);
+                   
                 }
+            })
+        },
+        saveData(request, submitData) {
+            request(submitData).then(data => {
+                this.$HandleLoad.hide();
+                let {success = false, message = '提交失败'} = data;
+                if (success) {
+                    message = '提交成功';
+                    this.$emit('change', true);
+                }
+                this.$vux.alert.show({
+                    content: message,
+                    onHide: () => {
+                        if (success) {
+                            this.judgePage();
+                        }
+                    }
+                });
+            }).catch(e => {
+                this.$HandleLoad.hide();
             })
         },
         getFormData(){
@@ -540,10 +509,10 @@ export default {
                             assMeasureDescription: box.assMeasureDescription,
                             assMeasureScale: box.assMeasureScale,
                             warehouseName_storehouseInCode: box.warehouseName_storehouseInCode,
-                            thenTotalQtyBal: box.thenTotalQtyBal,//待上架
-                            thenLockQty: box.thenLockQty,//已上架
-                            thenQtyBal: box.thenQtyBal,//
-                            tdQty: box.tdQty,//本次上架
+                            thenTotalQtyBal: box.thenTotalQtyBal,
+                            thenLockQty: box.thenLockQty,
+                            thenQtyBal: box.thenQtyBal,
+                            tdQty: box.tdQty,
                             assistQty:  box.assistQty,
                             batchNo: box.batchNo,
                             productionDate: box.productionDate,
@@ -612,8 +581,8 @@ export default {
             }
         },
         // 获取工作流的processCode
-        async getProcess() {
-            await  getProcess(this.$route.params.listId).then(([data = {}]) => {
+        getProcess() {
+            getProcess(this.$route.params.listId).then(([data = {}]) => {
                 this.processCode = data.processCode || '';
             })
         }
@@ -639,6 +608,10 @@ export default {
             this.biReferenceId = '';
             this.isModify = true;
         }
+        this.processCode = '';
+        
+        //获取关联工作流
+        this.getProcess();
 
     }
 }
