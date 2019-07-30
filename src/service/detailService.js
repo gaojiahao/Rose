@@ -1,7 +1,7 @@
 import $flyio from 'plugins/ajax';
 
 // 工作流
-export let getWorkFlow = (data = {}) => {
+export let listTaskLogByTransCode = (data = {}) => {
     return $flyio.ajax({
         url: '/H_roleplay-si/ds/listTaskLogByTransCode',
         data: {
@@ -74,6 +74,7 @@ export let findAllJobLog = (transCode = '') => {
         }
     })
 }
+//获取业务信息
 export let getListById = (data = {}) => {
     return $flyio.ajax({
         url: '/H_roleplay-si/ds/list/getListById',

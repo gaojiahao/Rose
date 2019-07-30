@@ -4,7 +4,7 @@
     <div class="form" :class="{scrollCt:model != 'view'}" ref="fill">
       <div class="fill_wrapper">
         <!-- 工作流组件 -->
-        <w-flow :formData="formData" :full-work-flow="workflows" v-if="transCode"/>
+        <w-flow :formData="formData" :full-work-flow="workflowLogs" v-if="transCode"/>
         <!-- 表单渲染 -->
         <r-fieldset-ct
           :cfg="fieldSets"
@@ -17,8 +17,7 @@
         <!-- 审批组件 -->
         <r2-action
           v-if="showAction"
-          :myFlow="taskInfo"
-          :workFlow="workflows"
+          :workFlowLogs="workflowLogs"
           :formStatus="formStatus"
         />
       </div>
@@ -28,11 +27,11 @@
       <span class="count_num" v-if="false">
         <!-- <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}} -->
       </span>
-      <span
+      <!--span
         class="count_btn stop"
         @click="stopOrder"
-        v-if="btnInfo.isMyTask === 1 && btnInfo.actions.indexOf('stop')>=0"
-      >终止</span>
+        v-if="taskInfo.isMyTask === 1 && taskInfo.actions.indexOf('stop')>=0"
+      >终止</span-->
       <span class="count_btn" @click="submit">提交</span>
     </div>
   </div>
@@ -47,7 +46,7 @@ import {
   isMyflow,
   getListId,
   getSOList,
-  getWorkFlow,
+  listTaskLogByTransCode,
   getWorkFlowByListId,
   getFromStatus,
   getAppExampleDetails
@@ -57,9 +56,7 @@ import {
   initWebContext,
   getFormViews,
   loadModelCfg,
-  getFormViewByUniqueId,
-  saveAndCommitTask,
-  getBasicInfo
+  getFormViewByUniqueId
 } from "service/commonService";
 export default {
   props: {
@@ -84,14 +81,11 @@ export default {
       //经过处理的基本信息
       baseinfo: {},
       attachment: [],
-      basicInfo: {},
-      myFlow: [],
-      taskInfo: null,
+      taskInfo: {},
       showAction: false,
-      userName: "",
-      btnInfo: {},
       workflows: [],
-      formStatus: []
+      workflowLogs:[],
+      formStatus: []//表单状态,是否草稿
     };
   },
   watch: {
@@ -134,13 +128,13 @@ export default {
         }
       });
     },
-    //工作流信息
-    getWorkFlow() {
-      getWorkFlow({
+    //工作流日志信息
+    getWorkFlowLogs() {
+      listTaskLogByTransCode({
         _dc: Date.now(),
         transCode: this.transCode
       }).then(data => {
-        this.workflows = data.tableContent || [];
+        this.workflowLogs = data.tableContent || [];
       });
     },
     getWorkFlowByListId(){
@@ -234,7 +228,8 @@ export default {
           { listId, viewId} = this.$route.params;
       
       viewId = viewId == '0' ? null : viewId;
-      if (debug) window.isDebug = true;
+      listId =  ~['undefined','0'].indexOf(listId) ? null :listId;
+      
       this.$loading.show();
       /**获取视图信息**/
       if (transCode) {
@@ -257,13 +252,15 @@ export default {
           }
           await this.getFromStatus();
         }
-        await this.getWorkFlow();
+        await this.getWorkFlowLogs(); //工作流日志
+        
       } else if (listId) {
         //没有transCode,获取新建视图。
         this.listId = listId;
         await this.getNewViewIdByListId();
-        await this.getWorkFlowByListId();
       }
+      //加载工作流信息
+      await this.getWorkFlowByListId();
       //加载视图信息
       if (this.viewId) {
         await this.loadFormCfg();
@@ -323,6 +320,7 @@ export default {
 
               this.taskInfo = task;
               this.viewId = this.taskInfo.viewId;
+              this.model = 'flow'
               break;
             }
           }
@@ -386,7 +384,7 @@ export default {
           this.viewInfo = data;
           this.initComputed();
           this.formKey = formKey;
-          console.log("this.config", data);
+          //console.log("this.config", data);
           this.fieldSets = fieldSets;
         }
       });

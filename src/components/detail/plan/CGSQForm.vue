@@ -20,7 +20,7 @@
 
 <script>
 // 请求 引入
-import { isMyflow, getSOList, getWorkFlow, getListId } from 'service/detailService'
+import { isMyflow, getSOList,getListId } from 'service/detailService'
 import { commitTask, saveAndCommitTask } from 'service/commonService'
 // mixins 引入
 import common from 'mixins/detailCommon'
