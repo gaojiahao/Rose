@@ -16,7 +16,7 @@
       <other-part :other-info="orderInfo" :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"
                   :attachment="attachment"></other-part>
       <!-- 审批操作 -->
-      <r-action :code="transCode" :task-id="taskId" :actions="actions" :agree-handler="agreeHandler"
+      <r-action :code="transCode" :task-id="taskId" :actions="actions" 
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
@@ -215,35 +215,7 @@
       // 确认修改
       onDetailConfirm(item,matterDetailIndex,matterDetailKey) {
           this.$set(this.orderList[matterDetailKey], matterDetailIndex, item);
-      },
-      // 同意的处理
-      agreeHandler() {
-        // IQC可以修改物料参数
-        if (this.isIQC) {
-          let warehouse = this.warehouse;
-          let dataSet = [];
-          let submitMatterField = this.submitMatterField;
-          let formData = {
-            ...this.defaultFormData,
-          };
-          for (let items of Object.values(this.orderList)) {
-            for (let item of items) {
-              let oItem = {};
-              for (let sItem of submitMatterField) {
-                oItem[sItem.fieldCode] = item[sItem.fieldCode];
-              }
-              dataSet.push(oItem);
-            }
-          }
-          formData.inPut = {
-            containerCode: warehouse.warehouseCode_containerCode,
-            storehouseInCode: warehouse.storehouseInCode,
-            dataSet,
-          };
-          this.saveData(formData);
-        }
-        return !this.isWarehouseStatistician
-      },
+      }
     },
   }
 </script>

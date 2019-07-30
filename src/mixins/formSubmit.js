@@ -3,7 +3,8 @@ import {
  updateBaseObject,
  saveAndStartWf,//保存并发起流程
  submitAndCalc,//保存并计算
- updateAppData//更新数据
+ updateAppData,//更新数据
+ saveAndCommitTask
 } from "service/commonService";
 import util from '@/common/util';
 export default {
@@ -196,20 +197,32 @@ export default {
         },
         submit(){
             var me = this,
+                formStatus = me.formStatus,
+                taskActions = me.taskInfo.actions || '',
+                isBindFlow = me.workflows.length > 0 ? true : false,
                 oprationType = me.model == 'new' ? 'add' : 'update',
                 isBaseObject = me.viewInfo.config.isBaseObject,
                 oprationObj = isBaseObject?'BaseObject':'AppData',
-                handler = this[oprationType+oprationObj];
+                opration = oprationType+oprationObj,
+                isDraft;
             
+            if(opration == 'updateAppData' && isBindFlow){
+                isDraft = !!formStatus.length && formStatus[0].status === '草稿';
+                if(!isDraft || ~taskActions.indexOf('resubmit') || ~taskActions.indexOf('updateDataCommitTask')){
+                    opration = 'saveAndCommitTask';
+                    me.taskType = ~taskActions.indexOf('updateDataCommitTask') ? 1 : 3;
+                }
+   
+            }
             //表单校验
             if (!me.isValid())return;
-
+            
             this.$vux.confirm.show({
                 content: '确认提交?',
                 // 确定回调
                 onConfirm: () => {
                     this.$HandleLoad.show();
-                    handler();
+                    me[opration]();
                 }
             });
         },
@@ -291,10 +304,13 @@ export default {
 
             return values;
         },
-        getApprovalData(values){
-            var approvalData = {},
+        getApprovalData(){
+            var me = this,
+                approvalData = {},
                 paramKey,
                 fieldCode,
+                values = this.formData,
+                cmp,
                 wfParamFieldMap = this.wfParamFieldMap;
 
             for(paramKey in wfParamFieldMap){
@@ -333,6 +349,34 @@ export default {
             }
             //3.提交表单数据
             updateAppData(oprationType,param).then((res)=>{
+                me.handlerResopnse(res);
+            }).catch(e => {
+                this.$HandleLoad.hide();
+            });
+        },
+        saveAndCommitTask(){
+            var me = this,
+                values = me.getValues(),
+                taskId = me.taskInfo.taskId,
+                transCode = me.transCode,
+                approvalData = me.getApprovalData(),
+                formData = me.formatValues(values),
+                param;
+
+            approvalData.transCode = transCode;
+            approvalData.result = me.taskType;
+            approvalData.taskId = taskId,
+            approvalData.comment = formData.biComment;
+    
+            param = {
+                listId: me.listId,
+                biComment: formData.biComment,
+                biReferenceId: me.biReferenceId,
+                formData: JSON.stringify(formData),
+                wfPara: JSON.stringify(approvalData)
+            }
+             //3.提交表单数据
+            saveAndCommitTask(param).then((res)=>{
                 me.handlerResopnse(res);
             }).catch(e => {
                 this.$HandleLoad.hide();

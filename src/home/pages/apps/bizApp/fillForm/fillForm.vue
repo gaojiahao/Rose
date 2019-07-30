@@ -16,6 +16,7 @@ import {
 } from "service/commonService";
 import platfrom from '@/plugins/platform'
 import { setTimeout } from 'timers';
+import { fileURLToPath } from 'url';
 export default {
   data(){
     return {
@@ -55,7 +56,7 @@ export default {
       this.transCode = transCode;
     }
     try {
-      if(fileName == 'null'){
+      if(fileName == 'null' || fileName == null){
           this.currentComponent = require(`components/detail/CommonForm.vue`).default;
       } else {
           this.currentComponent = require(`components/apply/${folder}/${fileName}Apply.vue`).default;
@@ -88,10 +89,6 @@ export default {
     //删除缓存的往来信息
     if (to.name === "LIST"){
       sessionStorage.removeItem('DEALERLIST_SELITEMS');
-    }else if(to.name == 'FILLFORM'){
-      setTimeout(function(){
-        fillPage.reload && fillPage.reload();
-      },0)
     }
     //离开数据保存为草稿
     if (to.name === "LIST" && keys && !this.transCode && !this.submitSuccess){
@@ -112,6 +109,13 @@ export default {
     next()
 
   },
+  beforeRouteUpdate(to, from, next){
+    let fillPage = this.$refs.fillPage;
+    setTimeout(function(){
+      fillPage.reload && fillPage.reload();
+    })
+    next();
+  }
 }
 </script>
 

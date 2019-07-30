@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { getWorkFlow} from "service/detailService";
+import { listTaskLogByTransCode} from "service/detailService";
 import { getBasicInfo} from "service/commonService";
 import { dateFormat } from "vux";
 import RScroll from "plugins/scroll/RScroll";
@@ -79,8 +79,8 @@ export default {
       });
     },
     // 获取工作流
-    getWorkFlow() {
-      return getWorkFlow({
+    getTaskLogs() {
+      return listTaskLogByTransCode({
         transCode: this.transCode
       }).then(({ tableContent = [] }) => {
         let [firstNode = {}] = tableContent;
@@ -111,7 +111,7 @@ export default {
     this.transCode = transCode;
     this.$loading.show();
     promises.push(this.getCurrentUser());
-    promises.push(this.getWorkFlow());
+    promises.push(this.getTaskLogs());
     Promise.all(promises).then(() => {
       this.$loading.hide();
     });

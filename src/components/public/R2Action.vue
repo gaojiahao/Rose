@@ -2,7 +2,7 @@
   <!-- 审批操作 -->
   <div class='handle_wrapper' v-if="!!actions.length">
     <div class="handle_btn">
-      <span class="btn_item resubmit" @click="resubmit" v-if="actions.includes('resubmit')">提交</span>
+      <!--span class="btn_item resubmit" @click="resubmit" v-if="actions.includes('resubmit')">提交</span-->
       <span class="btn_item submitNew" @click="submitNew" v-if="actions.includes('submitNew')">提交并新建</span>
       <span class="btn_item draft" @click="draft" v-if="actions.includes('draft')">保存草稿</span>
       <span class="btn_item newFile" @click="showViewModel('new')" v-if="actions.includes('newFile')">新建</span>
@@ -60,13 +60,7 @@ import PopUserList from 'components/Popup/PopUserList'
 
 var component = {
   props: {
-    myFlow: {
-      type: Object,
-      default() {
-        return {}
-      }
-    },
-    workFlow: {
+    workFlowLogs: {
       type: Array,
       default() {
         return []
@@ -105,24 +99,9 @@ var component = {
       appAction: {},//应用权限
     }
   },
-  watch: {
-    myFlow: {
-      handler(val) {
-        if(val) {
-          this.taskId = val.taskId;
-          this.dealActionInfo();
-        }
-      }
-    },
-    workFlow: {
-      handler() {
-        this.dealActionInfo();  
-      }
-    },
-  },
   methods: {
     //加载应用权限
-    getListById() {
+    getListInfo() {
       return getListById({ uniqueId: this.$parent.listId }).then(data => {
         this.listInfo = data[0];
         this.appAction = this.listInfo.action;
@@ -139,12 +118,12 @@ var component = {
     },
     //处理按钮的判断
     async dealActionInfo() {
-      await this.getListById();
+      await this.getListInfo();
       let me = this,
-          myFlow = me.myFlow || {},
-          workFlow = me.workFlow || [],
-          {isMyTask = 0, actions = '', taskId, viewId ,allowRecall} = myFlow,
-          last = workFlow[workFlow.length - 1] || {},
+          taskInfo = me.taskInfo || {},
+          {isMyTask = 0, actions = '', taskId, viewId} = taskInfo,
+          logs = me.workFlowLogs || [],
+          lastLog = logs[logs.length - 1] || {},
           statusText = (me.formStatus[0] && me.formStatus[0].status) || '',
           model = me.model,
           listInfo = me.listInfo,
@@ -158,8 +137,7 @@ var component = {
 
       if(me.code=='') {
         me.actions = addModelActions;
-        if(model ==='revise') 
-          return;
+        if(model ==='revise')return;
         me.pushActions('draft');
       }
 
@@ -204,9 +182,13 @@ var component = {
       if(isMyTask) {
         me.pushActions('transfer');
       }
-      if(last.isFirstNode === 1 && last.startUserId == this.userId) {
+      if(lastLog.isFirstNode === 1 && lastLog.startUserId == this.userId &&  lastLog.endTime == null) {
+        me.taskId = lastLog.taskId;
         me.pushActions('revoke'); 
       } 
+      if(taskInfo.actions && taskInfo.actions.indexOf('recall') > -1 && taskInfo.allowRecall){
+        me.pushActions('revoke'); 
+      }
     }, 
     resubmit() {},
     submitNew() {},
@@ -253,30 +235,23 @@ var component = {
       this.$vux.confirm.show({
         title:'确认归档?',
         onConfirm: (value) => {
-          this.archiveDataByTransCodes({
-            data:data,
-            successMsg: '归档成功',
-            value,
-          });
+          this.$HandleLoad.show();
+          archiveDataByTransCodes(data).then(data => {
+            this.$HandleLoad.hide();
+            let {success = false, message = ''} = data;
+            this.$vux.alert.show({
+              content: message,
+              onHide: () => {
+                if (success) {
+                  this.$router.go(0);
+                }
+              }
+            });
+          }).catch(e => {
+            this.$HandleLoad.hide();
+          });    
         }
       });
-    },
-    archiveDataByTransCodes({data,successMsg,value}) {
-      this.$HandleLoad.show();
-      return archiveDataByTransCodes(data).then(data => {
-        this.$HandleLoad.hide();
-        let {success = false, message = ''} = data;
-        this.$vux.alert.show({
-          content: message,
-          onHide: () => {
-            if (success) {
-              this.$router.go(0);
-            }
-          }
-        });
-      }).catch(e => {
-        this.$HandleLoad.hide();
-      });      
     },
     //还原
     reduction() {
@@ -322,7 +297,7 @@ var component = {
             successMsg: '终止成功',
             value: value,
             callback: () => {
-              this.$router.go(0);
+              this.showViewModel('view');
             }
           });
         }
@@ -385,8 +360,8 @@ var component = {
             successMsg: '撤回成功',
             value,
             callback: () => {
-              let { listId } = this.$route.query,
-                  { folder, fileName } = this.$route.params;
+              let { listId} = this.$route.params,
+                  { folder, fileName, transCode } = this.$route.query;
               this.$router.replace({
                 path: `/fillform/${listId}/0`,
                 query: {
@@ -510,7 +485,7 @@ var component = {
         this.$vux.alert.show({
           content: message,
           onHide: () => {
-            this.$router.go(0);
+            this.showViewModel('view');
           }
         });
       }).catch(e => {
@@ -522,6 +497,7 @@ var component = {
     var form = this.$parent;
 
     this.code = form.transCode || '';
+    this.taskInfo = form.taskInfo;
     this.userId = WebContext.currentUser.userId || '';
     this.name = this.$route.query.name || '';
     this.model = form.viewInfo.viewType || '';

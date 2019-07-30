@@ -58,7 +58,6 @@
 // 请求引入
 import { isMyflow } from 'service/detailService'
 import { getAllMsgList } from 'service/msgService'
-import { getWorkFlow } from 'service/detailService'
 // 组件引入
 import search from 'components/search/search'
 import RScroll from 'plugins/scroll/RScroll'

@@ -28,7 +28,6 @@ let RFieldsetCt = Vue.component('RFieldsetCt', {
             items.push(
                 _c(xtype, {
                     attrs: {
-                        form: this.$parent,
                         cfg: itemCfg,
                         values: this.values
                     }

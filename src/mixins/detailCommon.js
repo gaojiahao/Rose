@@ -3,7 +3,7 @@ import {
   isMyflow, 
   getListId, 
   getListById, 
-  getWorkFlow, 
+  listTaskLogByTransCode, 
   getFromStatus, 
   getAppExampleDetails 
 } from 'service/detailService'
@@ -165,8 +165,8 @@ export default {
       });
     },
     // 获取工作流
-    getWorkFlow() {
-      return getWorkFlow({
+    getTaskLogs() {
+      return listTaskLogByTransCode({
         _dc: this.randomID(),
         transCode: this.transCode,
       })
@@ -197,7 +197,7 @@ export default {
     },
     // 处理工作流，判断审批按钮
     getFlowAndActions() {
-      return Promise.all([this.isMyflow(), this.getWorkFlow()]).then(([data = {}, data2 = {}]) => {
+      return Promise.all([this.isMyflow(), this.getTaskLogs()]).then(([data = {}, data2 = {}]) => {
         let myFlow = data.tableContent || [];
         let workFlow = data2.tableContent || [];
         let [flow = {}] = myFlow;

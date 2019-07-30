@@ -162,7 +162,7 @@ export default {
       this.transCode = transCode;
       this.listId = listId;
       try {
-        if(fileName == 'null'){
+        if(fileName == null || fileName == 'null'){
             this.currentComponent = require(`components/detail/CommonForm.vue`).default;
             this.getAppExampleDetails();
             this.getAutoSubjectCount();

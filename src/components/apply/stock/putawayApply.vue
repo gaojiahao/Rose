@@ -198,7 +198,7 @@ export default {
                         this.handlerSetMatters(warehouse.warehouseCode,this.scanCodeInfo.postCode,res=>{
                             if(!res.dataCount){
                                 this.showTost = true;
-                                this.tostText = '该库位与入库申请单选定的仓库不一致，请重新扫码!';
+                                this.tostText = '当前申请单号并没有待上架的数据或库位与入库申请单选定的仓库不一致，请重新扫码!';
                                 this.scanCodeInfo.spCode = '';
                                 this.$refs.spCode.focus();
                             }else{
@@ -289,7 +289,7 @@ export default {
                         mat.boxCodes = mat.boxCodes.filter(box=> !box.isDelete);
                         return true;
                     })
-                    
+
                     this.selItems = [];
                     this.matterModifyClass = false;
                 }
