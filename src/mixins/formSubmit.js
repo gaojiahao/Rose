@@ -19,7 +19,8 @@ export default {
                     listId: me.listId,
                     biComment: formData.biComment,
                     formKey: me.formKey,
-                    formData: JSON.stringify(formData)
+                    formData: JSON.stringify(formData),
+                    biReferenceId: me.biReferenceId
                 },
                 isBindFlow = me.workflows.length > 0 ? true : false,
                 submitHandler = isBindFlow ? saveAndStartWf : submitAndCalc,
