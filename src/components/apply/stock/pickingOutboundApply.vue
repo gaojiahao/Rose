@@ -303,6 +303,7 @@ export default {
             if(this.scanCodeInfo.boxCode.split('-').length !=3){
                 this.showTost = true;
                 this.tostText = '箱码不符合规则，请重新扫码!'
+                this.scanCodeInfo.boxCode = "";
                 this.$refs.boxCode.focus();
                 return;
             }
@@ -310,6 +311,7 @@ export default {
             if(this.boxCodesMap[this.scanCodeInfo.boxCode]){
                 this.showTost = true;
                 this.tostText = '该箱码已经扫过啦，请不要重复扫码哦!';
+                this.scanCodeInfo.boxCode = "";
                 this.$refs.boxCode.focus();
                 return;
             }

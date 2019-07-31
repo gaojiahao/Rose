@@ -201,13 +201,15 @@
                 baseinfo: {
                   id: '',
                   handlerEntity: this.entity.dealerName,
-                  ...this.formData,
-                  
+                  ...this.formData
                 },
                 projectApproval: this.ProjectApproval
               },
               wfParam: null
             };
+            if (this.isModify){
+              submitData.biReferenceId = this.biReferenceId;
+            }
             this.saveData(operation, submitData);
           }
         });
