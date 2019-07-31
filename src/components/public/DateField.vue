@@ -1,11 +1,11 @@
 <template>
 <div v-show="!hidden" class="cell each_property vux-1px-b date">
-    <label :class="{'required':!cfg.allowBlank}">{{cfg.fieldLabel}}</label>
+    <label :class="{'required':!cfg.allowBlank,'readonly':cfg.readOnly}">{{cfg.fieldLabel}}</label>
     <!-- <input v-if="cfg.readOnly == false" :value="values[cfg.fieldCode]" placeholder="请输入" type="date" @input="onInput"/> -->
     <div class="content">
         <span v-if="cfg.readOnly == false" class="mater_nature" @click="getDate()">{{values[cfg.fieldCode] || '请选择'}}</span>
         <span v-else class="mater_nature">{{values[cfg.fieldCode]||'无'}}</span>
-        <span class="icon-right"></span>
+        <span class="icon-right" v-if="cfg.readOnly == false"></span>
     </div>
 </div>
 </template>

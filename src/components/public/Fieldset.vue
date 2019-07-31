@@ -232,10 +232,12 @@ export default Vue.component("RFieldset", component);
     white-space: nowrap;
     overflow: hidden;
     label {
-      color: #999;
       &.required {
         font-weight: bold;
         color: $main_color;
+      }
+      &.readonly{
+         color: #999;
       }
     }
     :after {

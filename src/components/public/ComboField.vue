@@ -315,6 +315,11 @@ export default Vue.component('R2Combofield',cfg);
    .content{
       display: flex;
       align-items: center;
+      .mater_nature{
+         max-width:2.5rem;
+         text-overflow:ellipsis;
+         overflow: hidden;
+      }
       .icon-right{
          width: .08rem;
          height: .14rem;
