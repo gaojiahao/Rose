@@ -30,6 +30,7 @@ let rtext = Vue.component('r2Textfield', {
                     {
                         class: {
                             required: !cfg.allowBlank
+                            ,'readonly':cfg.readOnly
                         }
                     },
                     cfg.fieldLabel
