@@ -175,29 +175,38 @@ export default {
 
             this.matters = [];
             getForPickingData(this.scanCodeInfo.postCode).then(res => {
-                res.tableContent.forEach(mat => {
-                    this.matters.unshift({
-                        expend:true,
-                        transMatchedCode: mat.transCode,
-                        transObjCode: mat.inventoryCode,
-                        inventoryCode:mat.inventoryCode,
-                        inventoryName:mat.inventoryName,
-                        tdProcessing: mat.processing,
-                        assMeasureUnit: mat.invSubUnitName,
-                        assMeasureDescription: mat.invSubUnitComment,
-                        assMeasureScale: mat.invSubUnitMulti,
-                        boxRule: mat.boxRule,
-                        thenTotalQtyBal: mat.thenTotalQtyBal,//待上架
-                        thenLockQty: mat.thenLockQty,//已上架
-                        thenQtyBal: mat.thenQtyBal,//
-                        keepingDays_transObjCode: 1,
-                        batchNo: mat.batchNo,
-                        productionDate: mat.productionDate,
-                        comment: '',
-                        boxCodes:[]
-                    });
-                })
+                if(res.tableContent.length > 0){
+                    res.tableContent.forEach(mat => {
+                        this.matters.unshift({
+                            expend:true,
+                            transMatchedCode: mat.transCode,
+                            transObjCode: mat.inventoryCode,
+                            inventoryCode:mat.inventoryCode,
+                            inventoryName:mat.inventoryName,
+                            tdProcessing: mat.processing,
+                            assMeasureUnit: mat.invSubUnitName,
+                            assMeasureDescription: mat.invSubUnitComment,
+                            assMeasureScale: mat.invSubUnitMulti,
+                            boxRule: mat.boxRule,
+                            thenTotalQtyBal: mat.thenTotalQtyBal,//待上架
+                            thenLockQty: mat.thenLockQty,//已上架
+                            thenQtyBal: mat.thenQtyBal,//
+                            keepingDays_transObjCode: 1,
+                            batchNo: mat.batchNo,
+                            productionDate: mat.productionDate,
+                            comment: '',
+                            boxCodes:[]
+                        });
+                    })
+                }else{
+                    this.showTost = true;
+                    this.tostText = '此单号无数据！请重新扫码！';
+                    this.scanCodeInfo.postCode = "";
+                    this.$refs.postCode.focus();
+                    return;
+                }
             })
+            this.$refs.boxCode.focus();
         },
         // 选中物料
         handlerSelectItem(sItem, index) {
@@ -405,13 +414,13 @@ export default {
             this.fillBscroll = new Bscroll(this.$refs.fill, {click: true})
         })
        
-        //扫库位码后确定的仓库信息
         //扫库位码后切换库位的判断依据
         this.warehouse = {};
         //扫箱码后确定的申请单号信息
         this.postCode = '';
         //已扫箱码信息集合
         this.boxCodesMap = {};
+        this.$refs.postCode.focus();
     }
 }
 </script>
