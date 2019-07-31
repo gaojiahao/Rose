@@ -13,7 +13,7 @@
           ref="fieldsetCt"
         />
         <!-- 附件组件 -->
-        <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId"/>
+        <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId" @on-upload='onUpload'/>
         <!-- 审批组件 -->
         <r2-action
           v-if="showAction"
@@ -469,6 +469,9 @@ export default {
       this.transCode = this.listId = this.viewId = this.model = null;
       this.formData = {};
       this.init();
+    },
+    onUpload(data) {
+      this.biReferenceId = data.biReferenceId;
     }
   },
   created() {
