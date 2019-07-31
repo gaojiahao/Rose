@@ -1,7 +1,7 @@
 <template>
   <!--通用form组件-->
-  <div class="detail_wrapper" :class="{pages:model != 'view'}" v-show="showTab">
-    <div class="form" :class="{scrollCt:model != 'view'}" ref="fill">
+  <div class="detail_wrapper" :class="{pages:scrollCt}" v-show="showTab">
+    <div class="form" :class="{scrollCt:scrollCt}" ref="fill">
       <div class="fill_wrapper">
         <!-- 工作流组件 -->
         <w-flow :formData="formData" :full-work-flow="workflowLogs" v-if="transCode"/>
@@ -13,7 +13,7 @@
           ref="fieldsetCt"
         />
         <!-- 附件组件 -->
-        <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId"/>
+        <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId" @on-upload='onUpload'/>
         <!-- 审批组件 -->
         <r2-action
           v-if="showAction"
@@ -23,7 +23,7 @@
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class="count_mode vux-1px-t" v-if="model != 'view'">
+    <div class="count_mode vux-1px-t" v-if="model != 'view' && model != 'flow'" v-show="showKeyboard == false">
       <span class="count_num" v-if="false">
         <!-- <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}} -->
       </span>
@@ -74,6 +74,7 @@ export default {
       model: null,
       loaded:false,
       fieldSets: [],
+      showKeyboard:false,
       formData: {},
       //经过处理的经办人信息
       transactor: {},
@@ -83,6 +84,7 @@ export default {
       attachment: [],
       taskInfo: {},
       showAction: false,
+      scrollCt:false,
       workflows: [],
       workflowLogs:[],
       formStatus: []//表单状态,是否草稿
@@ -195,29 +197,34 @@ export default {
       };
     },
     initScroll() {
-      if (this.model == "view") {
-        // 触发父组件的scroll刷新
-        this.$emit("refresh-scroll");
-        return;
-      }
-      this.$nextTick(() => {
-        this.fillBscroll = new Bscroll(this.$refs.fill, {
-          click: true
+      var originHeight = document.documentElement.clientHeight,
+          isScrollCt = this.$parent.$options.name != 'v-touch';
+      
+      this.scrollCt = isScrollCt;
+
+      if (isScrollCt){
+        this.$nextTick(() => {
+          this.fillBscroll = new Bscroll(this.$refs.fill, {
+            click: true
+          });
         });
-      });
+      } else {
+        // 触发父组件的scroll刷新
+        this.$emit("refresh-scroll",this.model);
+      }
+      
       //解决android键盘收起input没有失去焦点，底部按钮遮挡输入框
       if (platfrom.isAndroid) {
         window.onresize = () => {
-          if (this.clientHeight > document.documentElement.clientHeight) {
+          var activeElement = document.activeElement,
+              showKeyboard = originHeight > document.documentElement.clientHeight;
+ 
+          this.showKeyboard = showKeyboard;
+          this.$emit('keyboardToggle',showKeyboard);
+          if (showKeyboard == false) {
             //底部按钮隐藏
-            this.btnIsHide = true;
-          } else {
-            this.btnIsHide = false;
-            if (
-              document.activeElement.tagName === "INPUT" ||
-              document.activeElement.tagName === "TEXTAREA"
-            ) {
-              document.activeElement.blur();
+            if (~["INPUT", "TEXTAREA"].indexOf(activeElement.tagName)) {
+               activeElement.blur();
             }
           }
         };
@@ -229,7 +236,7 @@ export default {
       
       viewId = viewId == '0' ? null : viewId;
       listId =  ~['undefined','0'].indexOf(listId) ? null :listId;
-      
+
       this.$loading.show();
       /**获取视图信息**/
       if (transCode) {
@@ -287,11 +294,12 @@ export default {
     },
     loadFormData(transCode) {
       var params = {
-          formViewUniqueId: this.viewId,
-          transCode
-        },
-        config = this.viewInfo.config,
-        api = config.isBaseObject ? config.baseObjectKey : "formAPI";
+            formViewUniqueId: this.viewId,
+            transCode
+          },
+          config = this.viewInfo.config,
+          api = config.isBaseObject ? config.baseObjectKey : "formAPI";
+
       return getSOList(params, api).then(
         ({ formData = {}, attachment = [], biReferenceId }) => {
           this.handlerFormData(formData);
@@ -467,6 +475,9 @@ export default {
       this.transCode = this.listId = this.viewId = this.model = null;
       this.formData = {};
       this.init();
+    },
+    onUpload(data) {
+      this.biReferenceId = data.biReferenceId;
     }
   },
   created() {

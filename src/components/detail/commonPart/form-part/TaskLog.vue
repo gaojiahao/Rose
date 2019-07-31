@@ -20,7 +20,7 @@
         </search-selector>
       </div>
       <div class="task_log_title" :style="{borderColor:istitleRequired?'#e4393c':'#e8e8e8'}">
-        <x-input ref="taskLogTitle" :max="100" v-model="logTitle">
+        <x-input ref="taskLogTitle" text-align="right" :max="100" v-model="logTitle">
           <span 
             slot="label" 
             :style="{fontWeight:'bold',color:istitleRequired?'#e4393c':'#4e9cec'}">
@@ -83,7 +83,7 @@ export default {
       logTypelist: [[]],
       selectUsers: [],
       taskLog: {
-        logStatus: true,
+        logStatus: false,
         taskDate: "",
         comments: "",
         logDeclarationHours: 1,

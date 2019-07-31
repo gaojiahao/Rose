@@ -48,6 +48,18 @@ export default {
                 });
             }
         },
+        initKeyboardEvent:function(){
+            var vm = this,
+                form = vm.grid.form,
+                fn = function(showKeyboard){
+                    vm.showKeyboard = showKeyboard;
+                };
+
+            form.$on('keyboardToggle',fn);
+            vm.$on('hook:destroyed',function(){
+                form.$off('keyboardToggle',fn);
+            })
+        },
         getValues(){
             var values = {},
                 fieldMap = this.fieldMap,

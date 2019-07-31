@@ -38,7 +38,7 @@
           </div>
         </div>
       </r-scroll>
-      <div class="confirm_btn" @click="confirm" v-if="hasEditPart">
+      <div class="confirm_btn" @click="confirm" v-if="hasEditPart" v-show="showKeyboard == false">
         <div class="confirm">确认</div>
       </div>
     </popup>
@@ -80,6 +80,7 @@ var component = {
       showPop: true,
       values: {},
       readOnlyParts: [],
+      showKeyboard:false,
       editParts: [],
       onlyViewParts: [],
       title: null,
@@ -150,8 +151,8 @@ var component = {
   },
   created() {
     var grid = this.$parent,
-      cfg = grid.cfg,
-      columns = cfg.columns;
+        cfg = grid.cfg,
+        columns = cfg.columns;
     // *部分应用* 物料详情在审批节点可以重新录入数据 此处进行数据分割
     if (cfg.readOnly) {
       this.onlyViewParts = columns.filter(it => {
@@ -181,6 +182,7 @@ var component = {
     this.initFieldMap();
     this.initValueBind(this.grid.valueBindCfg);
     this.setValues(grid.detail);
+    this.initKeyboardEvent();
   }
 };
 export default Vue.component("GridDetail", component);

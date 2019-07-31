@@ -27,7 +27,10 @@ export default {
               //  uploadComp = me.formView.down('r2Fileupload'),
               //  files = uploadComp ? uploadComp.getR2Value() : null,
                 {relationKey} = me.$route.query;
-
+                
+            if(me.biReferenceId) {
+                param.biReferenceId = me.biReferenceId;    
+            }
             if (relationKey) {
                 param.relationKey = relationKey;
             }

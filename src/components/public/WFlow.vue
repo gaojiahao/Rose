@@ -19,7 +19,7 @@
         工作流已到{{currentStatus.nodeName}}
       </span>
     </div>
-    <r-picker title="流程状态" v-if="statusList.length" :data="statusList" :value="nowStatus" v-model="nowStatus"></r-picker>
+    <r-picker title="流程状态" v-if="statusList.length" :data="statusList" :value="nowStatus" v-model="nowStatus" @input="updateProcessStatus"></r-picker>
   </div>
 </template>
 <script>
@@ -89,12 +89,6 @@ var component = {
         this.workFlowHandler();
       },
       immediate: true,
-    },
-    nowStatus: {
-      handler(val,oldval) {
-        if(oldval != '')
-          this.updateProcessStatus(val);
-      } 
     }
   },
   components: {

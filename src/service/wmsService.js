@@ -51,6 +51,16 @@ export let  getInventoryInfoByBoxCode = (data ={}) =>{
   }) 
 }
 
+//获取拣货入库待拣货数据
+export let  getForPickingData =  (transCode) =>{
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getPickingOutByTransCode',
+    data: {
+      transCode: transCode
+    }
+  })
+}
+
 //撤销为草稿
 export let revocation = (data = {}) =>{
 

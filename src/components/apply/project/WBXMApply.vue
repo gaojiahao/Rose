@@ -26,8 +26,11 @@
               <!-- 输入框（数字） -->
               <div class='each_property ' v-if="item.xtype === 'r2Numberfield' || item.xtype === 'r2Permilfield'">
                 <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
-                <input type='number' v-model.number="ProjectApproval[item.fieldCode]" placeholder="请输入" class='property_val' 
-                       @focus="getFocus($event)" @blur="checkAmt(ProjectApproval, item.fieldCode, ProjectApproval[item.fieldCode])"/>
+                <input 
+                  v-model="ProjectApproval[item.fieldCode]" 
+                  placeholder="请输入" class='property_val'
+                  @focus="getFocus($event)"
+                  @blur="checkAmt(ProjectApproval, item.fieldCode, ProjectApproval[item.fieldCode])"/>
               </div>
               <!-- 日期 -->
               <div class='each_property' v-if="item.xtype === 'r2Datefield'" @click="getDate(ProjectApproval,item)">
@@ -61,7 +64,7 @@
 <script>
   // vux组件引入
   import {
-    XTextarea, dateFormat
+    XTextarea, dateFormat, numberComma
   } from 'vux'
   // 请求 引入
   import { saveProjectApproval, findProjectApproval } from 'service/projectService'
@@ -76,6 +79,7 @@
   import OpButton from 'components/apply/commonPart/OpButton'
   import { accMul, accAdd, accSub } from 'plugins/calc/decimalsAdd'
   import { toFixed } from '@/plugins/calc'
+import { debug } from 'util';
   const DRAFT_KEY = 'XMLX_DATA';
   export default {
     mixins: [ApplyCommon, common],
@@ -184,6 +188,7 @@
             if (this.isModify) {
               operation = update;
             }
+            this.ProjectApproval.budgetIncome && (this.ProjectApproval.budgetIncome = Number(this.ProjectApproval.budgetIncome.replace(/,/g,"")));
             let submitData = {
               listId: this.listId,
               formData: {
@@ -199,6 +204,9 @@
               },
               wfParam: null
             };
+            if (this.isModify){
+              submitData.biReferenceId = this.biReferenceId;
+            }
             this.saveData(operation, submitData);
           }
         });
@@ -222,6 +230,7 @@
           formData.projectApproval.expectEndDate = this.changeDate(formData.projectApproval.expectEndDate);
           
           this.ProjectApproval = formData.projectApproval;
+          this.ProjectApproval.budgetIncome && (this.ProjectApproval.budgetIncome = numberComma(this.ProjectApproval.budgetIncome));
           
           this.handlerDefault = {
             handler: formData.baseinfo.handler,
@@ -263,7 +272,12 @@
       },
       // 校验数字
       checkAmt(item, key, val) {
-        item[key] = Math.abs(toFixed(val));
+        if(isNaN(val.replace(/,/g,""))){
+          this.$vux.toast.text('请输入数字！');
+          item[key] = "";
+        }else{
+          item[key] = numberComma(val.replace(/,/g,""));
+        } 
       }
     },
     created() {

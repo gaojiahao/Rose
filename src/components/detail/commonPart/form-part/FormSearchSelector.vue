@@ -24,6 +24,10 @@
         @on-show="onShow"
         @on-hide="onHide">
         <div class="trade_pop">
+          <div class="pop-header">
+            <span class="cancel" @click="onHide">取消</span>
+            <span class="confirm" @click="confirmSelect">确定</span>
+          </div>
           <d-search @search="searchList" @turn-off="onHide"></d-search>
           <!-- 列表 -->
           <r-scroll
@@ -61,9 +65,6 @@
               </div>
             </div>
           </r-scroll>
-          <div class="pop_btn" @click="confirmSelect">
-            <x-button type="primary">确定</x-button>
-          </div>
         </div>
       </popup>
     </div>
@@ -280,6 +281,19 @@ export default {
   .trade_pop {
     height: 100%;
     overflow: hidden;
+    .pop-header{
+      padding: .1rem .1rem;
+      border-bottom: 1px solid #ddd;
+      .cancel{
+          font-size: .15rem;
+          color: #6b6767;
+      }
+      .confirm{
+        font-size: .15rem;
+        color: #4cb513;
+        float: right;
+      }
+    }
     .pop_btn{
       position: fixed;
       bottom: 0;
