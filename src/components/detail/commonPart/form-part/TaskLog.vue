@@ -83,7 +83,7 @@ export default {
       logTypelist: [[]],
       selectUsers: [],
       taskLog: {
-        logStatus: true,
+        logStatus: false,
         taskDate: "",
         comments: "",
         logDeclarationHours: 1,
