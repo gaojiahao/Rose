@@ -73,6 +73,9 @@
             this.toTopShow = true;
           else if (Math.abs(val) < 1000) 
             this.toTopShow = false;
+          if(val === this.bScroll.maxScrollY) {
+            this.$vux.toast.text('已到底部！', 'bottom')
+          }
         } 
       }  
   },
@@ -170,6 +173,7 @@
         this.bScroll.destroy();
         this.bScroll = null;
       },
+      //滚动到顶部
       scrollToTop() {
         this.$nextTick(() => {
           this.bScroll.scrollTo(0, 0, 400);

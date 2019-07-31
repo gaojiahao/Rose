@@ -225,6 +225,9 @@
                 status: 1,
               };
               this.files.push(arr);
+              this.$emit('on-upload', {
+                biReferenceId: data[0].biReferenceId,
+              });
             }
           });
         }
