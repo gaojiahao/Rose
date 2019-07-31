@@ -19,8 +19,7 @@ export default {
                     listId: me.listId,
                     biComment: formData.biComment,
                     formKey: me.formKey,
-                    formData: JSON.stringify(formData),
-                    biReferenceId: me.biReferenceId
+                    formData: JSON.stringify(formData)
                 },
                 isBindFlow = me.workflows.length > 0 ? true : false,
                 submitHandler = isBindFlow ? saveAndStartWf : submitAndCalc,
@@ -28,7 +27,10 @@ export default {
               //  uploadComp = me.formView.down('r2Fileupload'),
               //  files = uploadComp ? uploadComp.getR2Value() : null,
                 {relationKey} = me.$route.query;
-
+                
+            if(me.biReferenceId) {
+                param.biReferenceId = me.biReferenceId;    
+            }
             if (relationKey) {
                 param.relationKey = relationKey;
             }

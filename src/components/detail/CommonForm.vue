@@ -472,7 +472,6 @@ export default {
     },
     onUpload(data) {
       this.biReferenceId = data.biReferenceId;
-      console.log(this.biReferenceId)
     }
   },
   created() {
