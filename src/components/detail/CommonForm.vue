@@ -1,7 +1,7 @@
 <template>
   <!--通用form组件-->
-  <div class="detail_wrapper" :class="{pages:model != 'view'}" v-show="showTab">
-    <div class="form" :class="{scrollCt:model != 'view'}" ref="fill">
+  <div class="detail_wrapper" :class="{pages:scrollCt}" v-show="showTab">
+    <div class="form" :class="{scrollCt:scrollCt}" ref="fill">
       <div class="fill_wrapper">
         <!-- 工作流组件 -->
         <w-flow :formData="formData" :full-work-flow="workflowLogs" v-if="transCode"/>
@@ -23,7 +23,7 @@
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class="count_mode vux-1px-t" v-if="model != 'view'" v-show="showKeyboard == false">
+    <div class="count_mode vux-1px-t" v-if="model != 'view' && model != 'flow'" v-show="showKeyboard == false">
       <span class="count_num" v-if="false">
         <!-- <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}} -->
       </span>
@@ -84,6 +84,7 @@ export default {
       attachment: [],
       taskInfo: {},
       showAction: false,
+      scrollCt:false,
       workflows: [],
       workflowLogs:[],
       formStatus: []//表单状态,是否草稿
@@ -196,17 +197,22 @@ export default {
       };
     },
     initScroll() {
-      var originHeight = document.documentElement.clientHeight;
-      if (this.model == "view") {
-        // 触发父组件的scroll刷新
-        this.$emit("refresh-scroll");
-        return;
-      }
-      this.$nextTick(() => {
-        this.fillBscroll = new Bscroll(this.$refs.fill, {
-          click: true
+      var originHeight = document.documentElement.clientHeight,
+          isScrollCt = this.$parent.$options.name != 'v-touch';
+      
+      this.scrollCt = isScrollCt;
+
+      if (isScrollCt){
+        this.$nextTick(() => {
+          this.fillBscroll = new Bscroll(this.$refs.fill, {
+            click: true
+          });
         });
-      });
+      } else {
+        // 触发父组件的scroll刷新
+        this.$emit("refresh-scroll",this.model);
+      }
+      
       //解决android键盘收起input没有失去焦点，底部按钮遮挡输入框
       if (platfrom.isAndroid) {
         window.onresize = () => {
