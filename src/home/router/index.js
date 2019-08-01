@@ -72,7 +72,7 @@ export default [
   },
   {
     path:'/list/:folder',
-    name:'LIST',
+    name:'COMMONLIST',
     component:LIST,
     meta:{ title:'列表', keepAlive: true},
   },
