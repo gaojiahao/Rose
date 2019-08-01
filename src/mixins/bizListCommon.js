@@ -1,6 +1,7 @@
 // vux 引入
 import { dateFormat, numberComma } from 'vux'
 // 请求 引入
+import { isMyflow } from 'service/detailService'
 import { getAppDetail, getListMobileView } from 'service/app-basic/appSettingService'
 import { getSellOrderList } from 'service/listService'
 // 组件 引入
