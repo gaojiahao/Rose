@@ -162,7 +162,7 @@ export default {
       this.listId = listId;
       this.getAppFeature();
       try {
-        if(fileName == null || fileName == 'null'){
+        if(!fileName || fileName == 'null'){
             this.currentComponent = require(`components/detail/CommonForm.vue`).default;
             this.getAppExampleDetails();
             this.getAutoSubjectCount();
