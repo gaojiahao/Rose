@@ -1,11 +1,11 @@
 <template>
 <div v-show="!cfg.hiddenInRun" class="cell each_property vux-1px-b combo" >
-    <label :class="{'required':!cfg.allowBlank}">{{cfg.fieldLabel}}</label>
+    <label :class="{'required':!cfg.allowBlank,'readonly':cfg.readOnly}">{{cfg.fieldLabel}}</label>
     <div v-if="cfg.readOnly == false" class="content" @click="showPop = true">
        <span class='mater_nature'>{{values[cfg.fieldCode] || "请选择"}}</span>
        <span class="icon-right"></span>
     </div>
-    <span v-else >{{values[cfg.fieldCode]||'无'}}</span>
+    <span v-else >{{values[cfg.fieldCode] == null||'无'}}</span>
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
