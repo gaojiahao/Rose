@@ -170,7 +170,7 @@ export default {
                 content: "提交成功！",
                 onHide: () => {
                   //跳转到日志列表
-                  this.$router.push({
+                  this.$router.replace({
                     path: '/taskLog',
                     query: {
                       listId: this.$route.params.listId,

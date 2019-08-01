@@ -359,11 +359,11 @@ export default {
                     let data={};
                     let formData={
                         handlerName: currentUser.name,
-                        handlerUnitName: currentUser.depts && currentUser.depts[0] ? currentUser.depts[0].name : '',
-                        handlerRoleName: currentUser.isSysRoleList[0].name,
+                        handlerUnitName: currentUser.sysDeptList && currentUser.sysDeptList[0] ? currentUser.sysDeptList[0].groupName : '',
+                        handlerRoleName: currentUser.sysRoleList[0].name,
                         handler: currentUser.userId,
-                        handlerUnit:  currentUser.depts && currentUser.depts[0] ? currentUser.depts[0].id : '',
-                        handlerRole: currentUser.isSysRoleList[0].id,
+                        handlerUnit:  currentUser.sysDeptList && currentUser.sysDeptList[0] ? currentUser.sysDeptList[0].groupId : '',
+                        handlerRole: currentUser.sysRoleList[0].id,
                         creator: currentUser.userId,
                         modifer: currentUser.userId,
                         biId:'',
@@ -397,11 +397,14 @@ export default {
                         if (success) {
                             message = '提交成功';
                             releaseSortingOrder(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res => {
-                                this.$router.back();
+                                
                             })
                         }
                         this.$vux.alert.show({
-                            content: message
+                            content: message,
+                            onHide () {
+                                this.$router.back();
+                            }
                         });
                     }).catch(e => {
                         this.$HandleLoad.hide();
