@@ -244,6 +244,9 @@ export default {
       font-weight: bold;
       margin-left: -.1rem;
     }
+    .task_log_status /deep/ .weui-icon-success-circle:before{
+      color: #4CA3FB;
+    }
     &_title{
       border-bottom: 1px solid #e8e8e8;
       font-weight: bold;
