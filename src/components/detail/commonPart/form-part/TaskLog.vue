@@ -276,8 +276,9 @@ export default {
     }
     &_footer{
       position: fixed;
-      bottom: 0px;
-      width: 95%;
+      left: 0;
+      bottom: 0;
+      width: 100%;
     }
   }
   .task_container{
