@@ -2,7 +2,7 @@
   <!-- 审批操作 -->
   <div class='handle_wrapper' v-if="!!actions.length">
     <div class="handle_btn">
-      <!--span class="btn_item resubmit" @click="resubmit" v-if="actions.includes('resubmit')">提交</span-->
+      <span class="btn_item resubmit" @click="resubmit" v-if="actions.includes('resubmit')">提交</span>
       <span class="btn_item submitNew" @click="submitNew" v-if="actions.includes('submitNew')">提交并新建</span>
       <span class="btn_item draft" @click="draft" v-if="actions.includes('draft')">保存草稿</span>
       <span class="btn_item newFile" @click="showViewModel('new')" v-if="actions.includes('newFile')">新建</span>
@@ -110,12 +110,6 @@ var component = {
     pushActions(action) {
       this.actions.push(action);
     },
-    addNewFormBtn() {
-      this.actions.push('newFile');
-    },
-    addCopyAndNewBtn() {
-      this.actions.push('copyNew');  
-    },
     //处理按钮的判断
     async dealActionInfo() {
       await this.getListInfo();
@@ -127,23 +121,22 @@ var component = {
           statusText = (me.formStatus[0] && me.formStatus[0].status) || '',
           model = me.model,
           listInfo = me.listInfo,
-          action = me.appAction,
-          addModelActions = ['resubmit','submitNew'];  //新增模式按钮
+          action = me.appAction;  //新增模式按钮
 
       actions = actions.split(',');
 
       me.taskId = taskId;
       me.isMyTask = isMyTask === 1;
 
-      if(me.code=='') {
-        me.actions = addModelActions;
+      if(me.code == '') {
+        me.actions =  ['submitNew'];
         if(model ==='revise')return;
         me.pushActions('draft');
       }
 
       if ((action.add && model != 'marking') || model == 'view') {
-        me.addNewFormBtn();
-        me.addCopyAndNewBtn();
+        this.pushActions('newFile');
+        me.pushActions('copyNew');
       }
       if (statusText === '草稿' && model != 'edit') {
         me.pushActions('edit')  
@@ -161,10 +154,12 @@ var component = {
         me.pushActions('reduction');        
       }
       if (actions.includes('updateDataCommitTask')) {
+        me.form.taskType = 1;
         me.pushActions('resubmit');  
       }
       if (actions.includes('resubmit')) {
         me.pushActions('resubmit');
+        me.form.taskType = 3;
         me.pushActions('storage');
       }
       if(actions.includes('temporary') && !((me.actions).includes('storage'))) {
@@ -190,7 +185,9 @@ var component = {
         me.pushActions('revoke'); 
       }
     }, 
-    resubmit() {},
+    resubmit() {
+       this.form.saveAndCommitTask();
+    },
     submitNew() {},
     draft() {},
     copyNew() {},
@@ -495,11 +492,11 @@ var component = {
   },
   created () {
     var form = this.$parent;
-
+    
+    this.form = form;
     this.code = form.transCode || '';
     this.taskInfo = form.taskInfo;
     this.userId = WebContext.currentUser.userId || '';
-    this.name = this.$route.query.name || '';
     this.model = form.viewInfo.viewType || '';
     //我的流程，工作流为空（表单失效），执行一次
     this.dealActionInfo();  
