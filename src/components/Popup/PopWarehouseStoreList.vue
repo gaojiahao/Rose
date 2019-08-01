@@ -1,5 +1,5 @@
 <template>
-  <div class="pop-warehouse-container vux-1px-t" @click="warehouseClick">
+  <div class="pop-warehouse-container2 vux-1px-t" @click="warehouseClick">
     <!-- 仓库信息 -->
     <div class="warehouse-info">
       <div v-if="selItems.warehouseName">
@@ -43,6 +43,7 @@
                   <!--联系人电话 -->
                   <div class="withColor">
                     <span class="name">{{item.warehouseName}}</span>
+                    <span class="type">{{item.warehouseCode}}</span>
                     <span class="type">{{item.warehouseType}}</span>
                   </div>
                   <!-- 地址 -->
@@ -227,7 +228,7 @@
   .vux-1px-t:before{
     border-color: #e8e8e8;
   }
-  .pop-warehouse-container {
+  .pop-warehouse-container2 {
     color: #333;
     font-size: .14rem;
     padding: .18rem 0;

@@ -3,14 +3,13 @@ import {
   isMyflow, 
   getListId, 
   getListById, 
-  getWorkFlow, 
-  currentUser, 
+  listTaskLogByTransCode, 
   getFromStatus, 
   getAppExampleDetails 
 } from 'service/detailService'
 import { isSubscribeByRelationKey } from 'service/commentService'
 import { getAppDetail, getPCCommentList } from 'service/app-basic/appSettingService'
-import { getFormViews, getFormConfig, saveAndCommitTask } from 'service/common/commonService'
+import { getFormViews, getFormConfig, saveAndCommitTask, getBasicInfo, findConfigInfo} from 'service/commonService'
 // vux 引入
 import { numberComma } from 'vux'
 // 组件 引入
@@ -35,7 +34,6 @@ export default {
   },
   data() {
     return {
-      matterDetailIndex: 0,
       orderTitle: '所属订单', // 物料交易号名称
       clientHeight: document.documentElement.clientHeight,
       uploadStyle: { //附件容器样式
@@ -55,7 +53,6 @@ export default {
       transCode: '',
       formStatus: '',                     // 当前表单的状态
       currenrForm: '',                    // 当前表单类型
-      matterDetailKey: '',
       formViewUniqueId: '',
       action: {},                         // 表单允许的操作
       orderList: {},                      // 按订单划分的物料列表
@@ -71,6 +68,7 @@ export default {
       otherConfig: [],                    // 用于存放非往来，仓库的单一项配置
       dealerConfig: [],                   // 往来 相关配置
       matterConfig: [],                   // 物料相关配置
+      warehouseConfig: [],                //仓库配置
       baseinfoExtConfig: [],              // baseinfoExt相关配置（此处可能会存放*往来相关配置*）
       submitMatterField: [],              // 审批时要提交的物料字段
       isMine: false,                      // 是否 为我创建
@@ -80,6 +78,8 @@ export default {
       hasReviseView: false,               // 当前表单是否可以修改
       HasValRealted: false,               // 相关实例是否有值为0
       showMatterDetail: false,            // 是否展示物料详情弹窗
+      config: [],
+      baseinfoConfig: {},                 //baseinfo配置
     }
   },
   computed: {
@@ -123,13 +123,6 @@ export default {
       }
       return (S4() + S4() + S4());
     },
-    // 获取当前用户
-    getCurrentUser() {
-      return currentUser().then(({userId, nickname, userCode}) => {
-        this.userId = `${userId}`;
-        this.userName = `${nickname}-${userCode}`;
-      })
-    },
     // 获取listid
     getListId() {
       return getListId(this.transCode).then(data => {
@@ -172,8 +165,8 @@ export default {
       });
     },
     // 获取工作流
-    getWorkFlow() {
-      return getWorkFlow({
+    getTaskLogs() {
+      return listTaskLogByTransCode({
         _dc: this.randomID(),
         transCode: this.transCode,
       })
@@ -204,7 +197,7 @@ export default {
     },
     // 处理工作流，判断审批按钮
     getFlowAndActions() {
-      return Promise.all([this.isMyflow(), this.getWorkFlow()]).then(([data = {}, data2 = {}]) => {
+      return Promise.all([this.isMyflow(), this.getTaskLogs()]).then(([data = {}, data2 = {}]) => {
         let myFlow = data.tableContent || [];
         let workFlow = data2.tableContent || [];
         let [flow = {}] = myFlow;
@@ -212,7 +205,12 @@ export default {
         let [createFlow = {}] = workFlow;
         let last = workFlow[workFlow.length - 1] || {};
         let operationList = ['同意', '不同意']; // 操作列表的status
-
+        if(data.tableContent.length) {
+          this.actions = data.tableContent[0].actions || [];
+          if(this.actions.length) {
+            this.actions = this.actions.split(',')
+          }
+        }
         // 赋值 完整版工作流
         this.fullWL = workFlow;
         this.currentWL = flow;
@@ -231,13 +229,19 @@ export default {
         });
 
         // actions字段没有返回，修改固定赋值
-        this.actions = ['agreement', 'disagree', 'transfer']; 
+        if(this.actions.length){
+          this.actions.push('transfer')
+        } else {
+          this.actions = ['agreement', 'disagree', 'transfer']; 
+        }
+        //this.actions = ['agreement', 'disagree', 'transfer']; 
         // 判断是否为我创建的任务
-        if (createFlow.isFirstNode === 0 && createFlow.startUserId === this.userId) {
+        if (createFlow.isFirstNode === 0 && createFlow.startUserId === this.userId) { 
           this.isMine = true;
           // 如果没有审批操作，则删除拒绝，加入撤回
           if (this.noOperation) {
-            this.actions.splice(this.actions.findIndex(item => item === 'disagree'), 1, 'revoke');
+            this.actions.push('revoke')
+            //this.actions.splice(this.actions.findIndex(item => item === 'disagree'), 1, 'revoke');
           }
         }
         this.taskId = taskId;
@@ -248,6 +252,7 @@ export default {
           this.actions = this.isMine && this.noOperation ? ['revoke'] : [];
           return
         }
+
         this.formViewUniqueId = viewId;
       })
     },
@@ -285,7 +290,7 @@ export default {
     // 是否已经关注该订单
     isSubscribeByRelationKey() {
       isSubscribeByRelationKey(this.transCode).then(data => {
-        this.$emit('is-subscribe', data)
+        this.$emit('subscribeChange', data)
       })
     },
     async loadPage() {
@@ -298,23 +303,18 @@ export default {
       }
       this.transCode = transCode;
       this.$loading.show();
-      /**
-       * getBaseInfoData 接口一般用于提交页面   
-       * 由于“项目任务(XMRW)”在详情页面 可进行“任务日志”的提交 此处是为防止重复请求
-       */
-      if (!this.getBaseInfoData) {
-        await this.getCurrentUser();  //查询 当前用户基本信息
-      }
-      await this.getListId();
-      await this.getFlowAndActions();
-      await this.getOrderList(transCode);   // 获取表单表单详情
-      await this.getFromStatus();
-      await this.getFormConfig();
-      await this.getFormViews();
-      await this.getAction();
-      await this.getCommentList();
-      await this.getAppExampleDetails();
-      await this.isSubscribeByRelationKey();
+      await this.getBasicInfo(); // 用户信息，ds服务器地址，是否客户端
+      await this.getListId();// listid,viewId信息
+     
+      await this.getFlowAndActions();// 流程信息,有可能替换viewId
+      await this.getOrderList(transCode);// 获取表单表单详情
+      await this.getFromStatus();// 表单状态
+      await this.getFormConfig();// 表单配置
+      await this.getFormViews();// 所有的视图列表
+      await this.getAction();// 获取列表权限
+      await this.getCommentList();// 请求评论列表
+      await this.getAppExampleDetails();// 获取相关实例
+      await this.isSubscribeByRelationKey(); //是否订阅
 
       this.$loading.hide();
 
@@ -375,6 +375,55 @@ export default {
         }
       });
     },
+    //请求baseinfo配置
+    getBasicInfo() {
+      return getBasicInfo().then(data => {
+        let {currentUser} = data;
+        this.baseinfoConfig = data;
+        this.userId = `${currentUser.userId}`;
+        this.userName = `${currentUser.nickname}-${currentUser.userCode}`;
+      });  
+    },
+    //请求二次配置
+    findConfigInfo() {
+      return findConfigInfo(this.formViewUniqueId).then(data => {
+        if(this.baseinfoConfig.clientFlag) {
+          this.getNewFormConfig(this.config,data.data);
+        }
+      });
+    },
+    //二次配置覆盖
+    getNewFormConfig(old,New) {
+      let firstCongif = old;
+      New = JSON.parse(New)
+      let containerCfg =  New && New.container,
+          fieldsCfg = New && New.fields;
+      if(New){
+        if(JSON.stringify(New.form) != '{}') {
+          old = New.form;
+        }; 
+        for(let i = 0; i < old.length; i++) {
+          let name = old[i].name,
+          isList = old[i].isMultiple,
+          fields = old[i].items,
+          grid;
+
+          if ((JSON.stringify(fieldsCfg)!='{}') && old[i].items) {
+            for(let k = 0; k < old[i].items.length; k++) {
+              var key = isList ? [name, old[i].items[k].fieldCode].join('.') : old[i].items[k].fieldCode;
+              for(var prop in fieldsCfg) {
+                if(old[i].items[k].fieldCode == prop) {
+                  for(var prop2 in fieldsCfg[key]) {
+                    old[i].items[k][prop2] = fieldsCfg[key][prop2]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+    },
     // 请求配置
     getFormConfig() {
       return getFormConfig(this.formViewUniqueId).then(data => {
@@ -382,10 +431,10 @@ export default {
         this.currenrForm = data.viewType;
         
         let {config = [], dataSource = '[]', reconfig = {}} = data;
-
+        this.config = config;
         console.log('config:', config);
         console.log('二次配置-reconfig:', reconfig);
-
+        if(this.baseinfoConfig.clientFlag)this.findConfigInfo();//加载二次配置信息
         // 声明相关变量
         let [ 
           ckConfig,             // 出库 相关配置
@@ -600,7 +649,7 @@ export default {
       let info = { warehouseAction: type, config: []} ;
       for (let item of config) {
         if (!item.hiddenInRun) {
-          item.fieldValue = this.warehouse[item.fieldCode] || '';
+          //item.fieldValue = this.warehouse[item.fieldCode] || '';
           info.config.push(item);
         }
       }
@@ -635,15 +684,6 @@ export default {
         matter.dates = dates;
         matter.matterComment = matterComment;
       });
-    },
-    // 查看更多
-    onShowMore(item, index, key) {
-      if (key) {
-        this.matterDetailKey = key;
-      }
-      this.matterDetail = JSON.parse(JSON.stringify(item));
-      this.matterDetailIndex = index;
-      this.showMatterDetail = true;
     }
   },
   created() {

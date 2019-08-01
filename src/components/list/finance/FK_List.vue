@@ -44,6 +44,14 @@ export default {
           value: "transCode"
         },
         {
+          name: "往来名称",
+          value: "dealerName_dealerDebit"
+        },
+        {
+          name: "资金账户",
+          value: "fundName_cashOutCode"
+        },
+        {
           name: "经办人",
           value: "handlerName"
         }

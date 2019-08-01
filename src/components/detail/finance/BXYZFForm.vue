@@ -1,9 +1,12 @@
 <template>
   <div class="detail_wrapper">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
-
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
+      <!-- 往来账户可编辑-->
+      <pop-dealer-list :default-value="dealerInfo" @sel-item="selDealer" request="5" :params="cashParams"
+                     v-show="dealerConfig.length && !isEditDealer" required>
+      </pop-dealer-list>
       <!-- 往来联系部分 交易基本信息-->
       <contact-part :contact-info="dealerInfo" :configs="dealerConfig" :showAddress=false v-show="dealerConfig.length"></contact-part>
       <!-- 工作流 -->
@@ -40,7 +43,7 @@
         <template slot="other">
           <div class='each_property vux-1px-t'>
             <label>支付金额</label>
-            <input type='number' v-model.number="cashInfo.tdAmountCopy1" placeholder="请输入" class='property_val' @blur="checkAmt(cashInfo, 'tdAmountCopy1', cashInfo.tdAmountCopy1)"/>
+            <input  readonly="readonly" type='number' v-model.number="cashInfo.tdAmountCopy1" placeholder="请输入" class='property_val' @blur="checkAmt(cashInfo, 'tdAmountCopy1', cashInfo.tdAmountCopy1)"/>
           </div>
         </template>
       </pop-cash-list>
@@ -64,7 +67,7 @@
         </div>
       </div>
       <!-- 项目 -->
-      <div class="form_content">
+      <!-- <div class="form_content">
         <div class="main_content">
           <div :class="{'vux-1px-t': cIndex > 0}" v-for="(cItem, cIndex) in baseinfoExtConfig" :key="cIndex">
             <div class="each_info">
@@ -73,7 +76,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       <!-- 备注 -->
       <div class="comment">
         <form-cell cellTitle='备注' :cellContent="orderInfo.biComment"></form-cell>
@@ -99,9 +102,11 @@
   import workFlow from 'components/public/workFlow'
   import contactPart from 'components/detail/commonPart/ContactPart'
   import PopCashList from 'components/Popup/finance/PopCashList'
+  import PopDealerList from 'components/Popup/dealer/PopDealerList'
   //公共方法引入
   import {accAdd, accSub} from 'plugins/calc/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
+import { constants } from 'crypto';
 
   export default {
     data() {
@@ -137,8 +142,9 @@
       // 判断纸巾账户的支付金额是否可编辑
       isEditAdmout() {
         let isEdit = false;
+
         this.otherConfig.forEach(item => {
-          if (item.fieldCode === "tdAmountCopy1"){
+          if (item.fieldCode === "fundName_cashInCode"){
            isEdit = item.readOnly;
           }
         })
@@ -152,11 +158,21 @@
           }
         }
         return isEdit
+      },
+      // 判断纸巾账户的支付金额是否可编辑
+      isEditDealer() {
+        let isEdit = false;
+        this.config[2].items.forEach(item => {
+          if (item.fieldCode === "dealerName_dealerCodeCredit"){
+           isEdit = item.readOnly;
+          }
+        })
+        return isEdit
       }
     },
     mixins: [detailCommon],
     components: {
-      workFlow, RAction, contactPart, XInput, PopCashList
+      workFlow, RAction, contactPart, XInput, PopCashList, PopDealerList
     },
     methods: {
       checkAmt(item, key, val) {
@@ -185,7 +201,18 @@
           this.dealerInfo = formData.inPut.dataSet[0];
           this.cashInfo = formData.outPut.dataSet[0];
           this.costList = dataSet;
-
+          this.dealerInfo = {
+            ...this.dealerInfo,
+            dealerName_projectManager: formData.order.dealerName_projectManager,
+            expectStartDate_project: formData.order.expectStartDate_project,
+            expectEndDate_project: formData.order.expectEndDate_project,
+            projectAddress_project: formData.order.projectAddress_project,
+            budgetIncome_project: formData.order.budgetIncome_project,
+            nickname: this.dealerInfo.dealerName_dealerCodeCredit,
+            dealerLabelName: this.dealerInfo.crDealerLabel,
+            dealerCode: this.dealerInfo.dealerCodeCredit,
+            amntBal: this.dealerInfo.thenAmntBal,
+          }
           // 当前审批人为会计时，自动赋值本次支付金额
           if (this.isAccounting) {
             let {thenAmntBal = 0, thenAlreadyAmnt = 0} = this.dealerInfo;
@@ -200,7 +227,7 @@
       // 同意的处理
       agreeHandler() {
         if (this.isApproval || this.isAccounting || this.isCashier) {
-          if (this.isCashier && !this.cashInfo.fundCode) {
+          if (this.isCashier && !this.cashInfo.cashInCode) {
             this.$vux.alert.show({
               content: '请选择资金账户',
             });
@@ -230,16 +257,22 @@
             let cashInfo = this.cashInfo;
             formData.outPut = {
               dataSet: [{
-                fundName_cashInCode: cashInfo.fundName_cashInCode || cashInfo.fundName,
-                cashInCode: cashInfo.cashInCode || cashInfo.fundCode,
-                cashType_cashInCode: cashInfo.cashType_cashInCode || cashInfo.fundType,
-                thenAmntBalCopy1: cashInfo.thenAmntBalCopy1 || cashInfo.thenAmntBal,
+                fundName_cashInCode: cashInfo.fundName_cashInCode,
+                cashInCode: cashInfo.cashInCode,
+                cashType_cashInCode: cashInfo.cashType_cashInCode,
+                thenAmntBalCopy1: cashInfo.thenAmntBalCopy1,
                 tdAmountCopy1: cashInfo.tdAmountCopy1,
                 tdIdCopy1: cashInfo.tdIdCopy1,
               }],
             }
           }
-
+          if (this.dealerConfig.length) {
+            formData.inPut = {
+              dataSet: [{
+                ...this.dealerInfo
+              }],
+            }
+          }
           this.saveData(formData);
           return true
         }
@@ -268,11 +301,30 @@
       },
       // 选中资金
       selCash(item) {
-        this.cashInfo = {
-          ...this.cashInfo,
-          ...item,
-        };
+        // this.cashInfo = {
+        //   ...this.cashInfo,
+        //   ...item,
+        // };
+        this.cashInfo.fundName_cashInCode = item.fundName;
+        this.cashInfo.cashInCode = item.fundCode;
+        this.cashInfo.thenAmntBalCopy1 = item.thenAmntBal;
+        this.cashInfo.cashType_cashInCode = item.fundType;
       },
+      selDealer(item) {
+        this.dealerInfo = {
+          ...this.dealerInfo,
+          dealerCodeCredit: item.dealerCode,
+          dealerCode_dealerCodeCredit: item.dealerCode,
+          crDealerLabel: item.dealerLabelName,
+          dealerName_dealerCodeCredit: item.nickname,
+          thenAmntBal: item.amntBal,
+          differenceAmount: item.amntBal,
+          nickname: item.nickname,
+          dealerLabelName: item.dealerLabelName,
+          dealerCode: item.dealerCode,
+          amntBal: item.amntBal,
+        }
+      }
     }
   }
 </script>

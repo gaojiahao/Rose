@@ -7,6 +7,7 @@
         <div class="matter_name">
           {{item.inventoryName_transObjCode || item.facilityName_facilityObjCode || '该物料未获取到名称，请检查物料信息。'}}
         </div>
+        <div v-if="item.boxCode">{{item.boxCode}}</div>
         <div class="matter_info_item flex-start">
           <div class="matter_detail">
             <span class="matter_item_title">属性：</span>
@@ -15,7 +16,7 @@
           <div class="matter_detail">
             <span class="matter_item_title">产品规格：</span>
             <!-- <span class="matter_item_value">{{item.specification_transObjCode || item.specification_outPutMatCode || item.facilitySpecification_facilityObjCode || item.assMeasureDescription}}</span> -->
-            <span class="matter_item_value">{{item.specification_transObjCode || '无'}}</span>
+            <span class="matter_item_value">{{item.specification_transObjCode || item.specification_outPutMatCode || item.assMeasureDescription || '无'}}</span>
           </div>
         </div>
         <div class="matter_info_item">

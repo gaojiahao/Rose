@@ -97,11 +97,10 @@ export default {
     },
     // 编辑
     goEdit(){
-      let { name } = this.$route.query,
-          { folder, fileName } = this.$route.params;
+      let { name,folder, fileName } = this.$route.query;
       this.$router.push({
         path: `/fillForm/${folder}/${fileName}`,
-        query: { name, id: this.jobId }
+        query: { name, id: this.jobId,folder, fileName }
       })
     },
   },

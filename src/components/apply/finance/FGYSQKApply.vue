@@ -3,60 +3,49 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
-                      :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
-        <!-- 往来信息 -->
+                      :handle-org-list="handleORG" :user-role-list="userRoleList" :statusData = "currentStage"></pop-baseinfo>
         <pop-dealer-list :default-value="dealerInfo" @sel-item="selDealer">
           <template slot="other">
             <div class="amt-dealer">
               <span class="amt-dealer-item">申请金额: {{applicationAmount | numberComma(3)}}</span>
-              <!-- <span class="amt-dealer-item">本次支付: {{tdAmountCopy1 | numberComma(3)}}</span>
-              <span class="amt-dealer-item">本次支付后余额: {{differenceAmount | numberComma(3)}}</span> -->
             </div>
           </template>
         </pop-dealer-list>
-
-        <!-- 采购列表 -->
+        <!-- 欠款明细 -->
         <div class="materiel_list">
           <div class="order-info" @click="showOrder = true" v-if="!orderList.length">
             <div class="title">欠款明细</div>
-            <div class="mode">请选择欠款明细</div>
+            <div class="required">请选择欠款明细</div>
             <span class="iconfont icon-youjiantou r-arrow"></span>
           </div>
           <template v-else>
-            <div class="title">欠款明细</div>
             <div class="order-detail" :class="{'vux-1px-t': index !== 0}" v-for="(item, index) in orderList"
                  :key="index">
+              <div class="title">收票明细{{index+1}}<span class="iconfont icon-shanchu1" @click="deleteCost(sIndex)"></span></div>
               <div class="detail-item top">
-                <span class="info-item">{{item.popiCode}}</span>
+                <span class="info-item">收票号:{{item.popiCode}}</span>
               </div>
               <div class="detail-item">
-                <span class="info-item">采购订单号: {{item.poCode}}</span>
+                <span class="info-item">往来关系: {{item.crDealerLabel}}</span>
                 <span class="info-item">价税合计: {{item.thenTotalAmntBal | numberComma(3)}}</span>
               </div>
               <div class="detail-item">
+                <span class="info-item">预期付款日: {{item.expectedPaymentDate}}</span>
                 <span class="info-item">已核销: {{item.thenAlreadyAmnt | numberComma(3)}}</span>
                 <span class="info-item">待核销: {{item.thenAmntBal | numberComma(3)}}</span>
               </div>
               <div class="detail-item">
-                <span class="info-item" v-if="item.accountExpirationDate || item.accountExpirationDate === 0">账期到期日: {{item.accountExpirationDate}}</span>
                 <span class="info-item"
                       v-if="item.daysOfAccount || item.daysOfAccount === 0">账期天数: {{item.daysOfAccount}}</span>
                 <span class="info-item" v-if="item.ageOfAging || item.ageOfAging === 0">账龄天数: {{item.ageOfAging}}</span>
               </div>
               <div class="detail-item">
-                <span class="info-item" v-if="item.accountRemaingDays || item.accountRemaingDays === 0">账期剩余天数: {{item.accountRemaingDays}}</span>
+                <span class="info-item" >账期剩余天数: {{item.accountRemaingDays || -1}}</span>
                 <span class="info-item">已收票: {{item.invoicing | numberComma(3)}}</span>
                 <span class="info-item">待收票: {{item.pendingTicket || item.invoiced | numberComma(3)}}</span>
               </div>
-              <!-- <div class="detail-item">
-                <span class="info-item">本次支付后余额: {{item.differenceAmount}}</span>
-              </div> -->
-              <x-input class="" title="本次申请" text-align='right' placeholder='请填写' @on-blur="checkAmt(item, 'applicationAmount')"
+              <x-input class="required" title="本次申请" text-align='right' placeholder='请填写' @on-blur="checkAmt(item, 'applicationAmount')"
                        @on-focus="getFocus($event)" type='number' v-model.number='item.applicationAmount'></x-input>
-              <!-- <x-input title="本次支付" text-align='right' placeholder='请填写' @on-blur="checkAmt(item, 'tdAmount')" type='number'
-                       @on-focus="getFocus($event)" v-model.number='item.tdAmount'></x-input> -->
             </div>
           </template>
         </div>
@@ -73,10 +62,14 @@
           </template>
         </pop-cash-list> -->
 
-        <div class="materiel_list">
-          <group title="其他信息" class="costGroup">
-            <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
+        <!-- <div class="materiel_list">
+          <group title="备注" class="costGroup">
+            <x-textarea title="" v-model="formData.biComment" :max="100"></x-textarea>
           </group>
+        </div> -->
+        <div class='comment'>
+          <p class="commit-label vux-1px-b">备注</p>
+          <x-textarea v-model="formData.biComment" placeholder="请输入"></x-textarea>
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
         <!-- 采购单信息 -->
@@ -99,7 +92,7 @@
   } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/common/commonService'
+  import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
   import {findProjectApproval} from 'service/projectService'
   // mixins 引入
   import ApplyCommon from 'mixins/applyCommon'
@@ -110,8 +103,9 @@
   import RPicker from 'components/public/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
-  import {accAdd} from 'plugins/calc/decimalsAdd'
+  import {accAdd,accSub} from 'plugins/calc/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
+import { constants } from 'crypto';
 
   const DRAFT_KEY = 'FGYSQK_DATA';
   export default {
@@ -171,6 +165,10 @@
       },
     },
     methods: {
+      // 删除费用明细
+      deleteCost(index) {
+        this.orderList.splice(index, 1);
+      },
       // 提交
       submitOrder() {
         let warn = '';
@@ -184,26 +182,32 @@
         if (!warn) {
           this.orderList.every(item => {
             if (!item.popiCode) {
-              warn = '请选择采购入库号';
+              warn = '请选择收票号';
               return false
             }
+            item.tdAmount = item.applicationAmount;
+            item.differenceAmount = toFixed(accSub(item.thenAmntBal, item.tdAmount));
             dataSet.push({
-              tdId: item.tdId || '',
+              // tdId: item.tdId || '',
               transMatchedCode: item.popiCode,
               orderCode: item.poCode,
+              drDealerLabel: item.crDealerLabel,
               thenTotalAmntBal: item.thenTotalAmntBal,
+              dealerDebit: this.dealerInfo.dealerCode,
               thenAlreadyAmnt: item.thenAlreadyAmnt,
               thenAmntBal: item.thenAmntBal,
+              expectedPaymentDate: item.expectedPaymentDate,
               accountExpirationDate: item.accountExpirationDate,
               daysOfAccount: item.daysOfAccount,
               ageOfAging: item.ageOfAging,
-              accountRemaingDays: item.accountRemaingDays,
+              accountRemaingDays: item.accountRemaingDays ? item.accountRemaingDays : -1,
               invoiced: item.invoicing,
               pendingTicket: item.invoiced,
               applicationAmount: item.applicationAmount,
               tdAmount: item.tdAmount,
               differenceAmount: item.differenceAmount,
             });
+
             return true
           });
         }
@@ -235,7 +239,7 @@
             let inputDataSet = {
               dealerName_dealerDebit: this.dealerInfo.nickname,
               dealerDebit: this.dealerInfo.dealerCode,
-              drDealerLabel: this.dealerInfo.dealerLabelName,
+              // drDealerLabel: this.dealerInfo.dealerLabelName,
               thenAmntBalCopy1: this.dealerInfo.amntBal,
               applicationAmount: this.applicationAmount,
               tdAmountCopy1: this.tdAmountCopy1,
@@ -246,7 +250,9 @@
               cashOutCode: this.cashInfo.fundCode,
               cashType_cashOutCode: this.cashInfo.fundType,
               thenAmntBal: this.cashInfo.thenAmntBal,
-              tdAmount: this.cashInfo.tdAmount,
+              tdAmount: this.applicationAmount,
+              dealerDebitCopy1: this.dealerInfo.dealerCode,
+              drDealerLabelCopy1: this.dealerInfo.dealerLabelName,
             };
             if (this.transCode) {
               inputDataSet.tdIdCopy1 = this.dealerInfo.tdIdCopy1;
@@ -328,6 +334,7 @@
             item.popiCode = item.transMatchedCode;
             item.poCode = item.orderCode;
             item.invoicing = item.invoiced;
+            item.crDealerLabel = item.drDealerLabel;
           });
           this.dealerInfo = {
             ...dealerInfo,
@@ -374,7 +381,6 @@
       // 选中采购明细
       selOrder(val) {
         this.orderList = JSON.parse(val);
-        this.orderList
       },
       // 选中资金
       selCash(val) {
@@ -438,14 +444,18 @@
   }
 
   .costGroup {
-    /deep/ > .vux-no-group-title {
+    .weui-cells__title {
+      padding-left: 0;
+      font-size: 0.12rem;
+    }
+    .vux-no-group-title {
       margin-top: 0.08rem;
     }
-    /deep/ > .weui-cells:after {
+    .weui-cells:after {
       border-bottom: none;
     }
     .vux-cell-box {
-      /deep/ > .weui-cell {
+      .weui-cell {
         padding: 10px 0;
       }
       &:before {
@@ -461,7 +471,7 @@
     }
   }
 
-  /deep/ > .weui-cells__title {
+  .weui-cells__title {
     padding-left: 0;
     font-size: 0.12rem;
   }
@@ -483,7 +493,7 @@
   // 新增更多
   .handle_part {
     margin: 0 auto;
-    width: 95%;
+    //width: 95%;
     text-align: center;
     position: relative;
     background-color: #fff;
@@ -525,6 +535,12 @@
     &:last-child {
       margin-bottom: 0;
     }
+    .title {
+      span{
+          color: red;
+          float: right;
+        }
+    }
     .detail-item {
       display: flex;
       flex-wrap: wrap;
@@ -543,6 +559,22 @@
       font-size: .14rem;
       &:before {
         left: 0;
+      }
+    }
+  }
+  .materiel_list {
+    //width: 95%;
+    //margin: .1rem auto;
+    background: #fff;
+    margin-top: 0.1rem;
+    box-sizing: border-box;
+    padding: .06rem .1rem;
+    .title {
+      color: #757575;
+      font-size: .12rem;
+      .required {
+        color: required;
+        font-weight: bold;
       }
     }
   }

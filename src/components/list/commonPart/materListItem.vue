@@ -44,8 +44,9 @@
                 <div>
                   <p>编码: {{mItem.inventoryCode}}</p>
                   <p>
-                    <span>产品规格: {{mItem.specification_outPutMatCode || mItem.specification || '无'}}</span>
-                    <span>单位: {{mItem.measureUnit_outPutMatCode || mItem.measureUnit || mItem.assMeasureUnit|| '无'}}</span>
+                    <span v-if="mItem.boxCode">箱码: {{mItem.boxCode}}</span>
+                    <span v-if="mItem.specification_outPutMatCode || mItem.specification">产品规格: {{mItem.specification_outPutMatCode || mItem.specification || '无'}}</span>
+                    <span v-if="mItem.measureUnit_outPutMatCode || mItem.measureUnit || mItem.assMeasureUnit">单位: {{mItem.measureUnit_outPutMatCode || mItem.measureUnit || mItem.assMeasureUnit|| '无'}}</span>
                   </p>
                 </div>
                 <div class="matter_num_part">

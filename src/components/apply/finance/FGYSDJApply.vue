@@ -1,11 +1,12 @@
 <template>
+<!--供应商预付歀-->
   <div class="pages fgysqk-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
+        <!-- <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker> -->
         <!-- 往来信息 -->
         <pop-dealer-list request="1" :default-value="dealerInfo" @sel-item="selDealer">
           <template slot="other">
@@ -22,14 +23,14 @@
         <!-- 采购列表 -->
         <div class="materiel_list">
           <div class="order-info" @click="showOrder = true" v-if="!orderList.length">
-            <div class="title">定金明细</div>
-            <div class="mode">请选择定金明细</div>
+            <div class="title">采购明细</div>
+            <div class="mode">请选择采购明细</div>
             <span class="iconfont icon-youjiantou r-arrow"></span>
           </div>
           <template v-else>
-            <div class="title">定金明细</div>
             <div class="order-detail" :class="{'vux-1px-t': index !== 0}" v-for="(item, index) in orderList"
                  :key="index">
+              <div class="title">定金明细{{index+1}}<span class="iconfont icon-shanchu1" @click="deleteCost(sIndex)"></span></div>
               <div class="detail-item top">
                 <span class="info-item">{{item.transCode}}</span>
               </div>
@@ -67,8 +68,8 @@
         </pop-cash-list> -->
 
         <div class="materiel_list">
-          <group title="其他信息" class="costGroup">
-            <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
+          <group title="备注" class="costGroup">
+            <x-textarea title="" v-model="formData.biComment" :max="100"></x-textarea>
           </group>
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
@@ -92,7 +93,7 @@
   } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/common/commonService'
+  import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
   import {findProjectApproval} from 'service/projectService'
   // mixins 引入
   import ApplyCommon from 'mixins/applyCommon'
@@ -162,6 +163,10 @@
       },
     },
     methods: {
+      // 删除费用明细
+      deleteCost(index) {
+        this.orderList.splice(index, 1);
+      },
       // 提交
       submitOrder() {
         let warn = '';
@@ -170,7 +175,7 @@
           warn = '请选择供应商';
         }
         if (!warn && !this.orderList.length) {
-          warn = '请选择定金明细'
+          warn = '请选择采购明细'
         }
         // if (!warn) {
         //   this.orderList.every(item => {
@@ -206,6 +211,7 @@
           dataSet.push({
             tdId: item.tdId || '',
             transMatchedCode: item.transCode,
+            drDealerLabel: this.dealerInfo.dealerLabelName,
             thenTotalAmntBal: item.thenAmntBal,
             differenceAmountCopy1: item.amount,
             thenAlreadyAmnt: item.amnted,
@@ -213,6 +219,7 @@
             applicationAmount: item.tdAmount,
             tdAmountCopy1: item.tdAmount,
             dealerDebit: this.dealerInfo.dealerCode,
+
           });
         })
         this.$vux.confirm.show({
@@ -254,12 +261,13 @@
               // tdAmount: this.cashInfo.tdAmount,
               ...this.cashInfo,
               tdAmount: this.applicationAmount,
-
+              dealerDebitCopy1: this.dealerInfo.dealerCode,
+              drDealerLabelCopy1: this.dealerInfo.dealerLabelName,
             };
-            if (this.transCode) {
-              inputDataSet.tdIdCopy1 = this.dealerInfo.tdIdCopy1;
-              outputDataSet.tdId = this.cashInfo.tdId;
-            }
+            // if (this.transCode) {
+            //   inputDataSet.tdIdCopy1 = this.dealerInfo.tdIdCopy1;
+            //   outputDataSet.tdId = this.cashInfo.tdId;
+            // }
             let submitData = {
               listId: this.listId,
               biComment: this.formData.biComment,
@@ -465,14 +473,14 @@
   }
 
   .costGroup {
-    /deep/ > .vux-no-group-title {
+    .vux-no-group-title {
       margin-top: 0.08rem;
     }
-    /deep/ > .weui-cells:after {
+    .weui-cells:after {
       border-bottom: none;
     }
     .vux-cell-box {
-      /deep/ > .weui-cell {
+      .weui-cell {
         padding: 10px 0;
       }
       &:before {
@@ -488,7 +496,7 @@
     }
   }
 
-  /deep/ > .weui-cells__title {
+  .weui-cells__title {
     padding-left: 0;
     font-size: 0.12rem;
   }
@@ -510,7 +518,7 @@
   // 新增更多
   .handle_part {
     margin: 0 auto;
-    width: 95%;
+    width: 100%;
     text-align: center;
     position: relative;
     background-color: #fff;
@@ -552,6 +560,12 @@
     &:last-child {
       margin-bottom: 0;
     }
+    .title {
+      span{
+          color: red;
+          float: right;
+        }
+    }
     .detail-item {
       display: flex;
       flex-wrap: wrap;
@@ -570,6 +584,22 @@
       font-size: .14rem;
       &:before {
         left: 0;
+      }
+    }
+  }
+  .materiel_list {
+    //width: 95%;
+    //margin: .1rem auto;
+    background: #fff;
+    margin-top: 0.1rem;
+    box-sizing: border-box;
+    padding: .06rem .1rem;
+    .title {
+      color: #757575;
+      font-size: .12rem;
+      .required {
+        color: required;
+        font-weight: bold;
       }
     }
   }

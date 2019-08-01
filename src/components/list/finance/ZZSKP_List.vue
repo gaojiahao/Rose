@@ -21,7 +21,26 @@
 <script>
   import listCommon from 'mixins/bizListCommon'
   export default {
-    mixins: [listCommon]
+    mixins: [listCommon],
+    data() {
+      return {
+        filterList: [
+          {
+            name: '交易号',
+            value: 'transCode',
+          }, {
+            name: '经办人',
+            value: 'handlerName',
+          }, {
+            name: '物料名称',
+            value: 'inventoryName_transObjCode',
+          }, {
+            name: '往来名称',
+            value: 'dealerName_dealerCodeCredit',
+          },
+        ]
+      }
+    },
   }
 </script>
 

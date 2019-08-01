@@ -58,7 +58,6 @@
 // 请求引入
 import { isMyflow } from 'service/detailService'
 import { getAllMsgList } from 'service/msgService'
-import { getWorkFlow } from 'service/detailService'
 // 组件引入
 import search from 'components/search/search'
 import RScroll from 'plugins/scroll/RScroll'
@@ -98,16 +97,18 @@ export default {
           if (tableContent.length > 0) {
             let {isMyTask, nodeName} = tableContent[0];
             if (isMyTask === 1 && nodeName === '重新提交') {
-              path = `/fillform/${folder}/${packagePath}`;
+              path = `/fillform/${listId}/0`;
             } else {
-              path = `/detail/${folder}/${packagePath}`;
+              path = `/detail/${listId}/0`;
             }
           } else {
-            path = `/detail/${folder}/${packagePath}`;
+            path = `/detail/${listId}/0`;
           }
           let query = {
             listId,
             name: title,
+            folder,
+            fileName:packagePath,
             transCode : item.businessKey,
           }
           this.$router.push({

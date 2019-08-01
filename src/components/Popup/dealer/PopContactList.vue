@@ -3,9 +3,13 @@
     <div class="contact-content vux-1px-t" @click="showPop = !showPop">
       <div class="contact-info" >
         <template v-if="contactInfo.dealerName">
-          <div>
-            <span class="dealer-name">{{contactInfo.dealerName}}</span>
-            <span>{{contactInfo.dealerMobilePhone}}</span>
+          <div class="cp-info">
+            <span class="cp-ads-box">联系人</span>
+            <span class="cp-ads">{{contactInfo.dealerName}}</span>
+          </div>
+          <div class="cp-info">
+            <span class="cp-ads-box">手机</span>
+            <span class="cp-ads">{{contactInfo.dealerMobilePhone}}</span>
           </div>
         </template>
         <template v-else>
@@ -84,7 +88,7 @@
         bScroll: null,
         contactInfo: {},        // 联系人信息
         dealerList: [],
-        contactList: [],        // 联系人列表
+        contactList:[],        // 联系人列表
         scrollOptions: {
           pullUpLoad: true,
         },
@@ -100,7 +104,8 @@
           if (newVal) {
             newId = newVal.id || '';
           } 
-          if (JSON.stringify(oldVal) !== '{}' && oldId !== newId) {
+          if (JSON.stringify(oldVal) !== '{}') {
+          //if (JSON.stringify(oldVal) !== '{}' && oldId !== newId) {
             this.resetCondition();
             this.getContact();
           }
@@ -148,6 +153,9 @@
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.contactList = this.page === 1 ? tableContent : [...this.contactList, ...tableContent];
+          //获取往来的同时赋予默认联系人
+          this.contactInfo = Object.freeze({...this.contactList[0]})
+          this.$emit('sel-contact', this.contactInfo);
           this.$nextTick(() => {
             this.$refs.bScroll.finishPullUp();
           })
@@ -195,6 +203,22 @@
     box-sizing: border-box;
     font-size: .14rem;
     color: #333;
+    .cp-ads-box {
+      margin-right: .17rem;
+      height: .14rem;
+      font-size: .12rem;
+      width: .5rem;
+    }
+    .cp-ads {
+      flex: 1;
+      font-size: .12rem;
+      color: #999;
+    }
+    .cp-info {
+      color: #111;
+      display: flex;
+      margin-top: .06rem;
+    }
     .contact-content {
      padding: .18rem 0;
       .contact-info{

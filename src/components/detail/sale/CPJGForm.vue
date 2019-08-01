@@ -8,9 +8,7 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <matter-list :matter-list="matterList" @on-show-more="onShowMore"></matter-list>
-      <!-- 物料详情 -->
-      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
+      <matter-list :matter-list="matterList"></matter-list>
       <!-- 备注 -->
       <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
       <!-- 审批操作 -->

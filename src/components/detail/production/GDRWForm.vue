@@ -4,7 +4,7 @@
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 仓库信息 -->
-      <warehouse-content :warehouse-config="warehouseConfig"></warehouse-content>
+      <warehouse-content :warehouse-config="warehouseConfig" :warehouse="warehouse"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
@@ -77,19 +77,31 @@ export default {
         data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
         this.orderInfo = data.formData;
         this.workInfo = order.dataSet;
+        // this.warehouse = {
+        //   ...this.warehouse,
+        //   containerCode: order.containerCode,
+        //   storehouseInCode: order.storehouseInCode,
+        //   warehouseAddress_containerCode: order.warehouseAddress_containerCode,
+        //   warehouseAddress_storehouseInCode: order.warehouseAddress_storehouseInCode,
+        //   warehouseName_containerCode: order.warehouseName_containerCode,
+        //   warehouseName_storehouseInCode: order.warehouseName_storehouseInCode,
+        //   warehouseType_containerCode: order.warehouseType_containerCode,
+        //   warehouseType_storehouseInCode: order.warehouseType_storehouseInCode,
+        //   // warehouseName: order.warehouseName_containerCode,
+        //   // warehouseType: order.warehouseType_containerCode,
+        //   // warehouseAddress: order.warehouseAddress_containerCode,
+        // }
         this.warehouse = {
-          ...this.warehouse,
-          containerCode: order.containerCode,
-          storehouseInCode: order.storehouseInCode,
-          warehouseAddress_containerCode: order.warehouseAddress_containerCode,
-          warehouseAddress_storehouseInCode: order.warehouseAddress_storehouseInCode,
-          warehouseName_containerCode: order.warehouseName_containerCode,
-          warehouseName_storehouseInCode: order.warehouseName_storehouseInCode,
-          warehouseType_containerCode: order.warehouseType_containerCode,
-          warehouseType_storehouseInCode: order.warehouseType_storehouseInCode,
-          // warehouseName: order.warehouseName_containerCode,
-          // warehouseType: order.warehouseType_containerCode,
-          // warehouseAddress: order.warehouseAddress_containerCode,
+          containerInWarehouseManager: data.formData.containerInWarehouseManager,
+          warehouseName_containerCode : order.warehouseName_containerCode,     
+          containerCode : order.containerCode,     
+          warehouseType_containerCode : order.warehouseType_containerCode,     
+          warehouseAddress_containerCode : order.warehouseAddress_containerCode,     
+          containerInWarehouseManager : this.orderInfo.containerInWarehouseManager,                  //仓管员
+          warehouseName_storehouseInCode : order.warehouseName_storehouseInCode,                     //库区
+          storehouseInCode : order.storehouseInCode,       //库位编码
+          warehouseType_storehouseInCode : order.warehouseType_storehouseInCode,     //库位仓库类型
+          warehouseAddress_storehouseInCode : order.warehouseAddress_storehouseInCode,    //仓库地址       
         }
         this.workFlowInfoHandler();
       })

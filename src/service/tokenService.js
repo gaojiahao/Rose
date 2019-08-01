@@ -1,54 +1,50 @@
 import { querystring } from 'vux'
 import { corpid, secret, agentid, redirect_uri } from '@/plugins/ajax/conf'
+import {isPC,isQYWX,} from '@/plugins/platform/index'
 import Fly from 'flyio/dist/npm/fly'
 import * as dd from 'dingtalk-jsapi'
 import router from '../router';
 
 const fly = new Fly();
+const storage = window[isPC ? 'localStorage' : 'sessionStorage'];
 const ROSE_TOKEN_KEY = 'ROSE_LOGIN_TOKEN';
-const PC_RFD_TOKEN_KEY = 'roleplay-token';
 
 let tokenService = {
   // 清除token
   clean() {
-    window.sessionStorage.removeItem(ROSE_TOKEN_KEY);
-    window.localStorage.removeItem(PC_RFD_TOKEN_KEY);
+    storage.removeItem(ROSE_TOKEN_KEY);
   },
   // 设置token
   setToken(data) {
-    window.sessionStorage.setItem(ROSE_TOKEN_KEY, JSON.stringify({
+    storage.setItem(ROSE_TOKEN_KEY, JSON.stringify({
       entityId: data.entityId,
       token: data.token,
       name: data.name,
       department: data.department,
       avatar: data.avatar,
       position: data.position,
-      timestamp: +new Date()
-    }));
-    window.localStorage.setItem(PC_RFD_TOKEN_KEY, JSON.stringify({
       key1: data.key1,
       active: data.active,
-      entityId: data.entityId,
-      token: data.token
+      timestamp: +new Date()
     }));
   },
   // 获取token
-  getToken() {
-    let token = JSON.parse(window.sessionStorage.getItem(ROSE_TOKEN_KEY)) || {};
+  getToken(all) {
+    let token = JSON.parse(storage.getItem(ROSE_TOKEN_KEY)) || {};
+    if(all)return token;
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
     if (token['token']) {
       let timestamp = token.timestamp;
       let timeCalc = new Date() - timestamp;
       if (isQYWX && (timeCalc > (2 * 3600 * 1000))) {
         return ''
-      }
-      if (timeCalc > (12 * 3600 * 1000)) { // 设置12小时过期时间
+      } else if (timeCalc > (12 * 3600 * 1000)) { // 设置12小时过期时间
         return ''
       }
+      return token['token'];
     } else {
       return ''
     }
-    return token['token']
   },
   // 登录
   login() {
@@ -56,9 +52,9 @@ let tokenService = {
     this.clean();
     let query = querystring.parse(location.search.slice(1));
     let code = query.code;
-    // 是否为企业微信客户端
-    let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
 
+    let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
+    
     // 根据环境不同 调用不同的登录接口
     if (isQYWX) {
       if(code != null){
@@ -69,16 +65,15 @@ let tokenService = {
     } else if (dd.ios || dd.android) {
       return this.DDLogin();
     } else {
-     // router.push({path:'/login'});
       router.push('/login');
       return new Promise((resolve, reject)=>{
-
+        resolve();
       })
     }
   },
   // PC端登录，默认返回token
   pcLogin(userCode, password, key = 'token') {
-    console.log('进入pc了')
+    //console.log('进入pc了')
     return new Promise((resolve, reject) => {
       let params = {
         method: 'post',
@@ -88,8 +83,6 @@ let tokenService = {
           'Content-Type': 'application/json',
         },
         data: {
-          // password: '123456',
-          // userCode: 'jiangxing',
           password: password,
           userCode: userCode
         }
@@ -149,6 +142,7 @@ let tokenService = {
     })
   },
   DDLogin(key = 'token') {
+    var me = this;
     return new Promise((resolve, reject) => {
       dd.ready(function () {
         dd.runtime.permission.requestAuthCode({
@@ -157,21 +151,16 @@ let tokenService = {
             let code = info.code;
             fly.get(`/H_roleplay-si/ddLogin?code=${code}`).then((res) => {
               let data = res.data;
-              window.sessionStorage.setItem(ROSE_TOKEN_KEY, JSON.stringify({
+              me.setToken({
                 entityId: data.entityId,
                 token: data.token,
                 name: data.name,
                 department: data.department,
                 avatar: data.avatar,
                 position: data.position,
-                timestamp: +new Date()
-              }));
-              window.localStorage.setItem(PC_RFD_TOKEN_KEY, JSON.stringify({
                 key1: data.key1,
-                active: data.active,
-                entityId: data.entityId,
-                token: data.token
-              }));
+                active: data.active
+              });
               resolve(data[key])
             }).catch(function (error) {
               let res = error.response;

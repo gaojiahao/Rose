@@ -211,7 +211,6 @@
       // 监听用于根据（生产日期+保质期天数）计算有效期
       chosenMatter: {
         handler(val) {
-          console.log('val',val);
           if(val.warehouseName_containerCodeOut) {
             for (let dItem of this.config.editPart){
               if (dItem.fieldCode == "warehouseName_containerCodeOut"){
@@ -317,7 +316,7 @@
         let warn = '';
         this.config.editPart.every(item => {
           if (!item.allowBlank) {
-            if ((Array.isArray(this.chosenMatter[item.fieldCode]) && !this.chosenMatter[item.fieldCode].length) || (!this.chosenMatter[item.fieldCode]&&(this.chosenMatter[item.fieldCode].toString()==''))) {
+            if ((Array.isArray(this.chosenMatter[item.fieldCode]) && !this.chosenMatter[item.fieldCode].length) || (!this.chosenMatter[item.fieldCode])) {
               warn = item.text + '不能为空';
               return false
             }

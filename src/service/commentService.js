@@ -67,6 +67,7 @@ export let savePraise = (commentId = '') => {
 export let isSubscribeByRelationKey = (relationKey = '') => {
   return $flyio.ajax({
     url: '/H_roleplay-si/comment/isSubscribeByRelationKey',
+    dataType:'text',
     data: {
       relationKey,
       type: 'instance'

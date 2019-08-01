@@ -33,6 +33,7 @@
         </div>
       </div>
     </div>
+    <pop-matter-detail :show="showMatterDetail" :item="matterDetail" :check-amt="checkAmt" v-model="showMatterDetail" @on-confirm="doDetailEdit"></pop-matter-detail>
   </div>
 </template>
 
@@ -43,6 +44,7 @@ import {numberComma} from 'vux'
 import {toFixed} from '@/plugins/calc'
 // 内部组件引入
 import MatterItem from 'components/detail/commonPart/MatterItem'
+import PopMatterDetail from 'components/Popup/matter/PopMatterDetail'
 
 export default {
   name: 'MatterList',
@@ -63,13 +65,24 @@ export default {
       type: String,
       default: ''
     },
+    btnIsHide: {
+        type: Boolean,
+        default: false
+    },
+    checkAmt: {
+        type: Function
+    }
   },
-  components: { MatterItem },
+  components: { MatterItem,PopMatterDetail },
   filters: { toFixed, numberComma },
   data() {
     return {
       orderListMap: {},
       showAllMatter: false,
+      showMatterDetail:false,
+      matterDetail:{},
+      matterDetailIndex:0,
+      matterDetailKey:0
     }
   },
   watch: {
@@ -87,7 +100,16 @@ export default {
   },
   methods: {
     onShowMore(item, index, key) {
-      this.$emit('on-show-more', item, index, key);
+      this.matterDetail = JSON.parse(JSON.stringify(item));
+      this.showMatterDetail = true;
+      this.matterDetailIndex = index;
+      if (key) {
+        this.matterDetailKey = key;
+      }
+      //this.$emit('on-show-more', item, index, key);
+    },
+    doDetailEdit:function(detail){
+        this.$emit('on-detailEdit',detail,this.matterDetailIndex,this.matterDetailKey)
     },
     clickMore(key) {
       // 显示更多物料
@@ -172,5 +194,4 @@ export default {
       }
     }
   }
-
 </style>

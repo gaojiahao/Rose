@@ -56,7 +56,7 @@
   // 请求 引入
   import { getSOList } from 'service/detailService'
   import { getDepartMentWage, getAllRoleInfo } from 'service/hr/employeeService'
-  import { submitAndCalc, saveAndStartWf, saveAndCommitTask, getDictByType } from 'service/common/commonService'
+  import { submitAndCalc, saveAndStartWf, saveAndCommitTask, getDictByType } from 'service/commonService'
   // mixins 引入
   import common from 'mixins/applyCommon'
   // 组件引入

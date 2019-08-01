@@ -58,7 +58,7 @@
 
 <script>
 import {Icon, Popup,dateFormat} from 'vux'
-import {getList} from 'service/common/commonService'
+import {getList} from 'service/commonService'
 import {getListView} from 'service/detailService'
 import RScroll from 'plugins/scroll/RScroll'
 import MSearch from 'components/search/search'
@@ -184,8 +184,10 @@ export default {
       this.showPop = false;
       let { folder, file } = this.idInfo;
       this.$router.push({
-        path: `/detail/${folder}/${fileName}`,
+        path: `/detail/0/${fileName}`,
         query: {
+          fileName:file,
+          folder,
           name: item.transTypeName,
           transCode: item.transCode,
           fromRalted: true

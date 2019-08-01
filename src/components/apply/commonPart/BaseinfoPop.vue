@@ -12,7 +12,7 @@
       <r-picker class="vux-1px-b" title="经办组织" :data="groupList" :value="group" 
                 v-model="group" :required="requiredField === 'group'" @on-change="changeGroup"></r-picker>
       <r-picker class="vux-1px-b" title="经办职位" :data="roleList" :value="role" v-model="role" @on-change="changeRole"></r-picker>
-      <r-picker title="流程状态" :data="statusData" v-model="biProcessStatus" :value="biProcessStatus" v-if="showStatus"></r-picker>
+      <r-picker title="流程状态" :data="statusData" v-model="biProcessStatus" :value="biProcessStatus" v-if="biProcessStatus"></r-picker>
     </div>
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
@@ -48,7 +48,7 @@
   // vux 引入
   import {Popup, TransferDom, LoadMore} from 'vux'
   // 请求 引入
-  import {listUsers, getGroupByUserId, getRoleByUserId} from 'service/common/commonService'
+  import {listUsers, getGroupByUserId, getRoleByUserId} from 'service/commonService'
   // 组件 引入
   import RScroll from 'plugins/scroll/RScroll'
   import DSearch from 'components/search/search'
@@ -197,7 +197,7 @@
         this.selItems.handlerRoleName = val;
         this.roleList.forEach(item => {
           if (item.name === val) {
-            this.selItems.handlerRole = item.userGroupId;
+            this.selItems.handlerRole = item.id;
             return false;
           }
         });
@@ -276,6 +276,7 @@
         }
         this.defaultORG();  // 默认 经办组织
         this.defaultUserRole(); // 默认 经办职位
+        this.biProcessStatus = this.statusData.length ? this.statusData[0].fieldVlaue : '';
       },
       // 默认（传入）经办组织
       defaultORG() {
@@ -284,7 +285,7 @@
           this.groupList.push({
             ...item,
             name: item.userGroupName,
-            value: item.userGroupName,
+            value: item.userGroupName
           })
         });
       },
@@ -294,8 +295,7 @@
         this.userRoleList.forEach(item => {
           this.roleList.push({
             ...item,
-            name: item.userGroupName,
-            value: item.userGroupName,
+            value: item.name,
           })
         });
       },
@@ -328,8 +328,8 @@
           tableContent.forEach(item => {
             this.roleList.push({
               ...item,
-              name: item.userGroupName,
               value: item.userGroupName,
+              name:item.userGroupName
             })
           });
           if (tableContent.length && this.isSetInitial) {

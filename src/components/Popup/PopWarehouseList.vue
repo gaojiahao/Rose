@@ -83,7 +83,7 @@
   import PopWarehouseStoreList from 'components/Popup/PopWarehouseStoreList'
 
   export default {
-    name: "PopWarehouseList",
+    name: "PopWareHouseList",
     props: {
       // 标题
       title: {

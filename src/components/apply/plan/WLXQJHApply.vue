@@ -24,7 +24,7 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater" v-for="(oItem, key,index) in orderList" :key="key">
+              <div class="each_mater" v-for="(oItem, key) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
                   <span class="order_title">加工订单号</span>
                   <span class="order_num">{{key}}</span>
@@ -163,7 +163,7 @@
   // 请求 引入
   import {getSOList} from 'service/detailService'
   import {getJGRKBom} from 'service/materService'
-  import {saveAndStartWf, saveAndCommitTask, submitAndCalc} from 'service/common/commonService'
+  import {saveAndStartWf, saveAndCommitTask, submitAndCalc} from 'service/commonService'
   // mixins 引入
   import applyCommon from 'mixins/applyCommon'
   // 组件引入

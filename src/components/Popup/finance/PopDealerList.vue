@@ -4,7 +4,7 @@
       <div class='user-content' v-if="selInfo.dealerCode">
         <div class="user-info">
           <div class="user-name">
-            <span class="user-tips">{{selInfo.dealerLabelName}}</span>
+            <span class="user-tips" v-if="selInfo.dealerLabelName">{{selInfo.dealerLabelName}}</span>
             <span>{{selInfo.dealerName || selInfo.nickname}}</span>
           </div>
         </div>
@@ -58,6 +58,7 @@
     getObjDealerBalByLabelName
   } from 'service/dealerService'
   import RScroll from 'plugins/scroll/RScroll'
+import { constants } from 'crypto';
 
   export default {
     name: "PopDealerList",
@@ -222,12 +223,12 @@
   }
 
   .required {
-    color: $required;
+    color: #3296FA;
     font-weight: bold;
   }
 
   .pop_dealer_list {
-    width: 95%;
+    //width: 95%;
     margin: .1rem auto;
     background: #fff;
     margin-bottom: 0.1rem;
@@ -236,8 +237,8 @@
     .title {
       color: #757575;
       font-size: .12rem;
-      &.required {
-        color: $required;
+      .required {
+        color: #3296FA;
         font-weight: bold;
       }
     }

@@ -30,6 +30,14 @@
   background: url('~assets/iconfont/add.png');
   background-size: cover;
 }
+.icon-add-task {
+  background: url('~assets/iconfont/taskAdd.png');
+  background-size: cover;
+}
+.icon-empty {
+  background: url('~assets/iconfont/empty-box.png');
+  background-size: cover;
+}
 .icon-dealer {
   background: url('~assets/iconfont/dealer.png');
   background-size: cover;
@@ -82,6 +90,11 @@
 
 .icon-dialog {
   background: url('~assets/iconfont/dialog.png');
+  background-size: cover;
+}
+
+.icon-log {
+  background: url('~assets/iconfont/task4.png');
   background-size: cover;
 }
 
@@ -222,5 +235,9 @@
 
 .icon-matter-bianji{
   background: url('~assets/iconfont/icon_bianji.png');
+  background-size: cover;
+}
+.icon-scroll-top{
+  background: url('~assets/iconfont/scrollTop.png');
   background-size: cover;
 }

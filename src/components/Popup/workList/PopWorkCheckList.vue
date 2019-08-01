@@ -88,7 +88,7 @@
             value: 'inventoryName',
           }, {
             name: '成品编码',
-            value: 'inventoryCode',
+            value: 'matCode',
           },
           {
             name: '工序名称',

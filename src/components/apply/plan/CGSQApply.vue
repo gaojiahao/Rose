@@ -41,7 +41,7 @@
 import { XTextarea, dateFormat } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/common/commonService'
+import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
 // mixins 引入
 import common from 'mixins/applyCommon'
 // 组件 引入
@@ -138,7 +138,7 @@ export default {
           // 因包装数量要为整数，先根据当前的申请数量计算包装数量，如有小数向上取整后，再反算本次申请数量
           if (JSON.stringify(item.assistQty).includes('.')){
             item.assistQty = Math.ceil(item.assistQty);
-            item.tdQty = accMul(item.assistQty, item.assMeasureScale)
+            item.tdQty = toFixed(accMul(item.assistQty, item.assMeasureScale));
           }
           
         }
@@ -192,7 +192,7 @@ export default {
       if (key === 'tdQty'){
         // 因包装数量要为整数，先根据当前的申请数量计算包装数量，如有小数向上取整后，再反算本次申请数量
         item.assistQty = Math.ceil(item.assistQty);
-        item.tdQty = accMul(item.assistQty, item.assMeasureScale)
+        item.tdQty = toFixed(accMul(item.assistQty, item.assMeasureScale));
       }
     },
     // 物料修改确定

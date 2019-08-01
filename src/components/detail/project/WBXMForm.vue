@@ -1,4 +1,5 @@
 <template>
+  <!--外部项目-->
   <div class="detail_wrapper xmlw-detail-container">
     <div class="basicPart">
       <!-- 经办信息 （订单、主体等） -->
@@ -26,6 +27,7 @@ import onlyWord from 'components/detail/commonPart/form-part/onlyWord'
 import detailCommon from 'mixins/detailCommon'
 // 插件引入
 import {accMul} from 'plugins/calc/decimalsAdd'
+
 
 export default {
   data() {

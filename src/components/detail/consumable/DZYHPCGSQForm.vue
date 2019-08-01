@@ -1,4 +1,5 @@
 <template>
+<!--低值易耗品采购申请-->
   <div class="detail_wrapper xsbj-detail-container">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
 
@@ -8,11 +9,9 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <matter-list :matter-list="matterList" @on-show-more="onShowMore"></matter-list>
+      <matter-list :matter-list="matterList"></matter-list>
       <!-- 备注 -->
       <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
-      <!-- 物料详情 -->
-      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>

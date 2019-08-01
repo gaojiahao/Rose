@@ -1,12 +1,13 @@
 <template>
+<!--工单任务-->
   <div class="pages gdrw-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList" :showStatus="false"></pop-baseinfo>
-        <pop-warehouse-list title="在制仓库" :default-value="warehouse" @sel-item="selWarehouse" :default-store="warehouseStoreInfo" 
-                            @get-store="getStore" :filter-params="filterParams" isRequired isShowStore>
-        </pop-warehouse-list>
+        <pop-pg-list title="在制仓库" :default-value="warehouse" @sel-item="selWarehouse" :default-store="warehouseStoreInfo" 
+                            @get-store="getStore" :filter-params="filterParams" :gl-params="glParams" isRequired isShowStore ref='defManager'>
+        </pop-pg-list>
         <!-- 工单列表 -->
         <div class="materiel_list work_list">
           <div class="order-info" @click="getOrder" v-if="!workInfo.length">
@@ -19,14 +20,11 @@
             <div class="order-detail" :class="{'has_top' : index > 0}" v-for="(item, index) in workInfo"
                  :key="index">
               <div class="work_info vux-1px-b">
-                <div class="matter_name">
-                  <span>{{item.inventoryName}}</span>
-                  <span class="iconfont icon-shanchu1" @click="deleteClick(index)"></span>
-                </div>
-                <r-column-item :title="'订单号'" :value="item.transCode"/>
+                <r-column-title :title ="item.inventoryName" @click="deleteClick(index)"/>
+                <r-column-item title="订单号" :value="item.transCode"/>
                 <r-column-item :title="cItem.text" :value="item[cItem.fieldCode] || item[cItem.showFieldCode]" v-for="(cItem, cIndex) in matterEditConfig.property" :key="cIndex" />
-                <r-column-item :title="'工艺路线编码'" :value="item.proFlowCode"/>
-                <r-column-item :title="'工艺路线名称'" :value="item.technicsName"/>
+                <r-column-item title="工艺路线编码" :value="item.proFlowCode"/>
+                <r-column-item title="工艺路线名称" :value="item.technicsName"/>
               </div>
               <div class="edit_part" v-for="(dItem, dIndex) in matterEditConfig.editPart" :key="dIndex" >
                 <!-- 可编辑的字段 -->
@@ -86,7 +84,7 @@
         </div>
         <!-- 工序popup -->
         <pop-work-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
-                        @sel-item="selWork" ref="matter"></pop-work-list>
+                        @sel-item="selWork" ref="matter" :ck-params="ckParams" ></pop-work-list>
         <pop-manager-list :show="showManagerPop" v-model="showManagerPop" @sel-item="selManager"
                           :defaultValue="defaultManager[managerIndex]"></pop-manager-list>
         <pop-work-facility-list :show="showFacilityPop" v-model="showFacilityPop" @sel-item="selFacility"
@@ -114,18 +112,19 @@ import { Popup, Datetime, XTextarea, numberComma, TransferDom } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 import { getTaskBom } from 'service/materService'
-import { updateData, submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/common/commonService'
+import { updateData, submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
 // mixins 引入
 import Applycommon from 'mixins/applyCommon'
 // 组件 引入
 import PopWorkList from 'components/Popup/workList/PopWorkList'
-import PopWarehouseList from 'components/Popup/PopWarehouseList'
+import PopPgList from 'components/Popup/PopPgList'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 import PopManagerList from 'components/Popup/workList/PopManagerList'
 import PopWorkFacilityList from 'components/Popup/workList/PopWorkFacilityList'
 // 插件 引入
 import { accMul } from 'plugins/calc/decimalsAdd'
 import { toFixed } from '@/plugins/calc'
+import { constants } from 'crypto';
 const DRAFT_KEY = 'GDRW_DATA';
 
 export default {
@@ -133,7 +132,7 @@ export default {
   components: {
     Popup, Datetime, XTextarea,
     PopBaseinfo, PopWorkList, PopManagerList,
-    PopWarehouseList, PopWorkFacilityList
+    PopPgList, PopWorkFacilityList
   },
   data() {
     return {
@@ -176,6 +175,34 @@ export default {
   mixins: [Applycommon],
   filters: {
     numberComma,
+  },
+  computed: {
+    departId() {
+      return this.formData.handlerUnit;
+    },
+    glParams() {
+      return {
+        groupId:  this.formData.handlerUnit
+      }
+    },
+    ckParams() {
+      return {
+        whCode: this.warehouse.warehouseCode
+      }
+    }
+  },
+  watch: {
+    // 此处监听 经办组织id
+    departId: {
+      handler(newVal, oldVal){
+        this.glParams.groupId = newVal;
+      }     
+    },
+    warehouse: {
+      handler(val){
+        this.ckParams.whCode = val.warehouseCode;
+      }
+    }
   },
   methods: {
     handlerMatterEditConfig:function(config){
@@ -366,6 +393,7 @@ export default {
                 storehouseInCode: this.warehouseStoreInfo.warehouseCode,
                 dataSet,
               },
+              containerInWarehouseManager: this.$refs.defManager.defaultManage,
             }),
             wfPara : JSON.stringify(wfPara)
           }
@@ -470,6 +498,7 @@ export default {
           biProcessStatus: formData.biProcessStatus,
           creator: formData.creator,
           modifer: formData.modifer,
+          containerInWarehouseManager: formData.containerInWarehouseManager,
         }
         this.biReferenceId = formData.biReferenceId;
         this.$loading.hide();
@@ -515,7 +544,7 @@ export default {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang='scss'>
   @import '~scss/biz-app/bizApply';
   @import '~@/scss/color';
   .vux-1px-b:after {

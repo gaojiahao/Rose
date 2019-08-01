@@ -6,6 +6,11 @@
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 往来联系部分 交易基本信息-->
       <contact-part :contact-info="contactInfo"></contact-part>
+      <div class="form_content">
+        <div class="main_content" >
+          <form-cell cellTitle='收款类型' :cellContent="orderInfo.order.receiptType"></form-cell>
+        </div>
+      </div>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
@@ -20,7 +25,10 @@
           <div class="main_content" >
               <form-cell cellTitle='资金账户名称' :cellContent="item.fundName_cashInCode" :showTopBorder=false></form-cell>
               <form-cell cellTitle='资金账户大类' :cellContent="item.cashType_cashInCode"></form-cell>
+              <form-cell cellTitle='余额' showSymbol :cellContent="item.thenAmntBal | toFixed | numberComma(3)"></form-cell>
               <form-cell cellTitle='收款金额' showSymbol :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
+              <form-cell cellTitle='手续费' showSymbol :cellContent="item.brokerage | toFixed | numberComma(3)"></form-cell>
+              <form-cell cellTitle='净收款金额' showSymbol :cellContent="item.bookValue | toFixed | numberComma(3)"></form-cell>
           </div>
         </div>
       </div>
@@ -105,6 +113,12 @@ export default {
           city: order.city_dealerCodeCredit, // 城市
           county: order.county_dealerCodeCredit, // 地区
           address: order.address_dealerCodeCredit, // 详细地址
+          thenTotalAmntBal:order.thenTotalAmntBal,    //往来余额
+          thenAmntBal:order.thenTotalAmntBal,    //往来余额
+          //applicationAmount:order.thenAlreadyAmnt,   //申请金额
+          crDealerPaymentTerm: order.crDealerPaymentTerm,            //结算方式
+          thenAlreadyAmnt: order.thenAlreadyAmnt,                    //本次收款
+          differenceAmount: order.differenceAmount                   //本次收款后余额
         };
         this.workFlowInfoHandler();
       })
@@ -115,6 +129,11 @@ export default {
 
 <style lang='scss' scoped>
   @import '~scss/biz-app/bizDetail';
+  .form_part {
+    .form_title {
+      margin: .1rem .1rem .1rem;
+    }
+  }
   .form_part .form_title .iconfont {
     font-size: .14rem;
     margin-right: .04rem;

@@ -1,12 +1,9 @@
 <template>
+<!--项目任务-->
   <div class="detail_wrapper xmrw-detail-container">
     <div class="basicPart swiper-container task-form">
       <div class="swiper-wrapper">
         <div class="swiper-slide">
-          <div class="related_tips" @click="goSumbitTask">
-            <span>有新的任务日志需要提交？</span>
-            <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
-          </div>
           <!-- 经办信息 （订单、主体等） -->
           <basic-info :work-flow-info="orderInfo" :order-info="orderInfo"></basic-info>
           <!-- 项目任务信息 -->
@@ -81,7 +78,6 @@
 import { Cell, Group, dateFormat, XTextarea } from 'vux'
 // 请求 引入
 import { getSOList, findAllJobLog } from 'service/detailService'
-import { getBaseInfoData } from 'service/common/commonService'
 import { findProjectTask, saveJobLog } from 'service/projectService'
 // mixins 引入
 import common from '@/mixins/common'
@@ -99,9 +95,27 @@ export default {
       },
       comment: {},
       projectTask: {},
-      defaultUserInfo: {},
+      defaultUserInfo: {},//默认用户信息
       logList: [],
       pageSwiper: null
+    }
+  },
+  watch:{
+    baseinfoConfig:{
+      handler(val){
+        let {currentUser} = val,
+            {sysDeptList,sysRoleList} = currentUser;
+            
+          this.defaultUserInfo = {
+            handler: currentUser.userId,  // 用户id
+            handlerName: currentUser.nickname,  //用户名称
+            handlerUnit: sysDeptList[0].groupId,  // 用户组织id
+            handlerUnitName: sysDeptList[0].groupName,  // 用户组织名称
+            handlerRole: sysRoleList[0].id || '',  // 用户职位id
+            handlerRoleName: sysRoleList[0].name || '' // 用户职位名称
+            // userCode: basicUserInfo.userCode, // 用户工号
+          }
+      }
     }
   },
   mixins: [detailCommon, common],
@@ -218,20 +232,6 @@ export default {
         }
       });
     },
-    // 获取用户基本信息
-    getBaseInfoData() {
-      getBaseInfoData().then(({handleORG, userRoleList, ...basicUserInfo}) => {
-          this.defaultUserInfo = {
-            handler: basicUserInfo.userId,  // 用户id
-            handlerName: basicUserInfo.nickname,  //用户名称
-            handlerUnit: handleORG[0].groupId,  // 用户组织id
-            handlerUnitName: handleORG[0].groupName,  // 用户组织名称
-            handlerRole: userRoleList[0].roleId || '',  // 用户职位id
-            handlerRoleName: userRoleList[0].roleName || '',  // 用户职位名称
-            // userCode: basicUserInfo.userCode, // 用户工号
-          }
-      })
-    },
     // swiper切换至 任务日志
     goSumbitTask() {
       this.pageSwiper.slideTo(1);
@@ -253,7 +253,6 @@ export default {
     }
   },
   created() {
-    this.getBaseInfoData();
     this.initSwiper();
     this.findAllJobLog();  
   }

@@ -10,12 +10,10 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <matter-list :matter-list='matterList' @on-show-more="onShowMore"></matter-list>
+      <matter-list :matter-list='matterList'></matter-list>
       <!-- 金额明细 -->
       <other-part :other-info="orderInfo" :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"
                   :attachment="attachment"></other-part>
-      <!-- 物料详情 -->
-      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -99,11 +97,15 @@
             dealerMobilePhone: formData.dealerDebitContactInformation, // 手机
             dealerContactPersonName: formData.dealerDebitContactPersonName, // 联系人
             dealerCode: order.dealerDebit, // 客户编码
-            dealerLabelName: order.drDealerLabel, // 关系标签
+            crDealerLabel: order.drDealerLabel, // 关系标签
             province: order.province_dealerDebit, // 省份
             city: order.city_dealerDebit, // 城市
             county: order.county_dealerDebit, // 地区
             address: order.address_dealerDebit, // 详细地址
+            advancePaymentDueDate: formData.inPut.dataSet[0].advancePaymentDueDate,
+            tdAmountCopy1: formData.inPut.dataSet[0].tdAmountCopy1,
+            validUntil: formData.inPut.validUntil,
+            thenTotalAmntBal: formData.inPut.dataSet[0].thenTotalAmntBal,
           };
           this.workFlowInfoHandler();
         })

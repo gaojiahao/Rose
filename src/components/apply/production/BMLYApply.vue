@@ -55,7 +55,7 @@ import { dateFormat, XTextarea } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 import { getObjInvMoreUnitByInvCode } from 'service/materService'
-import { updateData, submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/common/commonService'
+import { updateData, submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
 // mixins 引入
 import applyCommon from 'mixins/applyCommon'
 // 组件引入

@@ -3,14 +3,39 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
-                      :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
+                      :handle-org-list="handleORG" :user-role-list="userRoleList" :statusData = "currentStage"></pop-baseinfo>
         <!-- <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker> -->
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" dealer-label-name="客户,原厂供应商,经销供应商,设施供应商,投资者,银行,其他"
                         dealerTitle="往来" :defaultValue="dealerInfo" :defaultContact="contact" :dealer-params="dealerParams">
         </pop-dealer-list>
-
+        <!-- 收款信息 -->
+        <div class="materiel_list" style=" margin-top:-0.2rem;">
+          <group class='costGroup'>
+            <div v-for="(item, index) in dealerConfig" :key='index'>
+              <r-picker :title="item.fieldLabel" @on-change="changePayment" :data="item.remoteData" mode="3" placeholder="请选择" :value="dealerInfo.paymentTerm"
+                  v-model="dealerInfo.paymentTerm" v-if = "item.fieldCode =='crDealerPaymentTerm' "></r-picker>
+              <!-- <r-picker class="vux-1px-b"  @on-change="changePayment" :title="item.fieldLabel" :data="item.remoteData" 
+              :value="dealerInfo.paymentTerm" v-model="dealerInfo.paymentTerm" v-if = "item.fieldCode =='crDealerPaymentTerm' "></r-picker> -->
+              <cell :title="item.fieldLabel" :value="dealerInfo.amntBal" v-else-if="item.fieldCode =='thenTotalAmntBal'">
+                <template slot="title">
+                  <span class='default'>{{ item.fieldLabel }}</span>
+                </template>
+              </cell>
+              <cell :title="item.fieldLabel" :value="totalAmount" v-else-if="item.fieldCode =='thenAlreadyAmnt'">
+                <template slot="title">
+                  <span class='required'>{{ item.fieldLabel }}</span>
+                </template>
+              </cell>
+              <cell :title="item.fieldLabel" :value="differenceAmount" v-else-if="item.fieldCode =='differenceAmount'">
+                <template slot="title">
+                  <span class='default'>{{ item.fieldLabel }}</span>
+                </template>
+              </cell>
+            </div>
+          </group>
+        </div>
         <!-- 费用列表 -->
         <div class="materiel_list" v-for="(item, index) in CostList" :key='index'>
           <group :title='`资金账户${index+1}`' class='costGroup'>
@@ -26,6 +51,11 @@
                 <span class='required'>资金账户大类</span>
               </template>
             </cell>
+            <cell title="余额" :value="item.thenAmntBal">
+              <template slot="title">
+                <span class='default'>余额</span>
+              </template>
+            </cell>
             <x-input title="收款金额" text-align='right' placeholder='请填写' @on-focus="getFocus($event)"
                      @on-blur="checkAmt(item)" type='number' v-model.number='item.tdAmount'>
               <template slot="label">
@@ -33,17 +63,63 @@
                 </span>
               </template>
             </x-input>
+            <x-input title="手续费" text-align='right' placeholder='请填写' @on-focus="getFocus($event)"
+                     @on-blur="checkAmt(item)" type='number' v-model.number='item.brokerage'>
+              <template slot="label">
+                <span class='default'>手续费
+                </span>
+              </template>
+            </x-input>
+            <x-input title="净收款金额" text-align='right'
+                     @on-blur="checkAmt(item)" type='number' v-model.number='item.bookValue' disabled>
+              <template slot="label">
+                <span class='default'>净收款金额
+                </span>
+              </template>
+            </x-input>
+            <!-- <cell title="净收款金额" :value="item.bookValue">
+              <template slot="title">
+                <span class='default'>净收款金额</span>
+              </template>
+            </cell> -->
           </group>
         </div>
         <!-- 新增更多 按钮 -->
         <div class="add_more">
-          您还需要添加新的报销?请点击
+          您还需要添加新的资金账户?请点击
           <span class='add' @click="addCost">新增</span>
           <em v-show="CostList.length>1">或</em>
           <span class='delete' @click="deleteCost" v-show="CostList.length>1">删除</span>
         </div>
+        <!-- 项目信息 -->
+        <div class="project_part">
+          <div v-for="(dItem,dIndex) in baseinfoExtConfig" :key="dIndex" class="project_part_content">
+            <template v-if="!dItem.readOnly">
+              <div class="each_info vux-1px-b" @click="showPop = true">
+                <div class="title">{{dItem.fieldLabel}}</div>
+                <div class="mode">
+                  <span class="mode_content">{{project[dItem.fieldCode]}}</span>
+                  <span class="icon-right"></span>
+                </div>
+              </div>
+            </template>
+            <!-- 可编辑的字段 -->
+            <!-- <template v-if="!dItem.readOnly">
+              <r-picker :title="dItem.fieldLabel" :data="dItem.remoteData" :value="project[dItem.fieldCode]"
+                      v-model="project[dItem.fieldCode]" :required="!dItem.allowBlank"
+                      v-if="dItem.xtype === 'r2Selector'"></r-picker>
+            </template> -->
+            <!--不可编辑的字段 -->
+            <template  v-else>
+              <div class='each_property vux-1px-t readOnly'>
+                <label :class="{required: !dItem.allowBlank}">{{dItem.fieldLabel}}</label>
+                <span class='property_val'>{{project[dItem.fieldCode]}}</span>
+              </div>
+            </template>
+          </div>
+        </div>
         <div class="materiel_list">
-          <group title="其他信息" class="costGroup">
+          <group title="" class="costGroup">
             <x-textarea title="备注" v-model="formData.biComment" :max="100" class="fontSize"></x-textarea>
           </group>
         </div>
@@ -51,6 +127,30 @@
         <!-- 费用popup -->
         <pop-fund-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost'
                        ref="matter"></pop-fund-list>
+        <!-- 项目pop -->
+        <div v-transfer-dom>
+          <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
+            <div class="trade_pop">
+              <!-- <d-search @search="searchList" @turn-off="onHide"></d-search> -->
+              <!-- 经理列表 -->
+              <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
+                        :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
+                <div v-for="(item, index) in baseinfoExtConfig" :key='index'>
+                  <div class="pop-mater-list-item" v-for="(k, index) in item.remoteData" :key='index'>
+                    <div class="pop-list-main " @click.stop="selThis(k, index)">
+                      <div class="pop-list-info">
+                        <!-- 名字 -->
+                        <div class="user_name" >{{k.value}}</div>
+                        <!-- 用户id -->
+                        <div class="user_code">{{k.projectManagerName}}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </r-scroll>
+            </div>
+          </popup>
+        </div>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -73,7 +173,7 @@
   } from 'vux'
   // 请求 引入
   import { getSOList } from 'service/detailService'
-  import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/common/commonService'
+  import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
   import { findProjectApproval } from 'service/projectService'
   // mixins 引入
   import ApplyCommon from 'mixins/applyCommon'
@@ -82,9 +182,12 @@
   import RPicker from 'components/public/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopDealerList from 'components/Popup/PopDealerList'
+  import RScroll from 'plugins/scroll/RScroll'
+  import DSearch from 'components/search/search'
   // 方法引入
   import { accAdd, accMul, accSub, accDiv } from 'plugins/calc/decimalsAdd'
   import { toFixed } from '@/plugins/calc'
+  import { constants } from 'crypto';
 
   const DRAFT_KEY = 'SK_DATA';
   export default {
@@ -92,7 +195,7 @@
     components: {
       Cell, Group, Popup,
       XInput, XTextarea,
-      PopFundList, PopupPicker, RPicker, PopBaseinfo, PopDealerList
+      PopFundList, PopupPicker, RPicker, PopBaseinfo, PopDealerList,RScroll,DSearch
     },
     data () {
       return {
@@ -100,12 +203,15 @@
         biComment: '',
         biReferenceId: '',
         showCostPop: false,
+        showPaymentTerm: false,
         CostList: [ // 费用列表
           {
             cashName: '', // 资金账户名称
             cashInCode: '', // 资金账户编码
             cashType_cashInCode: '', // 资金账户大类
             tdAmount: '', // 支付金额
+            brokerage: '',
+            bookValue: '',
           }
         ],
         selectedCost: [],
@@ -117,21 +223,149 @@
           biComment: '',
           biProcessStatus: ''
         },
+        project: {},
+        showPop: false,
+        page: 1,
+        limit: 50,
+        hasNext: true,
+        scrollOptions: {
+          click: true,
+          pullUpLoad: true,
+        },
       }
     },
     computed: {
       // 合计金额
       totalAmount () {
         let total = 0;
+        this.dealerInfo.totalAmount = 0;
         this.CostList.forEach(item => {
           if (item.tdAmount) {
             total = accAdd(total, item.tdAmount);
           }
         });
         return total;
+      },
+      // 本次支付后余额
+      differenceAmount() {
+        let total = 0;
+        if (this.dealerInfo.amntBal) {
+          total = accAdd(this.totalAmount, this.dealerInfo.amntBal)
+        }
+        return toFixed(total);
+      },
+    },
+    watch: {
+      project: {
+        handler(val) {
+          // 修改项目名称，获取对应的项目类型
+          if (val.project) {
+            for (let item of this.baseinfoExtConfig) {
+             if (item.fieldCode === 'project'){
+               for (let dItem of item.remoteData){
+                 if (dItem.name === val.project){
+                    this.project.projectType_project = dItem.PROJECT_TYPE;
+                    this.project.dealerName_projectManager = dItem.projectManagerName;
+                    this.project.expectStartDate_project = dItem.expectStartDate;
+                    this.project.expectEndDate_project = dItem.expectEndDate;
+                    this.project.projectAddress_project = dItem.address;
+                    this.project.budgetIncome_project = dItem.budgetIncome;
+                    this.project.tdProjectId_project = dItem.projectApprovalId;
+                    this.matterParams.data.project = dItem.projectApprovalId;
+                    this.costList = [{}];
+                    this.showPop = false;
+                   break
+                 }
+               }
+               break
+             }
+           }
+          }
+        },
+        deep: true
       }
     },
     methods: {
+      // 弹窗展示时调用
+      onShow() {
+        this.$nextTick(() => {
+          if (this.$refs.bScroll) {
+            this.$refs.bScroll.refresh();
+          }
+        })
+      },
+      // 弹窗隐藏时调用
+      onHide() {
+        this.showPop = false;
+      },
+      // 上拉加载
+      onPullingUp() {
+        this.page++;
+        this.getlistUsers();
+      },
+      // 搜索 项目
+      searchList({val = ''}) {
+        this.srhInpTx = val;
+        this.listData = [];
+        this.page = 1;
+        this.hasNext = true;
+        this.getlistUsers();
+      },
+       // 选择 项目
+      selThis(sItem, sIndex) {
+        this.project.project = sItem.name;
+        this.project.projectType_project = sItem.projectType;
+        this.project.dealerName_projectManager = sItem.projectManagerName;
+        this.project.expectStartDate_project = sItem.expectStartDate;
+        this.project.expectEndDate_project = sItem.expectEndDate;
+        this.project.projectAddress_project = sItem.address;
+        this.project.budgetIncome_project = sItem.budgetIncome;
+        this.project.tdProjectId_project = sItem.projectApprovalId;
+        this.isSetInitial = true;
+        this.showPop = false;
+        this.selItems = sItem;
+      },
+      // 请求 项目列表
+      getlistUsers() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: 'nickname',
+            }
+          ];
+        }
+        ;
+        return listUsers({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          filter: JSON.stringify(filter),
+        }).then(({dataCount = 0, tableContent = []}) => {
+          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+          this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
+          this.$nextTick(() => {
+            this.$refs.bScroll.finishPullUp();
+          })
+        });
+      },
+      // 选择 支付方式
+      changePayment(val) {
+        for(let i= 0; i < this.dealerConfig.length; i++) {
+          if(this.dealerConfig[i].fieldCode == "crDealerPaymentTerm") {
+            for(let k= 0; k < this.dealerConfig[i].remoteData.length; k++) {
+              if(this.dealerConfig[i].remoteData[k].value == val) {
+                this.dealerInfo.paymentTerm = this.dealerConfig[i].remoteData[k].name;
+                break;
+              }
+            }
+            break;
+          }
+        }
+      },
       // 选中的客户
       selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
@@ -144,6 +378,15 @@
         this.costIndex = index;
         this.selectedCost = [item];
       },
+      getPaymentTerm (index, item) {
+        this.showPaymentTerm = true;
+        //this.costIndex = index;
+        //this.selectedCost = [item];
+      },
+      checkAmt(item) {
+        item.tdAmount = Math.abs(toFixed(item.tdAmount)); 
+        item.bookValue = toFixed(accSub(item.tdAmount,item.brokerage));
+      },
       // 点击增加费用
       addCost () {
         this.expSubjectList = [];
@@ -152,6 +395,8 @@
           cashInCode: '', // 资金账户编码
           cashType_cashInCode: '', // 资金账户大类
           tdAmount: '', // 支付金额
+          brokerage: '',
+          bookValue: '',
         })
       },
       // 删除费用明细
@@ -164,6 +409,10 @@
         this.CostList[this.costIndex].cashName = sels.fundName;
         this.CostList[this.costIndex].cashInCode = sels.fundCode;
         this.CostList[this.costIndex].cashType_cashInCode = sels.fundType;
+        this.CostList[this.costIndex].thenAmntBal = sels.thenAmntBal;
+        this.CostList[this.costIndex].tdAmount = 0;
+        this.CostList[this.costIndex].brokerage = 0;
+        this.CostList[this.costIndex].bookValue = 0;
       },
       // 提交
       submitOrder () {
@@ -182,7 +431,10 @@
             tdId: item.tdId || '',
             cashInCode: item.cashInCode, // 费用编码
             cashType_cashInCode: item.cashType_cashInCode, // 费用科目
+            thenAmntBal: item.thenAmntBal,
             tdAmount: item.tdAmount, // 报销金额
+            brokerage: item.brokerage,
+            bookValue: item.bookValue,
           });
           return true
         });
@@ -222,7 +474,19 @@
                 order: {
                   dealerCodeCredit: this.dealerInfo.dealerCode,
                   crDealerLabel: this.dealerInfo.dealerLabelName,
-                  dataSet
+                  crDealerPaymentTerm: this.dealerInfo.paymentTerm,
+                  thenTotalAmntBal: this.dealerInfo.amntBal,
+                  thenAlreadyAmnt: this.totalAmount,
+                  differenceAmount: this.differenceAmount,
+                  receiptType: '其他',//收款类型
+                  project: this.project.project,
+                  tdProjectId_project: this.project.tdProjectId_project,
+                  dealerName_projectManager: this.project.dealerName_projectManager,
+                  expectStartDate_project: this.project.expectStartDate_project,
+                  expectEndDate_project: this.project.expectEndDate_project,
+                  projectAddress_project: this.project.projectAddress_project,
+                  budgetIncome_project: this.project.budgetIncome_project,
+                  dataSet:dataSet,
                 },
                 dealerCreditContactPersonName: this.contact.dealerName || null,
 	              dealerCreditContactInformation: this.contact.dealerMobilePhone || null,
@@ -346,6 +610,7 @@
 
 <style lang="scss" scoped>
   @import '~scss/biz-app/bizApply.scss';
+  @import '~@/scss/color';
 
   .costGroup {
     .vux-no-group-title {
@@ -353,6 +618,10 @@
     }
     .weui-cells:after {
       border-bottom: none;
+    }
+    .r-picker {
+      width: 100%;
+      padding: 10px 15px;
     }
     .vux-cell-box {
       .weui-cell {
@@ -372,13 +641,15 @@
     .required {
       font-size: .14rem;
     }
+    .default {
+      color: #696969;
+      font-size: .14rem;
+    }
   }
-
   .weui-cells__title {
     padding-left: 0;
     font-size: 0.12rem;
   }
-
   .add_more {
     width: 100%;
     text-align: center;
@@ -403,5 +674,156 @@
   }
   .fontSize {
     font-size: .14rem;
+  }
+  .project_part{
+    margin-top: .1rem;
+    background: #fff;
+    padding: 0 .15rem;
+  }
+  .fill_wrapper{
+    padding-bottom: .1rem;
+    font-size: .14rem;
+    
+  }
+  .each-info{
+    background-color: #fff;
+    padding: 0 .15rem;
+  }
+  .each_property {
+    padding: .18rem 0;
+    display: flex;
+    justify-content: space-between;
+    line-height: .14rem;
+    label{
+      color: #696969;
+    }
+    .add{
+      color: #3296FA;
+    }
+    .required {
+      color: #3296FA;
+      font-weight: bold;
+    }
+    .property_val {
+      text-align: right;
+    }
+    .readonly {
+      color: #999;
+    }
+    .picker {
+      display: flex;
+      align-items: center;
+      .icon-right{
+        width: .08rem;
+        height: .14rem;
+        margin-left: .1rem;
+      }
+    }
+  }
+  .project_part {
+    margin-bottom: .1rem;
+    padding: 0 .15rem;
+    background: #fff;
+    color: #333;
+    font-size: .14rem;
+    .project_part_content {
+      .each_info {
+        height: .5rem;
+        line-height: .5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .title {
+          color: #696969;
+          &.required {
+            font-weight: bold;
+            color: $main_color;
+          }
+        }
+        .mode {
+          display: flex;
+          align-items: center;
+          .icon-right {
+            width: .08rem;
+            height: .14rem;
+            margin-left: .1rem;
+          }
+        }
+      }
+    }
+  }
+  // 弹出层
+  .trade_pop_part {
+    background: #fff;
+    .trade_pop {
+      height: 100%;
+      overflow: hidden;
+      // 顶部
+      .title {
+        position: relative;
+        margin: .08rem 0;
+        font-size: .2rem;
+      }
+      .each_mode {
+        margin-right: .1rem;
+        display: inline-block;
+        padding: .04rem .2rem;
+      }
+      // 列表容器
+      .pop-list-container {
+        width: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+        height: calc(100% - .46rem);
+        /deep/ .scroll-wrapper {
+          padding: .05rem .15rem 0;
+        }
+        // 列表项
+        .pop-mater-list-item {
+          position: relative;
+          display: flex;
+          padding: .15rem;
+          margin-bottom: .2rem;
+          border-radius: .04rem;
+          color: #333;
+          box-sizing: border-box;
+          border-radius: .04rem;
+          box-shadow: 0 2px 10px 0 rgba(228, 228, 232, 0.5);
+          &.selected {
+            border: 1px solid $main_color;
+          }
+          // 列表主体
+          .pop-list-main {
+            flex: 1;
+            box-sizing: border-box;
+            display: flex;
+            //头像
+            .user-photo {
+              width: .4rem;
+              height: .4rem;
+              margin-right: .12rem;
+              img {
+                border-radius: 50%;
+                width: 100%;
+                height: 100%;
+              }
+            }
+            .user_name {
+              line-height: .16rem;
+              font-size: .16rem;
+              font-weight: 600;
+              margin-top: .04rem;
+            }
+            .user_code {
+              margin-top: .06rem;
+              line-height: .12rem;
+              color: #999;
+              font-size: .12rem;
+            }
+          }
+        }
+      }
+
+    }
   }
 </style>

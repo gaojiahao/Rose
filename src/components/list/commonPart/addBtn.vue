@@ -50,6 +50,8 @@ export default {
     justify-content: center;
     border: 1px solid #4CA3FB;
     transform: translate(-50%, -50%);
+    background: #fff;
+    box-shadow: 0 2px 5px #fff;
     span + span {
       margin-left: .1rem;
     }

@@ -79,10 +79,54 @@ export let getWarehouse = (data = {}) => {
     }
   })
 };
+
+// 获取工单任务派工的仓库列表
+export let getObjWorkshopWarehouse = (data = {}) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getObjWorkshopWarehouse',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
+
+// 获取工单任务验收的仓库列表
+export let getWorkCheckWh = (data = {}) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getWorkCheckWh',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
+
+//获取工单仓管员列表
+export let getWarehouseManager = (data = {}) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getWarehouseManager',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
+
 // TODO获取销售的出库的库位
 export let getObjWarehouseRel = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getObjWarehouseRel',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
+
+export let getObjWarehouseInfo = (data = {}) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getObjWarehouseInfo',
     data: {
       _dc: Date.now(),
       ...data,
