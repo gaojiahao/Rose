@@ -47,6 +47,7 @@ export default {
      * 此处是判断——跳转至详情页还是提交页面
      * */
     this.$loading.show();
+    this.redirect = false;
     let { folder, fileName} = this.$route.params,
       { name,listId,transCode } = this.$route.query;
     // 当路由当中包含transCode
@@ -66,11 +67,12 @@ export default {
         this.$router.replace({
           path, query: { name, folder,fileName,transCode }
         })
-      })
+      });
+      this.redirect = true;
     }
   },
   created() {
-    this.initPage();
+    if(this.redirect == false)this.initPage();
   },
   activated() {
     let listPage = this.$refs.list,
