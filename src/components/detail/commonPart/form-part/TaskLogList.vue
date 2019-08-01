@@ -163,7 +163,7 @@ export default {
     },
     //添加任务日志
     addTaskLog() {
-      this.$router.push({
+      this.$router.replace({
         path: '/taskLog/add',
         name: 'TASKLOG',
         params: {

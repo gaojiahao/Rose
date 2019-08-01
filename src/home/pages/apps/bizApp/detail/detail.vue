@@ -160,6 +160,7 @@ export default {
       this.hasComment = !!transCode;
       this.transCode = transCode;
       this.listId = listId;
+      this.getAppFeature();
       try {
         if(fileName == null || fileName == 'null'){
             this.currentComponent = require(`components/detail/CommonForm.vue`).default;
@@ -241,6 +242,8 @@ export default {
     },
     //获取应用特性管理数据
     getAppFeature() {
+      this.isDiscuss = false;
+      this.isTaskLog = false;
       getAppFeaturesData(this.$route.params.listId).then(res => {
         if(res.success){
           res.data.forEach(val => {
@@ -266,7 +269,6 @@ export default {
     }
   },
   created() {
-    this.getAppFeature();
     initWebContext().then(()=>{
         this.initPage();
     })

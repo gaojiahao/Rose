@@ -204,7 +204,7 @@ export default {
         title: '温馨提示',
         content: '即将进入修改页面，确认吗？',
         onConfirm: () => {
-          this.$router.replace({
+          this.$router.push({
             path: `/fillform/${listId}/0`,
             query: {
               fileName,
