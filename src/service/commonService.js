@@ -328,7 +328,7 @@ export let initWebContext = ()=>{
       }
       resolve();
     }).catch(e=>{
-      resolve();
+      
     }) 
   })
 };
