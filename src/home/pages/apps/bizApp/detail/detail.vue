@@ -1,13 +1,12 @@
 <template>
   <div class="pages">
     <div class="detail-container" :class="{'has-comment': hasComment}" ref='detail'>
-      <v-touch @swipeleft="swiperleft" @swiperight="swiperright" class="wrapper" :class="{'wrapper2': isShow}">
+      <v-touch @swipeleft="swiperleft" @swiperight="swiperright" class="wrapper">
         <component
           :is='currentComponent'
           @change='modifyRoute'
           @refresh-scroll="refresh"
           @subscribeChange="setSubscribe"
-          @slideStatus="slideStatus"
           :showTab="showTab['comm']"
           ref="detailComponent">
         </component>
@@ -103,7 +102,7 @@ export default {
       this.submitSuccess = val;
     },
     // 刷新better-scroll
-    refresh() {
+    refresh(model) {
       this.$nextTick(() => {
         if(this.detailScroll != null)this.detailScroll.refresh();
       })
@@ -161,6 +160,7 @@ export default {
       this.hasComment = !!transCode;
       this.transCode = transCode;
       this.listId = listId;
+      this.getAppFeature();
       try {
         if(fileName == null || fileName == 'null'){
             this.currentComponent = require(`components/detail/CommonForm.vue`).default;
@@ -197,14 +197,6 @@ export default {
     //打开侧滑菜单
     swiperright() {
       this.showSlide = true;
-    },
-    //由于视图的样式不同，导致侧滑菜单也要不同样式
-    slideStatus(data) {
-      if(data == 'view') {
-        this.isShow = false;
-      } else {
-        this.isShow = true;
-      }
     },
     //侧滑菜单切换tab
     goTab(val) {
@@ -250,6 +242,8 @@ export default {
     },
     //获取应用特性管理数据
     getAppFeature() {
+      this.isDiscuss = false;
+      this.isTaskLog = false;
       getAppFeaturesData(this.$route.params.listId).then(res => {
         if(res.success){
           res.data.forEach(val => {
@@ -275,7 +269,6 @@ export default {
     }
   },
   created() {
-    this.getAppFeature();
     initWebContext().then(()=>{
         this.initPage();
     })
@@ -322,14 +315,6 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-  .wrapper {
-
-  }
-  .wrapper2 {
-    height: 100%;
-    // overflow: hidden;
-    z-index: 11;
-  }
   .vux-1px-t:before {
     border-color: #e8e8e8;
   }

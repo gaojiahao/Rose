@@ -458,34 +458,6 @@ export default {
     dateFormat,
     toFixed,
   },
-  beforeCreate() {
-    /*
-     * 企业微信推送，第一层url跳转至此
-     * 此处是判断——跳转至详情页还是提交页面
-     * */
-    this.$loading.show();
-    let { listId} = this.$route.params,
-      { name, folder, fileName, transCode } = this.$route.query;
-    // 当路由当中包含transCode
-    if (transCode) {
-      isMyflow({ transCode }).then(({ tableContent }) => {
-        let path = '';
-        if (tableContent.length > 0) {
-          let { isMyTask, nodeName } = tableContent[0];
-          if (isMyTask === 1 && nodeName === '重新提交') {
-            path = `/fillform/${listId}/0`;
-          } else {
-            path = `/detail/${listId}/0`;
-          }
-        } else {
-          path = `/detail/${listId}/0`;
-        }
-        this.$router.replace({
-          path, query: { name, folder,fileName,transCode }
-        })
-      })
-    }
-  },
   created() {
     register(); // 注册wx-js-sdk
     this.applyCode = this.$route.query.listId;

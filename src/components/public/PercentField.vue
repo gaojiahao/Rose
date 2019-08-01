@@ -1,6 +1,6 @@
 <template>
 <div v-show="!hidden" class="cell each_property vux-1px-b">
-    <label :class="{'required':!cfg.allowBlank}">{{cfg.fieldLabel}}</label>
+    <label :class="{'required':!cfg.allowBlank,'readonly':cfg.readOnly}">{{cfg.fieldLabel}}</label>
     <input type="number" v-if="cfg.readOnly == false" :value="values[cfg.fieldCode]" placeholder="请输入" @blur="onInput" />
     <span v-else >{{values[cfg.fieldCode] == null ? '无' : values[cfg.fieldCode]}}</span>
 </div>

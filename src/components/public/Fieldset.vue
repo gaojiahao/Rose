@@ -13,7 +13,7 @@
         <template v-for="(item, index) in readOnlyParts">
           <div class="item" :key="index">
             <span >{{item.fieldLabel}}：</span>
-            <span >{{values[item.fieldCode]||'无'}}</span>
+            <span >{{values[item.fieldCode] == null ?  '无' : values[item.fieldCode]}}</span>
           </div>
         </template>
       </div>
@@ -232,10 +232,12 @@ export default Vue.component("RFieldset", component);
     white-space: nowrap;
     overflow: hidden;
     label {
-      color: #999;
       &.required {
         font-weight: bold;
         color: $main_color;
+      }
+      &.readonly{
+         color: #999;
       }
     }
     :after {

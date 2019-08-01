@@ -26,8 +26,11 @@
               <!-- 输入框（数字） -->
               <div class='each_property ' v-if="item.xtype === 'r2Numberfield' || item.xtype === 'r2Permilfield'">
                 <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
-                <input type='number' v-model.number="ProjectApproval[item.fieldCode]" placeholder="请输入" class='property_val' 
-                       @focus="getFocus($event)" @blur="checkAmt(ProjectApproval, item.fieldCode, ProjectApproval[item.fieldCode])"/>
+                <input 
+                  v-model="ProjectApproval[item.fieldCode]" 
+                  placeholder="请输入" class='property_val'
+                  @focus="getFocus($event)"
+                  @blur="checkAmt(ProjectApproval, item.fieldCode, ProjectApproval[item.fieldCode])"/>
               </div>
               <!-- 日期 -->
               <div class='each_property' v-if="item.xtype === 'r2Datefield'" @click="getDate(ProjectApproval,item)">
@@ -51,6 +54,9 @@
           <p class="commit-label vux-1px-b">备注栏</p>
           <x-textarea v-model="formData.biComment" placeholder="请输入"></x-textarea>
         </div>
+        <div class="upload-file">
+          <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
+        </div>
       </div>
     </div>
     <!-- 底部按钮 -->
@@ -61,7 +67,7 @@
 <script>
   // vux组件引入
   import {
-    XTextarea, dateFormat
+    XTextarea, dateFormat, numberComma
   } from 'vux'
   // 请求 引入
   import { saveProjectApproval, findProjectApproval } from 'service/projectService'
@@ -70,17 +76,19 @@
   import ApplyCommon from 'mixins/applyCommon'
   import common from '@/mixins/common'
   // 组件 引入
+  import UploadFile from 'components/upload/UploadFile'
   import RPicker from 'components/public/basicPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopManagerList from 'components/Popup/PopManagerList'
   import OpButton from 'components/apply/commonPart/OpButton'
   import { accMul, accAdd, accSub } from 'plugins/calc/decimalsAdd'
   import { toFixed } from '@/plugins/calc'
+import { debug } from 'util';
   const DRAFT_KEY = 'XMLX_DATA';
   export default {
     mixins: [ApplyCommon, common],
     components: {
-      RPicker, PopBaseinfo, XTextarea, PopManagerList, OpButton
+      RPicker, PopBaseinfo, XTextarea, PopManagerList, OpButton, UploadFile
     },
     data() {
       return {
@@ -184,6 +192,7 @@
             if (this.isModify) {
               operation = update;
             }
+            this.ProjectApproval.budgetIncome && (this.ProjectApproval.budgetIncome = Number(this.ProjectApproval.budgetIncome.replace(/,/g,"")));
             let submitData = {
               listId: this.listId,
               formData: {
@@ -199,6 +208,9 @@
               },
               wfParam: null
             };
+            if (this.isModify){
+              submitData.biReferenceId = this.biReferenceId;
+            }
             this.saveData(operation, submitData);
           }
         });
@@ -212,7 +224,8 @@
       },
       // 获取显示数据
       getFormData() {
-        return findProjectApproval(this.transCode).then(({formData = {}}) => {
+        return findProjectApproval(this.transCode).then(({attachment=[],formData = {}}) => {
+          this.attachment = attachment;
           this.defaultManager = {
             dealerName: formData.projectApproval.projectManagerName,
             dealerMobilePhone: formData.projectApproval.phoneNumber,
@@ -222,6 +235,7 @@
           formData.projectApproval.expectEndDate = this.changeDate(formData.projectApproval.expectEndDate);
           
           this.ProjectApproval = formData.projectApproval;
+          this.ProjectApproval.budgetIncome && (this.ProjectApproval.budgetIncome = numberComma(this.ProjectApproval.budgetIncome));
           
           this.handlerDefault = {
             handler: formData.baseinfo.handler,
@@ -263,7 +277,12 @@
       },
       // 校验数字
       checkAmt(item, key, val) {
-        item[key] = Math.abs(toFixed(val));
+        if(isNaN(val.replace(/,/g,""))){
+          this.$vux.toast.text('请输入数字！');
+          item[key] = "";
+        }else{
+          item[key] = numberComma(val.replace(/,/g,""));
+        } 
       }
     },
     created() {

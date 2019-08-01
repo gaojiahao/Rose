@@ -1,7 +1,7 @@
 <template>
   <!--通用form组件-->
-  <div class="detail_wrapper" :class="{pages:model != 'view'}" v-show="showTab">
-    <div class="form" :class="{scrollCt:model != 'view'}" ref="fill">
+  <div class="detail_wrapper" :class="{pages:scrollCt}" v-show="showTab">
+    <div class="form" :class="{scrollCt:scrollCt,'has-bbar':hasBbar}" ref="fill">
       <div class="fill_wrapper">
         <!-- 工作流组件 -->
         <w-flow :formData="formData" :full-work-flow="workflowLogs" v-if="transCode"/>
@@ -23,7 +23,7 @@
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class="count_mode vux-1px-t" v-if="model != 'view'" v-show="showKeyboard == false">
+    <div class="count_mode vux-1px-t" v-if="hasBbar" v-show="showKeyboard == false">
       <span class="count_num" v-if="false">
         <!-- <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}} -->
       </span>
@@ -84,6 +84,7 @@ export default {
       attachment: [],
       taskInfo: {},
       showAction: false,
+      scrollCt:false,
       workflows: [],
       workflowLogs:[],
       formStatus: []//表单状态,是否草稿
@@ -95,9 +96,11 @@ export default {
         this.$emit("slideStatus", val);
       }
     },
-    // '$route' (to, from) {
-    //   console.log('路由变化了')
-    // }
+  },
+  computed:{
+     hasBbar:function(){
+       return this.model!='view' && this.model!='flowNode'
+     }
   },
   methods: {
     // 获取查看视图的listId
@@ -197,16 +200,18 @@ export default {
     },
     initScroll() {
       var originHeight = document.documentElement.clientHeight;
-      if (this.model == "view") {
-        // 触发父组件的scroll刷新
-        this.$emit("refresh-scroll");
-        return;
-      }
-      this.$nextTick(() => {
-        this.fillBscroll = new Bscroll(this.$refs.fill, {
-          click: true
+        
+      if (this.scrollCt){
+        this.$nextTick(() => {
+          this.fillBscroll = new Bscroll(this.$refs.fill, {
+            click: true
+          });
         });
-      });
+      } else {
+        // 触发父组件的scroll刷新
+        this.$emit("refresh-scroll",this.model);
+      }
+      
       //解决android键盘收起input没有失去焦点，底部按钮遮挡输入框
       if (platfrom.isAndroid) {
         window.onresize = () => {
@@ -306,25 +311,19 @@ export default {
       return new Promise((resolve, reject) => {
         isMyflow({ transCode: this.transCode }).then(rs => {
           var l = rs.dataCount,
-            nodes = rs.tableContent,
-            task;
+              task = l && rs.tableContent[0];
 
-          while (l--) {
-            task = nodes[l];
-            if (
-              task.ASSIGNEE_ === WebContext.currentUser.userId.toString() ||
-              task.isMyTask || //当前节点是我的任务
-              (task.allowRecall &&
-                task.actions &&
-                task.actions.indexOf("recall") > -1)
-            ) {
-              //当前节点允许撤回
-
-              this.taskInfo = task;
-              this.viewId = this.taskInfo.viewId;
-              this.model = 'flow'
-              break;
-            }
+          if (task &&
+            task.ASSIGNEE_ === WebContext.currentUser.userId.toString() ||
+            task.isMyTask || //当前节点是我的任务
+            (task.allowRecall &&
+              task.actions &&
+              task.actions.indexOf("recall") > -1)
+          ) {
+            //当前节点允许撤回
+            this.taskInfo = task;
+            this.viewId = this.taskInfo.viewId;
+            this.model = 'flowNode';
           }
           resolve();
         });
@@ -458,6 +457,9 @@ export default {
       });
     },
     init(){
+         var isScrollCt = this.$parent.$options.name != 'v-touch';//fillform
+      
+         this.scrollCt = isScrollCt;
          this.fieldMap = {}; //id;
          this.fields = {}; //fieldCode
          this.wfParamFieldMap = {};
@@ -488,8 +490,11 @@ export default {
   overflow: hidden;
   position: relative;
   background: #f8f8f8;
-  height: calc(100% - 0.44rem);
+  height: 100%;
   -webkit-overflow-scrolling: touch;
+  &.has-bbar{
+     height: calc(100% - 0.44rem);
+  }
   .fill_wrapper {
     overflow: hidden;
   }

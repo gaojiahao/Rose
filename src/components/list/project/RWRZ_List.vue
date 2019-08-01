@@ -33,10 +33,10 @@
               <div
                 class="project_name"
                 :class="{'time-to-wrap': item.projectName_projectApprovalId&&item.projectName_projectApprovalId.length > 15}"
-              >项目名称: {{item.projectName_projectApprovalId}}</div>
+              >项目名称: {{item.projectName_projectApprovalId || '无'}}</div>
               <div class="project_manager">
                 <span class="project_manager_title">项目经理:</span>
-                <span class="project_manager_value">{{item.dealerName_dealerDebit}}</span>
+                <span class="project_manager_value">{{item.dealerName_dealerDebit || '无'}}</span>
               </div>
             </div>
             <div class="instance-task-container">
