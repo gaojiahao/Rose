@@ -56,7 +56,7 @@ export default {
       this.transCode = transCode;
     }
     try {
-      if(fileName == 'null' || fileName == null){
+      if(!fileName || fileName == 'null'){
           this.currentComponent = require(`components/detail/CommonForm.vue`).default;
       } else {
           this.currentComponent = require(`components/apply/${folder}/${fileName}Apply.vue`).default;
