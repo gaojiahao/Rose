@@ -249,6 +249,9 @@ export default {
               .list_right{
                   flex: 5;
                   margin-top: .08rem;
+                  .list_right_title /deep/ .weui-icon-success-circle:before{
+                    color: #4CA3FB;
+                  }
                   &_detail{
                       padding: .08rem 0rem;
                       .detail_name{
