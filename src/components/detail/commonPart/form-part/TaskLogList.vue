@@ -46,9 +46,9 @@
         </r-scroll>
       </div>
       <div class="task_footer" v-if="$route.name !== 'TASKLOG'">
-        <x-button plain type="primary" @click.native="addTaskLog">
+        <x-button plain  @click.native="addTaskLog">
           <span slot="default">
-            <span class="icon icon-add-task"></span>
+            <span class="icon icon-add"></span>
             新增
           </span>
         </x-button>
@@ -242,7 +242,7 @@ export default {
                   display: inline-block;
                   img {
                     border-radius: 50%;
-                    width: 85%;
+                    width: 90%;
                     height: 100%;
                   }
               }
@@ -252,11 +252,7 @@ export default {
                   &_detail{
                       padding: .08rem 0rem;
                       .detail_name{
-                        padding: .03rem .08rem;
-                        background-color: #e6f1f7;
-                        border-top-right-radius: .2rem;
-                        border-bottom-left-radius: .2rem;
-                        color: #3cbfe8;
+                        color: #999;
                       }
                       span{
                         margin-left: .05rem;
@@ -280,12 +276,16 @@ export default {
     width: 90%;
     padding: .1rem;
     margin: .1rem .1rem 0rem .1rem;
-    .icon-add-task{
+    .icon-add{
       width: .2rem;
       height: .2rem;
       display: inline-block;
       margin-bottom: -.03rem;
       margin-right: .05rem;
+    }
+    .weui-btn_plain-default{
+      color: #4CA3FB;
+      border: 1px solid #4CA3FB;
     }
   }
   .task_container{
