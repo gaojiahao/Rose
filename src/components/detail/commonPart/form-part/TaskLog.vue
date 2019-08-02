@@ -20,7 +20,7 @@
         </search-selector>
       </div>
       <div class="task_log_title" :style="{borderColor:istitleRequired?'#e4393c':'#e8e8e8'}">
-        <x-input ref="taskLogTitle" text-align="right" :max="100" v-model="logTitle">
+        <x-input ref="taskLogTitle" text-align="right" :max="100" v-model="logTitle" placeholder="请输入">
           <span 
             slot="label" 
             :style="{fontWeight:'bold',color:istitleRequired?'#e4393c':'#4e9cec'}">
@@ -41,14 +41,18 @@
         <datetime title="日期" v-model="taskLog.taskDate"></datetime>
       </div>
       <div class="task_log_hour">
-        <x-number 
+        <!-- <x-number 
           v-model="taskLog.logDeclarationHours" 
           fillable 
           :max='24' 
           :min="0.1" 
           :step="0.1" 
           title="申报工时"
-          button-style="round"></x-number>
+          button-style="round"></x-number> -->
+          <span>申报工时</span>
+          <div>
+            <r-number :num="1" :max="24" :min="0.1" v-model="taskLog.logDeclarationHours"></r-number>
+          </div>
       </div>
       <div class="task_log_comment">
         <x-textarea 
@@ -58,7 +62,7 @@
         </x-textarea>
       </div>
       <div class="task_log_footer">
-        <x-button type="primary" @click.native="submitLog">提交</x-button>
+        <x-button :gradients="['#4CA3FB', '#4CA3FB']" @click.native="submitLog">提交</x-button>
       </div>
     </div>
   </div>
@@ -67,6 +71,7 @@
 
 <script>
 import { CheckIcon, XInput, PopupPicker, Datetime, XNumber, XTextarea, XButton, Toast } from 'vux'
+import RNumber from 'components/public/RNumber'
 
 import { getTaskLogType, saveTaskLog } from 'service/projectService'
 import { initWebContext } from 'service/commonService'
@@ -100,7 +105,8 @@ export default {
     XNumber,
     XTextarea,
     XButton,
-    Toast
+    Toast,
+    RNumber
   },
   watch: {
     logTitle(value) {
@@ -170,7 +176,7 @@ export default {
                 content: "提交成功！",
                 onHide: () => {
                   //跳转到日志列表
-                  this.$router.push({
+                  this.$router.replace({
                     path: '/taskLog',
                     query: {
                       listId: this.$route.params.listId,
@@ -225,38 +231,57 @@ export default {
 <style lang='scss' scoped>
   .task_log{
     color: #999;
-    padding: .1rem;
+    padding: .05rem;
     background-color: #fff;
-    margin: .1rem;
+    margin: .05rem;
     &_header{
       font-size: .17rem;
     }
     &_status{
       border-bottom: 1px solid #e8e8e8;
-      padding: .1rem 0rem;
+      padding: .1rem .03rem;
       color: #4e9cec;
       font-weight: bold;
+      margin-left: -.1rem;
+    }
+    .task_log_status /deep/ .weui-icon-success-circle:before{
+      color: #4CA3FB;
     }
     &_title{
       border-bottom: 1px solid #e8e8e8;
       font-weight: bold;
       padding: .03rem 0rem;
+      margin-left: -.15rem;
     }
     &_type{
       border-bottom: 1px solid #e8e8e8;
       padding: .03rem 0rem;
+      margin-left: -.15rem;
     }
     &_date{
       border-bottom: 1px solid #e8e8e8;
       color: #4e9cec;
       font-weight: bold;
       padding: .03rem 0rem;
+      margin-left: -.15rem;
     }
     &_hour{
       border-bottom: 1px solid #e8e8e8;
       color: #4e9cec;
       font-weight: bold;
-      padding: .03rem 0rem;
+      padding: .12rem 0rem;
+      div{
+        float: right;
+      }
+    }
+    &_comment{
+      margin-left: -.15rem;
+    }
+    &_footer{
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100%;
     }
   }
   .task_container{

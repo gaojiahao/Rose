@@ -71,6 +71,12 @@ export default [
     meta:{ title:'列表', keepAlive: true},
   },
   {
+    path:'/list/:folder',
+    name:'COMMONLIST',
+    component:LIST,
+    meta:{ title:'列表', keepAlive: true},
+  },
+  {
     path:'/fillform/:listId/:viewId',
     name:'FILLFORM',
     component:FILLFORM,

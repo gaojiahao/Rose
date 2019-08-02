@@ -1,7 +1,7 @@
 <template>
   <!--通用form组件-->
   <div class="detail_wrapper" :class="{pages:scrollCt}" v-show="showTab">
-    <div class="form" :class="{scrollCt:scrollCt}" ref="fill">
+    <div class="form" :class="{scrollCt:scrollCt,'has-bbar':hasBbar}" ref="fill">
       <div class="fill_wrapper">
         <!-- 工作流组件 -->
         <w-flow :formData="formData" :full-work-flow="workflowLogs" v-if="transCode"/>
@@ -23,7 +23,7 @@
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class="count_mode vux-1px-t" v-if="model != 'view' && model != 'flow'" v-show="showKeyboard == false">
+    <div class="count_mode vux-1px-t" v-if="hasBbar" v-show="showKeyboard == false">
       <span class="count_num" v-if="false">
         <!-- <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}} -->
       </span>
@@ -96,9 +96,11 @@ export default {
         this.$emit("slideStatus", val);
       }
     },
-    // '$route' (to, from) {
-    //   console.log('路由变化了')
-    // }
+  },
+  computed:{
+     hasBbar:function(){
+       return this.model!='view' && this.model!='flowNode'
+     }
   },
   methods: {
     // 获取查看视图的listId
@@ -197,12 +199,9 @@ export default {
       };
     },
     initScroll() {
-      var originHeight = document.documentElement.clientHeight,
-          isScrollCt = this.$parent.$options.name != 'v-touch';
-      
-      this.scrollCt = isScrollCt;
-
-      if (isScrollCt){
+      var originHeight = document.documentElement.clientHeight;
+        
+      if (this.scrollCt){
         this.$nextTick(() => {
           this.fillBscroll = new Bscroll(this.$refs.fill, {
             click: true
@@ -312,25 +311,19 @@ export default {
       return new Promise((resolve, reject) => {
         isMyflow({ transCode: this.transCode }).then(rs => {
           var l = rs.dataCount,
-            nodes = rs.tableContent,
-            task;
+              task = l && rs.tableContent[0];
 
-          while (l--) {
-            task = nodes[l];
-            if (
-              task.ASSIGNEE_ === WebContext.currentUser.userId.toString() ||
-              task.isMyTask || //当前节点是我的任务
-              (task.allowRecall &&
-                task.actions &&
-                task.actions.indexOf("recall") > -1)
-            ) {
-              //当前节点允许撤回
-
-              this.taskInfo = task;
-              this.viewId = this.taskInfo.viewId;
-              this.model = 'flow'
-              break;
-            }
+          if (task &&
+            task.ASSIGNEE_ === WebContext.currentUser.userId.toString() ||
+            task.isMyTask || //当前节点是我的任务
+            (task.allowRecall &&
+              task.actions &&
+              task.actions.indexOf("recall") > -1)
+          ) {
+            //当前节点允许撤回
+            this.taskInfo = task;
+            this.viewId = this.taskInfo.viewId;
+            this.model = 'flowNode';
           }
           resolve();
         });
@@ -464,6 +457,9 @@ export default {
       });
     },
     init(){
+         var isScrollCt = this.$parent.$options.name != 'v-touch';//fillform
+      
+         this.scrollCt = isScrollCt;
          this.fieldMap = {}; //id;
          this.fields = {}; //fieldCode
          this.wfParamFieldMap = {};
@@ -494,8 +490,11 @@ export default {
   overflow: hidden;
   position: relative;
   background: #f8f8f8;
-  height: calc(100% - 0.44rem);
+  height: 100%;
   -webkit-overflow-scrolling: touch;
+  &.has-bbar{
+     height: calc(100% - 0.44rem);
+  }
   .fill_wrapper {
     overflow: hidden;
   }

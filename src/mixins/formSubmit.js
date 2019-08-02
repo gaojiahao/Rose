@@ -200,23 +200,11 @@ export default {
         },
         submit(){
             var me = this,
-                formStatus = me.formStatus,
-                taskActions = me.taskInfo.actions || '',
-                isBindFlow = me.workflows.length > 0 ? true : false,
                 oprationType = me.model == 'new' ? 'add' : 'update',
                 isBaseObject = me.viewInfo.config.isBaseObject,
                 oprationObj = isBaseObject?'BaseObject':'AppData',
-                opration = oprationType+oprationObj,
-                isDraft;
+                opration = oprationType+oprationObj;
             
-            if(opration == 'updateAppData' && isBindFlow){
-                isDraft = !!formStatus.length && formStatus[0].status === '草稿';
-                if(!isDraft || ~taskActions.indexOf('resubmit') || ~taskActions.indexOf('updateDataCommitTask')){
-                    opration = 'saveAndCommitTask';
-                    me.taskType = ~taskActions.indexOf('updateDataCommitTask') ? 1 : 3;
-                }
-   
-            }
             //表单校验
             if (!me.isValid())return;
             

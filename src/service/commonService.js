@@ -287,6 +287,8 @@ export let initWebContext = ()=>{
               entityId: user.entityId,
               entityName: user.entityName,
               userCode: user.userCode,
+              sysDeptList: user.sysDeptList,
+              sysRoleList: user.sysRoleList,
               isSysRoleList:user.isSysRoleList,
               sysGroupList:user.sysGroupList,
               depts: user.sysGroupList.filter(function (o) {
@@ -326,7 +328,7 @@ export let initWebContext = ()=>{
       }
       resolve();
     }).catch(e=>{
-      resolve();
+      
     }) 
   })
 };

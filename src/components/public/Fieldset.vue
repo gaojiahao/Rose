@@ -13,7 +13,7 @@
         <template v-for="(item, index) in readOnlyParts">
           <div class="item" :key="index">
             <span >{{item.fieldLabel}}：</span>
-            <span >{{values[item.fieldCode]||'无'}}</span>
+            <span >{{values[item.fieldCode] == null ?  '无' : values[item.fieldCode]}}</span>
           </div>
         </template>
       </div>

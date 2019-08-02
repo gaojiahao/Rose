@@ -74,6 +74,9 @@
 </template>
 
 <script>
+// vux 引入
+import { dateFormat } from 'vux'
+
 import listCommon from 'mixins/bizListCommon'
 export default {
   data() {
@@ -96,6 +99,21 @@ export default {
     }
   },
   mixins: [listCommon],
+  watch: {
+    listData: value => {
+      if(value.length > 0){
+        value.forEach(val => {
+          if(val.detailItem && val.detailItem.length > 0){
+            val.detailItem.forEach(item => {
+              item.startDate_projectPlanTask && (item.startDate_projectPlanTask=dateFormat(item.startDate_projectPlanTask, 'YYYY-MM-DD'));
+              item.deadline_projectPlanTask && (item.deadline_projectPlanTask=dateFormat(item.deadline_projectPlanTask, 'YYYY-MM-DD'));
+              item.completeTime_projectPlanTask && (item.completeTime_projectPlanTask=dateFormat(item.completeTime_projectPlanTask, 'YYYY-MM-DD'));
+            })
+          }
+        })
+      }
+    }
+  },
   methods: {
     // 返回任务icon
     getTaskIcon(index) {

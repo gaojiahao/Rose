@@ -54,6 +54,9 @@
           <p class="commit-label vux-1px-b">备注栏</p>
           <x-textarea v-model="formData.biComment" placeholder="请输入"></x-textarea>
         </div>
+        <div class="upload-file">
+          <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
+        </div>
       </div>
     </div>
     <!-- 底部按钮 -->
@@ -73,6 +76,7 @@
   import ApplyCommon from 'mixins/applyCommon'
   import common from '@/mixins/common'
   // 组件 引入
+  import UploadFile from 'components/upload/UploadFile'
   import RPicker from 'components/public/basicPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopManagerList from 'components/Popup/PopManagerList'
@@ -84,7 +88,7 @@ import { debug } from 'util';
   export default {
     mixins: [ApplyCommon, common],
     components: {
-      RPicker, PopBaseinfo, XTextarea, PopManagerList, OpButton
+      RPicker, PopBaseinfo, XTextarea, PopManagerList, OpButton, UploadFile
     },
     data() {
       return {
@@ -220,7 +224,8 @@ import { debug } from 'util';
       },
       // 获取显示数据
       getFormData() {
-        return findProjectApproval(this.transCode).then(({formData = {}}) => {
+        return findProjectApproval(this.transCode).then(({attachment=[],formData = {}}) => {
+          this.attachment = attachment;
           this.defaultManager = {
             dealerName: formData.projectApproval.projectManagerName,
             dealerMobilePhone: formData.projectApproval.phoneNumber,

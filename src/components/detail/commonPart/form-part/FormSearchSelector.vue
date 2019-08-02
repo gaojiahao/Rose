@@ -13,6 +13,7 @@
           {{ item[listName] }}
           <b :style="{marginLeft:'-5px'}" @click.stop="deleteSelectItems(item,index)"><icon type="cancel"></icon></b>
         </span>
+        <span class="mode_content" v-if="confirmItems.length===0">请选择</span>
         <span class="icon-right"></span>
       </div>
     </div>
@@ -254,7 +255,6 @@ export default {
       font-weight: bold;
       font-size: 0.15rem;
       margin-right: 0.1rem;
-      margin-left: 0.15rem;
       &.required {
         font-weight: bold;
         color: $main_color;
@@ -285,12 +285,12 @@ export default {
       padding: .1rem .1rem;
       border-bottom: 1px solid #ddd;
       .cancel{
-          font-size: .15rem;
+          font-size: .16rem;
           color: #6b6767;
       }
       .confirm{
-        font-size: .15rem;
-        color: #4cb513;
+        font-size: .16rem;
+        color: #04BE02;
         float: right;
       }
     }

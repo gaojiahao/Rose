@@ -61,7 +61,7 @@ fly.interceptors.response.use(
       this.lock();
       return tokenService.login()
       .then((token) => {
-        console.log('token已更新')
+        console.log('token已更新');
         AlertModule.show({
           title: '温馨提示',
           content: '您的登录状态似乎有点问题，不用担心，页面刷新之后就好',
