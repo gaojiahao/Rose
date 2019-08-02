@@ -351,7 +351,7 @@ export default {
         },
         handlerSubmit(){
 
-             if(!this.scanCodeInfo.postCode){
+            if(!this.scanCodeInfo.postCode){
                 this.$vux.alert.show({
                    content:"申请单号不能为空!"
                });
