@@ -253,6 +253,7 @@ export default Vue.component("RGrid", component);
   .has-data-header {
     display: flex;
     padding: 0.2rem 0 0.1rem;
+    border-bottom:1px solid #eee;
     line-height: 0.14rem;
     justify-content: space-between;
     .title {

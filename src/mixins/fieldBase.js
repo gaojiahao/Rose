@@ -198,7 +198,9 @@ export default {
             var value = cmp.getExtraFieldValue(valueField);
 
             this.setValue(value);
-            if(this.form.model == 'new' && this.cfg.readOnly == true)this.hidden = value == null;
+            if(this.form.model == 'new' && this.cfg.readOnly == true){
+                if(this.cfg.hiddenInRun == false)this.hidden = value == null;
+            }
         } 
     }
 }
