@@ -350,6 +350,20 @@ export default {
             return dataSet;
         },
         handlerSubmit(){
+
+             if(!this.scanCodeInfo.postCode){
+                this.$vux.alert.show({
+                   content:"申请单号不能为空!"
+               });
+               return;
+            }
+
+            if(this.matters.length===0){
+                this.$vux.alert.show({
+                    content:"出库明细不能为空!"
+                });
+                return;
+            }
              // 准备提交
             this.$vux.confirm.show({
                 content: '确认提交?',
