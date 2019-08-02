@@ -86,8 +86,8 @@ import {
     saveAndCommitTask, 
     submitAndCalc, 
     getPriceFromSalesContractAndPrice, 
-    updateData,
-    WebContext} from 'service/commonService'
+    updateData} from 'service/commonService'
+import WebContext from 'service/commonService'
 import { getStorageShelf, getWhbyStoragelocation } from 'service/wmsService'
 import { getSOList } from 'service/detailService'
 
