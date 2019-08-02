@@ -69,7 +69,7 @@
       <template v-if="!noCount && isDealerWarehouse">
         <div class="num">
           <div>
-            <span>共{{item.itemCount}}类商品</span>
+            <span>共{{item.itemCount}}条明细</span>
             <span v-show="item.totalQty">合计{{item.totalQty}}件</span>
           </div>
           <div class="money">
@@ -80,7 +80,7 @@
       <!-- 默认状态 -->
       <template v-else>
         <div class="num">
-          <span>共{{item.itemCount}}类商品</span>
+          <span>共{{item.itemCount}}条明细</span>
           <span v-show="item.totalQty">合计{{item.totalQty}}件</span>
         </div>
         <div class="money" v-if="!noCount">

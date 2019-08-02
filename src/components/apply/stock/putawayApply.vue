@@ -1,7 +1,6 @@
 <template>
-    <div class='pages cpxq-apply-container'>
+    <div class='pages putaway-apply-container'>
         <div class="basicPart" ref="fill">
-            <div class="wrapper">
                 <div class="scanCodeInfo">
                     <div class="vux-1px-t">
                         <div class='each_property' >
@@ -14,12 +13,13 @@
                                 class='property_val' 
                                 v-on:input="handlerScanPostCode"
                                 @focus="handleOnFocus($event)" />
-                            <i class="iconfont" @click="handlerClickPostCode">&#xe661;</i>
+                            <i class="iconfont">&#xe661;</i>
+
                         </div>
                     </div>
                     <div class="vux-1px-t">
                         <div class='each_property' >
-                            <label class="required">入库仓位</label>
+                            <label class="required">入库库位</label>
                             <input 
                                 type='text' 
                                 ref='spCode'
@@ -47,18 +47,19 @@
                     </div>
                     
                 </div>
-                <wms-matter-part 
-                    title='上架明细'
-                    :matterModifyClass="matterModifyClass"
-                    :matters="matters"
-                    :handlerSelectItem="handlerSelectItem"
-                    :showSelIcon="showSelIcon"
-                    :handlerChangeState="handlerChangeState"    
-                    :getGroupInfo="getGroupInfo"
-                    :matterInfoConfig="matterInfoConfig"
-                    >
-                </wms-matter-part>
-            </div>
+                <div  class="wms-matter-part">
+                    <wms-matter-part 
+                        title='上架明细'
+                        :matterModifyClass="matterModifyClass"
+                        :matters="matters"
+                        :handlerSelectItem="handlerSelectItem"
+                        :showSelIcon="showSelIcon"
+                        :handlerChangeState="handlerChangeState"    
+                        :getGroupInfo="getGroupInfo"
+                        :matterInfoConfig="matterInfoConfig"
+                        >
+                    </wms-matter-part>
+                </div>
         </div>
          <!-- 底部按钮 -->
         <op-button 
@@ -69,7 +70,7 @@
             @on-delete="handlerDeleteCheckd">
         </op-button>
         <!-- 提示信息 -->
-        <toast  v-model="showTost" type="text" :time="1000" is-show-mask :text="tostText" position="top" width="20em" ></toast>
+        <toast  v-model="showTost" type="text" :time="1500" is-show-mask :text="tostText" position="top" width="20em" ></toast>
     </div>
 </template>
 
@@ -85,14 +86,11 @@ import {
     saveAndCommitTask, 
     submitAndCalc, 
     getPriceFromSalesContractAndPrice, 
-    updateData} from 'service/commonService'
+    updateData,
+    WebContext} from 'service/commonService'
 import { getStorageShelf, getWhbyStoragelocation } from 'service/wmsService'
-import WebContext from 'service/commonService'
 import { getSOList } from 'service/detailService'
 
-
-// 插件引入
-import Bscroll from 'better-scroll'
 import { debug, debuglog } from 'util';
 export default {
     data(){
@@ -134,29 +132,6 @@ export default {
         Toast
     },
     methods:{
-        handlerClickPostCode(){
-            alert('调用扫码');
-            try {
-                wx.scanQRCode({
-                    desc: 'scanQRCode desc',
-                    needResult: 0, // 默认为0，扫描结果由企业微信处理，1则直接返回扫描结果，
-                    scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是条形码（一维码），默认二者都有
-                    success: function(res) {
-                        alert('扫码成功');
-                        alert(res);
-                    },
-                    error: function(res) {
-                        if (res.errMsg.indexOf('function_not_exist') > 0) {
-                            alert('版本过低请升级')
-                        }
-                    }
-                });
-            } catch (error) {
-                alert('调用失败');
-                alert(error);
-            }
-           
-        },
         // 输入框获取焦点，内容选中
         handleOnFocus(e) {
             event.currentTarget.select();
@@ -481,6 +456,26 @@ export default {
             return dataSet;
         },
         handlerSubmit(){
+            if(!this.scanCodeInfo.postCode){
+               this.$vux.alert.show({
+                   content:"申请单号不能为空!"
+               });
+               return;
+            }
+
+            if(!this.scanCodeInfo.spCode){
+                this.$vux.alert.show({
+                   content:"库位码不能为空!"
+               });
+               return;
+            }
+
+            if(this.matters.length===0){
+                this.$vux.alert.show({
+                    content:"上架明细不能为空!"
+                });
+                return;
+            }
              // 准备提交
             this.$vux.confirm.show({
                 content: '确认提交?',
@@ -648,9 +643,6 @@ export default {
     },
     mounted(){
         this.$loading.hide();
-        this.$nextTick(() => {
-            this.fillBscroll = new Bscroll(this.$refs.fill, {click: true})
-        })
        
         //扫库位码后确定的仓库信息
         //扫库位码后切换库位的判断依据
@@ -712,6 +704,7 @@ export default {
     }
   }
 .scanCodeInfo {
+    height: 1.60rem;
     background: #fff;
     padding: 0 .15rem;
     font-size: 0.14rem;
@@ -723,6 +716,11 @@ export default {
       }
     }
 }
+.wms-matter-part{
+    overflow: hidden;
+    margin-top: .1rem;
+    height: calc(100% - 1.60rem);
+  }
 
 </style>
 
