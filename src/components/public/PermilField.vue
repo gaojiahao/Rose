@@ -45,12 +45,12 @@ let cfg = {
             cfg = me.cfg,
             value = me.getValue();
 
-            if((!cfg.readOnly) && (!cfg.hiddenInRun) && cfg.submitValue) {
-              if(util.isString(value)) {
-                value = this.unNumberComma(value);
-                this.setValue(value);
-              }
-            }
+        if((!cfg.readOnly) && (!cfg.hiddenInRun) && cfg.submitValue) {
+          if(util.isString(value)) {
+            value = this.unNumberComma(value);
+            this.setValue(value);
+          }
+        }
 
         return me.disabled || me.getErrors().length == 0;
       },

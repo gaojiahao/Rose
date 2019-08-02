@@ -7,6 +7,7 @@ let RFieldsetCt = Vue.component('RFieldsetCt', {
             fieldsets = this.cfg,
             matterNames = ['inPut', 'order', 'outPut'],
             xtype,
+            value,
             i = 0,
             itemCfg,
             l;
@@ -14,6 +15,7 @@ let RFieldsetCt = Vue.component('RFieldsetCt', {
         for (l = fieldsets.length; i < l; i++) {
             itemCfg = fieldsets[i];
             xtype = 'RFieldset';//'ContentView';
+            value = this.values;
 
             if (!itemCfg.cName) this.setFieldCName(itemCfg);
 
@@ -21,15 +23,17 @@ let RFieldsetCt = Vue.component('RFieldsetCt', {
                 if (matterNames.indexOf(itemCfg.name) != -1) {
                     //  xtype = 'MatterListView'
                 }
-                if (itemCfg.xtype == 'r2Fileupload')
-                    //xtype = 'Fileupload'
-                    continue;
+                if (itemCfg.xtype == 'r2Fileupload'){
+                    value = this.form.attachment;
+                    xtype = 'fileupload'
+                }
+                   
             }
             items.push(
                 _c(xtype, {
                     attrs: {
                         cfg: itemCfg,
-                        values: this.values
+                        values: value
                     }
                 })
             )

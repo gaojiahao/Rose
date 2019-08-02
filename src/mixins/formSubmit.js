@@ -24,8 +24,6 @@ export default {
                 isBindFlow = me.workflows.length > 0 ? true : false,
                 submitHandler = isBindFlow ? saveAndStartWf : submitAndCalc,
                 values,
-              //  uploadComp = me.formView.down('r2Fileupload'),
-              //  files = uploadComp ? uploadComp.getR2Value() : null,
                 {relationKey} = me.$route.query;
                 
             if(me.biReferenceId) {
@@ -34,9 +32,6 @@ export default {
             if (relationKey) {
                 param.relationKey = relationKey;
             }
-            // if (files && files.length) {
-            //     param.biReferenceId = uploadComp.biReferenceId;
-            // }
             if (isBindFlow) {
                 proCode = me.workflows[0].procCode;
                 wfPara[proCode] = me.getApprovalData(values);
@@ -62,8 +57,6 @@ export default {
                 wfPara = {},
                 baseObjectKey = me.viewInfo.config.baseObjectKey,
                 apiKey = '/save',
-                // uploadComp = me.formView.down('r2Fileupload'),
-                // files = uploadComp ? uploadComp.getR2Value() : null,
                 {relationKey} = me.$route.query;
 
             if (relationKey) {
@@ -77,9 +70,10 @@ export default {
                 submitParam.wfPara = JSON.stringify(wfPara);
                 apiKey = '/saveAndStartWf';
             }
-            // if (files && files.length) {
-            //     submitParam.biReferenceId = uploadComp.biReferenceId;
-            // }
+            
+            if(me.biReferenceId) {
+                submitParam.biReferenceId = me.biReferenceId;    
+            }
 
             //console.log('----', submitParam);
             addBaseObject(baseObjectKey, apiKey,submitParam).then(function(res) {
