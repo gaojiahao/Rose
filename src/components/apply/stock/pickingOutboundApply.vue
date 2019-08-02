@@ -1,38 +1,38 @@
 <template>
     <div class='pages cpxq-apply-container'>
         <div class="basicPart" ref="fill">
-            <div class="wrapper">
-                <div class="scanCodeInfo">
-                    <div class="vux-1px-t">
-                        <div class='each_property' >
-                            <label class="required">申请单号</label>
-                            <input 
-                                ref='postCode'
-                                type='text' 
-                                v-model="scanCodeInfo.postCode" 
-                                placeholder="请扫码" 
-                                class='property_val' 
-                                @input="handlerScanPostCode"
-                                @focus="getFocus($event)" />
-                            <i class="iconfont">&#xe661;</i>
-                        </div>
+            <div class="scanCodeInfo">
+                <div class="vux-1px-t">
+                    <div class='each_property' >
+                        <label class="required">申请单号</label>
+                        <input 
+                            ref='postCode'
+                            type='text' 
+                            v-model="scanCodeInfo.postCode" 
+                            placeholder="请扫码" 
+                            class='property_val' 
+                            @input="handlerScanPostCode"
+                            @focus="getFocus($event)" />
+                        <i class="iconfont">&#xe661;</i>
                     </div>
-                    <div class="vux-1px-t">
-                        <div class='each_property' >
-                            <label class="required">货品箱码</label>
-                            <input 
-                                ref='boxCode'
-                                type='text' 
-                                v-model="scanCodeInfo.boxCode" 
-                                placeholder="请扫码" 
-                                @input="handlerSetMattersBox"
-                                class='property_val' 
-                                @focus="getFocus($event)" />
-                            <i class="iconfont">&#xe661;</i>
-                        </div>
-                    </div>
-                    
                 </div>
+                <div class="vux-1px-t">
+                    <div class='each_property' >
+                        <label class="required">货品箱码</label>
+                        <input 
+                            ref='boxCode'
+                            type='text' 
+                            v-model="scanCodeInfo.boxCode" 
+                            placeholder="请扫码" 
+                            @input="handlerSetMattersBox"
+                            class='property_val' 
+                            @focus="getFocus($event)" />
+                        <i class="iconfont">&#xe661;</i>
+                    </div>
+                </div>
+                
+            </div>
+            <div  class="wms-matter-part">
                 <wms-matter-part 
                     title='上架明细'
                     :matterModifyClass="matterModifyClass"
@@ -466,6 +466,7 @@ export default {
     }
   }
 .scanCodeInfo {
+    height: 1.0rem;
     background: #fff;
     padding: 0 .15rem;
     font-size: 0.14rem;
@@ -477,98 +478,10 @@ export default {
       }
     }
 }
-
-.materiel-wrapper{
-    padding: 0 .15rem;
-    font-size: .14rem;
-    position: relative;
-    background: #FFF;
-    margin-bottom: .1rem;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    .header{
-        height: .30rem;
-        margin: .15rem 0 0 0;
-        line-height: .30rem;
-        color: #696969;
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-        -webkit-box-pack: justify;
-        -ms-flex-pack: justify;
-        justify-content: space-between;
-    }
-    .materiels{
-        padding: 0.2em;
-        font-size: 14px;
-        .materiel-item{
-            .materiel-info{
-                font-weight: 600;
-            }
-            .box-codes{
-                font-size: 12px;
-                color: #696969;
-                .mater_delete{
-                    position: relative;
-                    padding-left: 0.3rem;
-                }
-                .box-code{
-                    width: 100%;
-                    display: -webkit-box;
-                    display: -ms-flexbox;
-                    display: flex;
-                    padding-top: .05rem;
-                    -webkit-box-sizing: border-box;
-                    box-sizing: border-box;
-                    -webkit-box-pack: justify;
-                    -ms-flex-pack: justify;
-                    justify-content: space-between;
-                    
-                    .matter-img {
-                        width: .75rem;
-                        height: .75rem;
-                        display: inline-block;
-                        img {
-                            width: 100%;
-                            max-height: 100%;
-                        }
-                    }
-                    .matter-info{
-                        -webkit-box-flex: 1;
-                        -ms-flex: 1;
-                        flex: 1;
-                        position: relative;
-                        margin-left: .12rem;
-                        padding-bottom: .15rem;
-                        .box-operate{
-                            display: flex;
-                            padding-top: .10rem;
-                            -webkit-box-sizing: border-box;
-                            box-sizing: border-box;
-                            -webkit-box-pack: justify;
-                            -ms-flex-pack: justify;
-                            justify-content: space-between;
-                        }
-                    }
-                }
-            }
-            .delete_icon{
-                left: 0;
-                top: 30%;
-                height: 20px;
-                fill: #999;
-                position: absolute;
-                transform: translateY(-50%);
-                .checked{
-                    fill: #FA7138;
-                }
-            }
-        }
-        
-        
-    }
-}
+.wms-matter-part{
+    overflow: hidden;
+    margin-top: .1rem;
+    height: calc(100% - 1.0rem);
+  }
 </style>
 

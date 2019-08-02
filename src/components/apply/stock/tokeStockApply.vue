@@ -1,7 +1,6 @@
 <template>
-    <div class='pages cpxq-apply-container'>
+    <div class='pages tokestock-apply-container'>
         <div class="basicPart" ref="fill">
-            <div class="wrapper">
                 <div class="scanCodeInfo">
                     <div class="vux-1px-t">
                         <div class='each_property' >
@@ -32,19 +31,20 @@
                         </div>
                     </div>
                 </div>
-                <wms-matter-part 
-                    title='盘点明细'
-                    :matterModifyClass="matterModifyClass"
-                    :matters="matters"
-                    :handlerSelectItem="handlerSelectItem"
-                    :showSelIcon="showSelIcon"
-                    :handlerChangeState="handlerChangeState"    
-                    :getGroupInfo="getGroupInfo"
-                    :getSpecialInfo="getSpecialInfo"
-                    :matterInfoConfig="matterInfoConfig"
-                    >
-                </wms-matter-part>
-            </div>
+                <div  class="wms-matter-part">
+                    <wms-matter-part 
+                        title='盘点明细'
+                        :matterModifyClass="matterModifyClass"
+                        :matters="matters"
+                        :handlerSelectItem="handlerSelectItem"
+                        :showSelIcon="showSelIcon"
+                        :handlerChangeState="handlerChangeState"    
+                        :getGroupInfo="getGroupInfo"
+                        :getSpecialInfo="getSpecialInfo"
+                        :matterInfoConfig="matterInfoConfig"
+                        >
+                    </wms-matter-part>
+                </div>
         </div>
          <!-- 底部按钮 -->
         <op-button 
@@ -57,7 +57,7 @@
 
         <toast 
             v-model="showTost" 
-            type="text" :time="1000" is-show-mask :text="tostText" position="top" width="20em" ></toast>
+            type="text" :time="1500" is-show-mask :text="tostText" position="top" width="20em" ></toast>
     </div>
 </template>
 
@@ -589,9 +589,6 @@ export default {
     },
     mounted(){
         this.$loading.hide();
-        this.$nextTick(() => {
-            this.fillBscroll = new Bscroll(this.$refs.fill, {click: true})
-        })
        
         //扫库位码后确定的仓库信息
         //扫库位码后切换库位的判断依据
@@ -619,6 +616,12 @@ export default {
 
 <style lang="scss" scoped>
   @import '~scss/biz-app/bizApply.scss';
+  
+  .wms-matter-part{
+    overflow: hidden;
+    margin-top: .1rem;
+    height: calc(100% - 1rem);
+  }
   .each_property {
     padding: .18rem 0;
     display: flex;
@@ -632,9 +635,6 @@ export default {
     label{
       color: #696969;
     }
-    // .add{
-    //   color: #3296FA;
-    // }
     .required {
       color: #3296FA;
       font-weight: bold;
@@ -656,6 +656,7 @@ export default {
     }
   }
 .scanCodeInfo {
+    height: 1rem;
     background: #fff;
     padding: 0 .15rem;
     font-size: 0.14rem;
