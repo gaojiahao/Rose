@@ -13,7 +13,7 @@
         <template v-for="(item, index) in readOnlyParts">
           <div class="item" :key="index">
             <span >{{item.fieldLabel}}：</span>
-            <span >{{values[item.fieldCode] == null ?  '无' : values[item.fieldCode]}}</span>
+            <span >{{formatByType(values[item.fieldCode],item.xtype)}}</span>
           </div>
         </template>
       </div>
@@ -109,6 +109,14 @@ var component = {
         }
 
         this.editParts = items; // 可编辑部分 
+    },
+    formatByType(value,type){
+      if(value == null) return '无';
+      if(~['r2Numberfield','r2Permilfield'].indexOf(type)){
+        return util.permilFormat(value);
+      } else {
+        return value
+      }
     },
     getValues(){
       var items = this.$children,

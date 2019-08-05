@@ -220,5 +220,11 @@ export default{
             rs = fn(items[i],i,items);
             if(rs == false)break;
         }
+    },
+    permilFormat:function (num){
+        var strArr = (num + '').split('.'),
+            reg = /\d{1,3}(?=(\d{3})+$)/g; 
+        strArr[0] = strArr[0].replace(reg, '$&,');
+        return strArr.join('.');
     }
 }
