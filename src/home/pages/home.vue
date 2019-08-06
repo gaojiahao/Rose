@@ -181,7 +181,9 @@ export default {
     },
     dealMenu(res) {
       let BUSobj = this.BUSobj;
-
+      this.BasicApps = [];
+      this.BusApps = [];
+      
       for (let val of res) {
         BUSobj[val.text] = []; //分类
 
@@ -242,7 +244,9 @@ export default {
           });
         }
       }
-      sessionStorage.setItem(ROSE_MENU,JSON.stringify(res));
+      if(!this.sessionApps) {
+        sessionStorage.setItem(ROSE_MENU,JSON.stringify(res));
+      }
     },
     // 选择单条记录
     dropItemClick(item) {
@@ -271,7 +275,7 @@ export default {
           res = JSON.parse(sessionStorage.getItem(ROSE_MENU));
       this.BasicApps = [];
       this.BusApps = [];
-      
+
       if(!filter) {
         this.dealMenu(this.sessionApps);
         return ;
