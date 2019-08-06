@@ -54,9 +54,8 @@
             </form>
           </div>
         </div>
-        <search-app :searchApps="searchApps" v-show="searchAppShow"></search-app>
-        <basic-app :BasicApps="BasicApps" v-show="busAppShow"></basic-app>
-        <bus-app :BusApps="BusApps" v-show="basicAppShow"></bus-app>
+        <basic-app :BasicApps="BasicApps"></basic-app>
+        <bus-app :BusApps="BusApps"></bus-app>
       </div>
       <div class="el-fade-in">
         <div class="page-component-up" @click="scrollToTop" v-show="toTopShow">
@@ -79,10 +78,10 @@ import basicMap from "./apps/basicApp/maps/basic";
 // 组件引入
 import busApp from "homePage/components/home-related/busAppList"; // 业务应用
 import basicApp from "homePage/components/home-related/basicApp"; // 基础应用
-import searchApp from "homePage/components/home-related/searchApp"; // 搜索应用
 // 插件引入
 import Bscroll from "better-scroll";
 import { constants } from 'crypto';
+const ROSE_MENU = 'ROSE_MENU';
 export default {
   data() {
     return {
@@ -95,15 +94,12 @@ export default {
       showDrop: false, // 是否显示主体下拉选择
       homeScroll: null, // 滑动实例
       searchValue: '',
-      searchAppShow: false,
-      busAppShow: true,
-      basicAppShow: true,
-      searchApps: [],
       yScrollValue: 0,
-      toTopShow:false
+      toTopShow:false,
+      sessionApps: [],
     };
   },
-  components: { busApp, basicApp , searchApp },
+  components: { busApp, basicApp },
   methods: {
     initData: async function() {
       this.$loading.show();
@@ -174,9 +170,14 @@ export default {
       return url;
     },
     initMenu() {
-      return homeService.getMeau().then(res => {
-        this.dealMenu(res);  
-      });
+      this.sessionApps = JSON.parse(sessionStorage.getItem(ROSE_MENU));
+      if(this.sessionApps) {
+        this.dealMenu(this.sessionApps);  
+      } else {
+        return homeService.getMenu().then(res => {
+          this.dealMenu(res);
+        });
+      }
     },
     dealMenu(res) {
       let BUSobj = this.BUSobj;
@@ -241,6 +242,7 @@ export default {
           });
         }
       }
+      sessionStorage.setItem(ROSE_MENU,JSON.stringify(res));
     },
     // 选择单条记录
     dropItemClick(item) {
@@ -263,32 +265,94 @@ export default {
       this.searchValue = e.target.value;
     },
     //搜索 菜单
-    searchMenu () {
-      this.busAppShow = false;
-      this.basicAppShow = false;
-      this.searchAppShow = true;
-
-      let data = {
-        _dc: Date.now(),
-        text: this.searchValue,
-      };
-      if(!data.text) {
-        this.searchAppShow = false;
-        this.busAppShow = true;
-        this.basicAppShow = true;
+    searchMenu() {
+      let BUSobj = this.BUSobj,
+          filter = this.searchValue,
+          res = JSON.parse(sessionStorage.getItem(ROSE_MENU));
+      this.BasicApps = [];
+      this.BusApps = [];
+      
+      if(!filter) {
+        this.dealMenu(this.sessionApps);
         return ;
       }
-      return homeService.getMenuLeafAndTaskByText(data).then(data => {
-        this.searchApps = data;  
-      });
+      for (let val of res) {
+        BUSobj[val.text] = []; //分类
+
+        //item 应用
+        for (let item of val.children) {
+          // 基础对象应用需 根据映射表 单独处理
+          if (val.text == '基础对象' || basicMap[item.listId]) {
+            // 图片处理
+            item.icon = item.icon ? `${item.icon}` : "";
+            if(filter) {
+              if(item.text.indexOf(filter) !=-1) {
+                this.BasicApps.push(item);
+              }
+            }
+          }
+          // 处理 业务应用
+          if (!item.children) {
+            // 获取 应用类型ID 对应相应文件夹
+            item.fileID = val.id;
+            // 处理 应用图标
+            if (item.icon) {
+              item.icon.includes("download")
+                ? // 用户自定义上传 应用icon
+                  (item.icon = `${location.origin}${item.icon}`)
+                : // 系统自带图标
+                  (item.icon = `${item.icon}`);
+            } else {
+              // 初始化应用图标
+              this.getDefaultIcon();
+            }
+            // 归类到相应的小数组
+            if(filter) {
+              if(item.text.indexOf(filter) !=-1) {
+                BUSobj[val.text].push(item);
+              }
+            }
+          }
+          // 如果应用里面 存在分类
+          if (item.children) {
+            for (let childItem of item.children) {
+              if (true || childItem.packagePath) {
+                childItem.fileID = val.id;
+                childItem.icon = childItem.icon
+                  ? `${childItem.icon}`
+                  : this.getDefaultIcon();
+                  if(filter) {
+                    if(childItem.text.indexOf(filter) !=-1) {
+                      if (!BUSobj[val.text][item.text]) {
+                        this.$set(BUSobj[val.text], item.text, {
+                          childId: item.id,
+                          childName: item.text,
+                          childList: [childItem]
+                        });
+                      } else {
+                        BUSobj[val.text][item.text].childList.push(childItem);
+                      }
+                    }
+                  }
+              }
+            }
+          }
+        }
+
+        if (true || val.folder) {
+          this.BusApps.push({
+            id: val.id,
+            name: val.text,
+            folder: val.folder,
+            appList: { ...BUSobj[val.text] }
+          });
+        }
+      }
     },
     //清除菜单
     clearSearch() {
-      this.searchAppShow = false;
-      this.busAppShow = true;
-      this.basicAppShow = true;
       this.searchValue = '';
-      this.searchApps = [];
+      this.dealMenu(this.sessionApps);
     },
     //滚动到顶部
     scrollToTop() {
