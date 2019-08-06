@@ -4,7 +4,7 @@
     <div class="form" :class="{scrollCt:scrollCt,'has-bbar':hasBbar}" ref="fill">
       <div class="fill_wrapper">
         <!-- 工作流组件 -->
-        <w-flow :formData="formData" :full-work-flow="workflowLogs" v-if="transCode"/>
+        <w-flow :formData="formData" :full-work-flow="workflowLogs" v-if="transCode && loaded"/>
         <!-- 表单渲染 -->
         <r-fieldset-ct
           :cfg="fieldSets"
@@ -13,7 +13,7 @@
           ref="fieldsetCt"
         />
         <!-- 附件组件 -->
-        <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId" @on-upload='onUpload'/>
+        <!-- <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId" @on-upload='onUpload' v-if="loaded"/> -->
         <!-- 审批组件 -->
         <r2-action
           v-if="showAction"
@@ -90,17 +90,10 @@ export default {
       formStatus: []//表单状态,是否草稿
     };
   },
-  watch: {
-    model: {
-      handler(val) {
-        this.$emit("slideStatus", val);
-      }
-    },
-  },
   computed:{
-     hasBbar:function(){
+    hasBbar:function(){
        return this.model!='view' && this.model!='flowNode'
-     }
+    }
   },
   methods: {
     // 获取查看视图的listId
@@ -277,7 +270,6 @@ export default {
         }
         if (transCode) {
           await this.loadFormData(transCode);
-          //await this.workFlowInfoHandler();
         }
         this.$loading.hide();
         this.loaded = true;
@@ -385,7 +377,7 @@ export default {
           this.viewInfo = data;
           this.initComputed();
           this.formKey = formKey;
-          //console.log("this.config", data);
+          console.log("this.config", data);
           this.fieldSets = fieldSets;
         }
       });
@@ -464,7 +456,6 @@ export default {
          this.fields = {}; //fieldCode
          this.wfParamFieldMap = {};
          this.loadPage();
-         this.$emit("slideStatus", this.model);
     },
     reload(){
       this.loaded = this.showAction =  false;
@@ -478,6 +469,7 @@ export default {
   },
   created() {
     this.init();
+    this.$on('on-upload',this.onUpload);
   }
 };
 </script>

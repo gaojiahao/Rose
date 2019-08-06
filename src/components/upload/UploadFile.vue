@@ -174,7 +174,7 @@
       upload(localId) {
         return uploadImage({
           localId,
-          biReferenceId: this.biReferenceId,
+          referenceId: this.biReferenceId,
         }).then(data => {
           let [detail = {}] = data;
           detail.iconType = this.judgeFileType(detail.attr1);

@@ -17,8 +17,8 @@
       <div class="warehouse_info" v-if="warehouseConfig[activeIndex]">
         <div class="warehouse_info_item" v-for="(item, index) in warehouseConfig[activeIndex].config" :key="index" v-show="item.fieldLabel">
           <span class="warehouse_item_title">{{item.fieldLabel}}:</span>
-          <span class="warehouse_item_value" v-if='activeIndex==0'>{{warehouse[item.fieldCode]}}</span>
-          <span class="warehouse_item_value" v-else>{{warehouseOut[item.fieldCode]}}</span>
+          <span class="warehouse_item_value">{{warehouse[item.fieldCode]}}</span>
+          <!-- <span class="warehouse_item_value" v-else>{{warehouseOut[item.fieldCode]}}</span> -->
         </div>
       </div>
     </div>

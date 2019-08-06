@@ -1,6 +1,6 @@
 <template>
-  <div class="upload-file-container" :class="{'no-upload': noUpload, 'vux-1px-t': noUpload}" :style="containStyle"
-       v-if="(noUpload && defaultValue.length) || !noUpload">
+  <div class="upload-file-container" :class="{'no-upload vux-1px-t':cfg.readOnly}" :style="containStyle"
+       v-if="values.length|| cfg.readOnly == false">
     <header class="upload-file-header">
       <div class="upload-file-title vux-1px-l">附件</div>
     </header>
@@ -14,10 +14,10 @@
         <template v-else>
           <div @click="downLoadFile(item)">{{item.attr1}}</div>
         </template>
-        <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="!noUpload"></i>
+        <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="cfg.readOnly == false"></i>
       </div>
       <input @change="commUploadFile()" type="file" ref="uFile" v-show="false"/>
-      <div class="upload-file-item" @click="dealUploadDev">
+      <div class="upload-file-item" @click="dealUploadDev" v-show="cfg.readOnly == false">
         <div class="icon_container">
           <span class="icon-upload-add"></span>
           <span>添加附件</span>
@@ -29,9 +29,8 @@
 
 <script>
   import Vue from 'vue';
-  import {deleteFile} from 'service/commonService';
+  import {deleteFile,upload} from 'service/commonService';
   import {chooseImage, uploadImage} from 'plugins/wx/api'
-  import uploadFile from '@/plugins/ajax'
   import {isIOS,isIPhone,isIPad,isAndroid,isPC,isQYWX} from '@/plugins/platform/index'
 
   var component = {
@@ -40,10 +39,6 @@
       id: {
         type: String,
         default: 'upload-file'
-      },
-      noUpload: {
-        type: Boolean,
-        default: false
       },
       containStyle: {//容器样式
         type: Object,
@@ -57,11 +52,6 @@
           return {}
         }
       },
-      // 表单提交id
-      biReferenceId: {
-        type: String,
-        default: ''
-      },
       values: {
         type: Array,
         default() {
@@ -69,7 +59,7 @@
         }
       },
       cfg: {
-        type: Array,
+        type: Object,
         default() {
           return {}
         }
@@ -79,21 +69,8 @@
       return {
         files: [],
         file: null,
+        biReferenceId:null,
         showLoading: false,
-        defaultValue: {},
-      }
-    },
-    watch: {
-      defaultValue: {
-        handler() {
-          this.setDefault();
-        },
-        //immediate: true
-      },
-      values: {
-        handler() {
-          this.defaultValue = this.values
-        }
       }
     },
     methods: {
@@ -123,8 +100,7 @@
       // 设置默认值
       setDefault() {
         let files = [];
-        let [first = {}] = this.defaultValue;
-        files = this.defaultValue.map(item => {
+        files = this.values.map(item => {
           return {
             ...item,
             iconType: this.judgeFileType(item.attr1),
@@ -210,24 +186,22 @@
       commUploadFile() {
         let files = this.$refs.uFile.files[0];
         if(files) {
-          return uploadFile.upload({
+          return upload({
             file: files,
             biReferenceId: this.biReferenceId,
           }).then(({data = [], success = true, message = ''}) => {
             if(success) {
-              let arr = {
-                attacthment: data[0].attacthment,
-                attr1: data[0].attr1,
-                attr2: data[0].attr2,
-                iconType: this.judgeFileType(data[0].attr1),
-                id: data[0].id,
-                referenceId: data[0].biReferenceId,
-                status: 1,
-              };
-              this.files.push(arr);
-              this.$emit('on-upload', {
-                biReferenceId: data[0].biReferenceId,
-              });
+              let detail = {
+                    attacthment: data[0].attacthment,
+                    attr1: data[0].attr1,
+                    attr2: data[0].attr2,
+                    iconType: this.judgeFileType(data[0].attr1),
+                    id: data[0].id,
+                    referenceId: data[0].biReferenceId,
+                    status: 1,
+                  };
+
+              this.uploadSuccess(detail);
             }
           });
         }
@@ -240,15 +214,22 @@
         }).then(data => {
           let [detail = {}] = data;
           detail.iconType = this.judgeFileType(detail.attr1);
-          this.files.push(detail);
-          this.$emit('on-upload', {
-            biReferenceId: detail.biReferenceId,
-          });
+          this.uploadSuccess(detail);
         });
       },
+      uploadSuccess:function(detail){
+        this.files.push(detail);
+        this.biReferenceId = detail.biReferenceId;
+        this.form.$emit('on-upload', {
+          biReferenceId: detail.biReferenceId,
+        });
+      }
     },
     created() {
       this.defaultValue = this.values
+      this.form = this.$parent.form;
+      this.biReferenceId = this.form.biReferenceId;
+      this.setDefault();
     }
   }
   export default Vue.component('Fileupload',component)

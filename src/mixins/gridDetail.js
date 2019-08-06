@@ -60,6 +60,18 @@ export default {
                 form.$off('keyboardToggle',fn);
             })
         },
+        formatByType(value,type){
+            if(value == null) return '无';
+             if(type == 'r2Numberfield'){
+                return util.permilFormat(value);
+             } else {
+               return value
+            }
+        },
+        getRowParam:function(paramField){
+            var paramData = this.values;
+            return util.isArray(paramField) ? util.getValueByNs(paramData, paramField) : eval('paramData' + paramField);
+        },
         getValues(){
             var values = {},
                 fieldMap = this.fieldMap,

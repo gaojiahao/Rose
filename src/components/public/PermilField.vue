@@ -2,7 +2,7 @@
 <div v-show="!hidden" class="cell each_property vux-1px-b">
     <label :class="{'required':!cfg.allowBlank,'readonly':cfg.readOnly}">{{cfg.fieldLabel}}</label>
     <input type="text" v-if="cfg.readOnly == false" :value="values[cfg.fieldCode]" placeholder="请输入" @blur="onInput" />
-    <span v-else >{{values[cfg.fieldCode] == null ? '无' : values[cfg.fieldCode]}}</span>
+    <span v-else >{{valueToRaw(values[cfg.fieldCode])}}</span>
 </div>
 </template>
 <script>
@@ -14,13 +14,6 @@ import util from '@/common/util'
 let cfg = {
     mixins: [fieldBase],
     props:['cfg','values'], 
-    watch: {
-      // num: {
-      //   handler(val) {
-      //     this.currentNum = this.unNumberComma(val);
-      //   }
-      // }
-    },
     methods:{
       onInput:function(e){
         var value = e.target.value;
@@ -39,23 +32,25 @@ let cfg = {
         value = this.getNum(value);
         return value;
       },
+      valueToRaw(value){
+         if (value == null)return '无';
+         return util.permilFormat(value);
+      },
       //覆盖fieldBase的校验方法
       isValid:function(){
         var me = this,
             cfg = me.cfg,
             value = me.getValue();
 
-            if((!cfg.readOnly) && (!cfg.hiddenInRun) && cfg.submitValue) {
-              if(util.isString(value)) {
-                value = this.unNumberComma(value);
-                this.setValue(value);
-              }
-            }
+        if((!cfg.readOnly) && (!cfg.hiddenInRun) && cfg.submitValue) {
+          if(util.isString(value)) {
+            value = this.unNumberComma(value);
+            this.setValue(value);
+          }
+        }
 
         return me.disabled || me.getErrors().length == 0;
       },
-    },
-    created () {
     }
 }
 export default Vue.component('r2Permilfield',cfg);
