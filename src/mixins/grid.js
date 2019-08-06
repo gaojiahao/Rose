@@ -158,6 +158,14 @@ export default {
                 return cfg;
             }
         },
+        formatByType(value,type){
+            if(value == null) return '无';
+            if(~['r2Numberfield','r2Permilfield'].indexOf(type)){
+              return util.permilFormat(value);
+            } else {
+              return value
+            }
+        },
         getSubmitData: function () {
             var values = this.getValue(),
                 data = { dataSet: [] },

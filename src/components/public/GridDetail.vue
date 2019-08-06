@@ -17,7 +17,7 @@
           <template v-for="(item, index) in readOnlyParts">
             <div class="item">
               <span :key="index">{{item.text}}：</span>
-              <span>{{values[item.fieldCode]||'无'}}</span>
+              <span>{{formatByType(values[item.fieldCode],item.editorType)}}</span>
             </div>
           </template>
         </div>
@@ -32,9 +32,9 @@
           </div>
         </div>
         <div class="onlyView-parts" v-if="onlyViewParts.length">
-          <div class="onlyView-item" v-for="(other, index) in onlyViewParts" :key="index">
-            <span class="title">{{other.text}}</span>
-            <span>{{values[other.fieldCode]}}</span>
+          <div class="onlyView-item" v-for="(item, index) in onlyViewParts" :key="index">
+            <span class="title">{{item.text}}</span>
+            <span>{{formatByType(values[item.fieldCode],item.editorType)}}</span>
           </div>
         </div>
       </r-scroll>
@@ -47,7 +47,6 @@
 
 <script>
 import Vue from "vue";
-import util from '@/common/util';
 import girdDetailMix from "mixins/gridDetail";
 import { XInput, numberComma, Popup } from "vux";
 import gridFieldFactory from "./GridFieldFactory";
@@ -101,10 +100,6 @@ var component = {
         item.inventoryPic = url;
       }
       return url;
-    },
-    getRowParam:function(paramField){
-       var paramData = this.values;
-       return util.isArray(paramField) ? util.getValueByNs(paramData, paramField) : eval('paramData' + paramField);
     },
     onShow() {
       this.$nextTick(() => {

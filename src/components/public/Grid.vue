@@ -34,7 +34,7 @@
          
           <div class="item" v-if="item.hidden == false" :key="index">
             <span>{{item.text}}：</span>
-            <span>{{row[item.fieldCode]||'无'}}</span>
+            <span>{{formatByType(row[item.fieldCode],item.editorType)}}</span>
           </div>
         </template>
         <div @click.stop="onShowDetail(row,rIndex)" class="show-more" v-show="!isEdit && cfg.readOnly">
