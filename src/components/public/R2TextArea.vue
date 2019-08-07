@@ -31,5 +31,8 @@ export default Vue.component('R2TextArea',cfg);
     &:before{
         border-top:none;
     }
+    .weui-cell__hd{
+        padding-right:0.05rem;
+    }
 }
 </style>
