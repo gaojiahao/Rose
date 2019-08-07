@@ -3,7 +3,7 @@
   <div class="task_container">
     <div class="task_log">
       <div class="task_log_header">
-        <b>任务日志</b>
+        <b>日志任务</b>
       </div>
       <div class="task_log_status">
         <check-icon
