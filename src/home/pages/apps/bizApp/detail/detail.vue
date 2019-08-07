@@ -201,7 +201,11 @@ export default {
     },
     //打开侧滑菜单
     swiperright() {
-      this.showSlide = true;
+      if(!this.showSlide) {
+        this.showSlide = true;
+      } else {
+        this.showSlide = false;
+      }
     },
     //侧滑菜单切换tab
     goTab(val) {
