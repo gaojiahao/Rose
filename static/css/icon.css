@@ -241,3 +241,7 @@
   background: url('~assets/iconfont/scrollTop.png');
   background-size: cover;
 }
+.icon-slide-bar{
+  background: url('~assets/iconfont/slide_bar.png');
+  background-size: cover;
+}
