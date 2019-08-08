@@ -12,7 +12,7 @@
                :src="`/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`">
         </template>
         <template v-else>
-          <div @click="downLoadFile(item)">{{item.attr1}}</div>
+          <div class="text" @click="downLoadFile(item)">{{item.attr1}}</div>
         </template>
         <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="cfg.readOnly == false"></i>
       </div>
@@ -200,7 +200,6 @@
                     referenceId: data[0].biReferenceId,
                     status: 1,
                   };
-
               this.uploadSuccess(detail);
             }
           });
@@ -219,9 +218,9 @@
       },
       uploadSuccess:function(detail){
         this.files.push(detail);
-        this.biReferenceId = detail.biReferenceId;
+        this.biReferenceId = detail.referenceId;
         this.form.$emit('on-upload', {
-          biReferenceId: detail.biReferenceId,
+          biReferenceId: detail.referenceId,
         });
       }
     },
@@ -300,6 +299,12 @@
         // background: #000;
         position: absolute;
         transform: translate(50%, -50%);
+      }
+      .text {
+        width: 100%;
+        height: 100%;
+        font-size: .12rem;
+        overflow: hidden;  
       }
     }
     .upload-file {

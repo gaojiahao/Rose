@@ -16,6 +16,11 @@
     </div>
     <slideBar :showSlide="showSlide" @swiperleft="swiperleft" @goTab="goTab" :appExample="appExample" :autoSubjectCount="autoSubjectCount"></slideBar>
     <div class="detail-comment-container vux-1px-t" v-if="hasComment">
+      <!-- tab -->
+      <div class="concern" @click="swiperright">
+        <span class="icon icon-slide-bar"></span>
+        <div class="heart-desc">更多</div>
+      </div>
       <!-- 关注 -->
       <div class="concern" @click="goConcern">
         <span class="icon icon-heart" v-if="isConcern === 0"></span>
@@ -196,7 +201,11 @@ export default {
     },
     //打开侧滑菜单
     swiperright() {
-      this.showSlide = true;
+      if(!this.showSlide) {
+        this.showSlide = true;
+      } else {
+        this.showSlide = false;
+      }
     },
     //侧滑菜单切换tab
     goTab(val) {

@@ -48,13 +48,13 @@ export default [
     path: '/taskLog',
     name: 'TASKLOGLIST',
     component: TASKLOGLIST,
-    meta: { title: '任务日志列表' },
+    meta: { title: '日志任务列表' },
     children:[
       {
         path: 'add',
         name: 'TASKLOG',
         component: TASKLOG,
-        meta:{ title:'新增任务日志' }
+        meta:{ title:'新增日志任务' }
       }
     ]
   },
