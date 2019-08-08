@@ -229,46 +229,46 @@ export default Vue.component("RFieldset", component);
       margin-right: 0.2rem;
     }
   }
-  .each_property {
-    height: 0.3rem;
-    padding: 0;
-    font-size: 0.13rem;
-    line-height: 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    white-space: nowrap;
-    overflow: hidden;
-    label {
-      &.required {
-        font-weight: bold;
-        color: $main_color;
-      }
-      &.readonly{
-         color: #999;
-      }
+}
+.each_property {
+  height: 0.3rem;
+  padding: 0;
+  font-size: 0.13rem;
+  line-height: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  white-space: nowrap;
+  overflow: hidden;
+  label {
+    &.required {
+      font-weight: bold;
+      color: $main_color;
     }
-    :after {
-      border-color: #e8e8e8;
-      left: 0;
-    }
-    input {
-      flex: 1;
-      font-size: 0.14rem;
-      margin-left: 0.05rem;
-      outline: none;
-      border: none;
-      text-align: right;
+    &.readonly{
+        color: #999;
     }
   }
-  .barWrapp {
-    display: block;
-    width: 0.3rem;
+  :after {
+    border-color: #e8e8e8;
+    left: 0;
   }
-  .style-toogleBar {
-    width: 0.14rem;
-    height: 0.08rem;
-    display: inline-block;
+  input {
+    flex: 1;
+    font-size: 0.14rem;
+    margin-left: 0.05rem;
+    outline: none;
+    border: none;
+    text-align: right;
   }
+}
+.barWrapp {
+  display: block;
+  width: 0.3rem;
+}
+.style-toogleBar {
+  width: 0.14rem;
+  height: 0.08rem;
+  display: inline-block;
 }
 </style>
