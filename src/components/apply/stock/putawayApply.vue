@@ -481,6 +481,7 @@ export default {
                 content: '确认提交?',
                 // 确定回调
                 onConfirm: () => {
+                    this.$HandleLoad.show();
                     const currentUser = WebContext.WebContext.currentUser;
                     let data={};
                     let formData={
@@ -575,6 +576,10 @@ export default {
                 this.biReferenceId = formData.biReferenceId;
 
                 this.scanCodeInfo.spCode = inPut.dataSet[0]['storehouseInCode'];
+                this.scanCodeInfo.postCode = formData.transCode;
+                this.warehouse = {
+                    warehouseCode: inPut.warehouseCode_containerCode
+                };
                 
                 inPut.dataSet.map(box=>{
                     if(!materielMap[box.transObjCode]){

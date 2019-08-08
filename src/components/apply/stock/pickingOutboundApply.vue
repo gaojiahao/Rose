@@ -40,7 +40,8 @@
                     :handlerSelectItem="handlerSelectItem"
                     :showSelIcon="showSelIcon"
                     :handlerChangeState="handlerChangeState"    
-                    :getGroupInfo="getGroupInfo">
+                    :getGroupInfo="getGroupInfo"
+                    :matterInfoConfig="matterInfoConfig">
                 </wms-matter-part>
             </div>
         </div>
@@ -79,6 +80,7 @@ import {
     updateData} from 'service/commonService'
 import { getPickingOutByBoxCode, releaseSortingOrder, getForPickingData } from 'service/wmsService'
 import WebContext from 'service/commonService'
+import { getSOList } from 'service/detailService'
 
 // 插件引入
 import Bscroll from 'better-scroll'
@@ -95,6 +97,11 @@ export default {
             btnIsHide:false,
             showTost:false,
             tostText:'',
+            formViewUniqueId: '700e7b24-d90b-4801-9a11-5d1ff24a4319', // 修改时的UniqueId
+            matterInfoConfig: {
+                warehouseName:"仓库名称",
+                storehouseOutCode:"库位编码"
+            }
         }
     },
     computed: {
@@ -265,7 +272,7 @@ export default {
                                 warehouseName: box.warehouseName,
                                 boxRule: box.boxRule,
                                 specification: box.specification,
-                                storehouseInCode: box.storehouseCode,
+                                storehouseOutCode: box.storehouseCode,
                                 whOutCode: box.whOutCode,
                                 thenTotalQtyBal: box.thenTotalQtyBal,//待上架
                                 thenLockQty: box.thenLockQty,//已上架
@@ -351,12 +358,14 @@ export default {
         },
         handlerSubmit(){
 
-            if(!this.scanCodeInfo.postCode){
-                this.$vux.alert.show({
-                   content:"申请单号不能为空!"
-               });
-               return;
-            }
+            // if(!this.isModify){
+                if(!this.scanCodeInfo.postCode){
+                    this.$vux.alert.show({
+                    content:"申请单号不能为空!"
+                });
+                    return;
+                }
+            // }
 
             if(this.matters.length===0){
                 this.$vux.alert.show({
@@ -369,6 +378,8 @@ export default {
                 content: '确认提交?',
                 // 确定回调
                 onConfirm: () => {
+                    this.$HandleLoad.show();
+                    
                     const currentUser = WebContext.WebContext.currentUser;
                     let data={};
                     let formData={
@@ -397,41 +408,147 @@ export default {
                     let submitData = {
                         listId: this.$route.params.listId,
                         biComment: '',
+                        biReferenceId:this.biReferenceId,
                         formData:JSON.stringify(formData)
                     }, matCodeCollection  = [];
 
                     formData.outPut.dataSet.forEach(val => {
                         matCodeCollection.push(val.inventoryCode);
                     })
-
-                    submitAndCalc(submitData).then(data => {
-                        this.$HandleLoad.hide()
-                        let {success = false, message = '提交失败'} = data;
-                        
-                        if (success) {
-                            message = '提交成功';
-                            releaseSortingOrder(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res => {
-                                
-                            })
-                        }
-                        this.$vux.alert.show({
-                            content: message,
-                            onHide () {
-                                this.$router.back();
+                    
+                    if(this.isModify){
+                        updateData(submitData).then(data => {
+                            let {success = false, message = '提交失败'} = data;
+                            if (success) {
+                                message = '提交成功';
+                                releaseSortingOrder(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res => {
+                                    
+                                })
                             }
-                        });
-                    }).catch(e => {
-                        this.$HandleLoad.hide();
-                    })
+                            this.$HandleLoad.hide();
+                            this.$vux.alert.show({
+                                content: message,
+                                onHide: () => {
+                                    if(success) this.judgePage();
+                                }
+                            });
+                        }).catch(e => {
+                            this.$HandleLoad.hide();
+                        })
+                    }else{
+                        delete submitData.biReferenceId;
+                        submitAndCalc(submitData).then(data => {
+                            let {success = false, message = '提交失败'} = data;
+                            
+                            if (success) {
+                                message = '提交成功';
+                                releaseSortingOrder(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res => {
+                                    
+                                })
+                            }
+                            this.$HandleLoad.hide();
+                            this.$vux.alert.show({
+                                content: message,
+                                onHide () {
+                                    if(success) this.judgePage();
+                                }
+                            });
+                        }).catch(e => {
+                            this.$HandleLoad.hide();
+                        })
+                    }
                 }
+            })
+        },
+        // 判断是返回上一页还是跳转详情页
+        judgePage() {
+            // 在企业微信的提醒中打开重新提交页面history为1，此时终止成功则跳转详情页
+            if (window.history.length !== 1) {
+                this.$router.go(-1);
+            }
+            else {
+                let {name,folder, fileName} = this.$route.query;
+                let {listId} = this.$route.params;
+                this.$router.replace({
+                path: `/detail/${listId}/0`,
+                query: {
+                    name,
+                    folder,
+                    fileName,
+                    transCode: this.transCode
+                }
+                });
+            }
+        },
+        getFormData(){
+            return getSOList({
+                formViewUniqueId: this.formViewUniqueId,
+                transCode:this.transCode
+            }).then(({success = true, formData = {}, attachment = []}) => {
+                if (success === false) {
+                    this.$vux.alert.show({
+                        content: '抱歉，数据有误，暂无法查看',
+                        onHide: () => {
+                            this.$router.back();
+                        }
+                    });
+                    return;
+                }
+                let {outPut = {}} = formData;
+                let materielMap  ={};
+                this.biReferenceId = formData.biReferenceId;
+                this.scanCodeInfo.postCode = formData.transCode;
+                
+                outPut.dataSet.map(box=>{
+                    if(!materielMap[box.outPutMatCode]){
+                        materielMap[box.outPutMatCode] = {
+                            expend:true,
+                            transMatchedCode: box.transMatchedCode,
+                            transObjCode: box.outPutMatCode,
+                            inventoryCode:box.inventoryCode_outPutMatCode,
+                            inventoryName:box.inventoryName_outPutMatCode,
+                            tdProcessing: box.tdProcessing,
+                            assMeasureUnit: box.assMeasureUnit,
+                            assMeasureDescription: box.assMeasureDescription,
+                            assMeasureScale: box.assMeasureScale,
+                            warehouseName: box.warehouseName_storehouseOutCode,
+                            boxRule: box.boxRule,
+                            specification: box.specification_outPutMatCode,
+                            storehouseInCode: box.storehouseOutCode,
+                            whOutCode: box.whOutCode,
+                            thenTotalQtyBal: box.thenTotalQtyBal,//待上架
+                            thenLockQty: box.thenLockQty,//已上架
+                            thenQtyBal: box.thenQtyBal,//
+                            tdQty: box.tdQty,//本次出库
+                            assistQty:  box.assistQty,
+                            keepingDays_transObjCode: 1,
+                            batchNo: box.batchNo,
+                            productionDate: box.productionDate,
+                            comment: '',
+                            boxCodes:[{
+                                ...box,
+                                warehouseName:outPut.warehouseName_containerCodeOut
+                            }]
+                        }
+                    }else{
+                        materielMap[box.outPutMatCode].boxCodes.push({
+                            ...box,
+                            warehouseName:outPut.warehouseName_containerCodeOut
+                        });
+                    }
+
+                    this.boxCodesMap[box.boxCode] = box;
+                });
+
+                for(var k in materielMap){
+                    this.matters.push(materielMap[k]);
+                }
+
             })
         }
     },
     mounted(){
         this.$loading.hide();
-        this.$nextTick(() => {
-            this.fillBscroll = new Bscroll(this.$refs.fill, {click: true})
-        })
        
         //扫库位码后切换库位的判断依据
         this.warehouse = {};
@@ -440,6 +557,12 @@ export default {
         //已扫箱码信息集合
         this.boxCodesMap = {};
         this.$refs.postCode.focus();
+        if(this.$route.query.transCode){
+            this.transCode = this.$route.query.transCode;
+            this.getFormData();
+            this.biReferenceId = '';
+            this.isModify = true;
+        }
     }
 }
 </script>
