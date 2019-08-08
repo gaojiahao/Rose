@@ -22,8 +22,18 @@ let  cfg = {
 }
 export default Vue.component('R2TextArea',cfg);
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 @import '~@/scss/color';
+/deep/.weui-cell {
+    padding: 0; 
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
 .r-fieldset .textarea {
     height:auto;
     line-height: normal;
@@ -35,4 +45,5 @@ export default Vue.component('R2TextArea',cfg);
         padding-right:0.05rem;
     }
 }
+
 </style>
