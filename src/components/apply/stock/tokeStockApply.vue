@@ -469,6 +469,7 @@ export default {
             })
         },
         saveData(request, submitData) {
+            this.$HandleLoad.show();
             request(submitData).then(data => {
                 this.$HandleLoad.hide();
                 let {success = false, message = '提交失败'} = data;

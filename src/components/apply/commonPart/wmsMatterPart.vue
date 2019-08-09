@@ -33,15 +33,13 @@
                             </div>
                             <div class="matter-info">
                                 <div >{{box.boxCode}}</div>
-                                <p v-for="(value,key) in  matterInfoConfig" :key="key">
-                                    <label>{{value}}:</label>
-                                    {{box[key]}}
-                                </p>
+                                <div class="other" v-for="(value,key) in  matterInfoConfig" :key="key">
+                                    {{value}}:{{box[key]}}
+                                </div>
                                 <div class="box-operate">
                                     <div>
                                         <div v-if="getSpecialInfo" v-html="getSpecialInfo(box)"></div>
                                     </div>
-                                    <div></div>
                                     <div>
                                         <r-number :num="box.tdQty" v-model="box.tdQty"></r-number>
                                     </div>
@@ -157,6 +155,7 @@ export default {
     box-sizing: border-box;
     height: 100%;
     .header{
+        font-size: 16px;
         padding-right: 0.2em;
         height: .30rem;
         line-height: .30rem;
@@ -224,7 +223,10 @@ export default {
                             flex: 1;
                             position: relative;
                             margin-left: .12rem;
-                            padding-bottom: .15rem;
+                            padding-bottom: .05rem;
+                            .other{
+                                display: inline-block;
+                            }
                             .box-operate{
                                 display: flex;
                                 -webkit-box-sizing: border-box;

@@ -108,7 +108,6 @@ export default {
             tostText:'',
             formViewUniqueId: 'a1bccaee-37a8-4786-bbf4-e9cee9fbd081', // 修改时的UniqueId
             matterInfoConfig:{
-                warehouseName:"仓库名称",
                 storehouseInCode:"库位编码",
                 specification:"规格",
                 batchNo:"批次号",
@@ -325,6 +324,46 @@ export default {
             });
             return s;
         },
+        transfromDataSource(item){
+            return {
+                transMatchedCode: item.transCode,//被核销交易号
+                transObjCode: item.inventoryCode,//物料编码
+                tdProcessing:item.processing,//加工属性
+                assMeasureUnit: item.invSubUnitName,//采购单位
+                assMeasureDescription: item.invSubUnitComment,//产品规格
+                assMeasureScale: item.invSubUnitMulti,//主计倍数
+                storehouseInCode: item.storehouseInCode,
+                thenTotalQtyBal: item.thenTotalQtyBal,
+                thenLockQty: item.thenLockQty,
+                thenQtyBal: item.thenQtyBal,
+                tdQty: item.tdQty,
+                batchNo: item.batchNo,
+                productionDate: item.productionDate
+            }
+        },
+        transfromViewData(box){
+            return {
+                transMatchedCode: box.transMatchedCode,
+                transObjCode: box.transObjCode,
+                inventoryCode:box.transObjCode,
+                inventoryName:box.inventoryName_transObjCode,
+                storehouseInCode:box.storehouseInCode,
+                tdProcessing: box.tdProcessing,
+                assMeasureUnit: box.measureUnit,
+                assMeasureDescription: box.assMeasureDescription,
+                assMeasureScale: box.assMeasureScale,
+                specification:box.specification_transObjCode,
+                thenTotalQtyBal: box.thenTotalQtyBal,//待上架
+                thenLockQty: box.thenLockQty,//已上架
+                thenQtyBal: box.thenQtyBal,//
+                tdQty: box.tdQty,//本次上架
+                assistQty:  box.assistQty,
+                batchNo: box.batchNo,
+                productionDate: box.productionDate,
+                boxCode:box.boxCode,
+                boxRule:box.boxRule
+            }
+        },
         handlerSetMatters(warehouseCode,postCode,callback){
             let params = {
                 whCode: warehouseCode,
@@ -407,13 +446,11 @@ export default {
         //往物料分组上添加箱码数据
         handlerAddBoxCodeToMatter(idx,boxRule){
             this.shelfList.map(mat=>{
-                let temMat = Object.assign({},mat);
-                delete temMat.boxCodes;
                 if(mat.idx === idx){
                     this.matters.map(m=>{
                         if(m.inventoryCode === mat.inventoryCode){
                             m.boxCodes.push({
-                                ...temMat,
+                                ...this.transfromDataSource(mat),
                                 boxCode: this.scanCodeInfo.boxCode,
                                 warehouseName :this.warehouse.warehouseName,
                                 storehouseInCode:this.scanCodeInfo.spCode,
@@ -432,24 +469,8 @@ export default {
             this.matters.map(mat=>{
                 mat.boxCodes.map(box=>{
                     dataSet.push({
-                        transMatchedCode: box.transCode,//被核销交易号
-                        transObjCode: box.inventoryCode,//物料编码
-                        tdProcessing:box.processing,//加工属性
-                        assMeasureUnit: box.invSubUnitName,//采购单位
-                        assMeasureDescription: box.invSubUnitComment,//产品规格
-                        assMeasureScale: box.invSubUnitMulti,//主计倍数
-                        boxCode: box.boxCode,
-                        boxRule: box.boxRule,
-                        warehouseName_storehouseInCode: '',//库区名称
-                        storehouseInCode: box.storehouseInCode,
-                        thenTotalQtyBal: box.thenTotalQtyBal,
-                        thenLockQty: box.thenLockQty,
-                        thenQtyBal: box.thenQtyBal,
-                        tdQty: box.tdQty,
+                        ...box,
                         assistQty: box.tdQty/box.invSubUnitMulti,
-                        keepingDays_transObjCode: box.keepingDays,
-                        batchNo: box.batchNo,
-                        productionDate: box.productionDate
                     });
                 });
             });
@@ -510,49 +531,38 @@ export default {
                         formData:JSON.stringify(formData),
                     };
 
-                   
+                    let opeartion = submitAndCalc;
+
                     if(this.isModify){
-                        updateData(submitData).then(data => {
-                            this.$HandleLoad.hide()
-                            let {success = false, message = '提交失败'} = data;
-                            if (success) {
-                                message = '提交成功';
-                                // this.$emit('change', true);
-                            }
-                            this.$vux.alert.show({
-                                content: message,
-                                onHide: () => {
-                                    if (success) {
-                                    this.judgePage();
-                                    }
-                                }
-                            });
-                        }).catch(e => {
-                            this.$HandleLoad.hide();
-                        })
+                        opeartion = updateData;
                     }else{
                         delete submitData.biReferenceId;
-                        submitAndCalc(submitData).then(data => {
-                            this.$HandleLoad.hide()
-                            let {success = false, message = '提交失败'} = data;
-                            if (success) {
-                                message = '提交成功';
-                                // this.$emit('change', true);
-                            }
-                            this.$vux.alert.show({
-                                content: message,
-                                onHide: () => {
-                                    if (success) {
-                                    this.judgePage();
-                                    }
-                                }
-                            });
-                        }).catch(e => {
-                            this.$HandleLoad.hide();
-                        })
                     }
+
+                    this.saveData(opeartion,submitData);
                    
                 }
+            })
+        },
+        saveData(request, submitData) {
+            this.$HandleLoad.show();
+            request(submitData).then(data => {
+                this.$HandleLoad.hide();
+                let {success = false, message = '提交失败'} = data;
+                if (success) {
+                    message = '提交成功';
+                    this.$emit('change', true);
+                }
+                this.$vux.alert.show({
+                    content: message,
+                    onHide: () => {
+                        if (success) {
+                            this.judgePage();
+                        }
+                    }
+                });
+            }).catch(e => {
+                this.$HandleLoad.hide();
             })
         },
         getFormData(){
@@ -575,39 +585,29 @@ export default {
                 this.biReferenceId = formData.biReferenceId;
 
                 this.scanCodeInfo.spCode = inPut.dataSet[0]['storehouseInCode'];
+                this.scanCodeInfo.postCode = inPut.dataSet[0]['transMatchedCode'];
+                this.warehouse = {
+                    warehouseCode:inPut.containerCode,
+                    warehouseName:inPut.warehouseName_containerCode
+                }
                 
                 inPut.dataSet.map(box=>{
                     if(!materielMap[box.transObjCode]){
                         materielMap[box.transObjCode] = {
                             expend:true,
-                            transMatchedCode: box.transMatchedCode,
-                            transObjCode: box.transObjCode,
                             inventoryCode:box.transObjCode,
                             inventoryName:box.inventoryName_transObjCode,
-                            tdProcessing: box.processing,
-                            assMeasureUnit: box.measureUnit,
-                            assMeasureDescription: box.assMeasureDescription,
-                            assMeasureScale: box.assMeasureScale,
-                            warehouseName_storehouseInCode: box.warehouseName_storehouseInCode,
                             thenTotalQtyBal: box.thenTotalQtyBal,//待上架
                             thenLockQty: box.thenLockQty,//已上架
                             thenQtyBal: box.thenQtyBal,//
                             tdQty: box.tdQty,//本次上架
-                            assistQty:  box.assistQty,
-                            batchNo: box.batchNo,
-                            productionDate: box.productionDate,
-                            comment: box.comment,
                             boxCodes:[{
-                                ...box,
-                                specification:box.specification_transObjCode,
-                                warehouseName:inPut.warehouseType_containerCode
+                                ...this.transfromViewData(box),
                             }]
                         }
                     }else{
                         materielMap[box.transObjCode].boxCodes.push({
-                            ...box,
-                            specification:box.specification_transObjCode,
-                            warehouseName:inPut.warehouseType_containerCode
+                            ...this.transfromViewData(box),
                         });
                     }
 
