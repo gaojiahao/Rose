@@ -200,6 +200,7 @@
                     referenceId: data[0].biReferenceId,
                     status: 1,
                   };
+
               this.uploadSuccess(detail);
             }
           });
@@ -218,9 +219,9 @@
       },
       uploadSuccess:function(detail){
         this.files.push(detail);
-        this.biReferenceId = detail.referenceId;
+        this.biReferenceId = detail.biReferenceId;
         this.form.$emit('on-upload', {
-          biReferenceId: detail.referenceId,
+          biReferenceId: detail.biReferenceId,
         });
       }
     },
