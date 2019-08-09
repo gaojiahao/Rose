@@ -525,7 +525,7 @@ export default Vue.component('R2Action',component)
       box-sizing: border-box;
       .btn_item {
         display: inline-block;
-        padding: .08rem .28rem;
+        padding: .08rem .26rem;
         border: 1px solid #9c9c9c;
         background-color: #fff;
         text-align: center;
