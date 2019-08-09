@@ -1,6 +1,6 @@
 import $flyio from 'plugins/ajax'
 let homeService = {
-    getMeau() {
+    getMenu() {
         return $flyio.ajax({
             url:'/H_roleplay-si/ds/getMenu'
         })

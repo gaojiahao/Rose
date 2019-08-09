@@ -502,6 +502,7 @@ export default {
                 content: '确认提交?',
                 // 确定回调
                 onConfirm: () => {
+                    this.$HandleLoad.show();
                     const currentUser = WebContext.WebContext.currentUser;
                     let data={};
                     let formData={

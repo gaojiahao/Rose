@@ -73,6 +73,9 @@
 </script>
 
 <style scoped lang="scss">
+  * {
+      touch-action: pan-y;
+  }
   .r-number-container {
     display: flex;
     border-radius: .02rem;
