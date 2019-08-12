@@ -142,7 +142,7 @@ export default {
         //企业微信扫申请单号
         handlerQwScanPostCode(){
             scanQRCode().then(({result = ''}) => {
-                alert(`扫码成功${result}aa`);
+                alert(`扫码252050成功${result}aa`);
                 alert(`库位${this.scanCodeInfo.spCode}`);
                 this.scanCodeInfo.postCode = result;
                 this.handlerScanPostCode();
