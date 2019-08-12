@@ -13,7 +13,7 @@
                                 class='property_val' 
                                 v-on:input="handlerScanPostCode"
                                 @focus="handleOnFocus($event)" />
-                            <i class="iconfont" @click="ScanPostCode">&#xe661;</i>
+                            <i class="iconfont" @click="scanAAA">&#xe661;</i>
 
                         </div>
                     </div>
@@ -139,7 +139,8 @@ export default {
         handleOnFocus(e) {
             event.currentTarget.select();
         },
-        scanPostCode(){
+        scanAAA(){
+            debugger
              scanQRCode().then(({result = ''}) => {
                 this.scanCodeInfo.postCode = result;
             })
