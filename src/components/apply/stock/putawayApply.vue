@@ -143,6 +143,7 @@ export default {
         handlerQwScanPostCode(){
             scanQRCode().then(({result = ''}) => {
                 alert(`扫码成功${result}aa`);
+                alert(`库位${this.scanCodeInfo.spCode}`);
                 this.scanCodeInfo.postCode = result;
                 this.handlerScanPostCode();
             });
