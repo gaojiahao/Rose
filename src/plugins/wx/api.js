@@ -19,7 +19,7 @@ export const scanQRCode = (options = {}) => {
             result: resultStr,
           });
         } else {
-          alert('扫码失败');
+          alert(`扫码失败${message}`);
           this.$vux.alert.show({
             content: message
           });
