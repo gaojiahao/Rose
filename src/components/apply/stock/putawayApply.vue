@@ -140,7 +140,7 @@ export default {
             event.currentTarget.select();
         },
         scanAAA(){
-            debugger
+            alert('scan');
              scanQRCode().then(({result = ''}) => {
                 this.scanCodeInfo.postCode = result;
             })
