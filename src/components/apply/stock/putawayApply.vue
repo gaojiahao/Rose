@@ -13,7 +13,7 @@
                                 class='property_val' 
                                 v-on:input="handlerScanPostCode"
                                 @focus="handleOnFocus($event)" />
-                            <i class="iconfont" @click="scanAAA">&#xe661;</i>
+                            <i class="iconfont" @click="handlerQwScanPostCode">&#xe661;</i>
 
                         </div>
                     </div>
@@ -28,7 +28,7 @@
                                 v-on:input="handlerScanSpinfo"
                                 class='property_val' 
                                 @focus="handleOnFocus($event)" />
-                            <i class="iconfont">&#xe661;</i>
+                            <i class="iconfont" @click="handlerQwScanSpinfo">&#xe661;</i>
                         </div>
                     </div>
                     <div class="vux-1px-t">
@@ -42,7 +42,7 @@
                                 v-on:input="handlerScanBoxCode"
                                 class='property_val' 
                                 @focus="handleOnFocus($event)" />
-                            <i class="iconfont">&#xe661;</i>
+                            <i class="iconfont" @click="handlerQwScanBoxCode">&#xe661;</i>
                         </div>
                     </div>
                     
@@ -139,14 +139,12 @@ export default {
         handleOnFocus(e) {
             event.currentTarget.select();
         },
-        scanAAA(){
-            alert('scan');
-            
-             scanQRCode().then(({result = ''}) => {
-                 alert('成功');
-                 alert(result);
+        //企业微信扫申请单号
+        handlerQwScanPostCode(){
+            scanQRCode().then(({result = ''}) => {
                 this.scanCodeInfo.postCode = result;
-            })
+                this.handlerScanPostCode();
+            });
         },
         //扫申请单号
         handlerScanPostCode(){
@@ -173,6 +171,13 @@ export default {
                 this.postCode = this.scanCodeInfo.postCode;
                 this.$refs.spCode.focus();
             }
+        },
+        //企业微信扫库位以确定库位信息
+        handlerQwScanSpinfo(){
+            scanQRCode().then(({result = ''}) => {
+                this.scanCodeInfo.spCode = result;
+                this.handlerScanPostCode();
+            });
         },
         //扫库位以确定库位信息
         //通过申请单号+仓库编码获取待上架物料
@@ -224,6 +229,14 @@ export default {
                 }
             })
             
+        },
+
+        // 企业为扫箱码
+        handlerQwScanBoxCode(){
+            scanQRCode().then(({result = ''}) => {
+                this.scanCodeInfo.boxCode = result;
+                this.handlerScanBoxCode();
+            });
         },
          /**
         * 扫箱码

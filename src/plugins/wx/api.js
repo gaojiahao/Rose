@@ -7,26 +7,12 @@ export const scanQRCode = (options = {}) => {
       desc: 'scanQRCode desc',
       needResult: 1, // 默认为0，扫描结果由企业微信处理，1则直接返回扫描结果，
       scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是一维码，默认二者都有
-      success: function ({err_Info = 'false', resultStr = ''}) {
+      success: function ({ resultStr = ''}) {
         // needResult为1时，返回值为{err_Info: 'success', resultStr: '链接地址', errMsg: 'scanQrCode: ok'}
-        alert(`扫码成功${resultStr}`);
-        let message = '扫描结果异常';
-        if (err_Info === 'success') {
-          alert(`扫码成功${resultStr}`);
-          message = '扫描成功';
-          resolve({
-            message,
-            result: resultStr,
-          });
-        } else {
-          alert(`扫码失败${message}`);
-          this.$vux.alert.show({
-            content: message
-          });
-          reject({
-            message
-          })
-        }
+        resolve({
+          message,
+          result: resultStr,
+        });
       },
       error: function (res) {
         let message = '扫描异常';
