@@ -7,11 +7,11 @@ export const scanQRCode = (options = {}) => {
       desc: 'scanQRCode desc',
       needResult: 1, // 默认为0，扫描结果由企业微信处理，1则直接返回扫描结果，
       scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是一维码，默认二者都有
-      success: function ({ resultStr = ''}) {
+      success: function ({err_Info = 'false', resultStr = ''}) {
         // needResult为1时，返回值为{err_Info: 'success', resultStr: '链接地址', errMsg: 'scanQrCode: ok'}
-        resolve({
+        return resolve({
           message,
-          result: resultStr,
+          result: resultStr
         });
       },
       error: function (res) {
