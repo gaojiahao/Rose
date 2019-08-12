@@ -142,6 +142,8 @@ export default {
         scanAAA(){
             alert('scan');
              scanQRCode().then(({result = ''}) => {
+                 alert('成功');
+                 alert(result);
                 this.scanCodeInfo.postCode = result;
             })
         },
