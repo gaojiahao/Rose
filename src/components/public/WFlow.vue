@@ -170,6 +170,7 @@ var component = {
     dateFormat,
   },
   created() {
+    this.workFlowInfoHandler();
     this.getProcessStatusByListId();
     this.getStatusProcessByTransCode();
   }
