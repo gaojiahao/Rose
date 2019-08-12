@@ -12,7 +12,7 @@ export const scanQRCode = (options = {}) => {
         
         let message = '扫描结果异常';
         if (err_Info === 'success') {
-          alert('扫码成功');
+          alert(`扫码成功${resultStr}`);
           message = '扫描成功';
           resolve({
             message,
