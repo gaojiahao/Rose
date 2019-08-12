@@ -284,8 +284,8 @@
         this.handleOrgList.forEach(item => {
           this.groupList.push({
             ...item,
-            name: item.userGroupName,
-            value: item.userGroupName
+            name: item.groupName,
+            value: item.groupName
           })
         });
       },
