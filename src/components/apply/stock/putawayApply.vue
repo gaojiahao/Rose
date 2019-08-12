@@ -13,7 +13,7 @@
                                 class='property_val' 
                                 v-on:input="handlerScanPostCode"
                                 @focus="handleOnFocus($event)" />
-                            <i class="iconfont">&#xe661;</i>
+                            <i class="iconfont" @click="ScanPostCode">&#xe661;</i>
 
                         </div>
                     </div>
@@ -90,6 +90,10 @@ import {
 import WebContext from 'service/commonService'
 import { getStorageShelf, getWhbyStoragelocation } from 'service/wmsService'
 import { getSOList } from 'service/detailService'
+// 微信JS-SDK引入
+import { register } from 'plugins/wx'
+
+  import { scanQRCode} from 'plugins/wx/api'
 
 import { debug, debuglog } from 'util';
 export default {
@@ -134,6 +138,11 @@ export default {
         // 输入框获取焦点，内容选中
         handleOnFocus(e) {
             event.currentTarget.select();
+        },
+        scanPostCode(){
+             scanQRCode().then(({result = ''}) => {
+                this.scanCodeInfo.postCode = result;
+            })
         },
         //扫申请单号
         handlerScanPostCode(){
@@ -641,6 +650,9 @@ export default {
                 });
             }
         },
+    },
+    created(){
+        register()
     },
     mounted(){
         this.$loading.hide();
