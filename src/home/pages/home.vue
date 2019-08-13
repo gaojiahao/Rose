@@ -194,7 +194,7 @@ export default {
             // 图片处理
             item.icon = item.icon ? `${item.icon}` : "";
             this.BasicApps.push(item);
-          }
+          } else
           // 处理 业务应用
           if (!item.children) {
             // 获取 应用类型ID 对应相应文件夹
@@ -212,7 +212,7 @@ export default {
             }
             // 归类到相应的小数组
             BUSobj[val.text].push(item);
-          }
+          } else
           // 如果应用里面 存在分类
           if (item.children) {
             for (let childItem of item.children) {
