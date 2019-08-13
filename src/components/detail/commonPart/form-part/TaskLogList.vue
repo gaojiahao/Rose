@@ -174,9 +174,11 @@ export default {
     },
     // 获取 默认图片
     getDefaultImg(item) {
-        let url = require("assets/ava02.png");
-        item && (item.photo = url);
+      if(item){
+        let url = item.gender === '男' ? require("assets/ava01.png") : require("assets/ava02.png");
+        item.photo = url;
         return url;
+      }
     },
       //格式化日期方法
     formatDate(currentDate) {

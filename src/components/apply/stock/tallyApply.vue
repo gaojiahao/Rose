@@ -180,7 +180,7 @@ export default {
                     let exist = false;
                     this.matters.map(m=>{
                         if(m.inventoryCode === mat.inventoryCode){
-                            m.boxCodes.unshift(this.transformDataSource(mat,boxCode,boxRule));
+                            m.boxCodes.unshift(this.transfromDataSource(mat,boxCode,boxRule));
                             exist = true;
                         }
                     });
@@ -189,7 +189,7 @@ export default {
                         this.matters.unshift({
                             ...mat,
                             expend:true,
-                            boxCodes:[this.transformDataSource(mat,boxCode,boxRule)]
+                            boxCodes:[this.transfromDataSource(mat,boxCode,boxRule)]
                         });
 
                         //记录出库仓信息
@@ -213,7 +213,7 @@ export default {
             this.$refs.boxCode.focus();
 
         },
-        transformDataSource(mat,boxCode,boxRule){
+        transfromDataSource(mat,boxCode,boxRule){
             return{
                 transObjCode: mat.inventoryCode,//物料编码
                 inventoryName:mat.inventoryName,
@@ -234,7 +234,7 @@ export default {
                 outWarehouseName:mat.warehouseName,
             }
         },
-        transformViewData(box){
+        transfromViewData(box){
             return {
                 transObjCode: box.transObjCode,//物料编码
                 inventoryCode:box.transObjCode,//物料编码
@@ -450,6 +450,7 @@ export default {
             })
         },
         saveData(request, submitData) {
+            this.$HandleLoad.show();
             request(submitData).then(data => {
                 this.$HandleLoad.hide();
                 let {success = false, message = '提交失败'} = data;
@@ -499,11 +500,11 @@ export default {
                     if(!materielMap[box.transObjCode]){
                         materielMap[box.transObjCode] = {
                             expend:true,
-                            ...this.transformViewData(box),
-                            boxCodes:[this.transformViewData(box)]
+                            ...this.transfromViewData(box),
+                            boxCodes:[this.transfromViewData(box)]
                         }
                     }else{
-                        materielMap[box.transObjCode].boxCodes.push(this.transformViewData(box));
+                        materielMap[box.transObjCode].boxCodes.push(this.transfromViewData(box));
                     }
 
                     this.boxCodesMap[box.boxCode] = box;

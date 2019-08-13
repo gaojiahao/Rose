@@ -186,22 +186,11 @@ export default {
                     res.tableContent.forEach(mat => {
                         this.matters.unshift({
                             expend:true,
-                            transMatchedCode: mat.transCode,
-                            transObjCode: mat.inventoryCode,
                             inventoryCode:mat.inventoryCode,
                             inventoryName:mat.inventoryName,
-                            tdProcessing: mat.processing,
-                            assMeasureUnit: mat.invSubUnitName,
-                            assMeasureDescription: mat.invSubUnitComment,
-                            assMeasureScale: mat.invSubUnitMulti,
-                            boxRule: mat.boxRule,
                             thenTotalQtyBal: mat.thenTotalQtyBal,//待上架
                             thenLockQty: mat.thenLockQty,//已上架
                             thenQtyBal: mat.thenQtyBal,//
-                            keepingDays_transObjCode: 1,
-                            batchNo: mat.batchNo,
-                            productionDate: mat.productionDate,
-                            comment: '',
                             boxCodes:[]
                         });
                     })
@@ -260,32 +249,7 @@ export default {
                     this.matters.map(mat => {
                         if(box.inventoryCode === mat.inventoryCode){
                             mat.boxCodes.unshift({
-                                expend:true,
-                                transMatchedCode: box.transCode,
-                                transObjCode: box.inventoryCode,
-                                inventoryCode:box.inventoryCode,
-                                inventoryName:box.inventoryName,
-                                tdProcessing: box.processing,
-                                assMeasureUnit: box.invSubUnitName,
-                                assMeasureDescription: box.invSubUnitComment,
-                                assMeasureScale: box.invSubUnitMulti,
-                                warehouseName: box.warehouseName,
-                                boxRule: box.boxRule,
-                                specification: box.specification,
-                                storehouseOutCode: box.storehouseCode,
-                                whOutCode: box.whOutCode,
-                                thenTotalQtyBal: box.thenTotalQtyBal,//待上架
-                                thenLockQty: box.thenLockQty,//已上架
-                                thenQtyBal: box.thenQtyBal,//
-                                tdQty: box.boxQtyBal,//本次出库
-                                assistQty:  box.boxQtyBal/box.invSubUnitMulti,
-                                keepingDays_transObjCode: 1,
-                                batchNo: box.batchNo,
-                                productionDate: box.productionDate,
-                                comment: '',
-                                boxCode: box.boxCode,
-                                postCode: this.scanCodeInfo.postCode,
-                                boxRule: box.boxRule
+                                ...this.transformDataSource(box)
                             })
                         }
                         this.warehouse = {
@@ -357,16 +321,12 @@ export default {
             return dataSet;
         },
         handlerSubmit(){
-
-            // if(!this.isModify){
-                if(!this.scanCodeInfo.postCode){
-                    this.$vux.alert.show({
-                    content:"申请单号不能为空!"
-                });
-                    return;
-                }
-            // }
-
+            if(!this.scanCodeInfo.postCode){
+                this.$vux.alert.show({
+                content:"申请单号不能为空!"
+            });
+                return;
+            }
             if(this.matters.length===0){
                 this.$vux.alert.show({
                     content:"出库明细不能为空!"
@@ -416,48 +376,35 @@ export default {
                         matCodeCollection.push(val.inventoryCode);
                     })
                     
+                    let opeartion = submitAndCalc;
                     if(this.isModify){
-                        updateData(submitData).then(data => {
-                            let {success = false, message = '提交失败'} = data;
-                            if (success) {
-                                message = '提交成功';
-                                releaseSortingOrder(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res => {
-                                    
-                                })
-                            }
-                            this.$HandleLoad.hide();
-                            this.$vux.alert.show({
-                                content: message,
-                                onHide: () => {
-                                    if(success) this.judgePage();
-                                }
-                            });
-                        }).catch(e => {
-                            this.$HandleLoad.hide();
-                        })
+                        opeartion = updateData;
                     }else{
                         delete submitData.biReferenceId;
-                        submitAndCalc(submitData).then(data => {
-                            let {success = false, message = '提交失败'} = data;
-                            
-                            if (success) {
-                                message = '提交成功';
-                                releaseSortingOrder(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res => {
-                                    
-                                })
-                            }
-                            this.$HandleLoad.hide();
-                            this.$vux.alert.show({
-                                content: message,
-                                onHide () {
-                                    if(success) this.judgePage();
-                                }
-                            });
-                        }).catch(e => {
-                            this.$HandleLoad.hide();
-                        })
                     }
+
+                    this.saveData(opeartion,submitData,matCodeCollection);
                 }
+            })
+        },
+        saveData(request, submitData,matCodeCollection) {
+            request(submitData).then(data => {
+                this.$HandleLoad.hide();
+                let {success = false, message = '提交失败'} = data;
+                if (success) {
+                    message = '提交成功';
+                    releaseSortingOrder(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res => {})
+                }
+                this.$vux.alert.show({
+                    content: message,
+                    onHide: () => {
+                        if (success) {
+                            this.judgePage();
+                        }
+                    }
+                });
+            }).catch(e => {
+                this.$HandleLoad.hide();
             })
         },
         // 判断是返回上一页还是跳转详情页
@@ -505,34 +452,20 @@ export default {
                             expend:true,
                             transMatchedCode: box.transMatchedCode,
                             transObjCode: box.outPutMatCode,
-                            inventoryCode:box.inventoryCode_outPutMatCode,
+                            inventoryCode:box.outPutMatCode,
                             inventoryName:box.inventoryName_outPutMatCode,
-                            tdProcessing: box.tdProcessing,
-                            assMeasureUnit: box.assMeasureUnit,
-                            assMeasureDescription: box.assMeasureDescription,
-                            assMeasureScale: box.assMeasureScale,
-                            warehouseName: box.warehouseName_storehouseOutCode,
-                            boxRule: box.boxRule,
-                            specification: box.specification_outPutMatCode,
-                            storehouseInCode: box.storehouseOutCode,
-                            whOutCode: box.whOutCode,
                             thenTotalQtyBal: box.thenTotalQtyBal,//待上架
                             thenLockQty: box.thenLockQty,//已上架
                             thenQtyBal: box.thenQtyBal,//
                             tdQty: box.tdQty,//本次出库
-                            assistQty:  box.assistQty,
-                            keepingDays_transObjCode: 1,
-                            batchNo: box.batchNo,
-                            productionDate: box.productionDate,
-                            comment: '',
                             boxCodes:[{
-                                ...box,
+                                ...this.transformViewData(box),
                                 warehouseName:outPut.warehouseName_containerCodeOut
                             }]
                         }
                     }else{
                         materielMap[box.outPutMatCode].boxCodes.push({
-                            ...box,
+                            ...this.transformViewData(box),
                             warehouseName:outPut.warehouseName_containerCodeOut
                         });
                     }
@@ -545,6 +478,59 @@ export default {
                 }
 
             })
+        },
+        transformDataSource(box){
+            return{
+                expend:true,
+                transMatchedCode: box.transCode,
+                transObjCode: box.inventoryCode,
+                inventoryCode:box.inventoryCode,
+                inventoryName:box.inventoryName,
+                tdProcessing: box.processing,
+                assMeasureUnit: box.invSubUnitName,
+                assMeasureDescription: box.invSubUnitComment,
+                assMeasureScale: box.invSubUnitMulti,
+                warehouseName: box.warehouseName,
+                whOutCode: box.whOutCode,
+                boxRule: box.boxRule,
+                specification: box.specification,
+                storehouseOutCode: box.storehouseCode,
+                whOutCode: box.whOutCode,
+                thenTotalQtyBal: box.thenTotalQtyBal,//待上架
+                thenLockQty: box.thenLockQty,//已上架
+                thenQtyBal: box.thenQtyBal,//
+                tdQty: box.boxQtyBal,//本次出库
+                assistQty:  box.boxQtyBal/box.invSubUnitMulti,
+                batchNo: box.batchNo,
+                productionDate: box.productionDate,
+                boxCode: box.boxCode,
+                postCode: this.scanCodeInfo.postCode,
+                boxRule: box.boxRule
+            }
+        },
+        transformViewData(box){
+            return {
+                expend:true,
+                transMatchedCode: box.transMatchedCode,
+                transObjCode: box.outPutMatCode,
+                inventoryCode:box.outPutMatCode,
+                inventoryName:box.inventoryName_outPutMatCode,
+                tdProcessing: box.tdProcessing,
+                assMeasureUnit: box.assMeasureUnit,
+                assMeasureDescription: box.assMeasureDescription,
+                assMeasureScale: box.assMeasureScale,
+                boxRule: box.boxRule,
+                specification: box.specification_outPutMatCode,
+                storehouseOutCode: box.storehouseOutCode,
+                thenTotalQtyBal: box.thenTotalQtyBal,//待上架
+                thenLockQty: box.thenLockQty,//已上架
+                thenQtyBal: box.thenQtyBal,//
+                tdQty: box.tdQty,//本次出库
+                assistQty:  box.boxQtyBal/box.invSubUnitMulti,
+                batchNo: box.batchNo,
+                productionDate: box.productionDate,
+                boxCode: box.boxCode
+            }
         }
     },
     mounted(){

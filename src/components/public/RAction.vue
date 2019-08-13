@@ -200,22 +200,16 @@ export default {
     update() {
       let { folder, fileName } = this.$route.query,
           { listId } = this.$route.params;
-      this.$vux.confirm.show({
-        title: '温馨提示',
-        content: '即将进入修改页面，确认吗？',
-        onConfirm: () => {
-          this.$router.push({
-            path: `/fillform/${listId}/0`,
-            query: {
-              fileName,
-              folder,
-              name: this.name,
-              transCode: this.code,
-              isModify: true
-            },
-          });
-        }
-      }) 
+      this.$router.push({
+        path: `/fillform/${listId}/0`,
+        query: {
+          fileName,
+          folder,
+          name: this.name,
+          transCode: this.code,
+          isModify: true
+        },
+      });
     },
     // 转办
     transfer() {

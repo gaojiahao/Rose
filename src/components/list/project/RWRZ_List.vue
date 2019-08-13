@@ -47,7 +47,14 @@
               >
                 <i class="icon" :class="[getTaskIcon(tIndex)]"></i>
                 <div class="task-detail">
-                  <div class="task_name">{{task.logTitle}}</div>
+                  <!-- <div class="task_name">
+                    {{task.logTitle}}
+                     <span class="instance_process_status">{{task.biProcessStatus || '暂无流程'}}</span>
+                    </div> -->
+                    <div class="task_name">
+                      <span class="task_title">{{task.logTitle}}</span>
+                      <span class="instance_process_status">{{item.biProcessStatus || '暂无流程'}}</span>
+                    </div>
                   <div class="task_info">
                     <div class="task_info_item">
                       <span class="task_info_title">预算成本:</span>
@@ -183,6 +190,19 @@ export default {
     .task_name {
       font-size: 0.14rem;
       line-height: 0.18rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .instance_process_status{
+        margin-left: .22rem;
+        padding: .04rem .05rem;
+        line-height: .12rem;
+        border: 1px solid #FB880B;
+        border-radius: .04rem;
+        color: #FB880B;
+        font-size: .1rem;
+        font-weight: 500;
     }
     .task_info {
       display: flex;

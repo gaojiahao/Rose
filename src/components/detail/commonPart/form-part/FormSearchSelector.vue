@@ -253,7 +253,7 @@ export default {
     .title {
       color: #4e9cec;
       font-weight: bold;
-      font-size: 0.15rem;
+      font-size: 0.14rem;
       margin-right: 0.1rem;
       &.required {
         font-weight: bold;

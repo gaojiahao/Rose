@@ -1,7 +1,7 @@
 <template>
   <div class="r-number-container">
     <span class="r-number-handle iconfont icon-iconfontmove" @click.stop="subNum" :class="{disabled : min && currentNum <= min}"></span>
-    <input class="num" type="number" :value="currentNum" @blur="getNum"/>
+    <input class="num" type="number" :value="currentNum" />
     <span class="r-number-handle iconfont icon-jia" @click.stop="plusNum"
           :class="{disabled: max && currentNum >= max}"></span>
   </div>
@@ -22,12 +22,12 @@
       // 最大值
       max: {
         type: Number,
-        default: 0
+        default: 9999999999
       },
       // 最小值
       min: {
         type: Number,
-        default: 1
+        default: 0
       },
       // 失去焦点时对值做的处理
       checkNum: {
@@ -63,19 +63,6 @@
       plusNum() {
         if (this.max && this.max === this.num) return;
         this.currentNum = parseFloat(accAdd(this.currentNum, 1));
-        this.$emit('input', this.currentNum);
-      },
-      // 数量自定义
-      getNum(e) {
-        let val = Number(e.target.value);
-        if (this.max && val > this.max) {
-          val = this.max;
-        }
-        if (this.min && val < this.min) {
-          val = this.min;
-        }
-        this.currentNum = this.checkNum(val);
-        e.target.value = this.currentNum;
         this.$emit('input', this.currentNum);
       },
     },
