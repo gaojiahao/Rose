@@ -23,7 +23,7 @@
         <x-input ref="taskLogTitle" text-align="right" :max="100" v-model="logTitle" placeholder="请输入">
           <span 
             slot="label" 
-            :style="{fontWeight:'bold',color:istitleRequired?'#e4393c':'#4e9cec'}">
+            :style="{fontWeight:'bold',fontSize:'.14rem',color:istitleRequired?'#e4393c':'#4e9cec'}">
             标题
           </span>
         </x-input>
@@ -34,7 +34,7 @@
           :data="logTypelist" 
           v-model="taskLog.logType" 
           placeholder="请选择">
-          <span slot="title" :style="{color:'#4e9cec',fontWeight:'bold'}">类型</span>
+          <span slot="title" :style="{color:'#4e9cec',fontSize:'.14rem',fontWeight:'bold'}">类型</span>
         </popup-picker>
       </div>
       <div class="task_log_date">
@@ -256,6 +256,7 @@ export default {
     &_type{
       border-bottom: 1px solid #e8e8e8;
       padding: .03rem 0rem;
+      font-size: .14rem;
       margin-left: -.15rem;
     }
     &_date{
@@ -264,12 +265,14 @@ export default {
       font-weight: bold;
       padding: .03rem 0rem;
       margin-left: -.15rem;
+      font-size: .14rem;
     }
     &_hour{
       border-bottom: 1px solid #e8e8e8;
       color: #4e9cec;
       font-weight: bold;
       padding: .12rem 0rem;
+      font-size: .14rem;
       div{
         float: right;
       }

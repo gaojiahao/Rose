@@ -9,21 +9,12 @@ export const scanQRCode = (options = {}) => {
       scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是一维码，默认二者都有
       success: function ({err_Info = 'false', resultStr = ''}) {
         // needResult为1时，返回值为{err_Info: 'success', resultStr: '链接地址', errMsg: 'scanQrCode: ok'}
-        let message = '扫描结果异常';
-        if (err_Info === 'success') {
-          message = '扫描成功';
-          resolve({
-            message,
-            result: resultStr,
-          });
-        } else {
-          this.$vux.alert.show({
-            content: message
-          });
-          reject({
-            message
-          })
-        }
+        alert(`c啊是大多数A${resultStr}`);
+        resolve({
+          message,
+          result: resultStr
+        });
+        alert(`c啊是大多数B${resultStr}`);
       },
       error: function (res) {
         let message = '扫描异常';
