@@ -176,7 +176,6 @@ export default {
                         this.tostText = `该箱码已经在库位${mat.storehouseCode}中，请另扫箱码!`;
                         return;
                     }
-
                     let exist = false;
                     this.matters.map(m=>{
                         if(m.inventoryCode === mat.inventoryCode){
@@ -207,11 +206,9 @@ export default {
                     this.tostText = '此箱码没有对应的物料信息!';
                     this.scanCodeInfo.boxCode = '';
                 }
+                this.scanCodeInfo.boxCode = '';
+                this.$refs.boxCode.focus();
             });
-
-            this.scanCodeInfo.boxCode = '';
-            this.$refs.boxCode.focus();
-
         },
         transfromDataSource(mat,boxCode,boxRule){
             return{
