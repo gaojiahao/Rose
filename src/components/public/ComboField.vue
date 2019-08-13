@@ -298,7 +298,13 @@ let cfg = {
           selection = listData.find(function(item){
               return item[valueField] === value;
           });
-          if(selection == null)this.reSet();
+          if(selection == null) {
+            this.reSet();
+            if(listData.length) {
+              selection = listData[0];
+              this.selItem(selection);
+            }
+          }
       } else if(listData.length){
           selection = listData[0];
           this.selItem(selection);
