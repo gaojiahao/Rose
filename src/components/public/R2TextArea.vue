@@ -1,7 +1,7 @@
 <template>
     <x-textarea :value="values[cfg.fieldCode]" placeholder="请输入" :max="100" class="each_property textarea" @input="onInput" :readonly = "cfg.readOnly">
         <template slot="label">
-        <label :class="{required : !cfg.allowBlank,'readonly':cfg.readOnly}" style="display: block;" v-show="cfg.fieldLabel != null">{{cfg.fieldLabel}}</label>
+        <label :class="{required : !cfg.allowBlank,'readonly':cfg.readOnly}" style="display: block;" v-show="cfg.fieldLabel != null && cfg.fieldLabel != '备注'">{{cfg.fieldLabel}}</label>
         </template>
     </x-textarea>
 </template>
