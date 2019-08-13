@@ -174,6 +174,8 @@ export default {
                     if(mat.storehouseCode === this.scanCodeInfo.spCode){
                         this.showTost = true;
                         this.tostText = `该箱码已经在库位${mat.storehouseCode}中，请另扫箱码!`;
+                        this.scanCodeInfo.boxCode = '';
+                        this.$refs.boxCode.focus();
                         return;
                     }
                     let exist = false;

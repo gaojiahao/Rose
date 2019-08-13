@@ -701,7 +701,7 @@ export default {
 <style lang="scss" scoped>
   @import '~scss/biz-app/bizApply.scss';
   .each_property {
-    padding: .18rem 0;
+    padding: .14rem 0;
     display: flex;
     justify-content: space-between;
     line-height: .14rem;
