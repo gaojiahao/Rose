@@ -351,7 +351,7 @@ export default {
             approvalData.transCode = transCode;
             approvalData.result = me.taskType;
             approvalData.taskId = taskId,
-            approvalData.comment = formData.biComment;
+            //approvalData.comment = formData.biComment;
     
             param = {
                 listId: me.listId,

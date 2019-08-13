@@ -318,7 +318,7 @@ var component = {
                 if (tableContent.length > 0) {
                   let {isMyTask, nodeName} = tableContent[0];
                   if (isMyTask === 1 && nodeName === '重新提交') {
-                    path = `/fillform/listId/0`;
+                    path = `/fillform/${listId}/0`;
                   } else {
                     this.$router.go(0);
                   }
