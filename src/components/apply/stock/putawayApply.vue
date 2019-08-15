@@ -11,6 +11,7 @@
                                 placeholder="请扫码" 
                                 ref='postCode'
                                 class='property_val' 
+                                style="ime-mode: disabled"
                                 v-on:input="handlerScanPostCode"
                                 @focus="handleOnFocus($event)" />
                             <i class="iconfont" @click="handlerClickScanIcon('postCode')">&#xe661;</i>
