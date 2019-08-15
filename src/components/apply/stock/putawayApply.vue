@@ -688,6 +688,7 @@ export default {
       border: none;
       outline: none;
       font-size: .14rem;
+      flex:none;
     }
     label{
       color: #696969;
