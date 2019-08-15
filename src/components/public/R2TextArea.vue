@@ -10,15 +10,15 @@ import Vue from 'vue'
 import {XTextarea } from 'vux'
 import fieldBase from 'mixins/fieldBase'
 let  cfg = {
-     mixins:[fieldBase],
+    mixins:[fieldBase],
     components: {XTextarea },
-     props:['cfg','values'], 
-     methods:{
+    props:['cfg','values'], 
+    methods:{
         onInput:function(e){
             var value = e;
             this.setValue(value);
         },
-     }
+    }
 }
 export default Vue.component('R2TextArea',cfg);
 </script>
