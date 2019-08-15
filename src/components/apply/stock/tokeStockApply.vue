@@ -638,6 +638,7 @@ export default {
     height: calc(100% - 1rem);
   }
   .each_property {
+    height: .2rem;
     padding: .18rem 0;
     display: flex;
     justify-content: space-between;
@@ -646,9 +647,13 @@ export default {
       border: none;
       outline: none;
       font-size: .14rem;
+      flex:none;
     }
     label{
       color: #696969;
+    }
+   .iconfont{
+        font-size: .20rem
     }
     .required {
       color: #3296FA;
