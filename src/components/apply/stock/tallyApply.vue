@@ -42,6 +42,8 @@
                     :handlerChangeState="handlerChangeState"    
                     :getGroupInfo="getGroupInfo"
                     :matterInfoConfig="matterInfoConfig"
+                    :getSpecialInfo="getSpecialInfo"
+                    :inputDisable="true"
                     >
                 </wms-matter-part>
             </div>
@@ -338,6 +340,9 @@ export default {
                 all:all,
                 done:done
             }
+        },
+        getSpecialInfo(box){
+            return `数量：<strong style="color: #3d92f0;">${box.tdQty}</<strong>`
         },
         groupSumByFileds(a,f,v,k){
             let s = 0;

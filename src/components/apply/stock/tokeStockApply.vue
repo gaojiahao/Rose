@@ -4,7 +4,7 @@
                 <div class="scanCodeInfo">
                     <div class="vux-1px-t">
                         <div class='each_property' >
-                            <label class="required">盘点仓位</label>
+                            <label class="required">盘点库位</label>
                             <input 
                                 type='text' 
                                 ref='spCode'

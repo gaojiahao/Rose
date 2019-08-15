@@ -19,8 +19,10 @@
                                 <flexbox-item :span="6"><div >{{mat.inventoryName}}({{mat.inventoryCode}})</div></flexbox-item>
                                 <flexbox-item ><div >{{getGroupInfo(mat).all}}</div></flexbox-item>
                                 <flexbox-item ><div >{{getGroupInfo(mat).done}}</div></flexbox-item>
-                                <x-icon type="ios-arrow-up" v-if="mat.expend && mat.boxCodes.length>0" size="20" @click.native="mat.expend=!mat.expend"></x-icon>
-                                <x-icon type="ios-arrow-down" v-if="!mat.expend && mat.boxCodes.length>0" size="20" @click.native="mat.expend=!mat.expend"></x-icon>
+                                <flexbox-item @click.native="mat.expend=!mat.expend">
+                                    <x-icon type="ios-arrow-up" v-if="mat.expend && mat.boxCodes.length>0" size="20" ></x-icon>
+                                    <x-icon type="ios-arrow-down" v-if="!mat.expend && mat.boxCodes.length>0" size="20" ></x-icon>
+                                </flexbox-item>
                             </flexbox>
                         </div>
                     <ul class="box-codes" v-if="mat.expend">
@@ -37,10 +39,10 @@
                                     {{value}}:{{box[key]}}
                                 </div>
                                 <div class="box-operate">
-                                    <div>
+                                    <div  >
                                         <div v-if="getSpecialInfo" v-html="getSpecialInfo(box)"></div>
                                     </div>
-                                    <div>
+                                    <div v-if="!inputDisable">
                                         <r-number :num="box.tdQty" v-model="box.tdQty"></r-number>
                                     </div>
                                 </div>
@@ -51,12 +53,12 @@
                                 v-if='matterModifyClass'>
                                 <x-icon 
                                     type="ios-checkmark" 
-                                    size="20" 
+                                    size="24" 
                                     class="checked" 
                                     v-show="showSelIcon( matIdx+'_'+ boxIdx)"></x-icon>
                                 <x-icon 
                                     type="ios-circle-outline" 
-                                    size="20" 
+                                    size="24" 
                                     v-show="!showSelIcon( matIdx+'_'+ boxIdx)"></x-icon>
                             </div>
         
@@ -94,6 +96,11 @@ export default {
         matterModifyClass: {
             type: Boolean,
             default: false
+        },
+        //是否显示数量输入框
+        inputDisable:{
+            type:Boolean,
+            default:false
         },
         //物料以及箱码数据
         matters:{
@@ -181,13 +188,12 @@ export default {
         height: calc(100% - .35rem);
         padding: 0 .15rem;
         .materiels{
-            padding: 0.2rem;
+            padding: .05rem;
             font-size: 14px;
             height: 100%;
             .materiel-item{
                 .materiel-info{
                     font-weight: 600;
-                
                 }
                 .box-codes{
                     font-size: 12px;
