@@ -155,10 +155,10 @@ export default {
     box-sizing: border-box;
     height: 100%;
     .header{
-        font-size: 16px;
+        font-size: 18px;
         padding-right: 0.2em;
-        height: .30rem;
-        line-height: .30rem;
+        height: .4rem;
+        line-height: .4rem;
         color: #696969;
         display: -webkit-box;
         display: -ms-flexbox;
@@ -181,7 +181,7 @@ export default {
         height: calc(100% - .35rem);
         padding: 0 .15rem;
         .materiels{
-            padding: 0.2em;
+            padding: 0.2rem;
             font-size: 14px;
             height: 100%;
             .materiel-item{

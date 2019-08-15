@@ -139,6 +139,7 @@ export default {
         // 输入框获取焦点，内容选中
         handleOnFocus(e) {
             event.currentTarget.select();
+            return false;
         },
         handlerClickScanIcon(refKey){
             this.$refs[refKey].focus();
