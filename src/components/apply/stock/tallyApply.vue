@@ -57,7 +57,7 @@
             @on-delete="handlerDeleteCheckd">
         </op-button>
         <!-- 提示信息 -->
-        <toast  v-model="showTost" type="text" :time="2000" is-show-mask :text="tostText" position="top" width="20em" ></toast>
+        <toast  v-model="showTost" type="text" :time="2500" is-show-mask :text="tostText" position="top" width="20em" ></toast>
     </div>
 </template>
 
@@ -167,6 +167,7 @@ export default {
             
             if(!this.handlerCheckBoxCode()){
                 scanVoice.error();
+                return;
             };
 
             let boxCode = this.scanCodeInfo.boxCode;

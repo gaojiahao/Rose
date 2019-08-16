@@ -57,7 +57,7 @@
         <toast 
             v-model="showTost" 
             type="text" 
-            :time="2000" 
+            :time="2500" 
             is-show-mask 
             :text="tostText" 
             position="top" 
@@ -298,13 +298,15 @@ export default {
                 this.$refs.boxCode.focus();
                 return false;
             }
+            return true;
         },
         handlerSetMattersBox(){
-            
 
-            if(this.handlerCheckBoxCode()){
+            if(!this.handlerCheckBoxCode()){
                 scanVoice.error();
+                return;
             }
+            
             //记录已扫码信息,防止重复扫码
             this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;
             
@@ -351,6 +353,25 @@ export default {
                 });
                 return;
             }
+
+            let validate = true;
+            let errMsg=``;
+
+            this.matters.map(mat=>{
+                let sumInfo = this.getGroupInfo(mat);
+                if(sumInfo.all< sumInfo.done){
+                    validate = false;
+                    errMsg = `抱歉,物料<strong style="color:red;">${mat.inventoryName}</strong>的数量不能大于待拣货数量!`;
+                }
+            });
+
+            if(!validate){
+                this.$vux.alert.show({
+                    content:errMsg
+                });
+                return;
+            }
+
              // 准备提交
             this.$vux.confirm.show({
                 content: '确认提交?',
@@ -400,7 +421,6 @@ export default {
                     }else{
                         delete submitData.biReferenceId;
                     }
-                    debugger
                     this.saveData(opeartion,submitData,matCodeCollection);
                 }
             })
@@ -573,7 +593,7 @@ export default {
 
 <style lang="scss" scoped>
   @import '~scss/biz-app/bizApply.scss';
-   .each_property {
+    .each_property {
     height: .2rem;
     padding: .18rem 0;
     display: flex;
@@ -590,6 +610,10 @@ export default {
     }
    .iconfont{
         font-size: .20rem
+    }
+    .required {
+      color: #3296FA;
+      font-weight: bold;
     }
     .property_val {
       text-align: right;

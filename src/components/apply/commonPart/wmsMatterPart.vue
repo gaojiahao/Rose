@@ -5,8 +5,8 @@
             <div>
                 <span v-if="!matterModifyClass" @click="handlerChangeState">编辑</span>
                 <span v-if="matterModifyClass" @click="handlerChangeState">完成</span>
-                <x-icon type="ios-arrow-up" v-if="allExpend &&matters.length>0" size="20" @click.native="handlerChangeExpendState"></x-icon>
-                <x-icon type="ios-arrow-down" v-if="!allExpend &&matters.length>0" size="20" @click.native="handlerChangeExpendState"></x-icon>
+                <x-icon type="ios-arrow-up" v-if="allExpend &&matters.length>0" size="26" @click.native="handlerChangeExpendState"></x-icon>
+                <x-icon type="ios-arrow-down" v-if="!allExpend &&matters.length>0" size="26" @click.native="handlerChangeExpendState"></x-icon>
             </div>
         </div>
         <r-scroll  class="materiel-item-wrapper">
@@ -20,8 +20,8 @@
                                 <flexbox-item ><div >{{getGroupInfo(mat).all}}</div></flexbox-item>
                                 <flexbox-item ><div >{{getGroupInfo(mat).done}}</div></flexbox-item>
                                 <flexbox-item @click.native="mat.expend=!mat.expend">
-                                    <x-icon type="ios-arrow-up" v-if="mat.expend && mat.boxCodes.length>0" size="20" ></x-icon>
-                                    <x-icon type="ios-arrow-down" v-if="!mat.expend && mat.boxCodes.length>0" size="20" ></x-icon>
+                                    <x-icon type="ios-arrow-up" v-if="mat.expend && mat.boxCodes.length>0" size="26" ></x-icon>
+                                    <x-icon type="ios-arrow-down" v-if="!mat.expend && mat.boxCodes.length>0" size="26" ></x-icon>
                                 </flexbox-item>
                             </flexbox>
                         </div>
@@ -36,7 +36,7 @@
                             <div class="matter-info">
                                 <div >{{box.boxCode}}</div>
                                 <div class="other" v-for="(value,key) in  matterInfoConfig" :key="key">
-                                    {{value}}:{{box[key]}}
+                                    {{value}}:{{box[key]}} &nbsp;
                                 </div>
                                 <div class="box-operate">
                                     <div  >
@@ -184,7 +184,7 @@ export default {
         background: #FFF;
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
-        height: calc(100% - .35rem);
+        height: calc(100% - .50rem);
         padding: 0 .15rem;
         .materiels{
             padding: .05rem;

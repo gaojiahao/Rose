@@ -70,7 +70,7 @@
             @on-delete="handlerDeleteCheckd">
         </op-button>
         <!-- 提示信息 -->
-        <toast  v-model="showTost" type="text" :time="2000" is-show-mask :text="tostText" position="top" width="20em" ></toast>
+        <toast  v-model="showTost" type="text" :time="2500" is-show-mask :text="tostText" position="top" width="20em" ></toast>
         
     </div>
 </template>
@@ -126,7 +126,8 @@ export default {
         checkList() {
             let newArr = [].concat.apply([], Object.values(this.selItems));
             return newArr
-        }
+        },
+        
     },
     components: {
         Flexbox,
@@ -499,6 +500,9 @@ export default {
             return dataSet;
         },
         handlerSubmit(){
+            let validate = true;
+            let errMsg=``;
+
             if(!this.scanCodeInfo.postCode){
                this.$vux.alert.show({
                    content:"申请单号不能为空!"
@@ -516,6 +520,21 @@ export default {
             if(this.matters.length===0){
                 this.$vux.alert.show({
                     content:"上架明细不能为空!"
+                });
+                return;
+            }
+
+            this.matters.map(mat=>{
+                let sumInfo = this.getGroupInfo(mat);
+                if(sumInfo.all< sumInfo.done){
+                    validate = false;
+                    errMsg = `抱歉,物料<strong style="color:red;">${mat.inventoryName}</strong>的数量不能大于待上架数量!`;
+                }
+            });
+
+            if(!validate){
+                this.$vux.alert.show({
+                    content:errMsg
                 });
                 return;
             }
