@@ -314,6 +314,8 @@ export default {
                 this.$refs.boxCode.focus();
                 return false;
             }
+
+            return true;
         },
        /**
         * 扫箱码
