@@ -42,6 +42,8 @@
                     :handlerChangeState="handlerChangeState"    
                     :getGroupInfo="getGroupInfo"
                     :matterInfoConfig="matterInfoConfig"
+                    :getSpecialInfo="getSpecialInfo"
+                    :inputDisable="true"
                     >
                 </wms-matter-part>
             </div>
@@ -174,6 +176,8 @@ export default {
                     if(mat.storehouseCode === this.scanCodeInfo.spCode){
                         this.showTost = true;
                         this.tostText = `该箱码已经在库位${mat.storehouseCode}中，请另扫箱码!`;
+                        this.scanCodeInfo.boxCode = '';
+                        this.$refs.boxCode.focus();
                         return;
                     }
                     let exist = false;
@@ -336,6 +340,9 @@ export default {
                 all:all,
                 done:done
             }
+        },
+        getSpecialInfo(box){
+            return `数量：<strong style="color: #3d92f0;">${box.tdQty}</<strong>`
         },
         groupSumByFileds(a,f,v,k){
             let s = 0;
@@ -558,7 +565,8 @@ export default {
 
 <style lang="scss" scoped>
   @import '~scss/biz-app/bizApply.scss';
-  .each_property {
+    .each_property {
+    height: .2rem;
     padding: .18rem 0;
     display: flex;
     justify-content: space-between;
@@ -567,13 +575,14 @@ export default {
       border: none;
       outline: none;
       font-size: .14rem;
+      flex:none;
     }
     label{
       color: #696969;
     }
-    // .add{
-    //   color: #3296FA;
-    // }
+   .iconfont{
+        font-size: .20rem
+    }
     .required {
       color: #3296FA;
       font-weight: bold;

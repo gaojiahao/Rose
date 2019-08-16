@@ -101,7 +101,7 @@ export default {
             if(fieldCfgHash){
                 for(fieldCode in values){
                     value = values[fieldCode];
-                    if(value && value.dataSet){ //grid or bom
+                    if(value && value.dataSet){ //grid or bom，设置列表数据
                         root[fieldCode] = root[fieldCode]||{};
                         root[fieldCode].dataSet = value.dataSet;
                     } else {
@@ -116,12 +116,12 @@ export default {
                     isList = fieldCfg && fieldCfg.isList,
                     groupBoxStr = fieldCfg && fieldCfg.fieldContainer;
                 
-                if (groupBoxStr){
+                if (groupBoxStr){//设置容器的字段
                     insertValueIntoGroupBox(fieldCode,value,groupBoxStr,isList);
                 } else {
-                    if (isList) {
+                    if (isList) {//列表数据必须放容器里
                         console.log('列表项 fieldCode:' + code + ' 需要配置数据容器！');
-                    } else {
+                    } else {//设置普通字段到根节点
                         setNode(root, fieldCode, value);
                     }
                         
@@ -181,6 +181,10 @@ export default {
             });
             function judgePage(){
                 let {name,folder,fileName} = me.$route.query;
+
+                if(me.$route.name == 'DETAIL') {
+                    router.go(0);
+                }
                 me.$router.replace({
                     path: `/detail/${me.listId}/0`,
                     query: {
@@ -351,7 +355,7 @@ export default {
             approvalData.transCode = transCode;
             approvalData.result = me.taskType;
             approvalData.taskId = taskId,
-            approvalData.comment = formData.biComment;
+            //approvalData.comment = formData.biComment;
     
             param = {
                 listId: me.listId,
