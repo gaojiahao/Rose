@@ -163,7 +163,6 @@ export default {
     height: 100%;
     .header{
         font-size: 18px;
-        padding-right: 0.2em;
         height: .4rem;
         line-height: .4rem;
         color: #696969;

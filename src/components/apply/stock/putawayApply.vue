@@ -70,7 +70,8 @@
             @on-delete="handlerDeleteCheckd">
         </op-button>
         <!-- 提示信息 -->
-        <toast  v-model="showTost" type="text" :time="1500" is-show-mask :text="tostText" position="top" width="20em" ></toast>
+        <toast  v-model="showTost" type="text" :time="2000" is-show-mask :text="tostText" position="top" width="20em" ></toast>
+        
     </div>
 </template>
 
@@ -92,8 +93,9 @@ import { getStorageShelf, getWhbyStoragelocation } from 'service/wmsService'
 import { getSOList } from 'service/detailService'
 // 微信JS-SDK引入
 import { register } from 'plugins/wx'
+import scanVoice from '@/plugins/scanVoice'
 
-  import { scanQRCode} from 'plugins/wx/api'
+import { scanQRCode} from 'plugins/wx/api'
 
 import { debug, debuglog } from 'util';
 export default {
@@ -147,7 +149,9 @@ export default {
         handlerScanPostCode(){
             if(!this.scanCodeInfo.postCode) return;
 
+
             if(this.postCode && this.scanCodeInfo.postCode != this.postCode && this.matters.length>0){
+               
                 this.$vux.confirm.show({
                     content: '当前扫的申请单号与前面扫的申请单号不一致，是否更换？以重新获取待上架数据',
                     // 确定回调
@@ -165,6 +169,7 @@ export default {
                     }
                 })
             }else{
+                scanVoice.error();
                 this.postCode = this.scanCodeInfo.postCode;
                 this.$refs.spCode.focus();
             }

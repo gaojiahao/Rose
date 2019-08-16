@@ -57,7 +57,7 @@
             @on-delete="handlerDeleteCheckd">
         </op-button>
         <!-- 提示信息 -->
-        <toast  v-model="showTost" type="text" :time="1500" is-show-mask :text="tostText" position="top" width="20em" ></toast>
+        <toast  v-model="showTost" type="text" :time="2000" is-show-mask :text="tostText" position="top" width="20em" ></toast>
     </div>
 </template>
 
@@ -342,7 +342,7 @@ export default {
             }
         },
         getSpecialInfo(box){
-            return `数量：<strong style="color: #3d92f0;">${box.tdQty}</<strong>`
+            return `数量：<strong style="color:#3d92f0;">${box.tdQty}</<strong>`
         },
         groupSumByFileds(a,f,v,k){
             let s = 0;
