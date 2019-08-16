@@ -1,5 +1,5 @@
 <template>
-<div v-show="!cfg.hiddenInRun" class="cell each_property vux-1px-b combo" >
+<div v-show="!hidden" class="cell each_property vux-1px-b combo" >
   <label :class="{'required':!cfg.allowBlank,'readonly':cfg.readOnly}">{{cfg.fieldLabel}}</label>
     <div v-if="cfg.readOnly == false" class="content" @click="showPop = true">
       <span class='mater_nature'>{{values[cfg.fieldCode] || "请选择"}}</span>
@@ -298,7 +298,13 @@ let cfg = {
           selection = listData.find(function(item){
               return item[valueField] === value;
           });
-          if(selection == null)this.reSet();
+          if(selection == null) {
+            this.reSet();
+            if(listData.length) {
+              selection = listData[0];
+              this.selItem(selection);
+            }
+          }
       } else if(listData.length){
           selection = listData[0];
           this.selItem(selection);

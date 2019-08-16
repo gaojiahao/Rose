@@ -157,22 +157,29 @@ export default {
                 onConfirm: () => {
                     console.log('====',this.selItems);
                 // 被选中删除的物料
-                this.selItems.map(sel => {
-                    let mIdx,bIdx;
-                    mIdx = Number(sel.split('_')[0]);
-                    bIdx = Number(sel.split('_')[1]);
-                    this.matters  = this.matters.filter((mat,matIdx) => {
-                        if(matIdx === mIdx){
-                            mat.boxCodes  = mat.boxCodes.filter((box,boxIdx) => {
-                                return boxIdx !== bIdx;
-                            });
-                        }
-                        return true;
+                    this.selItems.map(sel=>{
+                        let mIdx,bIdx;
+                        mIdx = Number(sel.split('_')[0]);
+                        bIdx = Number(sel.split('_')[1]);
+                        this.matters.map((mat,matIdx)=>{
+                            if(matIdx === mIdx){
+                                mat.boxCodes.map((box,boxIdx)=>{
+                                    if(boxIdx === bIdx){
+                                        box.isDelete = true;
+                                        delete this.boxCodesMap[box.boxCode];
+                                    }
+                                });
+                            }
+                        });
                     });
 
-                });
-                this.selItems = [];
-                this.matterModifyClass = false;
+                    this.matters = this.matters.filter(mat=>{
+                        mat.boxCodes = mat.boxCodes.filter(box=> !box.isDelete);
+                        return true;
+                    })
+
+                    this.selItems = [];
+                    this.matterModifyClass = false;
                 }
             })
         },
@@ -242,7 +249,7 @@ export default {
                     this.showTost = true;
                     this.tostText = '此箱码不存在！';
                     this.scanCodeInfo.boxCode = "";
-                    this.$refs.postCode.focus();
+                    this.$refs.boxCode.focus();
                     return;
                 }
                 res.tableContent.map(box => {
@@ -382,7 +389,7 @@ export default {
                     }else{
                         delete submitData.biReferenceId;
                     }
-
+                    debugger
                     this.saveData(opeartion,submitData,matCodeCollection);
                 }
             })
@@ -555,7 +562,8 @@ export default {
 
 <style lang="scss" scoped>
   @import '~scss/biz-app/bizApply.scss';
-  .each_property {
+   .each_property {
+    height: .2rem;
     padding: .18rem 0;
     display: flex;
     justify-content: space-between;
@@ -564,16 +572,13 @@ export default {
       border: none;
       outline: none;
       font-size: .14rem;
+      flex:none;
     }
     label{
       color: #696969;
     }
-    // .add{
-    //   color: #3296FA;
-    // }
-    .required {
-      color: #3296FA;
-      font-weight: bold;
+   .iconfont{
+        font-size: .20rem
     }
     .property_val {
       text-align: right;

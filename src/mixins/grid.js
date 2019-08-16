@@ -236,7 +236,7 @@ export default {
             function loopfn(changeDataIndex) {
                 var cfgArr;
 
-                if (changeDataIndex in paramColumns) {
+                if (paramColumns && changeDataIndex in paramColumns) {
                     editorDataIndexs = paramColumns[changeDataIndex];//用该列做参数的编辑器列的"dataIndex数组"
                     for (i = 0, l = editorDataIndexs.length; i < l; i++) {
                         editorDataIndex = editorDataIndexs[i];
@@ -276,6 +276,7 @@ export default {
         //默认值来自单一项的值时，处理单一项值发生改变的情况
         handleDefaultValueChange(fieldCode, value) {
             var me = this,
+                record,
                 values = me.getValue();
 
             if (values) values.forEach(function (data) {
