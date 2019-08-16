@@ -149,7 +149,8 @@ export default {
         handlerScanPostCode(){
             if(!this.scanCodeInfo.postCode) return;
 
-
+            // let scanAudio = new Audio();
+            // scanAudio.setAttribute('src',require("assets/scan/6579.mp3"));
             if(this.postCode && this.scanCodeInfo.postCode != this.postCode && this.matters.length>0){
                
                 this.$vux.confirm.show({
