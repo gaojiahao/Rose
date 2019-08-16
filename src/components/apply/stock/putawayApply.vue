@@ -239,6 +239,8 @@ export default {
                 return;
             }
 
+            scanVoice.success();
+
             //记录已扫码信息,防止重复扫码
             this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;
 

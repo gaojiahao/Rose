@@ -314,6 +314,8 @@ export default {
                 this.$refs.boxCode.focus();
                 return false;
             }
+
+            return true;
         },
        /**
         * 扫箱码
@@ -337,6 +339,10 @@ export default {
                         您此次点击确认,将做<strong style="color:red;">盘盈</strong>处理,点击取消不做任何处理!`,
                     onConfirm:()=>{
                         this.addInventoryProfit();
+                        this.$refs.boxCode.focus();
+                    },
+                    onCancel:()=>{
+                        this.scanCodeInfo.boxCode='';
                         this.$refs.boxCode.focus();
                     }
                 });
