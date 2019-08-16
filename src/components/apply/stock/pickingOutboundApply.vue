@@ -562,7 +562,8 @@ export default {
 
 <style lang="scss" scoped>
   @import '~scss/biz-app/bizApply.scss';
-  .each_property {
+   .each_property {
+    height: .2rem;
     padding: .18rem 0;
     display: flex;
     justify-content: space-between;
@@ -571,16 +572,13 @@ export default {
       border: none;
       outline: none;
       font-size: .14rem;
+      flex:none;
     }
     label{
       color: #696969;
     }
-    // .add{
-    //   color: #3296FA;
-    // }
-    .required {
-      color: #3296FA;
-      font-weight: bold;
+   .iconfont{
+        font-size: .20rem
     }
     .property_val {
       text-align: right;
