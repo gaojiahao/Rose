@@ -340,6 +340,10 @@ export default {
                     onConfirm:()=>{
                         this.addInventoryProfit();
                         this.$refs.boxCode.focus();
+                    },
+                    onCancel:()=>{
+                        this.scanCodeInfo.boxCode='';
+                        this.$refs.boxCode.focus();
                     }
                 });
             }else{
