@@ -336,16 +336,31 @@ var component = {
     },
     // 同意
     agreement() {
-      this.$vux.confirm.prompt('', {
-        title: '审批意见',
-        onConfirm: (value) => {
-          this.commitTask({
-            result: 1,
-            successMsg: '同意成功',
-            value
-          });
-        }
-      });
+      if(this.model == 'marking') {
+        this.form.taskType = 1;
+        this.form.saveAndCommitTask();
+      } else {
+        this.$vux.confirm.prompt('', {
+          title: '审批意见',
+          onConfirm: (value) => {
+            this.commitTask({
+              result: 1,
+              successMsg: '同意成功',
+              value
+            });
+          }
+        });
+      }
+      // this.$vux.confirm.prompt('', {
+      //   title: '审批意见',
+      //   onConfirm: (value) => {
+      //     this.commitTask({
+      //       result: 1,
+      //       successMsg: '同意成功',
+      //       value
+      //     });
+      //   }
+      // });
     },
     // 撤回
     revoke() {

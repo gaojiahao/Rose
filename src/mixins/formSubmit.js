@@ -181,6 +181,10 @@ export default {
             });
             function judgePage(){
                 let {name,folder,fileName} = me.$route.query;
+
+                if(me.$route.name == 'DETAIL') {
+                    router.go(0);
+                }
                 me.$router.replace({
                     path: `/detail/${me.listId}/0`,
                     query: {
