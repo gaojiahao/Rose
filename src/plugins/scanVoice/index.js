@@ -1,9 +1,9 @@
 
 let  scanVoice = {};
-// let scanAudio = new Audio("/src/assets/scan/6579.mp3");
 
 let scanAudio = new Audio();
-scanAudio.setAttribute('src',require("assets/scan/6579.mp3"));
+
+scanAudio.setAttribute('src',require("assets/scan/scan.mp3"));
 
 scanVoice.success = function(){
     scanAudio.play();

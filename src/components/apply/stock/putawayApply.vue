@@ -149,10 +149,8 @@ export default {
         handlerScanPostCode(){
             if(!this.scanCodeInfo.postCode) return;
 
-            // let scanAudio = new Audio();
-            // scanAudio.setAttribute('src',require("assets/scan/6579.mp3"));
             if(this.postCode && this.scanCodeInfo.postCode != this.postCode && this.matters.length>0){
-               
+               scanVoice.error();
                 this.$vux.confirm.show({
                     content: '当前扫的申请单号与前面扫的申请单号不一致，是否更换？以重新获取待上架数据',
                     // 确定回调
@@ -170,7 +168,7 @@ export default {
                     }
                 })
             }else{
-                scanVoice.error();
+                scanVoice.success();
                 this.postCode = this.scanCodeInfo.postCode;
                 this.$refs.spCode.focus();
             }
@@ -185,10 +183,12 @@ export default {
             }).then(res=>{
                 
                 if(!res.dataCount){
+                    scanVoice.error();
                     this.showTost = true;
                     this.tostText = '该库位未绑定仓库，请绑定后再扫!';
                     this.scanCodeInfo.spCode = '';
                     this.$refs.spCode.focus();
+                    return;
                 }else{
                     let warehouse = res.tableContent[0];
                     
@@ -200,6 +200,7 @@ export default {
                             this.warehouse.spCode = this.scanCodeInfo.spCode;
                             this.$refs.boxCode.focus();
                         }else{
+                            scanVoice.error();
                             this.showTost = true;
                             this.tostText = '该库位与入库申请单选定的仓库不一致，请重新扫码!';
                             this.scanCodeInfo.spCode = '';
@@ -208,11 +209,13 @@ export default {
                     }else{
                         this.handlerSetMatters(warehouse.warehouseCode,this.scanCodeInfo.postCode,res=>{
                             if(!res.dataCount){
+                                scanVoice.error();
                                 this.showTost = true;
                                 this.tostText = '当前申请单号并没有待上架的数据或库位与入库申请单选定的仓库不一致，请重新扫码!';
                                 this.scanCodeInfo.spCode = '';
                                 this.$refs.spCode.focus();
                             }else{
+                                scanVoice.success();
                                 //记录当前仓库&库位信息
                                 this.warehouse = {
                                     ...warehouse,
@@ -231,7 +234,10 @@ export default {
         */
         handlerScanBoxCode(){
             
-            if(!this.handlerCheckBoxCode())  return;
+            if(!this.handlerCheckBoxCode())  {
+                scanVoice.error();
+                return;
+            }
 
             //记录已扫码信息,防止重复扫码
             this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;

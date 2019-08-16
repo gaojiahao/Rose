@@ -77,6 +77,7 @@ import {
 import { getStorageShelf, getWhbyStoragelocation,getInventoryInfoByBoxCode} from 'service/wmsService'
 import WebContext from 'service/commonService'
 import { getSOList } from 'service/detailService'
+import scanVoice from '@/plugins/scanVoice'
 
 // 插件引入
 import Bscroll from 'better-scroll'
@@ -137,11 +138,13 @@ export default {
             }).then(res=>{
                 
                 if(!res.dataCount){
+                    scanVoice.error();
                     this.showTost = true;
                     this.tostText = '该库位未绑定仓库，请绑定后再扫!';
                     this.scanCodeInfo.spCode = '';
                     this.$refs.spCode.focus();
                 }else{
+                    scanVoice.success();
                     let warehouse = res.tableContent[0];
 
                     //记录当前仓库&库位信息
@@ -162,7 +165,9 @@ export default {
         handlerScanBoxCode(){
 
             
-            if(!this.handlerCheckBoxCode())  return;
+            if(!this.handlerCheckBoxCode()){
+                scanVoice.error();
+            };
 
             let boxCode = this.scanCodeInfo.boxCode;
             let boxRule = this.scanCodeInfo.boxCode.split('-')[2];
@@ -174,6 +179,7 @@ export default {
                     let mat = res.tableContent[0];
 
                     if(mat.storehouseCode === this.scanCodeInfo.spCode){
+                        scanVoice.error();
                         this.showTost = true;
                         this.tostText = `该箱码已经在库位${mat.storehouseCode}中，请另扫箱码!`;
                         this.scanCodeInfo.boxCode = '';
@@ -205,13 +211,14 @@ export default {
                     //记录已扫码信息,防止重复扫码
                     this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;
                     this.scanCodeInfo.boxCode = '';
+                    scanVoice.success();
                 }else{
+                    scanVoice.error();
                     this.showTost = true;
                     this.tostText = '此箱码没有对应的物料信息!';
                     this.scanCodeInfo.boxCode = '';
+                    this.$refs.boxCode.focus();
                 }
-                this.scanCodeInfo.boxCode = '';
-                this.$refs.boxCode.focus();
             });
         },
         transfromDataSource(mat,boxCode,boxRule){

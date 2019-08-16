@@ -81,6 +81,7 @@ import {
 import { getPickingOutByBoxCode, releaseSortingOrder, getForPickingData } from 'service/wmsService'
 import WebContext from 'service/commonService'
 import { getSOList } from 'service/detailService'
+import scanVoice from '@/plugins/scanVoice'
 
 // 插件引入
 import Bscroll from 'better-scroll'
@@ -190,6 +191,7 @@ export default {
             this.matters = [];
             getForPickingData(this.scanCodeInfo.postCode).then(res => {
                 if(res.tableContent.length > 0){
+                    scanVoice.success();
                     res.tableContent.forEach(mat => {
                         this.matters.unshift({
                             expend:true,
@@ -202,6 +204,7 @@ export default {
                         });
                     })
                 }else{
+                    scanVoice.error();
                     this.showTost = true;
                     this.tostText = '此单号无数据！请重新扫码！';
                     this.scanCodeInfo.postCode = "";
@@ -246,12 +249,14 @@ export default {
             let materielMap = {};
             getPickingOutByBoxCode(params).then(res => {
                 if(res.tableContent.length === 0){
+                    scanVoice.error();
                     this.showTost = true;
                     this.tostText = '此箱码不存在！';
                     this.scanCodeInfo.boxCode = "";
                     this.$refs.boxCode.focus();
                     return;
                 }
+                scanVoice.success();
                 res.tableContent.map(box => {
                     this.matters.map(mat => {
                         if(box.inventoryCode === mat.inventoryCode){
@@ -267,23 +272,23 @@ export default {
                 });
             });
         },
-        handlerSetMattersBox(){
+        handlerCheckBoxCode(){
             if(!this.scanCodeInfo.postCode) {
                 this.showTost = true;
                 this.tostText = '请先扫申请单号!';
                 this.scanCodeInfo.boxCode = "";
                 this.$refs.postCode.focus();
-                return;
+                return false;
             };
 
-            if(!this.scanCodeInfo.boxCode) return;
+            if(!this.scanCodeInfo.boxCode) return false;
 
             if(this.scanCodeInfo.boxCode.split('-').length !=3){
                 this.showTost = true;
                 this.tostText = '箱码不符合规则，请重新扫码!'
                 this.scanCodeInfo.boxCode = "";
                 this.$refs.boxCode.focus();
-                return;
+                return false;
             }
 
             if(this.boxCodesMap[this.scanCodeInfo.boxCode]){
@@ -291,9 +296,15 @@ export default {
                 this.tostText = '该箱码已经扫过啦，请不要重复扫码哦!';
                 this.scanCodeInfo.boxCode = "";
                 this.$refs.boxCode.focus();
-                return;
+                return false;
             }
+        },
+        handlerSetMattersBox(){
+            
 
+            if(this.handlerCheckBoxCode()){
+                scanVoice.error();
+            }
             //记录已扫码信息,防止重复扫码
             this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;
             

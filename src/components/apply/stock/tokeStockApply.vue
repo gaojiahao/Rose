@@ -67,6 +67,7 @@ import { Flexbox, FlexboxItem, Cell,Toast  } from 'vux'
 import RNumber from 'components/public/RNumber'
 import OpButton from 'components/apply/commonPart/OpButton'
 import WmsMatterPart from 'components/apply/commonPart/wmsMatterPart'
+import scanVoice from '@/plugins/scanVoice'
 
 import { 
     saveAndStartWf, 
@@ -130,6 +131,7 @@ export default {
             //如果已经扫库位码，获取到正确的仓库信息,并且已经扫了箱码
             if(this.warehouse && this.matters.length>0){
                 if(this.scanCodeInfo.spCode != this.warehouse.spCode){
+                    scanVoice.error();
                     this.$vux.confirm.show({
                         content: '确定要变更仓位?如果确定，存货明细将会清空哦',
                         // 确定回调
@@ -287,26 +289,22 @@ export default {
                 }
             });
         },
-       /**
-        * 扫箱码
-        * 
-        */
-        handlerScanBoxCode(){
+        handlerCheckBoxCode(){
             if(!this.scanCodeInfo.spCode){
                 this.showTost = true;
                 this.tostText = '请先扫库位!'
                 this.scanCodeInfo.boxCode = '';
-                return;
+                return false;
             }
 
-            if(!this.scanCodeInfo.boxCode) return;
+            if(!this.scanCodeInfo.boxCode) return false;
 
             if(this.scanCodeInfo.boxCode.split('-').length !=3){
                 this.showTost = true;
                 this.tostText = '箱码不复合规则，请重新扫码!';
                 this.scanCodeInfo.boxCode = '';
                 this.$refs.boxCode.focus();
-                return;
+                return false;
             }
 
             if(this.boxCodesMap[this.scanCodeInfo.boxCode]){
@@ -314,6 +312,17 @@ export default {
                 this.tostText = '该箱码已经扫过啦，请不要重复扫码哦!';
                 this.scanCodeInfo.boxCode = '';
                 this.$refs.boxCode.focus();
+                return false;
+            }
+        },
+       /**
+        * 扫箱码
+        * 
+        */
+        handlerScanBoxCode(){
+            
+            if(!this.handlerCheckBoxCode()){
+                scanVoice.error();
                 return;
             }
 
@@ -321,6 +330,7 @@ export default {
             //1、作盘盈处理
             //2、追查数据，作理货单
             if(!this.paperBoxCodesMap[this.scanCodeInfo.boxCode]){
+                scanVoice.error();
                 this.$vux.confirm.show({
                     content:`此箱码不在账面余额,建议您追查此箱码的账面数据,
                         根据追查结果做<strong style="color:red;">理货单</strong>或<strong style="color:red;">盘盈</strong>处理,
@@ -331,6 +341,7 @@ export default {
                     }
                 });
             }else{
+                scanVoice.success();
                 //记录已扫码信息,防止重复扫码
                 this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;
 
@@ -561,14 +572,16 @@ export default {
                 location:this.scanCodeInfo.spCode
             }).then(res=>{
                 if(res.dataCount===0){
+                    scanVoice.error();
                     this.showTost = true;
-                    this.tostText = '该库位未绑定仓库，请绑定后再扫!';
+                    this.tostText = `库位${this.scanCodeInfo.spCode}未绑定仓库，请绑定后再扫!`;
                     this.scanCodeInfo.spCode = '';
                 }else{
                     this.warehouse = {
                         ...res.tableContent[0],
                         spCode:this.scanCodeInfo.spCode
                     }
+                    scanVoice.success();
                     this.$refs.boxCode.focus();
 
                     callback && callback();
