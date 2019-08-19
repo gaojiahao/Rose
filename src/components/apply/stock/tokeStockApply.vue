@@ -95,12 +95,12 @@ export default {
             btnIsHide:false,
             showTost:false,
             tostText:'',
-            formViewUniqueId: 'a1bccaee-37a8-4786-bbf4-e9cee9fbd081', // 修改时的UniqueId,
+            formViewUniqueId: 'b029286e-9595-4430-99f5-9a20b199ccbc', // 修改时的UniqueId,
             matterInfoConfig:{
                 warehouseName:"仓库名称",
                 storehouseInCode:"库位编码",
                 specification:"规格",
-                boxCodeBal:"箱码存货"
+                boxCodeBal:"箱码库存"
             }
         }
     },
@@ -587,6 +587,7 @@ export default {
                             comment: box.comment,
                             boxCodes:[{
                                 ...box,
+                                boxCodeBal:box.thenLockQtyStock,
                                 specification:box.specification_transObjCode,
                                 warehouseName:inPut.warehouseType_containerCode
                             }]
@@ -594,6 +595,7 @@ export default {
                     }else{
                         materielMap[box.transObjCode].boxCodes.push({
                             ...box,
+                            boxCodeBal:box.thenLockQtyStock,
                             specification:box.specification_transObjCode,
                             warehouseName:inPut.warehouseType_containerCode
                         });
