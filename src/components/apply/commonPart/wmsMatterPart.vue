@@ -5,8 +5,8 @@
             <div>
                 <span v-if="!matterModifyClass" @click="handlerChangeState">编辑</span>
                 <span v-if="matterModifyClass" @click="handlerChangeState">完成</span>
-                <x-icon type="ios-arrow-up" v-if="allExpend &&matters.length>0" size="26" @click.native="handlerChangeExpendState"></x-icon>
-                <x-icon type="ios-arrow-down" v-if="!allExpend &&matters.length>0" size="26" @click.native="handlerChangeExpendState"></x-icon>
+                <x-icon type="ios-arrow-up" v-if="allExpend &&matters.length>0" size="28" @click.native="handlerChangeExpendState"></x-icon>
+                <x-icon type="ios-arrow-down" v-if="!allExpend &&matters.length>0" size="28" @click.native="handlerChangeExpendState"></x-icon>
             </div>
         </div>
         <r-scroll  class="materiel-item-wrapper">
@@ -16,12 +16,12 @@
                     :key="matIdx">
                         <div class="materiel-info">
                             <flexbox justify="space-between">
-                                <flexbox-item :span="6"><div >{{mat.inventoryName}}({{mat.inventoryCode}})</div></flexbox-item>
-                                <flexbox-item ><div >{{getGroupInfo(mat).all}}</div></flexbox-item>
-                                <flexbox-item ><div >{{getGroupInfo(mat).done}}</div></flexbox-item>
-                                <flexbox-item @click.native="mat.expend=!mat.expend">
-                                    <x-icon type="ios-arrow-up" v-if="mat.expend && mat.boxCodes.length>0" size="26" ></x-icon>
-                                    <x-icon type="ios-arrow-down" v-if="!mat.expend && mat.boxCodes.length>0" size="26" ></x-icon>
+                                <flexbox-item :span="5"><div >{{mat.inventoryName}}({{mat.inventoryCode}})</div></flexbox-item>
+                                <flexbox-item :span="2"><div >{{getGroupInfo(mat).all}}</div></flexbox-item>
+                                <flexbox-item :span="2"><div >{{getGroupInfo(mat).done}}</div></flexbox-item>
+                                <flexbox-item :span="2" @click.native="mat.expend=!mat.expend" style="text-align: right;">
+                                    <x-icon type="ios-arrow-up" v-if="mat.expend && mat.boxCodes.length>0" size="28" ></x-icon>
+                                    <x-icon type="ios-arrow-down" v-if="!mat.expend && mat.boxCodes.length>0" size="28" ></x-icon>
                                 </flexbox-item>
                             </flexbox>
                         </div>
