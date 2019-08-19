@@ -684,7 +684,11 @@ export default {
         },
     },
     created(){
-        register()
+        register();
+        document.body.addEventListener('focusin', (event) => {
+            alert('弹起');
+            event.preventDefault();
+        })
     },
     mounted(){
         this.$loading.hide();
