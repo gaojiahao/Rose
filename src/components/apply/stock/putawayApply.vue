@@ -91,8 +91,6 @@ import {
 import WebContext from 'service/commonService'
 import { getStorageShelf, getWhbyStoragelocation } from 'service/wmsService'
 import { getSOList } from 'service/detailService'
-// 微信JS-SDK引入
-import { register } from 'plugins/wx'
 import scanVoice from '@/plugins/scanVoice'
 
 import { scanQRCode} from 'plugins/wx/api'
@@ -684,10 +682,6 @@ export default {
         },
     },
     created(){
-        register();
-        document.body.addEventListener('focusin', (event) => {
-            event.preventDefault();
-        })
     },
     mounted(){
         this.$loading.hide();

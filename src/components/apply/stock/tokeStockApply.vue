@@ -140,7 +140,22 @@ export default {
                             //重新获取仓库信息
                             //清空箱码，申请单号信息
                             //清空待上架物料
-                            this.getWarehouse(this.handlerSetMatters);
+                            this.getWarehouse((res)=>{
+                                if(res.dataCount===0){
+                                    scanVoice.error();
+                                    this.tostText = `库位${this.scanCodeInfo.spCode}未绑定仓库，请绑定后再扫!`;
+                                    this.showTost = true;
+                                    this.scanCodeInfo.spCode = '';
+                                }else{
+                                    scanVoice.success();
+                                    this.warehouse = {
+                                        ...res.tableContent[0],
+                                        spCode:this.scanCodeInfo.spCode
+                                    }
+                                    this.$refs.boxCode.focus();
+                                }
+                                this.handlerSetMatters()
+                            });
                             this.scanCodeInfo.boxCode = '';
                             this.matters = [];
                         },
@@ -150,7 +165,22 @@ export default {
                     })
                 }
             }else{
-                this.getWarehouse(this.handlerSetMatters);
+                this.getWarehouse((res)=>{
+                    if(res.dataCount===0){
+                        scanVoice.error();
+                        this.tostText = `库位${this.scanCodeInfo.spCode}未绑定仓库，请绑定后再扫!`;
+                        this.showTost = true;
+                        this.scanCodeInfo.spCode = '';
+                    }else{
+                        scanVoice.success();
+                        this.warehouse = {
+                            ...res.tableContent[0],
+                            spCode:this.scanCodeInfo.spCode
+                        }
+                        this.$refs.boxCode.focus();
+                    }
+                    this.handlerSetMatters()
+                });
             }
             
         },
@@ -527,7 +557,12 @@ export default {
 
                 this.scanCodeInfo.spCode = inPut.dataSet[0]['storehouseInCode'];
                 //修改时，通过库位信息获取仓库信息
-                this.getWarehouse();
+                this.getWarehouse((res)=>{
+                    this.warehouse  = {
+                        ...res.tableContent[0],
+                        spCode:this.scanCodeInfo.spCode
+                    }
+                });
                 inPut.dataSet.map(box=>{
                     if(!materielMap[box.transObjCode]){
                         materielMap[box.transObjCode] = {
@@ -577,21 +612,7 @@ export default {
             getWhbyStoragelocation({
                 location:this.scanCodeInfo.spCode
             }).then(res=>{
-                if(res.dataCount===0){
-                    scanVoice.error();
-                    this.showTost = true;
-                    this.tostText = `库位${this.scanCodeInfo.spCode}未绑定仓库，请绑定后再扫!`;
-                    this.scanCodeInfo.spCode = '';
-                }else{
-                    this.warehouse = {
-                        ...res.tableContent[0],
-                        spCode:this.scanCodeInfo.spCode
-                    }
-                    scanVoice.success();
-                    this.$refs.boxCode.focus();
-
-                    callback && callback();
-                }
+                callback(res);
             })
         },
         // 判断是返回上一页还是跳转详情页

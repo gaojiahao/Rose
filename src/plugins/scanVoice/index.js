@@ -16,7 +16,7 @@ scanVoice.error = function(){
    scanAudio.play();
    setTimeout(() => {
     scanAudio.pause();
-   }, 360);
+   }, 400);
 }
 
 export default scanVoice 
