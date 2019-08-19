@@ -231,12 +231,13 @@ export default {
                                 });
                             }
                         });
-
-                        this.matters = this.matters.filter(mat=>{
-                            mat.boxCodes = mat.boxCodes.filter(box=> !box.isDelete);
-                            return true;
-                        })
                     });
+
+                    this.matters = this.matters.filter(mat=>{
+                        mat.boxCodes = mat.boxCodes.filter(box=> !box.isDelete);
+                        return true;
+                    })
+
                     this.selItems = [];
                     this.matterModifyClass = false;
                 }
