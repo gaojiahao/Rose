@@ -686,6 +686,8 @@ export default {
     created(){
         register();
         document.body.addEventListener('focusin', (event) => {
+            this.tostText ='aa';
+            this.showTost = true;
             event.preventDefault();
         })
     },
