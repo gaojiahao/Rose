@@ -144,7 +144,14 @@ export default {
             return false;
         },
         handlerClickScanIcon(refKey){
+
+            let disabledKeyboard = function(e){
+                e.preventDefault();
+            }
+            document.body.addEventListener('focusin',disabledKeyboard,false);
             this.$refs[refKey].focus();
+            document.body.removeEventListener('focusin',disabledKeyboard,false);
+            
         },
         //扫申请单号
         handlerScanPostCode(){
@@ -685,10 +692,6 @@ export default {
     },
     created(){
         register();
-        document.body.addEventListener('focusin', (event) => {
-            alert('弹起');
-            event.preventDefault();
-        })
     },
     mounted(){
         this.$loading.hide();
