@@ -1,22 +1,24 @@
 
 let  scanVoice = {};
 
-let scanAudio = new Audio();
+let scanAudioSuccess = new Audio();
+let scanAudioError = new Audio();
 
-scanAudio.setAttribute('src',require("assets/scan/scan.mp3"));
+scanAudioSuccess.setAttribute('src',require("assets/scan/scanSuccess.mp3"));
+scanAudioError.setAttribute('src',require("assets/scan/scanError.mp3"));
 
 scanVoice.success = function(){
-    scanAudio.play();
+    scanAudioSuccess.play();
     setTimeout(() => {
-     scanAudio.pause();
-    }, 200);
+        scanAudioSuccess.pause();
+    }, 1000);
 }
 
 scanVoice.error = function(){
-   scanAudio.play();
+    scanAudioError.play();
    setTimeout(() => {
-    scanAudio.pause();
-   }, 400);
+    scanAudioError.pause();
+   }, 350);
 }
 
 export default scanVoice 
