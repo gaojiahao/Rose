@@ -686,6 +686,7 @@ export default {
     created(){
         register();
         document.body.addEventListener('focusin', (event) => {
+            alert('aaa');
             event.preventDefault();
         })
     },
