@@ -333,7 +333,6 @@ export default {
                 value = me.getValue();
 
             if(me.$parent.cfg.submitValue) {
-                console.log(value)
                 if (value == null || value.length == 0) {
                     me.$vux.alert.show({
                         content: '请选择' + (me.listTitle || '物料')
