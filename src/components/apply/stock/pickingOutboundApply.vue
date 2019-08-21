@@ -57,7 +57,7 @@
         <toast 
             v-model="showTost" 
             type="text" 
-            :time="2500" 
+            :time="3000" 
             is-show-mask 
             :text="tostText" 
             position="top" 

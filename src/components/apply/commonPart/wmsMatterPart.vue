@@ -9,7 +9,8 @@
                 <x-icon type="ios-arrow-down" v-if="!allExpend &&matters.length>0" size="28" @click.native="handlerChangeExpendState"></x-icon>
             </div>
         </div>
-        <r-scroll  class="materiel-item-wrapper">
+        <!-- <r-scroll  class="materiel-item-wrapper"> -->
+            <div class="materiel-item-wrapper">
             <ul class="materiels" >
                 <li class="materiel-item" 
                     v-for="(mat,matIdx) in matters" 
@@ -18,7 +19,7 @@
                             <flexbox justify="space-between">
                                 <flexbox-item :span="5"><div >{{mat.inventoryName}}({{mat.inventoryCode}})</div></flexbox-item>
                                 <flexbox-item :span="2"><div >{{getGroupInfo(mat).all}}</div></flexbox-item>
-                                <flexbox-item :span="2"><div >{{getGroupInfo(mat).done}}</div></flexbox-item>
+                                <flexbox-item :span="2"><div >{{getGroupInfo(mat).done}}<span>/{{mat.boxCodes.length}}件</span></div></flexbox-item>
                                 <flexbox-item :span="2" @click.native="mat.expend=!mat.expend" style="text-align: right;">
                                     <x-icon type="ios-arrow-up" v-if="mat.expend && mat.boxCodes.length>0" size="28" ></x-icon>
                                     <x-icon type="ios-arrow-down" v-if="!mat.expend && mat.boxCodes.length>0" size="28" ></x-icon>
@@ -36,7 +37,7 @@
                             <div class="matter-info">
                                 <div >{{box.boxCode}}</div>
                                 <div class="other" v-for="(value,key) in  matterInfoConfig" :key="key">
-                                    {{value}}:{{box[key]}} &nbsp;
+                                    {{value}}:{{box[key]||'无'}} &nbsp;
                                 </div>
                                 <div class="box-operate">
                                     <div  >
@@ -66,7 +67,8 @@
                     </ul>
                 </li>
             </ul>
-        </r-scroll>
+            </div>
+        <!-- </r-scroll> -->
     </div>
 </template>
 <script>
@@ -184,15 +186,15 @@ export default {
         background: #FFF;
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
-        height: calc(100% - .50rem);
+        // height: calc(100% - .50rem);
         padding: 0 .15rem;
         .materiels{
-            padding: .05rem;
             font-size: 14px;
             height: 100%;
             .materiel-item{
                 .materiel-info{
                     font-weight: 600;
+                    border-bottom: 1px solid #e8e8e8;
                 }
                 .box-codes{
                     font-size: 12px;

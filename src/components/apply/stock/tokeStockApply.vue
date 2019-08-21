@@ -57,7 +57,7 @@
 
         <toast 
             v-model="showTost" 
-            type="text" :time="2500" is-show-mask :text="tostText" position="top" width="20em" ></toast>
+            type="text" :time="3000" is-show-mask :text="tostText" position="top" width="20em" ></toast>
     </div>
 </template>
 
