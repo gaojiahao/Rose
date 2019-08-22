@@ -11,7 +11,7 @@ scanVoice.success = function(){
     scanAudioSuccess.play();
     setTimeout(() => {
         scanAudioSuccess.pause();
-    }, 1000);
+    }, 500);
 }
 
 scanVoice.error = function(){

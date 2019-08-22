@@ -50,13 +50,16 @@ let tokenService = {
   login() {
     // 清楚token缓存
     this.clean();
-    let query = querystring.parse(location.search.slice(1));
+    let query = querystring.parse(location.search.slice(1)),
+        isDebug = query.debug == 'true';
     let code = query.code;
 
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
     
     // 根据环境不同 调用不同的登录接口
-    if (isQYWX) {
+    if (isDebug){
+      return this.toLoginPage();
+    }else if (isQYWX) {
       if(code != null){
         return this.QYWXLogin();
       } else {
@@ -65,11 +68,9 @@ let tokenService = {
     } else if (dd.ios || dd.android) {
       return this.DDLogin();
     } else {
-      router.push('/login');
-      return new Promise((resolve, reject)=>{
-        resolve();
-      })
+      return this.toLoginPage();
     }
+    
   },
   // PC端登录，默认返回token
   pcLogin(userCode, password, key = 'token') {
@@ -139,6 +140,12 @@ let tokenService = {
           message: message
         })
       });
+    })
+  },
+  toLoginPage(){
+    router.push('/login');
+    return new Promise((resolve, reject)=>{
+      resolve();
     })
   },
   DDLogin(key = 'token') {
