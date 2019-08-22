@@ -344,6 +344,9 @@ export default {
                 return true;
             }
         },
+        initNumberVerSel() {
+            return true;
+        },
         initDefaultValueCfg: function () {
             var me = this,
                 cfg = me.cfg,

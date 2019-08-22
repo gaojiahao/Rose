@@ -438,6 +438,21 @@ export default {
       }
       return !invalid;
     },
+    initNumberVerSel() {
+      var invalid = true,
+        fieldMap = this.fieldMap,
+        fieldCode,
+        field;
+
+      for (fieldCode in fieldMap) {
+        field = fieldMap[fieldCode];
+        if (!field.initNumberVerSel()) {
+          invalid = false;
+          break;
+        }
+      }
+      return invalid;  
+    },
     stopOrder() {},
     getFromStatus() {
       var data = {
