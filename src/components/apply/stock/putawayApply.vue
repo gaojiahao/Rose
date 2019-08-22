@@ -706,9 +706,7 @@ export default {
     },
     mounted(){
         document.body.addEventListener('focusin', (event) => {
-            setTimeout(() => {
-                event.preventDefault();
-            }, 100);
+            event.preventDefault();
         })
 
         //扫库位码后确定的仓库信息
