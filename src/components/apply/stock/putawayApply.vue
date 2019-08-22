@@ -491,7 +491,7 @@ export default {
                 if(mat.idx === idx){
                     this.matters.map(m=>{
                         if(m.inventoryCode === mat.inventoryCode){
-                            m.boxCodes.push({
+                            m.boxCodes.unshift({
                                 ...this.transfromDataSource(mat),
                                 boxCode: this.scanCodeInfo.boxCode,
                                 warehouseName :this.warehouse.warehouseName,
@@ -676,7 +676,7 @@ export default {
                 });
 
                 for(var k in materielMap){
-                    this.matters.push(materielMap[k]);
+                    this.matters.unshift(materielMap[k]);
                 }
 
             })
@@ -705,10 +705,6 @@ export default {
     created(){
     },
     mounted(){
-        document.body.addEventListener('focusin', (event) => {
-            event.preventDefault();
-        })
-
         //扫库位码后确定的仓库信息
         //扫库位码后切换库位的判断依据
         this.warehouse = undefined;
