@@ -9,9 +9,9 @@ scanAudioError.setAttribute('src',require("assets/scan/scanError.mp3"));
 
 scanVoice.success = function(){
     scanAudioSuccess.play();
-    // setTimeout(() => {
-    //     scanAudioSuccess.pause();
-    // }, 500);
+    setTimeout(() => {
+        scanAudioSuccess.pause();
+    }, 500);
 }
 
 scanVoice.error = function(){

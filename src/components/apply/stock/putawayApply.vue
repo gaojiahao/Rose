@@ -102,7 +102,6 @@ import { getStorageShelf, getWhbyStoragelocation,boxCodeInCheck } from 'service/
 import { getSOList } from 'service/detailService'
 import scanVoice from '@/plugins/scanVoice'
 
-import Bscroll from 'better-scroll'
 import { scanQRCode} from 'plugins/wx/api'
 // mixins 引入
 import wmsCommon from 'mixins/wmsCommon'
@@ -111,8 +110,6 @@ import { debug, debuglog } from 'util';
 export default {
     data(){
         return {
-            // isScroll: false, //显示固定元素
-            // scrollY: '',
             scanCodeInfo:{
                 spCode:'',
                 boxCode:'',
@@ -708,30 +705,12 @@ export default {
     created(){
     },
     mounted(){
-        // this.$loading.hide();
+        document.body.addEventListener('focusin', (event) => {
+            setTimeout(() => {
+                event.preventDefault();
+            }, 100);
+        })
 
-        // this.$nextTick(() => {
-        //     this.fillBscroll = new Bscroll(this.$refs.fill, {
-        //         probeType: 3,
-        //         scrollY: true,
-        //         click: true,
-        //         useTransition:false,  // 防止iphone微信滑动卡顿
-        //         bounce:true,
-        //         momentumLimitDistance: 5
-        //     })
-        //     this.fillBscroll.on('scroll',(pop)=>{
-        //             var tops = this.$refs.wmsMatterPart.offsetTop;
-        //             // 使用abs绝对值（否则 pop.y拿到值是负数）
-        //             this.scrollY = Math.abs(Math.round(pop.y));
-        //             //判断滑动距离大于"箱码明细"元素时, 吸顶title,否则隐藏
-        //             if(this.scrollY >= tops) {
-        //                 this.isScroll = true;
-        //             }else {
-        //                 this.isScroll = false;
-        //             }
-        //     })
-        // })
-       
         //扫库位码后确定的仓库信息
         //扫库位码后切换库位的判断依据
         this.warehouse = undefined;
