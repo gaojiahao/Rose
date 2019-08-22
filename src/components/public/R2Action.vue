@@ -186,7 +186,8 @@ var component = {
       }
     }, 
     resubmit() {
-       this.form.saveAndCommitTask();
+      this.$HandleLoad.show();
+      this.form.saveAndCommitTask();
     },
     submitNew() {},
     draft() {},
@@ -338,6 +339,7 @@ var component = {
     agreement() {
       if(this.model == 'marking') {
         this.form.taskType = 1;
+        this.$HandleLoad.show();
         this.form.saveAndCommitTask();
       } else {
         this.$vux.confirm.prompt('', {

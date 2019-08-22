@@ -141,7 +141,6 @@ var component = {
         if(!watch) return;
         try{
             cfgArr = JSON.parse(watch);
-            console.log('cfgArr',cfgArr) 
         }catch(e){
             console.log('watch解析bug');
             return null;
