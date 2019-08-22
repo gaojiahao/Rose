@@ -1,48 +1,50 @@
 <template>
     <div class='pages cpxq-apply-container'>
         <div class="basicPart" ref="fill">
-            <div class="scanCodeInfo">
-                <div class="vux-1px-t">
-                    <div class='each_property' >
-                        <label class="required">申请单号</label>
-                        <input 
-                            ref='postCode'
-                            type='text' 
-                            v-model="scanCodeInfo.postCode" 
-                            placeholder="请扫码" 
-                            class='property_val' 
-                            @input="handlerScanPostCode"
-                            @focus="getFocus($event)" />
-                        <i class="iconfont">&#xe661;</i>
+            <div class="wrapper">
+                <div class="scanCodeInfo">
+                    <div class="vux-1px-t">
+                        <div class='each_property' >
+                            <label class="required">申请单号</label>
+                            <input 
+                                ref='postCode'
+                                type='text' 
+                                v-model="scanCodeInfo.postCode" 
+                                placeholder="请扫码" 
+                                class='property_val' 
+                                @input="handlerScanPostCode"
+                                @focus="getFocus($event)" />
+                            <i class="iconfont">&#xe661;</i>
+                        </div>
                     </div>
-                </div>
-                <div class="vux-1px-t">
-                    <div class='each_property' >
-                        <label class="required">货品箱码</label>
-                        <input 
-                            ref='boxCode'
-                            type='text' 
-                            v-model="scanCodeInfo.boxCode" 
-                            placeholder="请扫码" 
-                            @input="handlerSetMattersBox"
-                            class='property_val' 
-                            @focus="getFocus($event)" />
-                        <i class="iconfont">&#xe661;</i>
+                    <div class="vux-1px-t">
+                        <div class='each_property' >
+                            <label class="required">货品箱码</label>
+                            <input 
+                                ref='boxCode'
+                                type='text' 
+                                v-model="scanCodeInfo.boxCode" 
+                                placeholder="请扫码" 
+                                @input="handlerSetMattersBox"
+                                class='property_val' 
+                                @focus="getFocus($event)" />
+                            <i class="iconfont">&#xe661;</i>
+                        </div>
                     </div>
+                    
                 </div>
-                
-            </div>
-            <div  class="wms-matter-part">
-                <wms-matter-part 
-                    title='上架明细'
-                    :matterModifyClass="matterModifyClass"
-                    :matters="matters"
-                    :handlerSelectItem="handlerSelectItem"
-                    :showSelIcon="showSelIcon"
-                    :handlerChangeState="handlerChangeState"    
-                    :getGroupInfo="getGroupInfo"
-                    :matterInfoConfig="matterInfoConfig">
-                </wms-matter-part>
+                <div  class="wms-matter-part" ref="wmsMatterPart">
+                    <wms-matter-part 
+                        title='上架明细'
+                        :matterModifyClass="matterModifyClass"
+                        :matters="matters"
+                        :handlerSelectItem="handlerSelectItem"
+                        :showSelIcon="showSelIcon"
+                        :handlerChangeState="handlerChangeState"    
+                        :getGroupInfo="getGroupInfo"
+                        :matterInfoConfig="matterInfoConfig">
+                    </wms-matter-part>
+                </div>
             </div>
         </div>
          <!-- 底部按钮 -->
@@ -63,6 +65,14 @@
             position="top" 
             width="20em" >
         </toast>
+
+        <!-- 固定title -->
+	    <section class="topFixed" v-show="isScroll" :class="isScroll == true ? 'isFixed' : ''" @click="toReferrals" >
+	        <div>拣货明细</div>
+	        <div >
+	            <div class="fixed-button">继续扫码</div>
+	        </div>
+	    </section>
     </div>
 </template>
 
@@ -81,6 +91,8 @@ import {
 import { getPickingOutByBoxCode, releaseSortingOrder, getForPickingData } from 'service/wmsService'
 import WebContext from 'service/commonService'
 import { getSOList } from 'service/detailService'
+// mixins 引入
+import wmsCommon from 'mixins/wmsCommon'
 import scanVoice from '@/plugins/scanVoice'
 
 // 插件引入
@@ -105,6 +117,7 @@ export default {
             }
         }
     },
+    mixins: [wmsCommon],
     computed: {
         // 将选中删除的物料 转换成 数组
         checkList() {
@@ -647,7 +660,36 @@ export default {
 .wms-matter-part{
     overflow: hidden;
     margin-top: .1rem;
-    height: calc(100% - 1.0rem);
   }
+.topFixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    background: #fff;
+    width: 100%;
+    padding: 0 .10rem;
+    box-shadow: 2.9px 5.2px 8px 0px rgba(109, 109, 109, 0.1);
+    height: .44rem;
+    line-height: .44rem;
+     display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: 0 .15rem;
+    .fixed-button{
+        background-color: #3296fa;
+        border-radius: .5rem;
+        display: initial;
+        padding: .03rem .09rem;
+        color: white;
+        font-size: 16px;
+        box-shadow: 2.9px 5.2px 8px 0px rgba(109, 109, 109, 0.1);
+    }
+}
 </style>
 

@@ -104,13 +104,15 @@ import scanVoice from '@/plugins/scanVoice'
 
 import Bscroll from 'better-scroll'
 import { scanQRCode} from 'plugins/wx/api'
+// mixins 引入
+import wmsCommon from 'mixins/wmsCommon'
 
 import { debug, debuglog } from 'util';
 export default {
     data(){
         return {
-            isScroll: false, //显示固定元素
-            scrollY: '',
+            // isScroll: false, //显示固定元素
+            // scrollY: '',
             scanCodeInfo:{
                 spCode:'',
                 boxCode:'',
@@ -131,6 +133,7 @@ export default {
             },
         }
     },
+    mixins: [wmsCommon],
     computed: {
         // 将选中删除的物料 转换成 数组
         checkList() {
@@ -700,37 +703,34 @@ export default {
                 }
                 });
             }
-        },
-        toReferrals(){
-            this.fillBscroll.scrollTo(0,0);
         }
     },
     created(){
     },
     mounted(){
-        this.$loading.hide();
+        // this.$loading.hide();
 
-        this.$nextTick(() => {
-            this.fillBscroll = new Bscroll(this.$refs.fill, {
-                probeType: 3,
-                scrollY: true,
-                click: true,
-                useTransition:false,  // 防止iphone微信滑动卡顿
-                bounce:true,
-                momentumLimitDistance: 5
-            })
-            this.fillBscroll.on('scroll',(pop)=>{
-                    var tops = this.$refs.wmsMatterPart.offsetTop;
-                    // 使用abs绝对值（否则 pop.y拿到值是负数）
-                    this.scrollY = Math.abs(Math.round(pop.y));
-                    //判断滑动距离大于"箱码明细"元素时, 吸顶title,否则隐藏
-                    if(this.scrollY >= tops) {
-                        this.isScroll = true;
-                    }else {
-                        this.isScroll = false;
-                    }
-            })
-        })
+        // this.$nextTick(() => {
+        //     this.fillBscroll = new Bscroll(this.$refs.fill, {
+        //         probeType: 3,
+        //         scrollY: true,
+        //         click: true,
+        //         useTransition:false,  // 防止iphone微信滑动卡顿
+        //         bounce:true,
+        //         momentumLimitDistance: 5
+        //     })
+        //     this.fillBscroll.on('scroll',(pop)=>{
+        //             var tops = this.$refs.wmsMatterPart.offsetTop;
+        //             // 使用abs绝对值（否则 pop.y拿到值是负数）
+        //             this.scrollY = Math.abs(Math.round(pop.y));
+        //             //判断滑动距离大于"箱码明细"元素时, 吸顶title,否则隐藏
+        //             if(this.scrollY >= tops) {
+        //                 this.isScroll = true;
+        //             }else {
+        //                 this.isScroll = false;
+        //             }
+        //     })
+        // })
        
         //扫库位码后确定的仓库信息
         //扫库位码后切换库位的判断依据
@@ -822,7 +822,7 @@ export default {
     width: 100%;
     padding: 0 .10rem;
     box-shadow: 2.9px 5.2px 8px 0px rgba(109, 109, 109, 0.1);
-    height: .44rem;
+height: .44rem;
     line-height: .44rem;
      display: -webkit-box;
     display: -ms-flexbox;

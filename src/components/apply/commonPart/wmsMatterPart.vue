@@ -54,12 +54,12 @@
                                 v-if='matterModifyClass'>
                                 <x-icon 
                                     type="ios-checkmark" 
-                                    size="24" 
+                                    size="30" 
                                     class="checked" 
                                     v-show="showSelIcon( matIdx+'_'+ boxIdx)"></x-icon>
                                 <x-icon 
                                     type="ios-circle-outline" 
-                                    size="24" 
+                                    size="30" 
                                     v-show="!showSelIcon( matIdx+'_'+ boxIdx)"></x-icon>
                             </div>
         
