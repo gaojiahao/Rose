@@ -822,8 +822,8 @@ export default {
     width: 100%;
     padding: 0 .10rem;
     box-shadow: 2.9px 5.2px 8px 0px rgba(109, 109, 109, 0.1);
-    height: .40rem;
-    line-height: .40rem;
+    height: .44rem;
+    line-height: .44rem;
      display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
