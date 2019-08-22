@@ -271,7 +271,7 @@ export default {
                     } 
                } else {
                    containerCode = field.containerCode;
-                   if(field.$parent.submitValue){
+                   if(field.$parent.submitValue&& (!field.$parent.cfg.hiddenInRun)){
                         values[containerCode] = field.getSubmitData();
                    }
                }
@@ -352,6 +352,7 @@ export default {
                 formData = me.formatValues(values),
                 param;
 
+            if (!me.isValid())return;
             approvalData.transCode = transCode;
             approvalData.result = me.taskType;
             approvalData.taskId = taskId,

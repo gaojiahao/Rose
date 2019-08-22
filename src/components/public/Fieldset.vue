@@ -1,5 +1,5 @@
 <template>
-  <div v-if = "!hidden" class="r-fieldset">
+  <div v-show = "!hidden" class="r-fieldset">
     <div class="box" :class="{muti:cfg.isMultiple}">
       <header v-show="!cfg.isMultiple">
         <div class="vux-1px-l">{{cfg.cName}}</div>
@@ -141,6 +141,7 @@ var component = {
         if(!watch) return;
         try{
             cfgArr = JSON.parse(watch);
+            console.log('cfgArr',cfgArr) 
         }catch(e){
             console.log('watch解析bug');
             return null;
