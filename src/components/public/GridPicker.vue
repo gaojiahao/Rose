@@ -230,7 +230,7 @@ export default {
                   contrlId = contrl.cfg.id;
               }
               valueField = paramCfg.value.valueField;
-              value = contrl.getExtraFieldValue(valueField);
+              value = contrl.getExtraFieldValue(valueField) || '';
               if (value == null) {
                 autoLoad = false;
               }

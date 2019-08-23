@@ -127,7 +127,7 @@ var component = {
 
         for (i; i < l; i++) {
           col = columns[i];
-          if (col.editorType == "r2Selector") {
+          if (col.editorType == "r2Selector" || col.editorType == "r2SelectorPlus") {
             me.dataSourceBind = { k: col.fieldCode, v: col.valueField };
             return {
               ...col.dataSource.data,

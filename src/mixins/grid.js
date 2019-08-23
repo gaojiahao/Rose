@@ -725,5 +725,8 @@ export default {
             });
             return validResult;
         },
+        getExtraFieldValue:function(valueField){
+            return this.getValue();
+        },
     }
 }
