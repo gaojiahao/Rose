@@ -1,6 +1,7 @@
 <template>
     <div class='pages tokestock-apply-container'>
         <div class="basicPart" ref="fill">
+            <div class="wrapper">
                 <div class="scanCodeInfo">
                     <div class="vux-1px-t">
                         <div class='each_property' >
@@ -31,7 +32,7 @@
                         </div>
                     </div>
                 </div>
-                <div  class="wms-matter-part">
+                <div  class="wms-matter-part" ref="wmsMatterPart">
                     <wms-matter-part 
                         title='盘点明细'
                         :matterModifyClass="matterModifyClass"
@@ -45,6 +46,7 @@
                         >
                     </wms-matter-part>
                 </div>
+            </div>
         </div>
          <!-- 底部按钮 -->
         <op-button 
@@ -57,7 +59,21 @@
 
         <toast 
             v-model="showTost" 
-            type="text" :time="1500" is-show-mask :text="tostText" position="top" width="20em" ></toast>
+            type="text" 
+            :time="3000" 
+            is-show-mask 
+            :text="tostText" 
+            position="top" 
+            width="20em" >
+        </toast>
+
+         <!-- 固定title -->
+	    <section class="topFixed" v-show="isScroll" :class="isScroll == true ? 'isFixed' : ''" @click="toReferrals" >
+	        <div>盘点明细</div>
+	        <div >
+	            <div class="fixed-button">继续扫码</div>
+	        </div>
+	    </section>
     </div>
 </template>
 
@@ -67,6 +83,7 @@ import { Flexbox, FlexboxItem, Cell,Toast  } from 'vux'
 import RNumber from 'components/public/RNumber'
 import OpButton from 'components/apply/commonPart/OpButton'
 import WmsMatterPart from 'components/apply/commonPart/wmsMatterPart'
+import scanVoice from '@/plugins/scanVoice'
 
 import { 
     saveAndStartWf, 
@@ -78,8 +95,8 @@ import {
 import {  getWhbyStoragelocation,getLocationOfinventory,getInventoryInfoByBoxCode} from 'service/wmsService'
 import WebContext from 'service/commonService'
 import { getSOList } from 'service/detailService'
-// 插件引入
-import Bscroll from 'better-scroll'
+// mixins 引入
+import wmsCommon from 'mixins/wmsCommon'
 import { debug, debuglog } from 'util';
 export default {
     data(){
@@ -94,15 +111,16 @@ export default {
             btnIsHide:false,
             showTost:false,
             tostText:'',
-            formViewUniqueId: 'a1bccaee-37a8-4786-bbf4-e9cee9fbd081', // 修改时的UniqueId,
+            formViewUniqueId: 'b029286e-9595-4430-99f5-9a20b199ccbc', // 修改时的UniqueId,
             matterInfoConfig:{
                 warehouseName:"仓库名称",
                 storehouseInCode:"库位编码",
                 specification:"规格",
-                boxCodeBal:"箱码存货"
+                boxCodeBal:"箱码库存"
             }
         }
     },
+    mixins: [wmsCommon],
     computed: {
         // 将选中删除的物料 转换成 数组
         checkList() {
@@ -130,6 +148,7 @@ export default {
             //如果已经扫库位码，获取到正确的仓库信息,并且已经扫了箱码
             if(this.warehouse && this.matters.length>0){
                 if(this.scanCodeInfo.spCode != this.warehouse.spCode){
+                    scanVoice.error();
                     this.$vux.confirm.show({
                         content: '确定要变更仓位?如果确定，存货明细将会清空哦',
                         // 确定回调
@@ -138,7 +157,22 @@ export default {
                             //重新获取仓库信息
                             //清空箱码，申请单号信息
                             //清空待上架物料
-                            this.getWarehouse(this.handlerSetMatters);
+                            this.getWarehouse((res)=>{
+                                if(res.dataCount===0){
+                                    scanVoice.error();
+                                    this.tostText = `库位${this.scanCodeInfo.spCode}未绑定仓库，请绑定后再扫!`;
+                                    this.showTost = true;
+                                    this.scanCodeInfo.spCode = '';
+                                }else{
+                                    scanVoice.success();
+                                    this.warehouse = {
+                                        ...res.tableContent[0],
+                                        spCode:this.scanCodeInfo.spCode
+                                    }
+                                    this.$refs.boxCode.focus();
+                                }
+                                this.handlerSetMatters()
+                            });
                             this.scanCodeInfo.boxCode = '';
                             this.matters = [];
                         },
@@ -148,7 +182,22 @@ export default {
                     })
                 }
             }else{
-                this.getWarehouse(this.handlerSetMatters);
+                this.getWarehouse((res)=>{
+                    if(res.dataCount===0){
+                        scanVoice.error();
+                        this.tostText = `库位${this.scanCodeInfo.spCode}未绑定仓库，请绑定后再扫!`;
+                        this.showTost = true;
+                        this.scanCodeInfo.spCode = '';
+                    }else{
+                        scanVoice.success();
+                        this.warehouse = {
+                            ...res.tableContent[0],
+                            spCode:this.scanCodeInfo.spCode
+                        }
+                        this.$refs.boxCode.focus();
+                    }
+                    this.handlerSetMatters()
+                });
             }
             
         },
@@ -199,12 +248,13 @@ export default {
                                 });
                             }
                         });
-
-                        this.matters = this.matters.filter(mat=>{
-                            mat.boxCodes = mat.boxCodes.filter(box=> !box.isDelete);
-                            return true;
-                        })
                     });
+
+                    this.matters = this.matters.filter(mat=>{
+                        mat.boxCodes = mat.boxCodes.filter(box=> !box.isDelete);
+                        return true;
+                    })
+
                     this.selItems = [];
                     this.matterModifyClass = false;
                 }
@@ -287,26 +337,22 @@ export default {
                 }
             });
         },
-       /**
-        * 扫箱码
-        * 
-        */
-        handlerScanBoxCode(){
+        handlerCheckBoxCode(){
             if(!this.scanCodeInfo.spCode){
                 this.showTost = true;
                 this.tostText = '请先扫库位!'
                 this.scanCodeInfo.boxCode = '';
-                return;
+                return false;
             }
 
-            if(!this.scanCodeInfo.boxCode) return;
+            if(!this.scanCodeInfo.boxCode) return false;
 
             if(this.scanCodeInfo.boxCode.split('-').length !=3){
                 this.showTost = true;
                 this.tostText = '箱码不复合规则，请重新扫码!';
                 this.scanCodeInfo.boxCode = '';
                 this.$refs.boxCode.focus();
-                return;
+                return false;
             }
 
             if(this.boxCodesMap[this.scanCodeInfo.boxCode]){
@@ -314,6 +360,19 @@ export default {
                 this.tostText = '该箱码已经扫过啦，请不要重复扫码哦!';
                 this.scanCodeInfo.boxCode = '';
                 this.$refs.boxCode.focus();
+                return false;
+            }
+
+            return true;
+        },
+       /**
+        * 扫箱码
+        * 
+        */
+        handlerScanBoxCode(){
+            
+            if(!this.handlerCheckBoxCode()){
+                scanVoice.error();
                 return;
             }
 
@@ -321,6 +380,7 @@ export default {
             //1、作盘盈处理
             //2、追查数据，作理货单
             if(!this.paperBoxCodesMap[this.scanCodeInfo.boxCode]){
+                scanVoice.error();
                 this.$vux.confirm.show({
                     content:`此箱码不在账面余额,建议您追查此箱码的账面数据,
                         根据追查结果做<strong style="color:red;">理货单</strong>或<strong style="color:red;">盘盈</strong>处理,
@@ -328,9 +388,14 @@ export default {
                     onConfirm:()=>{
                         this.addInventoryProfit();
                         this.$refs.boxCode.focus();
+                    },
+                    onCancel:()=>{
+                        this.scanCodeInfo.boxCode='';
+                        this.$refs.boxCode.focus();
                     }
                 });
             }else{
+                scanVoice.success();
                 //记录已扫码信息,防止重复扫码
                 this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;
 
@@ -510,7 +575,12 @@ export default {
 
                 this.scanCodeInfo.spCode = inPut.dataSet[0]['storehouseInCode'];
                 //修改时，通过库位信息获取仓库信息
-                this.getWarehouse();
+                this.getWarehouse((res)=>{
+                    this.warehouse  = {
+                        ...res.tableContent[0],
+                        spCode:this.scanCodeInfo.spCode
+                    }
+                });
                 inPut.dataSet.map(box=>{
                     if(!materielMap[box.transObjCode]){
                         materielMap[box.transObjCode] = {
@@ -534,6 +604,7 @@ export default {
                             comment: box.comment,
                             boxCodes:[{
                                 ...box,
+                                boxCodeBal:box.thenLockQtyStock,
                                 specification:box.specification_transObjCode,
                                 warehouseName:inPut.warehouseType_containerCode
                             }]
@@ -541,6 +612,7 @@ export default {
                     }else{
                         materielMap[box.transObjCode].boxCodes.push({
                             ...box,
+                            boxCodeBal:box.thenLockQtyStock,
                             specification:box.specification_transObjCode,
                             warehouseName:inPut.warehouseType_containerCode
                         });
@@ -560,19 +632,7 @@ export default {
             getWhbyStoragelocation({
                 location:this.scanCodeInfo.spCode
             }).then(res=>{
-                if(res.dataCount===0){
-                    this.showTost = true;
-                    this.tostText = '该库位未绑定仓库，请绑定后再扫!';
-                    this.scanCodeInfo.spCode = '';
-                }else{
-                    this.warehouse = {
-                        ...res.tableContent[0],
-                        spCode:this.scanCodeInfo.spCode
-                    }
-                    this.$refs.boxCode.focus();
-
-                    callback && callback();
-                }
+                callback(res);
             })
         },
         // 判断是返回上一页还是跳转详情页
@@ -689,5 +749,35 @@ export default {
     }
 }
 
+.topFixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    background: #fff;
+    width: 100%;
+    padding: 0 .10rem;
+    box-shadow: 2.9px 5.2px 8px 0px rgba(109, 109, 109, 0.1);
+    height: .44rem;
+    line-height: .44rem;
+     display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: 0 .15rem;
+    .fixed-button{
+        background-color: #3296fa;
+        border-radius: .5rem;
+        display: initial;
+        padding: .03rem .09rem;
+        color: white;
+        font-size: 16px;
+        box-shadow: 2.9px 5.2px 8px 0px rgba(109, 109, 109, 0.1);
+    }
+}
 </style>
 

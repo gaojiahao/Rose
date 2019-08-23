@@ -50,7 +50,7 @@ export const shareContent = (shareInfo = {}) => {
 };
 
 // 选择图片
-export const chooseImage = ({options = {}}) => {
+export const chooseImage = (options = {}) => {
   return new Promise((resolve, reject) => {
     wx.chooseImage({
       count: 1, // 默认9

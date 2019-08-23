@@ -5,23 +5,24 @@
             <div>
                 <span v-if="!matterModifyClass" @click="handlerChangeState">编辑</span>
                 <span v-if="matterModifyClass" @click="handlerChangeState">完成</span>
-                <x-icon type="ios-arrow-up" v-if="allExpend &&matters.length>0" size="20" @click.native="handlerChangeExpendState"></x-icon>
-                <x-icon type="ios-arrow-down" v-if="!allExpend &&matters.length>0" size="20" @click.native="handlerChangeExpendState"></x-icon>
+                <x-icon type="ios-arrow-up" v-if="allExpend &&matters.length>0" size="28" @click.native="handlerChangeExpendState"></x-icon>
+                <x-icon type="ios-arrow-down" v-if="!allExpend &&matters.length>0" size="28" @click.native="handlerChangeExpendState"></x-icon>
             </div>
         </div>
-        <r-scroll  class="materiel-item-wrapper">
+        <!-- <r-scroll  class="materiel-item-wrapper"> -->
+            <div class="materiel-item-wrapper">
             <ul class="materiels" >
                 <li class="materiel-item" 
                     v-for="(mat,matIdx) in matters" 
                     :key="matIdx">
                         <div class="materiel-info">
                             <flexbox justify="space-between">
-                                <flexbox-item :span="6"><div >{{mat.inventoryName}}({{mat.inventoryCode}})</div></flexbox-item>
-                                <flexbox-item ><div >{{getGroupInfo(mat).all}}</div></flexbox-item>
-                                <flexbox-item ><div >{{getGroupInfo(mat).done}}</div></flexbox-item>
-                                <flexbox-item @click.native="mat.expend=!mat.expend">
-                                    <x-icon type="ios-arrow-up" v-if="mat.expend && mat.boxCodes.length>0" size="20" ></x-icon>
-                                    <x-icon type="ios-arrow-down" v-if="!mat.expend && mat.boxCodes.length>0" size="20" ></x-icon>
+                                <flexbox-item :span="5"><div >{{mat.inventoryName}}({{mat.inventoryCode}})</div></flexbox-item>
+                                <flexbox-item :span="2"><div >{{getGroupInfo(mat).all}}</div></flexbox-item>
+                                <flexbox-item :span="2"><div >{{getGroupInfo(mat).done}}<span>/{{mat.boxCodes.length}}件</span></div></flexbox-item>
+                                <flexbox-item :span="2" @click.native="mat.expend=!mat.expend" style="text-align: right;">
+                                    <x-icon type="ios-arrow-up" v-if="mat.expend && mat.boxCodes.length>0" size="28" ></x-icon>
+                                    <x-icon type="ios-arrow-down" v-if="!mat.expend && mat.boxCodes.length>0" size="28" ></x-icon>
                                 </flexbox-item>
                             </flexbox>
                         </div>
@@ -36,7 +37,7 @@
                             <div class="matter-info">
                                 <div >{{box.boxCode}}</div>
                                 <div class="other" v-for="(value,key) in  matterInfoConfig" :key="key">
-                                    {{value}}:{{box[key]}}
+                                    {{value}}:{{box[key]||'无'}} &nbsp;
                                 </div>
                                 <div class="box-operate">
                                     <div  >
@@ -53,12 +54,12 @@
                                 v-if='matterModifyClass'>
                                 <x-icon 
                                     type="ios-checkmark" 
-                                    size="24" 
+                                    size="30" 
                                     class="checked" 
                                     v-show="showSelIcon( matIdx+'_'+ boxIdx)"></x-icon>
                                 <x-icon 
                                     type="ios-circle-outline" 
-                                    size="24" 
+                                    size="30" 
                                     v-show="!showSelIcon( matIdx+'_'+ boxIdx)"></x-icon>
                             </div>
         
@@ -66,7 +67,8 @@
                     </ul>
                 </li>
             </ul>
-        </r-scroll>
+            </div>
+        <!-- </r-scroll> -->
     </div>
 </template>
 <script>
@@ -163,7 +165,6 @@ export default {
     height: 100%;
     .header{
         font-size: 18px;
-        padding-right: 0.2em;
         height: .4rem;
         line-height: .4rem;
         color: #696969;
@@ -185,15 +186,15 @@ export default {
         background: #FFF;
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
-        height: calc(100% - .35rem);
+        // height: calc(100% - .50rem);
         padding: 0 .15rem;
         .materiels{
-            padding: .05rem;
             font-size: 14px;
             height: 100%;
             .materiel-item{
                 .materiel-info{
                     font-weight: 600;
+                    border-bottom: 1px solid #e8e8e8;
                 }
                 .box-codes{
                     font-size: 12px;

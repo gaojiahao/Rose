@@ -86,7 +86,7 @@
           count: 5, // 默认9
           defaultCameraMode: 'batch', //表示进入拍照界面的默认模式，目前有normal与batch两种选择，normal表示普通单拍模式，batch表示连拍模式，不传该参数则为normal模式。（注: 用户进入拍照界面仍然可自由切换两种模式）
         };
-        chooseImage({options,}).then(async localIds => {
+        chooseImage(options).then(async localIds => {
           for (let localId of localIds) {
             await this.upload(localId);
           }
