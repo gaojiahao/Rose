@@ -1,6 +1,6 @@
 <template>
   <!-- 单个物料 (嵌套于matterList中) -->
-  <div class="matter-item-container">
+  <div class="matter-item-container" @click="clickMore">
     <div class="matter-main">
       <img class="matter_img" :src="item.inventoryPic" alt="mater_img" @error="getMatterDefault(item)">
       <div class="matter_info">
@@ -25,7 +25,7 @@
             <span class="matter_item_value">{{item.transObjCode || item.outPutMatCode || item.facilityObjCode || '无'}}</span>
           </div>
         </div>
-        <div class="matter_info_item" @click="clickMore">
+        <div class="matter_info_item" >
           <div class="matter_detail">
             <span class="matter_item_title">其他</span>
           </div>

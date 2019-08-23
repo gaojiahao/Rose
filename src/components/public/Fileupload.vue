@@ -16,7 +16,7 @@
         </template>
         <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="cfg.readOnly == false"></i>
       </div>
-      <input @change="commUploadFile()" type="file" ref="uFile" v-show="false"/>
+      <input @change="commUploadFile()" type="file" ref="uFile" v-show="false" multiple/>
       <div class="upload-file-item" @click="dealUploadDev" v-show="cfg.readOnly == false">
         <div class="icon_container">
           <span class="icon-upload-add"></span>
@@ -91,7 +91,7 @@
           count: 5, // 默认9
           defaultCameraMode: 'batch', //表示进入拍照界面的默认模式，目前有normal与batch两种选择，normal表示普通单拍模式，batch表示连拍模式，不传该参数则为normal模式。（注: 用户进入拍照界面仍然可自由切换两种模式）
         };
-        chooseImage({options,}).then(async localIds => {
+        chooseImage(options).then(async localIds => {
           for (let localId of localIds) {
             await this.upload(localId);
           }
@@ -184,23 +184,38 @@
       },
       //通用上传文件
       commUploadFile() {
-        let files = this.$refs.uFile.files[0];
-        if(files) {
-          return upload({
-            file: files,
-            biReferenceId: this.biReferenceId,
+        let files = this.$refs.uFile.files,
+            l = files.length,
+            file,
+            vm = this,
+            i;
+
+        if(l) {
+          handler(files[0],function(){
+            for(i = 1;i < l; i++){
+              file = files[i];
+              handler(file);
+            }
+          });
+        }
+
+        function handler(file,cb){
+          upload({
+              file: file,
+              biReferenceId: vm.biReferenceId,
           }).then(({data = [], success = true, message = ''}) => {
             if(success) {
               let detail = {
                     attacthment: data[0].attacthment,
                     attr1: data[0].attr1,
                     attr2: data[0].attr2,
-                    iconType: this.judgeFileType(data[0].attr1),
+                    iconType: vm.judgeFileType(data[0].attr1),
                     id: data[0].id,
                     referenceId: data[0].biReferenceId,
                     status: 1,
                   };
-              this.uploadSuccess(detail);
+              vm.uploadSuccess(detail);
+              if(cb)cb();
             }
           });
         }

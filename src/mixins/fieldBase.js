@@ -8,7 +8,8 @@ export default {
         return {
             hidden:false,
             disabled:false,
-            allowBlank:false
+            allowBlank:false,
+            fieldLabel:''
         }
     },
     created(){
@@ -26,6 +27,7 @@ export default {
             this.form.registField(this);
             this.valueChangeKey = 'value-change-' + id;
             this.blankText = cfg.fieldLabel + '不能为空！'
+            this.fieldLabel = cfg.fieldLabel;
             this.initOption(cfg);
             if(cfg.wfParam){
                 form.wfParamFieldMap[cfg.wfParam] = fieldCode;
@@ -201,6 +203,58 @@ export default {
             if(this.form.model == 'new' && this.cfg.readOnly == true){
                 if(this.cfg.hiddenInRun == false)this.hidden = value == null;
             }
-        } 
+        },
+        initNumberVerSel() {
+            var me = this,
+                cfg = me.cfg,
+                numberVerSel = cfg.numberVerSel,
+                numberVerify = cfg.numberVerify,
+                result = true;
+            
+            if(!numberVerSel&&!numberVerify) return result;
+
+            var value = me.getValue(),
+                fields = me.form.fields,
+                value2 = fields[numberVerSel].getValue(),
+                text1 = me.fieldLabel,
+                text2 = fields[numberVerSel].fieldLabel,
+                textBlank;
+
+            switch(numberVerify) {
+                case 'lteq' :
+                    //小于等于
+                    result = (value <= value2 ? 1:0);
+                    textBlank = '输入值必须小于等于';
+                    break;
+                case 'gteq' :
+                    //大于等于
+                    result = (value >= value2 ? 1:0);
+                    textBlank = '输入值必须大于等于';
+                    break;
+                case 'eq' : 
+                    //等于
+                    result = (value = value2 ? 1:0);
+                    textBlank = '输入值必须等于';
+                    break;
+                case 'lt' : 
+                    //小于
+                    result = (value < value2 ? 1:0);
+                    textBlank = '输入值必须小于';
+                    break;
+                case 'gt' :
+                    //大于
+                    result = (value > value2 ? 1:0);
+                    textBlank = '输入值必须大于';
+                    break;
+                default :
+                    //默认
+            }
+            if(!result) {
+                this.$vux.alert.show({
+                    content: '[' + text1 + ']' + textBlank + '[' + text2 + ']'
+                });
+            }
+            return result;
+        }
     }
 }

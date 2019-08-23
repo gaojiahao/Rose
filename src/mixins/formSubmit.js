@@ -205,6 +205,7 @@ export default {
             
             //表单校验
             if (!me.isValid())return;
+            if(!me.initNumberVerSel())return;
             
             this.$vux.confirm.show({
                 content: '确认提交?',
@@ -271,7 +272,7 @@ export default {
                     } 
                } else {
                    containerCode = field.containerCode;
-                   if(field.$parent.submitValue){
+                   if(field.$parent.submitValue&& (!field.$parent.cfg.hiddenInRun)){
                         values[containerCode] = field.getSubmitData();
                    }
                }
@@ -352,6 +353,15 @@ export default {
                 formData = me.formatValues(values),
                 param;
 
+            if (!me.isValid()){
+                this.$HandleLoad.hide();    
+                return;
+            }
+            if(!me.initNumberVerSel()){
+                this.$HandleLoad.hide();    
+                return;    
+            }
+            
             approvalData.transCode = transCode;
             approvalData.result = me.taskType;
             approvalData.taskId = taskId,
