@@ -9,10 +9,10 @@ export let getStorageShelf = (data = {}) => {
 }
 
 
-//校验箱码是否已上架
-export let boxCodeInCheck = (data = {}) => {
+//通过箱码获取箱码具体信息
+export let getPreShelfInvInfoByBoxCode = (data = {}) => {
   return $flyio.ajax({
-    url: '/H_roleplay-si/ds/boxCodeInCheck',
+    url: '/H_roleplay-si/ds/getPreShelfInvInfoByBoxCode',
     data
   })
 }
