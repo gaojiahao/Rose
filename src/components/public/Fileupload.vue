@@ -75,15 +75,11 @@
     },
     methods: {
       dealUploadDev() {
-        if(isIOS || isIPhone || isIPad || isAndroid || isPC) {
-          this.clickUpload();
-          return ;
-        }
         if(isQYWX) {
           this.chooseFile();
-          return ;
-        }
-        this.clickUpload();
+        } else if (isIOS || isIPhone || isIPad || isAndroid || isPC) {
+          this.clickUpload();
+        } else this.clickUpload();
       },
       // 选择图片
       chooseFile() {

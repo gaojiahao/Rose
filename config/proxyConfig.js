@@ -23,6 +23,10 @@ module.exports = {
           '/dist': {
             target,
             changeOrigin: true,
+          },
+          '/content': {
+            target,
+            changeOrigin: true,
           }
 
     }
