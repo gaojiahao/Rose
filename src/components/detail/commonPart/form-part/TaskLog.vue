@@ -158,8 +158,9 @@ export default {
                 }
             } 
         };
-        
+        this.$HandleLoad.show();
         saveTaskLog(formdata).then(res => {
+          this.$HandleLoad.hide();
           if (res.success) {
               this.$vux.alert.show({
                 title: "提示",

@@ -206,7 +206,6 @@ export default {
   .task_list{
       padding: .1rem .1rem;
       background-color: #fff;
-      margin: .1rem;
       height: 100%;
       .pop-list-container{
         height: calc(100% - 100px);
@@ -233,6 +232,7 @@ export default {
             }
           }
           .list_container{
+              font-size: 14px;
               display: flex;
               padding-bottom: .1rem;
               .list_left{
@@ -243,9 +243,9 @@ export default {
                   margin-top: .05rem;
                   display: inline-block;
                   img {
-                    border-radius: 50%;
-                    width: 90%;
-                    height: 100%;
+                    border-radius: .23rem;
+                    height: .45rem;
+                    border: 1px solid  #9999991a;
                   }
               }
               .list_right{
