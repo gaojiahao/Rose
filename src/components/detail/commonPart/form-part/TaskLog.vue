@@ -222,7 +222,7 @@ export default {
   .task_log{
     color: #999;
     background-color: #fff;
-    padding: .15rem;
+    padding: .0rem .15rem;
     &_header{
       font-size: .17rem;
     }
