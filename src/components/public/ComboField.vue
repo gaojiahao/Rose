@@ -295,9 +295,12 @@ let cfg = {
           listData = this.listData;
 
       if(value != null){
-          selection = listData.find(function(item){
-              return item[valueField] === value;
-          });
+          // selection = listData.find(function(item){
+          //   console.log('valueField',valueField)
+          //     return item[valueField] === value;
+          // });
+          selection = listData[0];
+          this.selItem(selection);
           if(selection == null) {
             this.reSet();
             if(listData.length) {
