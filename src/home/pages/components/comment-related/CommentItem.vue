@@ -203,6 +203,11 @@
         justify-content: space-between;
         align-items: flex-start;
       }
+      .comment{
+        /deep/ img{
+          max-height: 80px;
+        }
+      }
       /* 创建者 */
       .creator-name {
         line-height: .14rem;
