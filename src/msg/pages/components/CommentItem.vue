@@ -261,6 +261,7 @@
         /deep/ img {
           display: inline-block;
           vertical-align: middle;
+          max-height: 50px;
         }
         /* 移动端表情 */
         /deep/ .img-emotion {
@@ -306,6 +307,10 @@
           margin-bottom: .15rem;
           line-height: .22rem;
           word-break: break-all;
+
+          /deep/ img{
+            max-height: 80px;
+          }
         }
         .belong-part {
           display: flex;
