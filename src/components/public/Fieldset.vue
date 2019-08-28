@@ -38,7 +38,7 @@
         <r2Combofield
           :cfg="item"
           :values="values"
-          v-if="['r2Selector','r2Combo'].indexOf(item.xtype)!=-1"
+          v-if="['r2Selector','r2Combo','r2SelectorPlus'].indexOf(item.xtype)!=-1"
           :key="index"
         />
         <r-grid
