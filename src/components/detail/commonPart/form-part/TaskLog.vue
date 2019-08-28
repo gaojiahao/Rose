@@ -2,9 +2,6 @@
   <!--任务日志-->
   <div class="task_container">
     <div class="task_log">
-      <div class="task_log_header">
-        <b>日志任务</b>
-      </div>
       <div class="task_log_status">
         <check-icon
           type="plain" 
@@ -41,14 +38,7 @@
         <datetime title="日期" v-model="taskLog.taskDate"></datetime>
       </div>
       <div class="task_log_hour">
-        <!-- <x-number 
-          v-model="taskLog.logDeclarationHours" 
-          fillable 
-          :max='24' 
-          :min="0.1" 
-          :step="0.1" 
-          title="申报工时"
-          button-style="round"></x-number> -->
+      
           <span>申报工时</span>
           <div>
             <r-number :num="1" :max="24" :min="0.1" v-model="taskLog.logDeclarationHours"></r-number>
@@ -168,8 +158,9 @@ export default {
                 }
             } 
         };
-        
+        this.$HandleLoad.show();
         saveTaskLog(formdata).then(res => {
+          this.$HandleLoad.hide();
           if (res.success) {
               this.$vux.alert.show({
                 title: "提示",
@@ -231,9 +222,8 @@ export default {
 <style lang='scss' scoped>
   .task_log{
     color: #999;
-    padding: .05rem;
     background-color: #fff;
-    margin: .05rem;
+    padding: .0rem .15rem;
     &_header{
       font-size: .17rem;
     }
@@ -242,7 +232,6 @@ export default {
       padding: .1rem .03rem;
       color: #4e9cec;
       font-weight: bold;
-      margin-left: -.1rem;
     }
     .task_log_status /deep/ .weui-icon-success-circle:before{
       color: #4CA3FB;
@@ -251,21 +240,27 @@ export default {
       border-bottom: 1px solid #e8e8e8;
       font-weight: bold;
       padding: .03rem 0rem;
-      margin-left: -.15rem;
+      /deep/ .weui-cell{
+        padding:10px 0px
+      }
     }
     &_type{
       border-bottom: 1px solid #e8e8e8;
       padding: .03rem 0rem;
       font-size: .14rem;
-      margin-left: -.15rem;
+      /deep/ .weui-cell{
+        padding:10px 0px
+      }
     }
     &_date{
       border-bottom: 1px solid #e8e8e8;
       color: #4e9cec;
       font-weight: bold;
       padding: .03rem 0rem;
-      margin-left: -.15rem;
       font-size: .14rem;
+      /deep/ .weui-cell{
+        padding:10px 0px
+      }
     }
     &_hour{
       border-bottom: 1px solid #e8e8e8;
@@ -294,5 +289,10 @@ export default {
     position:relative;
     background: #f8f8f8;
     -webkit-overflow-scrolling: touch;
+  }
+  .task_log_footer{
+    button{
+      border-radius: 0;
+    }
   }
 </style>

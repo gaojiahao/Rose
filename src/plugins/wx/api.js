@@ -34,8 +34,6 @@ export const scanQRCode = (options = {}) => {
 };
 // 分享
 export const shareContent = (shareInfo = {}) => {
-  // alert('哈哈')
-  console.log(shareInfo);
   return wx.onMenuShareAppMessage({
     title: shareInfo.title, // 分享标题
     desc: shareInfo.desc, // 分享描述

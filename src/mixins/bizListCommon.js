@@ -16,6 +16,7 @@ import { toFixed } from '@/plugins/calc'
 import { accAdd, accMul } from 'plugins/calc/decimalsAdd'
 // 微信 JS-SDK
 import { register } from 'plugins/wx'
+import {shareContent } from 'plugins/wx/api'
 export default {
   props: {
     refreshRequest: {
@@ -473,15 +474,15 @@ export default {
       if (!transCode) {
         this.$loading.hide();
       }
-      wx.ready(() => {
-        // 分享
-        let shareInfo = {
-          title: `点击查看${name}列表`,
-          desc: `点击查看${name}列表，可创建新的订单`,
-          imgUrl: ''
-        }
-        shareContent(shareInfo);
-      })
+      // wx.ready(() => {
+      //   // 分享
+      //   let shareInfo = {
+      //     title: `点击查看${name}列表`,
+      //     desc: `点击查看${name}列表，可创建新的订单`,
+      //     imgUrl: ''
+      //   }
+      //   shareContent(shareInfo);
+      // })
     });
   },
 

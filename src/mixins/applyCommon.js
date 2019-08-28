@@ -957,6 +957,8 @@ export default {
       // 根据uniqueId 请求表单配置
       await getFormConfig(this.viewId).then((data) => {
         let matterCols = [], { config, reconfig = {},dataSource} = data;
+
+        this.formKey = data.formKey || 'formKey';//防止crf攻击。
         // 由于往来组件已经单独定义 此处需要过滤部分字段
         let dealerFilter = [
           'dealerDebit', 

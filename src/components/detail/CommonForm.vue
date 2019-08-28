@@ -42,6 +42,8 @@ import platfrom from "@/plugins/platform/index";
 import submitMethod from "mixins/formSubmit";
 // 插件 引入
 import Bscroll from "better-scroll";
+/* 引入微信相关 */
+import {register} from 'plugins/wx'
 import {
   isMyflow,
   getListId,
@@ -58,6 +60,7 @@ import {
   loadModelCfg,
   getFormViewByUniqueId
 } from "service/commonService";
+
 export default {
   props: {
     showTab: {
@@ -465,7 +468,8 @@ export default {
     },
     init(){
          var isScrollCt = this.$parent.$options.name != 'v-touch';//fillform
-      
+         /* 引入微信相关 */
+         register();
          this.scrollCt = isScrollCt;
          this.fieldMap = {}; //id;
          this.fields = {}; //fieldCode
