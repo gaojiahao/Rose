@@ -13,6 +13,20 @@ export default {
         };
     },
     methods: {
+        addRecord: function(){
+            var me = this,
+                rows,
+                index;
+            
+            if(me.hasDs){
+                me.showGridPicker();
+            } else {
+                me.addRecords([{}]);
+                rows = me.getValue();
+                index = rows.length - 1;
+                me.onShowDetail(rows[index],index);
+            }
+        },
         addRecords: function (selection) {
             var value = this.getValue() || [],
                 record,
@@ -724,6 +738,9 @@ export default {
                 content: errorMsgArr.join('</br>')
             });
             return validResult;
+        },
+        getExtraFieldValue:function(valueField){
+            return this.getValue();
         },
     }
 }

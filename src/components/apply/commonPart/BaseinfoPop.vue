@@ -178,7 +178,7 @@
         this.selItems.handlerUnitName = val;
         this.groupList.forEach(item => {
           if (item.name === val) {
-            this.selItems.handlerUnit = item.userGroupId;
+            this.selItems.handlerUnit = item.groupId;
             return false;
           }
         });

@@ -98,7 +98,7 @@ import {
     getPriceFromSalesContractAndPrice, 
     updateData} from 'service/commonService'
 import WebContext from 'service/commonService'
-import { getStorageShelf, getWhbyStoragelocation,boxCodeInCheck } from 'service/wmsService'
+import { getStorageShelf, getWhbyStoragelocation,getPreShelfInvInfoByBoxCode } from 'service/wmsService'
 import { getSOList } from 'service/detailService'
 import scanVoice from '@/plugins/scanVoice'
 
@@ -247,29 +247,34 @@ export default {
                 return;
             }
 
-            boxCodeInCheck({
+            getPreShelfInvInfoByBoxCode({
                 boxCode:this.scanCodeInfo.boxCode
             }).then(res=>{
                 if(res.dataCount){
-                    scanVoice.error();
-                    this.$vux.alert.show({
-                        content:`箱码${this.scanCodeInfo.boxCode}已上架，上架单号为${res.tableContent[0].transCode}`
-                    });
+                    let boxInfo = res.tableContent[0];
+                    if(boxInfo.qty>0){
+                        this.$vux.alert.show({
+                            content:`物料<strong style="color:red;">${boxInfo.inventoryName}</strong><br>
+                                    箱码<strong style="color:red;">${this.scanCodeInfo.boxCode}</strong>已上架<br>
+                                    当前库存为<strong style="color:red;">${boxInfo.qty}</strong>`
+                        });
+                        scanVoice.error();
+                        this.scanCodeInfo.boxCode = '';
+                        this.$refs.boxCode.focus();
+                        return;
+                    }
+
+                    scanVoice.success();
+                    //记录已扫码信息,防止重复扫码
+                    this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;
+                    this.handlerAddBoxCodeToMatter(boxInfo);
+                   
                     this.scanCodeInfo.boxCode = '';
                     this.$refs.boxCode.focus();
                 }else{
-                    scanVoice.success();
-
-                    //记录已扫码信息,防止重复扫码
-                    this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;
-
-                    //idx 申请单对应物料的明细ID
-                    //boxRule 箱规
-                    //boxSeq 箱码序列号
-                    let [idx,boxRule,boxSeq] = this.scanCodeInfo.boxCode.split('-');
-                    idx = Number(idx);
-
-                    this.handlerAddBoxCodeToMatter(idx,boxRule);
+                    scanVoice.error();
+                    this.tostText ='此箱码无效!';
+                    this.showTost = true;
                     this.scanCodeInfo.boxCode = '';
                     this.$refs.boxCode.focus();
                 }
@@ -368,20 +373,17 @@ export default {
         },
         transfromDataSource(item){
             return {
-                transMatchedCode: item.transCode,//被核销交易号
+                transMatchedCode: this.scanCodeInfo.postCode,//被核销交易号
                 transObjCode: item.inventoryCode,//物料编码
                 tdProcessing:item.processing,//加工属性
                 assMeasureUnit: item.invSubUnitName,//采购单位
                 assMeasureDescription: item.invSubUnitComment,//产品规格
                 assMeasureScale: item.invSubUnitMulti,//主计倍数
                 specification:item.specification,//规格
-                storehouseInCode: item.storehouseInCode,
                 thenTotalQtyBal: item.thenTotalQtyBal,
                 thenLockQty: item.thenLockQty,
                 thenQtyBal: item.thenQtyBal,
                 tdQty: item.tdQty,
-                batchNo: item.batchNo,
-                productionDate: item.productionDate
             }
         },
         transfromViewData(box){
@@ -431,6 +433,7 @@ export default {
                         expend:true,
                         inventoryCode:mat.inventoryCode,
                         inventoryName:mat.inventoryName,
+                        processing:mat.processing,
                         thenTotalQtyBal: this.groupSumByFileds(this.shelfList,'inventoryCode',mat.inventoryCode,'thenTotalQtyBal'),//预入库数量
                         thenLockQty:this.groupSumByFileds(this.shelfList,'inventoryCode',mat.inventoryCode,'thenLockQty'),//已上架数量
                         thenQtyBal: this.groupSumByFileds(this.shelfList,'inventoryCode',mat.inventoryCode,'thenQtyBal'),//待上架数量
@@ -486,24 +489,25 @@ export default {
             return true;
         },
         //往物料分组上添加箱码数据
-        handlerAddBoxCodeToMatter(idx,boxRule){
-            this.shelfList.map(mat=>{
-                if(mat.idx === idx){
-                    this.matters.map(m=>{
-                        if(m.inventoryCode === mat.inventoryCode){
-                            m.boxCodes.unshift({
-                                ...this.transfromDataSource(mat),
-                                boxCode: this.scanCodeInfo.boxCode,
-                                warehouseName :this.warehouse.warehouseName,
-                                storehouseInCode:this.scanCodeInfo.spCode,
-                                postCode:this.postCode,
-                                boxRule:boxRule,
-                                tdQty:Number(boxRule),
-                            });
-                        }
+        handlerAddBoxCodeToMatter(boxInfo){
+            //idx 申请单对应物料的明细ID
+            //boxRule 箱规
+            //boxSeq 箱码序列号
+            let [idx,boxRule,boxSeq] = this.scanCodeInfo.boxCode.split('-');
+            this.matters.map(m=>{
+                if(m.inventoryCode === boxInfo.inventoryCode){
+                    m.boxCodes.unshift({
+                        ...this.transfromDataSource(m),
+                        batchNo: boxInfo.batchNo,
+                        productionDate: boxInfo.productionDate,
+                        boxCode: this.scanCodeInfo.boxCode,
+                        warehouseName :this.warehouse.warehouseName,
+                        storehouseInCode:this.scanCodeInfo.spCode,
+                        postCode:this.postCode,
+                        boxRule:boxRule,
+                        tdQty:Number(boxRule),
                     });
                 }
-                
             });
         },
         getDataSet(){

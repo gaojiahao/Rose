@@ -17,6 +17,7 @@ let cmp = Vue.component('GridFieldFactory', {
             fieldMap = {
                 'r2SelectorPlus':'R2Combofield',
                 'r2Selector':'R2Combofield',
+                'r2Combo':'R2Combofield'
             },
             xtype = cfg.editorType;
  
