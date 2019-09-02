@@ -272,7 +272,7 @@ export default {
                     } 
                } else {
                    containerCode = field.containerCode;
-                   if(field.$parent.submitValue&& (!field.$parent.cfg.hiddenInRun)){
+                   if(field.$parent.submitValue&& (!field.$parent.cfg.hidden)){
                         values[containerCode] = field.getSubmitData();
                    }
                }
