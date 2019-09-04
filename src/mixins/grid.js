@@ -719,7 +719,7 @@ export default {
                                 key = conditions[i];
                                 if (eval('nowData ' + key + ' numData')) {
                                     validResult = false;
-                                    errorMsgArr.push('重复项中第【' + (index + 1) + '】行【' + nowColmn + '】输入值' + eqHash[k] + '【' + numVerReleColmn + '】');
+                                    errorMsgArr.push('重复项中第【' + (index + 1) + '】行【' + nowColmn + '】输入值' + eqHash[key] + '【' + numVerReleColmn + '】');
                                     return false;
                                 }
                             }
