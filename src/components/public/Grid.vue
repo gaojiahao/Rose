@@ -131,8 +131,10 @@ var component = {
           col = columns[i];
           if (~["r2Selector", "r2SelectorPlus"].indexOf(col.editorType)) {
             me.dataSourceBind = { k: col.fieldCode, v: col.valueField };
-            col.dataSource.data.cols = col.proertyContext.dataSourceCols;
-            return col.dataSource.data;
+            if(col.dataSource) {
+              col.dataSource.data.cols = col.proertyContext.dataSourceCols;
+              return col.dataSource.data;
+            }
           }
         }
       }
