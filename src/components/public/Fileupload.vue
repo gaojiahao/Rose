@@ -90,6 +90,7 @@
         };
         chooseImage(options).then(async localIds => {
           var l = localIds.length,
+              i,
               localId;
 
           if(l) {
