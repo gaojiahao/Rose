@@ -85,6 +85,7 @@ export default {
         formatValues(values){
             var apiCfg = this.apiCfg,
                 disableFieldset = [],
+                multipleFieldset = [],
                 fieldsets = this.$refs.fieldsetCt.$children,
                 fieldCfgHash = apiCfg && apiCfg.groupCfg,
                 fieldCfg,
@@ -96,6 +97,7 @@ export default {
             //防止单一项映射进不提交的重复项容器。
             fieldsets.map(function(fieldset){
                 if(!fieldset.submitValue)disableFieldset.push(fieldset.cfg.name);
+                if(fieldset.cfg.isMultiple == true)multipleFieldset.push(fieldset.cfg.name);
             })
 
             if(fieldCfgHash){
@@ -143,7 +145,8 @@ export default {
                         root[groupBox] = {};
                     }
                     node = groupBoxNode = root[groupBox];
-                    if (isList) {
+                    if (isList) { //后端需要某些单一项表现的像重复项，所以包装成重复项。
+                        if (multipleFieldset.indexOf(groupBox) != -1)continue;//避免单一项被映射进重复项 
                         if (!groupBoxNode.dataSet) {
                             groupBoxNode.dataSet = [{}];
                         }
@@ -272,7 +275,7 @@ export default {
                     } 
                } else {
                    containerCode = field.containerCode;
-                   if(field.$parent.submitValue&& (!field.$parent.cfg.hiddenInRun)){
+                   if(field.$parent.submitValue&& (!field.$parent.hidden)){
                         values[containerCode] = field.getSubmitData();
                    }
                }
