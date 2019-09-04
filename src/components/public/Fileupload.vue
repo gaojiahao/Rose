@@ -83,13 +83,22 @@
       },
       // 选择图片
       chooseFile() {
-        let options = {
+        let me = this,
+          options = {
           count: 5, // 默认9
           defaultCameraMode: 'batch', //表示进入拍照界面的默认模式，目前有normal与batch两种选择，normal表示普通单拍模式，batch表示连拍模式，不传该参数则为normal模式。（注: 用户进入拍照界面仍然可自由切换两种模式）
         };
         chooseImage(options).then(async localIds => {
-          for (let localId of localIds) {
-            await this.upload(localId);
+          var l = localIds.length,
+              localId;
+
+          if(l) {
+            me.upload(localIds[0],()=>{
+              for(i = 1;i < l; i++){
+                localId = localIds[i];
+                me.upload(localId);
+              }
+            });
           }
         });
       },
@@ -217,7 +226,7 @@
         }
       },
       // 上传文件
-      upload(localId) {
+      upload(localId,cb) {
         return uploadImage({
           localId,
           biReferenceId: this.biReferenceId,
@@ -225,6 +234,7 @@
           let [detail = {}] = data;
           detail.iconType = this.judgeFileType(detail.attr1);
           this.uploadSuccess(detail);
+          if(cb)cb();
         });
       },
       uploadSuccess:function(detail){
