@@ -218,7 +218,7 @@ import { debug } from 'util';
                     attr2: data[0].attr2,
                     iconType: vm.judgeFileType(data[0].attr1),
                     id: data[0].id,
-                    referenceId: data[0].biReferenceId,
+                    biReferenceId: data[0].biReferenceId,
                     status: 1,
                   };
               vm.uploadSuccess(detail);
@@ -229,7 +229,6 @@ import { debug } from 'util';
       },
       // 上传文件
       upload(localId,cb) {
-        console.log('beforeupload:',this.referenceId);
         return uploadImage({
           localId,
           biReferenceId: this.biReferenceId,
@@ -242,11 +241,9 @@ import { debug } from 'util';
       },
       uploadSuccess:function(detail){
         this.files.push(detail);
-        debugger;
-        console.log('success:',this.referenceId);
-        this.biReferenceId = detail.referenceId;
+        this.biReferenceId = detail.biReferenceId;
         this.form.$emit('on-upload', {
-          biReferenceId: detail.referenceId,
+          biReferenceId: detail.biReferenceId,
         });
       }
     },
