@@ -32,6 +32,7 @@
   import {deleteFile,upload} from 'service/commonService';
   import {chooseImage, uploadImage} from 'plugins/wx/api'
   import {isIOS,isIPhone,isIPad,isAndroid,isPC,isQYWX} from '@/plugins/platform/index'
+import { debug } from 'util';
 
   var component = {
     props: {
@@ -228,6 +229,7 @@
       },
       // 上传文件
       upload(localId,cb) {
+        console.log('beforeupload:',this.referenceId);
         return uploadImage({
           localId,
           biReferenceId: this.biReferenceId,
@@ -240,6 +242,8 @@
       },
       uploadSuccess:function(detail){
         this.files.push(detail);
+        debugger;
+        console.log('success:',this.referenceId);
         this.biReferenceId = detail.referenceId;
         this.form.$emit('on-upload', {
           biReferenceId: detail.referenceId,
