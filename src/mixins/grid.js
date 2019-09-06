@@ -13,6 +13,20 @@ export default {
         };
     },
     methods: {
+        addRecord: function(){
+            var me = this,
+                rows,
+                index;
+            
+            if(me.hasDs){
+                me.showGridPicker();
+            } else {
+                me.addRecords([{}]);
+                rows = me.getValue();
+                index = rows.length - 1;
+                me.onShowDetail(rows[index],index);
+            }
+        },
         addRecords: function (selection) {
             var value = this.getValue() || [],
                 record,
@@ -705,7 +719,7 @@ export default {
                                 key = conditions[i];
                                 if (eval('nowData ' + key + ' numData')) {
                                     validResult = false;
-                                    errorMsgArr.push('重复项中第【' + (index + 1) + '】行【' + nowColmn + '】输入值' + eqHash[k] + '【' + numVerReleColmn + '】');
+                                    errorMsgArr.push('重复项中第【' + (index + 1) + '】行【' + nowColmn + '】输入值' + eqHash[key] + '【' + numVerReleColmn + '】');
                                     return false;
                                 }
                             }

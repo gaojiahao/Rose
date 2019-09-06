@@ -32,6 +32,7 @@
   import {deleteFile,upload} from 'service/commonService';
   import {chooseImage, uploadImage} from 'plugins/wx/api'
   import {isIOS,isIPhone,isIPad,isAndroid,isPC,isQYWX} from '@/plugins/platform/index'
+import { debug } from 'util';
 
   var component = {
     props: {
@@ -83,13 +84,23 @@
       },
       // 选择图片
       chooseFile() {
-        let options = {
+        let me = this,
+          options = {
           count: 5, // 默认9
           defaultCameraMode: 'batch', //表示进入拍照界面的默认模式，目前有normal与batch两种选择，normal表示普通单拍模式，batch表示连拍模式，不传该参数则为normal模式。（注: 用户进入拍照界面仍然可自由切换两种模式）
         };
         chooseImage(options).then(async localIds => {
-          for (let localId of localIds) {
-            await this.upload(localId);
+          var l = localIds.length,
+              i,
+              localId;
+
+          if(l) {
+            me.upload(localIds[0],()=>{
+              for(i = 1;i < l; i++){
+                localId = localIds[i];
+                me.upload(localId);
+              }
+            });
           }
         });
       },
@@ -207,7 +218,7 @@
                     attr2: data[0].attr2,
                     iconType: vm.judgeFileType(data[0].attr1),
                     id: data[0].id,
-                    referenceId: data[0].biReferenceId,
+                    biReferenceId: data[0].biReferenceId,
                     status: 1,
                   };
               vm.uploadSuccess(detail);
@@ -217,7 +228,7 @@
         }
       },
       // 上传文件
-      upload(localId) {
+      upload(localId,cb) {
         return uploadImage({
           localId,
           biReferenceId: this.biReferenceId,
@@ -225,13 +236,14 @@
           let [detail = {}] = data;
           detail.iconType = this.judgeFileType(detail.attr1);
           this.uploadSuccess(detail);
+          if(cb)cb();
         });
       },
       uploadSuccess:function(detail){
         this.files.push(detail);
-        this.biReferenceId = detail.referenceId;
+        this.biReferenceId = detail.biReferenceId;
         this.form.$emit('on-upload', {
-          biReferenceId: detail.referenceId,
+          biReferenceId: detail.biReferenceId,
         });
       }
     },

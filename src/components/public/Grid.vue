@@ -1,7 +1,7 @@
 <template>
   <div class="r-grid">
     <!-- 没有选择物料 -->
-    <template v-if="(!values || values.length == 0)&& cfg.readOnly == false">
+    <template v-if="(!values || values.length == 0)&& cfg.readOnly == false && hasDs">
       <div class="no-data-header" @click="showGridPicker">
         <div class="title">{{listTitle||'物料列表'}}</div>
         <div class="seleted_icon">
@@ -14,7 +14,7 @@
     <template v-else>
       <div class="has-data-header" @click="toggleEditStatus">
         <div class="title">{{listTitle||'物料列表'}}</div>
-        <div v-if="!cfg.readOnly">
+        <div v-if="!cfg.readOnly && values && values.length">
           <div class="edit" v-if="!isEdit">管理</div>
           <div class="edit" v-else>完成</div>
         </div>
@@ -48,19 +48,19 @@
         
       </div>
       <!--row-->
-      <div v-show="!values || values.length == 0" class="no-data">无</div>
+      <div v-show="(!values || values.length == 0) && hasDs" class="no-data">无</div>
     </div>
     <div
       class="add-more-wrapper"
-      v-if="!cfg.readOnly && (cfg.allowMutilRow ||cfg.allowAddorDel) && values &&values.length && !isEdit"
+      v-if="!cfg.readOnly && (cfg.allowMutilRow ||cfg.allowAddorDel) && ((values &&values.length) ||!hasDs) && !isEdit"
     >
-      <div class="add-more" @click="showGridPicker">
+      <div class="add-more" @click="addRecord">
         <span class="icon-add"></span>
         <span class="add_text">新增</span>
       </div>
     </div>
 
-    <grid-picker v-if="!cfg.readOnly" ref="gridPicker" @on-select="addRecords"/>
+    <grid-picker v-if="!cfg.readOnly && hasDs" ref="gridPicker" @on-select="addRecords"/>
     <div class="grid-detail-wrapper" v-if="showDetail">
       <grid-detail v-model="showDetail" @on-confirm="doDetailEdit" ref="gridDetail"/>
     </div>
@@ -95,7 +95,8 @@ var component = {
     return {
       showDetail: false,
       listTitle: "",
-      detail: {}
+      detail: {},
+      hasDs:false
     };
   },
   methods: {
@@ -119,6 +120,7 @@ var component = {
         ? //适配 r2AccountGrid
           cfg.dataSource
         : findDs(cfg.columns);
+      me.hasDs = !!me.dataSource;
 
       function findDs(columns) {
         var i = 0,
@@ -129,10 +131,10 @@ var component = {
           col = columns[i];
           if (~["r2Selector", "r2SelectorPlus"].indexOf(col.editorType)) {
             me.dataSourceBind = { k: col.fieldCode, v: col.valueField };
-            return {
-              ...col.dataSource.data,
-              ...{ cols: col.proertyContext.dataSourceCols }
-            };
+            if(col.dataSource) {
+              col.dataSource.data.cols = col.proertyContext.dataSourceCols;
+              return col.dataSource.data;
+            }
           }
         }
       }
