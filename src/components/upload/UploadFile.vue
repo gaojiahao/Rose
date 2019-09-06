@@ -192,13 +192,11 @@
 
 <style scoped lang="scss">
   .upload-file-container {
-    // margin: .1rem 0;
-    background: #fff;
-    position: relative;
-    padding: .18rem .15rem;
-    box-sizing: border-box;
-    font-size: .14rem;
+    padding: .15rem;
+    background-color: #fff;
     color: #333;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
     &.no-upload {
       padding: .24rem .15rem .15rem;
       &:before {

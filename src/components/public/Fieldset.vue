@@ -187,12 +187,10 @@ export default Vue.component("RFieldset", component);
 @import "~@/scss/color";
 .r-fieldset {
   color: #333;
-  margin: 0.1rem;
-  border-radius: 0.04rem;
   background-color: #fff;
-  width: calc(100% - 0.2rem);
+  margin-bottom: 0.1rem;
   .box {
-    padding: 0.15rem;
+    padding: 0.1rem 0.15rem 0rem 0.15rem;
     &.muti{
       padding: 0 0.15rem;
     }

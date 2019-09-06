@@ -193,10 +193,10 @@ export default Vue.component('WFlow',component)
     color: #333;
     padding: .15rem;
     border-radius: .04rem;
-    margin: .1rem .1rem 0;
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     background-color: #fff;
-    width: calc(100% - .2rem);
+    margin-bottom: 0.1rem;
     .work-flow-header {
       display: flex;
       font-size: .16rem;

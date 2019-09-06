@@ -253,6 +253,8 @@ export default Vue.component("GridDetail", component);
 
   .edit-part {
     color: #fff;
+    margin: 0.1rem 0;
+    padding: 0 0.09rem;
   }
   /* 其他数据 */
   .onlyView-parts {

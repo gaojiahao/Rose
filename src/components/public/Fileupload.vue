@@ -247,9 +247,7 @@
 
 <style scoped lang="scss">
   .upload-file-container {
-    margin: .1rem;
     padding: .15rem;
-    width: calc(100% - .2rem);
     background-color: #fff;
     color: #333;
     box-sizing: border-box;

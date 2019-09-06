@@ -428,7 +428,7 @@ export default {
     },
     getListMobileView() {
       var me = this;
-      me.fieldsObj = {};
+      me.fieldsObj = [];
       return getListMobileView(me.listId).then(data => {
         let viewRecord = data.tableContent[0];
         if (viewRecord) {
@@ -440,7 +440,13 @@ export default {
             if (it.parentCode) {
               key = key + '_' + it.parentCode;
             }
-            me.fieldsObj[key] = it.alias ? it.alias : it.fieldName;
+            // me.fieldsObj[key] = it.alias ? it.alias : it.fieldName;
+            me.fieldsObj.push({
+              fieldName:it.alias ? it.alias : it.fieldName,
+              fieldCode:key,
+              isSummary:it.isSummary
+            });
+
           });
         }
       });
