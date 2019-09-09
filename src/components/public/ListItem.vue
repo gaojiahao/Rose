@@ -13,7 +13,7 @@
     <div class="main-info">
       <div class="main-single">
         <template v-for="(field,index) in singleField" >
-            <div :key="index" class="main-single-item" >
+            <div :key="index" class="main-single-item" v-if="index<3">
               <span >{{field.alias ? field.alias : field.fieldName}}</span>
               <span>{{item[field.fieldCode]}}</span>
             </div>
@@ -24,27 +24,29 @@
         <div v-for="(detail,didx) in item.detailItem" :key="didx"  class="main-multiple-item">
 
           <div class="main-multiple-item-piccontain">
-            <img class="matter_img"  alt="mater_img" :src="getMatterDefault()" style="width: 0.85rem;">
+            <img class="matter_img"  alt="mater_img" :src="getMatterDefault()">
           </div>
 
           <div :key="didx" >
 
             <template v-for="(field,index) in multipleField">
-              <div :key="index" v-if="index<5">
-                <span >{{field.alias ? field.alias : field.fieldName}}</span>
-                <span>{{detail[field.fieldCode]}}</span>
+              <div :key="index" :class="{'list-left':index>0}" :style="{marginLeft: '.1rem'}">
+                <div>
+                  <span >{{field.alias ? field.alias : field.fieldName}}</span>
+                  <span>{{detail[field.fieldCode]}}</span>
+                </div>
               </div>
             </template>
 
             <template v-for="(field,index) in summaryField">
               <div :key="1+'-'+index" class="summary-item" >
                 <span class="summary-item-label">{{field.alias ? field.alias : field.fieldName}}</span>
-                <span class="summary-item-value">{{detail[field.fieldCode]}}</span>
+                <span class="summary-item-value">{{numberCommaNumer(detail[field.fieldCode])}}</span>
               </div>
             </template>
 
           </div>
-          </div>
+        </div>
       </div>
     </div>
 
@@ -213,8 +215,21 @@ export default Vue.component("ListItem", {
         display: flex;
         margin-bottom: 0.08rem;
         &-piccontain{
-          margin: 0rem 0.05rem 0 0;
+          .matter_img{
+            width: 0.85rem;
+          }
         }
+      }
+      .summary-item{
+        clear: both;
+        margin-left: .1rem;
+        &-value{
+          color: #4CA3FB;
+          font-weight: bold;
+        }
+      }
+      .list-left{
+        float: left;
       }
     }
   }
@@ -235,7 +250,7 @@ export default Vue.component("ListItem", {
         color: #605a5a;
       }
       &-value{
-        color: #FF5722
+        color: #4CA3FB;
       }
     }
     

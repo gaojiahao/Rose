@@ -36,8 +36,6 @@ import Loading from 'plugins/loading/pageLoad/loading'
 import HandleLoad from 'plugins/loading/handleLoad/handleLoading'
 import commonService from "service/commonService";
 
-import {getFieldSetting } from 'service/fieldModelService'
-
 require('@/directive')
 
 Vue.use(Loading)
@@ -65,18 +63,10 @@ router.afterEach((to, from) => {
   document.title = to.meta.title || '';
 })
 
-getFieldSetting().then(res=>{
-  Vue.prototype.$r2FiledSetting = {};
-  res.tableContent.map(it=>{
-    Vue.prototype.$r2FiledSetting[it.fieldCode] = it;
-  });
-
-  new Vue({
-    router,
-    render: h => h(App)
-  }).$mount('#app-box')
-});
-
+new Vue({
+  router,
+  render: h => h(App)
+}).$mount('#app-box')
 
 
 /* eslint-disable no-new */
