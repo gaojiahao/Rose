@@ -161,7 +161,8 @@ var component = {
   methods: {
     //选择默认图片
     getMatterDefault() {
-      let url = require('assets/wl_default03.png');
+      // let url = require('assets/wl_default03.png');
+      let url = require('assets/warehouse.png');
       return url
     },
     checkAmt() {},
@@ -217,16 +218,11 @@ var component = {
       values = this.values,
       name = fieldSet.name;
     
-    // this.cfg.columns.map(it=>{
-    //   console.log(it.text+'////' +it.editorType,it);
-    // });
-
     this.keyFiled = this.cfg.columns.filter(it=>{
       return !it.hidden;
     }).filter((v,i)=>{
       return i<2;
     });
-
 
     this.numberField = this.cfg.columns.filter(it=>{
       return !it.hidden;
@@ -240,15 +236,21 @@ var component = {
       return ['r2Numberfield','r2Percentfield '].includes(it.editorType) && it.summaryType === 'sum';
     });
 
+    this.referTtemField = [];
+    
+    // this.keyFiled.map(it=>{
+    //   if(it.fieldCode)
+    // });
 
-    this.numberField.map(it=>{
-      console.log(it.text+'////' +it.editorType,it);
-    });
+    // console.log('this.$r2FieldSetting',this.$r2FieldSetting);
 
-    console.log('===============');
-
-     this.summaryField.map(it=>{
-      console.log(it.text+'////' +it.editorType,it);
+    this.keyFiled.map(it=>{
+      let s = it.fieldCode.split('_')[0];
+      let o = this.$r2FieldSetting[s];
+      
+      if(o.fieldTempName === '查阅项'){
+        console.log('查阅项',o);
+      }
     });
 
 

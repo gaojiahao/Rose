@@ -2,7 +2,8 @@
   <div v-show = "!hidden" class="r-fieldset">
     <div class="box" :class="{muti:cfg.isMultiple}">
       <header v-show="!cfg.isMultiple">
-        <div class="vux-1px-l">{{cfg.cName}}</div>
+        <!-- <div class="vux-1px-l">{{cfg.cName}}</div> -->
+        <div></div>
         <div class="basic_process_status">
           <span v-if="hasToogleBar" @click="toggleStyleType()" class="barWrapp">
             <i class="style-toogleBar" :class="styleType?'icon-up':'icon-down'"></i>
@@ -190,7 +191,7 @@ export default Vue.component("RFieldset", component);
   background-color: #fff;
   margin-bottom: 0.1rem;
   .box {
-    padding: 0.1rem 0.15rem 0rem 0.15rem;
+    padding: 0rem 0.15rem 0rem 0.15rem;
     &.muti{
       padding: 0 0.15rem;
     }
