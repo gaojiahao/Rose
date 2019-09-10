@@ -263,8 +263,8 @@ export default Vue.component("GridDetail", component);
     .onlyView-item {
       display: flex;
       justify-content: space-between;
-      heigth: 0.5rem;
-      line-height: 0.5rem;
+      height: 0.5rem;
+      line-height: 0.25rem;
       font-size: 0.14rem;
     }
     .title {
