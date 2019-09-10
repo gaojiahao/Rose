@@ -255,12 +255,12 @@ export default {
     requestData() {
       let filter = [];
       //成品,商品,服务
-      if (this.searchValue) {
+      if (this.srhInpTx) {
         filter = [
           ...filter,
           {
             operator: "like",
-            value: this.searchValue,
+            value: this.srhInpTx,
             property: this.filterProperty
           }
         ];
@@ -280,7 +280,7 @@ export default {
     // 搜索物料
     searchList({ val = "", property = "" }) {
       this.srhInpTx = val;
-      this.filterProperty = property;
+      this.filterProperty = property ? property : 'inventoryName';
       this.resetCondition();
       this.requestData();
     },

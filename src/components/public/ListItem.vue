@@ -24,7 +24,7 @@
         <div v-for="(detail,didx) in item.detailItem" :key="didx"  class="main-multiple-item">
 
           <div class="main-multiple-item-piccontain">
-            <img class="matter_img"  alt="mater_img" :src="getMatterDefault()">
+            <img class="matter_img"  alt="mater_img" :src="getImgPic(detail)">
           </div>
 
           <div :key="didx" >
@@ -78,9 +78,29 @@
 <script>
 import Vue from "vue";
 import { numberComma} from 'vux'
+import objList from '../../common/const/obj-app';
+
 export default Vue.component("ListItem", {
   props: ["fieldsObj", "item"],
   computed:{
+    curObj:function() {
+      if(this.item.detailItem.length < 1) return;
+
+      let fieldSettingData = this.$r2FieldSetting,
+          obj,
+          key;
+          
+      this.multipleField.map(it=>{
+        key = it.fieldCode.split('_')[0];
+
+        if(fieldSettingData[key]){
+          if(fieldSettingData[key]['fieldTempName'] === '查阅项'){
+            obj = objList.getObjectByName(fieldSettingData[key]['objectNames'])[0];
+          }
+        }
+      });
+      return obj;
+    },
     summaryField:function(){
       return this.fieldsObj.filter(it=>{
         return it.isSummary;
@@ -157,9 +177,9 @@ export default Vue.component("ListItem", {
       return numberComma(v);
     },
     //选择默认图片
-    getMatterDefault() {
-      let url = require('assets/wl_default03.png');
-      return url
+    getImgPic(d) {
+     let url =  d[this.curObj.picKey] ? d[this.curObj.picKey] : '/static/' + this.curObj.defaultUrl;
+     return url;
     },
   },
 });
