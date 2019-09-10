@@ -108,11 +108,11 @@
             this.$emit('on-pulling-up');
           });
           // 绑定下拉刷新事件
-          this.bScroll.on('pullingDown', () => {
-            this.disable();
-            this.refreshDone = false;
-            this.$emit('on-pulling-down');
-          });
+          // this.bScroll.on('pullingDown', () => {
+          //   this.disable();
+          //   this.refreshDone = false;
+          //   this.$emit('on-pulling-down');
+          // });
           // 下拉的时候展示下拉刷新的图标
           this.bScroll.on('scroll', ({x, y}) => {
             this.yScrollValue = y;
@@ -125,7 +125,20 @@
             } else {
               this.resetPullDown();
             }
-          })
+          });
+          this.bScroll.on('scroll',(pos)=>{
+            if(pos.y > 30){
+              this.$vux.toast.text('下拉刷新', 'top')  
+            }
+          });
+          this.bScroll.on('touchEnd',(pos) =>{  //上拉刷新
+            if(pos.y > 30){
+                setTimeout(()=>{
+                    this.$emit('on-pulling-down');
+                    this.$vux.toast.text('刷新成功', 'top')  
+                },2000)
+            } 
+          });
         })
       },
       // 刷新

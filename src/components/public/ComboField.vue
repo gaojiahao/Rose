@@ -12,7 +12,7 @@
           <d-search @search="searchList" @turn-off="onHide" :isFill="true" :defaultValue="searchValue"></d-search>
           <!-- 往来列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
-                    :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
+                    :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" ref="bScroll">
             <div class="pop-list-item" v-for="(item, index) in listData" :key='index' @click.stop="selItem(item, index)" :class="{selected: showSelIcon(item)}">
               <div class="main">
                   <div class="name">
@@ -246,6 +246,10 @@ let cfg = {
     
     onPullingUp() {
       this.page++;
+      this.load();
+    },
+    onPullingDown() {
+      this.page=1;
       this.load();
     },
     // 弹窗隐藏时调用
