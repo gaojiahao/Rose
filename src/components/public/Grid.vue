@@ -41,21 +41,24 @@
             <template v-for="(item, index) in keyFiled" class="cell when-is-right">
               <div class="" v-if="item.hidden == false" :key="'keyFiled' + index">
                 <span>{{item.text}}：</span>
-                <span>{{formatByType(row[item.fieldCode],item.editorType)}}</span>
+                <span v-if="item.editorType=='r2Percentfield'">{{formatByType(row[item.fieldCode],item.editorType)}}%</span>
+                <span v-else>{{formatByType(row[item.fieldCode],item.editorType)}}</span>
               </div>
             </template>
 
             <template v-for="(item, index) in numberField" class="cell when-is-right">
               <div class="item" v-if="item.hidden == false" :key="'numberField' + index">
                 <span>{{item.text}}：</span>
-                <span>{{formatByType(row[item.fieldCode],item.editorType)}}</span>
+                <span v-if="item.editorType=='r2Percentfield'">{{formatByType(row[item.fieldCode],item.editorType)}}%</span>
+                <span v-else>{{formatByType(row[item.fieldCode],item.editorType)}}</span>
               </div>
             </template>
             
             <template v-for="(item, index) in summaryField" class="cell when-is-right">
               <div class="summary-item" v-if="item.hidden == false" :key="'summaryField' + index">
                 <span class="summary-item-label">{{item.text}}：</span>
-                <span class="summary-item-value">{{formatByType(row[item.fieldCode],item.editorType)}}</span>
+                <span class="summary-item-value" v-if="item.editorType=='r2Percentfield'">{{formatByType(row[item.fieldCode],item.editorType)}}%</span>
+                <span class="summary-item-value" v-else>{{formatByType(row[item.fieldCode],item.editorType)}}</span>
               </div>
             </template>
 

@@ -34,7 +34,8 @@
         <div class="onlyView-parts" v-if="onlyViewParts.length">
           <div class="onlyView-item" v-for="(item, index) in onlyViewParts" :key="index">
             <span class="title">{{item.text}}</span>
-            <span>{{formatByType(values[item.fieldCode],item.editorType)}}</span>
+            <span v-if="item.editorType=='r2Percentfield'">{{formatByType(values[item.fieldCode],item.editorType)}}%</span>
+            <span v-else>{{formatByType(values[item.fieldCode],item.editorType)}}</span>
           </div>
         </div>
       </r-scroll>
