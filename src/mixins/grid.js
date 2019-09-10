@@ -176,6 +176,8 @@ export default {
             if(value == null) return '无';
             if(~['r2Numberfield','r2Permilfield'].indexOf(type)){
               return util.permilFormat(value);
+            } else if(type == 'r2Percentfield'){
+                return util.permilFormat(value*100);  
             } else {
               return value
             }

@@ -34,7 +34,8 @@
          
           <div class="item" v-if="item.hidden == false" :key="index">
             <span>{{item.text}}：</span>
-            <span>{{formatByType(row[item.fieldCode],item.editorType)}}</span>
+            <span v-if="item.editorType=='r2Percentfield'">{{formatByType(row[item.fieldCode],item.editorType)}}%</span>
+            <span v-else>{{formatByType(row[item.fieldCode],item.editorType)}}</span>
           </div>
         </template>
         <div @click.stop="onShowDetail(row,rIndex)" class="show-more" v-show="!isEdit && cfg.readOnly">
