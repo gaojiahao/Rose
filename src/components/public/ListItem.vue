@@ -222,6 +222,8 @@ export default Vue.component("ListItem", {
       }
       .summary-item{
         clear: both;
+        display: flex;
+        justify-content: space-between;
         margin-left: .1rem;
         &-value{
           color: #4CA3FB;
