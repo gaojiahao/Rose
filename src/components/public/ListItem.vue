@@ -14,8 +14,8 @@
       <div class="main-single">
         <template v-for="(field,index) in singleField" >
             <div :key="index" class="main-single-item" v-if="index<3">
-              <span >{{field.alias ? field.alias : field.fieldName}}</span>
-              <span>{{item[field.fieldCode]}}</span>
+              <span>{{field.alias ? field.alias : field.fieldName}}</span>
+              <span class="single-item-value">{{item[field.fieldCode]}}</span>
             </div>
         </template>
       </div>
@@ -235,6 +235,10 @@ export default Vue.component("ListItem", {
       &-item{
         display:flex;
         justify-content: space-between;
+        .single-item-value{
+          display: inline-block;
+          width: 92%;
+        }
       }
     }
 
