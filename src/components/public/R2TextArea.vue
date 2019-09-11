@@ -10,7 +10,7 @@
         <label 
             :class="{required:!cfg.allowBlank,'readonly':cfg.readOnly}" 
             style="display: block;" 
-            v-show="cfg.fieldLabel != null && cfg.fieldLabel != '备注'">
+            v-show="cfg.fieldLabel != null">
             {{cfg.fieldLabel}}</label>
         </template>
     </x-textarea>
