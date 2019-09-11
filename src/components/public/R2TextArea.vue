@@ -1,7 +1,17 @@
 <template>
-    <x-textarea :value="values[cfg.fieldCode]" placeholder="请输入" :max="100" class="each_property textarea" @input="onInput" :readonly = "cfg.readOnly">
+    <x-textarea 
+        :value="values[cfg.fieldCode]" 
+        :placeholder="`请输入${cfg.fieldLabel}`" 
+        :max="100" 
+        class="each_property textarea"
+        @input="onInput" 
+        :readonly="cfg.readOnly">
         <template slot="label">
-        <label :class="{required : !cfg.allowBlank,'readonly':cfg.readOnly}" style="display: block;" v-show="cfg.fieldLabel != null && cfg.fieldLabel != '备注'">{{cfg.fieldLabel}}</label>
+        <label 
+            :class="{required:!cfg.allowBlank,'readonly':cfg.readOnly}" 
+            style="display: block;" 
+            v-show="cfg.fieldLabel != null && cfg.fieldLabel != '备注'">
+            {{cfg.fieldLabel}}</label>
         </template>
     </x-textarea>
 </template>
@@ -38,12 +48,16 @@ export default Vue.component('R2TextArea',cfg);
     height:auto;
     line-height: normal;
     align-items:normal;
+    padding-top: .05rem;
     &:before{
         border-top:none;
     }
     .weui-cell__hd{
         padding-right:0.05rem;
     }
+}
+.textarea /deep/ .weui-textarea{
+    text-align: right;
 }
 
 </style>

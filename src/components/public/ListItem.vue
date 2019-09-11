@@ -238,6 +238,7 @@ export default Vue.component("ListItem", {
         .single-item-value{
           display: inline-block;
           width: 92%;
+          word-break: break-all;
         }
       }
     }
