@@ -15,7 +15,8 @@
         <template v-for="(field,index) in singleField" >
             <div :key="index" class="main-single-item" v-if="index<3">
               <span>{{field.alias ? field.alias : field.fieldName}}</span>
-              <span class="single-item-value">{{item[field.fieldCode]}}</span>
+              <span v-if="field.fieldCode !== 'biComment'">{{item[field.fieldCode]}}</span>
+              <span v-else class="single-item-value">{{item[field.fieldCode]}}</span>
             </div>
         </template>
       </div>
