@@ -91,11 +91,11 @@ export default Vue.component("ListItem", {
           key;
           
       this.multipleField.map(it=>{
-        key = it.fieldCode.split('_')[0];
+        key = it.fieldCode.indexOf('_') > -1 ? it.fieldCode.split('_')[1] : it.fieldCode;
 
         if(fieldSettingData[key]){
-          if(fieldSettingData[key]['fieldTempName'] === '查阅项'){
-            obj = objList.getObjectByName(fieldSettingData[key]['objectNames'])[0];
+          if(fieldSettingData[key]['objCode']){
+            obj = objList.getObjectByName(fieldSettingData[key]['objCode'])[0];
           }
         }
       });
@@ -178,7 +178,15 @@ export default Vue.component("ListItem", {
     },
     //选择默认图片
     getImgPic(d) {
-     let url =  d[this.curObj.picKey] ? d[this.curObj.picKey] : '/static/' + this.curObj.defaultUrl;
+      let url;
+      if(d){
+        let pic = this.curObj ? this.curObj.picKey : '',
+            defaultUrl = this.curObj ? this.curObj.defaultUrl : 'wl_default03.png';
+        url =  d[pic] ? d[pic] : '/static/' + defaultUrl;
+      }else{
+        url = require('assets/wl_default03.png');
+      }
+     
      return url;
     },
   },
