@@ -23,6 +23,7 @@
           v-for="(item, index) in listData"
           :key="index"
           @click.native="goDetail(item, index)"
+          :class="{'list-item-last':listData.length-1===index}"
         ></ListItem>
       </r-scroll>
     </div>
@@ -81,5 +82,8 @@ export default {
       margin-right: 0.02rem;
     }
   }
+}
+.list-item-last{
+  margin-bottom: .78rem;
 }
 </style>
