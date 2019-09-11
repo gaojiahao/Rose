@@ -165,7 +165,7 @@ var component = {
     //选择默认图片
     getMatterDefault() {
       // let url = require('assets/wl_default03.png');
-      let url = require('assets/warehouse.png');
+      let url = require('assets/wl_default03.png');
       return url
     },
     checkAmt() {},
