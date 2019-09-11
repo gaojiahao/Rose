@@ -9,10 +9,10 @@
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
-          <d-search @search="searchList" @turn-off="onHide" :isFill="true" :defaultValue="searchValue"></d-search>
+          <d-search @search="searchList" @turn-off="onHide" :isFill="true" :defaultValue="searchValue" :searchBoxShows="searchBoxShow"></d-search>
           <!-- 往来列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
-                    :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" ref="bScroll">
+                    :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" @search-box-show="searchBox" ref="bScroll">
             <div class="pop-list-item" v-for="(item, index) in listData" :key='index' @click.stop="selItem(item, index)" :class="{selected: showSelIcon(item)}">
               <div class="main">
                   <div class="name">
@@ -59,8 +59,10 @@ let cfg = {
         hasNext: true,
         selection:null,
         scrollOptions: { // 滚动配置
-          pullUpLoad: true
+          pullUpLoad: true,
+          pullDownRefresh: true,
         },
+        searchBoxShow:true,
       }
     },
     methods:{
@@ -316,6 +318,9 @@ let cfg = {
           selection = listData[0];
           this.selItem(selection);
       }
+    },
+    searchBox(data){
+      this.searchBoxShow = data;
     }
   },
   created(){

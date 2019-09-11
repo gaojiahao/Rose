@@ -116,6 +116,7 @@
           // 下拉的时候展示下拉刷新的图标
           this.bScroll.on('scroll', ({x, y}) => {
             this.yScrollValue = y;
+            this.$emit('search-box-show',false);
             if (y > 0) {
               if (y > PULL_DOWN_REFRESH_HEIGHT) {
                 this.pullDownTop = 0;
@@ -126,16 +127,12 @@
               this.resetPullDown();
             }
           });
-          this.bScroll.on('scroll',(pos)=>{
-            if(pos.y > 30){
-              this.$vux.toast.text('下拉刷新', 'top')  
-            }
-          });
-          this.bScroll.on('touchEnd',(pos) =>{  //上拉刷新
+          this.bScroll.on('touchEnd',(pos) =>{  //下拉刷新
+            this.resetPullDown();
             if(pos.y > 30){
                 setTimeout(()=>{
                     this.$emit('on-pulling-down');
-                    this.$vux.toast.text('刷新成功', 'top')  
+                    this.$emit('search-box-show',true);
                 },2000)
             } 
           });
@@ -177,6 +174,7 @@
       },
       // 重置下拉刷新图标位置
       resetPullDown() {
+        this.$emit('search-box-show',true);
         if (this.pullDownTop !== -PULL_DOWN_REFRESH_HEIGHT) {
           this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
         }
