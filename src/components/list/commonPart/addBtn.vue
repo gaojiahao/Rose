@@ -2,7 +2,7 @@
   <div class="vux-1px-t btn" v-if="action.add">
     <div class="cfm_btn" @click="goEdit"> 
       <span class="icon-add"></span>
-      <span>新增</span>
+      <span>新建</span>
     </div>
   </div>
 </template>
