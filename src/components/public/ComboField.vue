@@ -2,7 +2,7 @@
 <div v-show="!hidden" class="cell each_property vux-1px-b combo" >
   <label :class="{'required':!cfg.allowBlank,'readonly':cfg.readOnly}">{{cfg.fieldLabel}}</label>
     <div v-if="cfg.readOnly == false" class="content" @click="showPop = true">
-      <span class='mater_nature'>{{values[cfg.fieldCode] || "请选择"}}</span>
+      <span class='mater_nature' :class="{placeholder:!values[cfg.fieldCode]}">{{values[cfg.fieldCode] || "请选择"}}</span>
       <span class="icon-right"></span>
     </div>
     <span v-else >{{values[cfg.fieldCode] == null ? '无' : values[cfg.fieldCode]}}</span>
@@ -340,6 +340,9 @@ export default Vue.component('R2Combofield',cfg);
       max-width:2.5rem;
       text-overflow:ellipsis;
       overflow: hidden;
+  }
+  .placeholder{
+    color: #999
   }
       .icon-right{
          width: .08rem;

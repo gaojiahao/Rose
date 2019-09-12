@@ -295,7 +295,7 @@ export default {
           item.modTime = dateFormat(item.modTime, 'YYYY-MM-DD HH:mm:ss');
           item.itemCount = item.detailItem.length;
           // 列表当中每个订单最多展现3个物料
-          item.detailItem = item.detailItem.slice(0, 3);
+          // item.detailItem = item.detailItem.slice(0, 3);
           item.detailItem.forEach(mItem => {
             // 计算totalQty
             if (mItem.assistQty != null) {

@@ -14,7 +14,7 @@
         <app-example :showTab="showTab['example']" :tabData="tabData['example']"></app-example>
       </v-touch>
     </div>
-    <slideBar :showSlide="showSlide" @swiperleft="swiperleft" @goTab="goTab" :appExample="appExample" :autoSubjectCount="autoSubjectCount"></slideBar>
+    <!-- <slideBar :showSlide="showSlide" @swiperleft="swiperleft" @goTab="goTab" :appExample="appExample" :autoSubjectCount="autoSubjectCount"></slideBar> -->
     <div class="detail-comment-container vux-1px-t" v-if="hasComment">
       <!-- tab 暂时关闭自动分录-->
       <!-- <div class="concern" @click="swiperright">

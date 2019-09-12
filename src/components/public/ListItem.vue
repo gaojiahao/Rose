@@ -22,42 +22,43 @@
       </div>
 
       <div class="main-multiple">
-        <div v-for="(detail,didx) in item.detailItem" :key="didx"  class="main-multiple-item">
+        <template  v-for="(detail,didx) in item.detailItem">
+          <div :key="didx"  class="main-multiple-item" v-if="didx<3">
+            <div class="main-multiple-item-piccontain">
+              <img class="matter_img"  alt="mater_img" :src="getImgPic(detail)">
+            </div>
+            <div :key="didx" >
 
-          <div class="main-multiple-item-piccontain">
-            <img class="matter_img"  alt="mater_img" :src="getImgPic(detail)">
-          </div>
-
-          <div :key="didx" >
-
-            <template v-for="(field,index) in multipleField">
-              <div :key="index" :class="{'list-left':index>0}" :style="{marginLeft: '.1rem'}">
-                <div>
-                  <span >{{field.alias ? field.alias : field.fieldName}}</span>
-                  <span>{{detail[field.fieldCode]}}</span>
+              <template v-for="(field,index) in multipleField">
+                <div :key="index" :class="{'list-left':index>0}" :style="{marginLeft: '.1rem'}">
+                  <div>
+                    <span >{{field.alias ? field.alias : field.fieldName}}</span>
+                    <span>{{detail[field.fieldCode]}}</span>
+                  </div>
                 </div>
-              </div>
-            </template>
+              </template>
 
-            <template v-for="(field,index) in summaryField">
-              <div :key="1+'-'+index" class="summary-item" >
-                <span class="summary-item-label">{{field.alias ? field.alias : field.fieldName}}</span>
-                <span class="summary-item-value">{{numberCommaNumer(detail[field.fieldCode])}}</span>
-              </div>
-            </template>
+              <template v-for="(field,index) in summaryField">
+                <div :key="1+'-'+index" class="summary-item" >
+                  <span class="summary-item-label">{{field.alias ? field.alias : field.fieldName}}</span>
+                  <span class="summary-item-value">{{numberCommaNumer(detail[field.fieldCode])}}</span>
+                </div>
+              </template>
 
+            </div>
           </div>
-        </div>
+        </template>
       </div>
     </div>
 
-    <div class="summary-info" v-if="item.detailItem.length">
+    <div class="summary-info" v-if="item.detailItem.length>1">
       <div class="summary-info-count" >
-        共{{item.detailItem.length}}条明细
+        <p>共{{item.detailItem.length}}条明细</p>
+        <p v-if="item.detailItem.length>3">点击请查看更多...</p>
       </div>
       <div>
-        <template v-for="(field,index) in summaryField">
-          <div class="summary-item" :key="index">
+        <template v-for="(field,index) in summaryField" >
+          <div class="summary-item" :key="index" >
             <span class="summary-item-label">{{field.alias ? field.alias : field.fieldName}}：</span>
             <span class="summary-item-value">{{numberCommaNumer(summaryValue[field.fieldCode])}}</span>
           </div>
@@ -246,7 +247,6 @@ export default Vue.component("ListItem", {
         justify-content: space-between;
         .single-item-value{
           display: inline-block;
-          width: 92%;
           word-break: break-all;
         }
       }

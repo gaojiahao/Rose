@@ -4,22 +4,26 @@
     <div class="work-flow-header">
       <span class="work_flow_title vux-1px-l">{{this.formData.transTypeName}}</span>
       <span class="check_more" v-if="fullWorkFlow.length" @click="goWorkFlowFull">
-        查看工作流<i class="icon-right"></i>
+        <i class="icon-flow-time"></i>
+        <span v-if="workFlowInfo.biStatus==='进行中'">工作流已到{{currentStatus.nodeName}}</span>
+        <span v-else>查看工作流</span>
+        <i class="icon-right"></i>
       </span>
     </div>
+
     <div class="work-flow-status-wrapper hight-line">
-      <span>交易号：</span>
-      <span>{{this.formData.transCode}}</span>
-      <span>当前状态：</span>
-      <span :class="[statusClass]">{{workFlowInfo.biStatus}}</span>
+      <div>{{this.formData.transCode}}</div>
+      <div class="biStatus" v-instanceStateDirective="{status:workFlowInfo.biStatus}" >{{workFlowInfo.biStatus}}</div>
     </div>
-    <div class="work-flow-status-wrapper" v-if="fullWorkFlow.length">
-      <i class="icon-flow-time"></i>
-      <span class="work-flow-text">
-        工作流已到{{currentStatus.nodeName}}
-      </span>
-    </div>
-    <r-picker title="流程状态" v-if="statusList.length" :data="statusList" :value="nowStatus" v-model="nowStatus" @input="updateProcessStatus"></r-picker>
+
+    <r-picker title="流程状态" 
+        v-if="statusList.length" 
+        :data="statusList" 
+        :value="nowStatus" 
+        v-model="nowStatus" 
+        @input="updateProcessStatus">
+      </r-picker>
+      
   </div>
 </template>
 <script>
@@ -227,7 +231,7 @@ export default Vue.component('WFlow',component)
     /* 已生效、草稿为#333 */
     .work-flow-status-wrapper {
       display: flex;
-      align-items: flex-start;
+      justify-content: space-between;
       margin-top: .1rem;
       line-height: .16rem;
       font-size: .14rem;
@@ -236,7 +240,7 @@ export default Vue.component('WFlow',component)
         color: #3296fa;
       }
       /* 已失效 */
-      .failure {
+      .failure {  
         color: #999;
       }
     }
@@ -246,6 +250,11 @@ export default Vue.component('WFlow',component)
         color:#333;
         margin-right: .1rem;
       }  
+    }
+    .biStatus{
+      color: white;
+      padding: 0.02rem 0.04rem;
+      border-radius: 0.10rem;
     }
     .status-process {
       display: flex;

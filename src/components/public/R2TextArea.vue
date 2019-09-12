@@ -3,15 +3,16 @@
         :value="values[cfg.fieldCode]" 
         :placeholder="`请输入${cfg.fieldLabel}`" 
         :max="100" 
-        class="each_property textarea"
+        class="each_property textarea" 
+        :class="{'readonly': cfg.readOnly,'textRinght':!values[cfg.fieldCode]}"
         @input="onInput" 
-        :readonly="cfg.readOnly">
+        :readonly = "cfg.readOnly">
+
         <template slot="label">
         <label 
-            :class="{required:!cfg.allowBlank,'readonly':cfg.readOnly}" 
+            :class="{required : !cfg.allowBlank,'readonly':cfg.readOnly}" 
             style="display: block;" 
-            v-show="cfg.fieldLabel != null">
-            {{cfg.fieldLabel}}</label>
+            v-show="cfg.fieldLabel != null ">{{cfg.fieldLabel}}</label>
         </template>
     </x-textarea>
 </template>
@@ -45,9 +46,12 @@ export default Vue.component('R2TextArea',cfg);
     align-items: center;
 }
 .r-fieldset .textarea {
+    padding: 0.03rem;
+    display: block;
     height:auto;
     line-height: normal;
     align-items:normal;
+    border-bottom: 1px solid #ddd;
     padding-top: .05rem;
     &:before{
         border-top:none;
@@ -55,8 +59,15 @@ export default Vue.component('R2TextArea',cfg);
     .weui-cell__hd{
         padding-right:0.05rem;
     }
+    label{
+        margin-bottom: 0.08rem;
+    }
 }
-.textarea /deep/ .weui-textarea{
+
+.readonly{
+    border-bottom: none !important;
+}
+.textRinght /deep/ .weui-textarea{
     text-align: right;
 }
 
