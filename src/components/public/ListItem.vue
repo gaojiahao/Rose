@@ -164,12 +164,20 @@ export default Vue.component("ListItem", {
       this.summaryField.map(it=>{
         this.item.detailItem.map(d=>{
           if(val[it.fieldCode]){
-            val[it.fieldCode] +=   Number(d[it.fieldCode]);
+            val[it.fieldCode] += Number(d[it.fieldCode]);
           }else{
             val[it.fieldCode] = Number(d[it.fieldCode]);
           }
         });
       });
+
+      for(var k in val){
+        if(isNaN(val[k])){
+          val[k] = '无';
+        }else{
+          val[k] = val[k].toFixed(2)
+        }
+      }
       return val;
     }
   },
