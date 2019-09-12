@@ -134,8 +134,8 @@ var component = {
         me.pushActions('draft');
       }
 
-      if ((action.add && model != 'marking') || model == 'view') {
-        this.pushActions('newFile');
+      if ((action.add && model != 'marking' && statusText =='已生效') || (model == 'view'&&  statusText =='已生效') || !this.isMyTask) {
+        me.pushActions('newFile');
         me.pushActions('copyNew');
       }
       if (statusText === '草稿' && model != 'edit') {
@@ -339,8 +339,12 @@ var component = {
     agreement() {
       if(this.model == 'marking') {
         this.form.taskType = 1;
-        this.$HandleLoad.show();
-        this.form.saveAndCommitTask();
+        this.$vux.confirm.prompt('', {
+          title: '审批意见',
+          onConfirm: (value) => {
+            this.form.saveAndCommitTask(value);
+          }
+        });
       } else {
         this.$vux.confirm.prompt('', {
           title: '审批意见',
