@@ -20,7 +20,6 @@
         </div>
       </div>
     </template>
-
     <div class="r-row-ct">
       <div
         class="r-row"
@@ -34,33 +33,32 @@
 
         <div class="trans-item">
           <div class="trans-item-img">
-            <img  :src="getMatterDefault()" >
+            <img  :src="getImgPic(row)" >
           </div>
          
           <div class="trans-item-info">
             <template v-for="(item, index) in keyFiled" class="cell when-is-right">
-              <div class="" v-if="item.hidden == false" :key="'keyFiled' + index">
+              <div class="" v-if="item.kField" :key="'keyFiled' + index" >
                 <span>{{item.text}}：</span>
-                <span v-if="item.editorType=='r2Percentfield'">{{formatByType(row[item.fieldCode],item.editorType)}}%</span>
-                <span v-else>{{formatByType(row[item.fieldCode],item.editorType)}}</span>
+                <span  class="key-info" v-if="item.editorType=='r2Percentfield'">{{formatByType(row[item.fieldCode],item.editorType)}}%</span>
+                <span v-else  class="key-info">{{formatByType(row[item.fieldCode],item.editorType)}}</span>
               </div>
             </template>
-
-            <template v-for="(item, index) in numberField" class="cell when-is-right">
-              <div class="item" v-if="item.hidden == false" :key="'numberField' + index">
-                <span>{{item.text}}：</span>
+            <!-- <template v-for="(item, index) in numberField" class="cell when-is-right">
+              <div class="item" :key="'numberField' + index">
+                <span>{{item.text}}：{{item.fieldCode}}</span>
                 <span v-if="item.editorType=='r2Percentfield'">{{formatByType(row[item.fieldCode],item.editorType)}}%</span>
                 <span v-else>{{formatByType(row[item.fieldCode],item.editorType)}}</span>
               </div>
             </template>
             
             <template v-for="(item, index) in summaryField" class="cell when-is-right">
-              <div class="summary-item" v-if="item.hidden == false" :key="'summaryField' + index">
-                <span class="summary-item-label">{{item.text}}：</span>
+              <div class="summary-item" :key="'summaryField' + index">
+                <span class="summary-item-label">{{item.text}}：{{item.fieldCode}}</span>
                 <span class="summary-item-value" v-if="item.editorType=='r2Percentfield'">{{formatByType(row[item.fieldCode],item.editorType)}}%</span>
                 <span class="summary-item-value" v-else>{{formatByType(row[item.fieldCode],item.editorType)}}</span>
               </div>
-            </template>
+            </template> -->
 
           </div>
         </div>
@@ -79,7 +77,7 @@
       <!--row-->
       <div v-show="(!values || values.length == 0) && hasDs" class="no-data">无</div>
 
-      <div class="summary-info" v-if="(values && values.length > 0)">
+      <div class="summary-info" v-if="(values && values.length > 1)">
         <div class="summarry-info-count">共{{this.values.length}}条明细</div>
          <div>
             <template v-for="(item, index) in summaryField" >
@@ -128,11 +126,38 @@ import Vue from "vue";
 import dao from "plugins/ajax";
 import gridPicker from "./GridPicker";
 import girdMix from "mixins/grid";
+import objList from '../../common/const/obj-app';
 var component = {
   mixins: [girdMix],
   components: { gridPicker },
   props: ["cfg", "values", "btnIsHide"],
   computed:{
+    curObj:function() {
+      
+      if(!this.values || this.values.length < 1) return;
+      let fieldSettingData = this.$r2FieldSetting,
+        obj,
+        objKey,
+        fKey;
+          
+      this.keyFiled.map(it=>{
+          objKey = it.fieldCode.indexOf('_') > -1 ? it.fieldCode.split('_')[1] : it.fieldCode;
+          fKey = it.fieldCode.split('_')[0];
+
+          if(fieldSettingData[objKey]){
+              if(fieldSettingData[objKey]['objCode']){
+                  obj = objList.getObjectByName(fieldSettingData[objKey]['objCode'])[0];
+              }
+          }
+          if(fieldSettingData[fKey]){
+            
+              if(fieldSettingData[fKey]['kField']===1){
+                  it.kField = 1;
+              }
+          }
+      });
+      return obj;
+    },
     summaryValue:function(){
       let val = {};
       this.summaryField.map(it=>{
@@ -163,10 +188,16 @@ var component = {
   },
   methods: {
     //选择默认图片
-    getMatterDefault() {
-      // let url = require('assets/wl_default03.png');
-      let url = require('assets/wl_default03.png');
-      return url
+    getImgPic(d) {
+       let url;
+      if(d){
+        let pic = this.curObj ? this.curObj.picKey : '',
+            defaultUrl = this.curObj ? this.curObj.defaultUrl : 'wl_default03.png';
+        url =  d[pic] ? d[pic] : '/static/' + defaultUrl;
+      }else{
+        url = require('assets/wl_default03.png');
+      }
+     return url;
     },
     checkAmt() {},
     setValue: function(value) {
@@ -223,9 +254,11 @@ var component = {
     
     this.keyFiled = this.cfg.columns.filter(it=>{
       return !it.hidden;
-    }).filter((v,i)=>{
-      return i<2;
     });
+    
+    // .filter((v,i)=>{
+    //   return i<2;
+    // });
 
     this.numberField = this.cfg.columns.filter(it=>{
       return !it.hidden;
@@ -238,24 +271,6 @@ var component = {
     }).filter((it)=>{
       return ['r2Numberfield','r2Percentfield '].includes(it.editorType) && it.summaryType === 'sum';
     });
-
-    this.referTtemField = [];
-    
-    // this.keyFiled.map(it=>{
-    //   if(it.fieldCode)
-    // });
-
-    // console.log('this.$r2FieldSetting',this.$r2FieldSetting);
-
-    this.keyFiled.map(it=>{
-      let s = it.fieldCode.split('_')[0];
-      let o = this.$r2FieldSetting[s];
-      
-      if(o.fieldTempName === '查阅项'){
-        console.log('查阅项',o);
-      }
-    });
-
 
     form.fieldMap[id] = this;
     this.isGrid = true;
@@ -340,7 +355,7 @@ export default Vue.component("RGrid", component);
         display: flex;
         .trans-item-img{
           img{
-            width: 0.95rem;
+            width: 0.65rem;
           }
         }
         .trans-item-info{
@@ -450,5 +465,9 @@ export default Vue.component("RGrid", component);
 }
 .grid-manger-wrapper {
   z-index: 100;
+}
+
+.key-info{
+  font-weight: bold !important;
 }
 </style>

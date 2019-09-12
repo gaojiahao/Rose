@@ -1,6 +1,6 @@
 
 let objectList =  [
-    {objName:'物料',objCode:'inventory',defaultUrl:'dealer.png',picKey: 'inventoryPic'},
+    {objName:'物料',objCode:'inventory',defaultUrl:'wl_default03.png',picKey: 'inventoryPic'},
     {objName:'往来',objCode:'dealer',defaultUrl:'dealer.png',picKey: 'dealerPic'},
     {objName:'费用',objCode:'cost',defaultUrl:'cost.png',picKey: 'costPic'},
     {objName:'仓库',objCode:'warehouse',defaultUrl:'warehouse.png',picKey: 'warehousePic'},
