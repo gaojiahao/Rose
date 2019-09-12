@@ -148,6 +148,8 @@ var component = {
       for(var k in val){
         if(isNaN(val[k])){
           val[k] = '无';
+        }else{
+          val[k] = val[k].toFixed(2)
         }
       }
       return val;
