@@ -4,7 +4,7 @@
     <div class="trans-info">
         <template v-for="(field,index) in transField">
           <div class="trans-item" :key="index"  v-bind:class="{'bi-status': field.fieldCode==='biStatus'}">
-            <span v-if="field.fieldCode!=='biStatus'">{{item[field.fieldCode]}}</span>
+            <strong v-if="field.fieldCode!=='biStatus'">{{item[field.fieldCode]}}</strong>
             <span v-if="field.fieldCode==='biStatus'" v-instanceStateDirective="{status:item[field.fieldCode]}" >{{item[field.fieldCode]}}</span>
           </div>
         </template>
@@ -13,7 +13,7 @@
     <div class="main-info">
       <div class="main-single">
         <template v-for="(field,index) in singleField" >
-            <div :key="index" class="main-single-item" v-if="index<3">
+            <div :key="index" class="main-single-item" v-if="field.kField">
               <span>{{field.alias ? field.alias : field.fieldName}}</span>
               <span v-if="field.fieldCode !== 'biComment'">{{item[field.fieldCode]}}</span>
               <span v-else class="single-item-value">{{item[field.fieldCode]}}</span>
@@ -27,25 +27,23 @@
             <div class="main-multiple-item-piccontain">
               <img class="matter_img"  alt="mater_img" :src="getImgPic(detail)">
             </div>
-            <div :key="didx" >
-
+            <div class="main-multiple-item-info">
               <template v-for="(field,index) in multipleField">
-                <div :key="index" :class="{'list-left':index>0}" :style="{marginLeft: '.1rem'}">
-                  <div>
+                <div :key="index"   v-if="field.kField">
+                  <div >
                     <span >{{field.alias ? field.alias : field.fieldName}}</span>
                     <span>{{detail[field.fieldCode]}}</span>
                   </div>
                 </div>
               </template>
-
               <template v-for="(field,index) in summaryField">
                 <div :key="1+'-'+index" class="summary-item" >
                   <span class="summary-item-label">{{field.alias ? field.alias : field.fieldName}}</span>
                   <span class="summary-item-value">{{numberCommaNumer(detail[field.fieldCode])}}</span>
                 </div>
               </template>
-
             </div>
+
           </div>
         </template>
       </div>
@@ -90,16 +88,24 @@ export default Vue.component("ListItem", {
 
       let fieldSettingData = this.$r2FieldSetting,
           obj,
-          key;
-          
-      this.multipleField.map(it=>{
-        key = it.fieldCode.indexOf('_') > -1 ? it.fieldCode.split('_')[1] : it.fieldCode;
+          objKey,
+          fKey;
+            
+      this.mainField.map(it=>{
+          objKey = it.fieldCode.indexOf('_') > -1 ? it.fieldCode.split('_')[1] : it.fieldCode;
+          fKey = it.fieldCode.split('_')[0];
 
-        if(fieldSettingData[key]){
-          if(fieldSettingData[key]['objCode']){
-            obj = objList.getObjectByName(fieldSettingData[key]['objCode'])[0];
+          if(fieldSettingData[objKey]){
+              if(fieldSettingData[objKey]['objCode']){
+                  obj = objList.getObjectByName(fieldSettingData[objKey]['objCode'])[0];
+              }
           }
-        }
+          if(fieldSettingData[fKey]){
+              if(fieldSettingData[fKey]['kField']===1){
+                  it.kField = 1;
+                  console.log(it.fieldName);
+              }
+          }
       });
       return obj;
     },
@@ -200,6 +206,9 @@ export default Vue.component("ListItem", {
      return url;
     },
   },
+  created(){
+    
+  }
 });
 </script>
 <style lang="scss">
@@ -261,12 +270,16 @@ export default Vue.component("ListItem", {
             width: 0.85rem;
           }
         }
+
+        &-info{
+          margin-left: .1rem;
+          width:calc(100% - 0.95rem);
+        }
       }
       .summary-item{
         clear: both;
         display: flex;
         justify-content: space-between;
-        margin-left: .1rem;
         &-value{
           color: #4CA3FB;
           font-weight: bold;

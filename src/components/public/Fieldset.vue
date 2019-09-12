@@ -10,14 +10,7 @@
           </span>
         </div>
       </header> -->
-      <div class="readOnlyPart" v-if="readOnlyParts.length">
-        <!-- <template v-for="(item, index) in readOnlyParts">
-          <div class="item" :key="index">
-            <span >{{item.fieldLabel}}：</span>
-            <span >{{formatByType(values[item.fieldCode],item.xtype)}}</span>
-          </div>
-        </template> -->
-        
+      <div class="readOnlyPart" v-if="readOnlyParts.length && styleType == 0">
         <r-base-info-part v-if="cfg.name==='baseinfo'" :fields="readOnlyParts" :values="values" ></r-base-info-part>
         <r-read-only-part :fields="readOnlyParts" :values="values" v-if="cfg.name!='baseinfo'"></r-read-only-part>
       </div>
