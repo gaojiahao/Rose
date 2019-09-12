@@ -14,7 +14,7 @@
       <span class="btn_item reduction" @click="reduction" v-if="actions.includes('reduction')">还原</span>
       <!-- <span class="btn_item storage" @click="storage" v-if="actions.includes('storage')">暂存</span> -->
       <span class="btn_item agreement" @click="agreement" v-if="actions.includes('agreement')">同意</span>
-      <span class="btn_item disagree" @click="disagree" v-if="actions.includes('disagree')">拒绝</span>
+      <span class="btn_item disagree" @click="disagree" v-if="actions.includes('disagree')">不同意</span>
       <span class="btn_item transfer" @click="transfer" v-if="actions.includes('transfer')">转办</span>
       <span class="btn_item revoke" @click="revoke" v-if="actions.includes('revoke')">撤回</span>
       <span class="btn_item stop" @click="stop" v-if="actions.includes('stop')">终止</span>
@@ -342,6 +342,7 @@ var component = {
         this.$vux.confirm.prompt('', {
           title: '审批意见',
           onConfirm: (value) => {
+            this.$HandleLoad.show();
             this.form.saveAndCommitTask(value);
           }
         });
