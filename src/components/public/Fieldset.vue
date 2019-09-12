@@ -1,22 +1,25 @@
 <template>
   <div v-show = "!hidden" class="r-fieldset">
     <div class="box" :class="{muti:cfg.isMultiple}">
-      <header v-show="!cfg.isMultiple">
-        <!-- <div class="vux-1px-l">{{cfg.cName}}</div> -->
+      <!-- <header v-show="!cfg.isMultiple">
+        <div class="vux-1px-l">{{cfg.cName}}</div>
         <div></div>
         <div class="basic_process_status">
           <span v-if="hasToogleBar" @click="toggleStyleType()" class="barWrapp">
             <i class="style-toogleBar" :class="styleType?'icon-up':'icon-down'"></i>
           </span>
         </div>
-      </header>
-      <div class="readOnlyPart" v-if="readOnlyParts.length && styleType == 0">
-        <template v-for="(item, index) in readOnlyParts">
+      </header> -->
+      <div class="readOnlyPart" v-if="readOnlyParts.length">
+        <!-- <template v-for="(item, index) in readOnlyParts">
           <div class="item" :key="index">
             <span >{{item.fieldLabel}}：</span>
             <span >{{formatByType(values[item.fieldCode],item.xtype)}}</span>
           </div>
-        </template>
+        </template> -->
+        
+        <r-base-info-part v-if="cfg.name==='baseinfo'" :fields="readOnlyParts" :values="values" ></r-base-info-part>
+        <r-read-only-part :fields="readOnlyParts" :values="values" v-if="cfg.name!='baseinfo'"></r-read-only-part>
       </div>
       <template v-for="(item, index) in editParts">
         <r2Textfield :cfg="item" :values="values" v-if="item.xtype == 'r2Textfield' && item.fieldCode != 'biComment'" :key="index"/>
@@ -73,7 +76,7 @@ var component = {
   },
   created: function() {
      var cfg = this.cfg;
-
+  
      this.name = cfg.name;
      this.hidden = cfg.hiddenInRun;
      this.submitValue = cfg.submitValue;
@@ -110,8 +113,15 @@ var component = {
             }
             this.hasToogleBar = !this.styleType;
         }
-
+      
         this.editParts = items; // 可编辑部分 
+        if(this.cfg.name==='comment'){
+          console.log('----'+this.cfg.name + '---');
+          console.log('readOnlyParts',this.readOnlyParts);
+          console.log('editParts',this.editParts);
+          console.log('----'+this.cfg.name + '---');
+        }
+       
     },
     formatByType(value,type){
       if(value == null) return '无';
@@ -217,7 +227,7 @@ export default Vue.component("RFieldset", component);
 
   .readOnlyPart {
     line-height: 0.22rem;
-    font-size: 0.12rem;
+    font-size: 0.13rem;
     span:nth-child(2n + 1) {
       color: #aaa;
     }
@@ -233,7 +243,7 @@ export default Vue.component("RFieldset", component);
 }
 .each_property {
   height: 0.3rem;
-  padding: 0;
+  padding: 0.03rem;
   font-size: 0.13rem;
   line-height: 0.5rem;
   display: flex;
@@ -272,4 +282,5 @@ export default Vue.component("RFieldset", component);
   height: 0.08rem;
   display: inline-block;
 }
+
 </style>

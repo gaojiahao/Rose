@@ -58,6 +58,13 @@ const webpackConfig = merge(baseWebpackConfig, {
       // This will result in *all* of your app's CSS being loaded upfront.
       allChunks: false,
     }),
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(__dirname, '../src/assets/obj'),
+        to: config.dev.assetsSubDirectory,
+        ignore: ['.*']
+      }]
+    ),
     // generate dist index.html with correct asset hash for caching.
     // you can customize output by editing /index.html
     // see https://github.com/ampedandwired/html-webpack-plugin

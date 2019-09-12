@@ -347,13 +347,14 @@ export default {
                 this.$HandleLoad.hide();
             });
         },
-        saveAndCommitTask(){
+        saveAndCommitTask(comment){
             var me = this,
                 values = me.getValues(),
                 taskId = me.taskInfo.taskId,
                 transCode = me.transCode,
                 approvalData = me.getApprovalData(),
                 formData = me.formatValues(values),
+                comment = comment || '',
                 param;
 
             if (!me.isValid()){
@@ -367,8 +368,8 @@ export default {
             
             approvalData.transCode = transCode;
             approvalData.result = me.taskType;
-            approvalData.taskId = taskId,
-            //approvalData.comment = formData.biComment;
+            approvalData.taskId = taskId,           
+            approvalData.comment = comment;
     
             param = {
                 listId: me.listId,

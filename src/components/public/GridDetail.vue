@@ -3,7 +3,7 @@
     <popup
       class="grid-detail-container"
       :class="{'has-edit': hasEditPart, 'is-focus': btnIsHide}"
-      height="80%"
+      max-height="80%"
       v-model="showPop"
       @on-show="onShow"
       @on-hide="onHide"
@@ -264,7 +264,6 @@ export default Vue.component("GridDetail", component);
     .onlyView-item {
       display: flex;
       justify-content: space-between;
-      height: 0.5rem;
       line-height: 0.25rem;
       font-size: 0.14rem;
     }
