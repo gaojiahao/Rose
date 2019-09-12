@@ -342,6 +342,7 @@ var component = {
         this.$vux.confirm.prompt('', {
           title: '审批意见',
           onConfirm: (value) => {
+            this.$HandleLoad.show();
             this.form.saveAndCommitTask(value);
           }
         });
