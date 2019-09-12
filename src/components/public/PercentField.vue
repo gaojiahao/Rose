@@ -23,6 +23,7 @@ let cfg = {
     watch: {
       num: {
         handler(val) {
+          console.log('val',val);
           this.currentNum = val;
         }
       },
@@ -49,7 +50,13 @@ let cfg = {
       }
     },
     created () {
-      this.rate = accMul(this.getValue(),100);
+      if(this.value) {
+        var value = this.getValue();
+      } else {
+        var value = this.cfg.defaultValue&&this.cfg.defaultValue.data[0] ? this.cfg.defaultValue.data[0]:0;
+      }
+
+      this.rate = accMul(value,100);
     }
 }
 export default Vue.component('r2Percentfield',cfg);
