@@ -163,7 +163,7 @@
       // 结束上拉加载
       finishPullUp() {
         return new Promise(resolve => {
-          this.bScroll.finishPullUp();
+          this.bScroll && this.bScroll.finishPullUp();
           this.refresh();
           resolve();
         })

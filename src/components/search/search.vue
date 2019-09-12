@@ -72,9 +72,12 @@
       Icon,
       RDropdown,
     },
-    created(){
-      var defaultValue = this.defaultValue;
-      if(defaultValue)this.srhInpTx = defaultValue;
+    // created(){
+    //   var defaultValue = this.defaultValue;
+    //   if(defaultValue)this.srhInpTx = defaultValue;
+    // },
+    mounted() {
+      this.clear();
     },
     methods: {
       getValue(e) {

@@ -12,9 +12,9 @@
     </template>
     <!-- 已经选择了物料 -->
     <template v-else>
-      <div class="has-data-header" @click="toggleEditStatus">
+      <div class="has-data-header">
         <div class="title">{{listTitle||'物料列表'}}</div>
-        <div v-if="!cfg.readOnly && values && values.length">
+        <div @click="toggleEditStatus" v-if="!cfg.readOnly && values && values.length">
           <div class="edit" v-if="!isEdit">管理</div>
           <div class="edit" v-else>完成</div>
         </div>
@@ -40,8 +40,8 @@
             <template v-for="(item, index) in keyFiled" class="cell when-is-right">
               <div class="" v-if="item.kField" :key="'keyFiled' + index" >
                 <span>{{item.text}}：</span>
-                <span  class="key-info" v-if="item.editorType=='r2Percentfield'">{{formatByType(row[item.fieldCode],item.editorType)}}%</span>
-                <span v-else  class="key-info">{{formatByType(row[item.fieldCode],item.editorType)}}</span>
+                <span   v-if="item.editorType=='r2Percentfield'">{{formatByType(row[item.fieldCode],item.editorType)}}%</span>
+                <span v-else  >{{formatByType(row[item.fieldCode],item.editorType)}}</span>
               </div>
             </template>
             <!-- <template v-for="(item, index) in numberField" class="cell when-is-right">
@@ -173,6 +173,8 @@ var component = {
       for(var k in val){
         if(isNaN(val[k])){
           val[k] = '无';
+        }else{
+          val[k] = val[k].toFixed(2)
         }
       }
       return val;
@@ -341,7 +343,7 @@ export default Vue.component("RGrid", component);
       color: #696969;
     }
     .edit {
-      color: #333;
+      color: #39f;
     }
   }
   //明细数据容器
@@ -355,7 +357,7 @@ export default Vue.component("RGrid", component);
         display: flex;
         .trans-item-img{
           img{
-            width: 0.65rem;
+            width: 0.85rem;
           }
         }
         .trans-item-info{
@@ -400,6 +402,7 @@ export default Vue.component("RGrid", component);
         height: 0.25rem;
         line-height: 0.25rem;
         font-size: .14rem;
+        color: #39f;
         .icon-more {
           display: inline-block;
           width: 0.2rem;
@@ -467,7 +470,4 @@ export default Vue.component("RGrid", component);
   z-index: 100;
 }
 
-.key-info{
-  font-weight: bold !important;
-}
 </style>

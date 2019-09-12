@@ -1,7 +1,7 @@
 <template>
     <x-textarea 
         :value="values[cfg.fieldCode]" 
-        placeholder="请输入" 
+        :placeholder="`请输入${cfg.fieldLabel}`" 
         :max="100" 
         class="each_property textarea" 
         :class="{'readonly': cfg.readOnly}"
@@ -52,6 +52,7 @@ export default Vue.component('R2TextArea',cfg);
     line-height: normal;
     align-items:normal;
     border-bottom: 1px solid #ddd;
+    padding-top: .05rem;
     &:before{
         border-top:none;
     }
@@ -65,6 +66,9 @@ export default Vue.component('R2TextArea',cfg);
 
 .readonly{
     border-bottom: none !important;
+}
+.textarea /deep/ .weui-textarea{
+    text-align: right;
 }
 
 </style>

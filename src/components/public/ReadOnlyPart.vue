@@ -7,16 +7,16 @@
             <template v-for="(item, index) in fields">
                 <div  :key="index" v-if="item.kField">
                     <span >{{item.fieldLabel}}：</span>
-                    <span :class="{'key-info':item.kField===1}">{{formatByType(values[item.fieldCode],item.xtype)}}</span>
+                    <span >{{formatByType(values[item.fieldCode],item.xtype)}}</span>
                 </div>
             </template>
 
-            <template v-for="(item, index) in fields">
+            <!-- <template v-for="(item, index) in fields">
                 <div  :key="index" v-if="!item.kField">
                     <span >{{item.fieldLabel}}：</span>
                     <span :class="{'key-info':item.kField===1}">{{formatByType(values[item.fieldCode],item.xtype)}}</span>
                 </div>
-            </template>
+            </template> -->
         </div>
     </div>
 </template>

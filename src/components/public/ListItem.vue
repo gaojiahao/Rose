@@ -15,7 +15,8 @@
         <template v-for="(field,index) in singleField" >
             <div :key="index" class="main-single-item" v-if="index<3">
               <span>{{field.alias ? field.alias : field.fieldName}}</span>
-              <span class="single-item-value">{{item[field.fieldCode]}}</span>
+              <span v-if="field.fieldCode !== 'biComment'">{{item[field.fieldCode]}}</span>
+              <span v-else class="single-item-value">{{item[field.fieldCode]}}</span>
             </div>
         </template>
       </div>
@@ -164,12 +165,20 @@ export default Vue.component("ListItem", {
       this.summaryField.map(it=>{
         this.item.detailItem.map(d=>{
           if(val[it.fieldCode]){
-            val[it.fieldCode] +=   Number(d[it.fieldCode]);
+            val[it.fieldCode] += Number(d[it.fieldCode]);
           }else{
             val[it.fieldCode] = Number(d[it.fieldCode]);
           }
         });
       });
+
+      for(var k in val){
+        if(isNaN(val[k])){
+          val[k] = '无';
+        }else{
+          val[k] = val[k].toFixed(2)
+        }
+      }
       return val;
     }
   },
@@ -238,6 +247,7 @@ export default Vue.component("ListItem", {
         justify-content: space-between;
         .single-item-value{
           display: inline-block;
+          word-break: break-all;
         }
       }
     }
