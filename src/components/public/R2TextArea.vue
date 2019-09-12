@@ -4,7 +4,7 @@
         :placeholder="`请输入${cfg.fieldLabel}`" 
         :max="100" 
         class="each_property textarea" 
-        :class="{'readonly': cfg.readOnly}"
+        :class="{'readonly': cfg.readOnly,'textRinght':!values[cfg.fieldCode]}"
         @input="onInput" 
         :readonly = "cfg.readOnly">
 
@@ -67,7 +67,7 @@ export default Vue.component('R2TextArea',cfg);
 .readonly{
     border-bottom: none !important;
 }
-.textarea /deep/ .weui-textarea{
+.textRinght /deep/ .weui-textarea{
     text-align: right;
 }
 

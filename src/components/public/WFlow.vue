@@ -4,15 +4,26 @@
     <div class="work-flow-header">
       <span class="work_flow_title vux-1px-l">{{this.formData.transTypeName}}</span>
       <span class="check_more" v-if="fullWorkFlow.length" @click="goWorkFlowFull">
-        <i class="icon-flow-time"></i>工作流已到{{currentStatus.nodeName}}<i class="icon-right"></i>
+        <i class="icon-flow-time"></i>
+        <span v-if="workFlowInfo.biStatus==='进行中'">工作流已到{{currentStatus.nodeName}}</span>
+        <span v-else>查看工作流</span>
+        <i class="icon-right"></i>
       </span>
     </div>
+
     <div class="work-flow-status-wrapper hight-line">
       <div>{{this.formData.transCode}}</div>
       <div class="biStatus" v-instanceStateDirective="{status:workFlowInfo.biStatus}" >{{workFlowInfo.biStatus}}</div>
-      
     </div>
-    <r-picker title="流程状态" v-if="statusList.length" :data="statusList" :value="nowStatus" v-model="nowStatus" @input="updateProcessStatus"></r-picker>
+
+    <r-picker title="流程状态" 
+        v-if="statusList.length" 
+        :data="statusList" 
+        :value="nowStatus" 
+        v-model="nowStatus" 
+        @input="updateProcessStatus">
+      </r-picker>
+      
   </div>
 </template>
 <script>

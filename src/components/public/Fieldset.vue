@@ -10,7 +10,7 @@
           </span>
         </div>
       </header> -->
-      <div class="readOnlyPart" v-if="readOnlyParts.length && styleType == 0">
+      <div class="readOnlyPart" v-if="readOnlyParts.length">
         <!-- <template v-for="(item, index) in readOnlyParts">
           <div class="item" :key="index">
             <span >{{item.fieldLabel}}：</span>
@@ -115,10 +115,13 @@ var component = {
         }
       
         this.editParts = items; // 可编辑部分 
-        console.log('----'+this.cfg.name + '---');
-        console.log('readOnlyParts',this.readOnlyParts);
-        console.log('editParts',this.editParts);
-        console.log('----'+this.cfg.name + '---');
+        if(this.cfg.name==='comment'){
+          console.log('----'+this.cfg.name + '---');
+          console.log('readOnlyParts',this.readOnlyParts);
+          console.log('editParts',this.editParts);
+          console.log('----'+this.cfg.name + '---');
+        }
+       
     },
     formatByType(value,type){
       if(value == null) return '无';
