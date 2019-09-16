@@ -110,6 +110,12 @@ var component = {
     pushActions(action) {
       this.actions.push(action);
     },
+    deleteActions(action) {
+      if(this.actions.length === 0) return;
+      if(this.actions.indexOf(action) > -1){
+        this.actions.splice(this.actions.indexOf(action),1);
+      }
+    },
     //处理按钮的判断
     async dealActionInfo() {
       await this.getListInfo();
@@ -137,6 +143,9 @@ var component = {
       if ((action.add && model != 'marking' && statusText =='已生效') || (model == 'view'&&  statusText =='已生效') || !this.isMyTask) {
         me.pushActions('newFile');
         me.pushActions('copyNew');
+      }
+      if(model === 'revise') {
+        me.deleteActions('newFile');
       }
       if (statusText === '草稿' && model != 'edit') {
         me.pushActions('edit')  
@@ -513,6 +522,7 @@ var component = {
     },
   },
   created () {
+    debugger
     var form = this.$parent;
     
     this.form = form;
