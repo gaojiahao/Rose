@@ -113,7 +113,7 @@ export default Vue.component('R2Datefield',cfg);
         }
 
         .placeholder{
-            color: #ddd;
+            color:  #757575;
         }
     }
 }

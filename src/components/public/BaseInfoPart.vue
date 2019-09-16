@@ -1,12 +1,12 @@
 <template>
     <div class="baseinfopart">
-        <div class="baseinfopart-header">
+        <div class="baseinfopart-header" @click="styleType=!styleType;">
             <div>
                 <strong>{{values['handlerUnitName']}}</strong>>
                 <strong>{{values['handlerRoleName']}}</strong>>
                 <strong>{{values['handlerName']}}</strong>
             </div>
-            <div  @click="styleType=!styleType;">
+            <div  >
                 <i class="style-toogleBar" :class="styleType?'icon-up':'icon-down'"></i>
             </div>
         </div>
