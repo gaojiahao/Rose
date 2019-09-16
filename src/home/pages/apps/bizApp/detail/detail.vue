@@ -169,8 +169,8 @@ export default {
       try {
         if(!fileName || fileName == 'null'){
             this.currentComponent = require(`components/detail/CommonForm.vue`).default;
-            this.getAppExampleDetails();
-            this.getAutoSubjectCount();
+            // this.getAppExampleDetails();
+            // this.getAutoSubjectCount();
         } else {
             this.currentComponent = require(`components/detail/${folder}/${fileName}Form.vue`).default;
         }
