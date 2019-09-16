@@ -14,9 +14,9 @@
       <div class="main-single">
         <template v-for="(field,index) in singleField" >
             <div :key="index" class="main-single-item" v-if="field.kField">
-              <span>{{field.alias ? field.alias : field.fieldName}}</span>
-              <span v-if="field.fieldCode !== 'biComment'">{{item[field.fieldCode]}}</span>
-              <span v-else class="single-item-value">{{item[field.fieldCode]}}</span>
+              <span class="fieldLabel">{{field.alias ? field.alias : field.fieldName}}</span>
+              <span class="fieldValue" v-if="field.fieldCode !== 'biComment'">{{item[field.fieldCode]}}</span>
+              <span class="fieldValue" v-else >{{item[field.fieldCode]}}</span>
             </div>
         </template>
       </div>
@@ -31,7 +31,7 @@
               <template v-for="(field,index) in multipleField">
                 <div :key="index"   v-if="field.kField">
                   <div >
-                    <span >{{field.alias ? field.alias : field.fieldName}}</span>
+                    <span >{{field.alias ? field.alias : field.fieldName}}:</span>
                     <span>{{detail[field.fieldCode]}}</span>
                   </div>
                 </div>
@@ -350,6 +350,19 @@ export default Vue.component("ListItem", {
 }
 .r-row:last-child {
   margin-bottom: 0rem;
+}
+
+.fieldLabel{
+  max-width: 30%;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+}
+.fieldValue{
+  max-width: 70%;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
 }
 </style>
 

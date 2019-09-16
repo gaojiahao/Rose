@@ -39,7 +39,7 @@
           <div class="trans-item-info">
             <template v-for="(item, index) in keyFiled" class="cell when-is-right">
               <div class="" v-if="item.kField" :key="'keyFiled' + index" >
-                <span>{{item.text}}：</span>
+                <span>{{item.text}}:</span>
                 <span   v-if="item.editorType=='r2Percentfield'">{{formatByType(row[item.fieldCode],item.editorType)}}%</span>
                 <span v-else  >{{formatByType(row[item.fieldCode],item.editorType)}}</span>
               </div>

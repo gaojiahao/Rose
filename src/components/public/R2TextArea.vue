@@ -1,5 +1,6 @@
 <template>
     <x-textarea 
+        autosize=true
         :value="values[cfg.fieldCode]" 
         :placeholder="`请输入${cfg.fieldLabel}`" 
         :max="100" 
