@@ -16,7 +16,7 @@
             <div :key="index" class="main-single-item" v-if="field.kField">
               <span class="fieldLabel">{{field.alias ? field.alias : field.fieldName}}:</span>
               <span class="fieldValue" v-if="field.fieldCode !== 'biComment'">{{item[field.fieldCode]}}</span>
-              <span class="fieldValue" v-else >{{item[field.fieldCode]}}</span>
+              <span class="fieldValue" v-else >{{formatValues(item[field.fieldCode])}}</span>
             </div>
         </template>
       </div>
@@ -32,7 +32,7 @@
                 <div :key="index"   v-if="field.kField">
                   <div >
                     <span >{{field.alias ? field.alias : field.fieldName}}:</span>
-                    <span>{{detail[field.fieldCode]}}</span>
+                    <span>{{formatValues(detail[field.fieldCode])}}</span>
                   </div>
                 </div>
               </template>
@@ -205,6 +205,17 @@ export default Vue.component("ListItem", {
      
      return url;
     },
+    formatValues(val){
+      if(typeof(val) === 'number'){
+        return this.numberCommaNumer(val);
+      }
+
+      if(typeof(val) === 'string' && val.includes('00:00:00')){
+        return val.replace('00:00:00','');
+      }
+      
+      return val;
+    }
   },
   created(){
     
