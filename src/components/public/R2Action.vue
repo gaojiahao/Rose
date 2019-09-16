@@ -442,7 +442,7 @@ var component = {
     },
     showViewModel(model) {//new||view||edit||revise
       let me = this,
-          { folder, fileName} = this.$route.query,
+          { folder, fileName,name} = this.$route.query,
           { listId } = this.$route.params;
      
       getFormViews(listId).then(data=>{
@@ -465,6 +465,7 @@ var component = {
               me.$router.replace({
                 path: '/' + wrapper +'/' + listId + '/' + viewId ,
                 query: {
+                  name,
                   model,
                   folder: folder, fileName:fileName,
                   transCode: model == 'new' ? undefined : me.code
