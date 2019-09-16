@@ -522,7 +522,6 @@ var component = {
     },
   },
   created () {
-    debugger
     var form = this.$parent;
     
     this.form = form;
