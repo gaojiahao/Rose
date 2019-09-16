@@ -9,7 +9,8 @@ export default {
             hidden:false,
             disabled:false,
             allowBlank:false,
-            fieldLabel:''
+            fieldLabel:'',
+            submitValue:false,
         }
     },
     created(){
@@ -28,6 +29,7 @@ export default {
             this.valueChangeKey = 'value-change-' + id;
             this.blankText = cfg.fieldLabel + '不能为空！'
             this.fieldLabel = cfg.fieldLabel;
+            this.submitValue = cfg.submitValue;
             this.initOption(cfg);
             if(cfg.wfParam){
                 form.wfParamFieldMap[cfg.wfParam] = fieldCode;
@@ -168,12 +170,18 @@ export default {
             this.form.setValue(cfg.fieldCode,value,this);
             this.form.$emit(this.valueChangeKey,this);
         },
+        setHidden:function(value) {
+            this.hidden = value;
+        },
+        setSubmitValue:function(value) {
+            this.submitValue = value;
+        },
         getErrors:function(){
             var me = this,
                 value = me.getValue(),
                 errors = [];
            
-            if(!me.allowBlank && value == null){
+            if(!me.allowBlank && value == null && me.submitValue){
                 errors.push(me.blankText);
                 this.$vux.alert.show({
                     content: me.blankText
@@ -216,7 +224,7 @@ export default {
                 numberVerify = cfg.numberVerify,
                 result = true;
             
-            if(!numberVerSel&&!numberVerify) return result;
+            if((!numberVerSel&&!numberVerify)||!me.submitValue) return result;
 
             var value = me.getValue(),
                 fields = me.form.fields,
