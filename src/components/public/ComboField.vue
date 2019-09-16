@@ -202,7 +202,7 @@ let cfg = {
       }
     },
     load:function(cb){
-      var store = this.store,
+      var store = this.store||{},
           filter,
           data = {
             limit: this.limit,
@@ -221,20 +221,22 @@ let cfg = {
           data.filter = JSON.stringify(filter);
       };
       data = {...data,...store.params};
-      $flyio.ajax({
-          url: this.store.url,
-          data
-      }).then(({dataCount = 0, tableContent = []}) => {
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
-          this.$nextTick(() => {
-              if (this.$refs.bScroll) {
-                this.$refs.bScroll.finishPullUp();
-              }
-          });
-          this.$emit('load',this.listData);
-          if(cb)cb();
-      })
+      if(store.url){
+        $flyio.ajax({
+            url: this.store.url,
+            data
+        }).then(({dataCount = 0, tableContent = []}) => {
+            this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+            this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
+            this.$nextTick(() => {
+                if (this.$refs.bScroll) {
+                  this.$refs.bScroll.finishPullUp();
+                }
+            });
+            this.$emit('load',this.listData);
+            if(cb)cb();
+        })
+      }
     },
     // 弹窗展示时调用
     onShow() {
