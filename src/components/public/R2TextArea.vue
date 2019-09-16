@@ -1,6 +1,6 @@
 <template>
     <x-textarea 
-        autosize=true
+        autosize
         :value="values[cfg.fieldCode]" 
         :placeholder="`请输入${cfg.fieldLabel}`" 
         :max="100" 
@@ -8,7 +8,6 @@
         :class="{'readonly': cfg.readOnly,'textRinght':!values[cfg.fieldCode]}"
         @input="onInput" 
         :readonly = "cfg.readOnly">
-
         <template slot="label">
         <label 
             :class="{required : !cfg.allowBlank,'readonly':cfg.readOnly}" 
@@ -30,6 +29,7 @@ let  cfg = {
             var value = e;
             this.setValue(value);
         },
+        
     }
 }
 export default Vue.component('R2TextArea',cfg);
@@ -52,7 +52,7 @@ export default Vue.component('R2TextArea',cfg);
     height:auto;
     line-height: normal;
     align-items:normal;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #e8e8e8;
     padding-top: .05rem;
     &:before{
         border-top:none;
@@ -65,9 +65,9 @@ export default Vue.component('R2TextArea',cfg);
     }
 }
 
-.readonly{
-    border-bottom: none !important;
-}
+// .readonly{
+//     border-bottom: none !important;
+// }
 .textRinght /deep/ .weui-textarea{
     text-align: right;
 }

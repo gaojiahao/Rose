@@ -15,6 +15,7 @@ let rtext = Vue.component('r2Textfield', {
         var self = this,
             cfg = this.cfg,
             values = this.values || {};
+        // debugger
         //  暂时用textfield RNumber 还没有只读状态下的视图
         return ['r2Textfield'].includes(cfg.xtype) ? c(
             'div',

@@ -61,10 +61,12 @@ export default {
             
             if(form.model == 'new' && values[cfg.fieldCode] == null && cfg.readOnly == true && hasValueBind && cfg.allowBlank == true){
                 this.hidden = true;
-            } else if(fieldSet.styleType == 0 && cfg.readOnly == true){
-                this.hidden = true;
-                fieldSet.$on('change-styleType',this.onStyleTypeChange)
-            }else {
+            } 
+            // else if(fieldSet.styleType == 0 && cfg.readOnly == true){
+            //     // this.hidden = true;
+            //     fieldSet.$on('change-styleType',this.onStyleTypeChange)
+            // }
+            else {
                 this.hidden = cfg.hiddenInRun;
             }
             

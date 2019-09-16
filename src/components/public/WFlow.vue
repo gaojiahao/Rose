@@ -255,6 +255,7 @@ export default Vue.component('WFlow',component)
       color: white;
       padding: 0.02rem 0.04rem;
       border-radius: 0.10rem;
+      font-size: 0.12rem;
     }
     .status-process {
       display: flex;

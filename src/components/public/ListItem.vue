@@ -14,7 +14,7 @@
       <div class="main-single">
         <template v-for="(field,index) in singleField" >
             <div :key="index" class="main-single-item" v-if="field.kField">
-              <span class="fieldLabel">{{field.alias ? field.alias : field.fieldName}}</span>
+              <span class="fieldLabel">{{field.alias ? field.alias : field.fieldName}}:</span>
               <span class="fieldValue" v-if="field.fieldCode !== 'biComment'">{{item[field.fieldCode]}}</span>
               <span class="fieldValue" v-else >{{item[field.fieldCode]}}</span>
             </div>
@@ -38,7 +38,7 @@
               </template>
               <template v-for="(field,index) in summaryField">
                 <div :key="1+'-'+index" class="summary-item" >
-                  <span class="summary-item-label">{{field.alias ? field.alias : field.fieldName}}</span>
+                  <span class="summary-item-label">{{field.alias ? field.alias : field.fieldName}}:</span>
                   <span class="summary-item-value">{{numberCommaNumer(detail[field.fieldCode])}}</span>
                 </div>
               </template>
@@ -52,7 +52,7 @@
     <div class="summary-info" v-if="item.detailItem.length>1">
       <div class="summary-info-count" >
         <p>共{{item.detailItem.length}}条明细</p>
-        <p v-if="item.detailItem.length>3">点击请查看更多...</p>
+        <p v-if="item.detailItem.length>3">查看更多...</p>
       </div>
       <div>
         <template v-for="(field,index) in summaryField" >

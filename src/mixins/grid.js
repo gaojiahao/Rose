@@ -173,7 +173,7 @@ export default {
             }
         },
         formatByType(value,type){
-            if(value == null) return '无';
+            if(value == null) return '-';
             if(~['r2Numberfield','r2Permilfield'].indexOf(type)){
               return util.permilFormat(value);
             } else if(type == 'r2Percentfield'){
