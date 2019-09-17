@@ -547,7 +547,7 @@ export default Vue.component('R2Action',component)
     .handle_btn {
       display: flex;
       flex-wrap: wrap;
-      // justify-content: flex-end;
+      justify-content: flex-end;
       width: 100%;
       padding: 0 .1rem;
       line-height: .12rem;
@@ -557,7 +557,7 @@ export default Vue.component('R2Action',component)
       box-sizing: border-box;
       .btn_item {
         display: inline-block;
-        padding: .08rem .26rem;
+        padding: .05rem .10rem;
         border: 1px solid #9c9c9c;
         background-color: #fff;
         text-align: center;

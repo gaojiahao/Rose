@@ -1,51 +1,47 @@
 <template>
   <div v-show = "!hidden" class="r-fieldset">
     <div class="box" :class="{muti:cfg.isMultiple}">
-      <!-- <header v-show="!cfg.isMultiple">
-        <div class="vux-1px-l">{{cfg.cName}}</div>
-        <div></div>
-        <div class="basic_process_status">
-          <span v-if="hasToogleBar" @click="toggleStyleType()" class="barWrapp">
-            <i class="style-toogleBar" :class="styleType?'icon-up':'icon-down'"></i>
-          </span>
-        </div>
-      </header> -->
-      <div class="readOnlyPart" v-if="readOnlyParts.length && styleType == 0">
-        <r-base-info-part v-if="cfg.name==='baseinfo'" :fields="readOnlyParts" :values="values" ></r-base-info-part>
-        <r-read-only-part :fields="readOnlyParts" :values="values" v-if="cfg.name!='baseinfo'"></r-read-only-part>
+     
+      <div class="readOnlyPart" v-if="cfg.name==='baseinfo' && viewType==='view'" >
+        <r-base-info-part  :fields="editParts" :values="values" ></r-base-info-part>
+        <!-- <r-read-only-part :fields="readOnlyParts" :values="values" v-if="cfg.name!='baseinfo'"></r-read-only-part> -->
       </div>
-      <template v-for="(item, index) in editParts">
-        <r2Textfield :cfg="item" :values="values" v-if="item.xtype == 'r2Textfield' && item.fieldCode != 'biComment'" :key="index"/>
-        <r2TextArea :cfg="item" :values="values" v-if="item.xtype == 'r2TextArea'" :key="index"/>
-        <r2TextArea :cfg="item" :values="values" v-if="item.xtype == 'r2Textfield' && item.fieldCode == 'biComment'" :key="index"/>
-        <!-- 暂时用textfield RNumber 还没有只读状态下的视图 -->
-        <r2Numberfield
-          :cfg="item"
-          :values="values"
-          v-if="item.xtype == 'r2Numberfield'"
-          :key="index"
-        />
-        <r2Permilfield
-          :cfg="item"
-          :values="values"
-          v-if="item.xtype == 'r2Permilfield'"
-          :key="index"
-        />
-        <r2Datefield :cfg="item" :values="values" v-if="item.xtype == 'r2Datefield'" :key="index"/>
-        <r2Percentfield :cfg="item" :values="values" v-if="item.xtype == 'r2Percentfield'" :key="index"/>
-        <r2Combofield
-          :cfg="item"
-          :values="values"
-          v-if="['r2Selector','r2Combo','r2SelectorPlus'].indexOf(item.xtype)!=-1"
-          :key="index"
-        />
-        <r-grid
-          :cfg="item"
-          :values="values[cfg.name]"
-          v-if="item.xtype.indexOf('Grid') != -1"
-          :key="index"
-        />
-      </template>
+      <div  v-if="(cfg.name ==='baseinfo' && viewType!='view' || cfg.name !='baseinfo')" >
+        <template v-for="(item, index) in editParts">
+          
+            <r2Textfield :cfg="item" :values="values" v-if="item.xtype == 'r2Textfield' && item.fieldCode != 'biComment'" :key="index"/>
+            <r2TextArea :cfg="item" :values="values" v-if="item.xtype == 'r2TextArea'" :key="index"/>
+            <r2TextArea :cfg="item" :values="values" v-if="item.xtype == 'r2Textfield' && item.fieldCode == 'biComment'" :key="index"/>
+            <!-- 暂时用textfield RNumber 还没有只读状态下的视图 -->
+            <r2Numberfield
+              :cfg="item"
+              :values="values"
+              v-if="item.xtype == 'r2Numberfield'"
+              :key="index"
+            />
+            <r2Permilfield
+              :cfg="item"
+              :values="values"
+              v-if="item.xtype == 'r2Permilfield'"
+              :key="index"
+            />
+            <r2Datefield :cfg="item" :values="values" v-if="item.xtype == 'r2Datefield'" :key="index"/>
+            <r2Percentfield :cfg="item" :values="values" v-if="item.xtype == 'r2Percentfield'" :key="index"/>
+            <r2Combofield
+              :cfg="item"
+              :values="values"
+              v-if="['r2Selector','r2Combo','r2SelectorPlus'].indexOf(item.xtype)!=-1"
+              :key="index"
+            />
+            <r-grid
+              :cfg="item"
+              :values="values[cfg.name]"
+              v-if="item.xtype.indexOf('Grid') != -1"
+              :key="index"
+            />
+        </template>
+            </div>
+
     </div>
   </div>
 </template>
@@ -64,7 +60,8 @@ var component = {
       visibleItemsLength: 0, //
       hasToogleBar: false,
       editParts: [],
-      readOnlyParts: []
+      readOnlyParts: [],
+      viewType:null
     };
   },
   created: function() {
@@ -74,6 +71,7 @@ var component = {
      this.hidden = cfg.hiddenInRun;
      this.submitValue = cfg.submitValue;
      this.form = this.$parent.form;
+     this.viewType = this.form.viewInfo.viewType;
      this.buildItems();
      this.initWatch(cfg.watch);
   },
@@ -84,40 +82,20 @@ var component = {
             { items = [], columns = [] } = cfg,
             formModel = this.form.model;
 
-        let readOnlyParts = [],
-            i = 0;
-          
-        if(cfg.layout != "fit"){
+        let hiddenItems,displayItems;
 
-            items.forEach(item => {
-              if (item.readOnly == true &&!item.hiddenInRun) {
-                readOnlyParts.push(item);
-              }
-              if (!item.hiddenInRun) i++;
-            });
+        hiddenItems = items.filter(it=>{
+          return it.hiddenInRun;
+        });
 
-            this.visibleItemsLength = i;
-            this.readOnlyParts = readOnlyParts; // 只读部分
-
-            if (formModel == "new" || this.visibleItemsLength <= this.pageSize) {
-              this.styleType = 1;
-            } else {
-              this.styleType = this.readOnlyParts.length > this.pageSize ? 0 : 1;
-            }
-            this.hasToogleBar = !this.styleType;
-        }
-      
-        this.editParts = items; // 可编辑部分 
-        if(this.cfg.name==='comment'){
-          console.log('----'+this.cfg.name + '---');
-          console.log('readOnlyParts',this.readOnlyParts);
-          console.log('editParts',this.editParts);
-          console.log('----'+this.cfg.name + '---');
-        }
-       
+        displayItems = items.filter(it=>{
+          return !it.hiddenInRun;
+        });
+        this.editParts = hiddenItems.concat(displayItems); // 可编辑部分 
+        // this.editParts = items;
     },
     formatByType(value,type){
-      if(value == null) return '无';
+      if(value == null) return '-';
       if(~['r2Numberfield','r2Permilfield'].indexOf(type)){
         return util.permilFormat(value);
       } else {
@@ -274,6 +252,10 @@ export default Vue.component("RFieldset", component);
   width: 0.14rem;
   height: 0.08rem;
   display: inline-block;
+}
+
+.each_property:not([style*="display:none"]):last-child:after{
+  border-bottom: none;
 }
 
 </style>

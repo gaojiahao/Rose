@@ -351,7 +351,7 @@ export default Vue.component('R2Combofield',cfg);
       overflow: hidden;
   }
   .placeholder{
-    color: #999
+    color: #757575;
   }
       .icon-right{
          width: .08rem;
