@@ -4,7 +4,9 @@
     <div class="trans-info">
         <template v-for="(field,index) in transField">
           <div class="trans-item" :key="index"  v-bind:class="{'bi-status': field.fieldCode==='biStatus'}">
-            <strong v-if="field.fieldCode!=='biStatus'">{{item[field.fieldCode]}}</strong>
+            <strong v-if="field.fieldCode!=='biStatus'">{{item[field.fieldCode]}}
+              <span v-if="item.biProcessStatus">{{item.biProcessStatus}}</span>
+            </strong>
             <span v-if="field.fieldCode==='biStatus'" v-instanceStateDirective="{status:item[field.fieldCode]}" >{{item[field.fieldCode]}}</span>
           </div>
         </template>
@@ -15,7 +17,7 @@
         <template v-for="(field,index) in singleField" >
             <div :key="index" class="main-single-item" v-if="field.kField">
               <span class="fieldLabel">{{field.alias ? field.alias : field.fieldName}}:</span>
-              <span class="fieldValue" v-if="field.fieldCode !== 'biComment'">{{item[field.fieldCode]}}</span>
+              <span class="fieldValue" v-if="field.fieldCode !== 'biComment'">{{formatValues(item[field.fieldCode])}}</span>
               <span class="fieldValue" v-else >{{formatValues(item[field.fieldCode])}}</span>
             </div>
         </template>
@@ -103,7 +105,6 @@ export default Vue.component("ListItem", {
           if(fieldSettingData[fKey]){
               if(fieldSettingData[fKey]['kField']===1){
                   it.kField = 1;
-                  console.log(it.fieldName);
               }
           }
       });
@@ -125,6 +126,7 @@ export default Vue.component("ListItem", {
         'effectiveTime',
         'creatorName',
         'transCode',
+        'biProcessStatus',
         'biStatus'];
       return this.fieldsObj.filter(it=>{
         return !it.isSummary;
@@ -133,15 +135,25 @@ export default Vue.component("ListItem", {
       })
     },
     singleField:function(){
-      var val = [];
+      let fieldSettingData = this.$r2FieldSetting,
+          val = [],
+          fKey;
       for(var key in this.item){
         if(key!= 'detailItem'){
           val.push(key);
         }
       }
       return this.mainField.filter(it=>{
+        fKey = it.fieldCode.split('_')[0];
+        if(fieldSettingData[fKey]){
+              if(fieldSettingData[fKey]['kField']===1){
+                  it.kField = 1;
+                  console.log(it.fieldName);
+              }
+          }
         return val.includes(it.fieldCode);
       });
+      
     },
     multipleField:function(){
       var val = [];
@@ -213,7 +225,7 @@ export default Vue.component("ListItem", {
       if(typeof(val) === 'string' && val.includes('00:00:00')){
         return val.replace('00:00:00','');
       }
-      
+
       return val;
     }
   },

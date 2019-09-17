@@ -1,21 +1,14 @@
 <template>
   <div v-show = "!hidden" class="r-fieldset">
     <div class="box" :class="{muti:cfg.isMultiple}">
-      <!-- <header v-show="!cfg.isMultiple">
-        <div class="vux-1px-l">{{cfg.cName}}</div>
-        <div></div>
-        <div class="basic_process_status">
-          <span v-if="hasToogleBar" @click="toggleStyleType()" class="barWrapp">
-            <i class="style-toogleBar" :class="styleType?'icon-up':'icon-down'"></i>
-          </span>
-        </div>
-      </header> -->
+     
       <div class="readOnlyPart" v-if="cfg.name==='baseinfo' && viewType==='view'" >
         <r-base-info-part  :fields="editParts" :values="values" ></r-base-info-part>
         <!-- <r-read-only-part :fields="readOnlyParts" :values="values" v-if="cfg.name!='baseinfo'"></r-read-only-part> -->
       </div>
+      <div  v-if="(cfg.name ==='baseinfo' && viewType!='view' || cfg.name !='baseinfo')" >
         <template v-for="(item, index) in editParts">
-          <div  v-if="(cfg.name ==='baseinfo' && viewType!='view' || cfg.name !='baseinfo')" :key="index">
+          
             <r2Textfield :cfg="item" :values="values" v-if="item.xtype == 'r2Textfield' && item.fieldCode != 'biComment'" :key="index"/>
             <r2TextArea :cfg="item" :values="values" v-if="item.xtype == 'r2TextArea'" :key="index"/>
             <r2TextArea :cfg="item" :values="values" v-if="item.xtype == 'r2Textfield' && item.fieldCode == 'biComment'" :key="index"/>
@@ -46,8 +39,9 @@
               v-if="item.xtype.indexOf('Grid') != -1"
               :key="index"
             />
-            </div>
         </template>
+            </div>
+
     </div>
   </div>
 </template>
@@ -88,38 +82,17 @@ var component = {
             { items = [], columns = [] } = cfg,
             formModel = this.form.model;
 
-        let readOnlyParts = [],
-            i = 0;
-          
-        // if(cfg.layout != "fit"){
+        let hiddenItems,displayItems;
 
-        //     items.forEach(item => {
-        //       if (item.readOnly == true &&!item.hiddenInRun) {
-        //         readOnlyParts.push(item);
-        //       }
-        //       if (!item.hiddenInRun) i++;
-        //     });
+        hiddenItems = items.filter(it=>{
+          return it.hiddenInRun;
+        });
 
-        //     this.visibleItemsLength = i;
-        //     this.readOnlyParts = readOnlyParts; // 只读部分
-
-        //     // if (formModel == "new" || this.visibleItemsLength <= this.pageSize) {
-        //     //   this.styleType = 1;
-        //     // } else {
-        //     //   this.styleType = this.readOnlyParts.length > this.pageSize ? 0 : 1;
-        //     // }
-        //     // this.hasToogleBar = !this.styleType;
-        // }
-      
-        this.editParts = items; // 可编辑部分 
-        // if(this.cfg.name==='comment'){
-          // console.log('editParts',this.editParts);
-          this.editParts.map(it=>{
-            console.log(it.fieldLabel + '/' + it.xtype,it.hiddenInRun);
-          });
-          console.log('----'+this.cfg.name + '---');
-        // }
-       
+        displayItems = items.filter(it=>{
+          return !it.hiddenInRun;
+        });
+        this.editParts = hiddenItems.concat(displayItems); // 可编辑部分 
+        // this.editParts = items;
     },
     formatByType(value,type){
       if(value == null) return '-';
@@ -279,6 +252,10 @@ export default Vue.component("RFieldset", component);
   width: 0.14rem;
   height: 0.08rem;
   display: inline-block;
+}
+
+.each_property:not([style*="display:none"]):last-child:after{
+  border-bottom: none;
 }
 
 </style>
