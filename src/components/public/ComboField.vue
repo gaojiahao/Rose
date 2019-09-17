@@ -290,7 +290,14 @@ let cfg = {
       this.selection = item;
       this.showPop = false;
       this.value = item[this.cfg.valueField];
-      this.setValue(this.value);
+      //重复项与单一项的默认展示数据需求不一样
+      if(this.$parent.cfg.xtype != "r2GridColumn") {
+        this.setValue(this.value);  
+      } else {
+        if(this.value != this.values[this.cfg.fieldCode]) {
+          this.setValue(this.value);
+        }
+      }
     },
     
     showSelIcon(item){

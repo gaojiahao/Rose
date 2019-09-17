@@ -132,7 +132,14 @@ export default {
                 value = cfg.data[0];
             }
             if(value != null){
-               this.setValue(value);
+                //重复项与单一项的默认展示数据需求不一样
+                if(this.$parent.cfg.xtype != "r2GridColumn") {
+                    this.setValue(value);
+                } else {
+                    if(value != this.values[this.cfg.fieldCode]) {
+                        this.setValue(this.values[this.cfg.fieldCode]);
+                    }
+                }
             }
         },
         initValueBind(valueBind){

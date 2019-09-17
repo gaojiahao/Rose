@@ -1,7 +1,8 @@
 <template>
 <div v-show="!hidden" class="cell each_property vux-1px-b">
     <label :class="{'required':!cfg.allowBlank}">{{cfg.fieldLabel}}</label>
-    <input type="nubmer" v-if="cfg.readOnly == false" :value="values[cfg.fieldCode]" placeholder="请输入" @blur="onInput"/>
+    <input type="nubmer" v-if="cfg.readOnly == false" :value="values[cfg.fieldCode]" placeholder="请输入" @blur="onInput" style="display:none;"/>
+    <input type="text" v-if="cfg.readOnly == false" v-model="number" placeholder="请输入" @blur="valueDeal" />
     <span v-else >{{values[cfg.fieldCode]||'无'}}</span>
 </div>
 </template>
@@ -15,7 +16,7 @@ let  cfg = {
     props:['cfg','values'],
     data() {
         return {
-
+            number:numberComma(this.getValue()||'')|| '',
         }
     },
     methods:{
@@ -29,6 +30,27 @@ let  cfg = {
                 e.target.value = value;
                 this.setValue(value);
             }
+        },
+        valueDeal:function(e){
+            var value = e.target.value;
+                value = this.unNumberComma(value);
+
+            value = this.getNum(value);
+            e.target.value = numberComma(value);
+            this.setValue(value);
+            if(this.dealColumn()) {
+                value = this.getMinAndMaxOfValue();
+                e.target.value = numberComma(value);
+            }
+            this.setValue(value);
+            this.number = numberComma(value);
+        },
+        //千分符转浮点型
+        unNumberComma(value) {
+            value = value.replace(/,/g,'');
+            value = Number(value);
+            value = this.getNum(value);
+            return value;
         },
         getNum(val) {
             return Math.abs(toFixed(val, 2));
