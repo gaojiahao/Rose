@@ -108,14 +108,15 @@
             this.$emit('on-pulling-up');
           });
           // 绑定下拉刷新事件
-          this.bScroll.on('pullingDown', () => {
-            this.disable();
-            this.refreshDone = false;
-            this.$emit('on-pulling-down');
-          });
+          // this.bScroll.on('pullingDown', () => {
+          //   this.disable();
+          //   this.refreshDone = false;
+          //   this.$emit('on-pulling-down');
+          // });
           // 下拉的时候展示下拉刷新的图标
           this.bScroll.on('scroll', ({x, y}) => {
             this.yScrollValue = y;
+            this.$emit('search-box-show',false);
             if (y > 0) {
               if (y > PULL_DOWN_REFRESH_HEIGHT) {
                 this.pullDownTop = 0;
@@ -125,7 +126,16 @@
             } else {
               this.resetPullDown();
             }
-          })
+          });
+          this.bScroll.on('touchEnd',(pos) =>{  //下拉刷新
+            this.resetPullDown();
+            if(pos.y > 30){
+                setTimeout(()=>{
+                    this.$emit('on-pulling-down');
+                    this.$emit('search-box-show',true);
+                },2000)
+            } 
+          });
         })
       },
       // 刷新
@@ -153,7 +163,7 @@
       // 结束上拉加载
       finishPullUp() {
         return new Promise(resolve => {
-          this.bScroll.finishPullUp();
+          this.bScroll && this.bScroll.finishPullUp();
           this.refresh();
           resolve();
         })
@@ -164,6 +174,7 @@
       },
       // 重置下拉刷新图标位置
       resetPullDown() {
+        this.$emit('search-box-show',true);
         if (this.pullDownTop !== -PULL_DOWN_REFRESH_HEIGHT) {
           this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
         }

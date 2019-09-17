@@ -17,6 +17,8 @@ import columnTitle from './components/public/column/Title'
 import fieldset from './components/public/Fieldset'
 import fieldsetCt from './components/public/FieldsetCt'
 import grid from './components/public/Grid'
+import ReadOnlyPart from './components/public/ReadOnlyPart'
+import BaseInfoPart from './components/public/BaseInfoPart'
 import gridDetail from './components/public/GridDetail'
 import transactorView from './components/public/TransactorView'
 import matterListView from './components/public/MatterListView'
@@ -35,6 +37,8 @@ import { AlertPlugin, ConfirmPlugin, ToastPlugin, TransferDom, DatetimePlugin } 
 import Loading from 'plugins/loading/pageLoad/loading'
 import HandleLoad from 'plugins/loading/handleLoad/handleLoading'
 import commonService from "service/commonService";
+
+require('@/directive')
 
 Vue.use(Loading)
 Vue.use(HandleLoad)
@@ -60,10 +64,13 @@ Vue.clone = function(a){
 router.afterEach((to, from) => {
   document.title = to.meta.title || '';
 })
+
 new Vue({
   router,
   render: h => h(App)
 }).$mount('#app-box')
+
+
 /* eslint-disable no-new */
 
 FastClick.prototype.focus = function(targetElement) {

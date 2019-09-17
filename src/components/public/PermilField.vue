@@ -42,7 +42,7 @@ let cfg = {
             cfg = me.cfg,
             value = me.getValue();
 
-        if((!cfg.readOnly) && (!cfg.hiddenInRun) && cfg.submitValue) {
+        if((!cfg.readOnly) && (!cfg.hiddenInRun) && me.submitValue) {
           if(util.isString(value)) {
             value = this.unNumberComma(value);
             this.setValue(value);

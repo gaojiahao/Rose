@@ -33,6 +33,7 @@ let webpackConfig = {
       'msgPage': resolve('src/msg/pages'),
       'homePage': resolve('src/home/pages'),
       'components': resolve('src/components'),
+      'directive': resolve('src/directive'),
     }
   },
   module: {

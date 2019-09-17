@@ -32,6 +32,7 @@
   import {deleteFile,upload} from 'service/commonService';
   import {chooseImage, uploadImage} from 'plugins/wx/api'
   import {isIOS,isIPhone,isIPad,isAndroid,isPC,isQYWX} from '@/plugins/platform/index'
+import { debug } from 'util';
 
   var component = {
     props: {
@@ -217,7 +218,7 @@
                     attr2: data[0].attr2,
                     iconType: vm.judgeFileType(data[0].attr1),
                     id: data[0].id,
-                    referenceId: data[0].biReferenceId,
+                    biReferenceId: data[0].biReferenceId,
                     status: 1,
                   };
               vm.uploadSuccess(detail);
@@ -240,9 +241,9 @@
       },
       uploadSuccess:function(detail){
         this.files.push(detail);
-        this.biReferenceId = detail.referenceId;
+        this.biReferenceId = detail.biReferenceId;
         this.form.$emit('on-upload', {
-          biReferenceId: detail.referenceId,
+          biReferenceId: detail.biReferenceId,
         });
       }
     },
@@ -258,9 +259,7 @@
 
 <style scoped lang="scss">
   .upload-file-container {
-    margin: .1rem;
     padding: .15rem;
-    width: calc(100% - .2rem);
     background-color: #fff;
     color: #333;
     box-sizing: border-box;

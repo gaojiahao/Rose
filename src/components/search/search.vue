@@ -1,7 +1,7 @@
 <template>
   <div class='search'>
     <form class="search_part" :class="{'has-filter': filterList.length}" action=""
-          @submit.prevent="searchMat(srhInpTx)">
+          @submit.prevent="searchMat(srhInpTx)" v-show="searchBoxShows">
       <i class="icon icon-search"></i>
       <input ref="searchInp" class="srh_inp" type="search" autocomplete="off"
             :placeholder="placeHolder" @input='getValue($event)' :value='srhInpTx' @focus="isShowDrop = true">
@@ -34,6 +34,10 @@
       isFill: {//是否为提交页面
         type: Boolean,
         default: false
+      },
+      searchBoxShows:{
+        type: Boolean,
+        default: true  
       },
       filterList: {
         type: Array,
@@ -68,9 +72,12 @@
       Icon,
       RDropdown,
     },
-    created(){
-      var defaultValue = this.defaultValue;
-      if(defaultValue)this.srhInpTx = defaultValue;
+    // created(){
+    //   var defaultValue = this.defaultValue;
+    //   if(defaultValue)this.srhInpTx = defaultValue;
+    // },
+    mounted() {
+      this.clear();
     },
     methods: {
       getValue(e) {

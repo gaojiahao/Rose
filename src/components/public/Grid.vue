@@ -12,9 +12,9 @@
     </template>
     <!-- 已经选择了物料 -->
     <template v-else>
-      <div class="has-data-header" @click="toggleEditStatus">
+      <div class="has-data-header">
         <div class="title">{{listTitle||'物料列表'}}</div>
-        <div v-if="!cfg.readOnly && values && values.length">
+        <div @click="toggleEditStatus" v-if="!cfg.readOnly && values && values.length">
           <div class="edit" v-if="!isEdit">管理</div>
           <div class="edit" v-else>完成</div>
         </div>
@@ -25,22 +25,49 @@
         class="r-row"
         v-for="(row,rIndex) in values"
         :key="rIndex"
-        :class="{row_delete : isEdit,'vux-1px-b' : rIndex < values.length - 1 }"
-      >
+        :class="{row_delete : isEdit,'vux-1px-b' : rIndex < values.length - 1 }">
+        
         <div class="edit-btn-wrapper">
          <span class="icon-matter-bianji" @click.stop="onShowDetail(row,rIndex)" v-show="!isEdit && !cfg.readOnly"></span>
-         </div>
-        <template v-for="(item, index) in cfg.columns" class="cell when-is-right">
-         
-          <div class="item" v-if="item.hidden == false" :key="index">
-            <span>{{item.text}}：</span>
-            <span>{{formatByType(row[item.fieldCode],item.editorType)}}</span>
+        </div>
+
+        <div class="trans-item">
+          <div class="trans-item-img">
+            <img  :src="getImgPic(row)" >
           </div>
-        </template>
+         
+          <div class="trans-item-info">
+            <template v-for="(item, index) in keyFiled" class="cell when-is-right">
+              <div class="" v-if="item.kField" :key="'keyFiled' + index" >
+                <span>{{item.text}}:</span>
+                <span   v-if="item.editorType=='r2Percentfield'">{{formatByType(row[item.fieldCode],item.editorType)}}%</span>
+                <span v-else  >{{formatByType(row[item.fieldCode],item.editorType)}}</span>
+              </div>
+            </template>
+            <!-- <template v-for="(item, index) in numberField" class="cell when-is-right">
+              <div class="item" :key="'numberField' + index">
+                <span>{{item.text}}：{{item.fieldCode}}</span>
+                <span v-if="item.editorType=='r2Percentfield'">{{formatByType(row[item.fieldCode],item.editorType)}}%</span>
+                <span v-else>{{formatByType(row[item.fieldCode],item.editorType)}}</span>
+              </div>
+            </template>
+            
+            <template v-for="(item, index) in summaryField" class="cell when-is-right">
+              <div class="summary-item" :key="'summaryField' + index">
+                <span class="summary-item-label">{{item.text}}：{{item.fieldCode}}</span>
+                <span class="summary-item-value" v-if="item.editorType=='r2Percentfield'">{{formatByType(row[item.fieldCode],item.editorType)}}%</span>
+                <span class="summary-item-value" v-else>{{formatByType(row[item.fieldCode],item.editorType)}}</span>
+              </div>
+            </template> -->
+
+          </div>
+        </div>
+
         <div @click.stop="onShowDetail(row,rIndex)" class="show-more" v-show="!isEdit && cfg.readOnly">
-          查看详情
+          其他
           <i class="icon-more"></i>
         </div>
+
         <div class="delete_icon" @click="delClick(rIndex)" v-if="isEdit">
           <x-icon type="ios-checkmark" size="20" class="checked" v-show="isChecked(rIndex)"></x-icon>
           <x-icon type="ios-circle-outline" size="20" v-show="!isChecked(rIndex)"></x-icon>
@@ -49,6 +76,18 @@
       </div>
       <!--row-->
       <div v-show="(!values || values.length == 0) && hasDs" class="no-data">无</div>
+
+      <div class="summary-info" v-if="(values && values.length > 1)">
+        <div class="summarry-info-count">共{{this.values.length}}条明细</div>
+         <div>
+            <template v-for="(item, index) in summaryField" >
+              <div class="summary-item" v-if="item.hidden == false" :key="index">
+                <span class="summary-item-label">{{item.text}}：</span>
+                <span class="summary-item-value">{{formatByType(summaryValue[item.fieldCode],item.editorType)}}</span>
+              </div>
+            </template>
+         </div>
+      </div>
     </div>
     <div
       class="add-more-wrapper"
@@ -87,10 +126,60 @@ import Vue from "vue";
 import dao from "plugins/ajax";
 import gridPicker from "./GridPicker";
 import girdMix from "mixins/grid";
+import objList from '../../common/const/obj-app';
 var component = {
   mixins: [girdMix],
   components: { gridPicker },
   props: ["cfg", "values", "btnIsHide"],
+  computed:{
+    curObj:function() {
+      
+      if(!this.values || this.values.length < 1) return;
+      let fieldSettingData = this.$r2FieldSetting,
+        obj,
+        objKey,
+        fKey;
+          
+      this.keyFiled.map(it=>{
+          objKey = it.fieldCode.indexOf('_') > -1 ? it.fieldCode.split('_')[1] : it.fieldCode;
+          fKey = it.fieldCode.split('_')[0];
+
+          if(fieldSettingData[objKey]){
+              if(fieldSettingData[objKey]['objCode']){
+                  obj = objList.getObjectByName(fieldSettingData[objKey]['objCode'])[0];
+              }
+          }
+          if(fieldSettingData[fKey]){
+            
+              if(fieldSettingData[fKey]['kField']===1){
+                  it.kField = 1;
+              }
+          }
+      });
+      return obj;
+    },
+    summaryValue:function(){
+      let val = {};
+      this.summaryField.map(it=>{
+        this.values.map(d=>{
+          if(val[it.fieldCode]){
+            (val[it.fieldCode] += Number(d[it.fieldCode]));
+          }else{
+            val[it.fieldCode] = Number(d[it.fieldCode]);
+          }
+        });
+      });
+
+      for(var k in val){
+        if(isNaN(val[k])){
+          val[k] = '无';
+        }else{
+          val[k] = val[k].toFixed(2)
+        }
+      }
+      return val;
+    }
+  },
   data() {
     return {
       showDetail: false,
@@ -100,6 +189,18 @@ var component = {
     };
   },
   methods: {
+    //选择默认图片
+    getImgPic(d) {
+       let url;
+      if(d){
+        let pic = this.curObj ? this.curObj.picKey : '',
+            defaultUrl = this.curObj ? this.curObj.defaultUrl : 'wl_default03.png';
+        url =  d[pic] ? d[pic] : '/static/' + defaultUrl;
+      }else{
+        url = require('assets/wl_default03.png');
+      }
+     return url;
+    },
     checkAmt() {},
     setValue: function(value) {
       this.$set(this.form.formData, this.name, value);
@@ -138,7 +239,7 @@ var component = {
           }
         }
       }
-    },
+    },  
     onShowDetail(row, rowIndex) {
       this.detail = row;
       this.detailRowNumer = rowIndex;
@@ -152,6 +253,26 @@ var component = {
       form = fieldSet.form,
       values = this.values,
       name = fieldSet.name;
+    
+    this.keyFiled = this.cfg.columns.filter(it=>{
+      return !it.hidden;
+    });
+    
+    // .filter((v,i)=>{
+    //   return i<2;
+    // });
+
+    this.numberField = this.cfg.columns.filter(it=>{
+      return !it.hidden;
+    }).filter((it)=>{
+      return ['r2Numberfield','r2Percentfield '].includes(it.editorType) && it.summaryType !== 'sum';
+    });
+
+    this.summaryField = this.cfg.columns.filter(it=>{
+      return !it.hidden;
+    }).filter((it)=>{
+      return ['r2Numberfield','r2Percentfield '].includes(it.editorType) && it.summaryType === 'sum';
+    });
 
     form.fieldMap[id] = this;
     this.isGrid = true;
@@ -170,47 +291,7 @@ export default Vue.component("RGrid", component);
 </script>
 
 <style lang="scss">
-.r-row {
-  margin: 0.05rem 0 0.05rem;
-  line-height: 0.22rem;
-  font-size: 0.12rem;
-  span:nth-child(2n + 1) {
-    color: #aaa;
-  }
-  span:nth-child(2n) {
-    font-weight: 400;
-    font-size: 0.13rem;
-  }
-  &.vux-1px-b:after {
-    border-color: #e8e8e8;
-  }
-  &.vux-1px-b:last-child:after {
-    border: none;
-  }
-  .edit-btn-wrapper{
-    position: relative;
-  }
-  .icon-matter-bianji {
-    width: .28rem;
-    height: .28rem;
-    position: absolute;
-    right: 0;
-    top: .03rem;
-  }
-  .show-more {
-    text-align: right;
-    color: blue;
-    .icon-more {
-      display: inline-block;
-      width: 0.2rem;
-      height: 0.04rem;
-    }
-  }
-  .item {
-    display: inline-flex;
-    margin-right: 0.2rem;
-  }
-}
+
 .row_delete {
   position: relative;
   padding-left: 0.3rem;
@@ -262,7 +343,98 @@ export default Vue.component("RGrid", component);
       color: #696969;
     }
     .edit {
-      color: #333;
+      color: #39f;
+    }
+  }
+  //明细数据容器
+  .r-row-ct{
+    .r-row {
+      margin: 0.05rem 0 0.05rem;
+      line-height: 0.20rem;
+      font-size: 0.12rem;
+
+      .trans-item{
+        display: flex;
+        .trans-item-img{
+          img{
+            width: 0.85rem;
+          }
+        }
+        .trans-item-info{
+          margin-left: 0.05rem;
+
+          .summary-item{
+            display: flex;
+            justify-content: space-between;
+
+            .summary-item-value{
+              color: #4CA3FB;
+              font-weight: bold;
+            }
+          }
+        }
+      }
+      span:nth-child(2n + 1) {
+        color: #aaa;
+      }
+      span:nth-child(2n) {
+        font-weight: 400;
+        font-size: 0.13rem;
+      }
+      &.vux-1px-b:after {
+        border-color: #e8e8e8;
+      }
+      &.vux-1px-b:last-child:after {
+        border: none;
+      }
+      .edit-btn-wrapper{
+        position: relative;
+      }
+      .icon-matter-bianji {
+        width: .28rem;
+        height: .28rem;
+        position: absolute;
+        right: 0;
+        top: .03rem;
+      }
+      .show-more {
+        text-align: right;
+        height: 0.25rem;
+        line-height: 0.25rem;
+        font-size: .14rem;
+        color: #39f;
+        .icon-more {
+          display: inline-block;
+          width: 0.2rem;
+          height: 0.04rem;
+        }
+      }
+      .item {
+        display: inline-flex;
+        margin-right: 0.05rem;
+      }
+    }
+    .summary-info{
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 600;
+      border-top: 1px solid #ddd;
+      padding: 0.05rem 0rem;
+      color:#605a5a;
+      .summary-item{
+        display: flex;
+        justify-content: space-between;
+
+        .summary-item-label{
+
+        }
+
+        .summary-item-value{
+          color: #4CA3FB;
+        }
+
+      }
     }
   }
   .add-more-wrapper {
@@ -292,8 +464,10 @@ export default Vue.component("RGrid", component);
       line-height: 0.12rem;
     }
   }
+  
 }
 .grid-manger-wrapper {
   z-index: 100;
 }
+
 </style>

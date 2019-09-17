@@ -141,12 +141,12 @@ export default {
                 for (i, l = groupBoxs.length; i < l; i++) {
                     groupBox = groupBoxs[i];
                     if (disableFieldset.indexOf(groupBox) != -1) continue;//避免单一项映射进被禁用的重复项容器。
+                    if (isList && multipleFieldset.indexOf(groupBox) != -1)continue;//避免单一项被映射进重复项 
                     if (!root[groupBox]) {
                         root[groupBox] = {};
                     }
                     node = groupBoxNode = root[groupBox];
                     if (isList) { //后端需要某些单一项表现的像重复项，所以包装成重复项。
-                        if (multipleFieldset.indexOf(groupBox) != -1)continue;//避免单一项被映射进重复项 
                         if (!groupBoxNode.dataSet) {
                             groupBoxNode.dataSet = [{}];
                         }
@@ -347,13 +347,14 @@ export default {
                 this.$HandleLoad.hide();
             });
         },
-        saveAndCommitTask(){
+        saveAndCommitTask(comment){
             var me = this,
                 values = me.getValues(),
                 taskId = me.taskInfo.taskId,
                 transCode = me.transCode,
                 approvalData = me.getApprovalData(),
                 formData = me.formatValues(values),
+                comment = comment || '',
                 param;
 
             if (!me.isValid()){
@@ -367,8 +368,8 @@ export default {
             
             approvalData.transCode = transCode;
             approvalData.result = me.taskType;
-            approvalData.taskId = taskId,
-            //approvalData.comment = formData.biComment;
+            approvalData.taskId = taskId,           
+            approvalData.comment = comment;
     
             param = {
                 listId: me.listId,

@@ -3,7 +3,7 @@
     <popup
       class="grid-detail-container"
       :class="{'has-edit': hasEditPart, 'is-focus': btnIsHide}"
-      height="80%"
+      height="60%"
       v-model="showPop"
       @on-show="onShow"
       @on-hide="onHide"
@@ -34,12 +34,16 @@
         <div class="onlyView-parts" v-if="onlyViewParts.length">
           <div class="onlyView-item" v-for="(item, index) in onlyViewParts" :key="index">
             <span class="title">{{item.text}}</span>
-            <span>{{formatByType(values[item.fieldCode],item.editorType)}}</span>
+            <span class="value" v-if="item.editorType=='r2Percentfield'">{{formatByType(values[item.fieldCode],item.editorType)}}%</span>
+            <span class="value" v-else>{{formatByType(values[item.fieldCode],item.editorType)}}</span>
           </div>
         </div>
       </r-scroll>
       <div class="confirm_btn" @click="confirm" v-if="hasEditPart" v-show="showKeyboard == false">
-        <div class="confirm">确认</div>
+        <div class="confirm">确定</div>
+      </div>
+      <div class="confirm_btn" @click="showPop = false;" v-if="!hasEditPart" v-show="showKeyboard == false">
+        <div class="confirm">关闭</div>
       </div>
     </popup>
   </div>
@@ -193,12 +197,12 @@ export default Vue.component("GridDetail", component);
   background-color: #f6f6f6;
   &.has-edit {
     .scroll-container {
-      height: calc(100% - 0.9rem);
+      // padding-bottom: 0.44rem;
     }
   }
   &.is-focus {
     .scroll-container {
-      height: calc(100% - 0.62rem);
+      // padding-bottom: 0.44rem;
     }
     .confirm_btn {
       display: none;
@@ -229,7 +233,8 @@ export default Vue.component("GridDetail", component);
   }
 
   .scroll-container {
-    height: calc(100% - 0.62rem);
+    // padding-bottom: 0.44rem;
+    height: calc(100% - 0.8rem);
   }
 
   .readOnlyPart {
@@ -253,21 +258,33 @@ export default Vue.component("GridDetail", component);
 
   .edit-part {
     color: #fff;
+    margin: 0.1rem 0;
+    padding: 0 0.09rem;
   }
   /* 其他数据 */
   .onlyView-parts {
-    padding: 0 0.15rem 0.24rem;
+    padding: 0 0.15rem 0rem;
     background-color: #fff;
     .onlyView-item {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
+      -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
       justify-content: space-between;
-      heigth: 0.5rem;
-      line-height: 0.5rem;
+      line-height: 0.30rem;
       font-size: 0.14rem;
+      border-bottom: 1px solid #d7d7d7;
+      .title {
+        color: #999;
+        max-width: 30%;
+      }
+      .value {
+       max-width: 70%;
+       word-break: break-all;
+      }
     }
-    .title {
-      color: #999;
-    }
+    
   }
 
   /* 时间部分 */
@@ -333,12 +350,10 @@ export default Vue.component("GridDetail", component);
     width: 100%;
     box-sizing: border-box;
     background: #fff;
-    padding: 0.08rem 0.2rem;
     .confirm {
       width: 100%;
       height: 0.44rem;
       line-height: 0.44rem;
-      border-radius: 0.04rem;
       background-color: $main_color;
       color: #fff;
       text-align: center;

@@ -2,17 +2,17 @@
 <div v-show="!hidden" class="cell each_property vux-1px-b combo" >
   <label :class="{'required':!cfg.allowBlank,'readonly':cfg.readOnly}">{{cfg.fieldLabel}}</label>
     <div v-if="cfg.readOnly == false" class="content" @click="showPop = true">
-      <span class='mater_nature'>{{values[cfg.fieldCode] || "请选择"}}</span>
+      <span class='mater_nature' :class="{placeholder:!values[cfg.fieldCode]}">{{values[cfg.fieldCode] || "请选择"}}</span>
       <span class="icon-right"></span>
     </div>
     <span v-else >{{values[cfg.fieldCode] == null ? '无' : values[cfg.fieldCode]}}</span>
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
-          <d-search @search="searchList" @turn-off="onHide" :isFill="true" :defaultValue="searchValue"></d-search>
+          <d-search @search="searchList" @turn-off="onHide" :isFill="true" :defaultValue="searchValue" :searchBoxShows="searchBoxShow"></d-search>
           <!-- 往来列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
-                    :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
+                    :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" @search-box-show="searchBox" ref="bScroll">
             <div class="pop-list-item" v-for="(item, index) in listData" :key='index' @click.stop="selItem(item, index)" :class="{selected: showSelIcon(item)}">
               <div class="main">
                   <div class="name">
@@ -59,8 +59,10 @@ let cfg = {
         hasNext: true,
         selection:null,
         scrollOptions: { // 滚动配置
-          pullUpLoad: true
+          pullUpLoad: true,
+          pullDownRefresh: true,
         },
+        searchBoxShow:true,
       }
     },
     methods:{
@@ -200,7 +202,7 @@ let cfg = {
       }
     },
     load:function(cb){
-      var store = this.store,
+      var store = this.store||{},
           filter,
           data = {
             limit: this.limit,
@@ -219,20 +221,22 @@ let cfg = {
           data.filter = JSON.stringify(filter);
       };
       data = {...data,...store.params};
-      $flyio.ajax({
-          url: this.store.url,
-          data
-      }).then(({dataCount = 0, tableContent = []}) => {
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
-          this.$nextTick(() => {
-              if (this.$refs.bScroll) {
-                this.$refs.bScroll.finishPullUp();
-              }
-          });
-          this.$emit('load',this.listData);
-          if(cb)cb();
-      })
+      if(store.url){
+        $flyio.ajax({
+            url: this.store.url,
+            data
+        }).then(({dataCount = 0, tableContent = []}) => {
+            this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+            this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
+            this.$nextTick(() => {
+                if (this.$refs.bScroll) {
+                  this.$refs.bScroll.finishPullUp();
+                }
+            });
+            this.$emit('load',this.listData);
+            if(cb)cb();
+        })
+      }
     },
     // 弹窗展示时调用
     onShow() {
@@ -246,6 +250,10 @@ let cfg = {
     
     onPullingUp() {
       this.page++;
+      this.load();
+    },
+    onPullingDown() {
+      this.page=1;
       this.load();
     },
     // 弹窗隐藏时调用
@@ -312,6 +320,9 @@ let cfg = {
           selection = listData[0];
           this.selItem(selection);
       }
+    },
+    searchBox(data){
+      this.searchBoxShow = data;
     }
   },
   created(){
@@ -331,6 +342,9 @@ export default Vue.component('R2Combofield',cfg);
       max-width:2.5rem;
       text-overflow:ellipsis;
       overflow: hidden;
+  }
+  .placeholder{
+    color: #757575;
   }
       .icon-right{
          width: .08rem;

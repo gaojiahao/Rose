@@ -9,7 +9,8 @@ export default {
             hidden:false,
             disabled:false,
             allowBlank:false,
-            fieldLabel:''
+            fieldLabel:'',
+            submitValue:false,
         }
     },
     created(){
@@ -28,13 +29,17 @@ export default {
             this.valueChangeKey = 'value-change-' + id;
             this.blankText = cfg.fieldLabel + '不能为空！'
             this.fieldLabel = cfg.fieldLabel;
+            this.submitValue = cfg.submitValue;
             this.initOption(cfg);
             if(cfg.wfParam){
                 form.wfParamFieldMap[cfg.wfParam] = fieldCode;
             }
             this.initVisible();
             this.initWatch(cfg.watch);
-            if(form.model == 'new')this.initDefaultValue(cfg.defaultValue);
+            if(form.model == 'new')
+                this.initDefaultValue(cfg.defaultValue);
+            else if(form.$parent.form&&(form.$parent.form.model == 'new')&&(!form.model))
+                this.initDefaultValue(cfg.defaultValue);
             if(cfg.valueBind != "" && typeof(cfg.valueBind)=='object')
                 this.initDefaultValue(cfg.valueBind[0]);
             this.initDataSource(cfg.dataSource);
@@ -53,15 +58,17 @@ export default {
             var cfg = this.cfg,
                 fieldSet = this.$parent,
                 form = this.form,
-                hasValueBind = cfg.dataSource && cfg.dataSource.type == "formData",
+                hasValueBind =cfg.watch ? false : cfg.dataSource && cfg.dataSource.type == "formData",
                 values = this.values;
             
             if(form.model == 'new' && values[cfg.fieldCode] == null && cfg.readOnly == true && hasValueBind && cfg.allowBlank == true){
                 this.hidden = true;
-            } else if(fieldSet.styleType == 0 && cfg.readOnly == true){
-                this.hidden = true;
-                fieldSet.$on('change-styleType',this.onStyleTypeChange)
-            }else {
+            } 
+            // else if(fieldSet.styleType == 0 && cfg.readOnly == true){
+            //     // this.hidden = true;
+            //     fieldSet.$on('change-styleType',this.onStyleTypeChange)
+            // }
+            else {
                 this.hidden = cfg.hiddenInRun;
             }
             
@@ -163,12 +170,18 @@ export default {
             this.form.setValue(cfg.fieldCode,value,this);
             this.form.$emit(this.valueChangeKey,this);
         },
+        setHidden:function(value) {
+            this.hidden = value;
+        },
+        setSubmitValue:function(value) {
+            this.submitValue = value;
+        },
         getErrors:function(){
             var me = this,
                 value = me.getValue(),
                 errors = [];
            
-            if(!me.allowBlank && value == null){
+            if(!me.allowBlank && value == null && me.submitValue){
                 errors.push(me.blankText);
                 this.$vux.alert.show({
                     content: me.blankText
@@ -211,7 +224,7 @@ export default {
                 numberVerify = cfg.numberVerify,
                 result = true;
             
-            if(!numberVerSel&&!numberVerify) return result;
+            if((!numberVerSel&&!numberVerify)||!me.submitValue) return result;
 
             var value = me.getValue(),
                 fields = me.form.fields,

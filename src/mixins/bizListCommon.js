@@ -295,7 +295,7 @@ export default {
           item.modTime = dateFormat(item.modTime, 'YYYY-MM-DD HH:mm:ss');
           item.itemCount = item.detailItem.length;
           // 列表当中每个订单最多展现3个物料
-          item.detailItem = item.detailItem.slice(0, 3);
+          // item.detailItem = item.detailItem.slice(0, 3);
           item.detailItem.forEach(mItem => {
             // 计算totalQty
             if (mItem.assistQty != null) {
@@ -428,7 +428,7 @@ export default {
     },
     getListMobileView() {
       var me = this;
-      me.fieldsObj = {};
+      me.fieldsObj = [];
       return getListMobileView(me.listId).then(data => {
         let viewRecord = data.tableContent[0];
         if (viewRecord) {
@@ -440,7 +440,13 @@ export default {
             if (it.parentCode) {
               key = key + '_' + it.parentCode;
             }
-            me.fieldsObj[key] = it.alias ? it.alias : it.fieldName;
+            // me.fieldsObj[key] = it.alias ? it.alias : it.fieldName;
+            me.fieldsObj.push({
+              fieldName:it.alias ? it.alias : it.fieldName,
+              fieldCode:key,
+              isSummary:it.isSummary
+            });
+
           });
         }
       });

@@ -3,7 +3,7 @@
   <div class='handle_wrapper' v-if="!!actions.length">
     <div class="handle_btn">
       <span class="btn_item reject" @click="revoke" v-if="actions.includes('revoke')">撤回</span>
-      <span class="btn_item reject" @click="reject" v-if="actions.includes('disagree')">拒绝</span>
+      <span class="btn_item reject" @click="reject" v-if="actions.includes('disagree')">不同意</span>
       <span class="btn_item agree" @click="agree" v-if="actions.includes('agreement')">同意</span>
       <span class="btn_item transfer" @click="transfer" v-if="actions.includes('transfer')">转办</span>
       <span class="btn_item update" @click="update" v-if="actions.includes('update')">修改</span>

@@ -14,7 +14,7 @@
       <span class="btn_item reduction" @click="reduction" v-if="actions.includes('reduction')">还原</span>
       <!-- <span class="btn_item storage" @click="storage" v-if="actions.includes('storage')">暂存</span> -->
       <span class="btn_item agreement" @click="agreement" v-if="actions.includes('agreement')">同意</span>
-      <span class="btn_item disagree" @click="disagree" v-if="actions.includes('disagree')">拒绝</span>
+      <span class="btn_item disagree" @click="disagree" v-if="actions.includes('disagree')">不同意</span>
       <span class="btn_item transfer" @click="transfer" v-if="actions.includes('transfer')">转办</span>
       <span class="btn_item revoke" @click="revoke" v-if="actions.includes('revoke')">撤回</span>
       <span class="btn_item stop" @click="stop" v-if="actions.includes('stop')">终止</span>
@@ -110,6 +110,12 @@ var component = {
     pushActions(action) {
       this.actions.push(action);
     },
+    deleteActions(action) {
+      if(this.actions.length === 0) return;
+      if(this.actions.indexOf(action) > -1){
+        this.actions.splice(this.actions.indexOf(action),1);
+      }
+    },
     //处理按钮的判断
     async dealActionInfo() {
       await this.getListInfo();
@@ -134,9 +140,12 @@ var component = {
         me.pushActions('draft');
       }
 
-      if ((action.add && model != 'marking') || model == 'view') {
-        this.pushActions('newFile');
+      if ((action.add && model != 'marking' && statusText =='已生效') || (model == 'view'&&  statusText =='已生效') || !this.isMyTask) {
+        me.pushActions('newFile');
         me.pushActions('copyNew');
+      }
+      if(model === 'revise') {
+        me.deleteActions('newFile');
       }
       if (statusText === '草稿' && model != 'edit') {
         me.pushActions('edit')  
@@ -339,8 +348,13 @@ var component = {
     agreement() {
       if(this.model == 'marking') {
         this.form.taskType = 1;
-        this.$HandleLoad.show();
-        this.form.saveAndCommitTask();
+        this.$vux.confirm.prompt('', {
+          title: '审批意见',
+          onConfirm: (value) => {
+            this.$HandleLoad.show();
+            this.form.saveAndCommitTask(value);
+          }
+        });
       } else {
         this.$vux.confirm.prompt('', {
           title: '审批意见',
@@ -428,7 +442,7 @@ var component = {
     },
     showViewModel(model) {//new||view||edit||revise
       let me = this,
-          { folder, fileName} = this.$route.query,
+          { folder, fileName,name} = this.$route.query,
           { listId } = this.$route.params;
      
       getFormViews(listId).then(data=>{
@@ -451,6 +465,7 @@ var component = {
               me.$router.replace({
                 path: '/' + wrapper +'/' + listId + '/' + viewId ,
                 query: {
+                  name,
                   model,
                   folder: folder, fileName:fileName,
                   transCode: model == 'new' ? undefined : me.code
@@ -532,7 +547,7 @@ export default Vue.component('R2Action',component)
     .handle_btn {
       display: flex;
       flex-wrap: wrap;
-      // justify-content: flex-end;
+      justify-content: flex-end;
       width: 100%;
       padding: 0 .1rem;
       line-height: .12rem;
@@ -542,7 +557,7 @@ export default Vue.component('R2Action',component)
       box-sizing: border-box;
       .btn_item {
         display: inline-block;
-        padding: .08rem .26rem;
+        padding: .05rem .10rem;
         border: 1px solid #9c9c9c;
         background-color: #fff;
         text-align: center;

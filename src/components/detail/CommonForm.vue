@@ -9,7 +9,7 @@
         <r-fieldset-ct
           :cfg="fieldSets"
           :values="formData"
-          v-if="loaded"
+          v-show="loaded"
           ref="fieldsetCt"
         />
         <!-- 附件组件 -->
@@ -396,9 +396,31 @@ export default {
           grid = fieldSet.items[0];
           if (grid && grid.xtype == "r2AccountGrid" && dsMap[fieldSet.name]) {
             grid.dataSource = JSON.parse(dsMap[fieldSet.name]);
+            grid.columns = initCols(grid);
           }
         }
       });
+      function initCols(item) {
+        var columns = item.columns,
+            dataIndxMap = item.dataIndexMap,
+            arr = [],
+            cols = item.dataSource.cols;
+
+        for(var i=0;i<columns.length;i++) {
+          var flag =false;
+          for(var j=0;j<cols.length;j++) {
+            var field = dataIndxMap[columns[i].fieldCode];
+            if((!field) || cols[j].k == field && !cols[j].h) {
+              flag = true;
+              break;
+            }
+          }
+          if(flag) {
+            arr.push(columns[i]);
+          }
+        }
+        return arr;
+      }
     },
     loadModelCfg(listId) {
       var me = this;

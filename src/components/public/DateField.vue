@@ -3,7 +3,7 @@
     <label :class="{'required':!cfg.allowBlank,'readonly':cfg.readOnly}">{{cfg.fieldLabel}}</label>
     <!-- <input v-if="cfg.readOnly == false" :value="values[cfg.fieldCode]" placeholder="请输入" type="date" @input="onInput"/> -->
     <div class="content">
-        <span v-if="cfg.readOnly == false" class="mater_nature" @click="getDate()">{{values[cfg.fieldCode] || '请选择'}}</span>
+        <span v-if="cfg.readOnly == false" class="mater_nature" @click="getDate()" :class="{placeholder:!values[cfg.fieldCode]}">{{values[cfg.fieldCode] || '请选择'}}</span>
         <span v-else class="mater_nature">{{values[cfg.fieldCode]||'无'}}</span>
         <span class="icon-right" v-if="cfg.readOnly == false"></span>
     </div>
@@ -110,6 +110,10 @@ export default Vue.component('R2Datefield',cfg);
             width: .08rem;
             height: .14rem;
             margin-left: .1rem;
+        }
+
+        .placeholder{
+            color:  #757575;
         }
     }
 }
