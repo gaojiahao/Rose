@@ -3,7 +3,9 @@
     <!-- 没有选择物料 -->
     <template v-if="(!values || values.length == 0)&& cfg.readOnly == false && hasDs">
       <div class="no-data-header" @click="showGridPicker">
-        <div class="title">{{listTitle||'物料列表'}}</div>
+        <div class="title">交易明细</div>
+        <!--row-->
+        <div>暂无数据</div>
         <div class="seleted_icon">
           请选择
           <span class="icon-right"></span>
@@ -13,7 +15,7 @@
     <!-- 已经选择了物料 -->
     <template v-else>
       <div class="has-data-header">
-        <div class="title">{{listTitle||'物料列表'}}</div>
+        <div class="title">交易明细</div>
         <div @click="toggleEditStatus" v-if="!cfg.readOnly && values && values.length">
           <div class="edit" v-if="!isEdit">管理</div>
           <div class="edit" v-else>完成</div>
@@ -44,21 +46,6 @@
                 <span v-else  >{{formatByType(row[item.fieldCode],item.editorType)}}</span>
               </div>
             </template>
-            <!-- <template v-for="(item, index) in numberField" class="cell when-is-right">
-              <div class="item" :key="'numberField' + index">
-                <span>{{item.text}}：{{item.fieldCode}}</span>
-                <span v-if="item.editorType=='r2Percentfield'">{{formatByType(row[item.fieldCode],item.editorType)}}%</span>
-                <span v-else>{{formatByType(row[item.fieldCode],item.editorType)}}</span>
-              </div>
-            </template>
-            
-            <template v-for="(item, index) in summaryField" class="cell when-is-right">
-              <div class="summary-item" :key="'summaryField' + index">
-                <span class="summary-item-label">{{item.text}}：{{item.fieldCode}}</span>
-                <span class="summary-item-value" v-if="item.editorType=='r2Percentfield'">{{formatByType(row[item.fieldCode],item.editorType)}}%</span>
-                <span class="summary-item-value" v-else>{{formatByType(row[item.fieldCode],item.editorType)}}</span>
-              </div>
-            </template> -->
 
           </div>
         </div>
@@ -74,8 +61,7 @@
         </div>
         
       </div>
-      <!--row-->
-      <div v-show="(!values || values.length == 0) && hasDs" class="no-data">无</div>
+      
 
       <div class="summary-info" v-if="(values && values.length > 1)">
         <div class="summarry-info-count">共{{this.values.length}}条明细</div>
@@ -183,7 +169,6 @@ var component = {
   data() {
     return {
       showDetail: false,
-      listTitle: "",
       detail: {},
       hasDs:false
     };
@@ -257,16 +242,6 @@ var component = {
     this.keyFiled = this.cfg.columns.filter(it=>{
       return !it.hidden;
     });
-    
-    // .filter((v,i)=>{
-    //   return i<2;
-    // });
-
-    this.numberField = this.cfg.columns.filter(it=>{
-      return !it.hidden;
-    }).filter((it)=>{
-      return ['r2Numberfield','r2Percentfield '].includes(it.editorType) && it.summaryType !== 'sum';
-    });
 
     this.summaryField = this.cfg.columns.filter(it=>{
       return !it.hidden;
@@ -277,7 +252,6 @@ var component = {
     form.fieldMap[id] = this;
     this.isGrid = true;
     this.name = name;
-    this.listTitle = fieldSet.cfg.cName;
     this.form = form;
     this.containerCode = fieldSet.cfg.name;
     this.dao = dao;//执行公式用;
@@ -314,7 +288,7 @@ export default Vue.component("RGrid", component);
   // 没有物料title样式
   .no-data-header {
     display: flex;
-    padding: 0.18rem 0;
+    padding: 0.15rem 0;
     font-size: 0.14rem;
     line-height: 0.14rem;
     justify-content: space-between;
