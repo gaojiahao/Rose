@@ -15,7 +15,7 @@
     <!-- 已经选择了物料 -->
     <template v-else>
       <div class="has-data-header">
-        <div class="title">交易明细</div>
+        <div class="title">明细</div>
         <div @click="toggleEditStatus" v-if="!cfg.readOnly && values && values.length">
           <div class="edit" v-if="!isEdit">管理</div>
           <div class="edit" v-else>完成</div>
