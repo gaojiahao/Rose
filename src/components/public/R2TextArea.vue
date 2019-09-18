@@ -9,6 +9,7 @@
         @input="onInput" 
         :readonly = "cfg.readOnly">
         <template slot="label">
+            
         <label 
             :class="{required : !cfg.allowBlank,'readonly':cfg.readOnly}" 
             style="display: block;" 
@@ -65,9 +66,6 @@ export default Vue.component('R2TextArea',cfg);
     }
 }
 
-// .readonly{
-//     border-bottom: none !important;
-// }
 .textRinght /deep/ .weui-textarea{
     text-align: right;
 }

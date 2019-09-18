@@ -210,8 +210,12 @@ let cfg = {
       }
     },
     getExtraFieldValue:function(valueField){
-      if(this.selection){
-          return this.selection[valueField];
+      if(this.selection.length > 0){
+        let extraValue = [];
+        this.selection.forEach(val => {
+          extraValue.push(val[valueField]);
+        })
+        return extraValue.join(',');
       } else {
           return null;
       }

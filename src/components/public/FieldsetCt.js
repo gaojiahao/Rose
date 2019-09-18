@@ -54,9 +54,13 @@ let RFieldsetCt = Vue.component('RFieldsetCt', {
                 cfg.cName = '附件';
                 return;
             }
-            if (!isMultiple) {
-                firstField = cfg.items[0],
+            if (!isMultiple ) {
+                if(cfg.xtype ==='r2HtmlEditor'){
+                    text = '';
+                }else{
+                    firstField = cfg.items[0],
                     text = firstField && firstField.fieldLabel;
+                }
             } else {
                 columns = cfg.columns || cfg.items[0].columns;
                 text = columns ? findText(columns) : '';

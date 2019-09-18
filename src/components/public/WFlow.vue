@@ -2,27 +2,29 @@
   <!-- 工作流 -->
   <div class="work-flow-container">
     <div class="work-flow-header">
-      <span class="work_flow_title vux-1px-l">{{this.formData.transTypeName}}</span>
-      <span class="check_more" v-if="fullWorkFlow.length" @click="goWorkFlowFull">
+      <div>
+        <span>{{this.formData.transCode}}</span>
+        <span class="biStatus" v-instanceStateDirective="{status:workFlowInfo.biStatus}" >
+        {{workFlowInfo.biStatus}}
+        </span>
+      </div>
+
+      <div class="check_more" v-if="fullWorkFlow.length" @click="goWorkFlowFull">
         <i class="icon-flow-time"></i>
-        <span v-if="workFlowInfo.biStatus==='进行中'">工作流已到{{currentStatus.nodeName}}</span>
+        <span v-if="workFlowInfo.biStatus==='进行中'">{{currentStatus.nodeName}}</span>
         <span v-else>查看工作流</span>
         <i class="icon-right"></i>
-      </span>
+      </div>
     </div>
 
-    <div class="work-flow-status-wrapper hight-line">
-      <div>{{this.formData.transCode}}</div>
-      <div class="biStatus" v-instanceStateDirective="{status:workFlowInfo.biStatus}" >{{workFlowInfo.biStatus}}</div>
-    </div>
-
-    <r-picker title="流程状态" 
-        v-if="statusList.length" 
+    <div class="process-container" v-if="statusList.length" >
+      <r-picker title="流程状态" 
         :data="statusList" 
         :value="nowStatus" 
         v-model="nowStatus" 
         @input="updateProcessStatus">
       </r-picker>
+    </div>
       
   </div>
 </template>
@@ -50,36 +52,11 @@ var component = {
   },
   data() {
     return {
-      defaulImg: require('assets/ava01.png'),   // 默认图片1
       currentStatus: {},
       workFlowInfo: {},
       statusList: [],
       nowStatus: '',
       show: false,
-    }
-  },
-  computed: {
-    statusClass() {
-      let {biStatus = ''} = this.workFlowInfo;
-      switch (biStatus) {
-        case '进行中':
-          return 'doing';
-        case '已失效':
-          return 'failure';
-        default:
-          return ''
-      }
-    },
-    biStatusClass() {
-      let {biStatus = ''} = this.workFlowInfo;
-      switch (biStatus) {
-        case '进行中':
-          return 'doing';
-        case '已失效':
-          return 'failure';
-        default:
-          return ''
-      }
     }
   },
   watch: {
@@ -105,22 +82,6 @@ var component = {
         biStatus: this.formData.biStatus,
         transCode: this.formData.transCode,
       };
-      switch (this.formData.biStatus) {
-        case '进行中':
-          let newkey = 'dyClass',
-          cokey = 'coClass';
-          this.workFlowInfo[newkey] = 'doing_work';
-          this.workFlowInfo[cokey] = 'doing_code';
-          break;
-        case '草稿':
-          newkey = 'dyClass';
-          this.workFlowInfo[newkey] = 'invalid_work';
-          break;
-        case '已失效':
-          newkey = 'dyClass';
-          this.workFlowInfo[newkey] = 'invalid_work';
-          break;
-      }
     },
     workFlowHandler() {
       let [currentStatus = {}] = this.fullWorkFlow.slice(-1);
@@ -183,6 +144,7 @@ export default Vue.component('WFlow',component)
 </script>
 
 <style lang='scss' scoped>
+
   .vux-1px-b:after {
     border-color: #e8e8e8;
   }
@@ -195,13 +157,13 @@ export default Vue.component('WFlow',component)
 
   .work-flow-container {
     color: #333;
-    padding: .15rem;
-    border-radius: .04rem;
+    padding: .05rem 0.15rem;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     background-color: #fff;
     margin-bottom: 0.1rem;
     .work-flow-header {
+      padding: .10rem 0rem;
       display: flex;
       font-size: .16rem;
       line-height: .14rem;
@@ -228,63 +190,15 @@ export default Vue.component('WFlow',component)
         display: inline-block;
       }
     }
-    /* 已生效、草稿为#333 */
-    .work-flow-status-wrapper {
-      display: flex;
-      justify-content: space-between;
-      margin-top: .1rem;
-      line-height: .16rem;
-      font-size: .14rem;
-      /* 进行中 */
-      .doing {
-        color: #3296fa;
-      }
-      /* 已失效 */
-      .failure {  
-        color: #999;
-      }
-    }
-    .hight-line {
-      color: #999;
-      span:nth-child(2n) {
-        color:#333;
-        margin-right: .1rem;
-      }  
-    }
+    
+   
     .biStatus{
       color: white;
       padding: 0.02rem 0.04rem;
       border-radius: 0.10rem;
       font-size: 0.12rem;
     }
-    .status-process {
-      display: flex;
-      font-size: .14rem;
-      line-height: .16rem;
-      justify-content: space-between;
-      margin-top: .1rem;
-      .work_flow_title {
-        line-height: .16rem;
-        font-size: 16px;
-        font-weight: 600;
-        &:before {
-          left: -.15rem;
-          width: .08rem;
-          border-left: .08rem solid #3296FA;
-        }
-      }
-      .change-status {
-        color: #999;
-        display: flex;
-        font-size: .12rem;
-      }
-      .icon-right {
-        width: .08rem;
-        height: .14rem;
-        margin-left: .04rem;
-        display: inline-block;
-      }
-    }
+   
     /deep/ .r-picker {
       padding: .1rem 0 0 0;
       font-size: .14rem;
@@ -342,5 +256,8 @@ export default Vue.component('WFlow',component)
         background-size: 100% 100%;
       }
     }
+  }
+  .process-container{
+    padding: .0rem .0rem .05rem 0rem;
   }
 </style>

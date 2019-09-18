@@ -7,20 +7,21 @@
     <!-- <p class="title" :style="titleStyle">附件</p> -->
     <div class="upload-file-list">
       <div class="upload-file-item" v-for="(item, index) in files" :key="index">
-        <template v-if="item.iconType === 'image'">
+        <!-- <template v-if="item.iconType === 'image'">
           <img @click="downLoadFile(item)" @click.stop="preview(item)" class="img"
                :src="`/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`">
         </template>
-        <template v-else>
+        <template v-else> -->
+        <template>
           <div class="text" @click="downLoadFile(item)">{{item.attr1}}</div>
         </template>
         <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="cfg.readOnly == false"></i>
       </div>
       <input @change="commUploadFile()" type="file" ref="uFile" v-show="false" multiple/>
-      <div class="upload-file-item" @click="dealUploadDev" v-show="cfg.readOnly == false">
+      <div class="upload-file-item-bottom" @click="dealUploadDev" v-show="cfg.readOnly == false">
         <div class="icon_container">
           <span class="icon-upload-add"></span>
-          <span>添加附件</span>
+          <!-- <span>添加附件</span> -->
         </div>
       </div>
     </div>
@@ -72,6 +73,14 @@ import { debug } from 'util';
         file: null,
         biReferenceId:null,
         showLoading: false,
+      }
+    },
+    watch: {
+      values: {
+        handler(val){
+          this.files = val;
+          this.biReferenceId = this.$parent.$parent.biReferenceId;
+        }
       }
     },
     methods: {
@@ -251,6 +260,7 @@ import { debug } from 'util';
       this.defaultValue = this.values
       this.form = this.$parent.form;
       this.biReferenceId = this.form.biReferenceId;
+      console.log(this.biReferenceId)
       this.setDefault();
     }
   }
@@ -298,13 +308,15 @@ import { debug } from 'util';
     .upload-file-list {
       display: flex;
       flex-wrap: wrap;
+      margin-top: .1rem;
       // padding: 0.05rem 0;
     }
     .upload-file-item {
-      width: .78rem;
-      height: .78rem;
+      width: 100%;
+      height: 100%;
       position: relative;
-      margin: .15rem .1rem 0 0;
+      /* margin: .15rem .1rem 0 0; */
+      margin: .1rem;
       display: inline-block;
       .img {
         width: 100%;
@@ -322,7 +334,7 @@ import { debug } from 'util';
         transform: translate(50%, -50%);
       }
       .text {
-        width: 100%;
+        width: 95%;
         height: 100%;
         font-size: .12rem;
         overflow: hidden;  
@@ -330,6 +342,13 @@ import { debug } from 'util';
     }
     .upload-file {
       display: none;
+    }
+    .upload-file-item-bottom {
+      width: 100%;
+      height: .3rem;
+      position: relative;
+      margin: .1rem;
+      display: inline-block;
     }
     .icon_container {
       background: #F7F7F7;
@@ -350,7 +369,7 @@ import { debug } from 'util';
         font-size: .12rem;
       }
       .icon-upload-add {
-        margin-bottom: .15rem;
+        // margin-bottom: .15rem;
         width: .16rem;
         height: .16rem;
       }

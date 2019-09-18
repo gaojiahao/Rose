@@ -60,7 +60,8 @@ export default {
   },
   mixins: [listCommon],
   methods: {},
-  created() {}
+  created() {
+  }
 };
 </script>
 
