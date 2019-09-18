@@ -17,9 +17,8 @@
       </div>
     </div>
 
-    <div class="process-container">
+    <div class="process-container" v-if="statusList.length" >
       <r-picker title="流程状态" 
-        v-if="statusList.length" 
         :data="statusList" 
         :value="nowStatus" 
         v-model="nowStatus" 
