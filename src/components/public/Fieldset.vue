@@ -39,6 +39,12 @@
               v-if="['r2MultiSelector'].indexOf(item.xtype)!=-1"
               :key="index"
             />
+            <r2Checkbox
+              :cfg="item"
+              :values="values"
+              v-if="['r2Checkbox'].indexOf(item.xtype)!=-1"
+              :key="index"
+            />
             <r-grid
               :cfg="item"
               :values="values[cfg.name]"

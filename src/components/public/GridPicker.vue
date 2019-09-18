@@ -187,6 +187,7 @@ export default {
       return url;
     },
     initStore: function() {
+      debugger
       var me = this,
         ds = this.$parent.dataSource,
         cols = ds.cols,
