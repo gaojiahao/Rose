@@ -206,9 +206,21 @@ import { debug } from 'util';
             vm = this,
             i;
 
+        //console.log(files)
+        if(!files.length) {
+          return false;
+        }
         if(l) {
           handler(files[0],function(){
             for(i = 1;i < l; i++){
+              if(!checkType(files[i].name)) {
+                vm.$vux.toast.text(files[i].name + '不符合的文件上传格式！')
+                continue;
+              }
+              if(!checkFileSize(files[i].size)) {
+                vm.$vux.toast.text(files[i].name + '上传大小不能超过10M！') 
+                continue;  
+              }
               file = files[i];
               handler(file);
             }
@@ -235,6 +247,21 @@ import { debug } from 'util';
             }
           });
         }
+        //文件类型校验
+        function checkType(fileName) {
+          var reg = /\.(png|jpg|jpeg|gif|bmp|xlsx|xls|doc|docx|ppt|pptx|txt|psd|mp3|mp4|rar|zip|pdf|)$/gi;
+          if (reg.test(fileName)) {     
+            return true;
+          } else {
+            return false;
+          }
+        }
+        //文件大小校验
+        function checkFileSize(filesize) {
+          if(filesize > 10485760) {
+            return false
+          } else return true;
+        }
       },
       // 上传文件
       upload(localId,cb) {
@@ -260,7 +287,6 @@ import { debug } from 'util';
       this.defaultValue = this.values
       this.form = this.$parent.form;
       this.biReferenceId = this.form.biReferenceId;
-      console.log(this.biReferenceId)
       this.setDefault();
     }
   }
