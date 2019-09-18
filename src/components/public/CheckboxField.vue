@@ -25,16 +25,21 @@ let cfg = {
     },
     watch: {
         values: function(value){
+            let defaultValue;
             value[this.cfg.fieldCode] && (this.displayValue = !!value[this.cfg.fieldCode]);
+            this.displayValue ? defaultValue = 1 : defaultValue = 0;
+            this.setValue(defaultValue);
         }
     },
     methods:{
         changeValue() {
+            let valueField;
             if(this.cfg.readOnly) {
                 this.displayValue = !this.displayValue;
                 return;
             }
-            this.setValue(this.displayValue);
+            this.displayValue ? valueField = 1 : valueField = 0;
+            this.setValue(valueField);
         }
     }
 }
