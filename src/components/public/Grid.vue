@@ -22,6 +22,7 @@
         </div>
       </div>
     </template>
+
     <div class="r-row-ct">
       <div
         class="r-row"
@@ -61,8 +62,6 @@
         </div>
         
       </div>
-      
-
       <div class="summary-info" v-if="(values && values.length > 1)">
         <div class="summarry-info-count">共{{this.values.length}}条明细</div>
          <div>
@@ -75,6 +74,7 @@
          </div>
       </div>
     </div>
+    
     <div
       class="add-more-wrapper"
       v-if="!cfg.readOnly && (cfg.allowMutilRow ||cfg.allowAddorDel) && ((values &&values.length) ||!hasDs) && !isEdit"
