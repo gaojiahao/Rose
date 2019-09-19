@@ -425,6 +425,7 @@ export default Vue.component('R2Combofield',cfg);
       .pop-list-item {
          position: relative;
          display: flex;
+         padding: .1rem;
          margin-bottom: .05rem;
          border-radius: .04rem;
          color: #333;
