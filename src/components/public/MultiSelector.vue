@@ -1,19 +1,23 @@
 <template>
 <div v-show="!hidden" class="cell each_property vux-1px-b combo" >
   <label :class="{'required':!cfg.allowBlank,'readonly':cfg.readOnly}">{{cfg.fieldLabel}}</label>
-  <div v-if="cfg.readOnly == false" class="content" @click="showPop = true">
-    <span class='mater_nature' :class="{placeholder:!values[cfg.fieldCode]}">{{displaysValue || "请选择"}}</span>
-    <span class="icon-right"></span>
-  </div>
-  <span v-else >{{values[cfg.fieldCode] == null ? '无' : displaysValue}}</span>
-  <div v-transfer-dom>
+    <div v-if="cfg.readOnly == false" class="content" @click="showPop = true">
+      <span class='mater_nature' :class="{placeholder:!values[cfg.fieldCode]}">{{values[cfg.fieldCode] || "请选择"}}</span>
+      <span class="icon-right"></span>
+    </div>
+    <span v-else >{{values[cfg.fieldCode] == null ? '无' : values[cfg.fieldCode]}}</span>
+    <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
+          <div class="pop-header">
+            <span class="cancel" @click="onHide">取消</span>
+            <span class="confirm" @click="confirmSelect">确定</span>
+          </div>
           <d-search @search="searchList" @turn-off="onHide" :isFill="true" :defaultValue="searchValue" :searchBoxShows="searchBoxShow"></d-search>
           <!-- 往来列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" @search-box-show="searchBox" ref="bScroll">
-            <div class="pop-list-item" v-for="(item, index) in listData" :key='index' @click.stop="selItem(item, index)" :class="{selected: showSelIcon(item)}">
+            <div class="pop-list-item" v-for="(item, index) in listData" :key='index' @click.stop="selItem(item, index)" :class="{selected:!!item.selected}">
               <div class="main">
                   <div class="name">
                      <span class="name">{{item[cfg.displayField]}}</span>
@@ -26,6 +30,9 @@
                      </template>
                   </div>
               </div>
+              <div class="selected-icon">
+                <check-icon :value="!!item.selected"></check-icon>
+              </div>
             </div>
           </r-scroll>
         </div>
@@ -37,18 +44,15 @@
 import Vue from 'vue'
 import fieldBase from 'mixins/fieldBase'
 import $flyio from 'plugins/ajax'
-import {Icon, Popup, LoadMore, AlertModule, numberComma} from 'vux'
+import {Icon, Popup, LoadMore, AlertModule, CheckIcon, numberComma} from 'vux'
 import DSearch from 'components/search/search'
 import RScroll from 'plugins/scroll/RScroll'
-import {
-    getDisplayValues
-} from "service/commonService";
 
 let cfg = {
   mixins:[fieldBase],
     props:['cfg','values'],
     components: {
-        Icon, Popup, DSearch, RScroll
+        Icon, Popup, DSearch, RScroll, CheckIcon
     },
     data(){
       return {
@@ -57,11 +61,10 @@ let cfg = {
         showPop:false,
         store:null,
         searchValue:null,
-        displaysValue: '',
         listData:[],
         fields:[],//可以显示的列。
         hasNext: true,
-        selection:null,
+        selection:[],
         scrollOptions: { // 滚动配置
           pullUpLoad: true,
           pullDownRefresh: true,
@@ -69,49 +72,7 @@ let cfg = {
         searchBoxShow:true,
       }
     },
-    watch: {
-      values: function(value){
-        if(value){
-          value[this.cfg.fieldCode] && this. displayFollowPeople();
-        }
-      }
-    },
     methods:{
-      displayFollowPeople() {
-        if(this.form.model !== 'new'){
-            let filter,
-                store = this.store||{},
-                data = {
-                  limit: this.limit,
-                  page: this.page,
-                  start: 0
-                };
-          
-            filter = [{operator: 'like',value: this.values[this.cfg.fieldCode],property: this.cfg.valueField}];
-            data.filter = JSON.stringify(filter);
-            data = {...data,...store.params};
-            if(store.url){
-              this.getDisplay(data).then(res => {
-                this.displaysValue = res;
-              })
-            }
-        }else{
-          this.listData.forEach(k => {
-            if(k[this.cfg.valueField] === this.values[this.cfg.fieldCode]){
-              this.displaysValue = k[this.cfg.displayField];
-            }
-          })
-        }
-      },
-      async getDisplay(data) {
-        const displayValue = await $flyio.ajax({
-                  url: this.cfg.dataSource.data.url,
-                  data
-              }).then(({dataCount = 0, tableContent = []}) => {
-                  return tableContent.length > 0 ? tableContent[0][this.cfg.displayField] : this.values[this.cfg.fieldCode];
-              })
-        return displayValue;
-      },
       buildStore:function(){
         var cfg = this.cfg,
             ds = cfg.dataSource;
@@ -204,32 +165,57 @@ let cfg = {
     },
     buildStaticDataStore(data){
       var listData = [];
-      
+      tableContent.forEach(val => {
+              val.selected = false; 
+              this.selection.forEach(item => {
+                if(val[this.cfg.valueField] === item[this.cfg.valueField]){
+                  val.selected = true;
+                }
+              })
+            })
       data.forEach(function(text){
-          listData.push({
-            text:text
-          })
+        text.selected = false; 
+        this.selection.forEach(item => {
+            if(text[this.cfg.valueField] === item[this.cfg.valueField]){
+                text.selected = true;
+            }
+        })
+        listData.push({
+            text:text,
+            selected: text.selected
+        })
       });
       this.listData = listData;
       this.hasNext = false;
     },
     checkValueOnLoad:function(listData){
-      var  value = this.getValue(),
-            valueField = this.cfg.valueField,
-            selection;
+      var  value = this.getValue().split(','),
+           valueField = this.cfg.valueField,
+           selection;
 
-      selection = listData.find(function(item){
-          return item[valueField] === value;
+      listData.forEach(item => {
+          value.forEach(val => {
+              if(item[valueField] === val){
+                  selection = [];
+                  selection.push(item);
+              }
+          })
       });
       if(selection == null){
           this.reSet();
       }else{
-          this.selItem(selection);
+          selection.forEach(k => {
+              this.selItem(k);
+          })
       }
     },
     getExtraFieldValue:function(valueField){
-      if(this.selection){
-          return this.selection[valueField];
+      if(this.selection.length > 0){
+        let extraValue = [];
+        this.selection.forEach(val => {
+          extraValue.push(val[valueField]);
+        })
+        return extraValue.join(',');
       } else {
           return null;
       }
@@ -273,13 +259,21 @@ let cfg = {
             data
         }).then(({dataCount = 0, tableContent = []}) => {
             this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+            tableContent.forEach(val => {
+              val.selected = false; 
+              this.selection.forEach(item => {
+                if(val[this.cfg.valueField] === item[this.cfg.valueField]){
+                  val.selected = true;
+                }
+              })
+            })
             this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
             this.$nextTick(() => {
                 if (this.$refs.bScroll) {
                   this.$refs.bScroll.finishPullUp();
                 }
             });
-            this.$emit('load',this.listData);
+            // this.$emit('load',this.listData);
             if(cb)cb();
         })
       }
@@ -322,7 +316,7 @@ let cfg = {
       this.load(this.validOrSetSelection);
     },
     reSet:function(){
-      this.selection = null;
+      this.selection = [];
       this.value = null;
       this.setValue(null);
     },
@@ -332,23 +326,28 @@ let cfg = {
       this.page = 1;
       this.load();
     },
-    selItem(item){
-      this.selection = item;
-      this.showPop = false;
-      this.value = item[this.cfg.valueField];
-      //重复项与单一项的默认展示数据需求不一样
-      if(this.$parent.cfg.xtype != "r2GridColumn") {
-        this.setValue(this.value);  
-      } else {
-        if(this.value != this.values[this.cfg.fieldCode]) {
-          this.setValue(this.value);
-        }
-      }
-      this.displayFollowPeople();
+    selItem(item,index){
+        let obj = {},selectValue = [];
+        this.listData[index].selected = !item.selected
+        this.listData[index].selected && this.selection.push(item);
+        this.selection = this.selection.filter(item => { return item.selected; })
+        //数组去重
+        this.selection = this.selection.reduce((cur, next) => {
+            obj[next[this.cfg.valueField]] ? "" : (obj[next[this.cfg.valueField]] = true && cur.push(next));
+            return cur;
+        }, []);
+        this.selection.forEach(val => {
+            if(val[this.cfg.valueField] === item[this.cfg.valueField]){
+                item.selected && selectValue.push(val[this.cfg.valueField]);
+            }else{
+                selectValue.push(val[this.cfg.valueField]);
+            }
+        })
+      this.value = selectValue.join(',');
     },
-    
-    showSelIcon(item){
-      return this.selection == item;
+    confirmSelect() {
+      this.setValue(this.value);
+      this.onHide();
     },
     validOrSetSelection(){
       var value = this.value,
@@ -357,10 +356,6 @@ let cfg = {
           listData = this.listData;
 
       if(value != null){
-          // selection = listData.find(function(item){
-          //   console.log('valueField',valueField)
-          //     return item[valueField] === value;
-          // });
           selection = listData[0];
           this.selItem(selection);
           if(selection == null) {
@@ -382,9 +377,9 @@ let cfg = {
   created(){
     this.initCombo();
     this.buildStore();
-  }
+  } 
 }
-export default Vue.component('R2Combofield',cfg);
+export default Vue.component('R2MultiSelector',cfg);
 </script>
 <style lang="scss">
 @import '~@/scss/color';
@@ -411,6 +406,20 @@ export default Vue.component('R2Combofield',cfg);
   background: #fff !important;
   .trade_pop{
       height:100%;
+      overflow: hidden;
+      .pop-header{
+      padding: .1rem .1rem;
+      border-bottom: 1px solid #ddd;
+      .cancel{
+          font-size: .16rem;
+          color: #6b6767;
+      }
+      .confirm{
+        font-size: .16rem;
+        color: #04BE02;
+        float: right;
+      }
+    }
   }
    // 列表容器
   .pop-list-container {
@@ -425,8 +434,9 @@ export default Vue.component('R2Combofield',cfg);
       .pop-list-item {
          position: relative;
          display: flex;
+         justify-content: space-between;
          padding: .15rem;
-         margin-bottom: .05rem;
+         margin-bottom: .2rem;
          border-radius: .04rem;
          color: #333;
          box-sizing: border-box;
@@ -435,7 +445,12 @@ export default Vue.component('R2Combofield',cfg);
          &.selected {
          border: 1px solid $main_color; 
          }
+         .selected-icon{
+            display: flex;
+            align-items: center;
+         }
          .main {
+             margin-right: .1rem;
             .name {
                .name {
                   font-weight: bold;
