@@ -189,17 +189,21 @@ export default {
     initStore: function() {
       var me = this,
         ds = this.$parent.dataSource,
-        cols = ds.cols,
+        cols = this.$parent.cfg.xtype==='r2AutoLoadGrid'?this.$parent.cfg.proertyContext.dataSourceCols:ds.cols,
         hFieldKeys = ds.hFields || [],
         col,
         fields = [],
         store = {
-          url: ds.url,
+          url: this.$parent.cfg.xtype==='r2AutoLoadGrid'?this.$parent.dataSource.data.url: ds.url,
           params: {}
         },
         i,
         l,
         autoLoad = true;
+
+        if(this.$parent.cfg.xtype==='r2AutoLoadGrid'){
+          ds.params = this.$parent.dataSource.data.params;
+        }
 
       setParams(ds.params);
 
@@ -341,6 +345,10 @@ export default {
       this.$nextTick(() => {
         this.$refs.bScroll.finishPullUp();
       });
+
+      // if(this.$parent.cfg.xtype === 'r2AutoLoadGrid'){
+      //   this.$parent.addRecords(tableContent);
+      // }
     },
     // 初始化条件
     resetCondition() {
