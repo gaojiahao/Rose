@@ -78,7 +78,7 @@ let cfg = {
     },
     methods:{
       displayFollowPeople() {
-        if(this.form.model !== 'new'){
+        if(this.form.model !== 'new' && (this.cfg.dataSource && this.cfg.dataSource.type !== 'staticData')){
             let filter,
                 store = this.store||{},
                 data = {
