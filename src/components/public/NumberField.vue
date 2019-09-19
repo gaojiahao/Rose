@@ -2,7 +2,7 @@
 <div v-show="!hidden" class="cell each_property vux-1px-b">
     <label :class="{'required':!cfg.allowBlank,'readonly': cfg.readOnly}">{{cfg.fieldLabel}}</label>
     <input type="nubmer" v-if="cfg.readOnly == false" :value="values[cfg.fieldCode]" placeholder="请输入" @blur="onInput" style="display:none;"/>
-    <input type="text" v-if="cfg.readOnly == false" v-model="number" placeholder="请输入" @blur="valueDeal" />
+    <input :class="{'red':!values[cfg.fieldCode]}" type="text" v-if="cfg.readOnly == false" v-model="number" placeholder="请输入" @blur="valueDeal" />
     <span v-else >{{values[cfg.fieldCode]||'无'}}</span>
 </div>
 </template>
@@ -112,3 +112,8 @@ let  cfg = {
 }
 export default Vue.component('r2Numberfield',cfg);
 </script>
+<style scoped lang="scss">
+.red{
+  color: red;
+}
+</style>
