@@ -20,7 +20,14 @@
               <span class="fieldValue" v-if="field.fieldCode !== 'biComment'">{{formatValues(item[field.fieldCode])}}</span>
               <span class="fieldValue" v-else >{{formatValues(item[field.fieldCode])}}</span>
             </div>
-        </template>
+        </template> 
+
+         <template  v-for="(field,index) in summaryField">
+            <div  class="main-single-item" :key="1+'-'+index" v-if="item[field.fieldCode]">
+              <span class="fieldLabel">{{field.alias ? field.alias : field.fieldName}}:</span>
+              <span class="fieldValue">{{numberCommaNumer(item[field.fieldCode])}}</span>
+            </div>
+          </template>
       </div>
 
       <div class="main-multiple">
@@ -51,7 +58,7 @@
       </div>
     </div>
 
-    <div class="summary-info  vux-1px-t" >
+    <div class="summary-info  vux-1px-t"  v-if="item.detailItem.length>1">
       <div class="summary-info-count" >
         <p>共{{item.detailItem.length}}条明细</p>
         <p v-if="item.detailItem.length>3">查看更多...</p>
@@ -152,7 +159,6 @@ export default Vue.component("ListItem", {
         if(fieldSettingData[fKey]){
               if(fieldSettingData[fKey]['kField']===1){
                   it.kField = 1;
-                  console.log(it.fieldName);
               }
           }
         return val.includes(it.fieldCode);
@@ -197,10 +203,6 @@ export default Vue.component("ListItem", {
           val[it.fieldCode] = this.item[it.fieldCode];
         }
       });
-
-
-
-
       for(var k in val){
         if(isNaN(val[k])){
           val[k] = '-';
@@ -343,7 +345,7 @@ export default Vue.component("ListItem", {
     
   }
   .base-info{
-     padding: .05rem .1rem;
+     padding: .1rem .1rem;
     .base-item{
       display: inline-block;
       margin-right: 0.10rem;
