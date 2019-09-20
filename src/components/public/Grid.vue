@@ -16,6 +16,7 @@
     <template v-else>
       <div class="has-data-header">
         <div class="title">明细</div>
+        <div v-if="values.length == 0">暂无数据</div>
         <div @click="toggleEditStatus" v-if="!cfg.readOnly && values && values.length">
           <div class="edit" v-if="!isEdit">管理</div>
           <div class="edit" v-else>完成</div>
@@ -194,7 +195,7 @@ var component = {
       return this.form.formData[this.name];
     },
     hasDataSource: function(cfg) {
-      return cfg.xtype != "r2Grid";
+      return cfg.xtype != "r2Grid" && cfg.xtype!='r2AutoLoadGrid';
     },
     showGridPicker() {
       this.$refs.gridPicker.show();
@@ -217,9 +218,16 @@ var component = {
           col = columns[i];
           if (~["r2Selector", "r2SelectorPlus"].indexOf(col.editorType)) {
             me.dataSourceBind = { k: col.fieldCode, v: col.valueField };
-            if(col.dataSource) {
+            if(col.dataSource && me.cfg.xtype!=='r2AutoLoadGrid') {
               col.dataSource.data.cols = col.proertyContext.dataSourceCols;
               return col.dataSource.data;
+            }
+
+            if(me.cfg.xtype=='r2AutoLoadGrid'){
+              return {
+                ...me.cfg.dataSource.data,
+                cols:me.cfg.proertyContext
+              }
             }
           }
         }
