@@ -216,6 +216,14 @@ export default {
         }
       }
       this.cols = fields;
+      if(this.cols.length > 0){
+        for(let k of this.cols){
+          this.filterList.push({
+            name: k.v,
+            value: k.k
+          });
+        }
+      }
 
       if (autoLoad) this.requestData();
 
@@ -261,7 +269,6 @@ export default {
       //成品,商品,服务
       if (this.srhInpTx) {
         filter = [
-          ...filter,
           {
             operator: "like",
             value: this.srhInpTx,
@@ -284,7 +291,7 @@ export default {
     // 搜索物料
     searchList({ val = "", property = "" }) {
       this.srhInpTx = val;
-      this.filterProperty = property ? property : 'inventoryName';
+      this.filterProperty = property;
       this.resetCondition();
       this.requestData();
     },
