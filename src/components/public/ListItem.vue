@@ -39,7 +39,7 @@
                 </div>
               </template>
               <template v-for="(field,index) in summaryField">
-                <div :key="1+'-'+index" class="summary-item" >
+                <div :key="1+'-'+index" class="summary-item" v-if="detail[field.fieldCode]">
                   <span class="summary-item-label">{{field.alias ? field.alias : field.fieldName}}:</span>
                   <span class="summary-item-value">{{numberCommaNumer(detail[field.fieldCode])}}</span>
                 </div>
@@ -51,7 +51,7 @@
       </div>
     </div>
 
-    <div class="summary-info" v-if="item.detailItem.length>1">
+    <div class="summary-info  vux-1px-t" >
       <div class="summary-info-count" >
         <p>共{{item.detailItem.length}}条明细</p>
         <p v-if="item.detailItem.length>3">查看更多...</p>
@@ -66,13 +66,17 @@
       </div>
     </div>
 
-    <div class="base-info">
-        <template v-for="(field,index) in baseField">
-          <div class="base-item" :key="index">
-            <span >{{field.alias ? field.alias : field.fieldName}}：</span>
-            <span>{{item[field.fieldCode]}}</span>
-          </div>
-        </template>
+    <div class="base-info vux-1px-t">
+      <div class="base-info-wrapper ">
+        <div>
+          <i class="icon icon-handler"></i>
+          <div>创建人：{{item.handlerName}}</div>
+        </div>
+        <div>
+          <i class="icon icon-mod-time"></i>
+          <div>创建时间：{{item.modTime}}</div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -188,11 +192,18 @@ export default Vue.component("ListItem", {
             val[it.fieldCode] = Number(d[it.fieldCode]);
           }
         });
+
+        if(this.item[it.fieldCode]){
+          val[it.fieldCode] = this.item[it.fieldCode];
+        }
       });
+
+
+
 
       for(var k in val){
         if(isNaN(val[k])){
-          val[k] = '无';
+          val[k] = '-';
         }else{
           val[k] = val[k].toFixed(2)
         }
@@ -245,14 +256,12 @@ export default Vue.component("ListItem", {
   border-radius: 0.04rem;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  padding: 0.1rem  0rem;
   -webkit-transition: background-color 200ms linear;
   -o-transition: background-color 200ms linear;
   transition: background-color 200ms linear;
   -webkit-box-shadow: 0 2px 10px 0 rgba(232, 232, 232, 0.7);
   box-shadow: 0 2px 10px 0 rgba(232, 232, 232, 0.7);
   line-height: 0.22rem;
-
   .trans-info{
     padding: 0.03rem 0.10rem;
     display: flex;
@@ -268,9 +277,8 @@ export default Vue.component("ListItem", {
       }
     }
   }
-
   .main-info{
-    border-bottom: 0.01rem solid #ddd;
+    // border-bottom: 0.01rem solid #ddd;
     padding: 0.03rem 0.10rem;
     
     .main-single{
@@ -314,7 +322,6 @@ export default Vue.component("ListItem", {
     }
   }
   .summary-info{
-    border-bottom: 0.01rem solid #ddd;
     padding: 0.03rem 0.10rem;
     display: flex;
     justify-content: space-between;
@@ -336,10 +343,49 @@ export default Vue.component("ListItem", {
     
   }
   .base-info{
-    padding: 0.03rem 0.10rem;
+     padding: .05rem .1rem;
     .base-item{
       display: inline-block;
       margin-right: 0.10rem;
+    }
+
+    &-wrapper{
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+      justify-content: space-between;
+      font-size: .12rem;
+      color: #9E9E9E;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      padding: .05rem .1rem;
+      background-color: #f7f7f7;
+      border-radius: .2rem;
+      white-space: nowrap;
+      div{
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex;
+          -webkit-box-align: center;
+          -ms-flex-align: center;
+          align-items: center;
+          color: #999;
+          margin-right: .05rem;
+      }
+    }
+    .icon {
+        display: inline-block;
+        margin-right: .05rem;
+        width: .16rem;
+        height: .16rem;
     }
   }
   span:nth-child(2n + 1) {
