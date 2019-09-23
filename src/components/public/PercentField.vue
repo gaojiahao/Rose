@@ -17,7 +17,7 @@ let cfg = {
     props:['cfg','values'], 
     data(){
       return {
-        rate: accMul(this.getValue(),100),
+        rate: accMul(this.getValue()||0,100),
       }
     },
     methods:{
