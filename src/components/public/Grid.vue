@@ -16,7 +16,7 @@
     <template v-else>
       <div class="has-data-header">
         <div class="title">明细</div>
-        <div v-if="values.length == 0">暂无数据</div>
+        <div v-if="(!values || values.length == 0)">暂无数据</div>
         <div @click="toggleEditStatus" v-if="!cfg.readOnly && values && values.length">
           <div class="edit" v-if="!isEdit">管理</div>
           <div class="edit" v-else>完成</div>

@@ -19,6 +19,13 @@ let  cfg = {
             number:numberComma(this.getValue()||'')|| '',
         }
     },
+    watch: {
+        values: {
+            handler(val) {
+                this.number = val[this.cfg.fieldCode]
+            }
+        }
+    },
     methods:{
         onInput:function(e){
             var value = e.target.value;

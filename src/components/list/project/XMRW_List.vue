@@ -26,28 +26,28 @@
               </div>
             </div>
             <div class="instance-task-container">
-              <div class="instance_task_item" v-for="(task, tIndex) in item.detailItem" :key="tIndex">
-                <i class="icon" :class="[getTaskIcon(tIndex)]"></i>
+              <div class="instance_task_item" >
+                <i class="icon" :class="[getTaskIcon(0)]"></i>
                 <div class="task-detail vux-1px-b">
-                  <div class="task_name">{{task.taskName_projectPlanTask}}</div>
+                  <div class="task_name">{{item.taskName_projectPlanTask}}</div>
                   <div class="task_info">
                     <div class="task_info_item">
                       <span class="task_info_title">执行者: </span>
-                      <span class="task_info_amt">{{task.dealerName_dealerCodeCredit || '暂无'}}</span>
+                      <span class="task_info_amt">{{item.dealerName_dealerCodeCredit || '暂无'}}</span>
                     </div>
                     <div class="task_info_item">
                       <span class="task_info_title">计划开始日期: </span>
-                      <span class="task_info_day">{{task.startDate_projectPlanTask || '无'}}</span>
+                      <span class="task_info_day">{{item.startDate_projectPlanTask || '无'}}</span>
                     </div>
                   </div>
-                  <div class="task_info" :class="{'when-is-fill': task.deadline_projectPlanTask && task.completeTime_projectPlanTask}">
+                  <div class="task_info" :class="{'when-is-fill': item.deadline_projectPlanTask && item.completeTime_projectPlanTask}">
                     <div class="task_info_item">
                       <span class="task_info_title">计划结束日期: </span>
-                      <span class="task_info_day">{{task.deadline_projectPlanTask || '无'}}</span>
+                      <span class="task_info_day">{{item.deadline_projectPlanTask || '无'}}</span>
                     </div>
                     <div class="task_info_item">
                       <span class="task_info_title">实际完成日期: </span>
-                      <span class="task_info_day">{{task.completeTime_projectPlanTask || '无'}}</span>
+                      <span class="task_info_day">{{item.completeTime_projectPlanTask || '无'}}</span>
                     </div>
                   </div>
                 </div>
