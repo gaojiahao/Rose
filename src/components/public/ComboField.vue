@@ -1,11 +1,11 @@
 <template>
 <div v-show="!hidden" class="cell each_property vux-1px-b combo" >
   <label :class="{'required':!cfg.allowBlank,'readonly':cfg.readOnly}">{{cfg.fieldLabel}}</label>
-  <div v-if="cfg.readOnly == false" class="content" @click="showPop = true">
-    <span class='mater_nature' :class="{placeholder:!values[cfg.fieldCode]}">{{displaysValue || "请选择"}}</span>
-    <span class="icon-right"></span>
+  <div v-if="cfg.readOnly == false" class="content" @click="clickShowPop">
+    <span class='mater_nature' :class="{placeholder:!values[cfg.fieldCode]}">{{displaysValue || displaysEmptyDatasourceValue || "请选择"}}</span>
+    <span v-if="cfg.dataSource" class="icon-right"></span>
   </div>
-  <span v-else >{{values[cfg.fieldCode] == null ? '无' : displaysValue}}</span>
+  <span v-else >{{values[cfg.fieldCode] == null ? '无' : displaysValue || displaysEmptyDatasourceValue}}</span>
   <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
@@ -72,13 +72,20 @@ let cfg = {
     watch: {
       values: function(value){
         if(value){
-          value[this.cfg.fieldCode] && this. displayFollowPeople();
+          value[this.cfg.fieldCode] && this. displayRealValue();
         }
       }
     },
+    computed: {
+      displaysEmptyDatasourceValue: function(){
+        if(!this.cfg.dataSource)  
+        return this.values[this.cfg.fieldCode];
+      }
+    },
     methods:{
-      displayFollowPeople() {
+      displayRealValue() {
         if(this.form.model !== 'new' && (this.cfg.dataSource && this.cfg.dataSource.type !== 'staticData')){
+          if(this.cfg.dataSource){
             let filter,
                 store = this.store||{},
                 data = {
@@ -95,6 +102,9 @@ let cfg = {
                 this.displaysValue = res;
               })
             }
+          }else{
+            this.displaysValue = this.values[this.cfg.fieldCode];
+          }
         }else{
           this.listData.forEach(k => {
             if(k[this.cfg.valueField] === this.values[this.cfg.fieldCode]){
@@ -111,6 +121,9 @@ let cfg = {
                   return tableContent.length > 0 ? tableContent[0][this.cfg.displayField] : this.values[this.cfg.fieldCode];
               })
         return displayValue;
+      },
+      clickShowPop() {
+        this.cfg.dataSource && (this.showPop = true);
       },
       buildStore:function(){
         var cfg = this.cfg,
@@ -351,7 +364,7 @@ let cfg = {
           this.setValue(this.value);
         }
       }
-      this.displayFollowPeople();
+      this.displayRealValue();
     },
     
     showSelIcon(item){
