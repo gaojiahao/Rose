@@ -129,7 +129,7 @@ export default {
                 dataIndex = cfg.col.fieldCode;
                 if (editorFieldCode == dataIndex || dataIndex in changeFieldCodes) continue; //当前编辑字段，不重新计算。
                 if (cfg.type == 'calc') {
-                    cfg = CalcToCmd(cfg);
+                    cfg = CalcToCmd(cfg);    
                 }
                 if (cfg.type == 'cmd') {
                     try {
@@ -144,6 +144,15 @@ export default {
                         num = cfg.fn.call(me, record, editorFieldCode);
                         if (num != null && !isNaN(num) && cfg.col.decimalPrecision != null) num = util.round(num, cfg.col.decimalPrecision);
                         if (num != null) record.set(dataIndex, convertDataType(cfg.col.editorType, num));
+                    } catch (ex) {
+                        console.warn(ex);
+                    }
+                } else if (cfg.type == 'calc') {
+                    try{
+                        var exp = record.get(cfg.v1) + cfg.symbol + record.get(cfg.v2);
+                        num = util.round(util.correctFloat(eval(exp)), cfg.col.decimalPrecision);
+                        num = (Number.isNaN(num) || (num === Infinity)) ? 0 : num;
+                        record.set(dataIndex, convertDataType(cfg.col.editorType, num));
                     } catch (ex) {
                         console.warn(ex);
                     }
