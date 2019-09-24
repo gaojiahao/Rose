@@ -9,7 +9,7 @@
                :src="`/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`">
         </template>
         <template v-else>
-          {{item.attr1}}
+          <div class="text">{{item.attr1}}</div>
         </template>
         <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="!noUpload"></i>
       </div>
@@ -329,6 +329,12 @@
         // background: #000;
         position: absolute;
         transform: translate(50%, -50%);
+      }
+      .text {
+        width: 95%;
+        height: 100%;
+        font-size: .12rem;
+        overflow: hidden;  
       }
     }
     .upload-file {
