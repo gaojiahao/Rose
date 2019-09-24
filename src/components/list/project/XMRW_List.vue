@@ -29,7 +29,7 @@
               <div class="instance_task_item" >
                 <i class="icon" :class="[getTaskIcon(0)]"></i>
                 <div class="task-detail vux-1px-b">
-                  <div class="task_name">{{item.taskName_projectPlanTask}}</div>
+                  <div class="task_name">{{item.projectName_projectApprovalId}}</div>
                   <div class="task_info">
                     <div class="task_info_item">
                       <span class="task_info_title">执行者: </span>
