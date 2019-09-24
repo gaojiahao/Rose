@@ -718,7 +718,7 @@ export default {
                             numberVerify = col.numberVerify;
 
                         nowColmn = col.text;
-                        if (col.numVerReleCol) {
+                        if (col.numVerReleCol && columnHash[col.numVerReleCol]) {
                             eqErrorKey = null;
                             nowData = getData(col, record);
                             releColumn = columnHash[col.numVerReleCol];
