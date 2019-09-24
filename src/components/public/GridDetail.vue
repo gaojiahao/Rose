@@ -15,8 +15,8 @@
       <r-scroll ref="bScroll">
         <div class="readOnlyPart" v-if="readOnlyParts.length">
           <template v-for="(item, index) in readOnlyParts">
-            <div class="item">
-              <span :key="index">{{item.text}}：</span>
+            <div class="item" :key="index">
+              <span >{{item.text}}：</span>
               <span>{{formatByType(values[item.fieldCode],item.editorType)}}</span>
             </div>
           </template>
@@ -32,7 +32,7 @@
           </div>
         </div>
         <div class="onlyView-parts" v-if="onlyViewParts.length">
-          <div class="onlyView-item" v-for="(item, index) in onlyViewParts" :key="index">
+          <div class="onlyView-item vux-1px-b" v-for="(item, index) in onlyViewParts" :key="index">
             <span class="title">{{item.text}}</span>
             <span class="value" v-if="item.editorType=='r2Percentfield'">{{formatByType(values[item.fieldCode],item.editorType)}}%</span>
             <span class="value" v-else>{{formatByType(values[item.fieldCode],item.editorType)}}</span>
@@ -261,6 +261,9 @@ export default Vue.component("GridDetail", component);
     margin: 0.1rem 0;
     padding: 0 0.09rem;
   }
+.vux-1px-b:not([style*="display:none"]):last-child:after{
+  border-bottom: none;
+}
   /* 其他数据 */
   .onlyView-parts {
     padding: 0 0.15rem 0rem;
@@ -274,7 +277,6 @@ export default Vue.component("GridDetail", component);
       justify-content: space-between;
       line-height: 0.30rem;
       font-size: 0.14rem;
-      border-bottom: 1px solid #d7d7d7;
       .title {
         color: #999;
         max-width: 30%;

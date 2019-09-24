@@ -246,6 +246,13 @@ let cfg = {
           if(cfg.xtype != 'r2Combo')this.searchValue = ''+value;
           this.$once('load',this.checkValueOnLoad)
       }
+
+      // if(cfg.valueBind.length){
+      //   cfg.valueBind.map(v=>{
+      //     if(v.type==='formData')
+      //     this.initValueBind([v.data]);
+      //   });
+      // }
     },
     load:function(cb){
       var store = this.store||{},
