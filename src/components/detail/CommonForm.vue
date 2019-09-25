@@ -395,16 +395,16 @@ export default {
         if (fieldSet.isMultiple && fieldSet.xtype == "r2FieldSet") {
           grid = fieldSet.items[0];
           if (grid && grid.xtype == "r2AccountGrid" && dsMap[fieldSet.name]) {
-            grid.dataSource = JSON.parse(dsMap[fieldSet.name]);
+            grid.dataSource = initHFields(JSON.parse(dsMap[fieldSet.name]));
             grid.columns = initCols(grid);
           }
         }
       });
       function initCols(item) {
-        console.log('item',item)
         var columns = item.columns,
             dataIndxMap = item.dataIndexMap,
             arr = [],
+            hFields = item.dataSource.hFields,
             cols = item.dataSource.cols;
 
         for(var i=0;i<columns.length;i++) {
@@ -422,6 +422,19 @@ export default {
           }
         }
         return arr;
+      }
+      function initHFields(item) {
+        var data = item,
+            arr = '',
+            harr = [];
+
+        for(var i=0;i<data.cols.length;i++) {
+          if(data.cols[i].h) {
+            harr.push(data.cols[i].k);
+          }
+        }
+        data.hFields = harr.join(",");
+        return data;
       }
     },
     loadModelCfg(listId) {
