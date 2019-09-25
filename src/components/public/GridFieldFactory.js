@@ -81,6 +81,7 @@ let cmp = Vue.component('GridFieldFactory', {
                 dataSource: cfg.dataSource,
                 valueField: cfg.valueField,
                 displayField: cfg.displayField,
+                inGrid: true,
                 proertyContext: cfg.proertyContext
             }
         },
