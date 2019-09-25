@@ -401,6 +401,7 @@ export default {
         }
       });
       function initCols(item) {
+        console.log('item',item)
         var columns = item.columns,
             dataIndxMap = item.dataIndexMap,
             arr = [],
@@ -410,7 +411,8 @@ export default {
           var flag =false;
           for(var j=0;j<cols.length;j++) {
             var field = dataIndxMap[columns[i].fieldCode];
-            if((!field) || cols[j].k == field && !cols[j].h) {
+            //if((!field) || cols[j].k == field && !cols[j].h) {
+            if((!field) || cols[j].k == field) {
               flag = true;
               break;
             }
