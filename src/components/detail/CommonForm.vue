@@ -381,15 +381,15 @@ export default {
                 }
               });
               this.singleFieldCts = singleFieldCts;
-              this.viewInfo = data;
               this.initComputed();
-              this.formKey = formKey;
               console.log("this.config", data);
               this.getNewFormConfig(config,res.data);
               this.fieldSets = fieldSets;
             }
           });
         }
+        this.viewInfo = data;
+        this.formKey = formKey;
       });
     },
     setAccountDataSource: function(config, dataSource) {
