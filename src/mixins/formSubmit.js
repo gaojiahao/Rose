@@ -292,7 +292,13 @@ export default {
             for(;i<l;i++){
                fieldset = fieldsets[i];
                name = fieldset.name;
-               values[name] = fieldset.getValues();
+               try{
+                   if(name){
+                        values[name] = fieldset.getValues();
+                    }
+                } catch(e){
+                    console.log(e)
+                }
             }
 
             return values;
