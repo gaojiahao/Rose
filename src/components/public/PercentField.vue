@@ -38,8 +38,9 @@ let cfg = {
         return Math.abs(toFixed(val, 2));
       },
       calc(value,temp) {
-        var v = accMul(value,temp);
+        var v = accMul(value||0,temp);
         this.rate = v;
+        console.log(v)
         return v;
       }
     }
