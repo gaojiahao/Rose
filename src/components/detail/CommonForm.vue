@@ -40,6 +40,8 @@
 // 请求 引入
 import platfrom from "@/plugins/platform/index";
 import submitMethod from "mixins/formSubmit";
+import secondConfig from 'mixins/secondConfig';
+import {findConfigInfo} from 'service/commonService'
 // 插件 引入
 import Bscroll from "better-scroll";
 /* 引入微信相关 */
@@ -68,7 +70,7 @@ export default {
       default: true,
     },
   },
-  mixins: [submitMethod],
+  mixins: [submitMethod, secondConfig],
   data() {
     return {
       transCode: null,
@@ -90,6 +92,7 @@ export default {
       scrollCt:false,
       workflows: [],
       workflowLogs:[],
+      baseinfoConfig: {},
       formStatus: []//表单状态,是否草稿
     };
   },
@@ -265,6 +268,7 @@ export default {
       await this.getWorkFlowByListId();
       //加载视图信息
       if (this.viewId) {
+        await this.getBasicInfo();
         await this.loadFormCfg();
         if (this.model != "new") this.showAction = true;
         if (this.model != "view") {
@@ -331,58 +335,61 @@ export default {
         window.document.title = appName;
         listInfo.uniqueId = this.listId;
         WebContext.listInfo = listInfo;
-
+        
         try {
           config = JSON.parse(config);
-          data.config = config;
         } catch (e) {
           config = null;
         }
-        if (dataSource) {
-          try {
-            dataSource = JSON.parse(dataSource);
-            data.dataSource = dataSource;
-          } catch (e) {
-            dataSource = null;
-          }
-        }
-
-        if (config) {
-          //适配表单级数据源，PC目前应用于r2AccountGrid表格
-          dataSource && this.setAccountDataSource(config, dataSource);
-
-          let fieldSets = config.items,
-              singleFieldCts = [],
-              reconfig = config.reconfig||{};
-
-          fieldSets.forEach(item => {
-            if (item.formViewPartId) {
-              let reconfigData = reconfig[`_${item.formViewPartId}`];
-
-              if (reconfigData) {
-                item.items =
-                  item.items &&
-                  item.items.map(cItem => {
-                    let matched = reconfigData[cItem.fieldCode] || {};
-                    return { ...cItem, ...matched };
-                  });
-                if (reconfigData._prop) {
-                  item = { ...item, ...reconfigData._prop };
-                }
+        if(this.baseinfoConfig.clientFlag){
+          findConfigInfo(this.viewId).then(res => {
+            if (dataSource) {
+              try {
+                dataSource = JSON.parse(dataSource);
+                data.dataSource = dataSource;
+              } catch (e) {
+                dataSource = null;
               }
             }
-            if (item.isMultiple == false && item.name) {
-              singleFieldCts.push(item.name);
+
+            if (config) {
+              //适配表单级数据源，PC目前应用于r2AccountGrid表格
+              dataSource && this.setAccountDataSource(config, dataSource);
+
+              let fieldSets = config.items,
+                  singleFieldCts = [],
+                  reconfig = config.reconfig||{};
+
+              fieldSets.forEach(item => {
+                if (item.formViewPartId) {
+                  let reconfigData = reconfig[`_${item.formViewPartId}`];
+
+                  if (reconfigData) {
+                    item.items =
+                      item.items &&
+                      item.items.map(cItem => {
+                        let matched = reconfigData[cItem.fieldCode] || {};
+                        return { ...cItem, ...matched };
+                      });
+                    if (reconfigData._prop) {
+                      item = { ...item, ...reconfigData._prop };
+                    }
+                  }
+                }
+                if (item.isMultiple == false && item.name) {
+                  singleFieldCts.push(item.name);
+                }
+              });
+              this.singleFieldCts = singleFieldCts;
+              this.initComputed();
+              console.log("this.config", data);
+              this.getNewFormConfig(config,res.data);
+              this.fieldSets = fieldSets;
             }
           });
-
-          this.singleFieldCts = singleFieldCts;
-          this.viewInfo = data;
-          this.initComputed();
-          this.formKey = formKey;
-          console.log("this.config", data);
-          this.fieldSets = fieldSets;
         }
+        this.viewInfo = data;
+        this.formKey = formKey;
       });
     },
     setAccountDataSource: function(config, dataSource) {

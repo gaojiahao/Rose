@@ -174,7 +174,7 @@ let cfg = {
             value,
             isParamInRow,
             contrlId;
-
+        
         if(params)for(key in params){
           paramCfg = params[key];
           if(paramCfg.type == 'contrl'){
@@ -196,13 +196,13 @@ let cfg = {
                           }
                     })(key,valueField));
                 } else if(contrl.isGrid == true){
-                    me.form.$on('field-change-' + paramCfg.value.dataIndex,(function(paramKey,valueField){
+                    me.form.$on('field-change-' + paramCfg.value.dataIndex,(function(paramKey,valueField,contrl){
                           return function(){
                             var arg = Array.prototype.slice.call(arguments);
-                            arg.unshift(paramKey,valueField);
+                            arg.unshift(paramKey,valueField,contrl);
                             me.paramChangeHandler.apply(me,arg);
                           }
-                    })(key,valueField))
+                    })(key,valueField,contrl))
                 }
               }
           } else if(paramCfg.type == 'text'){
