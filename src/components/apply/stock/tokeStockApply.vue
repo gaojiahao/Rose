@@ -299,7 +299,7 @@ export default {
                 storehouseCode:this.scanCodeInfo.spCode,
                 page: 1,
                 start: 0,
-                limit: 10000
+                limit: 100000
             };
 
             let materielMap = {};
@@ -347,7 +347,7 @@ export default {
 
             if(!this.scanCodeInfo.boxCode) return false;
 
-            if(this.scanCodeInfo.boxCode.split('-').length !=3){
+            if(this.scanCodeInfo.boxCode.split(',').length !=5){
                 this.showTost = true;
                 this.tostText = '箱码不复合规则，请重新扫码!';
                 this.scanCodeInfo.boxCode = '';
@@ -355,7 +355,7 @@ export default {
                 return false;
             }
 
-            if(this.boxCodesMap[this.scanCodeInfo.boxCode]){
+            if(this.boxCodesMap[this.curQrCodeInfo.uuid]){
                 this.showTost = true;
                 this.tostText = '该箱码已经扫过啦，请不要重复扫码哦!';
                 this.scanCodeInfo.boxCode = '';
@@ -370,6 +370,20 @@ export default {
         * 
         */
         handlerScanBoxCode(){
+
+            //matCode 物料编码
+            //batchNo 批次号
+            //productionDate 生产日期
+            //boxRule 箱规
+            //uuid 随机码
+            let [matCode,batchNo,productionDate,boxRule,uuid] = this.scanCodeInfo.boxCode.split(',');
+            this.curQrCodeInfo = {
+                matCode,
+                batchNo,
+                productionDate,
+                boxRule,
+                uuid
+            };
             
             if(!this.handlerCheckBoxCode()){
                 scanVoice.error();
@@ -379,7 +393,7 @@ export default {
             //当前扫的箱码，不在账面余额上，分为两种情况处理
             //1、作盘盈处理
             //2、追查数据，作理货单
-            if(!this.paperBoxCodesMap[this.scanCodeInfo.boxCode]){
+            if(!this.paperBoxCodesMap[uuid]){
                 scanVoice.error();
                 this.$vux.confirm.show({
                     content:`此箱码不在账面余额,建议您追查此箱码的账面数据,
@@ -397,13 +411,11 @@ export default {
             }else{
                 scanVoice.success();
                 //记录已扫码信息,防止重复扫码
-                this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;
-
-                let [bIdx,boxRule,boxSeq] = this.scanCodeInfo.boxCode.split('-');
+                this.boxCodesMap[uuid] = uuid;
 
                 this.matters.map(mat=>{
                     mat.boxCodes.map(box=>{
-                        if(box.boxCode === this.scanCodeInfo.boxCode){
+                        if(box.boxCode === uuid){
                             box.tdQty =Number(box.boxCodeBal);
                         }
                     });
@@ -414,10 +426,9 @@ export default {
         },
         //添加存货盘盈数据
         addInventoryProfit(){
-            let [bIdx,boxRule,boxSeq] = this.scanCodeInfo.boxCode.split('-');
 
             getInventoryInfoByBoxCode({
-                boxCode:this.scanCodeInfo.boxCode
+                boxCode:this.curQrCodeInfo.uuid
             }).then(res=>{
                 if(res.dataCount>0){
                     let mat = res.tableContent[0];
@@ -427,11 +438,11 @@ export default {
                         expend:true,
                         boxCodes:[{
                             ...mat,
-                            boxCode: this.scanCodeInfo.boxCode,
+                            boxCode: this.curQrCodeInfo.uuid,
                             warehouseName:this.warehouse.warehouseName,
                             storehouseInCode:this.scanCodeInfo.spCode,
                             boxCodeBal:0,
-                            tdQty:Number(boxRule)
+                            tdQty:Number(this.curQrCodeInfo.boxRule)
                         }]
                     });
                     this.scanCodeInfo.boxCode = '';

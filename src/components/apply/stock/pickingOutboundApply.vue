@@ -5,7 +5,7 @@
                 <div class="scanCodeInfo">
                     <div class="vux-1px-t">
                         <div class='each_property' >
-                            <label class="required">申请单号</label>
+                            <label class="required">波次单</label>
                             <input 
                                 ref='postCode'
                                 type='text' 
@@ -19,13 +19,13 @@
                     </div>
                     <div class="vux-1px-t">
                         <div class='each_property' >
-                            <label class="required">货品箱码</label>
+                            <label class="required">箱码/托盘码</label>
                             <input 
                                 ref='boxCode'
                                 type='text' 
                                 v-model="scanCodeInfo.boxCode" 
                                 placeholder="请扫码" 
-                                @input="handlerSetMattersBox"
+                                @input="handlerScanBoxOrTrayCode"
                                 class='property_val' 
                                 @focus="getFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
@@ -88,7 +88,7 @@ import {
     submitAndCalc, 
     getPriceFromSalesContractAndPrice, 
     updateData} from 'service/commonService'
-import { getPickingOutByBoxCode, releaseSortingOrder, getForPickingData } from 'service/wmsService'
+import { getPickingOutByBoxCode, releaseSortingOrder, getForPickingData ,getBoxInfoByPallet} from 'service/wmsService'
 import WebContext from 'service/commonService'
 import { getSOList } from 'service/detailService'
 // mixins 引入
@@ -113,7 +113,10 @@ export default {
             formViewUniqueId: '700e7b24-d90b-4801-9a11-5d1ff24a4319', // 修改时的UniqueId
             matterInfoConfig: {
                 warehouseName:"仓库名称",
-                storehouseOutCode:"库位编码"
+                storehouseOutCode:"库位编码",
+                cardCode:"托盘码",
+                assMeasureUnit:"采购单位", //采购单位
+                assMeasureDescription:"包装规格",//包装规格
             }
         }
     },
@@ -255,7 +258,7 @@ export default {
         },
         handlerSetMatters(){
             let params = {
-                boxCode:this.scanCodeInfo.boxCode,
+                boxCode:this.curQrCodeInfo.uuid,
                 transCode: this.scanCodeInfo.postCode
             };
 
@@ -274,7 +277,8 @@ export default {
                     this.matters.map(mat => {
                         if(box.inventoryCode === mat.inventoryCode){
                             mat.boxCodes.unshift({
-                                ...this.transformDataSource(box)
+                                ...this.transformDataSource(box),
+                                cardCode:this.trayCode
                             })
                         }
                         this.warehouse = {
@@ -286,6 +290,8 @@ export default {
             });
         },
         handlerCheckBoxCode(){
+
+            
             if(!this.scanCodeInfo.postCode) {
                 this.showTost = true;
                 this.tostText = '请先扫申请单号!';
@@ -296,7 +302,7 @@ export default {
 
             if(!this.scanCodeInfo.boxCode) return false;
 
-            if(this.scanCodeInfo.boxCode.split('-').length !=3){
+            if(this.scanCodeInfo.boxCode.split(',').length !=5){
                 this.showTost = true;
                 this.tostText = '箱码不符合规则，请重新扫码!'
                 this.scanCodeInfo.boxCode = "";
@@ -304,7 +310,7 @@ export default {
                 return false;
             }
 
-            if(this.boxCodesMap[this.scanCodeInfo.boxCode]){
+            if(this.boxCodesMap[this.curQrCodeInfo.uuid]){
                 this.showTost = true;
                 this.tostText = '该箱码已经扫过啦，请不要重复扫码哦!';
                 this.scanCodeInfo.boxCode = "";
@@ -313,7 +319,52 @@ export default {
             }
             return true;
         },
-        handlerSetMattersBox(){
+        handlerScanBoxOrTrayCode(){
+
+             if(!this.scanCodeInfo.postCode) {
+                this.showTost = true;
+                this.tostText = '请先扫申请单号!';
+                this.scanCodeInfo.boxCode = "";
+                this.$refs.postCode.focus();
+                return false;
+            };
+
+
+            if(this.scanCodeInfo.boxCode.split(',').length !=5 ){
+                 this.trayCode = this.scanCodeInfo.boxCode;
+                getBoxInfoByPallet({
+                    pallet: this.trayCode
+                }).then(res=>{
+                    if(res.dataCount){
+                        res.tableContent.map(box=>{
+                            this.scanCodeInfo.boxCode = `${box.inventoryCode},${box.batchNo},${box.productionDate},${box.qty},${box.boxCode}`;
+                            this.handlerScanBoxCode();
+                        });
+                    }else{
+                         this.showTost = true;
+                        this.tostText = '此托盘码无效!'
+                        this.scanCodeInfo.boxCode = '';
+                        return false;
+                    }
+                });
+            }else{
+                this.handlerScanBoxCode();
+            }
+        },
+        handlerScanBoxCode(){
+             //matCode 物料编码
+            //batchNo 批次号
+            //productionDate 生产日期
+            //boxRule 箱规
+            //uuid 随机码
+            let [matCode,batchNo,productionDate,boxRule,uuid] = this.scanCodeInfo.boxCode.split(',');
+            this.curQrCodeInfo = {
+                matCode,
+                batchNo,
+                productionDate,
+                boxRule,
+                uuid
+            };
 
             if(!this.handlerCheckBoxCode()){
                 scanVoice.error();
@@ -321,7 +372,7 @@ export default {
             }
             
             //记录已扫码信息,防止重复扫码
-            this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;
+            this.boxCodesMap[uuid] = uuid;
             
             this.handlerSetMatters();
             this.scanCodeInfo.boxCode = '';
@@ -332,8 +383,6 @@ export default {
             let keyMap = {
                 "transObjCode": "outPutMatCode",
                 "inventoryName": "inventoryName_outPutMatCode",
-                "assMeasureDescription": "specification_outPutMatCode",
-                "assMeasureUnit": "measureUnit_outPutMatCode",
                 "storehouseInCode": "storehouseOutCode"
             };
             this.matters.map(mat => {
@@ -551,7 +600,7 @@ export default {
                 thenLockQty: box.thenLockQty,//已上架
                 thenQtyBal: box.thenQtyBal,//
                 tdQty: box.boxQtyBal,//本次出库
-                assistQty:  box.boxQtyBal/box.invSubUnitMulti,
+                assistQty:  Math.ceil(box.boxQtyBal/box.invSubUnitMulti),
                 batchNo: box.batchNo,
                 productionDate: box.productionDate,
                 boxCode: box.boxCode,
@@ -593,6 +642,8 @@ export default {
         this.postCode = '';
         //已扫箱码信息集合
         this.boxCodesMap = {};
+
+         this.trayCode ='';
         this.$refs.postCode.focus();
         if(this.$route.query.transCode){
             this.transCode = this.$route.query.transCode;

@@ -32,7 +32,8 @@ export default {
   },
   methods: {
     goDetail(item) {
-      let { folder, fileName } = this.$route.query;
+      let { folder, fileName } = this.$route.params;
+
       this.$router.push({
         path: `/detail/0/${fileName}`,
         query: {
