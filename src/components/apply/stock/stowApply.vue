@@ -1,20 +1,20 @@
 <template>
-    <div class='pages tally-apply-container'>
+    <div class='pages stow-apply-container'>
         <div class="basicPart" ref="fill">
             <div class="wrapper">
                 <div class="scanCodeInfo">
                     <div class="vux-1px-t">
                         <div class='each_property' >
-                            <label class="required">入库库位</label>
+                            <label class="required">托盘码</label>
                             <input 
                                 type='text' 
-                                ref='spCode'
-                                v-model="scanCodeInfo.spCode" 
+                                v-model="scanCodeInfo.trayCode" 
                                 placeholder="请扫码" 
-                                v-on:input="handlerScanSpinfo"
+                                ref='trayCode'
                                 class='property_val' 
+                                v-on:input="handlerScanTrayCode"
                                 @focus="handleOnFocus($event)" />
-                            <i class="iconfont">&#xe661;</i>
+                            <i class="iconfont" @click="handlerClickScanIcon('trayCode')">&#xe661;</i>
                         </div>
                     </div>
                     <div class="vux-1px-t">
@@ -28,14 +28,14 @@
                                 v-on:input="handlerScanBoxCode"
                                 class='property_val' 
                                 @focus="handleOnFocus($event)" />
-                            <i class="iconfont">&#xe661;</i>
+                            <i class="iconfont" @click="handlerClickScanIcon('boxCode')">&#xe661;</i>
                         </div>
                     </div>
                     
                 </div>
-                <div  class="wms-matter-part"  ref="wmsMatterPart">
+                <div  class="wms-matter-part" ref="wmsMatterPart">
                     <wms-matter-part 
-                        title='理货明细'
+                        title='码垛明细'
                         :matterModifyClass="matterModifyClass"
                         :matters="matters"
                         :handlerSelectItem="handlerSelectItem"
@@ -43,8 +43,6 @@
                         :handlerChangeState="handlerChangeState"    
                         :getGroupInfo="getGroupInfo"
                         :matterInfoConfig="matterInfoConfig"
-                        :getSpecialInfo="getSpecialInfo"
-                        :inputDisable="true"
                         >
                     </wms-matter-part>
                 </div>
@@ -60,9 +58,10 @@
         </op-button>
         <!-- 提示信息 -->
         <toast  v-model="showTost" type="text" :time="3000" is-show-mask :text="tostText" position="top" width="20em" ></toast>
+
         <!-- 固定title -->
 	    <section class="topFixed" v-show="isScroll" :class="isScroll == true ? 'isFixed' : ''" @click="toReferrals" >
-	        <div>理货明细</div>
+	        <div>码垛明细</div>
 	        <div >
 	            <div class="fixed-button">继续扫码</div>
 	        </div>
@@ -83,23 +82,23 @@ import {
     submitAndCalc, 
     getPriceFromSalesContractAndPrice, 
     updateData} from 'service/commonService'
-import { getStorageShelf, getWhbyStoragelocation,getInventoryInfoByBoxCode} from 'service/wmsService'
 import WebContext from 'service/commonService'
+import {getInventoryInfoByMatCode ,getPreShelfInvInfoByBoxCode} from 'service/wmsService'
+ 
 import { getSOList } from 'service/detailService'
 import scanVoice from '@/plugins/scanVoice'
+
+import { scanQRCode} from 'plugins/wx/api'
 // mixins 引入
 import wmsCommon from 'mixins/wmsCommon'
 
-// 插件引入
-import Bscroll from 'better-scroll'
 import { debug, debuglog } from 'util';
 export default {
     data(){
         return {
             scanCodeInfo:{
-                spCode:'',
                 boxCode:'',
-                postCode:''
+                trayCode:''
             },
             matters:[],
             selItems: [],                               // 选中的要删除的物料
@@ -107,15 +106,13 @@ export default {
             btnIsHide:false,
             showTost:false,
             tostText:'',
-            formViewUniqueId: '845aaba6-a46b-44a7-b629-a794d46f2536', // 修改时的UniqueId
+            formViewUniqueId: '133d7d6a-14b5-4d1f-a259-4a2d0f1c8b83', // 修改时的UniqueId
             matterInfoConfig:{
-                outWarehouseName:"出库仓",
-                storehouseOutCode:"出库库位",
-                inPutWarehouseName:"入库仓",
-                storehouseInCode:"入库库位",
                 specification:"规格",
-                locationStock:"库位库存",
-                lockQty:"箱码库存"
+                batchNo:"生产批号",
+                productionDate:"生产日期",
+                assMeasureUnit:"采购单位", //采购单位
+                assMeasureDescription:"包装规格",//包装规格
             },
         }
     },
@@ -125,7 +122,8 @@ export default {
         checkList() {
             let newArr = [].concat.apply([], Object.values(this.selItems));
             return newArr
-        }
+        },
+        
     },
     components: {
         Flexbox,
@@ -139,43 +137,40 @@ export default {
         // 输入框获取焦点，内容选中
         handleOnFocus(e) {
             event.currentTarget.select();
+            return false;
         },
-        //扫库位以确定库位信息
-        //通过申请单号+仓库编码获取待上架物料
-        handlerScanSpinfo(){
-            if(!this.scanCodeInfo.spCode) return;
+        handlerClickScanIcon(refKey){
+            this.$refs[refKey].focus();
+        },
+        //扫托盘码
+        handlerScanTrayCode(){
+            if(!this.scanCodeInfo.trayCode) return;
 
-            getWhbyStoragelocation({
-              location:this.scanCodeInfo.spCode
-            }).then(res=>{
-                
-                if(!res.dataCount){
-                    scanVoice.error();
-                    this.showTost = true;
-                    this.tostText = '该库位未绑定仓库，请绑定后再扫!';
-                    this.scanCodeInfo.spCode = '';
-                    this.$refs.spCode.focus();
-                }else{
-                    scanVoice.success();
-                    let warehouse = res.tableContent[0];
-
-                    //记录当前仓库&库位信息
-                    this.warehouse = {
-                        inPutWarehouseCode:warehouse.warehouseCode,
-                        inPutWarehouseName:warehouse.warehouseName,
-                        spCode:this.scanCodeInfo.spCode
-                    };
-
-                    this.$refs.boxCode.focus();
-                }
-            })
-            
+            if(this.trayCode && this.scanCodeInfo.trayCode != this.trayCode && this.matters.length>0){
+               scanVoice.error();
+                this.$vux.confirm.show({
+                    content: '当前扫的托盘码与前面扫的托盘码不一致，是否更换？如果更换,将清空一已扫箱码数据',
+                    // 确定回调
+                    onConfirm: () => {
+                        this.trayCode = this.scanCodeInfo.trayCode;
+                        this.matters = [];
+                        this.boxCodesMap = {};
+                    },
+                    onCancel:() =>{
+                        this.scanCodeInfo.trayCode = this.trayCode;
+                        this.$refs.boxCode.focus();
+                    }
+                })
+            }else{
+                scanVoice.success();
+                this.trayCode = this.scanCodeInfo.trayCode;
+                this.$refs.boxCode.focus();
+            }
         },
          /**
         * 扫箱码
         */
         handlerScanBoxCode(){
-            
             //matCode 物料编码
             //batchNo 批次号
             //productionDate 生产日期
@@ -189,104 +184,71 @@ export default {
                 boxRule,
                 uuid
             };
-            
-            if(!this.handlerCheckBoxCode()){
+
+            if(!this.handlerCheckBoxCode())  {
                 scanVoice.error();
                 return;
-            };
-            
+            }
 
-            getInventoryInfoByBoxCode({
-              boxCode:uuid
+            this.boxCodesMap[uuid] =uuid;
+
+            getPreShelfInvInfoByBoxCode({
+                boxCode:uuid
             }).then(res=>{
-                if(res.dataCount>0){
-                    let mat = res.tableContent[0];
-
-                    if(mat.storehouseCode === this.scanCodeInfo.spCode){
-                        scanVoice.error();
-                        this.showTost = true;
-                        this.tostText = `该箱码已经在库位${mat.storehouseCode}中，请另扫箱码!`;
-                        this.scanCodeInfo.boxCode = '';
-                        this.$refs.boxCode.focus();
-                        return;
-                    }
-                    let exist = false;
-                    this.matters.map(m=>{
-                        if(m.inventoryCode === mat.inventoryCode){
-                            m.boxCodes.unshift(this.transfromDataSource(mat,uuid,boxRule));
-                            exist = true;
-                        }
+                if(res.dataCount){
+                    let boxInfo = res.tableContent[0];
+                    this.$vux.alert.show({
+                        content:`物料<strong style="color:red;">${boxInfo.inventoryName}</strong><br>
+                                箱码<strong style="color:red;">${uuid}</strong>已上架<br>
+                                当前库存为<strong style="color:red;">${boxInfo.qty}</strong>`
                     });
-
-                    if(!exist){
-                        this.matters.unshift({
-                            ...mat,
-                            expend:true,
-                            boxCodes:[this.transfromDataSource(mat,uuid,boxRule)]
-                        });
-
-                        //记录出库仓信息
-                        //同一个单据，出库仓只能是一个
-                        if(this.warehouse && !this.warehouse.outPutWarehouseCode){
-                            this.warehouse.outPutWarehouseCode = mat.warehouseCode;
-                            this.warehouse.outPutWarehouseName = mat.warehouseName;
-                        }
-                    }
-                    //记录已扫码信息,防止重复扫码
-                    this.boxCodesMap[uuid] = uuid;
-                    this.scanCodeInfo.boxCode = '';
-                    scanVoice.success();
-                }else{
                     scanVoice.error();
-                    this.showTost = true;
-                    this.tostText = '此箱码没有对应的物料信息!';
                     this.scanCodeInfo.boxCode = '';
                     this.$refs.boxCode.focus();
+                    return;
+                }else{
+                    if(this.materielMap[matCode]){
+                        scanVoice.success();
+                        this.handlerAddBoxCodeToMatter();
+                        this.scanCodeInfo.boxCode = '';
+                        this.$refs.boxCode.focus();
+                    }else{
+                        getInventoryInfoByMatCode({
+                            matCode:matCode
+                        }).then(res=>{
+                            if(res.dataCount){
+                                let mat = res.tableContent[0];
+                                this.materielMap[mat.inventoryCode] = {
+                                    inventoryCode:mat.inventoryCode,
+                                    inventoryName:mat.inventoryName,
+                                    processing:mat.processing,
+                                    specification:mat.specification,
+                                    assMeasureScale:mat.invSubUnitMulti,//主计倍数
+                                    assMeasureUnit:mat.invSubUnitName, //采购单位
+                                    assMeasureDescription:mat.invSubUnitComment,//包装规格
+                                };
+                                this.matters.push({
+                                    expend:true,
+                                    ...this.materielMap[mat.inventoryCode],
+                                    boxCodes:[]
+                                });
+                                scanVoice.success();
+                                this.handlerAddBoxCodeToMatter();
+                                this.scanCodeInfo.boxCode = '';
+                                this.$refs.boxCode.focus();
+                            }else{
+                                scanVoice.error();
+                                this.tostText ='此箱码无对应的物料信息!';
+                                this.showTost = true;
+                                this.scanCodeInfo.boxCode = '';
+                                this.$refs.boxCode.focus();
+                            }
+                        });
+                    }
                 }
             });
-        },
-        transfromDataSource(mat,boxCode,boxRule){
-            return{
-                transObjCode: mat.inventoryCode,//物料编码
-                inventoryName:mat.inventoryName,
-                tdProcessing:mat.processing,//物料属性
-                assMeasureUnit:mat.assMeasureUnit,//辅助计量单位
-                thenQtyStock:mat.thenQtyStock,//可用库存
-                assMeasureScale:mat.assMeasureScale,//与主计量单位倍数
-                boxCode:boxCode,
-                boxRule:boxRule,
-                specification:mat.specification,//规格
-                warehouseName_storehouseOutCode:mat.storehouseName,//出库库区
-                storehouseOutCode :mat.storehouseCode,//出库库位
-                locationStock:mat.qtyBalance,//库位库存
-                lockQty:mat.qty,//箱码库存
-                tdQty:mat.qty,//调拨数量
-                inPutWarehouseName:this.warehouse.inPutWarehouseName,//入库仓
-                storehouseInCode:this.warehouse.spCode,//入库库位
-                outWarehouseName:mat.warehouseName,
-            }
-        },
-        transfromViewData(box){
-            return {
-                transObjCode: box.transObjCode,//物料编码
-                inventoryCode:box.transObjCode,//物料编码
-                inventoryName:box.inventoryName_transObjCode,
-                tdProcessing:box.tdProcessing,//物料属性
-                assMeasureUnit:box.assMeasureUnit,//辅助计量单位
-                thenQtyStock:box.thenQtyBal,//可用库存
-                assMeasureScale:box.assMeasureScale,//与主计量单位倍数
-                boxCode:box.boxCode,
-                boxRule:box.boxRule,
-                specification:box.specification_transObjCode,//规格
-                warehouseName_storehouseOutCode:box.storehouseName,//出库库区
-                outWarehouseName:this.warehouse.outPutWarehouseName,//出库仓
-                storehouseOutCode :box.storehouseOutCode,//出库库位
-                inPutWarehouseName:this.warehouse.inPutWarehouseName,//入库仓
-                storehouseInCode:box.storehouseInCode,//入库库位
-                locationStock:box.thenQtyStock,//库位库存
-                lockQty:box.lockQty,//箱码库存
-                tdQty:box.tdQty,//调拨数量
-            }
+
+
         },
         isCheckAll(){
             let iNum = 0;
@@ -362,31 +324,54 @@ export default {
             return this.checkList.includes(index);;
         },
         getGroupInfo(mat){
-            let all = 0,done=0;
+            let done = 0; 
             mat.boxCodes.map(b=>{
                 done+= b.tdQty;
-                all += b.lockQty;
             });
             return {
-                all:all,
-                done:done
+                all:'',
+                done:done,
+                todo:''
             }
         },
-        getSpecialInfo(box){
-            return `数量：<strong style="color:#3d92f0;">${box.tdQty}</<strong>`
+        transfromDataSource(item){
+            return {
+                transMatchedCode: this.scanCodeInfo.postCode,//被核销交易号
+                transObjCode: item.inventoryCode,//物料编码
+                tdProcessing:item.processing,//加工属性
+                assMeasureUnit: item.assMeasureUnit,//采购单位
+                assMeasureDescription: item.assMeasureDescription,//产品规格
+                assMeasureScale: item.assMeasureScale,//主计倍数
+                specification:item.specification,//规格
+                tdQty: item.tdQty,
+            }
         },
-        groupSumByFileds(a,f,v,k){
-            let s = 0;
-            a.map(i=>{
-                if(i[f] === v) s+=i[k];
-            });
-            return s;
+        transfromViewData(box){
+            return {
+                transMatchedCode: box.transMatchedCode,
+                transObjCode: box.transObjCode,
+                inventoryCode:box.transObjCode,
+                inventoryName:box.inventoryName_transObjCode,
+                storehouseInCode:box.storehouseInCode,
+                tdProcessing: box.tdProcessing,
+                assMeasureUnit: box.measureUnit,
+                assMeasureDescription: box.assMeasureDescription,
+                assMeasureScale: box.assMeasureScale,
+                specification:box.specification_transObjCode,
+                tdQty: box.tdQty,//本次码垛
+                assistQty:  box.assistQty,
+                batchNo: box.batchNo,
+                productionDate: box.productionDate,
+                boxCode:box.boxCode,
+                boxRule:box.boxRule
+            }
         },
+       
         //校验箱码
         handlerCheckBoxCode(){
-            if(!this.scanCodeInfo.spCode){
+            if(!this.scanCodeInfo.trayCode){
                 this.showTost = true;
-                this.tostText = '请先扫库位!'
+                this.tostText = '请先扫托盘!'
                 this.scanCodeInfo.boxCode = '';
                 return false;
             }
@@ -408,8 +393,22 @@ export default {
                 this.$refs.boxCode.focus();
                 return false;
             }
-
             return true;
+        },
+        //往物料分组上添加箱码数据
+        handlerAddBoxCodeToMatter(){
+            this.matters.map(m=>{
+                if(m.inventoryCode === this.curQrCodeInfo.matCode){
+                    m.boxCodes.unshift({
+                        ...this.transfromDataSource(m),
+                        batchNo: this.curQrCodeInfo.batchNo,
+                        productionDate: this.curQrCodeInfo.productionDate,
+                        boxCode: this.curQrCodeInfo.uuid,
+                        boxRule:this.curQrCodeInfo.boxRule,
+                        tdQty:Number(this.curQrCodeInfo.boxRule),
+                    });
+                }
+            });
         },
         getDataSet(){
             let dataSet = [];
@@ -417,23 +416,34 @@ export default {
                 mat.boxCodes.map(box=>{
                     dataSet.push({
                         ...box,
-                        assistQty:box.tdQty/box.assMeasureScale,//辅计数量
+                        assistQty: Math.ceil(box.tdQty/box.assMeasureScale),
                     });
                 });
             });
             return dataSet;
         },
         handlerSubmit(){
-            if(!this.scanCodeInfo.spCode){
+            let validate = true;
+            let errMsg=``;
+
+           
+            if(!this.scanCodeInfo.trayCode){
                 this.$vux.alert.show({
-                   content:"入库库位码不能为空!"
+                   content:"托盘码不能为空!"
                });
                return;
             }
 
             if(this.matters.length===0){
                 this.$vux.alert.show({
-                    content:"理货明细不能为空!"
+                    content:"码垛明细不能为空!"
+                });
+                return;
+            }
+
+            if(!validate){
+                this.$vux.alert.show({
+                    content:errMsg
                 });
                 return;
             }
@@ -442,6 +452,7 @@ export default {
                 content: '确认提交?',
                 // 确定回调
                 onConfirm: () => {
+                    this.$HandleLoad.show();
                     const currentUser = WebContext.WebContext.currentUser;
                     let data={};
                     let formData={
@@ -459,8 +470,7 @@ export default {
                         containerInWarehouseManager:'',
                         biComment:'',
                         inPut:{
-                            containerCodeOut:this.warehouse.outPutWarehouseCode,
-                            containerCode:this.warehouse.inPutWarehouseCode,
+                            cardCode:this.scanCodeInfo.trayCode,
                             dataSet:this.getDataSet()
                         }
                     };
@@ -481,6 +491,7 @@ export default {
                     }
 
                     this.saveData(opeartion,submitData);
+                   
                 }
             })
         },
@@ -524,29 +535,30 @@ export default {
                 let materielMap  ={};
                 this.biReferenceId = formData.biReferenceId;
 
-                this.warehouse = {
-                    inPutWarehouseCode:inPut.containerCode,
-                    inPutWarehouseName:inPut.warehouseName_containerCode,
-                    outPutWarehouseCode:inPut.containerCodeOut,
-                    outPutWarehouseName:inPut.warehouseName_containerCodeOut
-                }
+                this.scanCodeInfo.trayCode = inPut.cardCode;
                 
                 inPut.dataSet.map(box=>{
                     if(!materielMap[box.transObjCode]){
                         materielMap[box.transObjCode] = {
                             expend:true,
-                            ...this.transfromViewData(box),
-                            boxCodes:[this.transfromViewData(box)]
+                            inventoryCode:box.transObjCode,
+                            inventoryName:box.inventoryName_transObjCode,
+                            tdQty: box.tdQty,//本次码垛
+                            boxCodes:[{
+                                ...this.transfromViewData(box),
+                            }]
                         }
                     }else{
-                        materielMap[box.transObjCode].boxCodes.push(this.transfromViewData(box));
+                        materielMap[box.transObjCode].boxCodes.push({
+                            ...this.transfromViewData(box),
+                        });
                     }
 
                     this.boxCodesMap[box.boxCode] = box;
                 });
 
                 for(var k in materielMap){
-                    this.matters.push(materielMap[k]);
+                    this.matters.unshift(materielMap[k]);
                 }
 
             })
@@ -570,20 +582,21 @@ export default {
                 }
                 });
             }
-        },
+        }
+    },
+    created(){
     },
     mounted(){
-        this.$loading.hide();
-       
-        //扫库位码后确定的仓库信息
-        //扫库位码后切换库位的判断依据
-        this.warehouse = undefined;
+
         //扫箱码后确定的申请单号信息
-        this.postCode = '';
+        this.trayCode = '';
         //已扫箱码信息集合
         this.boxCodesMap = {};
+        
 
-        this.$refs.spCode.focus();
+        this.materielMap = {};
+
+        this.$refs.trayCode.focus();
         if(this.$route.query.transCode){
             this.transCode = this.$route.query.transCode;
             this.getFormData();
@@ -596,7 +609,7 @@ export default {
 
 <style lang="scss" scoped>
   @import '~scss/biz-app/bizApply.scss';
-    .each_property {
+  .each_property {
     height: .2rem;
     padding: .18rem 0;
     display: flex;
@@ -635,7 +648,7 @@ export default {
     }
   }
 .scanCodeInfo {
-    height: 1.0rem;
+    height: 1rem;
     background: #fff;
     padding: 0 .15rem;
     font-size: 0.14rem;
@@ -647,11 +660,13 @@ export default {
       }
     }
 }
-
 .wms-matter-part{
     overflow: hidden;
     margin-top: .1rem;
+    // height: calc(100% - 1.60rem);
   }
+
+
 .topFixed {
     position: fixed;
     top: 0;
@@ -661,7 +676,7 @@ export default {
     width: 100%;
     padding: 0 .10rem;
     box-shadow: 2.9px 5.2px 8px 0px rgba(109, 109, 109, 0.1);
-    height: .44rem;
+height: .44rem;
     line-height: .44rem;
      display: -webkit-box;
     display: -ms-flexbox;
@@ -682,6 +697,5 @@ export default {
         box-shadow: 2.9px 5.2px 8px 0px rgba(109, 109, 109, 0.1);
     }
 }
-
 </style>
 
