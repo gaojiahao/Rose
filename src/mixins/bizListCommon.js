@@ -430,9 +430,9 @@ export default {
       var me = this;
       me.fieldsObj = [];
       return getListMobileView(me.listId).then(data => {
-        let viewRecord = data.tableContent[0];
+        let viewRecord = data[0];
         if (viewRecord) {
-          me.viewConfig = JSON.parse(viewRecord.CONTENT);
+          me.viewConfig = JSON.parse(viewRecord.content);
           me.viewConfig.fields.filter(it => {
             return !it.isHidden;
           }).forEach(it => {
