@@ -5,11 +5,11 @@
     <div class="upload-file-list">
       <div class="upload-file-item" v-for="(item, index) in files" :key="index">
         <template v-if="item.iconType === 'image'">
-          <img @click.stop="preview(item)" class="img"
+          <img @click.stop="downLoadFile(item)" class="img"
                :src="`/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`">
         </template>
         <template v-else>
-          <div class="text">{{item.attr1}}</div>
+          <div @click="downLoadFile(item)" class="text">{{item.attr1}}</div>
         </template>
         <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="!noUpload"></i>
       </div>
@@ -89,6 +89,10 @@
           this.clickUpload();
         } else this.clickUpload();
       },
+      //下载文件
+      downLoadFile(item){
+        window.open('/H_roleplay-si/ds/download?url=' + item.attacthment);
+      },
       // 选择图片
       chooseFile() {
         let options = {
@@ -159,22 +163,6 @@
       // 获取预览图片链接
       getImgUrl(item) {
         return `${location.origin}/H_roleplay-si/ds/download?url=${item.attacthment}`
-      },
-      // 放大图片预览
-      preview(item) {
-        if (item.iconType === 'image') {
-          let images = this.files.reduce((arr, image) => {
-            if (image.iconType === 'image') {
-              arr.push(this.getImgUrl(image));
-            }
-            return arr
-          }, []);
-          let imgUrl = this.getImgUrl(item);
-          wx.previewImage({
-            current: imgUrl, // 当前显示图片的http链接
-            urls: images // 需要预览的图片http链接列表
-          });
-        }
       },
       // 删除文件
       deleteFile(item) {
@@ -335,6 +323,7 @@
         height: 100%;
         font-size: .12rem;
         overflow: hidden;  
+        word-break: break-all;
       }
     }
     .upload-file {
