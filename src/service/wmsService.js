@@ -66,8 +66,40 @@ export let  getForPickingData =  (transCode) =>{
   })
 }
 
-//撤销为草稿
-export let revocation = (data = {}) =>{
-
+//根据物料编码获取物料信息
+export let getInventoryInfoByMatCode = (data = {}) =>{
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getInventoryInfoByMatCode',
+    data: data
+  })
 }
+
+
+//根据托盘码获取码垛箱码信息
+export let getBoxInfoByMD = (data = {}) =>{
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getBoxInfoByMD',
+    data: data
+  })
+}
+
+
+
+//根据托盘码获取箱码库存信息
+export let getBoxInfoByPallet = (data = {}) =>{
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getBoxInfoByPallet',
+    data: data
+  })
+}
+ 
+//入库上架时，如果直接扫箱码，校验箱码是否与托盘码建立关系
+export let validateBoxInfoByMD = (data ={}) =>{
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/validateBoxInfoByMD',
+    data: data
+  })
+}
+
+
 

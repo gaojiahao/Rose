@@ -158,10 +158,10 @@
       }
     },
     created() {
-      let {code = ''} = this.$route.query;
-      this.code = code;
+      let {trancode = ''} = this.$route.query;
+      this.code = trancode;
       // 获取表格的表头信息
-      this.headInfo = { ...this.listMap[code] };
+      this.headInfo = { ...this.listMap[trancode] };
       // 初始化数据
       this.initSwiper();
       this.getData();
