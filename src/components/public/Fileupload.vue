@@ -363,7 +363,8 @@ import { debug } from 'util';
         width: 95%;
         height: 100%;
         font-size: .12rem;
-        overflow: hidden;  
+        overflow: hidden; 
+        word-break: break-all;  
       }
     }
     .upload-file {
