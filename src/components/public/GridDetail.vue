@@ -17,7 +17,8 @@
           <template v-for="(item, index) in readOnlyParts">
             <div class="item" :key="index">
               <span >{{item.text}}：</span>
-              <span>{{formatByType(values[item.fieldCode],item.editorType)}}</span>
+              <span v-if="item.editorType=='r2Percentfield'">{{formatByType(values[item.fieldCode],item.editorType)}}%</span>
+              <span v-else>{{formatByType(values[item.fieldCode],item.editorType)}}</span>
             </div>
           </template>
         </div>
