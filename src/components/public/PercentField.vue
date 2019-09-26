@@ -40,7 +40,6 @@ let cfg = {
       calc(value,temp) {
         var v = accMul(value||0,temp);
         this.rate = v;
-        console.log(v)
         return v;
       }
     }
