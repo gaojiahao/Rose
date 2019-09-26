@@ -60,6 +60,7 @@
     background: #fff;
     box-sizing: border-box;
     opacity: 1;
+    overflow-y: scroll;
     /* 选中值 */
     .r-dropdown-value {
       width: 100%;
