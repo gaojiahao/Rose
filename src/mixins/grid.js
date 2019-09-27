@@ -144,7 +144,7 @@ export default {
                         var arr = [],
                             flag;
                         arr.push(record.data);
-                        flag = me.validateData(arr, me.cfg.columns);
+                        flag = me.valiGridData(arr, me.cfg.columns);
                         if(!flag) {
                             break;
                         } else {
@@ -718,6 +718,109 @@ export default {
                 } else {
                     return false;
                 }
+
+                if (validResult) {
+                    util.each(numberVerifyCols, function (col) {
+                        var i, l, conditions,
+                            key,
+                            numberVerify = col.numberVerify;
+
+                        nowColmn = col.text;
+                        if (col.numVerReleCol && columnHash[col.numVerReleCol]) {
+                            eqErrorKey = null;
+                            nowData = getData(col, record);
+                            releColumn = columnHash[col.numVerReleCol];
+                            numVerReleColmn = releColumn.text;
+                            numData = getData(releColumn, record);
+
+                            conditions = conditionMap[numberVerify];
+                            for (i = 0, l = conditions.length; i < l; i++) {
+                                key = conditions[i];
+                                if (eval('nowData ' + key + ' numData')) {
+                                    validResult = false;
+                                    errorMsgArr.push('重复项中第【' + (index + 1) + '】行【' + nowColmn + '】输入值' + eqHash[key] + '【' + numVerReleColmn + '】');
+                                    return false;
+                                }
+                            }
+
+                        } else {
+                            errorMsgArr.push('【' + nowColmn + '】未配置校验关联列');
+                            validResult = false;
+                            return false;
+                        }
+                    });
+                } else {
+                    return false;
+                }
+            });
+            if (errorMsgArr.length) me.$vux.alert.show({
+                content: errorMsgArr.join('</br>')
+            });
+            return validResult;
+        },
+        valiGridData: function (value, columns) {
+            var me = this,
+                columnHash = {},
+                disallowBlankCols = [],
+                numberVerifyCols = [],
+                fnValiCols = [],
+                fnError,
+                errorMsgArr = [],
+                eqHash = {
+                    '>': '大于',
+                    '<': '小于',
+                    '==': '等于',
+                    '!=': '不等于'
+                },
+                conditionMap = {
+                    eq: ['!='],
+                    lt: ['>', '=='],
+                    gt: ['<', '=='],
+                    lteq: ['>'],
+                    gteq: ['<']
+                },
+                eqErrorKey,
+                releColumn,
+                nowColmn = '',
+                numVerReleColmn = '',
+                nowData = '',
+                numData = '',
+                validResult = true,
+                validateFn,
+                getData = function (col, record) {
+                    if (col.editorType != "r2Datefield") {
+                        return record.data[col.fieldCode];
+                    } else {
+                        return Date((record.data[col.fieldCode]).replace(/-/g, '/')).getTime();
+                    }
+                };
+
+            (function (columns) {
+                var i,
+                    l = columns.length,
+                    column,
+                    dataIndex;
+
+                for (i = 0; i < l; i++) {
+                    column = columns[i];
+                    dataIndex = column.fieldCode;
+                    if (dataIndex) {
+                        columnHash[dataIndex] = column;
+                    }
+                    if (column.allowBlank == false) {
+                        disallowBlankCols.push(column);
+                    }
+                    if (column.numberVerify) {
+                        numberVerifyCols.push(column);
+                    }
+                    if (column.validateFn) {
+                        fnValiCols.push(column);
+                    }
+                }
+            })(columns);
+
+            util.each(value, function (row, index) {
+                var record = new Record(row, me);
 
                 if (validResult) {
                     util.each(numberVerifyCols, function (col) {
