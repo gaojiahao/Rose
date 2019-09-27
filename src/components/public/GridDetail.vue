@@ -147,6 +147,7 @@ var component = {
       }
       this.$emit("on-confirm", values);
       this.showPop = false;
+      this.showPop = !this.$parent.isValid();
     }
   },
   created() {

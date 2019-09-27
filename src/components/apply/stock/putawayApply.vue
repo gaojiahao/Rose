@@ -34,13 +34,13 @@
                     </div>
                     <div class="vux-1px-t">
                         <div class='each_property' >
-                            <label class="required">货品箱码</label>
+                            <label class="required">箱码/托盘码</label>
                             <input 
                                 ref='boxCode'
                                 type='text' 
                                 v-model="scanCodeInfo.boxCode" 
                                 placeholder="请扫码" 
-                                v-on:input="handlerScanBoxCode"
+                                v-on:input="handlerScanBoxOrTrayCode"
                                 class='property_val' 
                                 @focus="handleOnFocus($event)" />
                             <i class="iconfont" @click="handlerClickScanIcon('boxCode')">&#xe661;</i>
@@ -98,7 +98,14 @@ import {
     getPriceFromSalesContractAndPrice, 
     updateData} from 'service/commonService'
 import WebContext from 'service/commonService'
-import { getStorageShelf, getWhbyStoragelocation,getPreShelfInvInfoByBoxCode } from 'service/wmsService'
+import { 
+    getStorageShelf, 
+    getWhbyStoragelocation,
+    getPreShelfInvInfoByBoxCode,
+    getBoxInfoByMD,
+    getBoxInfoByPallet,
+    validateBoxInfoByMD 
+    } from 'service/wmsService'
 import { getSOList } from 'service/detailService'
 import scanVoice from '@/plugins/scanVoice'
 
@@ -126,7 +133,8 @@ export default {
                 storehouseInCode:"库位编码",
                 specification:"规格",
                 batchNo:"生产批号",
-                productionDate:"生产日期"
+                productionDate:"生产日期",
+                cardCode:"托盘码"
             },
         }
     },
@@ -237,48 +245,102 @@ export default {
             })
             
         },
-         /**
-        * 扫箱码
-        */
-        handlerScanBoxCode(){
-            
-            if(!this.handlerCheckBoxCode())  {
-                scanVoice.error();
-                return;
-            }
+        handlerScanBoxOrTrayCode(){
 
-            getPreShelfInvInfoByBoxCode({
-                boxCode:this.scanCodeInfo.boxCode
-            }).then(res=>{
-                if(res.dataCount){
-                    let boxInfo = res.tableContent[0];
-                    if(boxInfo.qty>0){
+            if(!this.scanCodeInfo.spCode){
+                this.showTost = true;
+                this.tostText = '请先扫库位!'
+                this.scanCodeInfo.boxCode = '';
+                return false;
+            }
+            if(this.scanCodeInfo.boxCode.split(',').length !=5 ){
+                this.trayCode = this.scanCodeInfo.boxCode;
+                getBoxInfoByMD({
+                    pallet:this.trayCode
+                }).then(res=>{
+                    if(res.dataCount){
+                        res.tableContent.map(box=>{
+                            this.scanCodeInfo.boxCode = `${box.inventoryCode},${box.batchNo},${box.productionDate},${box.qty},${box.boxCode}`;
+                            this.handlerScanBoxCode();
+                        });
+                    }else{
+                        this.showTost = true;
+                        this.tostText = '此托盘码无效!'
+                        this.scanCodeInfo.boxCode = '';
+                        return false;
+                    }
+                    this.trayCode = '';
+                });
+            }else{
+                let [matCode,batchNo,productionDate,boxRule,uuid] = this.scanCodeInfo.boxCode.split(',');
+
+                validateBoxInfoByMD({
+                    boxCode:uuid
+                }).then(res=>{
+                    if(res.dataCount){
+                        let boxInfo = res.tableContent[0];
                         this.$vux.alert.show({
-                            content:`物料<strong style="color:red;">${boxInfo.inventoryName}</strong><br>
-                                    箱码<strong style="color:red;">${this.scanCodeInfo.boxCode}</strong>已上架<br>
-                                    当前库存为<strong style="color:red;">${boxInfo.qty}</strong>`
+                            content:`箱码${uuid}已在托盘${boxInfo.pallet},请扫托盘码!`
                         });
                         scanVoice.error();
                         this.scanCodeInfo.boxCode = '';
                         this.$refs.boxCode.focus();
                         return;
+                    }else{
+                        getPreShelfInvInfoByBoxCode({
+                            boxCode:uuid
+                        }).then(res=>{
+                            if(res.dataCount){
+                                let boxInfo = res.tableContent[0];
+                                this.$vux.alert.show({
+                                    content:`物料<strong style="color:red;">${boxInfo.inventoryName}</strong><br>
+                                            箱码<strong style="color:red;">${this.scanCodeInfo.boxCode}</strong>已上架<br>
+                                            当前库存为<strong style="color:red;">${boxInfo.qty}</strong>`
+                                });
+                                scanVoice.error();
+                                this.scanCodeInfo.boxCode = '';
+                                this.$refs.boxCode.focus();
+                                return;
+                            }else{
+                                this.handlerScanBoxCode();
+                            }
+                        });
                     }
+                });
+               
+            }
+        },
+        /**
+        * 扫箱码
+        */
+        handlerScanBoxCode(){
 
-                    scanVoice.success();
-                    //记录已扫码信息,防止重复扫码
-                    this.boxCodesMap[this.scanCodeInfo.boxCode] = this.scanCodeInfo.boxCode;
-                    this.handlerAddBoxCodeToMatter(boxInfo);
-                   
-                    this.scanCodeInfo.boxCode = '';
-                    this.$refs.boxCode.focus();
-                }else{
-                    scanVoice.error();
-                    this.tostText ='此箱码无效!';
-                    this.showTost = true;
-                    this.scanCodeInfo.boxCode = '';
-                    this.$refs.boxCode.focus();
-                }
-            });
+            //matCode 物料编码
+            //batchNo 批次号
+            //productionDate 生产日期
+            //boxRule 箱规
+            //uuid 随机码
+            let [matCode,batchNo,productionDate,boxRule,uuid] = this.scanCodeInfo.boxCode.split(',');
+            this.curQrCodeInfo = {
+                matCode,
+                batchNo,
+                productionDate,
+                boxRule,
+                uuid
+            };
+
+            if(!this.handlerCheckBoxCode())  {
+                scanVoice.error();
+                return;
+            }
+
+
+
+            this.boxCodesMap[uuid] =uuid;
+            this.handlerAddBoxCodeToMatter();
+
+            this.scanCodeInfo.boxCode = '';
+            this.$refs.boxCode.focus();
         },
         isCheckAll(){
             let iNum = 0;
@@ -376,8 +438,8 @@ export default {
                 transMatchedCode: this.scanCodeInfo.postCode,//被核销交易号
                 transObjCode: item.inventoryCode,//物料编码
                 tdProcessing:item.processing,//加工属性
-                assMeasureUnit: item.invSubUnitName,//采购单位
-                assMeasureDescription: item.invSubUnitComment,//产品规格
+                assMeasureUnit: item.assMeasureUnit,//采购单位
+                assMeasureDescription: item.assMeasureDescription,//产品规格
                 assMeasureScale: item.invSubUnitMulti,//主计倍数
                 specification:item.specification,//规格
                 thenTotalQtyBal: item.thenTotalQtyBal,
@@ -434,6 +496,9 @@ export default {
                         inventoryCode:mat.inventoryCode,
                         inventoryName:mat.inventoryName,
                         processing:mat.processing,
+                        invSubUnitMulti:mat.invSubUnitMulti,
+                        assMeasureUnit:mat.invSubUnitName, //采购单位
+                        assMeasureDescription:mat.invSubUnitComment,//包装规格
                         thenTotalQtyBal: this.groupSumByFileds(this.shelfList,'inventoryCode',mat.inventoryCode,'thenTotalQtyBal'),//预入库数量
                         thenLockQty:this.groupSumByFileds(this.shelfList,'inventoryCode',mat.inventoryCode,'thenLockQty'),//已上架数量
                         thenQtyBal: this.groupSumByFileds(this.shelfList,'inventoryCode',mat.inventoryCode,'thenQtyBal'),//待上架数量
@@ -455,7 +520,7 @@ export default {
 
             if(!this.scanCodeInfo.boxCode) return;
 
-            if(this.scanCodeInfo.boxCode.split('-').length !=3){
+            if(this.scanCodeInfo.boxCode.split(',').length !=5){
                 this.showTost = true;
                 this.tostText = '箱码不复合规则，请重新扫码!';
                 this.scanCodeInfo.boxCode = '';
@@ -463,7 +528,7 @@ export default {
                 return false;
             }
 
-            if(this.boxCodesMap[this.scanCodeInfo.boxCode]){
+            if(this.boxCodesMap[this.curQrCodeInfo.uuid]){
                 this.showTost = true;
                 this.tostText = '该箱码已经扫过啦，请不要重复扫码哦!';
                 this.scanCodeInfo.boxCode = '';
@@ -472,16 +537,14 @@ export default {
             }
 
             let boxCodeFlag = false;
-            let [idx,boxRule,boxSeq] = this.scanCodeInfo.boxCode.split('-');
-            idx = Number(idx);
-
-            this.shelfList.map(mat=>{
-                if(mat.idx === idx) boxCodeFlag  =true;
+            
+            this.matters.map(mat=>{
+                if(mat.inventoryCode === this.curQrCodeInfo.matCode) boxCodeFlag  =true;
             });
 
             if(!boxCodeFlag){
                 this.showTost = true;
-                this.tostText = '此箱码与申请单数据不匹配，请重新扫码!';
+                this.tostText = '此箱码对应物料与申请单数据不匹配，请重新扫码!';
                 this.scanCodeInfo.boxCode = '';
                 this.$refs.boxCode.focus();
                 return false;
@@ -489,23 +552,20 @@ export default {
             return true;
         },
         //往物料分组上添加箱码数据
-        handlerAddBoxCodeToMatter(boxInfo){
-            //idx 申请单对应物料的明细ID
-            //boxRule 箱规
-            //boxSeq 箱码序列号
-            let [idx,boxRule,boxSeq] = this.scanCodeInfo.boxCode.split('-');
+        handlerAddBoxCodeToMatter(){
             this.matters.map(m=>{
-                if(m.inventoryCode === boxInfo.inventoryCode){
+                if(m.inventoryCode === this.curQrCodeInfo.matCode){
                     m.boxCodes.unshift({
                         ...this.transfromDataSource(m),
-                        batchNo: boxInfo.batchNo,
-                        productionDate: boxInfo.productionDate,
-                        boxCode: this.scanCodeInfo.boxCode,
+                        batchNo: this.curQrCodeInfo.batchNo,
+                        productionDate: this.curQrCodeInfo.productionDate,
+                        boxCode: this.curQrCodeInfo.uuid,
                         warehouseName :this.warehouse.warehouseName,
                         storehouseInCode:this.scanCodeInfo.spCode,
                         postCode:this.postCode,
-                        boxRule:boxRule,
-                        tdQty:Number(boxRule),
+                        boxRule:this.curQrCodeInfo.boxRule,
+                        tdQty:Number(this.curQrCodeInfo.boxRule),
+                        cardCode:this.trayCode
                     });
                 }
             });
@@ -516,7 +576,7 @@ export default {
                 mat.boxCodes.map(box=>{
                     dataSet.push({
                         ...box,
-                        assistQty: box.tdQty/box.invSubUnitMulti,
+                        assistQty: Math.ceil(box.tdQty/box.assMeasureScale)
                     });
                 });
             });
@@ -718,6 +778,9 @@ export default {
         this.boxCodesMap = {};
         //待上架明细
         this.shelfList = undefined;
+
+        this.trayCode = '';
+
 
         this.$refs.postCode.focus();
         if(this.$route.query.transCode){
