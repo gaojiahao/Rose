@@ -147,7 +147,8 @@ var component = {
       }
       this.$emit("on-confirm", values);
       this.showPop = false;
-      this.showPop = !this.$parent.isValid();
+      //this.showPop = !this.$parent.isValid();
+      this.showPop = !this.$parent.valiGridData(values, this.$parent.cfg.columns);
     }
   },
   created() {
