@@ -410,7 +410,7 @@ export default {
 
                     if (cfg && cfg.type == 'formData') {
                         cmp = me.getComponentByCfg(cfg.data);
-                        cmpId = cmp.cfg.id;
+                        cmpId = cmp && cmp.cfg.id;
 
                         if (cmp && cmpId != gridId) {
                             form.$on('value-change-' + cmpId, function (cmp, e) {
