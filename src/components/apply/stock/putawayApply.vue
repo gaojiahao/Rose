@@ -12,7 +12,7 @@
                                 placeholder="请扫码" 
                                 ref='postCode'
                                 class='property_val' 
-                                v-on:input="handlerScanPostCode"
+                               @change="handlerScanPostCode"
                                 @focus="handleOnFocus($event)" />
                             <i class="iconfont" @click="handlerClickScanIcon('postCode')">&#xe661;</i>
 
@@ -26,7 +26,7 @@
                                 ref='spCode'
                                 v-model="scanCodeInfo.spCode" 
                                 placeholder="请扫码" 
-                                v-on:input="handlerScanSpinfo"
+                               @change="handlerScanSpinfo"
                                 class='property_val' 
                                 @focus="handleOnFocus($event)" />
                             <i class="iconfont" @click="handlerClickScanIcon('spCode')">&#xe661;</i>
@@ -40,7 +40,7 @@
                                 type='text' 
                                 v-model="scanCodeInfo.boxCode" 
                                 placeholder="请扫码" 
-                                v-on:input="handlerScanBoxOrTrayCode"
+                                @change="handlerScanBoxOrTrayCode"
                                 class='property_val' 
                                 @focus="handleOnFocus($event)" />
                             <i class="iconfont" @click="handlerClickScanIcon('boxCode')">&#xe661;</i>
@@ -251,6 +251,7 @@ export default {
                 this.showTost = true;
                 this.tostText = '请先扫库位!'
                 this.scanCodeInfo.boxCode = '';
+                scanVoice.error;
                 return false;
             }
             if(this.scanCodeInfo.boxCode.split(',').length !=5 ){
@@ -631,11 +632,11 @@ export default {
                     let data={};
                     let formData={
                         handlerName: currentUser.name,
-                        handlerUnitName: currentUser.depts && currentUser.depts[0] ? currentUser.depts[0].name : '',
-                        handlerRoleName: currentUser.isSysRoleList[0].name,
+                        handlerUnitName: currentUser.sysDeptList && currentUser.sysDeptList[0] ? currentUser.sysDeptList[0].groupName : '',
+                        handlerRoleName: currentUser.sysRoleList[0].name,
                         handler: currentUser.userId,
-                        handlerUnit:  currentUser.depts && currentUser.depts[0] ? currentUser.depts[0].id : '',
-                        handlerRole: currentUser.isSysRoleList[0].id,
+                        handlerUnit:  currentUser.sysDeptList && currentUser.sysDeptList[0] ? currentUser.sysDeptList[0].groupId : '',
+                        handlerRole: currentUser.sysRoleList[0].id,
                         creator: currentUser.userId,
                         modifer: currentUser.userId,
                         biId:'',

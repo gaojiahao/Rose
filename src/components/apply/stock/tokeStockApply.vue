@@ -11,7 +11,7 @@
                                 ref='spCode'
                                 v-model="scanCodeInfo.spCode" 
                                 placeholder="请扫码" 
-                                v-on:input="handlerScanSpinfo"
+                                @change="handlerScanSpinfo"
                                 class='property_val' 
                                 @focus="handlerOnFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
@@ -25,7 +25,7 @@
                                 type='text' 
                                 v-model="scanCodeInfo.boxCode" 
                                 placeholder="请扫码" 
-                                v-on:input="handlerScanBoxCode"
+                                @change="handlerScanBoxCode"
                                 class='property_val' 
                                 @focus="handlerOnFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
@@ -502,11 +502,11 @@ export default {
                     const currentUser = WebContext.WebContext.currentUser;
                     let formData={
                         handlerName: currentUser.name,
-                        handlerUnitName: currentUser.depts && currentUser.depts[0] ? currentUser.depts[0].name : '',
-                        handlerRoleName: currentUser.isSysRoleList[0].name,
+                        handlerUnitName: currentUser.sysDeptList && currentUser.sysDeptList[0] ? currentUser.sysDeptList[0].groupName : '',
+                        handlerRoleName: currentUser.sysRoleList[0].name,
                         handler: currentUser.userId,
-                        handlerUnit:  currentUser.depts && currentUser.depts[0] ? currentUser.depts[0].id : '',
-                        handlerRole: currentUser.isSysRoleList[0].id,
+                        handlerUnit:  currentUser.sysDeptList && currentUser.sysDeptList[0] ? currentUser.sysDeptList[0].groupId : '',
+                        handlerRole: currentUser.sysRoleList[0].id,
                         creator: currentUser.userId,
                         modifer: currentUser.userId,
                         biId:'',

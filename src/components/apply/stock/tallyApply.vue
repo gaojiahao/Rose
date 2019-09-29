@@ -11,7 +11,7 @@
                                 ref='spCode'
                                 v-model="scanCodeInfo.spCode" 
                                 placeholder="请扫码" 
-                                v-on:input="handlerScanSpinfo"
+                                @change="handlerScanSpinfo"
                                 class='property_val' 
                                 @focus="handleOnFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
@@ -19,13 +19,13 @@
                     </div>
                     <div class="vux-1px-t">
                         <div class='each_property' >
-                            <label class="required">货品箱码</label>
+                            <label class="required">箱码/托盘码</label>
                             <input 
                                 ref='boxCode'
                                 type='text' 
                                 v-model="scanCodeInfo.boxCode" 
                                 placeholder="请扫码" 
-                                v-on:input="handlerScanBoxCode"
+                                @change="handlerScanBoxOrTrayCode"
                                 class='property_val' 
                                 @focus="handleOnFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
@@ -83,7 +83,7 @@ import {
     submitAndCalc, 
     getPriceFromSalesContractAndPrice, 
     updateData} from 'service/commonService'
-import { getStorageShelf, getWhbyStoragelocation,getInventoryInfoByBoxCode} from 'service/wmsService'
+import { getStorageShelf, getWhbyStoragelocation,getInventoryInfoByBoxCode,getLocationByPallet,getBoxInfoByPallet} from 'service/wmsService'
 import WebContext from 'service/commonService'
 import { getSOList } from 'service/detailService'
 import scanVoice from '@/plugins/scanVoice'
@@ -170,6 +170,55 @@ export default {
                 }
             })
             
+        },
+        handlerScanBoxOrTrayCode(){
+             if(!this.scanCodeInfo.spCode){
+                this.showTost = true;
+                this.tostText = '请先扫库位!'
+                this.scanCodeInfo.boxCode = '';
+                scanVoice.error();
+                return false;
+            }
+
+             if(this.scanCodeInfo.boxCode.split(',').length !=5 ){
+                let pallet = this.scanCodeInfo.boxCode;
+                getLocationByPallet(pallet).then(res=>{
+                    if(res.dataCount){
+                        let palletInfo = res.tableContent[0];
+                        if(this.scanCodeInfo.spCode === palletInfo.location){
+                            this.tostText = '此托盘已存在目标库位，请核对数据再扫码!';
+                            this.showTost = true;
+                            this.scanCodeInfo.boxCode = '';
+                            scanVoice.error();
+                            return;
+                        }else{
+                            getBoxInfoByPallet(pallet).then(res=>{
+                                if(res.dataCount){
+                                    res.tableContent.map(box=>{
+                                        this.scanCodeInfo.boxCode = `${box.inventoryCode},${box.batchNo},${box.productionDate},${box.qty},${box.boxCode}`;
+                                        this.handlerScanBoxCode();
+                                    });
+                                    scanVoice.success;
+                                }else{
+                                    this.tostText = '此托盘没有关联的箱码信息!';
+                                    this.showTost = true;
+                                    this.scanCodeInfo.boxCode = '';
+                                    scanVoice.error();
+                                    return;
+                                }
+                            });
+                        }
+                    }else{
+                        this.tostText = '此托盘并无关联库位，无法获取库存信息!';
+                        this.showTost = true;
+                        this.scanCodeInfo.boxCode = '';
+                        scanVoice.error();
+                        return;
+                    }
+                });
+             }else{
+                handlerScanBoxCode();
+             }
         },
          /**
         * 扫箱码
@@ -384,12 +433,7 @@ export default {
         },
         //校验箱码
         handlerCheckBoxCode(){
-            if(!this.scanCodeInfo.spCode){
-                this.showTost = true;
-                this.tostText = '请先扫库位!'
-                this.scanCodeInfo.boxCode = '';
-                return false;
-            }
+           
 
             if(!this.scanCodeInfo.boxCode) return;
 
@@ -446,11 +490,11 @@ export default {
                     let data={};
                     let formData={
                         handlerName: currentUser.name,
-                        handlerUnitName: currentUser.depts && currentUser.depts[0] ? currentUser.depts[0].name : '',
-                        handlerRoleName: currentUser.isSysRoleList[0].name,
+                        handlerUnitName: currentUser.sysDeptList && currentUser.sysDeptList[0] ? currentUser.sysDeptList[0].groupName : '',
+                        handlerRoleName: currentUser.sysRoleList[0].name,
                         handler: currentUser.userId,
-                        handlerUnit:  currentUser.depts && currentUser.depts[0] ? currentUser.depts[0].id : '',
-                        handlerRole: currentUser.isSysRoleList[0].id,
+                        handlerUnit:  currentUser.sysDeptList && currentUser.sysDeptList[0] ? currentUser.sysDeptList[0].groupId : '',
+                        handlerRole: currentUser.sysRoleList[0].id,
                         creator: currentUser.userId,
                         modifer: currentUser.userId,
                         biId:'',
