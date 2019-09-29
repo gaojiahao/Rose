@@ -72,7 +72,7 @@ let cfg = {
     watch: {
       values: function(value){
         if(value){
-          value[this.cfg.fieldCode] && this. displayRealValue();
+          value[this.cfg.fieldCode] && this.displayRealValue();
         }
       }
     },
@@ -94,7 +94,7 @@ let cfg = {
                   start: 0
                 };
           
-            filter = [{operator: 'like',value: this.values[this.cfg.fieldCode],property: this.cfg.valueField}];
+            filter = [{operator: 'eq',value: this.values[this.cfg.fieldCode],property: this.cfg.valueField}];
             data.filter = JSON.stringify(filter);
             data = {...data,...store.params};
             if(store.url){
@@ -402,6 +402,7 @@ let cfg = {
   created(){
     this.initCombo();
     this.buildStore();
+    this.values[this.cfg.fieldCode] && this.displayRealValue();
   }
 }
 export default Vue.component('R2Combofield',cfg);
