@@ -381,7 +381,7 @@ export default {
                 }
               });
               this.singleFieldCts = singleFieldCts;
-              this.initComputed();
+              this.initComputed(JSON.parse(data.config).formComputed);
               console.log("this.config", data);
               this.getNewFormConfig(config,res.data);
               this.fieldSets = fieldSets;
