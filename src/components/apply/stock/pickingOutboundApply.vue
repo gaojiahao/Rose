@@ -5,7 +5,7 @@
                 <div class="scanCodeInfo">
                     <div class="vux-1px-t">
                         <div class='each_property' >
-                            <label class="required">波次单</label>
+                            <label class="required">申请单</label>
                             <input 
                                 ref='postCode'
                                 type='text' 
@@ -35,7 +35,7 @@
                 </div>
                 <div  class="wms-matter-part" ref="wmsMatterPart">
                     <wms-matter-part 
-                        title='上架明细'
+                        title='拣货明细'
                         :matterModifyClass="matterModifyClass"
                         :matters="matters"
                         :handlerSelectItem="handlerSelectItem"
