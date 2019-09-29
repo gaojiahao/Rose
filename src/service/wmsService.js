@@ -83,13 +83,13 @@ export let getBoxInfoByMD = (data = {}) =>{
   })
 }
 
-
-
 //根据托盘码获取箱码库存信息
-export let getBoxInfoByPallet = (data = {}) =>{
+export let getBoxInfoByPallet = (pallet) =>{
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getBoxInfoByPallet',
-    data: data
+    data: {
+      pallet:pallet
+    }
   })
 }
  
@@ -100,6 +100,31 @@ export let validateBoxInfoByMD = (data ={}) =>{
     data: data
   })
 }
+
+//通过托盘码获取库位信息
+export let getLocationByPallet = (pallet) =>{
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getLocationByPallet',
+    data: {
+      pallet:pallet
+    }
+  })
+}
+
+
+//通过库位码获取库位信息
+export let getLocationInfo = (location) =>{
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getLocationInfo',
+    data: {
+      location:location
+    }
+  })
+}
+
+
+
+
 
 
 

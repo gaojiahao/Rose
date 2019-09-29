@@ -331,10 +331,8 @@ export default {
 
 
             if(this.scanCodeInfo.boxCode.split(',').length !=5 ){
-                 this.trayCode = this.scanCodeInfo.boxCode;
-                getBoxInfoByPallet({
-                    pallet: this.trayCode
-                }).then(res=>{
+                this.trayCode = this.scanCodeInfo.boxCode;
+                getBoxInfoByPallet(this.trayCode).then(res=>{
                     if(res.dataCount){
                         res.tableContent.map(box=>{
                             this.scanCodeInfo.boxCode = `${box.inventoryCode},${box.batchNo},${box.productionDate},${box.qty},${box.boxCode}`;
