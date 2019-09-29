@@ -219,8 +219,8 @@ export default {
                 }
             });
         },
-        initComputed:function(){
-            var computed = parseComputed(this.viewInfo.config.formComputed);
+        initComputed:function(formComputed){
+            var computed = parseComputed(formComputed);
 
             if(computed)util.setFormulas(this,computed);
 

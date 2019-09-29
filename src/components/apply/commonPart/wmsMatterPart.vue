@@ -9,8 +9,7 @@
                 <x-icon type="ios-arrow-down" v-if="!allExpend &&matters.length>0" size="28" @click.native="handlerChangeExpendState"></x-icon>
             </div>
         </div>
-        <!-- <r-scroll  class="materiel-item-wrapper"> -->
-            <div class="materiel-item-wrapper">
+        <div class="materiel-item-wrapper">
             <ul class="materiels" >
                 <li class="materiel-item" 
                     v-for="(mat,matIdx) in matters" 
@@ -67,8 +66,7 @@
                     </ul>
                 </li>
             </ul>
-            </div>
-        <!-- </r-scroll> -->
+        </div>
     </div>
 </template>
 <script>
@@ -186,7 +184,6 @@ export default {
         background: #FFF;
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
-        // height: calc(100% - .50rem);
         padding: 0 .15rem;
         .materiels{
             font-size: 14px;
