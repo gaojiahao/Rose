@@ -28,8 +28,14 @@ DataMode.prototype.set = function(key,newValue,options){
         value = values[name];
         oldValue = this.data[name];
         owner.$set(this.data,name,value);
-        if(value !== oldValue && typeof(oldValue)!=='undefined' && !commit){
-            this.changeMap[key] = true;
+        if(typeof commit!=='undefined') {
+            if(value !== oldValue && (typeof(oldValue)!=='undefined' || !commit)){
+                this.changeMap[key] = true;
+            }    
+        } else {
+            if(value !== oldValue && typeof(oldValue)!=='undefined' && !commit){
+                this.changeMap[key] = true;
+            }    
         }
     }    
 }

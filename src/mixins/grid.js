@@ -146,7 +146,7 @@ export default {
                         arr.push(record.data);
                         flag = me.valiGridData(arr, me.cfg.columns);
                         if(!flag) {
-                            break;
+                            continue;
                         } else {
                             num = cfg.fn.call(me, record, editorFieldCode);
                             if (num != null && !isNaN(num) && cfg.col.decimalPrecision != null) num = util.round(num, cfg.col.decimalPrecision);
@@ -321,6 +321,7 @@ export default {
         },
         handlerValueBind: function (record, selection, editorFieldCode, cfgArr,gridDetail) {
             var extra = {},
+                me = this,
                 isEdit = !!gridDetail;
 
             extra[editorFieldCode + '.extraData'] = util.clone(selection);
@@ -332,7 +333,14 @@ export default {
                 try {
                     value = util.isArray(valueField) ? util.getValueByNs(extra, valueField) : eval('extra' + valueField);
                     value = convertDataType(cfg.editorType, value);
-                    record.set(targetFieldCode, value);
+                    for(var i=0;i<me.cfg.columns.length;i++){
+                        var commit = {'commit':'add'};
+                        if(me.cfg.columns[i].fieldCode == targetFieldCode){
+                            commit = me.cfg.columns[i].valueBind ? false:commit;
+                            break;
+                        }
+                    }; 
+                    record.set(targetFieldCode, value,commit);
                     if(gridDetail){
                         setTimeout(function(){
                             //放到下一个执行队列的原因是，保障值清空先进行，重新加载数据后执行，可以再设置一个默认值。
