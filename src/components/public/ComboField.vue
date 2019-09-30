@@ -149,6 +149,12 @@ let cfg = {
           autoLoad = true;
 
       
+      if(me.cfg.valueBind.length) {
+        var ctrl = me.cfg.valueBind[0].data.contrl,
+            field = me.cfg.valueBind[0].data.valueField;
+        ds.data.params[field] = me.cfg.valueBind[0];
+      }
+
       setParams(ds.data.params);
 
       this.store = store;
@@ -211,6 +217,23 @@ let cfg = {
                 value = me.getRegParam(value,reg);
               }
               store.params[key] = value;
+          } else if(paramCfg.type == 'formData') {
+            contrlId = paramCfg.data.contrl;
+            valueField = paramCfg.data.valueField;
+            contrl = me.form.fieldMap[contrlId];  
+            if(contrl){
+              value = me.getContrlParamValue(contrl,valueField);  
+              if(value == null){
+                autoLoad = false;
+              }
+              me.form.$on('value-change-' + contrlId,(function(paramKey,valueField){
+                return function(){
+                  var arg = Array.prototype.slice.call(arguments);
+                  arg.unshift(paramKey,valueField);
+                  me.paramChangeHandler.apply(me,arg);
+                }
+              })(key,valueField));
+            }
           }
         }
       }
@@ -267,7 +290,7 @@ let cfg = {
       //   });
       // }
     },
-    load:function(cb){
+    load:function(cb,valueBind){
       var store = this.store||{},
           filter,
           data = {
@@ -286,6 +309,19 @@ let cfg = {
           ];
           data.filter = JSON.stringify(filter);
       };
+      if(this.cfg.valueBind&&valueBind){
+        data = {
+          limit: 1,
+        }
+        filter = [
+          {
+          operator: 'eq',
+          value: valueBind.value,
+          property: valueBind.valueField,
+          }
+        ];
+        data.filter = JSON.stringify(filter);  
+      }
       data = {...data,...store.params};
       if(store.url){
         $flyio.ajax({
@@ -339,7 +375,7 @@ let cfg = {
       }
       this.listData = [];
       this.page = 1;
-      this.load(this.validOrSetSelection);
+      this.load(this.validOrSetSelection,{'valueField':valueField,'value':value});
     },
     reSet:function(){
       this.selection = null;
