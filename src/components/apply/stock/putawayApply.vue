@@ -251,7 +251,7 @@ export default {
                 this.showTost = true;
                 this.tostText = '请先扫库位!'
                 this.scanCodeInfo.boxCode = '';
-                scanVoice.error;
+                scanVoice.error();
                 return false;
             }
             if(this.scanCodeInfo.boxCode.split(',').length !=5 ){
@@ -260,6 +260,7 @@ export default {
                     pallet:this.trayCode
                 }).then(res=>{
                     if(res.dataCount){
+                        scanVoice.success();
                         res.tableContent.map(box=>{
                             this.scanCodeInfo.boxCode = `${box.inventoryCode},${box.batchNo},${box.productionDate},${box.qty},${box.boxCode}`;
                             this.handlerScanBoxCode();
@@ -268,6 +269,7 @@ export default {
                         this.showTost = true;
                         this.tostText = '此托盘码无效!'
                         this.scanCodeInfo.boxCode = '';
+                        scanVoice.error();
                         return false;
                     }
                     this.trayCode = '';

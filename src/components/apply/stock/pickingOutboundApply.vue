@@ -5,14 +5,14 @@
                 <div class="scanCodeInfo">
                     <div class="vux-1px-t">
                         <div class='each_property' >
-                            <label class="required">波次单</label>
+                            <label class="required">申请单</label>
                             <input 
                                 ref='postCode'
                                 type='text' 
                                 v-model="scanCodeInfo.postCode" 
                                 placeholder="请扫码" 
                                 class='property_val' 
-                                @input="handlerScanPostCode"
+                                @change="handlerScanPostCode"
                                 @focus="getFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
                         </div>
@@ -25,7 +25,7 @@
                                 type='text' 
                                 v-model="scanCodeInfo.boxCode" 
                                 placeholder="请扫码" 
-                                @input="handlerScanBoxOrTrayCode"
+                                @change="handlerScanBoxOrTrayCode"
                                 class='property_val' 
                                 @focus="getFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
@@ -35,7 +35,7 @@
                 </div>
                 <div  class="wms-matter-part" ref="wmsMatterPart">
                     <wms-matter-part 
-                        title='上架明细'
+                        title='拣货明细'
                         :matterModifyClass="matterModifyClass"
                         :matters="matters"
                         :handlerSelectItem="handlerSelectItem"
