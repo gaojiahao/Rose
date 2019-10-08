@@ -205,7 +205,9 @@ import { debug } from 'util';
             l = files.length,
             file,
             vm = this,
-            i;
+            i,
+            textBlankType='',
+            textBlankSize='';
 
         //console.log(files)
         if(!files.length) {
@@ -214,11 +216,25 @@ import { debug } from 'util';
         if(l) {
           for(i = 0;i < l; i++){
             if(!checkType(files[i].name)) {
-              vm.$vux.toast.text(files[i].name + '不符合的文件上传格式！')
+              textBlankType = textBlankType + files[i].name + ',' + '</br>';
+              vm.$vux.toast.show({
+                text:textBlankType + '不符合的文件上传格式！',
+                position:'middle',
+                type:'warn',
+                width:'15em',
+                time:3000
+              })
               continue;
             }
             if(!checkFileSize(files[i].size)) {
-              vm.$vux.toast.text(files[i].name + '上传大小不能超过10M！') 
+              textBlankSize = textBlankSize + files[i].name + ',' + '</br>';
+              vm.$vux.toast.show({
+                text:textBlankSize + '上传大小不能超过10M！',
+                position:'middle',
+                type:'warn',
+                width:'15em',
+                time:3000
+              })
               continue;  
             }
             handler(files[i]);

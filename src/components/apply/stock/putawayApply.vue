@@ -498,6 +498,7 @@ export default {
                         invSubUnitMulti:mat.invSubUnitMulti,
                         assMeasureUnit:mat.invSubUnitName, //采购单位
                         assMeasureDescription:mat.invSubUnitComment,//包装规格
+                        specification:mat.specification,//规格
                         thenTotalQtyBal: this.groupSumByFileds(this.shelfList,'inventoryCode',mat.inventoryCode,'thenTotalQtyBal'),//预入库数量
                         thenLockQty:this.groupSumByFileds(this.shelfList,'inventoryCode',mat.inventoryCode,'thenLockQty'),//已上架数量
                         thenQtyBal: this.groupSumByFileds(this.shelfList,'inventoryCode',mat.inventoryCode,'thenQtyBal'),//待上架数量
