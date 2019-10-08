@@ -185,14 +185,6 @@ export default {
                 uuid
             };
 
-            // if(!uuid){
-            //     return;
-            // }
-
-            // if(uuid.length<11){
-            //     return;
-            // }
-
             if(!this.handlerCheckBoxCode())  {
                 scanVoice.error();
                 return;
