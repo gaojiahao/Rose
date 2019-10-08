@@ -1,5 +1,6 @@
 import util from '@/common/util';
 import Record from '@/common/record';
+import { accMul, accDiv } from "plugins/calc/decimalsAdd";
 import {
     getValuesByExp,
     convertDataType
@@ -194,7 +195,7 @@ export default {
             if(~['r2Numberfield','r2Permilfield'].indexOf(type)){
               return util.permilFormat(value);
             } else if(type == 'r2Percentfield'){
-                return util.permilFormat(value*100);  
+                return util.permilFormat(accMul(value,100));
             } else {
               return value
             }
