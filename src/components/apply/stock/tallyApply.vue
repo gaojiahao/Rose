@@ -113,7 +113,7 @@ export default {
                 storehouseOutCode:"出库库位",
                 inPutWarehouseName:"入库仓",
                 storehouseInCode:"入库库位",
-                specification:"规格",
+                specification:"产品规格",
                 locationStock:"库位库存",
                 lockQty:"箱码库存"
             },

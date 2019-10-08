@@ -131,7 +131,7 @@ export default {
             formViewUniqueId: 'a1bccaee-37a8-4786-bbf4-e9cee9fbd081', // 修改时的UniqueId
             matterInfoConfig:{
                 storehouseInCode:"库位编码",
-                specification:"规格",
+                specification:"产品规格",
                 batchNo:"生产批号",
                 productionDate:"生产日期",
                 cardCode:"托盘码"
