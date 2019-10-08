@@ -86,7 +86,8 @@ import { debug } from 'util';
     methods: {
       dealUploadDev() {
         if(isQYWX) {
-          this.chooseFile();
+          //this.chooseFile();
+          this.clickUpload();
         } else if (isIOS || isIPhone || isIPad || isAndroid || isPC) {
           this.clickUpload();
         } else this.clickUpload();
