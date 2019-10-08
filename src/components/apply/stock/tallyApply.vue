@@ -217,7 +217,7 @@ export default {
                     }
                 });
              }else{
-                handlerScanBoxCode();
+                this.handlerScanBoxCode();
              }
         },
          /**

@@ -12,7 +12,7 @@
                                 placeholder="请扫码" 
                                 ref='postCode'
                                 class='property_val' 
-                               @change="handlerScanPostCode"
+                                @change="handlerScanPostCode"
                                 @focus="handleOnFocus($event)" />
                             <i class="iconfont" @click="handlerClickScanIcon('postCode')">&#xe661;</i>
 
@@ -336,12 +336,8 @@ export default {
                 scanVoice.error();
                 return;
             }
-
-
-
             this.boxCodesMap[uuid] =uuid;
             this.handlerAddBoxCodeToMatter();
-
             this.scanCodeInfo.boxCode = '';
             this.$refs.boxCode.focus();
         },

@@ -86,7 +86,8 @@ import { debug } from 'util';
     methods: {
       dealUploadDev() {
         if(isQYWX) {
-          this.chooseFile();
+          //this.chooseFile();
+          this.clickUpload();
         } else if (isIOS || isIPhone || isIPad || isAndroid || isPC) {
           this.clickUpload();
         } else this.clickUpload();
@@ -200,7 +201,7 @@ import { debug } from 'util';
       },
       //通用上传文件
       commUploadFile() {
-        let files = this.$refs.uFile.files,
+        var files = this.$refs.uFile.files,
             l = files.length,
             file,
             vm = this,
@@ -211,20 +212,18 @@ import { debug } from 'util';
           return false;
         }
         if(l) {
-          handler(files[0],function(){
-            for(i = 1;i < l; i++){
-              if(!checkType(files[i].name)) {
-                vm.$vux.toast.text(files[i].name + '不符合的文件上传格式！')
-                continue;
-              }
-              if(!checkFileSize(files[i].size)) {
-                vm.$vux.toast.text(files[i].name + '上传大小不能超过10M！') 
-                continue;  
-              }
-              file = files[i];
-              handler(file);
+          for(i = 0;i < l; i++){
+            if(!checkType(files[i].name)) {
+              vm.$vux.toast.text(files[i].name + '不符合的文件上传格式！')
+              continue;
             }
-          });
+            if(!checkFileSize(files[i].size)) {
+              vm.$vux.toast.text(files[i].name + '上传大小不能超过10M！') 
+              continue;  
+            }
+            handler(files[i]);
+          }
+          this.uploadSuccess();
         }
 
         function handler(file,cb){
@@ -276,11 +275,14 @@ import { debug } from 'util';
         });
       },
       uploadSuccess:function(detail){
-        this.files.push(detail);
-        this.biReferenceId = detail.biReferenceId;
-        this.form.$emit('on-upload', {
-          biReferenceId: detail.biReferenceId,
-        });
+        if(detail){
+          this.files.push(detail);
+          this.biReferenceId = detail.biReferenceId;
+          this.form.$emit('on-upload', {
+            biReferenceId: detail.biReferenceId,
+          });
+        }
+        this.$refs.uFile.value = '';
       }
     },
     created() {
