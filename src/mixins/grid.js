@@ -160,8 +160,10 @@ export default {
                     try{
                         var exp = record.get(cfg.v1) + cfg.symbol + record.get(cfg.v2);
                         num = util.round(util.correctFloat(eval(exp)), cfg.col.decimalPrecision);
-                        num = (Number.isNaN(num) || (num === Infinity)) ? 0 : num;
-                        record.set(dataIndex, convertDataType(cfg.col.editorType, num));
+                        if(num){
+                            num = (Number.isNaN(num) || (num === Infinity)) ? 0 : num;
+                            record.set(dataIndex, convertDataType(cfg.col.editorType, num));
+                        }
                     } catch (ex) {
                         console.warn(ex);
                     }
