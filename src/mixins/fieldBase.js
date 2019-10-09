@@ -183,6 +183,9 @@ export default {
         setSubmitValue:function(value) {
             this.submitValue = value;
         },
+        setAllowBlank:function(value) {
+            this.allowBlank = value;
+        },
         getErrors:function(){
             var me = this,
                 value = me.getValue(),
