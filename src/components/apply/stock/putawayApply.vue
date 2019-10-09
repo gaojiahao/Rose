@@ -131,7 +131,7 @@ export default {
             formViewUniqueId: 'a1bccaee-37a8-4786-bbf4-e9cee9fbd081', // 修改时的UniqueId
             matterInfoConfig:{
                 storehouseInCode:"库位编码",
-                specification:"规格",
+                specification:"产品规格",
                 batchNo:"生产批号",
                 productionDate:"生产日期",
                 cardCode:"托盘码"
@@ -498,6 +498,7 @@ export default {
                         invSubUnitMulti:mat.invSubUnitMulti,
                         assMeasureUnit:mat.invSubUnitName, //采购单位
                         assMeasureDescription:mat.invSubUnitComment,//包装规格
+                        specification:mat.specification,//规格
                         thenTotalQtyBal: this.groupSumByFileds(this.shelfList,'inventoryCode',mat.inventoryCode,'thenTotalQtyBal'),//预入库数量
                         thenLockQty:this.groupSumByFileds(this.shelfList,'inventoryCode',mat.inventoryCode,'thenLockQty'),//已上架数量
                         thenQtyBal: this.groupSumByFileds(this.shelfList,'inventoryCode',mat.inventoryCode,'thenQtyBal'),//待上架数量

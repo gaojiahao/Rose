@@ -109,7 +109,7 @@ export default {
             tostText:'',
             formViewUniqueId: '133d7d6a-14b5-4d1f-a259-4a2d0f1c8b83', // 修改时的UniqueId
             matterInfoConfig:{
-                specification:"规格",
+                specification:"产品规格",
                 batchNo:"生产批号",
                 productionDate:"生产日期",
                 assMeasureUnit:"采购单位", //采购单位

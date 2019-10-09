@@ -115,7 +115,7 @@ export default {
             matterInfoConfig:{
                 warehouseName:"仓库名称",
                 storehouseInCode:"库位编码",
-                specification:"规格",
+                specification:"产品规格",
                 boxCodeBal:"箱码库存"
             }
         }
