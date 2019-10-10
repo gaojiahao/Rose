@@ -4,24 +4,25 @@
     <header class="upload-file-header">
       <div class="upload-file-title vux-1px-l">附件</div>
     </header>
-    <!-- <p class="title" :style="titleStyle">附件</p> -->
     <div class="upload-file-list">
-      <div class="upload-file-item" v-for="(item, index) in files" :key="index">
-        <!-- <template v-if="item.iconType === 'image'">
+      <div class="upload-file-text" v-for="(item, index) in comFiles" :key="item.attr1+index">
+        <template v-if="item.iconType != 'image'">
+          <div class="text" @click="downLoadFile(item)">{{item.attr1}}</div>
+          <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="cfg.readOnly == false"></i>
+        </template>  
+      </div>
+      <div class="upload-file-item" v-for="(item, index) in imgFiles" :key="item.attr1+index">
+        <template v-if="item.iconType === 'image'">
           <img @click="downLoadFile(item)" @click.stop="preview(item)" class="img"
                :src="`/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`">
-        </template>
-        <template v-else> -->
-        <template>
-          <div class="text" @click="downLoadFile(item)">{{item.attr1}}</div>
         </template>
         <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="cfg.readOnly == false"></i>
       </div>
       <input @change="commUploadFile()" type="file" ref="uFile" v-show="false" multiple/>
-      <div class="upload-file-item-bottom" @click="dealUploadDev" v-show="cfg.readOnly == false">
+      <div class="upload-file-item" @click="dealUploadDev" v-show="cfg.readOnly == false">
         <div class="icon_container">
           <span class="icon-upload-add"></span>
-          <!-- <span>添加附件</span> -->
+          <span>添加附件</span>
         </div>
       </div>
     </div>
@@ -73,12 +74,21 @@ import { debug } from 'util';
         file: null,
         biReferenceId:null,
         showLoading: false,
+        imgFiles:[],
+        comFiles:[],
       }
     },
     watch: {
       values: {
         handler(val){
-          this.files = val;
+          var arr = [];
+          arr = val.map(item => {
+            return {
+              ...item,
+              iconType: this.judgeFileType(item.attr1),
+            }
+          });
+          this.dealFilesType(arr);
           this.biReferenceId = this.$parent.$parent.biReferenceId;
         }
       }
@@ -123,7 +133,7 @@ import { debug } from 'util';
             iconType: this.judgeFileType(item.attr1),
           }
         });
-        this.files = files;
+        this.dealFilesType(files);
       },
       // 判断图片类型
       judgeFileType(url) {
@@ -186,9 +196,16 @@ import { debug } from 'util';
           onConfirm: () => {
             deleteFile(item.id).then(({success = true, message = ''}) => {
               if (success) {
-                let idx = this.files.findIndex(fItem => fItem.id === item.id);
-                if (idx !== -1) {
-                  this.files.splice(idx, 1);
+                if(item.iconType=='image'){
+                  let idx = this.imgFiles.findIndex(fItem => fItem.id === item.id);
+                  if (idx !== -1) {
+                    this.imgFiles.splice(idx, 1);
+                  }
+                } else {
+                  let idx = this.comFiles.findIndex(fItem => fItem.id === item.id);
+                  if (idx !== -1) {
+                    this.comFiles.splice(idx, 1);
+                  }
                 }
               }
             })
@@ -207,9 +224,9 @@ import { debug } from 'util';
             vm = this,
             i,
             textBlankType='',
-            textBlankSize='';
+            textBlankSize='',
+            arrFiles = [];
 
-        //console.log(files)
         if(!files.length) {
           return false;
         }
@@ -237,7 +254,15 @@ import { debug } from 'util';
               })
               continue;  
             }
-            handler(files[i]);
+            arrFiles.push(files[i]);
+          }
+          if(arrFiles.length){
+            handler(arrFiles[0],function(){
+              for(i = 1;i < arrFiles.length; i++){
+                file = arrFiles[i];
+                handler(file);
+              }
+            });
           }
           this.uploadSuccess();
         }
@@ -292,13 +317,26 @@ import { debug } from 'util';
       },
       uploadSuccess:function(detail){
         if(detail){
-          this.files.push(detail);
-          this.biReferenceId = detail.biReferenceId;
+          if(detail.iconType == 'image'){
+            this.imgFiles.push(detail);
+          } else {
+            this.comFiles.push(detail);
+          }
+          this.biReferenceId = this.biReferenceId ? this.biReferenceId:detail.biReferenceId;
           this.form.$emit('on-upload', {
             biReferenceId: detail.biReferenceId,
           });
         }
         this.$refs.uFile.value = '';
+      },
+      dealFilesType(files){
+        for(var i = 0; i < files.length; i++){
+          if(files[i].iconType == 'image') {
+            this.imgFiles.push(files[i]);
+          } else {
+            this.comFiles.push(files[i]);
+          }
+        }
       }
     },
     created() {
@@ -356,8 +394,8 @@ import { debug } from 'util';
       // padding: 0.05rem 0;
     }
     .upload-file-item {
-      width: 100%;
-      height: 100%;
+      width: .78rem;
+      height: .78rem;
       position: relative;
       /* margin: .15rem .1rem 0 0; */
       margin: .1rem;
@@ -367,6 +405,30 @@ import { debug } from 'util';
         height: 100%;
         border-radius: .04rem;
       }
+      .icon-shanchu {
+        top: 0;
+        right: 0;
+        z-index: 5;
+        font-size: .2rem;
+        color: #ea5455;
+        // background: #000;
+        position: absolute;
+        transform: translate(50%, -50%);
+      }
+      .text {
+        width: 95%;
+        height: 100%;
+        font-size: .12rem;
+        overflow: hidden; 
+        word-break: break-all;  
+      }
+    }
+    .upload-file-text {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      margin: .1rem;
+      display: inline-block;
       .icon-shanchu {
         top: 0;
         right: 0;
