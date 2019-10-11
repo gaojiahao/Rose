@@ -190,6 +190,7 @@ var component = {
     checkAmt() {},
     setValue: function(value) {
       this.$set(this.form.formData, this.name, value);
+      this.$event.$emit(`item-event-${this.name}`,value);
     },
     getValue: function() {
       return this.form.formData[this.name];
@@ -258,6 +259,7 @@ var component = {
     });
 
     form.fieldMap[id] = this;
+    form.fields[this.cfg.fieldCode] = this;
     this.isGrid = true;
     this.name = name;
     this.form = form;

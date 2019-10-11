@@ -384,6 +384,7 @@ export default {
               this.initComputed(JSON.parse(data.config).formComputed);
               console.log("this.config", data);
               this.getNewFormConfig(config,res.data);
+              this.viewInfo = config;
               this.fieldSets = fieldSets;
             }
           });

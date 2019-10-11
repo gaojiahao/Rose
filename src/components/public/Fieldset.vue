@@ -87,6 +87,9 @@ var component = {
      this.buildItems();
      this.initWatch(cfg.watch);
   },
+  mounted(){
+    this.form.initItemsEvent();
+  },
   methods: {
     buildItems(){
        // *部分应用* 物料详情在审批节点可以重新录入数据 此处进行数据分割
