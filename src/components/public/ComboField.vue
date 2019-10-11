@@ -106,6 +106,10 @@ let cfg = {
             this.displaysValue = this.values[this.cfg.fieldCode];
           }
         }else{
+          if(this.listData.length === 0){
+            this.displaysValue = '';
+            return;
+          }
           this.listData.forEach(k => {
             if(k[this.cfg.valueField] === this.values[this.cfg.fieldCode]){
               this.displaysValue = k[this.cfg.displayField];

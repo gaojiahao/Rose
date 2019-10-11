@@ -251,6 +251,40 @@ export default {
                 return computed;
             }
         },
+        initItemsEvent: function () {
+            let me = this,
+                itemsEvent = me.viewInfo.formItemsEvent,
+                cmpMap = me.fields;
+    
+            if (itemsEvent) itemsEvent.forEach(function (item) {
+                let cmp = cmpMap[item.fieldcode],
+                    fn;
+                if (cmp) {
+                    try {
+                        fn = eval('(' + item.fn + ')');
+                    } catch (e) {
+                        console.error(item.fieldcode + '事件函数bug', e);
+                    }
+                    if (Object.prototype.toString.call(fn)==='[object Function]') {
+                        me.$event.$on(`item-event-${item.fieldcode}`, (function (cmp,item,fn) {
+                            return function(){
+                                let args = [me, cmp].concat(Array.prototype.slice.call(arguments));
+                                try {
+                                    fn.apply(me, args);
+                                } catch (e) {
+                                    console.error(item.fieldcode + '事件函数执行bug', e);
+                                }
+                            }
+                        })(cmp,item,fn));
+                    } else {
+                        console.error(item.fieldcode + '：表单事件函数错误,不是一个合法函数');
+                    }
+    
+                } else {
+                    console.error('表单事件主体[' + item.fieldcode + ']不存在！');
+                }
+            });
+        },
         setValue(fieldCode,value){
             this.$set(this.formData,fieldCode,value);
         },
