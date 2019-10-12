@@ -74,6 +74,26 @@ let cfg = {
         if(value){
           value[this.cfg.fieldCode] && this.displayRealValue();
         }
+      },
+      listData: function(value){
+        let me = this,
+            data = {
+              page: 1,
+              start: 0
+            };
+        if(value.length > 0){
+          if(this.form.model === 'revise'){
+            if(me.cfg.fieldCode === 'handlerName'){
+              data.filter = JSON.stringify([{operator: 'eq',value: this.values[this.cfg.fieldCode],property: this.cfg.valueField}]);
+              $flyio.ajax({
+                  url: me.cfg.dataSource.data.url,
+                  data
+              }).then(({dataCount = 0, tableContent = []}) => {
+                tableContent[0] && me.selItem(tableContent[0]);
+              })
+            }
+          }
+        }
       }
     },
     computed: {
@@ -106,6 +126,10 @@ let cfg = {
             this.displaysValue = this.values[this.cfg.fieldCode];
           }
         }else{
+          if(this.listData.length === 0){
+            this.displaysValue = '';
+            return;
+          }
           this.listData.forEach(k => {
             if(k[this.cfg.valueField] === this.values[this.cfg.fieldCode]){
               this.displaysValue = k[this.cfg.displayField];
@@ -391,7 +415,7 @@ let cfg = {
     selItem(item){
       this.selection = item;
       this.showPop = false;
-      this.value = item[this.cfg.valueField];
+      this.value = item && item[this.cfg.valueField];
       //重复项与单一项的默认展示数据需求不一样
       if(this.$parent.cfg.xtype != "r2GridColumn") {
         this.setValue(this.value);  
