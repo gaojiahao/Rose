@@ -755,9 +755,11 @@ export default {
                             }
 
                         } else {
-                            errorMsgArr.push('【' + nowColmn + '】未配置校验关联列');
-                            validResult = false;
-                            return false;
+                            console.log('【' + nowColmn + '】未配置校验关联列');
+                            return validResult;
+                            //errorMsgArr.push('【' + nowColmn + '】未配置校验关联列');
+                            //validResult = false;
+                            //return false;
                         }
                     });
                 } else {
@@ -858,9 +860,11 @@ export default {
                             }
 
                         } else {
-                            errorMsgArr.push('【' + nowColmn + '】未配置校验关联列');
-                            validResult = false;
-                            return false;
+                            console.log('【' + nowColmn + '】未配置校验关联列');
+                            return validResult;
+                            //errorMsgArr.push('【' + nowColmn + '】未配置校验关联列');
+                            //validResult = false;
+                            //return false;
                         }
                     });
                 } else {
