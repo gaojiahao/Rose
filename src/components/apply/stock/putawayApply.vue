@@ -252,9 +252,28 @@ export default {
                 this.tostText = '请先扫库位!'
                 this.scanCodeInfo.boxCode = '';
                 scanVoice.error();
-                return false;
+                return;
             }
             if(this.scanCodeInfo.boxCode.split(',').length !=5 ){
+                
+                let flag = false;
+
+                this.matters.map(m=>{
+                    m.boxCodes.map(b=>{
+                        if(b.cardCode){
+                            flag = true;
+                        }
+                    });
+                });
+
+                if(flag){
+                    this.showTost = true;
+                    this.tostText = '上架时只能扫一个托盘码!';
+                    this.scanCodeInfo.boxCode = '';
+                    scanVoice.error();
+                    return;
+                }
+                
                 this.trayCode = this.scanCodeInfo.boxCode;
                 getBoxInfoByMD({
                     pallet:this.trayCode
@@ -373,6 +392,7 @@ export default {
                 content: '确认删除?',
                 // 确定回调
                 onConfirm: () => {
+                    let cardCode = undefined;
                     // 被选中删除的物料
                     this.selItems.map(sel=>{
                         let mIdx,bIdx;
@@ -382,6 +402,15 @@ export default {
                             if(matIdx === mIdx){
                                 mat.boxCodes.map((box,boxIdx)=>{
                                     if(boxIdx === bIdx){
+                                        if(box.cardCode){
+                                            cardCode = box.cardCode;
+                                        }
+                                        box.isDelete = true;
+                                        delete this.boxCodesMap[box.boxCode];
+                                    }
+
+                                    //如果是扫托盘进来的箱码，删除一个箱码，其余在该托盘上的箱码一起删除
+                                    if(cardCode && box.cardCode === cardCode){
                                         box.isDelete = true;
                                         delete this.boxCodesMap[box.boxCode];
                                     }
