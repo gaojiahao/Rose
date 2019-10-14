@@ -202,7 +202,7 @@ export default {
         submit(){
             var me = this,
                 oprationType = me.model == 'new' ? 'add' : 'update',
-                isBaseObject = me.viewInfo.config.isBaseObject,
+                isBaseObject = me.viewInfo.config&&me.viewInfo.config.isBaseObject,
                 oprationObj = isBaseObject?'BaseObject':'AppData',
                 opration = oprationType+oprationObj;
             
