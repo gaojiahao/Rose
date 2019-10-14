@@ -133,7 +133,7 @@
       line-height: .12rem;
       font-size: .12rem;
       & + .matter_info_item {
-        margin-top: .12rem;
+        margin-top: .05rem;
       }
       &.flex-start {
         justify-content: flex-start;
