@@ -519,6 +519,7 @@ export default {
          this.fieldMap = {}; //id;
          this.fields = {}; //fieldCode
          this.wfParamFieldMap = {};
+         this.initItemsEvents = true;
          this.loadPage();
     },
     reload(){

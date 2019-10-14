@@ -457,6 +457,18 @@ let cfg = {
     },
     searchBox(data){
       this.searchBoxShow = data;
+    },
+    //原料采购订单先选明细后选供应商自动设置税率和含税单价方法
+    setTaxPrice(matCodeParms,dealerCode){
+      let data = {matCodes:matCodeParms,dealerCode:dealerCode};
+      return $flyio.ajax({
+        type: 'POST',
+        contentType: 'application/json',
+        url: '/H_roleplay-si/formAPI/getPriceFromProcurementContract',
+        data: JSON.stringify(data)
+      }).then(res => {
+        return res;
+      })
     }
   },
   created(){

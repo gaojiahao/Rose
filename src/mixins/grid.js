@@ -40,11 +40,11 @@ export default {
             }
             this.setValue(value);
         },
-        createRecord: function (row) {
+        createRecord: function (row,editorFieldCode) {
             var me = this,
                 data = {},
                 record = new Record(data, me),
-                editorFieldCode,
+                editorFieldCode = editorFieldCode ? editorFieldCode : null,
                 dataSourceBind = this.dataSourceBind;
 
             this.setDefaultValue(record);
@@ -52,9 +52,13 @@ export default {
                 editorFieldCode = dataSourceBind.k;
                 data[editorFieldCode] = row[dataSourceBind.v];
                 this.setValueBindValue(record, editorFieldCode, row);
-            } else if (me.cfg.dataIndexMap) {
+            } else if (me.cfg.dataIndexMap && !editorFieldCode) {
                 //适配AccountGrid
                 me.handlerValueBindByIndexMap(record, row, me.cfg.dataIndexMap);
+            }
+            //form字段改变事件处理record
+            if(editorFieldCode){
+                me.handleFormEventRecord(record, row);
             }
             me.executeExpression(record, editorFieldCode);
             return record;
@@ -115,7 +119,7 @@ export default {
                 num,
                 cfg,
                 dataIndex,
-                changeFieldCodes = record.getChanges(),
+                changeFieldCodes = record.getChanges ? record.getChanges() : {},
                 getNumber = function (fieldCode) {
                     var form = me.form;
                     return Number(form.getValues()[fieldCode]);
@@ -363,6 +367,12 @@ export default {
             var extra = util.clone(selection);
             for (let k in map) {
                 record.set(k, extra[map[k]]);
+            }
+        },
+        handleFormEventRecord(record, selection) {
+            var row = util.clone(selection);
+            for (let k in row) {
+                record.set(k, row[k]);
             }
         },
         
