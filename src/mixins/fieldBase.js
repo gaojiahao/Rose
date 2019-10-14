@@ -176,6 +176,7 @@ export default {
             this.form.$emit('before-'+this.valueChangeKey,this);
             this.form.setValue(cfg.fieldCode,value,this);
             this.form.$emit(this.valueChangeKey,this);
+            this.$event.$emit(`item-event-${cfg.fieldCode}`);
         },
         setHidden:function(value) {
             this.hidden = value;

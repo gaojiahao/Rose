@@ -255,7 +255,7 @@ export default {
             let me = this,
                 itemsEvent = me.viewInfo.formItemsEvent,
                 cmpMap = me.fields;
-    
+            
             if (itemsEvent) itemsEvent.forEach(function (item) {
                 let cmp = cmpMap[item.fieldcode],
                     fn;
@@ -266,16 +266,18 @@ export default {
                         console.error(item.fieldcode + '事件函数bug', e);
                     }
                     if (Object.prototype.toString.call(fn)==='[object Function]') {
-                        me.$event.$on(`item-event-${item.fieldcode}`, (function (cmp,item,fn) {
-                            return function(){
-                                let args = [me, cmp].concat(Array.prototype.slice.call(arguments));
-                                try {
-                                    fn.apply(me, args);
-                                } catch (e) {
-                                    console.error(item.fieldcode + '事件函数执行bug', e);
+                        if(!me._events[`item-event-${item.fieldcode}`]){
+                            me.$event.$on(`item-event-${item.fieldcode}`, (function (cmp,item,fn) {
+                                return function(){
+                                    let args = [me, cmp].concat(Array.prototype.slice.call(arguments));
+                                    try {
+                                        fn.apply(me, args);
+                                    } catch (e) {
+                                        console.error(item.fieldcode + '事件函数执行bug', e);
+                                    }
                                 }
-                            }
-                        })(cmp,item,fn));
+                            })(cmp,item,fn));
+                        }
                     } else {
                         console.error(item.fieldcode + '：表单事件函数错误,不是一个合法函数');
                     }
