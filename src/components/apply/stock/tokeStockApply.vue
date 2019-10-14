@@ -116,7 +116,9 @@ export default {
                 warehouseName:"仓库名称",
                 storehouseInCode:"库位编码",
                 specification:"产品规格",
-                boxCodeBal:"箱码库存"
+                boxCodeBal:"箱码库存",
+                batchNo:"生产批号",
+                productionDate:"生产日期"
             }
         }
     },
@@ -462,18 +464,18 @@ export default {
                         transObjCode: box.inventoryCode,//物料编码
                         tdProcessing: box.processing,//加工属性
                         assMeasureUnit: box.assMeasureUnit,//计量单位
-                        assMeasureScale: null,
                         boxCode: box.boxCode,//箱码
                         boxRule: box.boxRule,//箱规
                         storehouseInCode:box.storehouseInCode,//库位编码
                         thenTotalQtyStock: box.qtyBal,//库存余额
                         thenLockQtyStock: box.qtyLock,//计划占用
                         thenQtyStock: box.safeStock,//可用库存
-                        assistQty: 0,
                         locationStock: box.storehouseQtyBal,//库位存货
                         tdQty: box.tdQty,//盘点数量
                         lockQty: box.boxCodeBal,//箱码库存
-                        differenceNum:box.tdQty - box.boxCodeBal
+                        differenceNum:box.tdQty - box.boxCodeBal,
+                        batchNo:box.batchNo,
+                        productionDate:box.productionDate
                     });
                 });
             });
