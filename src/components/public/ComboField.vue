@@ -436,6 +436,9 @@ let cfg = {
           valueField = this.cfg.valueField,
           listData = this.listData;
 
+      if(this.cfg.defaultValue.type !='firstItem' && listData.length>1){
+        return ;
+      }
       if(value != null){
           // selection = listData.find(function(item){
           //   console.log('valueField',valueField)
