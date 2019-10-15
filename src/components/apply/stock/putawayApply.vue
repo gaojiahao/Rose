@@ -103,7 +103,6 @@ import {
     getWhbyStoragelocation,
     getPreShelfInvInfoByBoxCode,
     getBoxInfoByMD,
-    getBoxInfoByPallet,
     validateBoxInfoByMD 
     } from 'service/wmsService'
 import { getSOList } from 'service/detailService'
@@ -260,7 +259,7 @@ export default {
 
                 this.matters.map(m=>{
                     m.boxCodes.map(b=>{
-                        if(b.cardCode){
+                        if(b.cardCode === this.scanCodeInfo.boxCode){
                             flag = true;
                         }
                     });
@@ -268,7 +267,7 @@ export default {
 
                 if(flag){
                     this.showTost = true;
-                    this.tostText = '上架时只能扫一个托盘码!';
+                    this.tostText = '该托盘已经扫过啦!';
                     this.scanCodeInfo.boxCode = '';
                     scanVoice.error();
                     return;
@@ -392,7 +391,7 @@ export default {
                 content: '确认删除?',
                 // 确定回调
                 onConfirm: () => {
-                    let cardCode = undefined;
+                    let cardCodes = [];
                     // 被选中删除的物料
                     this.selItems.map(sel=>{
                         let mIdx,bIdx;
@@ -403,14 +402,20 @@ export default {
                                 mat.boxCodes.map((box,boxIdx)=>{
                                     if(boxIdx === bIdx){
                                         if(box.cardCode){
-                                            cardCode = box.cardCode;
+                                            cardCodes.push(box.cardCode);
                                         }
                                         box.isDelete = true;
                                         delete this.boxCodesMap[box.boxCode];
                                     }
+                                });
+                            }
+                        });
 
+                        this.matters.map((mat,matIdx)=>{
+                            if(matIdx === mIdx){
+                                mat.boxCodes.map((box,boxIdx)=>{
                                     //如果是扫托盘进来的箱码，删除一个箱码，其余在该托盘上的箱码一起删除
-                                    if(cardCode && box.cardCode === cardCode){
+                                    if(cardCodes.includes(box.cardCode)){
                                         box.isDelete = true;
                                         delete this.boxCodesMap[box.boxCode];
                                     }
