@@ -1,7 +1,16 @@
 <template>
   <div class="detail_wrapper">
+    <div class="end-date">
+      <group>
+        <datetime
+          v-model="endDate"
+          @on-change="endDateChange">
+          <h4 slot="title" :style="{color:'#39f'}">截至日期</h4>
+        </datetime>
+      </group>
+    </div>
     <div class="header">
-      <div class="title">{{headInfo.title}}</div>
+      <div class="title-form">{{headInfo.title}}</div>
       <div class="swiper-container swiper-container-header">
         <div class="swiper-wrapper">
           <div class="swiper-slide">{{headInfo.firstName}}</div>
@@ -12,16 +21,14 @@
     <r-scroll :options="scrollOptions" ref="bScroll">
       <div class="part-left">
         <div v-for="(item, index) in listData" :key="index">
-          <div class="title border-1px-t border-1px-b" v-if="item.assetType"
-               ref="partLeftTitle">{{item.assetType}}
-          </div>
           <div class="content-item"
-               :class="{'final-total': lItem.isTotal,
-                 'border-1px-t': lItem.isTotal,
-                 'is-first': lItem.bigSubject,
-                 'indent': lItem.bigSubject !== undefined && !lItem.bigSubject && !lItem.subjectName.includes(': ')}"
-               v-for="(lItem, lIndex) in item.items" :key="lIndex" ref="partLeftContent">
-            {{lItem.subjectName}}
+               :class="{'final-total': item.total,
+               'border-1px-t': item.total,
+               'border-1px-b': item.total,
+               'title': item.total,
+               'indent': !item.total}" 
+               ref="partLeft">
+               {{item.financeName}}
           </div>
         </div>
       </div>
@@ -29,21 +36,19 @@
         <div class="swiper-wrapper">
           <div class="swiper-slide">
             <div v-for="(item, index) in listData" :key="index">
-              <div class="title" v-if="item.assetType" ref="partRightInitTitle"></div>
               <div class="content-item"
-                   :class="{'final-total': lItem.isTotal, 'is-first': lItem.bigSubject}"
-                   v-for="(lItem, lIndex) in item.items" :key="lIndex" ref="partRightInit">
-                {{lItem.initialBalance | formatNum}}
+                   :class="{'final-total': item.total || item.bigSubject}"
+                   ref="partRightInit">
+                   {{item.initAmount | formatNum}}
               </div>
             </div>
           </div>
           <div class="swiper-slide">
             <div v-for="(item, index) in listData" :key="index">
-              <div class="title" v-if="item.assetType" ref="partRightFinalTitle"></div>
               <div class="content-item"
-                   :class="{'final-total': lItem.isTotal, 'is-first': lItem.bigSubject}"
-                   v-for="(lItem, lIndex) in item.items" :key="lIndex" ref="partRightFinal">
-                {{lItem.finalBalance | formatNum}}
+                   :class="{'final-total': item.total || item.bigSubject}"
+                   ref="partRightFinal">
+                   {{item.finalAmount | formatNum}}
               </div>
             </div>
           </div>
@@ -58,12 +63,13 @@
   import RScroll from 'plugins/scroll/RScroll'
   import {toFixed} from '@/plugins/calc'
   import {accAdd} from "plugins/calc/decimalsAdd";
-  import {numberComma} from 'vux'
+  import {numberComma,Datetime,Group,dateFormat} from 'vux'
 
   export default {
     name: "ZCFZForm",
     data() {
       return {
+        endDate: dateFormat(new Date(), 'YYYY-MM-DD'),
         headerSwiper: null,         // 顶部swiper
         partRightSwiper: null,      // 右侧金额swiper
         code: '',                   // 路由参数
@@ -92,51 +98,39 @@
     },
     components: {
       RScroll,
+      Datetime,
+      Group
     },
     methods: {
+      endDateChange(){
+        this.getData();
+      },
       // 获取资产负债表数据
       getData() {
-        return this.listMap[this.code].request().then(res => {
+        return this.listMap[this.code].request(this.endDate).then(res => {
           let {data = []} = res;
-          let tmp = {};
-          // 组装数据
-          data.forEach(item => {
-            let matchedObj = tmp[item.assetType];
-            if (matchedObj) {
-              matchedObj.items.push(Object.freeze(item));
-            } else {
-              tmp[item.assetType] = {
-                assetType: item.assetType,
-                items: [Object.freeze(item)]
-              }
-            }
-          });
 
-          this.listData = tmp;
+          this.listData = data;
           this.$nextTick(() => {
             // 设置金额行高度，判断高度是否与title相同，不相同则设置为title的高度
-            this.setHeight(this.$refs.partLeftContent, this.$refs.partRightInit, this.$refs.partRightFinal);
-            if (this.code === 'ZCFZ') {
-              // 设置标题高度，判断高度是否与title相同，不相同则设置为title的高度
-              this.setHeight(this.$refs.partLeftTitle, this.$refs.partRightInitTitle, this.$refs.partRightFinalTitle);
-            }
+            this.setHeight(
+              this.$refs.partLeft, 
+              this.$refs.partRightInit, 
+              this.$refs.partRightFinal);
             this.$loading.hide();
           })
         })
       },
       // 设置高度
-      setHeight(left, ...right) {
-        let [first] = right;
-        left && left.forEach((item, index) => {
-          let initialItem = first[index];
-
-          // 判断高度是否与title相同，不相同则设置为title的高度
-          if (item.clientHeight !== initialItem.clientHeight) {
-            right.forEach(rItem => {
-              rItem[index].style.height = `${item.clientHeight}px`;
-            });
-          }
-        });
+      setHeight(left,rightInit,rightFinal) {
+        let right = [rightInit,rightFinal];
+        left.forEach((item,index) => {
+          right.forEach(rRight => {
+            if(item.clientHeight !== rRight[index].clientHeight){
+              rRight[index].style.height = `${item.clientHeight}px`;
+            }
+          })
+        })
       },
       // 初始化swiper
       initSwiper() {
@@ -151,10 +145,8 @@
     filters: {
       // 格式化数字
       formatNum(num) {
-        if (!num) {
-          return '-'
-        }
-        return `${numberComma(toFixed(num))}元`
+        if (!num) return '-';
+        return `${numberComma(toFixed(num))}元`;
       }
     },
     created() {
@@ -198,6 +190,10 @@
       height: .3rem;
       line-height: .2rem;
       box-sizing: border-box;
+      .title-form{
+        font-size: .2rem;
+        font-weight: bold;
+      }
     }
     /* 顶部期初、期末 */
     .swiper-container-header {
@@ -217,25 +213,25 @@
     .part-left, .part-right {
       width: 50%;
       font-size: .14rem;
-      /* 标题 */
-      .title {
-        padding: .05rem .15rem;
-        min-height: .4rem;
-        line-height: .3rem;
-        font-size: .18rem;
-        font-weight: bold;
-        box-sizing: border-box;
-      }
       .content-item {
         position: relative;
         padding: .05rem .15rem;
         width: 100%;
         line-height: .2rem;
         box-sizing: border-box;
+        /* 标题 */
+        .title {
+          padding: .05rem .15rem;
+          min-height: .4rem;
+          line-height: .3rem;
+          font-size: .16rem;
+          font-weight: bold;
+          box-sizing: border-box;
+        }
 
         /* 资产合计 */
         &.final-total {
-          line-height: .3rem;
+          line-height: .25rem;
           font-size: .16rem;
           font-weight: bold;
         }
@@ -249,6 +245,7 @@
       }
     }
     .part-left {
+      border-right: 1px solid #C7C7C7;
       .title {
         position: relative;
       }

@@ -25,15 +25,21 @@ export let getViewList = (data = {}) => {
 };
 
 // 获取资产负债表数据
-export let getOffBalance = () => {
+export let getOffBalance = (endDate) => {
   return $flyio.ajax({
-    url: '/account-api/account/getOffBalanceForMobile',
+    url: '/account-api/composite/getBalanceSheet',
+    data: {
+      end: endDate
+    }
   })
 };
 // 获取利润表数据
-export let getProfit = () => {
+export let getProfit = (endDate) => {
   return $flyio.ajax({
-    url: '/account-api/account/getProfitForMobile',
+    url: '/account-api/composite/getProfitSheet',
+    data: {
+      end: endDate
+    }
   })
 };
 //获取自动分录数据 view_id 区分会计类科目与非会计类科目
