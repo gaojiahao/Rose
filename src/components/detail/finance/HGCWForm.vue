@@ -5,7 +5,7 @@
         <datetime
           v-model="endDate"
           @on-change="endDateChange">
-          <h4 slot="title" :style="{color:'#39f'}">截至日期</h4>
+          <h5 slot="title" :style="{color:'#39f',fontSize:'.15rem'}">截至日期</h5>
         </datetime>
       </group>
     </div>
@@ -181,6 +181,14 @@
     overflow: hidden;
     background-color: #fff;
 
+    .end-date /deep/ .vux-no-group-title{
+      margin-top: 0;
+    }
+    .end-date /deep/ .weui-cells{
+      margin-top: 0;
+      line-height: 1.2;
+    }
+
     /* 头部 */
     .header {
       display: flex;
@@ -191,7 +199,7 @@
       line-height: .2rem;
       box-sizing: border-box;
       .title-form{
-        font-size: .2rem;
+        font-size: .17rem;
         font-weight: bold;
       }
     }
@@ -232,7 +240,7 @@
         /* 资产合计 */
         &.final-total {
           line-height: .25rem;
-          font-size: .16rem;
+          font-size: .14rem;
           font-weight: bold;
         }
 
