@@ -115,7 +115,8 @@ export default {
                 storehouseInCode:"入库库位",
                 specification:"产品规格",
                 locationStock:"库位库存",
-                lockQty:"箱码库存"
+                lockQty:"箱码库存",
+                cardCode:"托盘码"
             },
         }
     },
@@ -194,9 +195,18 @@ export default {
                         }else{
                             getBoxInfoByPallet(pallet).then(res=>{
                                 if(res.dataCount){
+
+                                    if(res.tableContent[0].warehouseName != this.warehouse.inPutWarehouseName){
+                                        scanVoice.error();
+                                        this.showTost = true;
+                                        this.tostText = `当前托盘所属仓库与入库仓库不一致，请重新扫码!`;
+                                        this.scanCodeInfo.boxCode = '';
+                                        this.$refs.boxCode.focus();
+                                        return;
+                                    }
                                     res.tableContent.map(box=>{
                                         this.scanCodeInfo.boxCode = `${box.inventoryCode},${box.batchNo},${box.productionDate},${box.qty},${box.boxCode}`;
-                                        this.handlerScanBoxCode();
+                                        this.handlerScanBoxCode(pallet);
                                     });
                                     scanVoice.success;
                                 }else{
@@ -223,7 +233,7 @@ export default {
          /**
         * 扫箱码
         */
-        handlerScanBoxCode(){
+        handlerScanBoxCode(palletCode=''){
             
             //matCode 物料编码
             //batchNo 批次号
@@ -251,6 +261,15 @@ export default {
                 if(res.dataCount>0){
                     let mat = res.tableContent[0];
 
+                    if(mat.warehouseName != this.warehouse.inPutWarehouseName){
+                        scanVoice.error();
+                        this.showTost = true;
+                        this.tostText = `当前箱码所属仓库与入库仓库不一致，请重新扫码!`;
+                        this.scanCodeInfo.boxCode = '';
+                        this.$refs.boxCode.focus();
+                        return;
+                    }
+
                     if(mat.storehouseCode === this.scanCodeInfo.spCode){
                         scanVoice.error();
                         this.showTost = true;
@@ -262,7 +281,10 @@ export default {
                     let exist = false;
                     this.matters.map(m=>{
                         if(m.inventoryCode === mat.inventoryCode){
-                            m.boxCodes.unshift(this.transfromDataSource(mat,uuid,boxRule));
+                            m.boxCodes.unshift({
+                                ...this.transfromDataSource(mat,uuid,boxRule),
+                                cardCode:palletCode
+                            });
                             exist = true;
                         }
                     });
@@ -271,7 +293,10 @@ export default {
                         this.matters.unshift({
                             ...mat,
                             expend:true,
-                            boxCodes:[this.transfromDataSource(mat,uuid,boxRule)]
+                            boxCodes:[{
+                                ...this.transfromDataSource(mat,uuid,boxRule),
+                                cardCode:palletCode
+                            }]
                         });
 
                         //记录出库仓信息

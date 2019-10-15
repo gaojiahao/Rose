@@ -88,7 +88,8 @@ var component = {
      this.initWatch(cfg.watch);
   },
   mounted(){
-    this.form.initItemsEvent();
+    this.form.initItemsEvents && this.form.initItemsEvent();
+    this.form.initItemsEvents = false;
   },
   methods: {
     buildItems(){
