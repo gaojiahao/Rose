@@ -339,13 +339,14 @@ export default {
                             this.handlerScanBoxCode();
                         });
                     }else{
-                         this.showTost = true;
+                        this.showTost = true;
                         this.tostText = '此托盘码无效!'
                         this.scanCodeInfo.boxCode = '';
                         return false;
                     }
                 });
             }else{
+                this.trayCode = '';
                 this.handlerScanBoxCode();
             }
         },

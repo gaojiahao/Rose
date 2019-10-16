@@ -3,6 +3,18 @@
         <div class="basicPart" ref="fill">
             <div class="wrapper">
                 <div class="scanCodeInfo">
+                    <div class='each_property' >
+                            <label class="required">申请单号</label>
+                            <input 
+                                type='text' 
+                                v-model="scanCodeInfo.postCode" 
+                                placeholder="请扫码" 
+                                ref='postCode'
+                                class='property_val' 
+                                @change="handlerScanPostCode"
+                                @focus="handleOnFocus($event)" />
+                            <i class="iconfont" @click="handlerClickScanIcon('postCode')">&#xe661;</i>
+                        </div>
                     <div class="vux-1px-t">
                         <div class='each_property' >
                             <label class="required">托盘码</label>
@@ -84,7 +96,7 @@ import {
     getPriceFromSalesContractAndPrice, 
     updateData} from 'service/commonService'
 import WebContext from 'service/commonService'
-import {getInventoryInfoByMatCode ,getPreShelfInvInfoByBoxCode} from 'service/wmsService'
+import {getStorageShelf, getInventoryInfoByMatCode ,getPreShelfInvInfoByBoxCode} from 'service/wmsService'
  
 import { getSOList } from 'service/detailService'
 import scanVoice from '@/plugins/scanVoice'
@@ -112,7 +124,6 @@ export default {
                 specification:"产品规格",
                 batchNo:"生产批号",
                 productionDate:"生产日期",
-                assMeasureUnit:"采购单位", //采购单位
                 assMeasureDescription:"包装规格",//包装规格
             },
         }
@@ -143,8 +154,54 @@ export default {
         handlerClickScanIcon(refKey){
             this.$refs[refKey].focus();
         },
+        handlerScanPostCode(){
+             if(!this.scanCodeInfo.postCode) return;
+
+            if(this.postCode && this.scanCodeInfo.postCode != this.postCode && this.matters.length>0){
+               scanVoice.error();
+                this.$vux.confirm.show({
+                    content: '当前扫的申请单号与前面扫的申请单号不一致，是否更换？以重新获取待上架数据',
+                    // 确定回调
+                    onConfirm: () => {
+                        this.postCode = this.scanCodeInfo.postCode;
+                        this.scanCodeInfo.trayCode = '';
+                        this.warehouse = undefined;
+                        this.matters = [];
+                        this.boxCodesMap = {};
+                        this.shelfList = [];
+                    },
+                    onCancel:() =>{
+                        this.scanCodeInfo.postCode = this.postCode;
+                        this.$refs.trayCode.focus();
+                    }
+                })
+            }else{
+                
+                this.handlerSetMatters(this.scanCodeInfo.postCode,res=>{
+                    if(!res.dataCount){
+                        scanVoice.error();
+                        this.showTost = true;
+                        this.tostText = '当前申请单号并没有待上架的数据,请重新扫码!';
+                        this.scanCodeInfo.postCode = '';
+                        this.$refs.postCode.focus();
+                    }else{
+                        scanVoice.success();
+                        this.postCode = this.scanCodeInfo.postCode;
+                        this.$refs.trayCode.focus();
+                    }
+                });
+            }
+        },
         //扫托盘码
         handlerScanTrayCode(){
+            if(!this.scanCodeInfo.postCode) {
+                scanVoice.error();
+                this.showTost = true;
+                this.tostText = '请先扫申请单号!';
+                this.scanCodeInfo.trayCode = '';
+                this.$refs.postCode.focus();
+            }
+
             if(!this.scanCodeInfo.trayCode) return;
 
             var reg =  /[a-zA-Z]{5}[0-9]{8}/;
@@ -166,7 +223,9 @@ export default {
                     // 确定回调
                     onConfirm: () => {
                         this.trayCode = this.scanCodeInfo.trayCode;
-                        this.matters = [];
+                        this.matters.map(m=>{
+                            m.boxCodes = [];
+                        });
                         this.boxCodesMap = {};
                     },
                     onCancel:() =>{
@@ -203,8 +262,6 @@ export default {
                 return;
             }
 
-            this.boxCodesMap[uuid] =uuid;
-
             getPreShelfInvInfoByBoxCode({
                 boxCode:uuid
             }).then(res=>{
@@ -220,48 +277,12 @@ export default {
                     this.$refs.boxCode.focus();
                     return;
                 }else{
-                    if(this.materielMap[matCode]){
-                        scanVoice.success();
-                        this.handlerAddBoxCodeToMatter();
-                        this.scanCodeInfo.boxCode = '';
-                        this.$refs.boxCode.focus();
-                    }else{
-                        getInventoryInfoByMatCode({
-                            matCode:matCode
-                        }).then(res=>{
-                            if(res.dataCount){
-                                let mat = res.tableContent[0];
-                                this.materielMap[mat.inventoryCode] = {
-                                    inventoryCode:mat.inventoryCode,
-                                    inventoryName:mat.inventoryName,
-                                    processing:mat.processing,
-                                    specification:mat.specification,
-                                    assMeasureScale:mat.invSubUnitMulti,//主计倍数
-                                    assMeasureUnit:mat.invSubUnitName, //采购单位
-                                    assMeasureDescription:mat.invSubUnitComment,//包装规格
-                                };
-                                this.matters.push({
-                                    expend:true,
-                                    ...this.materielMap[mat.inventoryCode],
-                                    boxCodes:[]
-                                });
-                                scanVoice.success();
-                                this.handlerAddBoxCodeToMatter();
-                                this.scanCodeInfo.boxCode = '';
-                                this.$refs.boxCode.focus();
-                            }else{
-                                scanVoice.error();
-                                this.tostText ='此箱码无对应的物料信息!';
-                                this.showTost = true;
-                                this.scanCodeInfo.boxCode = '';
-                                this.$refs.boxCode.focus();
-                            }
-                        });
-                    }
+                    this.boxCodesMap[uuid] =uuid;
+                    this.handlerAddBoxCodeToMatter();
+                    this.scanCodeInfo.boxCode = '';
+                    this.$refs.boxCode.focus();
                 }
             });
-
-
         },
         isCheckAll(){
             let iNum = 0;
@@ -347,6 +368,13 @@ export default {
                 todo:''
             }
         },
+        groupSumByFileds(a,f,v,k){
+            let s = 0;
+            a.map(i=>{
+                if(i[f] === v) s+=i[k];
+            });
+            return s;
+        },
         transfromDataSource(item){
             return {
                 transMatchedCode: this.scanCodeInfo.postCode,//被核销交易号
@@ -379,14 +407,53 @@ export default {
                 boxRule:box.boxRule
             }
         },
+        handlerSetMatters(postCode,callback){
+            let params = {
+                transCode: postCode,
+                page: 1,
+                start: 0,
+                limit: 10000
+            };
+
+            let materielMap = {};
+            this.matters = [];
+            getStorageShelf(params).then(res=>{
+                //循环待上架明细数据
+                //往物料集合(materielMap)注册，唯一键为物料编码，作为页面分组使用数据
+                this.shelfList = res.tableContent;
+                
+                res.tableContent.map(m=>{
+                    materielMap[m.inventoryCode] = m;
+                });
+                for(var k in materielMap){
+                    let mat = materielMap[k];
+                    this.matters.push({
+                        expend:true,
+                        inventoryCode:mat.inventoryCode,
+                        inventoryName:mat.inventoryName,
+                        processing:mat.processing,
+                        invSubUnitMulti:mat.invSubUnitMulti,
+                        assMeasureUnit:mat.invSubUnitName, //采购单位
+                        assMeasureDescription:mat.invSubUnitComment,//包装规格
+                        specification:mat.specification,//规格
+                        thenTotalQtyBal: this.groupSumByFileds(this.shelfList,'inventoryCode',mat.inventoryCode,'thenTotalQtyBal'),//预入库数量
+                        thenLockQty:this.groupSumByFileds(this.shelfList,'inventoryCode',mat.inventoryCode,'thenLockQty'),//已上架数量
+                        thenQtyBal: this.groupSumByFileds(this.shelfList,'inventoryCode',mat.inventoryCode,'thenQtyBal'),//待上架数量
+                        boxCodes:[]
+                    });
+                }
+                this.postCode = this.scanCodeInfo.postCode;
+                callback && callback(res);
+            });
+        },
        
         //校验箱码
         handlerCheckBoxCode(){
-            
             if(!this.scanCodeInfo.trayCode){
                 this.showTost = true;
-                this.tostText = '请先扫托盘!'
+                this.tostText = '请先扫托盘码!'
                 this.scanCodeInfo.boxCode = '';
+                this.$refs.trayCode.focus();
                 return false;
             }
 
@@ -403,6 +470,20 @@ export default {
             if(this.boxCodesMap[this.curQrCodeInfo.uuid]){
                 this.showTost = true;
                 this.tostText = '该箱码已经扫过啦，请不要重复扫码哦!';
+                this.scanCodeInfo.boxCode = '';
+                this.$refs.boxCode.focus();
+                return false;
+            }
+
+            let boxCodeFlag = false;
+            
+            this.matters.map(mat=>{
+                if(mat.inventoryCode === this.curQrCodeInfo.matCode) boxCodeFlag  =true;
+            });
+
+            if(!boxCodeFlag){
+                this.showTost = true;
+                this.tostText = '此箱码对应物料与申请单数据不匹配，请重新扫码!';
                 this.scanCodeInfo.boxCode = '';
                 this.$refs.boxCode.focus();
                 return false;
@@ -607,10 +688,12 @@ export default {
         //已扫箱码信息集合
         this.boxCodesMap = {};
         
+        //待上架明细
+        this.shelfList = undefined;
 
         this.materielMap = {};
 
-        this.$refs.trayCode.focus();
+        this.$refs.postCode.focus();
         if(this.$route.query.transCode){
             this.transCode = this.$route.query.transCode;
             this.getFormData();
@@ -662,7 +745,7 @@ export default {
     }
   }
 .scanCodeInfo {
-    height: 1rem;
+    height: 1.60rem;
     background: #fff;
     padding: 0 .15rem;
     font-size: 0.14rem;
