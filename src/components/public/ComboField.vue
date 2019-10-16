@@ -7,7 +7,7 @@
   </div>
   <span v-else >{{values[cfg.fieldCode] == null ? '无' : displaysValue || displaysEmptyDatasourceValue}}</span>
   <div v-transfer-dom>
-      <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
+      <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide" style="z-index: 502;">
         <div class="trade_pop">
           <d-search @search="searchList" @turn-off="onHide" :isFill="true" :defaultValue="searchValue" :searchBoxShows="searchBoxShow"></d-search>
           <!-- 往来列表 -->
