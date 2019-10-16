@@ -15,7 +15,6 @@
                                 @change="handlerScanPostCode"
                                 @focus="handleOnFocus($event)" />
                             <i class="iconfont" @click="handlerClickScanIcon('postCode')">&#xe661;</i>
-
                         </div>
                     </div>
                     <div class="vux-1px-t">
@@ -193,7 +192,7 @@ export default {
                         this.showTost = true;
                         this.tostText = '当前申请单号并没有待上架的数据,请重新扫码!';
                         this.scanCodeInfo.spCode = '';
-                        this.$refs.spCode.focus();
+                        this.$refs.postCode.focus();
                     }else{
                         scanVoice.success();
                         this.warehouse = {
