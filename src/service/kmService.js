@@ -42,6 +42,12 @@ export let getProfit = (endDate) => {
     }
   })
 };
+// 获取企业货币
+export let getLocalCurrency = () => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/foreignExchange/get'
+  })
+};
 //获取自动分录数据 view_id 区分会计类科目与非会计类科目
 export let prolxyGetAutomaticEntry = (data = {}) => {
   return  $flyio.ajax({
