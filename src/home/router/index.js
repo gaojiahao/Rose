@@ -16,6 +16,7 @@ import LIST from '../pages/apps/bizApp/list/list'
 import FILLFORM from '../pages/apps/bizApp/fillForm/fillForm'
 import DETAIL from '../pages/apps/bizApp/detail/detail'
 import WORKFLOWFULL from '../pages/apps/bizApp/detail/workFlowFull'
+import CheckList from '../pages/apps/bizApp/detail/checkList'
 import RELATED from '../pages/apps/bizApp/detail/related/related'
 import COMMENTLIST from '@/home/pages/apps/bizApp/comment/commentList'
 import TASKLOGLIST from 'components/detail/commonPart/form-part/TaskLogList'
@@ -93,6 +94,12 @@ export default [
     name:'WORKFLOWFULL',
     component:WORKFLOWFULL,
     meta:{ title:'工作流列表' }
+  },
+  {
+    path:'/checkList',
+    name:'CheckList',
+    component:CheckList,
+    meta:{ title:'点检表' }
   },
   {
     path:'/appDetail/:listId',
