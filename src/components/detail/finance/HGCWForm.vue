@@ -10,7 +10,7 @@
       </group>
     </div>
     <div class="header">
-      <div class="title-form">{{headInfo.title}}</div>
+      <div class="title-form">{{`${headInfo.title}(单位：${localCurrency})`}}</div>
       <div class="swiper-container swiper-container-header">
         <div class="swiper-wrapper">
           <div class="swiper-slide">{{headInfo.firstName}}</div>
@@ -59,7 +59,7 @@
 </template>
 
 <script>
-  import {getOffBalance, getProfit} from 'service/kmService'
+  import {getOffBalance, getProfit, getLocalCurrency} from 'service/kmService'
   import RScroll from 'plugins/scroll/RScroll'
   import {toFixed} from '@/plugins/calc'
   import {accAdd} from "plugins/calc/decimalsAdd";
@@ -72,7 +72,8 @@
         endDate: dateFormat(new Date(), 'YYYY-MM-DD'),
         headerSwiper: null,         // 顶部swiper
         partRightSwiper: null,      // 右侧金额swiper
-        code: '',                   // 路由参数
+        code: '',  
+        localCurrency: "",                 // 路由参数
         headInfo:{},                // 表头信息
         listData: {},
         listMap: {
@@ -140,13 +141,23 @@
           this.partRightSwiper.controller.control = this.headerSwiper;
           this.headerSwiper.controller.control = this.partRightSwiper;
         })
+      },
+      //获取企业货币
+      getLocalCurrencyData() {
+        getLocalCurrency().then(({list = []}) => {
+          list.forEach(item => {
+            if(item.localCurrency){
+              this.localCurrency = item.currencyValue === 'CNY' ? '元' : item.currency;
+            }
+          })
+        })
       }
     },
     filters: {
       // 格式化数字
       formatNum(num) {
         if (!num) return '-';
-        return `${numberComma(toFixed(num))}元`;
+        return `${numberComma(num.toFixed(2))}`;
       }
     },
     created() {
@@ -157,6 +168,7 @@
       // 初始化数据
       this.initSwiper();
       this.getData();
+      this.getLocalCurrencyData();
     }
   }
 </script>
