@@ -12,7 +12,12 @@
       <div class="check_more" v-if="fullWorkFlow.length" @click="goWorkFlowFull">
         <i class="icon-flow-time"></i>
         <span v-if="workFlowInfo.biStatus==='进行中'">{{currentStatus.nodeName}}</span>
-        <span v-else>查看工作流</span>
+        <span v-else>工作流</span>
+        <i class="icon-right"></i>
+      </div>
+      <div class="check_more" v-if="fullWorkFlow.length&&fullWorkFlow[fullWorkFlow.length-1].checkTableId" @click="goCheckList">
+        <i class="icon-flow-time"></i>
+        <span>点检表</span>
         <i class="icon-right"></i>
       </div>
     </div>
@@ -79,8 +84,10 @@ var component = {
     // 处理简易版工作流数据
     workFlowInfoHandler() {
       this.workFlowInfo = {
-        biStatus: this.formData.biStatus,
+        biStatus: this.formData.biStatus||this.$parent.formStatus&&this.$parent.formStatus[0].status,
         transCode: this.formData.transCode,
+        checkTableId: this.fullWorkFlow[this.fullWorkFlow.length-1].checkTableId,
+        taskId: this.fullWorkFlow[this.fullWorkFlow.length-1].taskId,
       };
     },
     workFlowHandler() {
@@ -99,6 +106,20 @@ var component = {
         path: '/workFlowFull',
         query: {
           transCode,
+        }
+      })
+    },
+    // 跳转到点检列表页面
+    goCheckList() {
+      let {transCode = '',checkTableId='',taskId='',biStatus=''} = this.workFlowInfo;
+      biStatus = biStatus || this.$parent.formStatus&&this.$parent.formStatus[0].status;
+      this.$router.push({
+        path: '/checkList',
+        query: {
+          transCode,
+          checkTableId,
+          taskId,
+          biStatus,
         }
       })
     },

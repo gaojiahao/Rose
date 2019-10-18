@@ -138,4 +138,44 @@ export let getAppFeaturesData = (listId) => {
     })
 }
 
+//点检表节点
+export let getCheckItemInfoByTaskId = (data={}) => {
+    return $flyio.ajax({
+        url: '/H_roleplay-si/check/getCheckItemInfoByTaskId',
+        data: {
+            _dc:Date.now(),
+            page: 1,
+            start: 0,
+            limit: 1000,
+            ...data,
+        }
+    })
+}
+
+//保存点检表节点
+export let saveContentAssess = (data = {}) => {
+    return $flyio.ajax({
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded',
+        url: '/H_roleplay-si/check/saveContentAssess',
+        data: {
+            ...data,
+        }
+    })
+}
+
+//查看检点表
+export let getCheckItemInfoByTransCode = (data={}) => {
+    return $flyio.ajax({
+        url: '/H_roleplay-si/ds/getCheckItemInfoByTransCode',
+        data: {
+            _dc:Date.now(),
+            page: 1,
+            start: 0,
+            limit: 1000,
+            ...data,
+        }
+    })
+}
+
 export default {}
