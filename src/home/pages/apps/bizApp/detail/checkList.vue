@@ -4,6 +4,7 @@
         <header class="work-flow-header">点检表</header>
         <div class="work-flow-wrapper">
             <div class="work_flow_item vux-1px-l" v-for="(item, index) in checkList" :class="[item.statusClass, {is_my_node: item.isMyNode}]" :key="index">
+                <div>{{index+1}}</div>
                 <div class="work_flow_info">
                     <div class="checker-icon" @click='saveContentAssess'>
                         <check-icon :disabled='isEdit' :value.sync="checkListValue[item.id]"></check-icon>
