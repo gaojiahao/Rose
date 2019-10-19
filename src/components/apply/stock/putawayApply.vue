@@ -102,7 +102,8 @@ import {
     getWhbyStoragelocation,
     getPreShelfInvInfoByBoxCode,
     getBoxInfoByMD,
-    validateBoxInfoByMD 
+    validateBoxInfoByMD,
+    autoConfirm
     } from 'service/wmsService'
 import { getSOList } from 'service/detailService'
 import scanVoice from '@/plugins/scanVoice'
@@ -282,6 +283,8 @@ export default {
                             this.scanCodeInfo.boxCode = `${box.inventoryCode},${box.batchNo},${box.productionDate},${box.qty},${box.boxCode}`;
                             this.handlerScanBoxCode();
                         });
+                        this.scanCodeInfo.spCode = '';
+                        this.$refs.spCode.focus();
                     }else{
                         this.showTost = true;
                         this.tostText = '此托盘码无效!'
@@ -626,13 +629,6 @@ export default {
                return;
             }
 
-            if(!this.scanCodeInfo.spCode){
-                this.$vux.alert.show({
-                   content:"库位码不能为空!"
-               });
-               return;
-            }
-
             if(this.matters.length===0){
                 this.$vux.alert.show({
                     content:"上架明细不能为空!"
@@ -708,17 +704,42 @@ export default {
                 this.$HandleLoad.hide();
                 let {success = false, message = '提交失败'} = data;
                 if (success) {
-                    message = '提交成功';
-                    this.$emit('change', true);
-                }
-                this.$vux.alert.show({
-                    content: message,
-                    onHide: () => {
-                        if (success) {
-                            this.judgePage();
+                    this.$vux.confirm.show({
+                        content:"上架成功，是否生成入库单？",
+                        onConfirm:()=>{
+                            this.$HandleLoad.show();
+                            autoConfirm(data.transCode,this.postCode).then(res=>{
+                                this.$HandleLoad.hide();
+                                if(res.success){
+                                    message = '已成功生成入库单!';
+                                }else{
+                                    message = data.message;
+                                }
+                                 this.$vux.alert.show({
+                                    content: message,
+                                    onHide: () => {
+                                        if (success) {
+                                            this.judgePage();
+                                        }
+                                    }
+                                });
+                            });
+                        },
+                        onCancel:()=>{
+                            this.$emit('change', true);
+
+                            this.$vux.alert.show({
+                                content: message,
+                                onHide: () => {
+                                    if (success) {
+                                        this.judgePage();
+                                    }
+                                }
+                            });
                         }
-                    }
-                });
+                    });
+                }
+                
             }).catch(e => {
                 this.$HandleLoad.hide();
             })

@@ -42,7 +42,7 @@
               <div class="detail_info_item_content">
                 <div><label>托盘码:</label>{{d.cardCode}}</div>
                 <div><label>库区:</label>{{d.warehouseName_storehouseOutCode}}</div>
-                <div><label>库位编码:</label>{{d.库位编码}}</div>
+                <div><label>库位编码:</label>{{d.warehouseCode_storehouseOutCode}}</div>
               </div>
             </div>
           </div>
