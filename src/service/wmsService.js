@@ -122,6 +122,15 @@ export let getLocationInfo = (location) =>{
   })
 }
 
+//自动生成入库确认单
+export let autoConfirm = (onShelvesCode,applicationCode) =>{
+  return $flyio.post({
+    url: `/H_roleplay-si/wms/autoConfirm?onShelvesCode=${onShelvesCode}&applicationCode=${applicationCode}`
+  })
+}
+
+
+
 
 
 
