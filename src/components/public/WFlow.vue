@@ -86,9 +86,11 @@ var component = {
       this.workFlowInfo = {
         biStatus: this.formData.biStatus||this.$parent.formStatus&&this.$parent.formStatus[0].status,
         transCode: this.formData.transCode,
-        checkTableId: this.fullWorkFlow[this.fullWorkFlow.length-1].checkTableId,
-        taskId: this.fullWorkFlow[this.fullWorkFlow.length-1].taskId,
       };
+      if(this.fullWorkFlow.length){
+        this.workFlowInfo.checkTableId = this.fullWorkFlow[this.fullWorkFlow.length-1].checkTableId;
+        this.workFlowInfo.taskId = this.fullWorkFlow[this.fullWorkFlow.length-1].taskId;
+      }
     },
     workFlowHandler() {
       let [currentStatus = {}] = this.fullWorkFlow.slice(-1);
