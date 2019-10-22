@@ -363,9 +363,9 @@ export default {
                 done+= b.tdQty;
             });
             return {
-                all:'',
+                all:mat.thenQtyBal,
                 done:done,
-                todo:''
+                todo:mat.thenQtyBal - done
             }
         },
         groupSumByFileds(a,f,v,k){
