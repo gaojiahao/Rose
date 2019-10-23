@@ -24,6 +24,21 @@
                         </div>
                     </div>
                 </div>
+                <div class="r-fieldset" v-if="changeTab==='管理会计'">
+                    <div style="padding:0.15rem 0.15rem 0rem 0.15rem;">合计</div>
+                    <div class="box">
+                        <div class="readOnlyPart" >
+                            <template v-for="(item, index) in financeModel.model">
+                                <div class="item" :key= index v-if='financeDataTotal[item.field]>=0'>
+                                    <template>
+                                        <span>{{item.text}}</span>
+                                        <span>{{financeDataTotal[item.field]||'-'}}</span>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
                 <div class="r-fieldset">
                     <div class="box">
                         <header>
@@ -43,6 +58,21 @@
                         </div>
                     </div>
                 </div>
+                <div class="r-fieldset">
+                    <div style="padding:0.15rem 0.15rem 0rem 0.15rem;">合计</div>
+                    <div class="box">
+                        <div class="readOnlyPart" >
+                            <template v-for="(item, index) in manageModel.model">
+                                <div class="item" :key= index v-if='manageDataTotal[item.field]>=0'>
+                                    <template>
+                                        <span>{{item.text}}</span>
+                                        <span>{{manageDataTotal[item.field]||'-'}}</span>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -51,6 +81,7 @@
 import Vue from 'vue'
 import { Tab, TabItem, Swiper, SwiperItem } from 'vux'
 import { getView } from 'service/kmService'
+import { accAdd, accDiv } from "plugins/calc/decimalsAdd"
 
 var component = {
     props: {
@@ -73,7 +104,9 @@ var component = {
             financeModel: {},
             financeData: {},//财务会计数据包
             manageModel: {},
-            manageData: {}//管理会计数据包
+            manageData: {},//管理会计数据包
+            manageDataTotal:{},
+            financeDataTotal:{},
         }
     },
     watch: {
@@ -129,11 +162,14 @@ var component = {
                 op: 'queryAll',
                 view_type: this.view_type    
             }
+
             if(this.changeTab=='财务会计') {
                 this.financeModel = await this.getView(data1);
                 this.financeData = await this.getView(data2);
                 this.manageModel = await this.getView(data3); 
                 this.manageData = await this.getView(data4);
+                this.manageDataTotal = this.dealTotal(this.manageData.data);
+                console.log(this.manageDataTotal);
             } else {
                 data1.view_id = 'view_managerAccountAutomaticEntry';
                 data1.active_type = 'automatic';
@@ -142,7 +178,64 @@ var component = {
 
                 this.financeModel = await this.getView(data1);
                 this.financeData = await this.getView(data2);
+                this.financeDataTotal = this.dealTotal(this.financeData.data);
+                console.log(this.financeDataTotal);
             }
+        },
+        dealTotal(arr){
+            var totalObj={
+                debitAmount:0,
+                debitQty:0,
+                creditAmount:0,
+                creditQty:0,
+            };
+
+            for(var i=0;i<arr.length;i++){
+                if(arr[i].debitAmount&&!this.regArr(arr[i].debitAmount)){
+                    totalObj.debitAmount = accAdd(totalObj.debitAmount,arr[i].debitAmount);
+                }
+                if(arr[i].debitQty&&!this.regArr(arr[i].debitQty)){
+                    totalObj.debitQty = accAdd(totalObj.debitQty,arr[i].debitQty);
+                }
+                if(arr[i].creditAmount&&!this.regArr(arr[i].creditAmount)){
+                    totalObj.creditAmount = accAdd(totalObj.creditAmount,arr[i].creditAmount);
+                }
+                if(arr[i].creditQty&&!this.regArr(arr[i].creditQty)){
+                    totalObj.creditQty = accAdd(totalObj.creditQty,arr[i].creditQty);
+                }
+            }
+            return totalObj;  
+        },
+        dealTotal2(arr){
+            var totalObj={
+                crOriginalCurrencyAmount:0,  //借方原币金额
+                crStandardCurrencyAmount:0,  //贷方原币金额
+                drOriginalCurrencyAmount:0,  //借方本位币金额
+                drStandardCurrencyAmount:0,  //贷方本位币金额
+            };
+
+            for(var i=0;i<arr.length;i++){
+                if(arr[i].crOriginalCurrencyAmount&&!this.regArr(arr[i].debitAmount)){
+                    totalObj.crOriginalCurrencyAmount = accAdd(totalObj.crOriginalCurrencyAmount,arr[i].crOriginalCurrencyAmount);
+                }
+                if(arr[i].crStandardCurrencyAmount&&!this.regArr(arr[i].debitAmount)){
+                    totalObj.crStandardCurrencyAmount = accAdd(totalObj.crStandardCurrencyAmount,arr[i].crStandardCurrencyAmount);
+                }
+                if(arr[i].drOriginalCurrencyAmount&&!this.regArr(arr[i].debitAmount)){
+                    totalObj.drOriginalCurrencyAmount = accAdd(totalObj.drOriginalCurrencyAmount,arr[i].drOriginalCurrencyAmount);
+                }
+                if(arr[i].drStandardCurrencyAmount&&!this.regArr(arr[i].debitAmount)){
+                    totalObj.drStandardCurrencyAmount = accAdd(totalObj.drStandardCurrencyAmount,arr[i].drStandardCurrencyAmount);
+                }
+            }
+            return totalObj;  
+        },
+        regArr(arr){
+            var reg="^[-]+$";
+            var regus = new RegExp(reg);
+
+            return regus.test(arr) 
+
         },
         getView(data) {
             return getView(data);
@@ -163,7 +256,7 @@ export default Vue.component('AutoSubject',component);
             color: #333;
             border-radius: 0.04rem;
             background-color: #fff;
-            width: calc(100% - 0.2rem);
+            width: 100%;
             .box {
                 padding: 0.15rem;
                 &.muti{
