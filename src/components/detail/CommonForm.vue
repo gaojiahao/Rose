@@ -9,7 +9,7 @@
         <r-fieldset-ct
           :cfg="fieldSets"
           :values="formData"
-          v-show="loaded"
+          v-if="loaded"
           ref="fieldsetCt"
         />
         <!-- 附件组件 -->
@@ -178,6 +178,12 @@ export default {
           }
         }
       }
+      // for(item in formData){
+      //   this.$set(this.formData,item,formData[item]);
+      // }
+      // this.$nextTick(function(){
+      //   this.formData= formData;
+      // });
       this.formData = formData;
       //预估以下mapping在未来业务上是确定的所以可以通过以下代码进行固化
       //mapping 基本信息
@@ -386,6 +392,12 @@ export default {
               this.getNewFormConfig(config,res.data);
               this.viewInfo = config;
               this.fieldSets = fieldSets;
+              // for(var i = 0;i<fieldSets.length;i++){
+              //   this.$set(this.fieldSets,i,fieldSets[i]);
+              // }
+              // this.$nextTick(function(){
+              //   this.fieldSets= fieldSets;
+              // });
             }
           });
         }
