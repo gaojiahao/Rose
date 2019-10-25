@@ -5,12 +5,12 @@
         <datetime
           v-model="endDate"
           @on-change="endDateChange">
-          <h5 slot="title" :style="{color:'#39f',fontSize:'.15rem'}">截至日期</h5>
+          <h5 slot="title" :style="{fontSize:'.15rem'}">截至日期</h5>
         </datetime>
       </group>
     </div>
     <div class="header">
-      <div class="title-form">{{`${headInfo.title}(单位：${localCurrency})`}}</div>
+      <div class="title-form">{{`单位：${localCurrency}`}}</div>
       <div class="swiper-container swiper-container-header">
         <div class="swiper-wrapper">
           <div class="swiper-slide">{{headInfo.firstName}}</div>
@@ -20,7 +20,7 @@
     </div>
     <r-scroll :options="scrollOptions" ref="bScroll">
       <div class="part-left">
-        <div v-for="(item, index) in listData" :key="index">
+        <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
           <div class="content-item"
                :class="{'final-total': item.total,
                'border-1px-t': item.total,
@@ -35,7 +35,7 @@
       <div class="swiper-container part-right">
         <div class="swiper-wrapper">
           <div class="swiper-slide">
-            <div v-for="(item, index) in listData" :key="index">
+            <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
                    :class="{'final-total': item.total || item.bigSubject}"
                    ref="partRightInit">
@@ -44,7 +44,7 @@
             </div>
           </div>
           <div class="swiper-slide">
-            <div v-for="(item, index) in listData" :key="index">
+            <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
                    :class="{'final-total': item.total || item.bigSubject}"
                    ref="partRightFinal">
@@ -207,8 +207,8 @@
       justify-content: space-between;
       padding: .05rem .15rem;
       width: 100%;
-      height: .3rem;
-      line-height: .2rem;
+      height: .35rem;
+      line-height: .25rem;
       box-sizing: border-box;
       .title-form{
         font-size: .17rem;
@@ -237,7 +237,7 @@
         position: relative;
         padding: .05rem .15rem;
         width: 100%;
-        line-height: .2rem;
+        line-height: .25rem;
         box-sizing: border-box;
         /* 标题 */
         .title {
@@ -251,7 +251,7 @@
 
         /* 资产合计 */
         &.final-total {
-          line-height: .25rem;
+          line-height: .3rem;
           font-size: .14rem;
           font-weight: bold;
         }
@@ -265,7 +265,9 @@
       }
     }
     .part-left {
-      border-right: 1px solid #C7C7C7;
+      .bg-color{
+        background-color: #eee;
+      }
       .title {
         position: relative;
       }
@@ -287,6 +289,9 @@
     }
     .part-right {
       text-align: right;
+      .bg-color{
+        background-color: #eee;
+      }
       .content-item {
         padding-left: 0;
       }
