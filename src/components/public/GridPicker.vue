@@ -397,7 +397,7 @@ export default {
   .matter-list-container {
     height: calc(100% - 0.82rem);
     /deep/ .search_filter {
-      top: 0.8rem;
+      // top: 0.8rem;
       .layer {
         background: #ccc;
       }
