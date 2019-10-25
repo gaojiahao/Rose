@@ -447,11 +447,11 @@ export default {
                         handlerName: currentUser.name,
                         handlerUnitName: currentUser.sysDeptList && currentUser.sysDeptList[0] ? currentUser.sysDeptList[0].groupName : '',
                         handlerRoleName: currentUser.sysRoleList[0].name,
-                        handler: currentUser.userId,
-                        handlerUnit:  currentUser.sysDeptList && currentUser.sysDeptList[0] ? currentUser.sysDeptList[0].groupId : '',
-                        handlerRole: currentUser.sysRoleList[0].id,
-                        creator: currentUser.userId,
-                        modifer: currentUser.userId,
+                        handler: String(currentUser.userId),
+                        handlerUnit:  currentUser.sysDeptList && currentUser.sysDeptList[0] ? String(currentUser.sysDeptList[0].groupId) : '',
+                        handlerRole: String(currentUser.sysRoleList[0].id),
+                        creator: String(currentUser.userId),
+                        modifer: String(currentUser.userId),
                         biId:'',
                         handlerEntity: currentUser.entityId,
                         biProcessStatus:null,
@@ -492,23 +492,39 @@ export default {
                 this.$HandleLoad.hide();
                 let {success = false, message = '提交失败'} = data;
                 if (success) {
-                    message = '提交成功';
-                    autoConfirmStockPick(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res => {
-                        if(!res.success){
+                    this.$vux.confirm.show({
+                        content:"分拣成功，是否生成出库单？",
+                        onConfirm:()=>{
+                            this.$HandleLoad.show();
+                            autoConfirmStockPick(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res=>{
+                                this.$HandleLoad.hide();
+                                if(res.success){
+                                    message = '已成功生成出库单!';
+                                }else{
+                                    message = data.message;
+                                }
+                                 this.$vux.alert.show({
+                                    content: message,
+                                    onHide: () => {
+                                        if (success) {
+                                            this.judgePage();
+                                        }
+                                    }
+                                });
+                            });
+                        },
+                        onCancel:()=>{
                             this.$vux.alert.show({
-                                content: res.message
-                            })
+                                content: message,
+                                onHide: () => {
+                                    if (success) {
+                                        this.judgePage();
+                                    }
+                                }
+                            });
                         }
-                    })
+                    });
                 }
-                this.$vux.alert.show({
-                    content: message,
-                    onHide: () => {
-                        if (success) {
-                            this.judgePage();
-                        }
-                    }
-                });
             }).catch(e => {
                 this.$HandleLoad.hide();
             })
