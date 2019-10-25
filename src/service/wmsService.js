@@ -25,10 +25,26 @@ export let getWhbyStoragelocation = (data = {}) => {
     })
   }
 
-//通过箱码获取仓库信息
+//拣货下架通过箱码获取仓库信息
 export let getPickingOutByBoxCode = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getPickingOutByBoxCode',
+    data
+  })
+}
+
+//分拣通过箱码获取仓库信息
+export let getSortingByBoxCode = (data = {}) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getSortingByBoxCode',
+    data
+  })
+}
+
+//按单拣货通过箱码获取仓库信息
+export let getSortingOrderByBoxCode = (data = {}) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getSortingOrderByBoxCode',
     data
   })
 }
@@ -41,10 +57,17 @@ export let  getLocationOfinventory =  (data = {}) =>{
   })
 }
 
-//拣货入库新增提交后调用
+//拣货下架释放订单占用
 export let  releaseSortingOrder =  (transCode,matCode) =>{
   return $flyio.post({
     url: `/H_roleplay-si/wms/releaseSortingOrder?transCode=${transCode}&matCode=${matCode}`
+  })
+}
+
+//分拣，按单拣货生成出库单
+export let  autoConfirmStockPick =  (applicationCode,onShelvesCode) =>{
+  return $flyio.post({
+    url: `/H_roleplay-si/wms/autoConfirm?onShelvesCode=${onShelvesCode}&applicationCode=${applicationCode}`
   })
 }
 
@@ -60,6 +83,26 @@ export let  getInventoryInfoByBoxCode = (data ={}) =>{
 export let  getForPickingData =  (transCode) =>{
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getPickingOutByTransCode',
+    data: {
+      transCode: transCode
+    }
+  })
+}
+
+//获取分拣数据
+export let  getSortOutData =  (transCode) =>{
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getSortingByTransCode',
+    data: {
+      transCode: transCode
+    }
+  })
+}
+
+//获取按单拣货数据
+export let  getOrderPickingData =  (transCode) =>{
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getSortingOrderByTransCode',
     data: {
       transCode: transCode
     }

@@ -662,7 +662,7 @@ export default {
                         handlerName: currentUser.name,
                         handlerUnitName: currentUser.sysDeptList && currentUser.sysDeptList[0] ? currentUser.sysDeptList[0].groupName : '',
                         handlerRoleName: currentUser.sysRoleList[0].name,
-                        handler: currentUser.userId,
+                        handler: String(currentUser.userId),
                         handlerUnit:  currentUser.sysDeptList && currentUser.sysDeptList[0] ? currentUser.sysDeptList[0].groupId : '',
                         handlerRole: currentUser.sysRoleList[0].id,
                         creator: currentUser.userId,
