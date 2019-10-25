@@ -4,7 +4,7 @@
           @submit.prevent="searchMat(srhInpTx)" v-show="searchBoxShows">
       <i class="icon icon-search"></i>
       <input ref="searchInp" class="srh_inp" type="search" autocomplete="off"
-            :placeholder="placeHolder" @input='getValue($event)' :value='srhInpTx' @focus="isShowDrop = true">
+            :placeholder="placeHolder" @input='getValue($event)' :value='srhInpTx' @focus="dealInput($event);">
       <div class="pop_cfm" v-if='isFill'
            :class='{ pop_cancel : !srhInpTx.length }'
            @click="searchMat(srhInpTx)">{{srhInpTx.length>0 ? '搜索' : '返回'}}
@@ -80,8 +80,16 @@
       this.clear();
     },
     methods: {
-      getValue(e) {
+      dealInput(e){
+        this.isShowDrop = true;
+        setTimeout(function(){
+          console.log('a')
+          e.target.scrollIntoView(true);
+          // true:元素的顶端将和其所在滚动区的可视区域的顶端对齐; false:底端对齐。
+        },100);  // 延时 == 键盘弹起需要时间
         // 解决iOS原生输入法在input框输入文字之后一瞬间为空的坑
+      },
+      getValue(e) { 
         setTimeout(() => {
           this.srhInpTx = e.target.value;
           // 提交页面输入框内容为空时 按钮会变成“返回” 此时让列表重新请求数据
