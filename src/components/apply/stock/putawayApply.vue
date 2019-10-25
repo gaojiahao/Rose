@@ -245,7 +245,7 @@ export default {
             
         },
         handlerScanBoxOrTrayCode(){
-
+debugger
             if(!this.scanCodeInfo.spCode){
                 this.showTost = true;
                 this.tostText = '请先扫库位!'
@@ -290,7 +290,6 @@ export default {
                         this.tostText = '此托盘码无效!'
                         this.scanCodeInfo.boxCode = '';
                         scanVoice.error();
-                        return false;
                     }
                     this.trayCode = '';
                 });

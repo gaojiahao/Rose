@@ -9,7 +9,7 @@
         <r-fieldset-ct
           :cfg="fieldSets"
           :values="formData"
-          v-if="loaded"
+          v-show="loaded"
           ref="fieldsetCt"
         />
         <!-- 附件组件 -->

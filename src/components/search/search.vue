@@ -81,6 +81,11 @@
     },
     methods: {
       getValue(e) {
+        setTimeout(function(){
+          console.log('a')
+          e.target.scrollIntoView(true);
+          // true:元素的顶端将和其所在滚动区的可视区域的顶端对齐; false:底端对齐。
+        },100);  // 延时 == 键盘弹起需要时间
         // 解决iOS原生输入法在input框输入文字之后一瞬间为空的坑
         setTimeout(() => {
           this.srhInpTx = e.target.value;
@@ -194,7 +199,7 @@
     .search_filter {
       left: 0;
       bottom: 0;
-      top: .49rem;
+      top: .8rem;
       width: 100%;
       z-index: 100;
       font-size: .14rem;
