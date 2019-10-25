@@ -5,7 +5,7 @@
                 <div class="scanCodeInfo">
                     <div class="vux-1px-t">
                         <div class='each_property' >
-                            <label class="required">申请单</label>
+                            <label class="required">计划单</label>
                             <input 
                                 ref='postCode'
                                 type='text' 
@@ -491,39 +491,23 @@ export default {
                 this.$HandleLoad.hide();
                 let {success = false, message = '提交失败'} = data;
                 if (success) {
-                    this.$vux.confirm.show({
-                        content:"拣货成功，是否释放订单？",
-                        onConfirm:()=>{
-                            this.$HandleLoad.show();
-                            releaseSortingOrder(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res=>{
-                                this.$HandleLoad.hide();
-                                if(res.success){
-                                    message = '已成功释放订单!';
-                                }else{
-                                    message = data.message;
-                                }
-                                 this.$vux.alert.show({
-                                    content: message,
-                                    onHide: () => {
-                                        if (success) {
-                                            this.judgePage();
-                                        }
-                                    }
-                                });
-                            });
-                        },
-                        onCancel:()=>{
+                    message = '提交成功';
+                    releaseSortingOrder(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res => {
+                        if(!res.success){
                             this.$vux.alert.show({
-                                content: message,
-                                onHide: () => {
-                                    if (success) {
-                                        this.judgePage();
-                                    }
-                                }
-                            });
+                                content: res.message
+                            })
                         }
-                    });
+                    })
                 }
+                this.$vux.alert.show({
+                    content: message,
+                    onHide: () => {
+                        if (success) {
+                            this.judgePage();
+                        }
+                    }
+                });
             }).catch(e => {
                 this.$HandleLoad.hide();
             })
