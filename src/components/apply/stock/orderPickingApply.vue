@@ -13,7 +13,8 @@
                                 placeholder="请扫码" 
                                 class='property_val' 
                                 @change="handlerScanPostCode"
-                                @focus="getFocus($event)" />
+                                @focus="getFocus($event)" 
+                                :style="{marginRight:'-.3rem'}"/>
                             <i class="iconfont">&#xe661;</i>
                         </div>
                     </div>
@@ -88,7 +89,7 @@ import {
     submitAndCalc, 
     getPriceFromSalesContractAndPrice, 
     updateData} from 'service/commonService'
-import { getPickingOutByBoxCode, releaseSortingOrder, getForPickingData ,getBoxInfoByPallet} from 'service/wmsService'
+import { getSortingOrderByBoxCode, autoConfirmStockPick, getOrderPickingData ,getBoxInfoByPallet} from 'service/wmsService'
 import WebContext from 'service/commonService'
 import { getSOList } from 'service/detailService'
 // mixins 引入
@@ -205,20 +206,21 @@ export default {
             if(!this.scanCodeInfo.postCode) return;
 
             this.matters = [];
-            getForPickingData(this.scanCodeInfo.postCode).then(res => {
+            getOrderPickingData(this.scanCodeInfo.postCode).then(res => {
                 if(res.tableContent.length > 0){
                     scanVoice.success();
                     res.tableContent.forEach(mat => {
                         this.matters.unshift({
                             expend:true,
-                            inventoryCode:mat.inventoryCode,
-                            inventoryName:mat.inventoryName,
+                            inventoryCode: mat.inventoryCode,
+                            inventoryName: mat.inventoryName,
                             thenTotalQtyBal: mat.thenTotalQtyBal,//待上架
                             thenLockQty: mat.thenLockQty,//已上架
                             thenQtyBal: mat.thenQtyBal,//
                             boxCodes:[]
                         });
                     })
+                    this.$refs.boxCode.focus();
                 }else{
                     scanVoice.error();
                     this.showTost = true;
@@ -228,7 +230,6 @@ export default {
                     return;
                 }
             })
-            this.$refs.boxCode.focus();
         },
         // 选中物料
         handlerSelectItem(sItem, index) {
@@ -263,7 +264,7 @@ export default {
             };
 
             let materielMap = {};
-            getPickingOutByBoxCode(params).then(res => {
+            getSortingOrderByBoxCode(params).then(res => {
                 if(res.tableContent.length === 0){
                     scanVoice.error();
                     this.showTost = true;
@@ -340,7 +341,7 @@ export default {
                         });
                     }else{
                         this.showTost = true;
-                        this.tostText = '此托盘码无效!';
+                        this.tostText = '此托盘码无效!'
                         this.scanCodeInfo.boxCode = '';
                         return false;
                     }
@@ -492,13 +493,13 @@ export default {
                 let {success = false, message = '提交失败'} = data;
                 if (success) {
                     this.$vux.confirm.show({
-                        content:"拣货成功，是否释放订单？",
+                        content:"拣货成功，是否生成出库单？",
                         onConfirm:()=>{
                             this.$HandleLoad.show();
-                            releaseSortingOrder(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res=>{
+                            autoConfirmStockPick(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res=>{
                                 this.$HandleLoad.hide();
                                 if(res.success){
-                                    message = '已成功释放订单!';
+                                    message = '已成功生成出库单!';
                                 }else{
                                     message = data.message;
                                 }
