@@ -169,7 +169,6 @@ var component = {
                 this.manageModel = await this.getView(data3); 
                 this.manageData = await this.getView(data4);
                 this.manageDataTotal = this.dealTotal(this.manageData.data);
-                console.log(this.manageDataTotal);
             } else {
                 data1.view_id = 'view_managerAccountAutomaticEntry';
                 data1.active_type = 'automatic';
@@ -179,7 +178,6 @@ var component = {
                 this.financeModel = await this.getView(data1);
                 this.financeData = await this.getView(data2);
                 this.financeDataTotal = this.dealTotal(this.financeData.data);
-                console.log(this.financeDataTotal);
             }
         },
         dealTotal(arr){
