@@ -114,9 +114,6 @@ export default {
             formViewUniqueId: '700e7b24-d90b-4801-9a11-5d1ff24a4319', // 修改时的UniqueId
             matterInfoConfig: {
                 warehouseName:"仓库名称",
-                storehouseOutCode:"库位编码",
-                cardCode:"托盘码",
-                assMeasureUnit:"采购单位", //采购单位
                 assMeasureDescription:"包装规格",//包装规格
             }
         }
@@ -219,6 +216,24 @@ export default {
                             thenQtyBal: mat.thenQtyBal,//
                             boxCodes:[]
                         });
+                        this.subBox = {
+                            tdProcessing: mat.processing,
+                            assMeasureUnit: mat.invSubUnitName,
+                            assMeasureDescription: mat.invSubUnitComment,
+                            assMeasureScale: mat.invSubUnitMulti,
+                            thenTotalQtyBal: mat.thenTotalQtyBal,//下架总数
+                            thenLockQty: mat.thenLockQty,//已上架
+                            thenQtyBal: mat.thenQtyBal,//待上架
+                            assistQty:  Math.ceil(mat.boxQtyBal/mat.invSubUnitMulti),
+                            batchNo: mat.batchNo,
+                            productionDate: mat.productionDate,
+                            postCode: this.scanCodeInfo.postCode
+
+                        };
+                        this.warehouse = {
+                            warehouseName: mat.whName,
+                            whOutCode: mat.whCode
+                        };
                     })
                     this.$refs.boxCode.focus();
                 }else{
@@ -269,10 +284,12 @@ export default {
                     scanVoice.error();
                     this.showTost = true;
                     this.tostText = '此箱码不存在！';
+                    delete this.boxCodesMap[this.scanCodeInfo.boxCode];
                     this.scanCodeInfo.boxCode = "";
                     this.$refs.boxCode.focus();
                     return;
                 }
+                this.scanCodeInfo.boxCode = "";
                 scanVoice.success();
                 res.tableContent.map(box => {
                     this.matters.map(mat => {
@@ -343,7 +360,6 @@ export default {
                         this.showTost = true;
                         this.tostText = '此托盘码无效!'
                         this.scanCodeInfo.boxCode = '';
-                        return false;
                     }
                 });
             }else{
@@ -358,6 +374,7 @@ export default {
             //boxRule 箱规
             //uuid 随机码
             let [matCode,batchNo,productionDate,boxRule,uuid] = this.scanCodeInfo.boxCode.split(',');
+            boxRule = Number(boxRule);
             this.curQrCodeInfo = {
                 matCode,
                 batchNo,
@@ -371,11 +388,28 @@ export default {
                 return;
             }
             
+            this.matters.map(mat => {
+                if(matCode === mat.inventoryCode){
+                    mat.boxCodes.unshift({
+                        expend:true,
+                        cardCode:this.trayCode,
+                        transObjCode: matCode,
+                        inventoryCode: matCode,
+                        tdQty: boxRule,
+                        warehouseName: this.warehouse.warehouseName,
+                        whOutCode: this.warehouse.whOutCode,
+                        processCode: this.scanCodeInfo.postCode,
+                        boxRule: boxRule,
+                        boxCode: uuid,
+                        ...this.subBox
+                    })
+                }
+            })
             //记录已扫码信息,防止重复扫码
             this.boxCodesMap[uuid] = uuid;
             
-            this.handlerSetMatters();
-            this.scanCodeInfo.boxCode = '';
+            // this.handlerSetMatters();先注释通过箱码获取物料信息，计划有变，以后可能会用到
+            this.scanCodeInfo.boxCode = "";
             this.$refs.boxCode.focus();
         },
         getDataSet(){
@@ -471,11 +505,7 @@ export default {
                         biComment: '',
                         biReferenceId:this.biReferenceId,
                         formData:JSON.stringify(formData)
-                    }, matCodeCollection  = [];
-
-                    formData.outPut.dataSet.forEach(val => {
-                        matCodeCollection.push(val.inventoryCode);
-                    })
+                    };
                     
                     let opeartion = submitAndCalc;
                     if(this.isModify){
@@ -483,11 +513,11 @@ export default {
                     }else{
                         delete submitData.biReferenceId;
                     }
-                    this.saveData(opeartion,submitData,matCodeCollection);
+                    this.saveData(opeartion,submitData);
                 }
             })
         },
-        saveData(request, submitData,matCodeCollection) {
+        saveData(request, submitData) {
             request(submitData).then(data => {
                 this.$HandleLoad.hide();
                 let {success = false, message = '提交失败'} = data;
@@ -496,7 +526,7 @@ export default {
                         content:"分拣成功，是否生成出库单？",
                         onConfirm:()=>{
                             this.$HandleLoad.show();
-                            autoConfirmStockPick(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res=>{
+                            autoConfirmStockPick(this.scanCodeInfo.postCode,data.transCode).then(res=>{
                                 this.$HandleLoad.hide();
                                 if(res.success){
                                     message = '已成功生成出库单!';
@@ -621,7 +651,7 @@ export default {
                 thenTotalQtyBal: box.thenTotalQtyBal,//待上架
                 thenLockQty: box.thenLockQty,//已上架
                 thenQtyBal: box.thenQtyBal,//
-                tdQty: box.boxQtyBal,//本次出库
+                tdQty: box.thenQtyBal,//本次出库
                 assistQty:  Math.ceil(box.boxQtyBal/box.invSubUnitMulti),
                 batchNo: box.batchNo,
                 productionDate: box.productionDate,

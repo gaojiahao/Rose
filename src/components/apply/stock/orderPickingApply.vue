@@ -471,23 +471,19 @@ export default {
                         biComment: '',
                         biReferenceId:this.biReferenceId,
                         formData:JSON.stringify(formData)
-                    }, matCodeCollection  = [];
+                    };
 
-                    formData.outPut.dataSet.forEach(val => {
-                        matCodeCollection.push(val.inventoryCode);
-                    })
-                    
                     let opeartion = submitAndCalc;
                     if(this.isModify){
                         opeartion = updateData;
                     }else{
                         delete submitData.biReferenceId;
                     }
-                    this.saveData(opeartion,submitData,matCodeCollection);
+                    this.saveData(opeartion,submitData);
                 }
             })
         },
-        saveData(request, submitData,matCodeCollection) {
+        saveData(request, submitData) {
             request(submitData).then(data => {
                 this.$HandleLoad.hide();
                 let {success = false, message = '提交失败'} = data;
@@ -496,7 +492,7 @@ export default {
                         content:"拣货成功，是否生成出库单？",
                         onConfirm:()=>{
                             this.$HandleLoad.show();
-                            autoConfirmStockPick(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res=>{
+                            autoConfirmStockPick(this.scanCodeInfo.postCode,data.transCode).then(res=>{
                                 this.$HandleLoad.hide();
                                 if(res.success){
                                     message = '已成功生成出库单!';
