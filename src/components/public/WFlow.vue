@@ -1,6 +1,6 @@
 <template>
   <!-- 工作流 -->
-  <div class="work-flow-container">
+  <div class="work-flow-container" v-if="this.$parent.model!='new'">
     <div class="work-flow-header">
       <div>
         <span>{{this.formData.transCode}}</span>
@@ -83,7 +83,6 @@ var component = {
   methods: {
     // 处理简易版工作流数据
     workFlowInfoHandler() {
-      console.log('a');
       this.workFlowInfo = {
         biStatus: this.$parent.formStatus&&this.$parent.formStatus[0].status,
         transCode: this.formData.transCode,
@@ -159,9 +158,11 @@ var component = {
     dateFormat,
   },
   created() {
-    this.workFlowInfoHandler();
-    this.getProcessStatusByListId();
-    this.getStatusProcessByTransCode();
+    if(this.$parent.model!='new'){
+      this.workFlowInfoHandler();
+      this.getProcessStatusByListId();
+      this.getStatusProcessByTransCode();
+    }
   }
 }
 export default Vue.component('WFlow',component)
