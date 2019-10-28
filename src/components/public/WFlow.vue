@@ -65,17 +65,17 @@ var component = {
     }
   },
   watch: {
-    formData: {
-      handler() {
-        this.workFlowInfoHandler();  
-      }
-    },
-    fullWorkFlow: {
-      handler() {
-        this.workFlowHandler();
-      },
-      immediate: true,
-    }
+    // formData: {
+    //   handler() {
+    //     this.workFlowInfoHandler();  
+    //   }
+    // },
+    // fullWorkFlow: {
+    //   handler() {
+    //     this.workFlowHandler();
+    //   },
+    //   immediate: true,
+    // }
   },
   components: {
     Popup, Group, Icon, XButton, RScroll, Picker, RPicker, Toast
