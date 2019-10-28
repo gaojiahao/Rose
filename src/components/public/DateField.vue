@@ -34,7 +34,9 @@ let cfg = {
                 confirmText: '确认',
                 cancelText: '取消',
                 onConfirm: (val)=> {
-                    this.setValue(val);
+                    var data = val;
+                    var str = this.cfg.format=='Y-m-d H:i:s' ? data + ':00':data + ' 00:00:00';
+                    this.setValue(str);
                 },
             });
         },
