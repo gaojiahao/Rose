@@ -494,11 +494,7 @@ export default {
                             this.$HandleLoad.show();
                             autoConfirmStockPick(this.scanCodeInfo.postCode,data.transCode).then(res=>{
                                 this.$HandleLoad.hide();
-                                if(res.success){
-                                    message = '已成功生成出库单!';
-                                }else{
-                                    message = data.message;
-                                }
+                                message = data.message;
                                  this.$vux.alert.show({
                                     content: message,
                                     onHide: () => {
