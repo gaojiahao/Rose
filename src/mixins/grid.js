@@ -389,7 +389,7 @@ export default {
             if(!me.$parent.hidden) { 
                 if (value == null || value.length == 0) {
                     me.$vux.alert.show({
-                        content: '请选择' + (me.listTitle || '物料')
+                        content: '请选择' + (me.listTitle || '交易明细')
                     });
                     return false;
                 }
