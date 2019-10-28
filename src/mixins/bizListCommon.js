@@ -490,6 +490,11 @@ export default {
       //   shareContent(shareInfo);
       // })
     });
+    var deafalutSort = {
+      direction:'desc',
+      property:'crtTime'
+    }
+    this.onSortList(deafalutSort);
   },
 
 }

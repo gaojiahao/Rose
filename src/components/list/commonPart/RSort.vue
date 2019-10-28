@@ -96,7 +96,7 @@ export default {
       type: Array,
       default() {
         return [
-          { name: '综合', key: '' },
+          { name: '综合', key: 'crtTime' },
           { name: '交易号', key: 'transCode' },
           { name: '修改时间', key: 'modTime' },
         ]
@@ -148,7 +148,7 @@ export default {
       }
       else {
         // 默认为正序
-        this.sort = 'ASC'
+        this.sort = 'DESC'
       }
       this.property = item.key;
       this.$emit('on-sort', {

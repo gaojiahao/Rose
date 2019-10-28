@@ -709,12 +709,8 @@ debugger
                             this.$HandleLoad.show();
                             autoConfirm(data.transCode,this.postCode).then(res=>{
                                 this.$HandleLoad.hide();
-                                if(res.success){
-                                    message = '已成功生成入库单!';
-                                }else{
-                                    message = data.message;
-                                }
-                                 this.$vux.alert.show({
+                                message = data.message;
+                                this.$vux.alert.show({
                                     content: message,
                                     onHide: () => {
                                         if (success) {
