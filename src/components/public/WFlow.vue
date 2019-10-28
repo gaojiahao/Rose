@@ -15,13 +15,7 @@
         <span v-else>工作流</span>
         <i class="icon-right"></i>
       </div>
-      <div class="check_more" v-if="fullWorkFlow.length&&fullWorkFlow[fullWorkFlow.length-1].checkTableId" @click="goCheckList">
-        <i class="icon-flow-time"></i>
-        <span>点检表</span>
-        <i class="icon-right"></i>
-      </div>
     </div>
-
     <div class="process-container" v-if="statusList.length" >
       <r-picker title="流程状态" 
         :data="statusList" 
@@ -30,7 +24,13 @@
         @input="updateProcessStatus">
       </r-picker>
     </div>
-      
+    <div class="work-flow-header" v-if="fullWorkFlow.length&&fullWorkFlow[fullWorkFlow.length-1].checkTableId">
+      <div class="check_more" @click="goCheckList">
+        <i class="icon-flow-time"></i>
+        <span>点检表</span>
+        <i class="icon-right"></i>
+      </div>
+    </div>  
   </div>
 </template>
 <script>
@@ -83,8 +83,9 @@ var component = {
   methods: {
     // 处理简易版工作流数据
     workFlowInfoHandler() {
+      console.log('a');
       this.workFlowInfo = {
-        biStatus: this.formData.biStatus||this.$parent.formStatus&&this.$parent.formStatus[0].status,
+        biStatus: this.$parent.formStatus&&this.$parent.formStatus[0].status,
         transCode: this.formData.transCode,
       };
       if(this.fullWorkFlow.length){
