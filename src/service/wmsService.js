@@ -135,6 +135,16 @@ export let getBoxInfoByPallet = (pallet) =>{
     }
   })
 }
+
+//分拣根据托盘码获取箱码库存信息
+export let getSortOutBoxInfoByPallet = (pallet) =>{
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getBoxInfoByPalletOut',
+    data: {
+      pallet:pallet
+    }
+  })
+}
  
 //入库上架时，如果直接扫箱码，校验箱码是否与托盘码建立关系
 export let validateBoxInfoByMD = (data ={}) =>{
