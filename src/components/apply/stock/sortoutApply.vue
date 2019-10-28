@@ -20,7 +20,7 @@
                     </div>
                     <div class="vux-1px-t">
                         <div class='each_property' >
-                            <label class="required">箱码</label>
+                            <label class="required">箱码/托盘码</label>
                             <input 
                                 ref='boxCode'
                                 type='text' 
@@ -89,7 +89,7 @@ import {
     submitAndCalc, 
     getPriceFromSalesContractAndPrice, 
     updateData} from 'service/commonService'
-import { getSortingByBoxCode, autoConfirmStockPick, getSortOutData ,getBoxInfoByPallet} from 'service/wmsService'
+import { getSortingByBoxCode, autoConfirmStockPick, getSortOutData ,getSortOutBoxInfoByPallet} from 'service/wmsService'
 import WebContext from 'service/commonService'
 import { getSOList } from 'service/detailService'
 // mixins 引入
@@ -350,7 +350,7 @@ export default {
 
             if(this.scanCodeInfo.boxCode.split(',').length !=5 ){
                 this.trayCode = this.scanCodeInfo.boxCode;
-                getBoxInfoByPallet(this.trayCode).then(res=>{
+                getSortOutBoxInfoByPallet(this.trayCode).then(res=>{
                     if(res.dataCount){
                         res.tableContent.map(box=>{
                             this.scanCodeInfo.boxCode = `${box.inventoryCode},${box.batchNo},${box.productionDate},${box.qty},${box.boxCode}`;
