@@ -245,7 +245,6 @@ export default {
             
         },
         handlerScanBoxOrTrayCode(){
-debugger
             if(!this.scanCodeInfo.spCode){
                 this.showTost = true;
                 this.tostText = '请先扫库位!'
