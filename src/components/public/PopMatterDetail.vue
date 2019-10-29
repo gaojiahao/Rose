@@ -12,7 +12,7 @@
           <img class="matter_img" :src="item.inventoryPic" alt="mater_img" @error="getMatterDefault(item)">
           <div class="matter_info">
             <div class="matter_name">
-              {{item.inventoryName_transObjCode || item.facilityName_facilityObjCode || '该物料未获取到名称，请检查物料信息。'}}
+              {{item.inventoryName_transObjCode || item.inventoryName_outPutMatCode || item.facilityName_facilityObjCode || '该物料未获取到名称，请检查物料信息。'}}
             </div>
             <div class="matter_info_item flex-start">
               <div class="matter_detail">

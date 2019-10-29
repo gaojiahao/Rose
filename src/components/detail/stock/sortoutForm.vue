@@ -140,6 +140,9 @@
             item.inventoryPic = item.inventoryPic_outPutMatCode
               ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400`
               : this.getDefaultImg();
+            if(!item.transMatchedCode){
+              item.transMatchedCode = item.processCode
+            }
             if (!orderList[item.transMatchedCode]) {
               orderList[item.transMatchedCode] = [];
             }
