@@ -706,17 +706,18 @@ export default {
                         content:"上架成功，是否生成入库单？",
                         onConfirm:()=>{
                             this.$HandleLoad.show();
+
                             autoConfirm(data.transCode,this.postCode).then(res=>{
-                                this.$HandleLoad.hide();
-                                message = data.message;
                                 this.$vux.alert.show({
-                                    content: message,
+                                    content: res.message,
                                     onHide: () => {
-                                        if (success) {
-                                            this.judgePage();
-                                        }
+                                        this.$HandleLoad.hide();
+                                        this.judgePage();
                                     }
                                 });
+                            }).catch(res=>{
+                                this.$HandleLoad.hide();
+                                this.judgePage();
                             });
                         },
                         onCancel:()=>{
