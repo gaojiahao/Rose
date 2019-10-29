@@ -136,7 +136,7 @@ let Rxports = {
           }
         })
         .catch( err => {
-          reject();
+          reject(err);
           console.log('err:', err);
         })
     })
