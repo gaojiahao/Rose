@@ -482,7 +482,7 @@ export default {
         let hideOrderTitle = false; // 是否隐藏订单号
         let listData = []; // 一维物料数组
         let submitMatterField = []; // 提交的物料参数
-        debugger
+
         // 从请求回来的配置中拆分往来，物料，其他段落的配置
         config.forEach(item => {
           if (item.formViewPartId) {
