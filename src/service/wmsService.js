@@ -127,11 +127,12 @@ export let getBoxInfoByMD = (data = {}) =>{
 }
 
 //根据托盘码获取箱码库存信息
-export let getBoxInfoByPallet = (pallet) =>{
+export let getBoxInfoByPallet = (pallet,transCode) =>{
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getBoxInfoByPallet',
     data: {
-      pallet:pallet
+      pallet: pallet,
+      transCode: transCode
     }
   })
 }
