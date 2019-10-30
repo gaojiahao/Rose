@@ -107,7 +107,6 @@ export default {
     },
     // 当前滚动容器
     currentScroll() {
-      debugger
       return this.$refs.bScroll[this.activeIndex];
     }
   },
