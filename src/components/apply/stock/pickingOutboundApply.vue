@@ -494,9 +494,10 @@ export default {
                     message = '提交成功';
                     releaseSortingOrder(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res => {
                         if(!res.success){
-                            this.$vux.alert.show({
-                                content: res.message
-                            })
+                            this.$vux.toast.show({
+                                type: 'warn',
+                                text: res.message
+                            });
                         }
                     })
                 }
