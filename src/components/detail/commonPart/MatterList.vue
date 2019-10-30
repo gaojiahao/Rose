@@ -88,7 +88,6 @@ export default {
   watch: {
     orderList: {
       handler(val) {
-        debugger
         // 每个 订单号 底下只展示三个物料 如有多的则默认隐藏
         let orderListMap = {};
         Object.keys(val).forEach(item => {
