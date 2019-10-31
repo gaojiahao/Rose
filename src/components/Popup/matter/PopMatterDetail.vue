@@ -27,7 +27,7 @@
             <div class="matter_info_item">
               <div class="matter_detail">
                 <span class="matter_item_title">编码：</span>
-                <span class="matter_item_value">{{item.transObjCode || item.facilityObjCode || '无'}}</span>
+                <span class="matter_item_value">{{item.transObjCode || item.outPutMatCode || item.facilityObjCode || '无'}}</span>
               </div>
             </div>
           </div>

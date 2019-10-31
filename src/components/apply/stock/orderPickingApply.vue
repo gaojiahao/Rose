@@ -395,7 +395,8 @@ export default {
                         }
                     }
                     dataSet.push({
-                       ...box
+                       ...box,
+                       assistQty: Math.ceil(box.tdQty/box.assMeasureScale)
                     });
                 });
             });
@@ -440,7 +441,6 @@ export default {
                 // 确定回调
                 onConfirm: () => {
                     this.$HandleLoad.show();
-                    
                     const currentUser = WebContext.WebContext.currentUser;
                     let data={};
                     let formData={

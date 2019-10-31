@@ -100,7 +100,7 @@
     },
     mixins: [detailCommon],
     components: {
-      workFlow, RAction, PopWarehouseList, PriceTotal, contactPart, WarehouseContent, MatterList, MatterItem,
+      workFlow, RAction, PopWarehouseList, PriceTotal, contactPart, MatterList, MatterItem,
     },
     methods: {
       //选择默认图片
