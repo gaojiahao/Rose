@@ -506,7 +506,6 @@ export default {
             });
         },
         getDataSet(){
-            debugger
             let dataSet = [];
             this.matters.map(mat=>{
                 mat.boxCodes.map(box=>{
