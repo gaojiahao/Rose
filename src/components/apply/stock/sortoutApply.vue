@@ -206,6 +206,7 @@ export default {
             getSortOutData(this.scanCodeInfo.postCode).then(res => {
                 if(res.tableContent.length > 0){
                     scanVoice.success();
+                    this.subBox = [];
                     res.tableContent.forEach(mat => {
                         this.matters.unshift({
                             expend:true,
@@ -216,20 +217,48 @@ export default {
                             thenQtyBal: mat.thenQtyBal,//
                             boxCodes:[]
                         });
-                        this.subBox = {
-                            tdProcessing: mat.processing,
-                            assMeasureUnit: mat.invSubUnitName,
-                            assMeasureDescription: mat.invSubUnitComment,
-                            assMeasureScale: mat.invSubUnitMulti,
-                            thenTotalQtyBal: mat.thenTotalQtyBal,//下架总数
-                            thenLockQty: mat.thenLockQty,//已上架
-                            thenQtyBal: mat.thenQtyBal,//待上架
-                            assistQty:  Math.ceil(mat.boxQtyBal/mat.invSubUnitMulti),
-                            batchNo: mat.batchNo,
-                            productionDate: mat.productionDate,
-                            postCode: this.scanCodeInfo.postCode
+                        if(this.subBox.length > 0){
+                            let subCode = [];
+                            this.subBox.forEach(val => {
+                                subCode.push(val.inventoryCode);
+                            })
+                            if(subCode.indexOf(mat.inventoryCode) < 0){
+                                this.subBox.push({
+                                    tdProcessing: mat.processing,
+                                    assMeasureUnit: mat.invSubUnitName,
+                                    inventoryCode: mat.inventoryCode,
+                                    assMeasureDescription: mat.invSubUnitComment,
+                                    assMeasureScale: mat.invSubUnitMulti,
+                                    thenTotalQtyBal: mat.thenTotalQtyBal,//下架总数
+                                    thenLockQty: mat.thenLockQty,//已上架
+                                    thenQtyBal: mat.thenQtyBal,//待上架
+                                    tdQty: mat.thenQtyBal,
+                                    invSubUnitMulti: mat.invSubUnitMulti,
+                                    batchNo: mat.batchNo,
+                                    productionDate: mat.productionDate,
+                                    postCode: this.scanCodeInfo.postCode
 
-                        };
+                                })
+                            }
+                        }else{
+                            this.subBox.push({
+                                tdProcessing: mat.processing,
+                                assMeasureUnit: mat.invSubUnitName,
+                                inventoryCode: mat.inventoryCode,
+                                assMeasureDescription: mat.invSubUnitComment,
+                                assMeasureScale: mat.invSubUnitMulti,
+                                thenTotalQtyBal: mat.thenTotalQtyBal,//下架总数
+                                thenLockQty: mat.thenLockQty,//已上架
+                                thenQtyBal: mat.thenQtyBal,//待上架
+                                tdQty: mat.thenQtyBal,
+                                invSubUnitMulti: mat.invSubUnitMulti,
+                                batchNo: mat.batchNo,
+                                productionDate: mat.productionDate,
+                                postCode: this.scanCodeInfo.postCode
+
+                            })
+                        }
+                        
                         this.warehouse = {
                             warehouseName: mat.whName,
                             whOutCode: mat.whCode
@@ -387,21 +416,24 @@ export default {
                 scanVoice.error();
                 return;
             }
-            
+
             this.matters.map(mat => {
                 if(matCode === mat.inventoryCode){
-                    mat.boxCodes.unshift({
-                        expend:true,
-                        cardCode:this.trayCode,
-                        transObjCode: matCode,
-                        inventoryCode: matCode,
-                        tdQty: boxRule,
-                        warehouseName: this.warehouse.warehouseName,
-                        whOutCode: this.warehouse.whOutCode,
-                        processCode: this.scanCodeInfo.postCode,
-                        boxRule: boxRule,
-                        boxCode: uuid,
-                        ...this.subBox
+                    this.subBox.map(sub => {
+                        if(sub.inventoryCode === mat.inventoryCode){
+                            mat.boxCodes.unshift({
+                                expend:true,
+                                cardCode:this.trayCode,
+                                transObjCode: matCode,
+                                warehouseName: this.warehouse.warehouseName,
+                                whOutCode: this.warehouse.whOutCode,
+                                assistQty:  Math.ceil(sub.tdQty/sub.invSubUnitMulti),
+                                processCode: this.scanCodeInfo.postCode,
+                                boxRule: boxRule,
+                                boxCode: uuid,
+                                ...sub
+                            })
+                        }
                     })
                 }
             })
@@ -428,8 +460,10 @@ export default {
                             delete box[k];
                         }
                     }
+
                     dataSet.push({
-                       ...box
+                       ...box,
+                       assistQty: Math.ceil(box.tdQty/box.assMeasureScale)
                     });
                 });
             });
@@ -474,7 +508,6 @@ export default {
                 // 确定回调
                 onConfirm: () => {
                     this.$HandleLoad.show();
-                    
                     const currentUser = WebContext.WebContext.currentUser;
                     let data={};
                     let formData={
@@ -513,7 +546,7 @@ export default {
                     }else{
                         delete submitData.biReferenceId;
                     }
-                    this.saveData(opeartion,submitData);
+                    // this.saveData(opeartion,submitData);
                 }
             })
         },

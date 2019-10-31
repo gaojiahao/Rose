@@ -393,8 +393,10 @@ export default {
                             delete box[k];
                         }
                     }
+
                     dataSet.push({
-                       ...box
+                       ...box,
+                       assistQty: Math.ceil(box.tdQty/box.assMeasureScale)
                     });
                 });
             });
@@ -439,7 +441,6 @@ export default {
                 // 确定回调
                 onConfirm: () => {
                     this.$HandleLoad.show();
-                    
                     const currentUser = WebContext.WebContext.currentUser;
                     let data={};
                     let formData={
@@ -632,7 +633,7 @@ export default {
                 thenLockQty: box.thenLockQty,//已上架
                 thenQtyBal: box.thenQtyBal,//
                 tdQty: box.tdQty,//本次出库
-                assistQty:  box.boxQtyBal/box.invSubUnitMulti,
+                assistQty:  box.tdQty/box.invSubUnitMulti,
                 batchNo: box.batchNo,
                 productionDate: box.productionDate,
                 boxCode: box.boxCode
