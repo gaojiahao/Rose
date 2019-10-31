@@ -8,8 +8,6 @@
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
-
-      <warehouse-content :warehouse-config="warehouseConfig" :warehouseOut="{}" :warehouse="warehouse"></warehouse-content>
       <!-- 物料列表 -->
       <matter-list :order-list='orderList' :order-title="orderTitle" :btnIsHide = "btnIsHide" :check-amt="checkAmt" @on-detailEdit="onDetailConfirm"></matter-list>
       <!-- 备注 -->
@@ -33,7 +31,6 @@
   import PopWarehouseList from 'components/Popup/PopWarehouseList'
   import contactPart from 'components/detail/commonPart/ContactPart'
   import PriceTotal from 'components/detail/commonPart/PriceTotal'
-  import WarehouseContent from 'components/detail/commonPart/WarehouseContent'
   import MatterList from 'components/detail/commonPart/MatterList'
   import MatterItem from 'components/detail/commonPart/MatterItem'
   //公共方法引入
@@ -49,7 +46,6 @@
         warehouse: {},      // 入库仓库
         formViewUniqueId: 'e76a8c6f-05cc-45ee-ba93-299fe6751856',
         orderList: {}, // 物料列表
-        warehouseConfig: [], // 仓库相关配置
         defaultFormData: {},
       }
     },
@@ -104,7 +100,7 @@
     },
     mixins: [detailCommon],
     components: {
-      workFlow, RAction, PopWarehouseList, PriceTotal, contactPart, WarehouseContent, MatterList, MatterItem,
+      workFlow, RAction, PopWarehouseList, PriceTotal, contactPart, MatterList, MatterItem,
     },
     methods: {
       //选择默认图片
@@ -140,13 +136,16 @@
             item.inventoryPic = item.inventoryPic_outPutMatCode
               ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400`
               : this.getDefaultImg();
+            if(!item.transMatchedCode){
+              item.transMatchedCode = item.processCode
+            }
             if (!orderList[item.transMatchedCode]) {
               orderList[item.transMatchedCode] = [];
             }
             orderList[item.transMatchedCode].push(item);
           }
           this.orderList = orderList;
-         
+
           // 动态获取 仓库字段信息
           for (let key in outPut) {
             if (key.includes('warehouse') || key.includes('storehouse') || key.includes('containerCode')) {

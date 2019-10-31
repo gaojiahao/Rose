@@ -432,7 +432,7 @@ export default {
                         inventoryCode:mat.inventoryCode,
                         inventoryName:mat.inventoryName,
                         processing:mat.processing,
-                        invSubUnitMulti:mat.invSubUnitMulti,
+                        assMeasureScale:mat.invSubUnitMulti,
                         assMeasureUnit:mat.invSubUnitName, //采购单位
                         assMeasureDescription:mat.invSubUnitComment,//包装规格
                         specification:mat.specification,//规格

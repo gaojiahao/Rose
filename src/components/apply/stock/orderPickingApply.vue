@@ -89,7 +89,7 @@ import {
     submitAndCalc, 
     getPriceFromSalesContractAndPrice, 
     updateData} from 'service/commonService'
-import { getSortingOrderByBoxCode, autoConfirmStockPick, getOrderPickingData ,getBoxInfoByPallet} from 'service/wmsService'
+import { getSortingOrderByBoxCode, autoConfirmStockPick, releaseSortingOrder, getOrderPickingData ,getBoxInfoByPallet} from 'service/wmsService'
 import WebContext from 'service/commonService'
 import { getSOList } from 'service/detailService'
 // mixins 引入
@@ -333,7 +333,7 @@ export default {
 
             if(this.scanCodeInfo.boxCode.split(',').length !=5 ){
                 this.trayCode = this.scanCodeInfo.boxCode;
-                getBoxInfoByPallet(this.trayCode).then(res=>{
+                getBoxInfoByPallet(this.trayCode,this.scanCodeInfo.postCode).then(res=>{
                     if(res.dataCount){
                         res.tableContent.map(box=>{
                             this.scanCodeInfo.boxCode = `${box.inventoryCode},${box.batchNo},${box.productionDate},${box.qty},${box.boxCode}`;
@@ -395,7 +395,8 @@ export default {
                         }
                     }
                     dataSet.push({
-                       ...box
+                       ...box,
+                       assistQty: Math.ceil(box.tdQty/box.assMeasureScale)
                     });
                 });
             });
@@ -440,7 +441,6 @@ export default {
                 // 确定回调
                 onConfirm: () => {
                     this.$HandleLoad.show();
-                    
                     const currentUser = WebContext.WebContext.currentUser;
                     let data={};
                     let formData={
@@ -471,7 +471,11 @@ export default {
                         biComment: '',
                         biReferenceId:this.biReferenceId,
                         formData:JSON.stringify(formData)
-                    };
+                    }, matCodeCollection  = [];
+
+                    formData.outPut.dataSet.forEach(val => {
+                        matCodeCollection.push(val.inventoryCode);
+                    })
 
                     let opeartion = submitAndCalc;
                     if(this.isModify){
@@ -479,15 +483,23 @@ export default {
                     }else{
                         delete submitData.biReferenceId;
                     }
-                    this.saveData(opeartion,submitData);
+                    this.saveData(opeartion,submitData,matCodeCollection);
                 }
             })
         },
-        saveData(request, submitData) {
+        saveData(request, submitData,matCodeCollection) {
             request(submitData).then(data => {
                 this.$HandleLoad.hide();
                 let {success = false, message = '提交失败'} = data;
                 if (success) {
+                    releaseSortingOrder(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res => {
+                        if(!res.success){
+                            this.$vux.toast.show({
+                                type: 'warn',
+                                text: res.message
+                            });
+                        }
+                    })
                     this.$vux.confirm.show({
                         content:"拣货成功，是否生成出库单？",
                         onConfirm:()=>{

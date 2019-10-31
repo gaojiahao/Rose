@@ -127,11 +127,12 @@ export let getBoxInfoByMD = (data = {}) =>{
 }
 
 //根据托盘码获取箱码库存信息
-export let getBoxInfoByPallet = (pallet) =>{
+export let getBoxInfoByPallet = (pallet,transCode) =>{
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getBoxInfoByPallet',
     data: {
-      pallet:pallet
+      pallet: pallet,
+      transCode: transCode
     }
   })
 }
@@ -177,8 +178,10 @@ export let getLocationInfo = (location) =>{
 
 //自动生成入库确认单
 export let autoConfirm = (onShelvesCode,applicationCode) =>{
-  return $flyio.post({
-    url: `/H_roleplay-si/wms/autoConfirm?onShelvesCode=${onShelvesCode}&applicationCode=${applicationCode}`
+  return $flyio.ajax({
+    url: `/H_roleplay-si/wms/autoConfirm?onShelvesCode=${onShelvesCode}&applicationCode=${applicationCode}`,
+    type:'post',
+    contentType:'application/json'
   })
 }
 

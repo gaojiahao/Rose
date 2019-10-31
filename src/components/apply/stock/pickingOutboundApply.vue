@@ -332,7 +332,7 @@ export default {
 
             if(this.scanCodeInfo.boxCode.split(',').length !=5 ){
                 this.trayCode = this.scanCodeInfo.boxCode;
-                getBoxInfoByPallet(this.trayCode).then(res=>{
+                getBoxInfoByPallet(this.trayCode,this.scanCodeInfo.postCode).then(res=>{
                     if(res.dataCount){
                         res.tableContent.map(box=>{
                             this.scanCodeInfo.boxCode = `${box.inventoryCode},${box.batchNo},${box.productionDate},${box.qty},${box.boxCode}`;
@@ -393,8 +393,10 @@ export default {
                             delete box[k];
                         }
                     }
+
                     dataSet.push({
-                       ...box
+                       ...box,
+                       assistQty: Math.ceil(box.tdQty/box.assMeasureScale)
                     });
                 });
             });
@@ -439,7 +441,6 @@ export default {
                 // 确定回调
                 onConfirm: () => {
                     this.$HandleLoad.show();
-                    
                     const currentUser = WebContext.WebContext.currentUser;
                     let data={};
                     let formData={
@@ -494,9 +495,10 @@ export default {
                     message = '提交成功';
                     releaseSortingOrder(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res => {
                         if(!res.success){
-                            this.$vux.alert.show({
-                                content: res.message
-                            })
+                            this.$vux.toast.show({
+                                type: 'warn',
+                                text: res.message
+                            });
                         }
                     })
                 }
@@ -631,7 +633,7 @@ export default {
                 thenLockQty: box.thenLockQty,//已上架
                 thenQtyBal: box.thenQtyBal,//
                 tdQty: box.tdQty,//本次出库
-                assistQty:  box.boxQtyBal/box.invSubUnitMulti,
+                assistQty:  box.tdQty/box.invSubUnitMulti,
                 batchNo: box.batchNo,
                 productionDate: box.productionDate,
                 boxCode: box.boxCode
