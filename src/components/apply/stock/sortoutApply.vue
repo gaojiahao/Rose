@@ -546,7 +546,7 @@ export default {
                     }else{
                         delete submitData.biReferenceId;
                     }
-                    // this.saveData(opeartion,submitData);
+                    this.saveData(opeartion,submitData);
                 }
             })
         },
