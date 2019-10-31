@@ -20,6 +20,13 @@ let cfg = {
         rate: accMul(this.getValue()||0,100),
       }
     },
+    watch:{
+      value:{
+        handler(val){
+          console.log(val)
+        }
+      }   
+    },
     methods:{
       onInput:function(e){
         var value = e.target.value;
@@ -41,6 +48,15 @@ let cfg = {
         var v = accMul(value||0,temp);
         this.rate = v;
         return v;
+      }
+    },
+    created () {
+      var value;
+      if (this.cfg.defaultValue.type == 'staticData') {
+        value = this.cfg.defaultValue.data[0];
+      }
+      if (value != null) {
+        this.setValue(value);
       }
     }
 }
