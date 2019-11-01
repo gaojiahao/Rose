@@ -98,7 +98,7 @@ import {
     updateData} from 'service/commonService'
 import WebContext from 'service/commonService'
 import { 
-    getStorageShelf, 
+    getPutawayStorageShelf, 
     getWhbyStoragelocation,
     getPreShelfInvInfoByBoxCode,
     getBoxInfoByMD,
@@ -514,7 +514,7 @@ export default {
 
             let materielMap = {};
             this.matters = [];
-            getStorageShelf(params).then(res=>{
+            getPutawayStorageShelf(params).then(res=>{
                 //循环待上架明细数据
                 //往物料集合(materielMap)注册，唯一键为物料编码，作为页面分组使用数据
                 this.shelfList = res.tableContent;

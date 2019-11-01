@@ -1,9 +1,17 @@
 import $flyio from 'plugins/ajax';
 
-//获取待上架的箱码
+//获取码垛的箱码
 export let getStorageShelf = (data = {}) => {
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getPalletizingApp',
+    data
+  })
+}
+
+//获取入库上架上架的箱码
+export let getPutawayStorageShelf = (data = {}) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getStorageShelf2',
     data
   })
 }
