@@ -3,7 +3,7 @@ import $flyio from 'plugins/ajax';
 //获取待上架的箱码
 export let getStorageShelf = (data = {}) => {
   return $flyio.ajax({
-    url: '/H_roleplay-si/ds/getStorageShelf2',
+    url: '/H_roleplay-si/ds/getPalletizingApp',
     data
   })
 }
