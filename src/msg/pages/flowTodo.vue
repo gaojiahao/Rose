@@ -10,35 +10,35 @@
             >
         <div class="flow-task">
             
-            <div class="flow-task-item" v-for="(task,index) in tasks" :key="index" @click="handlerViewTask(task)">
-            <div class="flow-task-item-header">
-                <div class="flow-task-item-header-wrapper">
-                        <div>
-                        <span>{{task.title}}</span>
-                        </div>
-                        <div>
-                        <span>{{task.TRANS_CODE}}</span>
-                        </div>
-                </div>
-            </div>
-            <div class="flow-task-item-center">
-                <div class="flow-task-item-center-wrapper">
-                    <span>{{task.nodeName}}</span>
-                </div>
-                </div>
-
-            <div class="flow-task-item-foot vux-1px-t" >
-                    <div class="flow-task-item-foot-wrapper">
-                        <div>
-                            <i class="icon icon-handler"></i>
-                            <span>创建人：{{task.creator_name}}</span>
-                        </div>
-                        <div>
-                            <i class="icon icon-mod-time"></i>
-                        <span>创建时间：{{task.crtTime}}</span>
-                        </div>
+            <div class="flow-task-item" v-for="(task,index) in tasks" :key="index" @click="handlerViewTask(task)" >
+                <div class="flow-task-item-header">
+                    <div class="flow-task-item-header-wrapper">
+                            <div>
+                            <span>{{task.title}}</span>
+                            </div>
+                            <div>
+                            <span>{{task.TRANS_CODE}}</span>
+                            </div>
                     </div>
-            </div>
+                </div>
+                <div class="flow-task-item-center">
+                    <div class="flow-task-item-center-wrapper">
+                        <span>{{task.nodeName}}</span>
+                    </div>
+                    </div>
+
+                <div class="flow-task-item-foot vux-1px-t" >
+                        <div class="flow-task-item-foot-wrapper">
+                            <div>
+                                <i class="icon icon-handler"></i>
+                                <span>创建人：{{task.creator_name}}</span>
+                            </div>
+                            <div>
+                                <i class="icon icon-mod-time"></i>
+                            <span>创建时间：{{task.crtTime}}</span>
+                            </div>
+                        </div>
+                </div>
             </div>
         </div>
     </r-scroll>
