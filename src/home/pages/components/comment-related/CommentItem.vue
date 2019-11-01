@@ -104,14 +104,17 @@
         // 处理PC的表情图片
         comment = comment.replace(/src="resources/g, 'src="/dist/resources');
         // 处理移动端的表情图片
-        comment = comment.replace(reg, (word) => {
-          // 寻找表情索引
-          let idx = emotionList.findIndex(item => item === word.replace(/(\[|\])/g, ''));
-          // 没有匹配项则返回原文字
-          if (idx === -1) {
-            return word
-          }
-          return `<span class="img-emotion" style="background-position: -${24 * idx}px 0;"></span>`
+        comment = comment.replace(/\[[\u4E00-\u9FA5]{1,3}\]/gi, (word) =>{
+            var newWord = word.replace(/\[|\]/gi,'');
+            var index = emotionList.indexOf(newWord);
+            var backgroundPositionX = -index * 24
+            var imgHTML = '';
+            if(index<0){
+                return word;
+            }
+            var path = index>104 ? '/img' : 'https://res.wx.qq.com/mpres/htmledition/images/icon';
+            imgHTML = `<img class="static-emotion-gif" style="vertical-align: middle" src="${path}/emotion/${index}.gif">`
+            return imgHTML;
         });
         return comment;
       },

@@ -1,9 +1,12 @@
 <template>
   <div class="emotion-container vux-1px-t" v-show="show" ref="emotionContainer">
     <div class="emotion-wrapper">
-      <emotion class="emotion-item" v-for="(item, index) in emotionList" :key="index"
-               @click.native="emotionClick(item, index)">{{item}}</emotion>
+        <div v-for="(item, index) in emotionList" :key="index" class="vux-center-h">
+        <emotion   @click.native="emotionClick(item, index)">{{item}}</emotion>
+        <emotion is-gif>{{item}}</emotion>
     </div>
+    </div>
+    
   </div>
 </template>
 
