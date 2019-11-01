@@ -333,7 +333,7 @@ let cfg = {
           ];
           data.filter = JSON.stringify(filter);
       };
-      if(this.cfg.valueBind&&valueBind&&this.cfg.xtype=='r2Selector'){
+      if(this.cfg.valueBind&&valueBind&&this.cfg.xtype=='r2Selector'&&!store.params){
         data = {
           limit: 1,
         }
