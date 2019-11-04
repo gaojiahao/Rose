@@ -416,7 +416,7 @@ export default {
                 scanVoice.error();
                 return;
             }
-
+            debugger
             this.matters.map(mat => {
                 if(matCode === mat.inventoryCode){
                     this.subBox.map(sub => {
@@ -431,7 +431,8 @@ export default {
                                 processCode: this.scanCodeInfo.postCode,
                                 boxRule: boxRule,
                                 boxCode: uuid,
-                                ...sub
+                                ...sub,
+                                tdQty:boxRule
                             })
                         }
                     })
