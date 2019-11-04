@@ -28,11 +28,7 @@
           <span class="title required">转办给: </span>
           <span>{{selectedUser.nickname}}</span>
         </div>
-        <div class="confirm-item">
-          <span class="title required">工时: </span>
-          <input type="number" class="value" v-model.number="transferInfo.taskTime">
-        </div>
-        <div class="warn" v-show="showTaskWarn">请输入工时</div>
+     
         <div class="confirm-item">
           <span class="title required">备注: </span>
           <input type="text" class="value" v-model="transferInfo.comment">
@@ -89,10 +85,8 @@ var component = {
       selectedUser: {}, // 选中的转办用户
       showConfirm: false,
       transferInfo: {
-        taskTime: 0.1, // 工时
         comment: '', // 备注
       },
-      showTaskWarn: false,
       showCommentWarn: false,
       actions: [],
       listInfo: {},
@@ -494,9 +488,8 @@ var component = {
         taskId: this.taskId,
         ...this.transferInfo,
       };
-      this.showTaskWarn = !this.transferInfo.taskTime;
       this.showCommentWarn = !this.transferInfo.comment;
-      if (this.showTaskWarn || this.showCommentWarn) {
+      if (this.showCommentWarn) {
         return
       }
 
@@ -510,6 +503,7 @@ var component = {
           this.$emit('on-submit-success', JSON.stringify({
             type: 'transfer'
           }));
+          location.reload();
         }
         this.$vux.alert.show({
           content: message,

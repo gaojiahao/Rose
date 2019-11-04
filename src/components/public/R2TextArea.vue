@@ -31,6 +31,14 @@ let  cfg = {
             this.setValue(value);
         },
         
+    },
+    mounted() {
+        this.$nextTick(function(){
+            setTimeout(() => {
+                let targetEl = this.$el.children[1].children[0];
+                targetEl.style.height = `${targetEl.scrollHeight}px`;
+            },10)
+        })
     }
 }
 export default Vue.component('R2TextArea',cfg);

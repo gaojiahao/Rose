@@ -169,6 +169,7 @@ export default {
                         this.matters = [];
                         this.boxCodesMap = {};
                         this.shelfList = [];
+                        this.getPostRequestData();
                     },
                     onCancel:() =>{
                         this.scanCodeInfo.postCode = this.postCode;
@@ -176,21 +177,24 @@ export default {
                     }
                 })
             }else{
-                
-                this.handlerSetMatters(this.scanCodeInfo.postCode,res=>{
-                    if(!res.dataCount){
-                        scanVoice.error();
-                        this.showTost = true;
-                        this.tostText = '当前申请单号并没有待上架的数据,请重新扫码!';
-                        this.scanCodeInfo.postCode = '';
-                        this.$refs.postCode.focus();
-                    }else{
-                        scanVoice.success();
-                        this.postCode = this.scanCodeInfo.postCode;
-                        this.$refs.trayCode.focus();
-                    }
-                });
+                this.getPostRequestData();
             }
+        },
+        //扫申请单请求
+        getPostRequestData() {
+            this.handlerSetMatters(this.scanCodeInfo.postCode,res=>{
+                if(!res.dataCount){
+                    scanVoice.error();
+                    this.showTost = true;
+                    this.tostText = '当前申请单号并没有待上架的数据,请重新扫码!';
+                    this.scanCodeInfo.postCode = '';
+                    this.$refs.postCode.focus();
+                }else{
+                    scanVoice.success();
+                    this.postCode = this.scanCodeInfo.postCode;
+                    this.$refs.trayCode.focus();
+                }
+            });
         },
         //扫托盘码
         handlerScanTrayCode(){

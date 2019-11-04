@@ -59,7 +59,7 @@ export default {
     overflow: hidden;
     .wrapper {
         // height: calc(100% - 0.99rem);
-        height: 6.5rem;
+        height: 7.2rem;
     }
 }
 
