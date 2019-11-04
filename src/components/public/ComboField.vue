@@ -173,7 +173,7 @@ let cfg = {
           autoLoad = true;
 
       
-      if(me.cfg.valueBind.length) {
+      if(me.cfg.valueBind&&me.cfg.valueBind.length) {
         var ctrl = me.cfg.valueBind[0].data.contrl,
             field = me.cfg.valueBind[0].data.valueField;
         ds.data.params[field] = me.cfg.valueBind[0];
