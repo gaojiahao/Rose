@@ -35,7 +35,12 @@ let cfg = {
                 cancelText: '取消',
                 onConfirm: (val)=> {
                     var data = val;
-                    var str = this.cfg.format=='Y-m-d H:i:s' ? data + ':00':data + ' 00:00:00';
+                    if(this.cfg.format=='Y-m-d H:i:s')
+                        var str =  data + ':00';
+                    else  if(this.cfg.format=='Y-m-d')
+                        var str = data;
+                    else 
+                        var str = data;
                     this.setValue(str);
                 },
             });
