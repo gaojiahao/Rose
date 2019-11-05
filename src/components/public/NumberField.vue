@@ -17,6 +17,7 @@ let  cfg = {
     data() {
         return {
             number:numberComma(this.getValue()||'')|| '',
+            toFixNum: 2,
         }
     },
     watch: {
@@ -60,7 +61,7 @@ let  cfg = {
             return value;
         },
         getNum(val) {
-            return Math.abs(toFixed(val, 2));
+            return Math.abs(toFixed(val, this.toFixNum));
         },
         //覆盖fieldBase的校验方法
         isValid:function(){
@@ -114,7 +115,7 @@ let  cfg = {
         },
     },
     created () {
-
+        this.toFixNum = this.cfg.decimalPrecision;
     }
 }
 export default Vue.component('r2Numberfield',cfg);
