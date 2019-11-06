@@ -171,7 +171,8 @@ var component = {
     return {
       showDetail: false,
       detail: {},
-      hasDs:false
+      hasDs:false,
+      notAddOneRow:false,
     };
   },
   methods: {
@@ -246,7 +247,8 @@ var component = {
       fieldSet = this.$parent,
       form = fieldSet.form,
       values = this.values,
-      name = fieldSet.name;
+      name = fieldSet.name,
+      notAddOneRow = this.cfg.notAddOneRow;
     
     this.keyFiled = this.cfg.columns.filter(it=>{
       return !it.hidden;
@@ -269,6 +271,15 @@ var component = {
     this.initDefaultValueCfg();
     this.initValueBindAndExpressionCfg();
     this.initEditorParamsCfg();
+    if(!this.notAddOneRow){
+      var value = this.getValue() || [],
+        record,
+        row, i = 0;
+
+      record = this.createRecord();
+      value.push(record.data);
+      this.setValue(value);
+    }
   }
 };
 export default Vue.component("RGrid", component);
