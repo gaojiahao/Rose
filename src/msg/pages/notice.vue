@@ -1,5 +1,5 @@
 <template>
-    <div class="notice-container">
+    <div class="notice-container" >
         <tab active-color='#2196F3'>
            
         <tab-item 
@@ -57,9 +57,10 @@ export default {
 
 .notice-container{
     overflow: hidden;
+    height: 100%;
     .wrapper {
-        // height: calc(100% - 0.99rem);
-        height: 7.2rem;
+        height: calc(100% - 10.99rem);
+        // height: 7.2rem;
     }
 }
 
