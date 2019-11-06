@@ -99,6 +99,7 @@
       //兼容复制黏贴图片预览
       handleViewImg(e) {
         if(e.target.tagName === 'IMG'){
+          e.preventDefault();
           let imgUrl = `${location.origin}${e.target.getAttribute("src")}`;
           this.attachmentImgs.push(imgUrl);
           wx.previewImage({

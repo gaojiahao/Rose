@@ -9,7 +9,7 @@
       <div class="creator-name">{{item.creatorName}}</div>
       <!-- 时间 -->
       <div class="time">{{item.crtTime | filterTime}}</div>
-      <div class="comment" v-html="handleComment()"></div>
+      <div class="comment" @click="handleViewImg($event)" v-html="handleComment()"></div>
       <!-- 附件 -->
       <div class="comment-attachments" v-if="item.attachment && item.attachment.length">
         <img class="comment_image_item" :src="img.attachment" v-for="(img, iIndex) in item.attachment"
@@ -111,6 +111,18 @@
           current: imgUrl, // 当前显示图片的http链接
           urls: this.attachmentImgs // 需要预览的图片http链接列表
         });
+      },
+      //兼容复制黏贴图片预览
+      handleViewImg(e) {
+        if(e.target.tagName === 'IMG'){
+          e.preventDefault();
+          let imgUrl = `${location.origin}${e.target.getAttribute("src")}`;
+          this.attachmentImgs.push(imgUrl);
+          wx.previewImage({
+            current: imgUrl, // 当前显示图片的http链接
+            urls: this.attachmentImgs // 需要预览的图片http链接列表
+          });
+        }
       },
       // 校验图片后缀名
       checkImgSuffix() {
