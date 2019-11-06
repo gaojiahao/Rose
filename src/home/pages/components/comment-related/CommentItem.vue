@@ -19,7 +19,7 @@
         </div>
       </div>
       <!-- 评论内容 -->
-      <div class="comment" @click="handleViewImg($event)" v-html="handleComment()"></div>
+      <div class="comment" @click.stop="handleViewImg($event)" v-html="handleComment()"></div>
       <!-- 附件 -->
       <div class="comment-attachments" v-if="item.commentAttachments && item.commentAttachments.length">
         <img class="comment_image_item" :src="img.ATTACHMENT" v-for="(img, iIndex) in item.commentAttachments"

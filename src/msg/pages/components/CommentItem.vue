@@ -9,7 +9,7 @@
       <div class="creator-name">{{item.creatorName}}</div>
       <!-- 时间 -->
       <div class="time">{{item.crtTime | filterTime}}</div>
-      <div class="comment" @click="handleViewImg($event)" v-html="handleComment()"></div>
+      <div class="comment" @click.stop="handleViewImg($event)" v-html="handleComment()"></div>
       <!-- 附件 -->
       <div class="comment-attachments" v-if="item.attachment && item.attachment.length">
         <img class="comment_image_item" :src="img.attachment" v-for="(img, iIndex) in item.attachment"
@@ -20,7 +20,7 @@
       </div>
       <!-- 实例创建者信息 -->
       <div class="belong-container" :class="{'has-reply': item.reply}">
-        <div class="reply-part" v-if="item.reply" v-html="handleComment('reply')"></div>
+        <div class="reply-part" v-if="item.reply" @click.stop="handleViewImg($event)" v-html="handleComment('reply')"></div>
         <div class="belong-part">
           <div class="app_img">
             <img class="app_img" :src='item.pic' alt="appImg" @error="getDefaultIcon(item)">
@@ -212,8 +212,7 @@
         return `${prefix} ${dateFormat(val, 'HH:mm:ss')}`;
       },
     },
-    created() {
-    }
+    created() {}
   }
 </script>
 
