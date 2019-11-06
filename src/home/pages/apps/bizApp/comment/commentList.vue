@@ -54,6 +54,11 @@
         showEmotion: false,
       }
     },
+    watch: {
+      comment: function(val) {
+        if(val === '') this.parentId = -1;
+      }
+    },
     methods: {
       // 上拉加载
       onPullingUp() {
@@ -95,7 +100,7 @@
       // 回复
       onReply(item) {
         this.parentId = item.ID;
-        this.placeholder = `回复${item.creatorName}:`;
+        this.comment = `回复@${item.creatorName}:`;
         this.$refs.commentValue.focus();
       },
       // 点赞成功
@@ -132,7 +137,8 @@
       },      
       // 评论
       saveComment() {
-        if (!this.comment) {
+        let commentData = this.comment.slice(this.comment.indexOf(':')+1)
+        if (!commentData) {
           this.$vux.toast.show({
             text: '评论不能为空',
             position: 'top',
@@ -148,7 +154,7 @@
           type: "instance",
           parentId: this.parentId,
           relationKey: this.transCode,
-          content: this.utf16toEntities(this.tagFilter(this.comment)),// 标签过滤
+          content: this.utf16toEntities(this.tagFilter(commentData)),// 标签过滤
         };
         // 应用详情的评论
         if (this.listId) {
@@ -156,7 +162,7 @@
             type: 'list',
             parentId: this.parentId,
             relationKey: this.listId,
-            content: this.utf16toEntities(this.tagFilter(this.comment)),// 标签过滤
+            content: this.utf16toEntities(this.tagFilter(commentData)),// 标签过滤
           };
         }
 
@@ -164,7 +170,6 @@
           if (success) {
             this.comment = '';
             this.parentId = -1;
-            this.placeholder = '添加评论...';
             this.page = 1;
             this.$refs.bScroll.scrollTo(0, 0);
             this.getCommentList().then(() => {
