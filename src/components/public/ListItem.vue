@@ -77,7 +77,7 @@
       <div class="base-info-wrapper ">
         <div>
           <i class="icon icon-handler"></i>
-          <div>创建人：{{item.handlerName}}</div>
+          <div>创建人：{{item.creatorName}}</div>
         </div>
         <div>
           <i class="icon icon-mod-time"></i>

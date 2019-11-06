@@ -184,6 +184,9 @@
       // 评论框失去焦点
       commentFocusOut() {
         this.focusInput = false;
+        this.comment = '';
+        this.parentId = -1;
+        this.placeholder = '添加评论...';
       },
       // 选中表情
       emotionSelected(val) {
