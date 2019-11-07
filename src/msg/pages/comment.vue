@@ -20,6 +20,8 @@
 import CommentItem from "msgPage/components/CommentItem";
 import { getNotice} from "service/msgService";
 import RScroll from "plugins/scroll/RScroll";
+  /* 引入微信相关 */
+  import {register} from 'plugins/wx'
 export default {
     name:"noticeComment",
     components:{
@@ -122,6 +124,9 @@ export default {
     },
     mounted(){
         this.getNotice();
+    },
+    created(){
+        register();
     }
 }
 </script>

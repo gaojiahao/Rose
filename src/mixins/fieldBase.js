@@ -59,9 +59,10 @@ export default {
                 fieldSet = this.$parent,
                 form = this.form,
                 hasValueBind =cfg.watch ? false : cfg.dataSource && cfg.dataSource.type == "formData",
-                values = this.values;
+                values = this.values,
+                hasSumbit = cfg.submitValue;
             
-            if(form.model == 'new' && values[cfg.fieldCode] == null && cfg.readOnly == true && hasValueBind && cfg.allowBlank == true){
+            if(form.model == 'new' && values[cfg.fieldCode] == null && cfg.readOnly == true && hasValueBind && cfg.allowBlank == true && hasSumbit){
                 this.hidden = true;
             } 
             // else if(fieldSet.styleType == 0 && cfg.readOnly == true){
@@ -225,7 +226,7 @@ export default {
 
             this.setValue(value);
             if(this.form.model == 'new' && this.cfg.readOnly == true){
-                if(this.cfg.hiddenInRun == false)this.hidden = value == null;
+                // if(this.cfg.hiddenInRun == false)this.hidden = value == null;
             }
         },
         initNumberVerSel() {
