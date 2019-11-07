@@ -13,7 +13,7 @@
           <!-- 往来列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" @search-box-show="searchBox" ref="bScroll">
-            <div class="pop-list-item" v-for="(item, index) in listData" :key='index' @click.stop="selItem(item, index)" :class="{selected: showSelIcon(item)}">
+            <div class="pop-list-item" v-for="(item, index) in listData" :key='index' @click.stop="selItem(item,true)" :class="{selected: showSelIcon(item)}">
               <div class="main">
                   <div class="name">
                      <span class="name">{{item[cfg.displayField]}}</span>
@@ -104,7 +104,7 @@ let cfg = {
     },
     methods:{
       displayRealValue() {
-        if(this.form.model !== 'new' && (this.cfg.dataSource && this.cfg.dataSource.type !== 'staticData')){
+        if(this.cfg.dataSource && this.cfg.dataSource.type !== 'staticData'){
           if(this.cfg.dataSource){
             let filter,
                 store = this.store||{},
@@ -119,7 +119,8 @@ let cfg = {
             data = {...data,...store.params};
             if(store.url){
               this.getDisplay(data).then(res => {
-                this.displaysValue = res;
+                this.displaysValue = res[this.cfg.displayField] || this.values[this.cfg.fieldCode];
+                this.selItem(res);
               })
             }
           }else{
@@ -142,7 +143,9 @@ let cfg = {
                   url: this.cfg.dataSource.data.url,
                   data
               }).then(({dataCount = 0, tableContent = []}) => {
-                  return tableContent.length > 0 ? tableContent[0][this.cfg.displayField] : this.values[this.cfg.fieldCode];
+                if(tableContent.length > 0){
+                  return tableContent[0];
+                }
               })
         return displayValue;
       },
@@ -412,7 +415,7 @@ let cfg = {
       this.page = 1;
       this.load();
     },
-    selItem(item){
+    selItem(item,status){
       this.selection = item;
       this.showPop = false;
       this.value = item && item[this.cfg.valueField];
@@ -424,7 +427,9 @@ let cfg = {
           this.setValue(this.value);
         }
       }
-      this.displayRealValue();
+      if(status){
+        this.displayRealValue();
+      }
     },
     
     showSelIcon(item){
@@ -435,22 +440,28 @@ let cfg = {
           selection,
           valueField = this.cfg.valueField,
           listData = this.listData;
-
-      // if(this.cfg.defaultValue.type !='firstItem' && listData.length>1){
-      //   return ;
-      // }
-      if(value != null){
-          // selection = listData.find(function(item){
-          //   console.log('valueField',valueField)
-          //     return item[valueField] === value;
-          // });
-          selection = listData[0];
-          this.selItem(selection);
-          if(selection == null) {
-            this.reSet();
-            if(listData.length) {
-              selection = listData[0];
-              this.selItem(selection);
+      if(value){
+        if(this.cfg.dataSource){
+            let filter,
+                store = this.store||{},
+                data = {
+                  limit: this.limit,
+                  page: this.page,
+                  start: 0
+                };
+          
+            filter = [{operator: 'eq',value: this.values[this.cfg.fieldCode],property: this.cfg.valueField}];
+            data.filter = JSON.stringify(filter);
+            data = {...data,...store.params};
+            if(store.url){
+              this.getDisplay(data).then(res => {
+                selection = res;
+                if(!selection) {
+                  this.reSet(selection);
+                }else{
+                  this.selItem(selection,true);
+                }
+              })
             }
           }
       } else if(listData.length){
