@@ -13,7 +13,7 @@
           <!-- 往来列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" @search-box-show="searchBox" ref="bScroll">
-            <div class="pop-list-item" v-for="(item, index) in listData" :key='index' @click.stop="selItem(item,true)" :class="{selected: showSelIcon(item)}">
+            <div class="pop-list-item" v-for="(item, index) in listData" :key='index' @click.stop="selItem(item, index)" :class="{selected: showSelIcon(item)}">
               <div class="main">
                   <div class="name">
                      <span class="name">{{item[cfg.displayField]}}</span>
@@ -104,7 +104,7 @@ let cfg = {
     },
     methods:{
       displayRealValue() {
-        if(this.cfg.dataSource && this.cfg.dataSource.type !== 'staticData'){
+        if(this.form.model !== 'new' && (this.cfg.dataSource && this.cfg.dataSource.type !== 'staticData')){
           if(this.cfg.dataSource){
             let filter,
                 store = this.store||{},
@@ -119,8 +119,7 @@ let cfg = {
             data = {...data,...store.params};
             if(store.url){
               this.getDisplay(data).then(res => {
-                this.displaysValue = res[this.cfg.displayField] || this.values[this.cfg.fieldCode];
-                this.selItem(res);
+                this.displaysValue = res;
               })
             }
           }else{
@@ -143,9 +142,7 @@ let cfg = {
                   url: this.cfg.dataSource.data.url,
                   data
               }).then(({dataCount = 0, tableContent = []}) => {
-                if(tableContent.length > 0){
-                  return tableContent[0];
-                }
+                return tableContent.length > 0 ? tableContent[0][this.cfg.displayField] : this.values[this.cfg.fieldCode];
               })
         return displayValue;
       },
@@ -418,7 +415,7 @@ let cfg = {
       this.page = 1;
       this.load();
     },
-    selItem(item,status){
+    selItem(item){
       this.selection = item;
       this.showPop = false;
       this.value = item && item[this.cfg.valueField];
@@ -430,9 +427,7 @@ let cfg = {
           this.setValue(this.value);
         }
       }
-      if(status){
-        this.displayRealValue();
-      }
+      this.displayRealValue();
     },
     
     showSelIcon(item){

@@ -363,7 +363,7 @@ export default {
             }
         },
         handlerValueBindByIndexMap: function (record, selection, map) {
-            var extra = util.clone(selection);
+            var extra = selection?util.clone(selection):'';
             for (let k in map) {
                 record.set(k, extra[map[k]]);
             }
