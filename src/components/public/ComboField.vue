@@ -333,7 +333,7 @@ let cfg = {
           ];
           data.filter = JSON.stringify(filter);
       };
-      if(this.cfg.valueBind&&valueBind&&this.cfg.xtype=='r2Selector'&&!store.params){
+      if(this.cfg.valueBind&&valueBind&&this.cfg.xtype=='r2Selector'&&valueBind.value&&this.cfg.readOnly){
         data = {
           limit: 1,
         }
@@ -346,6 +346,7 @@ let cfg = {
         ];
         data.filter = JSON.stringify(filter);  
       }
+      this.value = valueBind&&valueBind.value;
       data = {...data,...store.params};
       if(store.url){
         $flyio.ajax({
@@ -353,6 +354,7 @@ let cfg = {
             data
         }).then(({dataCount = 0, tableContent = []}) => {
             this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+            this.listDataAll = tableContent;
             this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
             this.$nextTick(() => {
                 if (this.$refs.bScroll) {
@@ -405,6 +407,7 @@ let cfg = {
       this.selection = null;
       this.value = null;
       this.setValue(null);
+      this.displaysValue = '';
     },
 
     searchList({val}){
@@ -440,20 +443,28 @@ let cfg = {
       //   return ;
       // }
       if(value != null){
-          // selection = listData.find(function(item){
-          //   console.log('valueField',valueField)
-          //     return item[valueField] === value;
-          // });
-          selection = listData[0];
-          this.selItem(selection);
-          if(selection == null) {
+          if(this.cfg.valueBind){
+            selection = listData.find(function(item){
+                if(item[valueField] == value)
+                  return item;
+            });
+            if(selection){
+              this.selItem(selection);  
+            } else {
+              this.reSet();    
+            }
+          } else {
+            selection = listData[0];
+            this.selItem(selection);
+          }
+          if(selection == null&&!this.cfg.valueBind) {
             this.reSet();
             if(listData.length) {
               selection = listData[0];
               this.selItem(selection);
             }
           }
-      } else if(listData.length){
+      } else if(listData.length&&!this.cfg.valueBind){
           selection = listData[0];
           this.selItem(selection);
       }
