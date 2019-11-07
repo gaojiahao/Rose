@@ -92,12 +92,19 @@ export default {
                 isList,
                 root = {},
                 fieldCode,
+                nullFields=[],
                 value;
         
             //防止单一项映射进不提交的重复项容器。
             fieldsets.map(function(fieldset){
-                if(!fieldset.submitValue)disableFieldset.push(fieldset.cfg.name);
-                if(fieldset.cfg.isMultiple == true)multipleFieldset.push(fieldset.cfg.name);
+                if(!fieldset.submitValue){
+                    console.log('不提交单一项：'+fieldset.cfg.name);
+                    disableFieldset.push(fieldset.cfg.name);
+                }
+                if(fieldset.cfg.isMultiple == true){
+                    console.log('重复项：'+fieldset.cfg.name);
+                    multipleFieldset.push(fieldset.cfg.name);
+                }
             })
 
             if(fieldCfgHash){
@@ -311,7 +318,10 @@ export default {
                     } 
                } else {
                    containerCode = field.containerCode;
-                   if(field.$parent.submitValue&& (!field.$parent.hidden)){
+                   if(field.$parent.submitValue&&!field.$parent.hidden){
+                        values[containerCode] = field.getSubmitData();
+                   }
+                   if(!field.cfg.notAddOneRow){
                         values[containerCode] = field.getSubmitData();
                    }
                }

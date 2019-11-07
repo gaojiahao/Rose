@@ -499,35 +499,44 @@ export default {
                                 text: res.message
                             });
                         }
-                    })
-                    this.$vux.confirm.show({
-                        content:"拣货成功，是否生成出库单？",
-                        onConfirm:()=>{
-                            this.$HandleLoad.show();
-                            autoConfirmStockPick(this.scanCodeInfo.postCode,data.transCode).then(res=>{
-                                this.$HandleLoad.hide();
-                                message = data.message;
-                                 this.$vux.alert.show({
-                                    content: message,
-                                    onHide: () => {
-                                        if (success) {
-                                            this.judgePage();
-                                        }
-                                    }
-                                });
-                            });
-                        },
-                        onCancel:()=>{
-                            this.$vux.alert.show({
-                                content: message,
-                                onHide: () => {
-                                    if (success) {
-                                        this.judgePage();
-                                    }
-                                }
-                            });
+                    });
+
+                    this.$vux.alert.show({
+                        content: message,
+                        onHide: () => {
+                            if (success) {
+                                this.judgePage();
+                            }
                         }
                     });
+                    // this.$vux.confirm.show({
+                    //     content:"拣货成功，是否生成出库单？",
+                    //     onConfirm:()=>{
+                    //         this.$HandleLoad.show();
+                    //         autoConfirmStockPick(this.scanCodeInfo.postCode,data.transCode).then(res=>{
+                    //             this.$HandleLoad.hide();
+                    //             message = data.message;
+                    //              this.$vux.alert.show({
+                    //                 content: message,
+                    //                 onHide: () => {
+                    //                     if (success) {
+                    //                         this.judgePage();
+                    //                     }
+                    //                 }
+                    //             });
+                    //         });
+                    //     },
+                    //     onCancel:()=>{
+                    //         this.$vux.alert.show({
+                    //             content: message,
+                    //             onHide: () => {
+                    //                 if (success) {
+                    //                     this.judgePage();
+                    //                 }
+                    //             }
+                    //         });
+                    //     }
+                    // });
                 }
             }).catch(e => {
                 this.$HandleLoad.hide();
