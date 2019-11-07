@@ -50,7 +50,7 @@ export default {
             this.setDefaultValue(record);
             if (dataSourceBind) {
                 editorFieldCode = dataSourceBind.k;
-                data[editorFieldCode] = row[dataSourceBind.v];
+                data[editorFieldCode] = row ? row[dataSourceBind.v] : '';
                 this.setValueBindValue(record, editorFieldCode, row);
             } else if (me.cfg.dataIndexMap && !editorFieldCode) {
                 //适配AccountGrid
@@ -330,7 +330,7 @@ export default {
                 me = this,
                 isEdit = !!gridDetail;
 
-            extra[editorFieldCode + '.extraData'] = util.clone(selection);
+            extra[editorFieldCode + '.extraData'] = selection ? util.clone(selection):'';
             cfgArr.forEach(function (cfg) {
                 var valueField = cfg.valueField,
                     targetFieldCode = cfg.fieldCode,
@@ -369,7 +369,7 @@ export default {
             }
         },
         handleFormEventRecord(record, selection) {
-            var row = util.clone(selection);
+            var row = selection ? util.clone(selection) : '';
             for (let k in row) {
                 record.set(k, row[k]);
             }

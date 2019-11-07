@@ -30,7 +30,6 @@
       <!-- 评论 -->
       <div class="operation" @click="goDiscuss" v-if="isDiscuss">
         <span class="icon icon-dialog"></span>
-        <span class="count">{{commentCount || 0}}</span>
         <div class="dialog-desc">评论</div>
       </div>
       <!-- 日志 -->
