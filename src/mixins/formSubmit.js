@@ -98,11 +98,11 @@ export default {
             //防止单一项映射进不提交的重复项容器。
             fieldsets.map(function(fieldset){
                 if(!fieldset.submitValue){
-                    console.log('不提交单一项：'+fieldset.cfg.name);
+                    //console.log('不提交单一项：'+fieldset.cfg.name);
                     disableFieldset.push(fieldset.cfg.name);
                 }
                 if(fieldset.cfg.isMultiple == true){
-                    console.log('重复项：'+fieldset.cfg.name);
+                    //console.log('重复项：'+fieldset.cfg.name);
                     multipleFieldset.push(fieldset.cfg.name);
                 }
             })

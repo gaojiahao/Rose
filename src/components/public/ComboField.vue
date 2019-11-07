@@ -13,7 +13,7 @@
           <!-- 往来列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" @search-box-show="searchBox" ref="bScroll">
-            <div class="pop-list-item" v-for="(item, index) in listData" :key='index' @click.stop="selItem(item, index)" :class="{selected: showSelIcon(item)}">
+            <div class="pop-list-item" v-for="(item, index) in listData" :key='index' @click.stop="selItem(item,true)" :class="{selected: showSelIcon(item)}">
               <div class="main">
                   <div class="name">
                      <span class="name">{{item[cfg.displayField]}}</span>
@@ -104,7 +104,7 @@ let cfg = {
     },
     methods:{
       displayRealValue() {
-        if(this.form.model !== 'new' && (this.cfg.dataSource && this.cfg.dataSource.type !== 'staticData')){
+        if(this.cfg.dataSource && this.cfg.dataSource.type !== 'staticData'){
           if(this.cfg.dataSource){
             let filter,
                 store = this.store||{},
@@ -119,7 +119,8 @@ let cfg = {
             data = {...data,...store.params};
             if(store.url){
               this.getDisplay(data).then(res => {
-                this.displaysValue = res;
+                this.displaysValue = res[this.cfg.displayField] || this.values[this.cfg.fieldCode];
+                this.selItem(res);
               })
             }
           }else{
@@ -142,7 +143,9 @@ let cfg = {
                   url: this.cfg.dataSource.data.url,
                   data
               }).then(({dataCount = 0, tableContent = []}) => {
-                  return tableContent.length > 0 ? tableContent[0][this.cfg.displayField] : this.values[this.cfg.fieldCode];
+                if(tableContent.length > 0){
+                  return tableContent[0];
+                }
               })
         return displayValue;
       },
@@ -333,7 +336,7 @@ let cfg = {
           ];
           data.filter = JSON.stringify(filter);
       };
-      if(this.cfg.valueBind&&valueBind&&this.cfg.xtype=='r2Selector'&&!store.params){
+      if(this.cfg.valueBind&&valueBind&&this.cfg.xtype=='r2Selector'&&valueBind.value&&this.cfg.readOnly){
         data = {
           limit: 1,
         }
@@ -346,6 +349,7 @@ let cfg = {
         ];
         data.filter = JSON.stringify(filter);  
       }
+      this.value = valueBind&&valueBind.value;
       data = {...data,...store.params};
       if(store.url){
         $flyio.ajax({
@@ -353,6 +357,7 @@ let cfg = {
             data
         }).then(({dataCount = 0, tableContent = []}) => {
             this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+            this.listDataAll = tableContent;
             this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
             this.$nextTick(() => {
                 if (this.$refs.bScroll) {
@@ -405,6 +410,7 @@ let cfg = {
       this.selection = null;
       this.value = null;
       this.setValue(null);
+      this.displaysValue = '';
     },
 
     searchList({val}){
@@ -412,7 +418,7 @@ let cfg = {
       this.page = 1;
       this.load();
     },
-    selItem(item){
+    selItem(item,status){
       this.selection = item;
       this.showPop = false;
       this.value = item && item[this.cfg.valueField];
@@ -424,7 +430,9 @@ let cfg = {
           this.setValue(this.value);
         }
       }
-      this.displayRealValue();
+      if(status){
+        this.displayRealValue();
+      }
     },
     
     showSelIcon(item){
@@ -440,20 +448,28 @@ let cfg = {
       //   return ;
       // }
       if(value != null){
-          // selection = listData.find(function(item){
-          //   console.log('valueField',valueField)
-          //     return item[valueField] === value;
-          // });
-          selection = listData[0];
-          this.selItem(selection);
-          if(selection == null) {
+          if(this.cfg.valueBind){
+            selection = listData.find(function(item){
+                if(item[valueField] == value)
+                  return item;
+            });
+            if(selection){
+              this.selItem(selection);  
+            } else {
+              this.reSet();    
+            }
+          } else {
+            selection = listData[0];
+            this.selItem(selection);
+          }
+          if(selection == null&&!this.cfg.valueBind) {
             this.reSet();
             if(listData.length) {
               selection = listData[0];
               this.selItem(selection);
             }
           }
-      } else if(listData.length){
+      } else if(listData.length&&!this.cfg.valueBind){
           selection = listData[0];
           this.selItem(selection);
       }
