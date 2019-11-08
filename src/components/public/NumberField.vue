@@ -116,8 +116,6 @@ let  cfg = {
         },
     },
     created () {
-        debugger
-        var a = this.getValue();
         this.toFixNum = this.cfg.decimalPrecision;
     }
 }
