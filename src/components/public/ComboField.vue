@@ -117,6 +117,7 @@ let cfg = {
             filter = [{operator: 'eq',value: this.values[this.cfg.fieldCode],property: this.cfg.valueField}];
             data.filter = JSON.stringify(filter);
             data = {...data,...store.params};
+
             if(store.url){
               this.getDisplay(data).then(res => {
                 if(res){
@@ -435,7 +436,7 @@ let cfg = {
           this.setValue(this.value);
         }
       }
-      status && this.displayRealValue();
+      this.displayRealValue();
     },
     
     showSelIcon(item){
