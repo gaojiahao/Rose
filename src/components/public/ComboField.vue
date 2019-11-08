@@ -414,7 +414,7 @@ let cfg = {
       this.selection = null;
       this.value = null;
       this.setValue(null);
-      if(this.form.$parent.form.model == 'new'){
+      if(!this.cfg.defaultValue){
         this.displaysValue = '';
       }
     },
