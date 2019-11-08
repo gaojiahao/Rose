@@ -407,7 +407,9 @@ let cfg = {
       this.selection = null;
       this.value = null;
       this.setValue(null);
-      this.displaysValue = '';
+      if(this.form.$parent.form.model == 'new'){
+        this.displaysValue = '';
+      }
     },
 
     searchList({val}){
