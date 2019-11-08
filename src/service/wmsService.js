@@ -44,7 +44,7 @@ export let getPickingOutByBoxCode = (data = {}) => {
 //分拣通过箱码获取仓库信息
 export let getSortingByBoxCode = (data = {}) => {
   return $flyio.ajax({
-    url: '/H_roleplay-si/ds/getSortingByBoxCode',
+    url: '/H_roleplay-si/ds/getPickGoodsQtyByBoxCode',
     data
   })
 }

@@ -13,7 +13,7 @@
           <!-- 往来列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" @search-box-show="searchBox" ref="bScroll">
-            <div class="pop-list-item" v-for="(item, index) in listData" :key='index' @click.stop="selItem(item, index)" :class="{selected: showSelIcon(item)}">
+            <div class="pop-list-item" v-for="(item, index) in listData" :key='index' @click.stop="selItem(item,true)" :class="{selected: showSelIcon(item)}">
               <div class="main">
                   <div class="name">
                      <span class="name">{{item[cfg.displayField]}}</span>
@@ -113,13 +113,19 @@ let cfg = {
                   page: this.page,
                   start: 0
                 };
-          
+
             filter = [{operator: 'eq',value: this.values[this.cfg.fieldCode],property: this.cfg.valueField}];
             data.filter = JSON.stringify(filter);
             data = {...data,...store.params};
+
             if(store.url){
               this.getDisplay(data).then(res => {
-                this.displaysValue = res;
+                if(res){
+                  this.displaysValue = res[this.cfg.displayField];
+                  this.selection = res;
+                }else{
+                  this.displaysValue = this.values[this.cfg.fieldCode];
+                }
               })
             }
           }else{
@@ -142,7 +148,9 @@ let cfg = {
                   url: this.cfg.dataSource.data.url,
                   data
               }).then(({dataCount = 0, tableContent = []}) => {
-                return tableContent.length > 0 ? tableContent[0][this.cfg.displayField] : this.values[this.cfg.fieldCode];
+                if(tableContent.length > 0){
+                  return tableContent[0];
+                }
               })
         return displayValue;
       },
@@ -194,7 +202,6 @@ let cfg = {
       }
 
       if(autoLoad)this.load();
-
       function setParams(params){
         var paramCfg,
             reg = /\{([\w|\.])*}/ig,
@@ -407,7 +414,9 @@ let cfg = {
       this.selection = null;
       this.value = null;
       this.setValue(null);
-      this.displaysValue = '';
+      if(!this.cfg.defaultValue){
+        this.displaysValue = '';
+      }
     },
 
     searchList({val}){
@@ -415,7 +424,7 @@ let cfg = {
       this.page = 1;
       this.load();
     },
-    selItem(item){
+    selItem(item,status){
       this.selection = item;
       this.showPop = false;
       this.value = item && item[this.cfg.valueField];
