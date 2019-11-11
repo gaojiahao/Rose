@@ -69,7 +69,7 @@
 
         <!-- 固定title -->
 	    <section class="topFixed" v-show="isScroll" :class="isScroll == true ? 'isFixed' : ''" @click="toReferrals" >
-	        <div>拣货明细</div>
+	        <div>分拣明细</div>
 	        <div >
 	            <div class="fixed-button">继续扫码</div>
 	        </div>
@@ -212,57 +212,16 @@ export default {
                             expend:true,
                             inventoryCode: mat.inventoryCode,
                             inventoryName: mat.inventoryName,
-                            thenTotalQtyBal: mat.thenTotalQtyBal,//待上架
-                            thenLockQty: mat.thenLockQty,//已上架
+                            tdProcessing: mat.processing,
+                            assMeasureUnit: mat.invSubUnitName,
+                            inventoryCode: mat.inventoryCode,
+                            assMeasureDescription: mat.invSubUnitComment,
+                            assMeasureScale: mat.invSubUnitMulti,
                             thenQtyBal: mat.thenQtyBal,//
+                            warehouseName: mat.whName,
+                            whOutCode: mat.whCode,
                             boxCodes:[]
                         });
-                        if(this.subBox.length > 0){
-                            let subCode = [];
-                            this.subBox.forEach(val => {
-                                subCode.push(val.inventoryCode);
-                            })
-                            if(subCode.indexOf(mat.inventoryCode) < 0){
-                                this.subBox.push({
-                                    tdProcessing: mat.processing,
-                                    assMeasureUnit: mat.invSubUnitName,
-                                    inventoryCode: mat.inventoryCode,
-                                    assMeasureDescription: mat.invSubUnitComment,
-                                    assMeasureScale: mat.invSubUnitMulti,
-                                    thenTotalQtyBal: mat.thenTotalQtyBal,//下架总数
-                                    thenLockQty: mat.thenLockQty,//已上架
-                                    thenQtyBal: mat.thenQtyBal,//待上架
-                                    tdQty: mat.thenQtyBal,
-                                    invSubUnitMulti: mat.invSubUnitMulti,
-                                    batchNo: mat.batchNo,
-                                    productionDate: mat.productionDate,
-                                    postCode: this.scanCodeInfo.postCode
-
-                                })
-                            }
-                        }else{
-                            this.subBox.push({
-                                tdProcessing: mat.processing,
-                                assMeasureUnit: mat.invSubUnitName,
-                                inventoryCode: mat.inventoryCode,
-                                assMeasureDescription: mat.invSubUnitComment,
-                                assMeasureScale: mat.invSubUnitMulti,
-                                thenTotalQtyBal: mat.thenTotalQtyBal,//下架总数
-                                thenLockQty: mat.thenLockQty,//已上架
-                                thenQtyBal: mat.thenQtyBal,//待上架
-                                tdQty: mat.thenQtyBal,
-                                invSubUnitMulti: mat.invSubUnitMulti,
-                                batchNo: mat.batchNo,
-                                productionDate: mat.productionDate,
-                                postCode: this.scanCodeInfo.postCode
-
-                            })
-                        }
-                        
-                        this.warehouse = {
-                            warehouseName: mat.whName,
-                            whOutCode: mat.whCode
-                        };
                     })
                     this.$refs.boxCode.focus();
                 }else{
@@ -303,8 +262,7 @@ export default {
         },
         handlerSetMatters(){
             let params = {
-                boxCode:this.curQrCodeInfo.uuid,
-                transCode: this.scanCodeInfo.postCode
+                boxCode:this.curQrCodeInfo.uuid
             };
 
             let materielMap = {};
@@ -322,16 +280,26 @@ export default {
                 scanVoice.success();
                 res.tableContent.map(box => {
                     this.matters.map(mat => {
-                        if(box.inventoryCode === mat.inventoryCode){
+                        if(box.matCode === mat.inventoryCode){
                             mat.boxCodes.unshift({
-                                ...this.transformDataSource(box),
-                                cardCode:this.trayCode
+                                cardCode:this.trayCode,
+                                boxCode:this.curQrCodeInfo.uuid,
+                                boxRule:this.curQrCodeInfo.boxRule,
+                                expend:true,
+                                processCode: this.scanCodeInfo.postCode,
+                                inventoryCode: mat.inventoryCode,
+                                transObjCode: mat.inventoryCode,
+                                inventoryName: mat.inventoryName,
+                                tdProcessing: mat.tdProcessing,
+                                assMeasureUnit: mat.assMeasureUnit,
+                                assMeasureDescription: mat.assMeasureDescription,
+                                assMeasureScale: mat.assMeasureScale,
+                                thenQtyBal: mat.thenQtyBal,//
+                                warehouseName: mat.warehouseName,
+                                whOutCode: mat.whOutCode,
+                                tdQty:box.qty
                             })
                         }
-                        this.warehouse = {
-                            warehouseName: box.warehouseName,
-                            whOutCode: box.whOutCode
-                        };
                     })
                 });
             });
@@ -416,31 +384,10 @@ export default {
                 scanVoice.error();
                 return;
             }
-            this.matters.map(mat => {
-                if(matCode === mat.inventoryCode){
-                    this.subBox.map(sub => {
-                        if(sub.inventoryCode === mat.inventoryCode){
-                            mat.boxCodes.unshift({
-                                expend:true,
-                                cardCode:this.trayCode,
-                                transObjCode: matCode,
-                                warehouseName: this.warehouse.warehouseName,
-                                whOutCode: this.warehouse.whOutCode,
-                                assistQty:  Math.ceil(sub.tdQty/sub.invSubUnitMulti),
-                                processCode: this.scanCodeInfo.postCode,
-                                boxRule: boxRule,
-                                boxCode: uuid,
-                                ...sub,
-                                tdQty:boxRule
-                            })
-                        }
-                    })
-                }
-            })
             //记录已扫码信息,防止重复扫码
             this.boxCodesMap[uuid] = uuid;
             
-            // this.handlerSetMatters();先注释通过箱码获取物料信息，计划有变，以后可能会用到
+            this.handlerSetMatters();
             this.scanCodeInfo.boxCode = "";
             this.$refs.boxCode.focus();
         },
@@ -460,7 +407,6 @@ export default {
                             delete box[k];
                         }
                     }
-
                     dataSet.push({
                        ...box,
                        assistQty: Math.ceil(box.tdQty/box.assMeasureScale)
@@ -525,10 +471,6 @@ export default {
                         containerOutWarehouseManager:'',
                         biComment:'',
                         outPut:{
-                            containerCodeOut: this.warehouse.whOutCode,
-                            warehouseName_containerCodeOut: this.warehouse.warehouseName,
-                            warehouseType_containerCodeOut: this.warehouse.warehouseType,
-                            warehouseAddress_containerCodeOut: this.warehouse.warehouseAddress,
                             dataSet:this.getDataSet()
                         }
                     };
@@ -660,35 +602,6 @@ export default {
 
             })
         },
-        transformDataSource(box){
-            return{
-                expend:true,
-                transMatchedCode: box.transCode,
-                transObjCode: box.inventoryCode,
-                inventoryCode:box.inventoryCode,
-                inventoryName:box.inventoryName,
-                tdProcessing: box.processing,
-                assMeasureUnit: box.invSubUnitName,
-                assMeasureDescription: box.invSubUnitComment,
-                assMeasureScale: box.invSubUnitMulti,
-                warehouseName: box.warehouseName,
-                whOutCode: box.whOutCode,
-                boxRule: box.boxRule,
-                specification: box.specification,
-                storehouseOutCode: box.storehouseCode,
-                whOutCode: box.whOutCode,
-                thenTotalQtyBal: box.thenTotalQtyBal,//待上架
-                thenLockQty: box.thenLockQty,//已上架
-                thenQtyBal: box.thenQtyBal,//
-                tdQty: box.thenQtyBal,//本次出库
-                assistQty:  Math.ceil(box.boxQtyBal/box.invSubUnitMulti),
-                batchNo: box.batchNo,
-                productionDate: box.productionDate,
-                boxCode: box.boxCode,
-                postCode: this.scanCodeInfo.postCode,
-                boxRule: box.boxRule
-            }
-        },
         transformViewData(box){
             return {
                 expend:true,
@@ -716,9 +629,6 @@ export default {
     },
     mounted(){
         this.$loading.hide();
-       
-        //扫库位码后切换库位的判断依据
-        this.warehouse = {};
         //扫箱码后确定的申请单号信息
         this.postCode = '';
         //已扫箱码信息集合

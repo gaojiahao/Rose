@@ -113,7 +113,7 @@ let cfg = {
                   page: this.page,
                   start: 0
                 };
-          
+
             filter = [{operator: 'eq',value: this.values[this.cfg.fieldCode],property: this.cfg.valueField}];
             data.filter = JSON.stringify(filter);
             data = {...data,...store.params};
