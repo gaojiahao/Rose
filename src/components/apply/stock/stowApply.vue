@@ -208,18 +208,18 @@ export default {
 
             if(!this.scanCodeInfo.trayCode) return;
 
-            var reg =  /[a-zA-Z]{5}[0-9]{8}/;
-            if(!reg.test(this.scanCodeInfo.trayCode)){
-                scanVoice.error();
-                this.$vux.alert.show({
-                    content:"此托盘码不符合(5位英文字母+8位数字)的规则,请重新贴码!",
-                    onHide:()=>{
-                        this.scanCodeInfo.trayCode = '';
-                        this.$refs.trayCode.focus();
-                    }
-                });
-                return;
-            }
+            // var reg =  /[a-zA-Z]{5}[0-9]{8}/;
+            // if(!reg.test(this.scanCodeInfo.trayCode)){
+            //     scanVoice.error();
+            //     this.$vux.alert.show({
+            //         content:"此托盘码不符合(5位英文字母+8位数字)的规则,请重新贴码!",
+            //         onHide:()=>{
+            //             this.scanCodeInfo.trayCode = '';
+            //             this.$refs.trayCode.focus();
+            //         }
+            //     });
+            //     return;
+            // }
             if(this.trayCode && this.scanCodeInfo.trayCode != this.trayCode && this.matters.length>0){
                scanVoice.error();
                 this.$vux.confirm.show({
