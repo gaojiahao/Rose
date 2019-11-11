@@ -106,7 +106,7 @@ export default {
     } else if (transCode) {
       to.meta.title = "加载中...";
     } else {
-      to.meta.title = name + "-测试版";
+      //to.meta.title = name + "-测试版";
     }
     next();
   },
