@@ -397,7 +397,7 @@ export default {
             }
         },
         handlerScanBoxCode(){
-             //matCode 物料编码
+            //matCode 物料编码
             //batchNo 批次号
             //productionDate 生产日期
             //boxRule 箱规
