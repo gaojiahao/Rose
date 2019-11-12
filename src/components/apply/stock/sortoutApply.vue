@@ -270,7 +270,7 @@ export default {
                 if(res.tableContent.length === 0){
                     scanVoice.error();
                     this.showTost = true;
-                    this.tostText = '此箱码不存在！';
+                    this.tostText = '此箱码无效或不在已下架的箱码中！';
                     delete this.boxCodesMap[this.scanCodeInfo.boxCode];
                     this.scanCodeInfo.boxCode = "";
                     this.$refs.boxCode.focus();
@@ -283,7 +283,7 @@ export default {
                         if(box.matCode === mat.inventoryCode){
                             mat.boxCodes.unshift({
                                 cardCode:this.trayCode,
-                                boxCode:this.curQrCodeInfo.uuid,
+                                boxCode:box.boxCode,
                                 boxRule:this.curQrCodeInfo.boxRule,
                                 expend:true,
                                 processCode: this.scanCodeInfo.postCode,
