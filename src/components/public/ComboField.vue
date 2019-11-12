@@ -119,6 +119,9 @@ let cfg = {
             data = {...data,...store.params};
 
             if(store.url){
+              if(this.cfg.xtype=='r2Combo'){
+                delete data.filter;
+              }
               this.getDisplay(data).then(res => {
                 if(res){
                   this.displaysValue = res[this.cfg.displayField];
