@@ -284,7 +284,6 @@ export default {
                             mat.boxCodes.unshift({
                                 cardCode:this.trayCode,
                                 boxCode:box.boxCode,
-                                boxRule:this.curQrCodeInfo.boxRule,
                                 expend:true,
                                 processCode: this.scanCodeInfo.postCode,
                                 inventoryCode: mat.inventoryCode,
@@ -297,7 +296,10 @@ export default {
                                 thenQtyBal: mat.thenQtyBal,//
                                 warehouseName: mat.warehouseName,
                                 whOutCode: mat.whOutCode,
-                                tdQty:box.qty
+                                tdQty:box.qty,
+                                batchNo: this.curQrCodeInfo.batchNo,
+                                productionDate: this.curQrCodeInfo.productionDate,
+                                boxRule:this.curQrCodeInfo.boxRule,
                             })
                         }
                     })
