@@ -271,7 +271,16 @@ var component = {
     this.initDefaultValueCfg();
     this.initValueBindAndExpressionCfg();
     this.initEditorParamsCfg();
-    if(!this.notAddOneRow){
+    if(this.cfg.notAddOneRow==true){
+      var value = this.getValue() || [],
+        record,
+        row, i = 0;
+
+      record = this.createRecord();
+      value.push(record.data);
+      this.setValue(value);
+    }
+    if(this.cfg.allowAddorDel==false){
       var value = this.getValue() || [],
         record,
         row, i = 0;

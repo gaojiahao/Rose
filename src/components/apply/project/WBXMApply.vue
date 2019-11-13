@@ -111,7 +111,7 @@ import { debug } from 'util';
             if (item.fieldCode === 'projectType') {
               for (let dItem of item.remoteData) {
                 if (dItem.name === val) {
-                  type = dItem.originValue;
+                  type = dItem.id;
                   break;
                 }
               }
@@ -120,7 +120,7 @@ import { debug } from 'util';
               let requestParams = {
                 url: item.dataSource.data.url,
                 data: {
-                  value: type
+                  parentId: type
                 }
               }
               requestData(requestParams).then(({tableContent = []}) => {

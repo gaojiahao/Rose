@@ -114,7 +114,11 @@ export default {
             formViewUniqueId: '700e7b24-d90b-4801-9a11-5d1ff24a4319', // 修改时的UniqueId
             matterInfoConfig: {
                 warehouseName:"仓库名称",
-                assMeasureDescription:"包装规格",//包装规格
+                warehouseName_storehouseOutCode: '库区',
+                storehouseOutCode: '库位编码',
+                productionDate: '生产日期',
+                batchNo:"生产批号",
+                assMeasureDescription:"包装规格",//包装规格,
             }
         }
     },
@@ -284,20 +288,24 @@ export default {
                             mat.boxCodes.unshift({
                                 cardCode:this.trayCode,
                                 boxCode:box.boxCode,
-                                boxRule:this.curQrCodeInfo.boxRule,
                                 expend:true,
                                 processCode: this.scanCodeInfo.postCode,
                                 inventoryCode: mat.inventoryCode,
-                                transObjCode: mat.inventoryCode,
-                                inventoryName: mat.inventoryName,
+                                outPutMatCode: mat.inventoryCode,
+                                inventoryName_outPutMatCode: mat.inventoryName,
                                 tdProcessing: mat.tdProcessing,
                                 assMeasureUnit: mat.assMeasureUnit,
                                 assMeasureDescription: mat.assMeasureDescription,
                                 assMeasureScale: mat.assMeasureScale,
                                 thenQtyBal: mat.thenQtyBal,//
-                                warehouseName: mat.warehouseName,
-                                whOutCode: mat.whOutCode,
-                                tdQty:box.qty
+                                warehouseName_containerCodeOut: box.warehouseName,
+                                containerCodeOut: box.warehouseCode,
+                                warehouseName_storehouseOutCode: box.storehouseName,
+                                storehouseOutCode: box.storehouseCode,
+                                tdQty:box.qty,
+                                batchNo: this.curQrCodeInfo.batchNo,
+                                productionDate: this.curQrCodeInfo.productionDate,
+                                boxRule:this.curQrCodeInfo.boxRule,
                             })
                         }
                     })
@@ -393,20 +401,8 @@ export default {
         },
         getDataSet(){
             let dataSet = [];
-            let keyMap = {
-                "transObjCode": "outPutMatCode",
-                "inventoryName": "inventoryName_outPutMatCode",
-                "storehouseInCode": "storehouseOutCode"
-            };
             this.matters.map(mat => {
                 mat.boxCodes.map(box => {
-                    for(let k in box){
-                        let newKey = keyMap[k];
-                        if(newKey){
-                            box[newKey] = box[k];
-                            delete box[k];
-                        }
-                    }
                     dataSet.push({
                        ...box,
                        assistQty: Math.ceil(box.tdQty/box.assMeasureScale)

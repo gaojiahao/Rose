@@ -27,7 +27,7 @@
                     <div class="each_status"  :class="{'active vux-1px' : showSelIcon(item, key)}"
                         v-for="(item, index) in statusList[key].value" :key="index"
                         @click="selProcee(item, key, index)">
-                      <div class="status_content">{{item}}</div>
+                      <div class="status_content">{{statusList[key].showValue[item]}}</div>
                     </div>
                   </div>
                 </div>
@@ -54,7 +54,7 @@
                 </div>
               </div>
             </div>
-            <div class="process-status-container vux-1px-b" v-for="(val, key, index) in filtersList" :key="index" v-if="key !== 'biProcessStatus' && val.value.length">
+            <div class="process-status-container vux-1px-b" v-for="(val, key, index) in filtersList" :key="index" v-if="key !== 'biProcessStatus'&& key !=='biStatus' && val.value.length">
               <div class="process-wrapper">
                 <div class="filter_title " @click="val.showAll = !val.showAll">
                   <span>{{val.alias}}</span>
@@ -226,7 +226,7 @@ export default {
       }
       else {
         let obj = {};
-        if (key !== 'biProcessStatus' && key !== 'bugProcessStatus' && key !== 'processStatus'){
+        if (key !== 'biProcessStatus' && key !== 'bugProcessStatus' && key !== 'processStatus' && key !=='biStatus'){
           obj = {
             alias: this.filtersList[key].alias,
             value: [sItem]
@@ -337,7 +337,7 @@ export default {
     // 请求过滤字段
     getFilterFields(){
       filterFields(this.listId).then(data=> {
-        let formStatusList = ['进行中', '已生效', '草稿'];
+        let formStatusList = ['草稿', '已生效', '进行中'];
         let filtersList = {}, statusList = {};
         if (this.hasFormStatus){
           filtersList = {
@@ -351,7 +351,7 @@ export default {
         }
         for (let key of Object.keys(data)){
           let item = data[key];
-          if (key !== 'biProcessStatus' && key !== 'bugProcessStatus' && key !== 'processStatus'){
+          if (key !== 'biProcessStatus' && key !== 'bugProcessStatus' && key !== 'processStatus' && key !=='biStatus'){
             filtersList[key] = {
               ...item,
               showValue: item.value.slice(0,9),
@@ -361,7 +361,7 @@ export default {
           else {
             statusList[key] = {
               ...item,
-              showValue: item.value.slice(0,9),
+              showValue: formStatusList,
               showAll: false,
             }
           }
