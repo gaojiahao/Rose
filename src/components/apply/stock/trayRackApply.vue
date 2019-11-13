@@ -170,21 +170,7 @@ export default {
         handlerScanTrayCode(){
             if(!this.scanCodeInfo.trayCode) return;
 
-            var reg =  /[a-zA-Z]{5}[0-9]{8}/;
-            if(!reg.test(this.scanCodeInfo.trayCode)){
-                 this.scanCodeInfo.trayCode = '';
-                 scanVoice.error();
-                this.$vux.alert.show({
-                    content:"此托盘码不符合(5位英文字母+8位数字)的规则,请重新贴码!",
-                    onHide:()=>{
-                        this.$refs.trayCode.focus();
-                    }
-                });
-                return;
-            }
             let pallet = this.scanCodeInfo.trayCode;
-
-
 
              if(this.trays.filter(t=>{ return t.cardCode === pallet}).length){
                 this.tostText = '此托盘码已经扫码过啦!';

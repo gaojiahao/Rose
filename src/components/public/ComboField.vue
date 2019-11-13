@@ -451,9 +451,6 @@ let cfg = {
           valueField = this.cfg.valueField,
           listData = this.listData;
 
-      // if(this.cfg.defaultValue.type !='firstItem' && listData.length>1){
-      //   return ;
-      // }
       if(value != null){
           if(this.cfg.valueBind){
             selection = listData.find(function(item){
@@ -462,23 +459,29 @@ let cfg = {
             });
             if(selection){
               this.selItem(selection);  
+              return ;
             } else {
               this.reSet();    
+              this.displaysValue = '';    
             }
-          } else {
+          } 
+          if(this.cfg.defaultValue){
             selection = listData[0];
             this.selItem(selection);
+            return ;
           }
           if(selection == null&&!this.cfg.valueBind) {
             this.reSet();
-            if(listData.length) {
-              selection = listData[0];
-              this.selItem(selection);
-            }
+            this.displaysValue = '';
           }
-      } else if(listData.length&&!this.cfg.valueBind){
+      } else {
+        if(listData.length&&this.cfg.defaultValue){
           selection = listData[0];
           this.selItem(selection);
+        } else {
+          this.reSet();
+          this.displaysValue = '';  
+        }
       }
     },
     searchBox(data){

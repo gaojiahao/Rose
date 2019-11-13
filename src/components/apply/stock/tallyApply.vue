@@ -83,7 +83,7 @@ import {
     submitAndCalc, 
     getPriceFromSalesContractAndPrice, 
     updateData} from 'service/commonService'
-import { getStorageShelf, getWhbyStoragelocation,getInventoryInfoByBoxCode,getLocationByPallet,getBoxInfoByPallet} from 'service/wmsService'
+import { getStorageShelf, getWhbyStoragelocation,getInventoryInfoByBoxCode,getLocationByPallet,getTallyBoxInfoByPallet} from 'service/wmsService'
 import WebContext from 'service/commonService'
 import { getSOList } from 'service/detailService'
 import scanVoice from '@/plugins/scanVoice'
@@ -193,7 +193,7 @@ export default {
                             scanVoice.error();
                             return;
                         }else{
-                            getBoxInfoByPallet(pallet).then(res=>{
+                            getTallyBoxInfoByPallet(pallet).then(res=>{
                                 if(res.dataCount){
 
                                     if(res.tableContent[0].warehouseName != this.warehouse.inPutWarehouseName){
@@ -205,7 +205,7 @@ export default {
                                         return;
                                     }
                                     res.tableContent.map(box=>{
-                                        this.scanCodeInfo.boxCode = `${box.inventoryCode},${box.batchNo},${box.productionDate},${box.qty},${box.boxCode}`;
+                                        this.scanCodeInfo.boxCode = `${box.inventoryCode},${box.batchNo},${box.productionDate},${box.boxRule},${box.boxCode}`;
                                         this.handlerScanBoxCode(pallet);
                                     });
                                     scanVoice.success;
@@ -511,6 +511,7 @@ export default {
                 content: '确认提交?',
                 // 确定回调
                 onConfirm: () => {
+
                     const currentUser = WebContext.WebContext.currentUser;
                     let data={};
                     let formData={
