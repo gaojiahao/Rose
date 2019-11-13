@@ -280,7 +280,7 @@ var component = {
       value.push(record.data);
       this.setValue(value);
     }
-    if(this.cfg.allowAddorDel!=true){
+    if(this.cfg.allowAddorDel==false){
       var value = this.getValue() || [],
         record,
         row, i = 0;
