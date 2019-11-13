@@ -145,6 +145,16 @@ export let getBoxInfoByPallet = (pallet,transCode) =>{
   })
 }
 
+//理货根据托盘码获取箱码库存信息
+export let getTallyBoxInfoByPallet = (pallet) =>{
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getBoxInfoByPalletForLH',
+    data: {
+      pallet: pallet
+    }
+  })
+}
+
 //分拣根据托盘码获取箱码库存信息
 export let getSortOutBoxInfoByPallet = (pallet) =>{
   return $flyio.ajax({
