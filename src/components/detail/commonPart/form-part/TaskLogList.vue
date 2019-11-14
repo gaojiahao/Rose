@@ -26,7 +26,7 @@
                               @click.native="handlerChangeLogStatus(list)" 
                               :value.sync="list.logStatus==='已办'?true:false">
                           </check-icon>
-                          <b>{{ list.logTitle }}</b>
+                          <b style="word-break:break-all;">{{ list.logTitle }}</b>
                       </div>
                       <div class="list_right_detail">
                           <b class="detail_name">{{ list.handlerName?list.handlerName:'未知' }}</b>
@@ -245,6 +245,7 @@ export default {
                   img {
                     border-radius: .23rem;
                     height: .45rem;
+                    width: .45rem;
                     border: 1px solid  #9999991a;
                   }
               }
