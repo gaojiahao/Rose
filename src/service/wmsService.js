@@ -68,7 +68,7 @@ export let  getLocationOfinventory =  (data = {}) =>{
 //拣货下架释放订单占用
 export let  releaseSortingOrder =  (transCode,matCode) =>{
   return $flyio.post({
-    url: `/H_roleplay-si/wms/releaseSortingOrder?transCode=${transCode}&matCode=${matCode}`
+    url: `/H_roleplay-si/wms/releaseSortingOrder?transCode=${transCode}&matCodes=${matCode}`
   })
 }
 
