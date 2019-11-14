@@ -13,6 +13,7 @@
           <b :style="{fontSize:'.2rem'}" @click.stop="deleteSelectItems(item,index)">×</icon></b>
         </span>
         <span class="select-title" v-if="confirmItems.length===0">请选择</span>
+        <span v-else class="select-title"></span>
         <span class="icon-right"></span>
       </div>
     </div>
