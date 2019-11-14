@@ -8,12 +8,11 @@
         <span
           class="mode_content"
           v-for="(item, index) of confirmItems"
-          :key="index"
-          :style="{marginLeft:'.08rem'}">
+          :key="index">
           {{ item[listName] }}
-          <b :style="{marginLeft:'-5px'}" @click.stop="deleteSelectItems(item,index)"><icon type="cancel"></icon></b>
+          <b :style="{fontSize:'.2rem'}" @click.stop="deleteSelectItems(item,index)">×</icon></b>
         </span>
-        <span class="mode_content" v-if="confirmItems.length===0">请选择</span>
+        <span class="select-title" v-if="confirmItems.length===0">请选择</span>
         <span class="icon-right"></span>
       </div>
     </div>
@@ -255,18 +254,45 @@ export default {
       font-weight: bold;
       font-size: 0.14rem;
       margin-right: 0.1rem;
+      width: .7rem;
       &.required {
         font-weight: bold;
         color: $main_color;
       }
     }
     .mode {
-      display: flex;
-      align-items: center;
       .icon-right {
         width: 0.08rem;
         height: 0.14rem;
         margin-left: 0.1rem;
+      }
+      .mode_content{
+        overflow: hidden;
+        background-color: #ddd;
+        padding: .05rem;
+        margin-right: .02rem;
+      }
+      .select-title{
+        font-size: .15rem;
+        margin-right: .04rem;
+      }
+      .select-title:after{
+        content: " ";
+        display: inline-block;
+        height: 6px;
+        width: 6px;
+        border-width: 2px 2px 0 0;
+        border-color: #C8C8CD;
+        border-style: solid;
+        -webkit-transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+        -ms-transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+        transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+        position: relative;
+        top: -2px;
+        position: absolute;
+        top: 50%;
+        margin-top: -4px;
+        right: 2px;
       }
     }
   }
