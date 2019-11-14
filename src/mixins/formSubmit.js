@@ -111,8 +111,10 @@ export default {
                 for(fieldCode in values){
                     value = values[fieldCode];
                     if(value && value.dataSet){ //grid or bom，设置列表数据
-                        root[fieldCode] = root[fieldCode]||{};
-                        root[fieldCode].dataSet = value.dataSet;
+                        if(root[fieldCode]){
+                            root[fieldCode] = root[fieldCode]||{};
+                            root[fieldCode].dataSet = value.dataSet;
+                        }
                     } else {
                         insetValueIntoRoot(fieldCode,value);
                     }
