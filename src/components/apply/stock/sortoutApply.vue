@@ -303,8 +303,8 @@ export default {
                                 warehouseName_storehouseOutCode: box.storehouseName,
                                 storehouseOutCode: box.storehouseCode,
                                 tdQty:box.qty,
-                                batchNo: this.curQrCodeInfo.batchNo,
-                                productionDate: this.curQrCodeInfo.productionDate,
+                                batchNo: box.batchNo,
+                                productionDate: box.productionDate,
                                 boxRule:this.curQrCodeInfo.boxRule,
                             })
                         }

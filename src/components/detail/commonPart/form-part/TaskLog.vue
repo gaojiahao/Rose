@@ -221,7 +221,7 @@ export default {
 
 <style lang='scss' scoped>
   .task_log{
-    color: #999;
+    color: #767474;
     background-color: #fff;
     padding: .0rem .15rem;
     &_header{
@@ -250,6 +250,9 @@ export default {
       font-size: .14rem;
       /deep/ .weui-cell{
         padding:10px 0px
+      }
+      /deep/ .vux-popup-picker-value{
+        font-size: .15rem;
       }
     }
     &_date{

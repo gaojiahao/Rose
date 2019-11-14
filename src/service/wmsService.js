@@ -68,7 +68,7 @@ export let  getLocationOfinventory =  (data = {}) =>{
 //拣货下架释放订单占用
 export let  releaseSortingOrder =  (transCode,matCode) =>{
   return $flyio.post({
-    url: `/H_roleplay-si/wms/releaseSortingOrder?transCode=${transCode}&matCode=${matCode}`
+    url: `/H_roleplay-si/wms/releaseSortingOrder?transCode=${transCode}&matCodes=${matCode}`
   })
 }
 
@@ -141,6 +141,16 @@ export let getBoxInfoByPallet = (pallet,transCode) =>{
     data: {
       pallet: pallet,
       transCode: transCode
+    }
+  })
+}
+
+//理货根据托盘码获取箱码库存信息
+export let getTallyBoxInfoByPallet = (pallet) =>{
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getBoxInfoByPalletForLH',
+    data: {
+      pallet: pallet
     }
   })
 }
