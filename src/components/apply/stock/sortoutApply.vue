@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { Flexbox, FlexboxItem, Cell,Toast  } from 'vux'
+import { Flexbox, FlexboxItem, Cell,Toast,dateFormat  } from 'vux'
 
 import OpButton from 'components/apply/commonPart/OpButton'
 import WmsMatterPart from 'components/apply/commonPart/wmsMatterPart'
@@ -266,7 +266,8 @@ export default {
         },
         handlerSetMatters(){
             let params = {
-                boxCode:this.curQrCodeInfo.uuid
+                boxCode:this.curQrCodeInfo.uuid,
+                processCode:this.scanCodeInfo.postCode
             };
 
             let materielMap = {};
@@ -304,7 +305,7 @@ export default {
                                 storehouseOutCode: box.storehouseCode,
                                 tdQty:box.qty,
                                 batchNo: box.batchNo,
-                                productionDate: box.productionDate,
+                                productionDate: dateFormat(box.productionDate,'YYYY-MM-DD'),
                                 boxRule:this.curQrCodeInfo.boxRule,
                             })
                         }
@@ -355,7 +356,7 @@ export default {
 
             if(this.scanCodeInfo.boxCode.split(',').length !=5 ){
                 this.trayCode = this.scanCodeInfo.boxCode;
-                getSortOutBoxInfoByPallet(this.trayCode).then(res=>{
+                getSortOutBoxInfoByPallet(this.trayCode,this.scanCodeInfo.postCode).then(res=>{
                     if(res.dataCount){
                         res.tableContent.map(box=>{
                             this.scanCodeInfo.boxCode = `${box.inventoryCode},${box.batchNo},${box.productionDate},${box.qty},${box.boxCode}`;

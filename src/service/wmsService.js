@@ -156,11 +156,12 @@ export let getTallyBoxInfoByPallet = (pallet) =>{
 }
 
 //分拣根据托盘码获取箱码库存信息
-export let getSortOutBoxInfoByPallet = (pallet) =>{
+export let getSortOutBoxInfoByPallet = (pallet,processCode) =>{
   return $flyio.ajax({
     url: '/H_roleplay-si/ds/getBoxInfoByPalletOut',
     data: {
-      pallet:pallet
+      pallet:pallet,
+      processCode:processCode
     }
   })
 }
