@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { Flexbox, FlexboxItem, Cell,Toast  } from 'vux'
+import { Flexbox, FlexboxItem, Cell,Toast,dateFormat  } from 'vux'
 
 import OpButton from 'components/apply/commonPart/OpButton'
 import WmsMatterPart from 'components/apply/commonPart/wmsMatterPart'
@@ -304,7 +304,7 @@ export default {
                                 storehouseOutCode: box.storehouseCode,
                                 tdQty:box.qty,
                                 batchNo: box.batchNo,
-                                productionDate: box.productionDate,
+                                productionDate: dateFormat(box.productionDate,'YYYY-MM-DD'),
                                 boxRule:this.curQrCodeInfo.boxRule,
                             })
                         }
