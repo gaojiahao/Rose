@@ -266,7 +266,8 @@ export default {
         },
         handlerSetMatters(){
             let params = {
-                boxCode:this.curQrCodeInfo.uuid
+                boxCode:this.curQrCodeInfo.uuid,
+                processCode:this.scanCodeInfo.postCode
             };
 
             let materielMap = {};
@@ -355,7 +356,7 @@ export default {
 
             if(this.scanCodeInfo.boxCode.split(',').length !=5 ){
                 this.trayCode = this.scanCodeInfo.boxCode;
-                getSortOutBoxInfoByPallet(this.trayCode).then(res=>{
+                getSortOutBoxInfoByPallet(this.trayCode,this.scanCodeInfo.postCode).then(res=>{
                     if(res.dataCount){
                         res.tableContent.map(box=>{
                             this.scanCodeInfo.boxCode = `${box.inventoryCode},${box.batchNo},${box.productionDate},${box.qty},${box.boxCode}`;
