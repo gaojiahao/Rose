@@ -119,7 +119,7 @@ let cfg = {
             data = {...data,...store.params};
 
             if(store.url){
-              if(this.cfg.xtype=='r2Combo'){
+              if(this.cfg.xtype=='r2Combo'&&this.cfg.readOnly!=true){
                 delete data.filter;
               }
               this.getDisplay(data).then(res => {
