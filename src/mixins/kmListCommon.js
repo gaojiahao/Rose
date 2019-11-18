@@ -133,6 +133,7 @@ export default {
         this.FlowHasNext = total > (this.flowPage - 1) * this.flowLimit + data.length;
         data.forEach( item => {
           item.showList = false;
+          item.calcTime && (item.calcTime = dateFormat(item.calcTime,'YYYY-MM-DD'));
         })
         this.flowData = this.FlowHasNext === 1 ? data : this.flowData.concat(data);
         this.$nextTick(() => {
@@ -283,8 +284,6 @@ export default {
     this.applyCode = this.$route.params.code;
     (async () => {
       await this.getClassfiy();
-      await this.getView();
-      await this.getListData();
     })()
   }
 }

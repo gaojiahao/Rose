@@ -6,7 +6,7 @@
         <searchIcon @search='searchList' :place-holder="tipsWord"></searchIcon>
         <div class="tab-container" ref="tabContainer">
           <div class="tab-item" :class="{active: index === activeIndex}" v-for="(item, index) in listView"
-               @click="tabClick(item, index)" ref="tabs">
+               @click="tabClick(item, index)" ref="tabs" :key="index">
             {{item.view_name}}
           </div>
         </div>
@@ -19,7 +19,10 @@
                       @on-pulling-down="onPullingDown" ref="bScroll">
               <!-- 现金流分类识别 -->
               <template v-if="key === 'view_49'">
-                <div class="classification-item-wrapper" v-for='(item, index) in slide.listData' :key='index'>
+                <div class="classification-item-wrapper" 
+                  v-for='(item, index) in slide.listData' 
+                  @click="goInstanceDetail(item)" 
+                  :key='index'>
                   <div class="classification-header-wrapper">
                     <img class="classification_img" :src="item.AppIcon" alt="icon">
                     <div class="classification_app">
@@ -93,7 +96,10 @@
               </template>
               <!-- 现金流计划表 -->
               <template v-else-if="key === 'view_140'">
-                <div class="schedule-item-wrapper" v-for='(item, index) in slide.listData' :key='index'>
+                <div class="schedule-item-wrapper" 
+                  v-for='(item, index) in slide.listData'
+                  @click="goInstanceDetail(item)" 
+                  :key='index'>
                   <div class="schedule-main">
                     <img class="schedule_img" :src="item.appIcon">
                     <div class="schedule_info">
@@ -111,7 +117,7 @@
                         <span class="schedule_info_title">往来名称：</span>{{item.dealerName}}
                       </div>
                       <div class="schedule_info_item">
-                        <span class="schedule_info_title">到账截止日期：</span>{{item.draftDueDate | dateFormat('YYYY-MM-DD')
+                        <span class="schedule_info_title">到账截止日期：</span>{{item.draftDueDate
                         || '无'}}
                       </div>
                     </div>
@@ -180,7 +186,7 @@
               </div>
               <div class="flow_list">
                 <div class='each_flow' v-for='(Fitem,Findex) in flowData' :key="Findex"
-                     @click.stop="Fitem.showList = !Fitem.showList">
+                     @click.stop="goInstanceDetail(Fitem)">
                   <!--展开状态-->
                   <div class="duty_top">
                     <!-- 编码 -->
@@ -190,7 +196,7 @@
                     </div>
                     <!-- 时间 -->
                     <div class="time">
-                      {{Fitem.calcTime | dateFormat}}
+                      {{Fitem.calcTime}}
                     </div>
                   </div>
                   <!-- 金额 -->
@@ -266,6 +272,7 @@
   import listCommon from 'mixins/kmListCommon'
   import {getListClassfiy, getViewList} from 'service/kmService'
   import {toFixed} from '@/plugins/calc'
+  import { dateFormat } from 'vux'
 
   const BASE_PARAMS = {
     page: 1,
@@ -287,8 +294,10 @@
     computed: {
       // 当前滑块
       currentItem() {
-        let {view_id} = this.listView[this.activeIndex];
-        return this.listMap[view_id];
+        if(this.listView.length){
+          let {view_id} = this.listView[this.activeIndex];
+          return this.listMap[view_id];
+        }
       },
       // 当前滚动容器
       currentScroll() {
@@ -307,12 +316,25 @@
     },
     mixins: [listCommon],
     methods: {
+      goInstanceDetail(item) {
+        this.$router.push({
+          path: `/detail/${item.listId}/0`,
+          query: {
+            name: item.appTitle, 
+            folder: 'finance',
+            fileName: 'null',
+            transCode: item.transCode
+          }
+        })
+      },
       // 重置列表条件
       resetCondition() {
-        let {view_id} = this.listView[this.activeIndex];
-        this.listMap[view_id] = {...BASE_PARAMS};
-        this.currentScroll.scrollTo(0, 0);
-        this.currentScroll.resetPullDown();
+        if(this.listView.length){
+          let view_id = this.listView[this.activeIndex] && this.listView[this.activeIndex]['view_id'];
+          this.listMap[view_id] = {...BASE_PARAMS};
+          this.currentScroll.scrollTo(0, 0);
+          this.currentScroll.resetPullDown();
+        }
       },
       // tab切换
       tabClick(val, index) {
@@ -344,6 +366,9 @@
           this.activeTab = first.view_name;
           this.calc_rel_code = first.calc_rel_code;
           this.view_id = first.view_id;
+          this.getView();
+          this.getListData();
+          this.initSwiper();
           this.$nextTick(() => {
             this.listSwiper.update();
           })
@@ -351,7 +376,8 @@
       },
       //获取列表数据
       getListData(noReset = false) {
-        let {page, limit} = this.currentItem;
+        if(this.currentItem){
+          let {page, limit} = this.currentItem;
         return getViewList({
           user_code: 1,
           page: page,
@@ -372,6 +398,7 @@
           this.currentItem.hasNext = total > (page - 1) * limit + data.length;
           data.forEach(item => {
             item.status = false;
+            item.draftDueDate && (item.draftDueDate = dateFormat(item.draftDueDate,'YYYY-MM-DD'));
             if (item.cashInOrOut) {
               switch (item.cashInOrOut) {
                 case '流入':
@@ -387,7 +414,7 @@
             if (this.activeTab.includes('资金账户余额')) {
               item.icon = bankMap[item.bank];
             } else if (this.activeTab.includes('现金流计划表')) {
-              item.appIcon = `/dist/${item.appIcon}`;
+              item.appIcon = item.appIcon || 'https://lab.roletask.com/resource/app-icon/payment-of-supplier-arrears.png';
             }
           });
           this.listData = page === 1 ? data : this.listData.concat(data);
@@ -419,6 +446,7 @@
         }).catch(e => {
           this.resetScroll();
         })
+        }
       },
       //根据视图获取订单数据
       async getList(noReset = false) {
@@ -489,7 +517,7 @@
     },
     filters: {toFixed},
     created() {
-      this.initSwiper();
+      
     }
   }
 </script>
