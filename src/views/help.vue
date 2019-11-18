@@ -31,7 +31,8 @@
           <!-- 数量输入 -->
           <x-input title="数量" v-model.number="item.qty" text-align="right" placeholder="请输入数量"
                    v-if="item.value !== '无'"></x-input>
-          <cell class="each_part" title="套数" :value="item.num1 || 0" value-align="right"
+
+          <cell class="each_part" title="系数" :value="item.num1 || 0" value-align="right" style="display: none;"
                 v-if="item.value.length>0"></cell>
         </group>
 
@@ -151,7 +152,7 @@
         let total = 0;
         this.arr.forEach(item => {
           if (item.qty) {
-            total = accAdd(total, accMul(item.qty, item.amount));
+            total = accAdd(total, accMul(item.qty, item.amount,item.num1));
           }
         });
         total = accAdd(total, this.Aclass);
