@@ -68,8 +68,10 @@ export default {
     //搜索
     searchList({val = ''}) {
       this.serachVal = val;
-      this.resetCondition();
-      this.getListData();
+      if(this.listView.length){
+        this.resetCondition();
+        this.getListData();
+      }
     },
     getDefaultImg(item) {
       item.inventoryPic = require('assets/wl_default03.png');
