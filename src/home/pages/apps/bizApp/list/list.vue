@@ -93,7 +93,7 @@ export default {
     this.$nextTick(() => {
       if (listPage) {
         listPage.changeVisitedStatus && listPage.changeVisitedStatus();
-        listPage.$refs.bScroll && listPage.$refs.bScroll.refresh();
+        listPage.$refs.bScroll && listPage.$refs.bScroll.refresh && listPage.$refs.bScroll.refresh();
       }
     });
   },

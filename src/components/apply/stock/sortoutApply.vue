@@ -113,7 +113,7 @@ export default {
             tostText:'',
             formViewUniqueId: '700e7b24-d90b-4801-9a11-5d1ff24a4319', // 修改时的UniqueId
             matterInfoConfig: {
-                warehouseName:"仓库名称",
+                warehouseName_containerCodeOut:"仓库名称",
                 warehouseName_storehouseOutCode: '库区',
                 storehouseOutCode: '库位编码',
                 productionDate: '生产日期',
@@ -500,16 +500,16 @@ export default {
                             this.$HandleLoad.show();
                             autoConfirmStockPick(this.scanCodeInfo.postCode,data.transCode).then(res=>{
                                 this.$HandleLoad.hide();
-                                message = data.message;
                                  this.$vux.alert.show({
-                                    content: message,
+                                    content: res.message,
                                     onHide: () => {
-                                        if (success) {
-                                            this.judgePage();
-                                        }
+                                        this.judgePage();
                                     }
                                 });
-                            });
+                            }).catch(res=>{
+                                this.$HandleLoad.hide();
+                                this.judgePage();
+                            });;
                         },
                         onCancel:()=>{
                             this.$vux.alert.show({
