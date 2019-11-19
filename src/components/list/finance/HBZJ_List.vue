@@ -41,37 +41,34 @@
                     </div>
                   </div>
                   <div class="classification-split"></div>
+                  <div class="bank-name">{{item.account}}</div>
                   <div class="bank-info">
-                    <div class="bank_detail">
-                      <div class="bank">
-                        <span class="title">开户银行: </span>{{item.bank || '暂无银行信息'}}
+                    <div class="flow-info">
+                      <div class="flow_info_item">
+                        <span class="title">开户银行：</span>{{item.bank || '暂无银行信息'}}
                       </div>
-                      <div class="bank_account">
-                        <span class="title">银行账号: </span>{{item.account || '无'}}
+                      <div class="flow_info_item">
+                        <span class="title">资金账户名称：</span>{{item.fundName}}
+                      </div>
+                      <div class="flow_info_item">
+                        <div class="flow_account_item">
+                          <span class="title">账户编码：</span>{{item.cashCode}}
+                        </div>
+                      </div>
+                      <div class="flow_info_item">
+                          <span class="title">账户大类：</span>{{item.accountSub}}
+                      </div>
+                      <div class="flow_info_item">
+                        <span class="title">现金流类型：</span>{{item.cashType}}
+                      </div>
+                      <div class="flow_info_item">
+                        <span class="title">现金流项目：</span>{{item.cashFlow}}
                       </div>
                     </div>
                     <div class="bank_amt_wrapper">
                       <!-- 付款：crAmt，收款：drAmt -->
-                      <div class="bank_amt">{{item.crAmnt || item.drAmnt | numberComma}}
+                      <div class="bank_amt">￥{{item.crAmnt || item.drAmnt | numberComma}}
                       </div>
-                      <div class="text">总{{item.transName}}({{item.fundCurrency}})</div>
-                    </div>
-                  </div>
-                  <div class="bank-name">{{item.fundName}}</div>
-                  <div class="flow-info">
-                    <div class="flow_info_item">
-                      <div class="flow_account_item">
-                        <span class="title">账户编码：</span>{{item.cashCode}}
-                      </div>
-                      <div class="flow_account_item flow_account_sub">
-                        <span class="title">账户大类：</span>{{item.accountSub}}
-                      </div>
-                    </div>
-                    <div class="flow_info_item">
-                      <span class="title">现金流类型：</span>{{item.cashType}}
-                    </div>
-                    <div class="flow_info_item">
-                      <span class="title">现金流项目：</span>{{item.cashFlow}}
                     </div>
                   </div>
                 </div>
@@ -108,35 +105,29 @@
                         <span class="schedule_info_title">实例编码：</span>{{item.transCode}}
                       </div>
                       <div class="schedule_info_item">
-                        <span class="schedule_info_title">往来编码：</span>{{item.dealerCode}}
-                      </div>
-                      <div class="schedule_info_item">
-                        <span class="schedule_info_title">关系标签：</span>{{item.accountSub}}
-                      </div>
-                      <div class="schedule_info_item">
-                        <span class="schedule_info_title">往来名称：</span>{{item.dealerName}}
-                      </div>
-                      <div class="schedule_info_item">
                         <span class="schedule_info_title">到账截止日期：</span>{{item.draftDueDate
                         || '无'}}
                       </div>
                     </div>
                   </div>
                   <div class="schedule-split"></div>
-                  <div class="schedule-bottom">
-                    <div class="schedule_bottom_item days">
-                      <div class="schedule_bottom_value">{{item.paymentSurplusDays || 0}}</div>
-                      <div class="schedule_bottom_title">剩余天数</div>
-                    </div>
-                    <div class="schedule_bottom_item">
-                      <div class="schedule_bottom_value">{{item.transName}}</div>
-                      <div class="schedule_bottom_title">计划类型</div>
-                    </div>
-                    <div class="schedule_bottom_item amt">
-                      <div class="schedule_bottom_value">
-                        {{item.amntBalance | numberComma}}
+                  <div class="dealer-name">{{item.dealerName}}</div>
+                  <div class="schedule_dealer">
+                    <div>
+                      <div class="schedule_dealer_item">
+                        <span class="schedule_dealer_title">往来编码：</span>{{item.dealerCode}}
                       </div>
-                      <div class="schedule_bottom_title">金额</div>
+                      <div class="schedule_dealer_item">
+                        <span class="schedule_dealer_title">关系标签：</span>{{item.accountSub}}
+                      </div>
+                      <div class="schedule_dealer_item">
+                        <span class="schedule_dealer_title">剩余天数：</span>{{item.paymentSurplusDays || 0}}
+                      </div>
+                    </div>
+                    <div>
+                      <div class="bank_amt_wrapper">
+                      <div class="bank_amt">￥{{item.amntBalance | numberComma}}</div>
+                    </div>
                     </div>
                   </div>
                 </div>
@@ -641,6 +632,12 @@
     color: #333;
     box-sizing: border-box;
     box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
+    .bank-name {
+      margin: .18rem 0 0;
+      line-height: .18rem;
+      font-size: .145rem;
+      font-weight: 700;
+    }
     .classification-header-wrapper {
       display: flex;
       .classification_img {
@@ -711,6 +708,27 @@
           color: #999;
         }
       }
+      .flow-info {
+        margin-top: .12rem;
+        line-height: .12rem;
+        font-size: .12rem;
+        .flow_info_item {
+          display: flex;
+          & + .flow_info_item {
+            margin-top: .08rem;
+          }
+          /* 账户大类 */
+          .flow_account_sub {
+            margin-left: .1rem;
+            .title {
+              color: #696969;
+            }
+          }
+          .title {
+            color: #999;
+          }
+        }
+      }
       .bank_account {
         margin-top: .07rem;
         line-height: .12rem;
@@ -736,34 +754,6 @@
         line-height: .12rem;
         color: #999;
         font-size: .12rem;
-      }
-    }
-
-    .bank-name {
-      margin: .18rem 0 0;
-      line-height: .18rem;
-      font-size: .14rem;
-      font-weight: 600;
-    }
-    .flow-info {
-      margin-top: .12rem;
-      line-height: .12rem;
-      font-size: .12rem;
-      .flow_info_item {
-        display: flex;
-        & + .flow_info_item {
-          margin-top: .08rem;
-        }
-        /* 账户大类 */
-        .flow_account_sub {
-          margin-left: .1rem;
-          .title {
-            color: #696969;
-          }
-        }
-        .title {
-          color: #999;
-        }
       }
     }
   }
@@ -805,6 +795,38 @@
       .schedule_info_title {
         color: #999;
       }
+    }
+
+    .schedule_dealer{
+      line-height: .12rem;
+      font-size: .12rem;
+      display: flex;
+      justify-content: space-between;
+      .schedule_dealer_item {
+        margin-top: .12rem;
+        & + .schedule_dealer_item {
+          margin-top: .08rem;
+        }
+      }
+      .schedule_dealer_title {
+        color: #999;
+      }
+      .bank_amt_wrapper {
+        text-align: center;
+      }
+      .bank_amt {
+        line-height: .17rem;
+        color: #FA7138;
+        font-size: .18rem;
+        font-weight: 600;
+      }
+    }
+
+    .dealer-name {
+      margin: .18rem 0 0;
+      line-height: .18rem;
+      font-size: .14rem;
+      font-weight: 600;
     }
 
     .schedule-split {
