@@ -78,7 +78,7 @@ export default {
       handler() {
         // 监听并计算套数
         this.arr.forEach(item => {
-          item.num1 = accMul(item.qty, item.num5);
+          item.num1 = item.num5;
         })
       },
       deep: true,
