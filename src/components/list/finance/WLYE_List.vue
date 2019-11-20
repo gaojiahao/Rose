@@ -4,26 +4,22 @@
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon @search="searchList" :place-holder="tipsWord"></searchIcon>
-        <!-- <div class="filter_part">
-          <tab-item :tabVal='listView' @tab-click="tabClick"></tab-item>
-        </div> -->
         <div class="tab-container" ref="tabContainer">
           <div class="tab-item" :class="{active: index === activeIndex}" v-for="(item, index) in listView"
-               @click="tabClick(item, index)" ref="tabs">
+               @click="tabClick(item, index)" ref="tabs" :key="index">
             {{item.view_name}}
           </div>
         </div>
       </div>
-      <!-- 列表 -->
       <div class="swiper-container list-container">
         <div class="swiper-wrapper">
           <div class="swiper-slide" v-for="(slide, key) in listMap" :key="key">
-            <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
-                      :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
-                      ref="bScroll">
+            <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="slide.hasNext"
+                      :no-data="!slide.hasNext && !slide.listData.length" @on-pulling-up="onPullingUp" 
+                      @on-pulling-down="onPullingDown" ref="bScroll">
               <!-- 核销余额表 -->
               <template v-if="activeTab.includes('核销余额')">
-                <div class="verification-item-wrapper" v-for='(item, index) in listData' :key='index'>
+                <div class="verification-item-wrapper" v-for='(item, index) in slide.listData' :key='index'>
                   <div class="verification-main">
                     <img class="verification_img" :src="item.appIcon">
                     <div class="verification_info">
@@ -252,7 +248,6 @@
 </template>
 
 <script>
-import TabItem from 'components/public/sub-tab'
 import listCommon from 'mixins/kmListCommon'
 import {getListClassfiy, getViewList} from 'service/kmService'
 import { toFixed } from '@/plugins/calc'
@@ -269,7 +264,6 @@ export default {
     return {
       uniqueId: 9000,
       showContent: false,
-      handleLoadding: false,
       filterArr: [
         {operator: 'like', value: '', property: 'dealerCode'}
       ],
@@ -297,9 +291,6 @@ export default {
       };
       if (viewList.hasOwnProperty(currentView)) return viewList[currentView];
     }
-  },
-  components:{
-    TabItem
   },
   mixins: [listCommon],
   filters: { toFixed },
