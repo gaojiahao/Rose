@@ -1,5 +1,5 @@
 <template>
-  <div class="pages" ref="list">
+  <div class="pages">
     <div class="content">
       <div class="list_top">
         <!-- 搜索栏 -->
@@ -84,7 +84,7 @@
               </template>
               <!-- 手动核销明细 -->
               <template v-else-if="activeTab.includes('手动核销明细')">
-                <div class="classification-item-wrapper" v-for='(item, index) in listData' :key='index'>
+                <div class="classification-item-wrapper" v-for='(item, index) in slide.listData' :key='index'>
                   <div class="classification-header-wrapper">
                     <div class="classification_app">
                       <div class="app_top">
@@ -124,7 +124,7 @@
                 </div>
               </template>
               <template v-else>
-                <div class="each_duty" v-for="(item, index) in listData" :key="index" @click="getFlow(item)">
+                <div class="each_duty" v-for="(item, index) in slide.listData" :key="index" @click="getFlow(item)">
                   <div class="duty_top">
                     <!-- 表单状态 及 编码 -->
                     <div class="basic_info">
@@ -332,6 +332,9 @@ export default {
         this.activeTab = first.view_name;
         this.calc_rel_code = first.calc_rel_code;
         this.view_id = first.view_id;
+        this.getView();
+        this.getListData();
+        this.initSwiper();
         this.$nextTick(() => {
           this.listSwiper.update();
         })
@@ -476,15 +479,19 @@ export default {
     },
   },
   created() {
-    this.initSwiper();
+    //this.initSwiper();
   }
 }
 </script>
 
 <style lang='scss' scoped>
   @import '~scss/subject/subList';
-  .list_wrapper {
-    height: calc(100% - 1rem);
+  .list-container {
+    height: calc(100% - .96rem);
+    .list_wrapper {
+      height: 100%;
+      background-color: #fff;
+    }
   }
   .tab-container {
     display: flex;
