@@ -1,160 +1,168 @@
 <template>
-  <div class="pages" ref="list">
+  <div class="pages">
     <div class="content">
       <div class="list_top">
         <!-- 搜索栏 -->
-        <searchIcon @search="searchList"></searchIcon>
-        <div class="filter_part">
-          <tab-item :tabVal='listView' @tab-click="tabClick"></tab-item>
+        <searchIcon @search="searchList" :place-holder="tipsWord"></searchIcon>
+        <div class="tab-container" ref="tabContainer">
+          <div class="tab-item" :class="{active: index === activeIndex}" v-for="(item, index) in listView"
+               @click="tabClick(item, index)" ref="tabs" :key="index">
+            {{item.view_name}}
+          </div>
         </div>
       </div>
-      <!-- 列表 -->
-      <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
-                :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
-                ref="bScroll">
-        <!-- 核销余额表 -->
-        <template v-if="activeTab.includes('核销余额')">
-          <div class="verification-item-wrapper" v-for='(item, index) in listData' :key='index'>
-            <div class="verification-main">
-              <img class="verification_img" :src="item.appIcon">
-              <div class="verification_info">
-                <div class="app_name">{{item.appTitle}}</div>
-                <div class="verification_info_item">
-                  <span class="verification_info_title">应用类型: </span>{{item.transName}}
+      <div class="swiper-container list-container">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide" v-for="(slide, key) in listMap" :key="key">
+            <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="slide.hasNext"
+                      :no-data="!slide.hasNext && !slide.listData.length" @on-pulling-up="onPullingUp" 
+                      @on-pulling-down="onPullingDown" ref="bScroll">
+              <!-- 核销余额表 -->
+              <template v-if="activeTab.includes('核销余额')">
+                <div class="verification-item-wrapper" v-for='(item, index) in slide.listData' :key='index'>
+                  <div class="verification-main">
+                    <img class="verification_img" :src="item.appIcon">
+                    <div class="verification_info">
+                      <div class="app_name">{{item.appTitle}}</div>
+                      <div class="verification_info_item">
+                        <span class="verification_info_title">应用类型: </span>{{item.transName}}
+                      </div>
+                      <div class="verification_info_item">
+                        <span class="verification_info_title">实例编码: </span>{{item.transCode}}
+                      </div>
+                      <div class="verification_info_item">
+                        <span class="verification_info_title">往来编码: </span>{{item.dealerCode}}
+                      </div>
+                      <div class="verification_info_item">
+                        <span class="verification_info_title">往来名称: </span>{{item.dealerName}}
+                      </div>
+                      <div class="verification_info_item">
+                        <span class="verification_info_title">结算方式: </span>{{item.paymentTerm || '无'}}
+                      </div>
+                      <div class="verification_info_item">
+                        <span class="verification_info_title">记账日期与时间: </span>
+                        {{item.effectiveTime | dateFormat('YYYY-MM-DD')|| '无'}}
+                      </div>
+                      <div class="verification_info_item">
+                        <span class="verification_info_title">到期日: </span>
+                        {{item.paymentDays | dateFormat('YYYY-MM-DD')|| '无'}}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="verification-split"></div>
+                  <div class="verification-bottom">
+                    <div class="verification_bottom_item days">
+                      <div class="verification_bottom_value">{{item.daysOfAccount || 0}}</div>
+                      <div class="verification_bottom_title">账期天数</div>
+                    </div>
+                    <div class="verification_bottom_item acount_day">
+                      <div class="verification_bottom_value">{{item.paymentSurplusDays || '无'}}</div>
+                      <div class="verification_bottom_title">剩余天数</div>
+                    </div>
+                    <div class="verification_bottom_item">
+                      <div class="verification_bottom_value">{{item.accountAge}}</div>
+                      <div class="verification_bottom_title">账龄天数</div>
+                    </div>
+                  </div>
+                  <div class="verification-bottom">
+                    <div class="verification_bottom_item days">
+                      <div class="verification_bottom_value">{{item.drAmnt | numberComma}}</div>
+                      <div class="verification_bottom_title">发生金额</div>
+                    </div>
+                    <div class="verification_bottom_item">
+                      <div class="verification_bottom_value">{{item.crAmnt}}</div>
+                      <div class="verification_bottom_title">已核销</div>
+                    </div>
+                    <div class="verification_bottom_item amt">
+                      <div class="verification_bottom_value">
+                        {{item.amountBalance | numberComma}}
+                      </div>
+                      <div class="verification_bottom_title">金额余额</div>
+                    </div>
+                  </div>
                 </div>
-                <div class="verification_info_item">
-                  <span class="verification_info_title">实例编码: </span>{{item.transCode}}
+              </template>
+              <!-- 手动核销明细 -->
+              <template v-else-if="activeTab.includes('手动核销明细')">
+                <div class="classification-item-wrapper" v-for='(item, index) in slide.listData' :key='index'>
+                  <div class="classification-header-wrapper">
+                    <div class="classification_app">
+                      <div class="app_top">
+                        <div class="app_name">{{item.appTitle}}</div>
+                      </div>
+                      <div class="classification_detail_item">
+                        <span class="classification_detail_title">应用类型: </span>{{item.transName}}
+                      </div>
+                      <div class="classification_detail_item">
+                        <span class="classification_detail_title">实例编码: </span>{{item.transCode}}
+                      </div>
+                      <div class="classification_detail_item">
+                        <span class="classification_detail_title">记账与生效日期: </span>
+                        {{item.effectiveTime | dateFormat('YYYY-MM-DD')}}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="classification-split"></div>
+                  <div class="dealer-info">
+                    <div class="dealer_detail">
+                      <div class="dealer">
+                        <span class="title">往来名称: </span>{{item.dealerName || '暂无'}}
+                      </div>
+                      <div class="dealer">
+                        <span class="title">往来编码: </span>{{item.dealerCode || '暂无'}}
+                      </div>
+                      <div class="dealer">
+                        <span class="title">往来关系标签: </span>{{item.dealerLabel || '暂无'}}
+                      </div>
+                    </div>
+                    <div class="dealer_amt_wrapper">
+                      <div class="dealer_amt">{{item.amount | numberComma}}
+                      </div>
+                      <div class="text">核销金额</div>
+                    </div>
+                  </div>
                 </div>
-                <div class="verification_info_item">
-                  <span class="verification_info_title">往来编码: </span>{{item.dealerCode}}
+              </template>
+              <template v-else>
+                <div class="each_duty" v-for="(item, index) in slide.listData" :key="index" @click="getFlow(item)">
+                  <div class="duty_top">
+                    <!-- 表单状态 及 编码 -->
+                    <div class="basic_info">
+                      <!-- 状态 -->
+                      <span class="warehouse warehouse_name">
+                          <!-- 往来关系标签/二级科目 -->
+                          {{item.accountSub}}
+                        </span>
+                      <!-- 往来编码 -->
+                      <span class="warehouse warehouse_code">{{item.dealerCode}}</span>
+                    </div>
+                    <!-- 数量余额 -->
+                    <div class="mater_code" v-if="item.accountAge !== undefined">
+                      <span class="title">账龄天数</span>
+                      <span class="num">{{item.accountAge}}</span>
+                    </div>
+                  </div>
+                  <!-- 往来名称 -->
+                  <div class="matter" v-if="item.dealerName">
+                    <div class="matter_name">
+                      {{item.dealerName}}
+                    </div>
+                  </div>
+                  <!-- 金额余额等 -->
+                  <div class="duty_btm" :class="{'vux-1px-t': item.dealerName}">
+                    <!-- 仓库类型 -->
+                    <div class="ware_type"></div>
+                    <!-- 余额 -->
+                    <div class="balance" v-if="item.amountBalance !== ''">
+                      <span class="symbol" >余额: </span><span class='detail_font' :class="{'red': item.amountBalance < 0}">{{item.amountBalance| toFixed | numberComma}}</span>
+                    </div>
+                  </div>
                 </div>
-                <div class="verification_info_item">
-                  <span class="verification_info_title">往来名称: </span>{{item.dealerName}}
-                </div>
-                <div class="verification_info_item">
-                  <span class="verification_info_title">结算方式: </span>{{item.paymentTerm || '无'}}
-                </div>
-                <div class="verification_info_item">
-                  <span class="verification_info_title">记账日期与时间: </span>
-                  {{item.effectiveTime | dateFormat('YYYY-MM-DD')|| '无'}}
-                </div>
-                <div class="verification_info_item">
-                  <span class="verification_info_title">到期日: </span>
-                  {{item.paymentDays | dateFormat('YYYY-MM-DD')|| '无'}}
-                </div>
-              </div>
-            </div>
-            <div class="verification-split"></div>
-            <div class="verification-bottom">
-              <div class="verification_bottom_item days">
-                <div class="verification_bottom_value">{{item.daysOfAccount || 0}}</div>
-                <div class="verification_bottom_title">账期天数</div>
-              </div>
-              <div class="verification_bottom_item acount_day">
-                <div class="verification_bottom_value">{{item.paymentSurplusDays || '无'}}</div>
-                <div class="verification_bottom_title">剩余天数</div>
-              </div>
-              <div class="verification_bottom_item">
-                <div class="verification_bottom_value">{{item.accountAge}}</div>
-                <div class="verification_bottom_title">账龄天数</div>
-              </div>
-            </div>
-            <div class="verification-bottom">
-              <div class="verification_bottom_item days">
-                <div class="verification_bottom_value">{{item.drAmnt | numberComma}}</div>
-                <div class="verification_bottom_title">发生金额</div>
-              </div>
-              <div class="verification_bottom_item">
-                <div class="verification_bottom_value">{{item.crAmnt}}</div>
-                <div class="verification_bottom_title">已核销</div>
-              </div>
-              <div class="verification_bottom_item amt">
-                <div class="verification_bottom_value">
-                  {{item.amountBalance | numberComma}}
-                </div>
-                <div class="verification_bottom_title">金额余额</div>
-              </div>
-            </div>
+              </template>
+            </r-scroll>
           </div>
-        </template>
-        <!-- 手动核销明细 -->
-        <template v-else-if="activeTab.includes('手动核销明细')">
-          <div class="classification-item-wrapper" v-for='(item, index) in listData' :key='index'>
-            <div class="classification-header-wrapper">
-              <div class="classification_app">
-                <div class="app_top">
-                  <div class="app_name">{{item.appTitle}}</div>
-                </div>
-                <div class="classification_detail_item">
-                  <span class="classification_detail_title">应用类型: </span>{{item.transName}}
-                </div>
-                <div class="classification_detail_item">
-                  <span class="classification_detail_title">实例编码: </span>{{item.transCode}}
-                </div>
-                <div class="classification_detail_item">
-                  <span class="classification_detail_title">记账与生效日期: </span>
-                  {{item.effectiveTime | dateFormat('YYYY-MM-DD')}}
-                </div>
-              </div>
-            </div>
-            <div class="classification-split"></div>
-            <div class="dealer-info">
-              <div class="dealer_detail">
-                <div class="dealer">
-                  <span class="title">往来名称: </span>{{item.dealerName || '暂无'}}
-                </div>
-                <div class="dealer">
-                  <span class="title">往来编码: </span>{{item.dealerCode || '暂无'}}
-                </div>
-                <div class="dealer">
-                  <span class="title">往来关系标签: </span>{{item.dealerLabel || '暂无'}}
-                </div>
-              </div>
-              <div class="dealer_amt_wrapper">
-                <div class="dealer_amt">{{item.amount | numberComma}}
-                </div>
-                <div class="text">核销金额</div>
-              </div>
-            </div>
-          </div>
-        </template>
-        <template v-else>
-          <div class="each_duty" v-for="(item, index) in listData" :key="index" @click="getFlow(item)">
-            <div class="duty_top">
-              <!-- 表单状态 及 编码 -->
-              <div class="basic_info">
-                <!-- 状态 -->
-                <span class="warehouse warehouse_name">
-                    <!-- 往来关系标签/二级科目 -->
-                    {{item.accountSub}}
-                  </span>
-                <!-- 往来编码 -->
-                <span class="warehouse warehouse_code">{{item.dealerCode}}</span>
-              </div>
-              <!-- 数量余额 -->
-              <div class="mater_code" v-if="item.accountAge !== undefined">
-                <span class="title">账龄天数</span>
-                <span class="num">{{item.accountAge}}</span>
-              </div>
-            </div>
-            <!-- 往来名称 -->
-            <div class="matter" v-if="item.dealerName">
-              <div class="matter_name">
-                {{item.dealerName}}
-              </div>
-            </div>
-            <!-- 金额余额等 -->
-            <div class="duty_btm" :class="{'vux-1px-t': item.dealerName}">
-              <!-- 仓库类型 -->
-              <div class="ware_type"></div>
-              <!-- 余额 -->
-              <div class="balance" v-if="item.amountBalance !== ''">
-                <span class="symbol">余额: </span>{{item.amountBalance| toFixed | numberComma}}
-              </div>
-            </div>
-          </div>
-        </template>
-      </r-scroll>
+        </div>
+      </div>
       <!-- 点击展开状态 -->
       <div v-transfer-dom>
         <popup v-model="flowShow" position="bottom" height="80%">
@@ -240,32 +248,277 @@
 </template>
 
 <script>
-import TabItem from 'components/public/sub-tab'
 import listCommon from 'mixins/kmListCommon'
+import {getListClassfiy, getViewList} from 'service/kmService'
 import { toFixed } from '@/plugins/calc'
+
+const BASE_PARAMS = {
+  page: 1,
+  limit: 20,
+  hasNext: true,
+  listData: [],
+};
+
 export default {
   data() {
     return {
       uniqueId: 9000,
       showContent: false,
-      handleLoadding: false,
       filterArr: [
         {operator: 'like', value: '', property: 'dealerCode'}
       ],
+      listMap: {},
     }
   },
-  components:{
-    TabItem
+  computed: {
+    // 当前滑块
+    currentItem() {
+      let {view_id} = this.listView[this.activeIndex];
+      return this.listMap[view_id];
+    },
+    // 当前滚动容器
+    currentScroll() {
+      return this.$refs.bScroll[this.activeIndex]
+    },
+    // 搜索提示文字
+    tipsWord() {
+      let currentView = this.view_id;
+      let viewList = {
+        view_12: '往来名称/往来编码/往来标签/账龄天数', 
+        view_50: '应用名称/往来编码/往来名称/往来标签/结算方式/账龄', 
+        view_58: '往来名称/往来编码/往来标签/账龄天数',
+        view_60: '往来名称/往来编码/往来标签/账龄天数'
+      };
+      if (viewList.hasOwnProperty(currentView)) return viewList[currentView];
+    }
   },
   mixins: [listCommon],
-  filters: { toFixed }
+  filters: { toFixed },
+  methods:{
+    // 重置列表条件
+    resetCondition() {
+      let {view_id} = this.listView[this.activeIndex];
+      this.listMap[view_id] = {...BASE_PARAMS};
+      this.currentScroll.scrollTo(0, 0);
+      this.currentScroll.resetPullDown();
+    },
+    // tab切换
+    tabClick(val, index) {
+      if (index === this.activeIndex) {
+        this.currentScroll.scrollTo(0, 0);
+        return;
+      }
+      this.activeIndex = index;
+      this.activeTab = val.view_name;
+      this.calc_rel_code = val.calc_rel_code;
+      this.view_id = val.view_id;
+      this.currentScroll.scrollTo(0, 0);
+      this.resetCondition();
+      this.listSwiper.slideTo(index);
+    },
+    //获取列表视图
+    getClassfiy() {
+      return getListClassfiy({
+        account_code: this.uniqueId,
+        device_type: 'phone'
+      }).then(({data = []}) => {
+        let [first = {}] = data;
+        let listMap = {};
+        data.forEach(item => {
+          listMap[item.view_id] = {...BASE_PARAMS};
+        });
+        this.listMap = listMap;
+        this.listView = data;
+        this.activeTab = first.view_name;
+        this.calc_rel_code = first.calc_rel_code;
+        this.view_id = first.view_id;
+        this.getView();
+        this.getListData();
+        this.initSwiper();
+        this.$nextTick(() => {
+          this.listSwiper.update();
+        })
+      })
+    },
+    //获取列表数据
+    getListData(noReset = false) {
+      let {page, limit} = this.currentItem;
+      return getViewList({
+        user_code: 1,
+        page: page,
+        limit: limit,
+        view_scope: 'data',
+        device_type: 'phone',
+        view_id: this.view_id,
+        filter: this.serachVal,
+        calc_rel_code: this.calc_rel_code,
+        start: (page - 1) * limit,
+      }).then(({data = [], total = 0}) => {
+        let bankMap = {
+          '交通银行': require('assets/iconfont/bank/bank_jt.png'),
+          '建设银行': require('assets/iconfont/bank/bank_js.png'),
+          '中国银行': require('assets/iconfont/bank/bank_zg.png'),
+          '招商银行': require('assets/iconfont/bank/bank_zs.png'),
+        };
+        this.currentItem.hasNext = total > (page - 1) * limit + data.length;
+        data.forEach(item => {
+          item.status = false;
+          if (item.cashInOrOut) {
+            switch (item.cashInOrOut) {
+              case '流入':
+                item.flowIconClass = 'iconfont icon-shangjiantou';
+                item.flowWordClass = 'cashIn';
+                break;
+              case '流出':
+                item.flowIconClass = 'iconfont icon-xiajiantou-copy';
+                item.flowWordClass = 'cashOut';
+                break;
+            }
+          }
+          if (this.activeTab.includes('资金账户余额')) {
+            item.icon = bankMap[item.bank];
+          } else if (this.activeTab.includes('现金流计划表')) {
+            item.appIcon = `/dist/${item.appIcon}`;
+          }
+        });
+        this.listData = page === 1 ? data : this.listData.concat(data);
+        this.currentItem.listData = page === 1 ? data : [...this.currentItem.listData, ...data];
+        if (!noReset) {
+          this.$nextTick(() => {
+            this.resetScroll();
+          })
+        }
+        // 判断最近有无新增数据
+        let text = '';
+        if (noReset && this.activeIndex === 0) {
+          if (this.total) {
+            text = total - this.total === 0 ? '暂无新数据' : text = `新增${total - this.total}条数据`;
+            this.$vux.toast.show({
+              text: text,
+              position: 'top',
+              width: '50%',
+              type: "text",
+              time: 700
+            })
+          }
+        }
+        //列表总数据缓存
+        if (this.activeIndex === 0 && page === 1) {
+          sessionStorage.setItem(this.applyCode, total);
+        }
+        this.$loading.hide();
+      }).catch(e => {
+        this.resetScroll();
+      })
+    },
+    //根据视图获取订单数据
+    async getList(noReset = false) {
+      await this.getView();
+      await this.getListData(noReset);
+    },
+    // 重置下拉刷新、上拉加载的状态
+    resetScroll() {
+      this.currentScroll.finishPullDown();
+      this.currentScroll.finishPullUp();
+    },
+    // 上拉加载
+    onPullingUp() {
+      this.currentItem.page++;
+      this.getListData();
+    },
+    // 下拉刷新
+    onPullingDown() {
+      this.currentItem.page = 1;
+      this.getData(true);
+    },
+    async getData(noReset) {
+      await this.getSession();
+      if (noReset) {
+        await this.getList(true).then(() => {
+          this.$nextTick(() => {
+            this.currentScroll.finishPullDown().then(() => {
+              this.currentScroll.finishPullUp();
+            });
+          })
+        });
+        return
+      }
+      await this.getList();
+    },
+    // 初始化swiper
+    initSwiper() {
+      this.$nextTick(() => {
+        this.listSwiper = new this.Swiper('.list-container', {
+          touchAngle: 30,
+          on: {
+            slideChangeTransitionStart: () => {
+              let index = this.listSwiper.activeIndex;
+              let tab = this.listView[index];
+              this.activeIndex = index;
+              this.activeTab = tab.view_name;
+              this.calc_rel_code = tab.calc_rel_code;
+              this.view_id = tab.view_id;
+              this.scrollToShow(index);
+              // 已有数据则不重新请求
+              if (this.currentItem.listData.length) {
+                return
+              }
+              //this.resetCondition();
+              this.getListData();
+            },
+          },
+        });
+      })
+    },
+    // 滑动显示完整名字
+    scrollToShow(index) {
+      let $container = this.$refs.tabContainer;
+      let paddingLeft = parseFloat(getComputedStyle($container).paddingLeft);
+      let $activate = this.$refs.tabs[index];
+      $container.scrollLeft = $activate.offsetLeft - paddingLeft;
+    },
+  },
+  created() {
+    //this.initSwiper();
+  }
 }
 </script>
 
 <style lang='scss' scoped>
   @import '~scss/subject/subList';
-  .list_wrapper {
-    height: calc(100% - 1rem);
+  .list-container {
+    height: calc(100% - .96rem);
+    .list_wrapper {
+      height: 100%;
+      background-color: #fff;
+    }
+  }
+  .tab-container {
+    display: flex;
+    align-items: center;
+    padding: 0 .15rem;
+    width: 100%;
+    height: .46rem;
+    color: #333;
+    white-space: nowrap;
+    overflow: auto;
+    box-sizing: border-box;
+    .tab-item {
+      line-height: .14rem;
+      font-size: .14rem;
+      & + .tab-item {
+        margin-left: .2rem;
+      }
+      &:last-child {
+      }
+      padding-right: .15rem;
+      &.active {
+        line-height: .18rem;
+        color: #3296FA;
+        font-size: .18rem;
+        font-weight: 600;
+      }
+    }
   }
   .verification-item-wrapper {
     color: #333;
@@ -479,5 +732,14 @@ export default {
         }
       }
     }
+  }
+  .red{
+    color: red;
+  }
+  .matter_name{
+    font-weight: 600;
+  }
+  .detail_font{
+    font-weight: 600;
   }
 </style>

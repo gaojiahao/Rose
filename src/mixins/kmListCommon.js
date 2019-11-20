@@ -68,8 +68,10 @@ export default {
     //搜索
     searchList({val = ''}) {
       this.serachVal = val;
-      this.resetCondition();
-      this.getListData();
+      if(this.listView.length){
+        this.resetCondition();
+        this.getListData();
+      }
     },
     getDefaultImg(item) {
       item.inventoryPic = require('assets/wl_default03.png');
@@ -284,6 +286,8 @@ export default {
     this.applyCode = this.$route.params.code;
     (async () => {
       await this.getClassfiy();
+      await this.getView();
+      await this.getListData();
     })()
   }
 }
