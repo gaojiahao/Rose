@@ -149,6 +149,7 @@ export default {
         // 输入框获取焦点，内容选中
         handleOnFocus(e) {
             event.currentTarget.select();
+            window.innerHeight = this.winHeight;
             return false;
         },
         handlerClickScanIcon(refKey){
@@ -682,7 +683,7 @@ export default {
         
         //待上架明细
         this.shelfList = undefined;
-
+        this.winHeight = window.innerHeight;
         this.materielMap = {};
 
         this.$refs.postCode.focus();
