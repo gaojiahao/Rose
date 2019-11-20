@@ -286,6 +286,8 @@ export default {
     this.applyCode = this.$route.params.code;
     (async () => {
       await this.getClassfiy();
+      await this.getView();
+      await this.getListData();
     })()
   }
 }
