@@ -148,8 +148,12 @@ export default {
     methods:{
         // 输入框获取焦点，内容选中
         handleOnFocus(e) {
-            event.currentTarget.select();
-            return false;
+            this.$refs.postCode.setAttribute('readonly', 'readonly');
+            setTimeout(() => {
+                this.$refs.postCode.removeAttribute('readonly');
+            }, 200);
+            // event.currentTarget.select();
+            // return false;
         },
         handlerClickScanIcon(refKey){
             this.$refs[refKey].focus();
@@ -679,14 +683,10 @@ export default {
         this.trayCode = '';
         //已扫箱码信息集合
         this.boxCodesMap = {};
-        window.winHeight = window.innerHeight;
         //待上架明细
         this.shelfList = undefined;
 
         this.materielMap = {};
-        window.addEventListener('resize', () => {
-            window.innerHeight = window.winHeight;
-        });
         this.$refs.postCode.focus();
         if(this.$route.query.transCode){
             this.transCode = this.$route.query.transCode;
