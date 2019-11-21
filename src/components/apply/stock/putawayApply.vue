@@ -13,7 +13,7 @@
                                 ref='postCode'
                                 class='property_val' 
                                 @change="handlerScanPostCode"
-                                @focus="handleOnFocus($event)" />
+                                @focus="handlePostOnFocus($event)" />
                             <i class="iconfont" @click="handlerClickScanIcon('postCode')">&#xe661;</i>
                         </div>
                     </div>
@@ -27,7 +27,7 @@
                                 placeholder="请扫码" 
                                @change="handlerScanSpinfo"
                                 class='property_val' 
-                                @focus="handleOnFocus($event)" />
+                                @focus="handleSpOnFocus($event)" />
                             <i class="iconfont" @click="handlerClickScanIcon('spCode')">&#xe661;</i>
                         </div>
                     </div>
@@ -41,7 +41,7 @@
                                 placeholder="请扫码" 
                                 @change="handlerScanBoxOrTrayCode"
                                 class='property_val' 
-                                @focus="handleOnFocus($event)" />
+                                @focus="handleBoxOnFocus($event)" />
                             <i class="iconfont" @click="handlerClickScanIcon('boxCode')">&#xe661;</i>
                         </div>
                     </div>
@@ -156,7 +156,27 @@ export default {
     },
     methods:{
         // 输入框获取焦点，内容选中
-        handleOnFocus(e) {
+         handleSpOnFocus(e) {
+            this.$refs.spCode.setAttribute('readonly', 'readonly');
+            setTimeout(() => {
+                this.$refs.spCode.removeAttribute('readonly');
+            }, 200);
+            event.currentTarget.select();
+            return false;
+        },
+        handlePostOnFocus(e) {
+            this.$refs.postCode.setAttribute('readonly', 'readonly');
+            setTimeout(() => {
+                this.$refs.postCode.removeAttribute('readonly');
+            }, 200);
+            event.currentTarget.select();
+            return false;
+        },
+        handleBoxOnFocus(e) {
+            this.$refs.boxCode.setAttribute('readonly', 'readonly');
+            setTimeout(() => {
+                this.$refs.boxCode.removeAttribute('readonly');
+            }, 200);
             event.currentTarget.select();
             return false;
         },

@@ -12,7 +12,7 @@
                                 ref='postCode'
                                 class='property_val' 
                                 @change="handlerScanPostCode"
-                                @focus="handleOnFocus($event)" />
+                                @focus="handlePostOnFocus($event)"/>
                             <i class="iconfont" @click="handlerClickScanIcon('postCode')">&#xe661;</i>
                         </div>
                     <div class="vux-1px-t">
@@ -25,7 +25,7 @@
                                 ref='trayCode'
                                 class='property_val' 
                                 @change="handlerScanTrayCode"
-                                @focus="handleOnFocus($event)" />
+                                @focus="handleTrayOnFocus($event)" />
                             <i class="iconfont" @click="handlerClickScanIcon('trayCode')">&#xe661;</i>
                         </div>
                     </div>
@@ -40,7 +40,7 @@
                                 placeholder="请扫码" 
                                 @change="handlerScanBoxCode"
                                 class='property_val' 
-                                @focus="handleOnFocus($event)" />
+                                @focus="handleBoxOnFocus($event)" />
                             <i class="iconfont" @click="handlerClickScanIcon('boxCode')">&#xe661;</i>
                         </div>
                     </div>
@@ -147,9 +147,28 @@ export default {
     },
     methods:{
         // 输入框获取焦点，内容选中
-        handleOnFocus(e) {
+        handleTrayOnFocus(e) {
+            this.$refs.trayCode.setAttribute('readonly', 'readonly');
+            setTimeout(() => {
+                this.$refs.trayCode.removeAttribute('readonly');
+            }, 200);
             event.currentTarget.select();
-            window.innerHeight = this.winHeight;
+            return false;
+        },
+        handlePostOnFocus(e) {
+            this.$refs.postCode.setAttribute('readonly', 'readonly');
+            setTimeout(() => {
+                this.$refs.postCode.removeAttribute('readonly');
+            }, 200);
+            event.currentTarget.select();
+            return false;
+        },
+        handleBoxOnFocus(e) {
+            this.$refs.boxCode.setAttribute('readonly', 'readonly');
+            setTimeout(() => {
+                this.$refs.boxCode.removeAttribute('readonly');
+            }, 200);
+            event.currentTarget.select();
             return false;
         },
         handlerClickScanIcon(refKey){
@@ -680,12 +699,10 @@ export default {
         this.trayCode = '';
         //已扫箱码信息集合
         this.boxCodesMap = {};
-        
         //待上架明细
         this.shelfList = undefined;
-        this.winHeight = window.innerHeight;
-        this.materielMap = {};
 
+        this.materielMap = {};
         this.$refs.postCode.focus();
         if(this.$route.query.transCode){
             this.transCode = this.$route.query.transCode;
