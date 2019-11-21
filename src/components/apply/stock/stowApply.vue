@@ -289,6 +289,7 @@ export default {
                     this.$refs.boxCode.focus();
                     return;
                 }else{
+                    scanVoice.success();
                     this.boxCodesMap[uuid] =uuid;
                     this.handlerAddBoxCodeToMatter();
                     this.scanCodeInfo.boxCode = '';

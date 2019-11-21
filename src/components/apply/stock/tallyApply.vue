@@ -219,7 +219,7 @@ export default {
                                         this.scanCodeInfo.boxCode = `${box.inventoryCode},${box.batchNo},${box.productionDate},${box.boxRule},${box.boxCode}`;
                                         this.handlerScanBoxCode(pallet);
                                     });
-                                    scanVoice.success;
+                                    scanVoice.success();
                                 }else{
                                     this.tostText = '此托盘没有关联的箱码信息!';
                                     this.showTost = true;
