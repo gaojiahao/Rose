@@ -24,9 +24,9 @@
                     <img class="verification_img" :src="item.appIcon">
                     <div class="verification_info">
                       <div class="app_name">{{item.appTitle}}</div>
-                      <div class="verification_info_item">
+                      <!-- <div class="verification_info_item">
                         <span class="verification_info_title">应用类型: </span>{{item.transName}}
-                      </div>
+                      </div> -->
                       <div class="verification_info_item">
                         <span class="verification_info_title">实例编码: </span>{{item.transCode}}
                       </div>
