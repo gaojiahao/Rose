@@ -14,7 +14,7 @@
                                 ref='trayCode'
                                 class='property_val' 
                                 @change="handlerScanTrayCode"
-                                @focus="handleOnFocus($event)" />
+                                @focus="handleTrayOnFocus($event)" />
                             <i class="iconfont" @click="handlerClickScanIcon('trayCode')">&#xe661;</i>
                         </div>
                     </div>
@@ -28,7 +28,7 @@
                                 ref='spCode'
                                 class='property_val' 
                                 @change="handlerScanSpCode"
-                                @focus="handleOnFocus($event)" />
+                                @focus="getSpFocus($event)" />
                             <i class="iconfont" @click="handlerClickScanIcon('spCode')">&#xe661;</i>
                         </div>
                     </div>
@@ -159,9 +159,19 @@ export default {
             this.$refs.trayCode.focus();
         },
         // 输入框获取焦点，内容选中
-        handleOnFocus(e) {
+        handleTrayOnFocus(e) {
+            this.$refs.trayCode.setAttribute('readonly', 'readonly');
+            setTimeout(() => {
+                this.$refs.trayCode.removeAttribute('readonly');
+            }, 200);
             event.currentTarget.select();
-            return false;
+        },
+        getSpFocus(e) {
+            this.$refs.spCode.setAttribute('readonly', 'readonly');
+            setTimeout(() => {
+                this.$refs.spCode.removeAttribute('readonly');
+            }, 200);
+            event.currentTarget.select();
         },
         handlerClickScanIcon(refKey){
             this.$refs[refKey].focus();

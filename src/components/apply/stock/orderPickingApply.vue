@@ -13,7 +13,7 @@
                                 placeholder="请扫码" 
                                 class='property_val' 
                                 @change="handlerScanPostCode"
-                                @focus="getFocus($event)" 
+                                @focus="getPostFocus($event)" 
                                 :style="{marginRight:'-.3rem'}"/>
                             <i class="iconfont">&#xe661;</i>
                         </div>
@@ -28,7 +28,7 @@
                                 placeholder="请扫码" 
                                 @change="handlerScanBoxOrTrayCode"
                                 class='property_val' 
-                                @focus="getFocus($event)" />
+                                @focus="getBoxFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
                         </div>
                     </div>
@@ -138,7 +138,18 @@ export default {
     },
     methods:{
         // 输入框获取焦点，内容选中
-        getFocus(e) {
+        getBoxFocus(e) {
+            this.$refs.boxCode.setAttribute('readonly', 'readonly');
+            setTimeout(() => {
+                this.$refs.boxCode.removeAttribute('readonly');
+            }, 200);
+            event.currentTarget.select();
+        },
+        getPostFocus(e) {
+            this.$refs.postCode.setAttribute('readonly', 'readonly');
+            setTimeout(() => {
+                this.$refs.postCode.removeAttribute('readonly');
+            }, 200);
             event.currentTarget.select();
         },
         isCheckAll(){
