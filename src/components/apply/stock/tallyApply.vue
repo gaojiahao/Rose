@@ -13,7 +13,7 @@
                                 placeholder="请扫码" 
                                 @change="handlerScanSpinfo"
                                 class='property_val' 
-                                @focus="handleOnFocus($event)" />
+                                @focus="getSpFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
                         </div>
                     </div>
@@ -27,7 +27,7 @@
                                 placeholder="请扫码" 
                                 @change="handlerScanBoxOrTrayCode"
                                 class='property_val' 
-                                @focus="handleOnFocus($event)" />
+                                @focus="getBoxFocus($event)" />
                             <i class="iconfont">&#xe661;</i>
                         </div>
                     </div>
@@ -138,7 +138,18 @@ export default {
     },
     methods:{
         // 输入框获取焦点，内容选中
-        handleOnFocus(e) {
+         getBoxFocus(e) {
+            this.$refs.boxCode.setAttribute('readonly', 'readonly');
+            setTimeout(() => {
+                this.$refs.boxCode.removeAttribute('readonly');
+            }, 200);
+            event.currentTarget.select();
+        },
+        getSpFocus(e) {
+            this.$refs.spCode.setAttribute('readonly', 'readonly');
+            setTimeout(() => {
+                this.$refs.spCode.removeAttribute('readonly');
+            }, 200);
             event.currentTarget.select();
         },
         //扫库位以确定库位信息
