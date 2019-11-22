@@ -150,7 +150,7 @@
               }
               break;
             case 'A':
-              aClassAmt = accAdd(aClassAmt, item.amount);
+              aClassAmt = accAdd(aClassAmt, item.amount||0);
               break;
             case '其他A类':
               listSalesAmt.unshift({
