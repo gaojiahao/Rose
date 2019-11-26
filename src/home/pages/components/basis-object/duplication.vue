@@ -36,6 +36,12 @@
                 <span class='icon-right'></span>
               </div>
             </div>
+            <!-- 百分符 -->
+            <div class='each_property ' v-if="dItem.editorType === 'r2Percentfield'">
+              <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
+              <!-- <input type='number' v-model.number="sItem[dItem.fieldCode]" placeholder="请输入" class='property_val'/> -->
+              <input type='number' v-model.number="sItem['disRate']" placeholder="请输入" class='property_val' @blur="getPercent($event,dIndex,item,dItem)"/>%
+            </div>
           </template>
           <!--不可编辑的字段 -->
           <template  v-else>
@@ -64,6 +70,8 @@
 <script>
 import RPicker from 'components/public/basicPicker';
 import { requestData } from 'service/commonService';
+import { accMul, accDiv } from "plugins/calc/decimalsAdd";
+import {toFixed} from '@/plugins/calc';
 export default {
   name: 'duplicateComponent',
   props: {
@@ -97,6 +105,13 @@ export default {
     defaultValue: {
       handler(val){
         this.duplicateData = JSON.parse(JSON.stringify(this.defaultValue))
+        if(this.duplicateData['taxDealerRel']&&this.duplicateData['taxDealerRel'].length){
+          for(var i =0 ; i<this.duplicateData['taxDealerRel'].length;i++){
+            if(this.duplicateData['taxDealerRel'][i].trTaxRate&&!this.duplicateData['taxDealerRel'][i]['disRate']){
+              this.duplicateData['taxDealerRel'][i]['disRate'] = this.getPercent2(this.duplicateData['taxDealerRel'][i].trTaxRate);
+            }
+          }
+        }
       },
       deep : true
     },
@@ -250,7 +265,21 @@ export default {
     //输入框获取焦点时内容选中
     getFocus(e){
       event.currentTarget.select();
-    }
+    },
+    getPercent(e,dIndex,item,dItem){
+      var value = e.target.value;
+      value = this.getNum(value);
+      e.target.value = value;
+      this.defaultValue[item.name][0]['disRate'] = value;
+      this.defaultValue[item.name][0][dItem.fieldCode] = accDiv(value,100);
+      //this.setValue(accDiv(value,100));
+    },
+    getPercent2(value){
+      return accMul(value,100);
+    },
+    getNum(val) {
+      return Math.abs(Math.round(val));
+    },
   }
 
 }
