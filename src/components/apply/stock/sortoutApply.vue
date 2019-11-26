@@ -89,7 +89,7 @@ import {
     submitAndCalc, 
     getPriceFromSalesContractAndPrice, 
     updateData} from 'service/commonService'
-import { getSortingByBoxCode, autoConfirmStockPick, getSortOutData ,getSortOutBoxInfoByPallet} from 'service/wmsService'
+import { getSortingByBoxCode, autoConfirmStockPick, releaseSortingOrder, getSortOutData ,getSortOutBoxInfoByPallet} from 'service/wmsService'
 import WebContext from 'service/commonService'
 import { getSOList } from 'service/detailService'
 // mixins 引入
@@ -314,7 +314,7 @@ export default {
                                 containerCodeOut: box.warehouseCode,
                                 warehouseName_storehouseOutCode: box.storehouseName,
                                 storehouseOutCode: box.storehouseCode,
-                                tdQty:box.qty,
+                                tdQty: this.curQrCodeInfo.boxRule,
                                 batchNo: box.batchNo,
                                 productionDate: dateFormat(box.productionDate,'YYYY-MM-DD'),
                                 boxRule:this.curQrCodeInfo.boxRule,
@@ -488,23 +488,35 @@ export default {
                         biComment: '',
                         biReferenceId:this.biReferenceId,
                         formData:JSON.stringify(formData)
-                    };
+                    }, matCodeCollection  = [];
                     
+                    formData.outPut.dataSet.forEach(val => {
+                        matCodeCollection.push(val.inventoryCode);
+                    })
+
                     let opeartion = submitAndCalc;
                     if(this.isModify){
                         opeartion = updateData;
                     }else{
                         delete submitData.biReferenceId;
                     }
-                    this.saveData(opeartion,submitData);
+                    this.saveData(opeartion,submitData,matCodeCollection);
                 }
             })
         },
-        saveData(request, submitData) {
+        saveData(request, submitData,matCodeCollection) {
             request(submitData).then(data => {
                 this.$HandleLoad.hide();
                 let {success = false, message = '提交失败'} = data;
                 if (success) {
+                    releaseSortingOrder(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res => {
+                        if(!res.success){
+                            this.$vux.toast.show({
+                                type: 'warn',
+                                text: res.message
+                            });
+                        }
+                    });
                     this.$vux.confirm.show({
                         content:"分拣成功，是否生成出库单？",
                         onConfirm:()=>{

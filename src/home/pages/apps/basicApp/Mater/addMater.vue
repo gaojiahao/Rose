@@ -10,44 +10,63 @@
       <div v-for="(item, index) in matterConfig" :key="index" class="each-info">
         <template v-if="!item.readOnly">
           <!-- 下拉框 -->
-          <template v-if="(item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.fieldCode !== 'technicsCode' && item.fieldCode !== 'inventoryStatus'">
+          <template v-if="!item.isService && (item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.fieldCode !== 'technicsCode' && item.fieldCode !== 'inventoryStatus'">
             <r-picker class="vux-1px-t" :title="item.fieldLabel" :data="item.remoteData" :value="inventory[item.fieldCode]" 
                       v-model="inventory[item.fieldCode]" :required="!item.allowBlank" ></r-picker>
           </template>
           <!-- 输入框（数字） -->
-          <template v-else-if="item.xtype === 'r2Numberfield'">
+          <template v-else-if="!item.isService && item.xtype === 'r2Numberfield'">
             <div class='each_property vux-1px-t'>
               <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
               <input type='number' class='property_val' placeholder="请输入" v-model.number="inventory[item.fieldCode]" @focus="getFocus($event)"/>
             </div>
           </template>
           <!-- 输入框（文字） -->
-          <template v-else-if="item.xtype === 'r2Textfield'">
+          <template v-else-if="!item.isService && !item.isProcurement && !item.isCustomerSupplier && item.xtype === 'r2Textfield'">
             <div class='each_property vux-1px-t'>
               <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
               <input type='text' class='property_val' placeholder="请输入" v-model="inventory[item.fieldCode]" @focus="getFocus($event)"/>
             </div>
           </template>
           <!-- 日期 -->
-          <template v-else-if="item.xtype === 'r2Datefield'">
+          <template v-else-if="!item.isService && item.xtype === 'r2Datefield'">
             <div class='each_property' @click="getDate(inventory,item)">
               <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
               <span class='property_val'>{{inventory[item.fieldCode] || "请选择"}}</span>
             </div>
           </template>
+          <!-- 多行文本 -->
+          <template v-else-if="item.xtype === 'r2TextArea'">
+            <div class='each_property'>
+              <x-textarea 
+                class='property_val textRight'
+                v-model="inventory[item.fieldCode]" 
+                placeholder="请输入"
+                @focus="getFocus($event)">
+                <template slot="label">
+                <label 
+                    :class="{required : !item.allowBlank}" 
+                    style="display:block;margin-left:-.15rem;">{{item.fieldLabel}}</label>
+                </template>
+              </x-textarea>
+            </div>
+          </template>
           <!-- pop组件 -->
-          <template v-else-if="item.xtype === 'r2Selector'">
+          <template v-else-if="!item.isService && !item.isProcurement && !item.isCustomerSupplier && item.xtype === 'r2Selector'">
+            <pop-selector @sel-item="selSelectorName" :default-value="inventory" :itemData="item" class="vux-1px-t"></pop-selector>
+          </template>
+          <!-- <template v-else-if="!item.isService && !item.isProcurement && item.fieldCode === 'procedureName'">
             <pop-procedure-list @sel-item="selProcedure" :default-value="inventory" class="vux-1px-t"></pop-procedure-list>
           </template>
-          <template v-else-if="item.fieldCode === 'technicsCode'">
+          <template v-else-if="!item.isService && !item.isProcurement && item.fieldCode === 'technicsName'">
             <pop-technics-list class="vux-1px-t" @sel-item="selTechnics" :default-value="inventory"></pop-technics-list>
-          </template>
-          <template v-else-if="item.fieldCode === 'inventoryStatus'">
+          </template> -->
+          <template v-else-if="!item.isService && !item.isProcurement && item.fieldCode === 'inventoryStatus'">
             <r-picker class="vux-1px-t" :title="item.fieldLabel" :data="item.remoteData" :value="inventoryStatus" 
                       v-model="inventoryStatus" :required="!item.allowBlank" ></r-picker>
           </template>
         </template>
-        <template v-else-if="item.xtype !== 'r2Spacer'">
+        <template v-else-if="!item.isService && !item.isProcurement && !item.isCustomerSupplier && item.xtype !== 'r2Spacer'">
           <div class='each_property readonly vux-1px-t'>
             <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
             <input type='text' disabled class='property_val' v-model="inventory[item.fieldCode]"/>
@@ -55,7 +74,7 @@
         </template>
       </div>
       <!-- 重复项 -->
-      <duplicate-component :config="matterDuplicateConfig" :defaultValue="matterDuplicateData" v-model="matterDuplicateData"></duplicate-component>
+      <duplicate-component v-if="!isService" :config="matterDuplicateConfig" :defaultValue="matterDuplicateData" v-model="matterDuplicateData"></duplicate-component>
     </r-scroll>
     <div class='btn vux-1px-t'>
       <div class="cfm_btn" @click="save">{{this.transCode? '保存':'提交'}}</div>
@@ -72,7 +91,9 @@ import RPicker from 'components/public/basicPicker';
 import UploadImage from 'components/upload/UploadImage'
 import PopTechnicsList from 'components/Popup/matter/PopTechnicsList'
 import PopProcedureList from 'components/Popup/matter/PopProcedureList'
+import PopSelector from 'components/Popup/matter/PopSelector'
 import duplicateComponent from 'homePage/components/basis-object/duplication'
+import { XTextarea } from 'vux'
 // mixins引入
 import common from 'mixins/common'
 // 插件引入
@@ -125,12 +146,13 @@ export default {
       picShow: false,                   // 是否展示图片
       codeReadOnly: false,              // 物料编码是否只读
       submitSuccess: false,             // 是否提交成功
+      isService: false
     }
   },
   mixins: [common],
   components: {
-    RPicker, UploadImage, RScroll,  
-    PopTechnicsList, PopProcedureList, duplicateComponent
+    RPicker, UploadImage, RScroll, XTextarea, 
+    PopTechnicsList, PopProcedureList, duplicateComponent, PopSelector
   },
   computed: {
     // 临保天数
@@ -186,8 +208,23 @@ export default {
     // 监听 物料属性
     'inventory.processing'(val) {
       let [ value, config, inventory, typeParentId ] = [ '', this.matterConfig, this.inventory, '' ];
+
+      val === '服务' ? this.isService = true : this.isService = false;
       setTimeout(() => {
         for (let item of config) {
+          if(item.r2Bind && item.r2Bind.hidden){
+            if(item.r2Bind.hidden === '{isService}' || item.r2Bind.hidden === '{isService || procurement}'){
+              if(val === '服务'){
+                item.isService = true;
+              }else{
+                item.isService = false;
+              }
+            }else{
+              if(item.r2Bind.hidden !== '{!isCustomerSupplier}') item.isService = true;
+            }
+          }else{
+            item.isService = false;
+          }
           // 物料属性 
           if (item.fieldCode === 'processing') {
             if (item.remoteData) {
@@ -248,6 +285,30 @@ export default {
           }
         }
       }, 0)
+    },
+    // 监听 获取方式
+    'inventory.multipleAccess'(val) {
+        for(let item of this.matterConfig){
+          if(item.r2Bind && item.r2Bind.hidden){
+              if(item.r2Bind.hidden === '{isService || procurement}'){
+                if(val === '采购'){
+                  item.isProcurement = true;
+                }else{
+                  item.isProcurement = false;
+                }
+              }else if(item.r2Bind.hidden === '{!isCustomerSupplier}'){
+                if(val === '客供'){
+                  item.isCustomerSupplier = false;
+                }else{
+                  item.isCustomerSupplier = true;
+                }
+              }else{
+                item.isProcurement = false;
+              }
+            }else{
+              item.isProcurement = false;
+            }
+        }
     },
     // 监听 物料大类
     'inventory.inventoryType'(val) {
@@ -553,8 +614,8 @@ export default {
       });
       return warn;
     },
-    // 选择工序名称
-    selProcedure(val) {
+    // 选择名称
+    selSelectorName(val) {
       this.inventory = {
         ...this.inventory,
         procedureName: val.procedureName,
@@ -652,6 +713,25 @@ export default {
             }
           }
         })
+        this.matterConfig.forEach(item => {
+          if(item.r2Bind && item.r2Bind.hidden){
+            if(item.r2Bind.hidden === '{isService}'){
+              item.isService = false;
+              item.isProcurement = false;
+            }else if(item.r2Bind.hidden === '{isService || procurement}'){
+              item.isService = false;
+              item.isProcurement = false;
+            }else if(item.r2Bind.hidden === '{!isCustomerSupplier}'){
+              item.isCustomerSupplier = true;
+            }else{
+              item.isService = true;
+              item.isProcurement = true;
+            }
+          }else{
+            item.isService = false;
+            item.isProcurement = false;
+          }
+        })
         // 处理 物料 *重复项* 配置
         matterDuplicateConfig.forEach(item => {
           switch(item.name) {
@@ -744,6 +824,10 @@ export default {
 
     }
   }
+  .textRight /deep/ .weui-textarea{
+    text-align: right;
+    margin-left: .36rem;
+}
 </style>
 
 
