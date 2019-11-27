@@ -294,7 +294,8 @@ export default {
                 
                 this.trayCode = this.scanCodeInfo.boxCode;
                 getBoxInfoByMD({
-                    pallet:this.trayCode
+                    pallet:this.trayCode,
+                    transCode:this.postCode
                 }).then(res=>{
                     if(res.dataCount){
                         scanVoice.success();
