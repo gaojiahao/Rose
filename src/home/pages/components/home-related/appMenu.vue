@@ -39,7 +39,7 @@ export default {
             }
             path = basicMap[listId];
             if(path){
-                this.$router.push({ path: path });
+                this.$router.push({ name: path,params: {listId:listId}});
             } else{
                 this.$router.push({
                     path: `/list/${folder}/${fileName}`,

@@ -111,7 +111,7 @@
       selThis(sItem, sIndex) {
         this.selItems = {...sItem};
         this.showPop = false;
-        this.$emit('sel-item', {...sItem});
+        this.$emit('sel-item', {sItem:sItem,type:this.itemData['fieldCode']});
       },
       // 获取用户列表
       getList() {
