@@ -3,7 +3,7 @@
   <div class="duplicate-wrapper" v-for="(item, index) in duplicateConfig" :key="`${item.name}+${index}`">
     <template v-if="!item.hiddenInRun">
       <div class="title" v-if="duplicateData[item.name] && !duplicateData[item.name].length">
-      <div class="each_property">
+      <div class="each_property1">
         <label>{{item.title}}</label>
         <span class="add" @click="addMoreUnit(item)">新增</span>
       </div>
@@ -19,17 +19,17 @@
                     @on-change="onChange($event, index, dItem, sItem)"
                     v-if="dItem.editorType === 'r2Combo' || dItem.editorType === 'r2Selector'"></r-picker>
             <!-- 输入框（数字） -->
-            <div class='each_property ' v-if="dItem.editorType === 'r2Numberfield'">
+            <div class='each_property1 ' v-if="dItem.editorType === 'r2Numberfield'">
               <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
               <input type='number' v-model.number="sItem[dItem.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
             </div>
             <!-- 输入框（文字） -->
-            <div class='each_property' v-if="dItem.editorType === 'r2Textfield'">
+            <div class='each_property1' v-if="dItem.editorType === 'r2Textfield'">
               <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
               <input type='text' v-model="sItem[dItem.fieldCode]" placeholder="请输入" class='property_val' @focus="getFocus($event)"/>
             </div>
             <!-- 日期 -->
-            <div class='each_property' v-if="dItem.editorType === 'r2Datefield'" @click="getDate(sItem,dItem)">
+            <div class='each_property1' v-if="dItem.editorType === 'r2Datefield'" @click="getDate(sItem,dItem)">
               <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
               <div class='picker'>
                 <span class='mater_nature'>{{sItem[dItem.fieldCode] || "请选择"}}</span>
@@ -37,7 +37,7 @@
               </div>
             </div>
             <!-- 百分符 -->
-            <div class='each_property ' v-if="dItem.editorType === 'r2Percentfield'">
+            <div class='each_property1 ' v-if="dItem.editorType === 'r2Percentfield'">
               <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
               <!-- <input type='number' v-model.number="sItem[dItem.fieldCode]" placeholder="请输入" class='property_val'/> -->
               <input type='number' v-model.number="sItem['disRate']" placeholder="请输入" class='property_val' @blur="getPercent($event,dIndex,item,dItem)"/>%
@@ -45,7 +45,7 @@
           </template>
           <!--不可编辑的字段 -->
           <template  v-else>
-            <div class='each_property readOnly'>
+            <div class='each_property1 readOnly'>
               <label :class="{required: !dItem.allowBlank}">{{dItem.text}}</label>
               <span class='property_val'>{{sItem[dItem.fieldCode]}}</span>
             </div>

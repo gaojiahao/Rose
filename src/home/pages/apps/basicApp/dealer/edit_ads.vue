@@ -2,16 +2,16 @@
   <div class='childPage dealer-page'>
     <r-scroll :options="scrollOptions" class="content" ref="bScroll">
       <div class='mater_baseinfo'>
-        <div class="mater_pic">
+        <div class="mater_pic1">
           <span class="title">往来照片</span>
           <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
         </div>
       </div>
-      <div class="each-info" v-for="(item, index) in dealerConfig" :key="index">
+      <div class="each-info1" v-for="(item, index) in dealerConfig" :key="index">
         <template v-if="!item.hiddenInRun">
           <template v-if="item.fieldCode !== 'dealerLabelName' && item.fieldCode !== 'dealerStatus'" >
             <!-- 输入框（文字字） -->
-            <div class='each_property vux-1px-t' v-if="item.xtype === 'r2Textfield'">
+            <div class='each_property1 vux-1px-t' v-if="item.xtype === 'r2Textfield'">
               <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
               <div class='property_val' >
                 <input type='text' placeholder="请输入" v-model="dealer[item.fieldCode]"  @blur="check(item)" @focus="getFocus($event)"/>
@@ -19,7 +19,7 @@
               </div> 
             </div>
             <!-- 输入框（数字） -->
-            <div class='each_property vux-1px-t' v-if="item.xtype === 'r2Numberfield'">
+            <div class='each_property1 vux-1px-t' v-if="item.xtype === 'r2Numberfield'">
               <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
               <div class='property_val' >
                 <input type='number' placeholder="请输入" v-model.number="dealer[item.fieldCode]" @blur="check(item)" @focus="getFocus($event)"/>
@@ -37,7 +37,7 @@
           </template>
           <!-- 往来类型 -->
           <template v-else>
-            <div class='each_property vux-1px-t' @click="DealerPop">
+            <div class='each_property1 vux-1px-t' @click="DealerPop">
               <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
               <div class='picker'>
                   <span class='mater_nature'>{{dealer[item.fieldCode] || "请选择"}}</span>
@@ -72,7 +72,7 @@
     </div>
     <!--提交按钮-->
     <div class='btn vux-1px-t'>
-      <div class="cfm_btn" @click="save" :class='{disabled : disabledSubmit}'>
+      <div class="cfm_btn1" @click="save" :class='{disabled : disabledSubmit}'>
         {{this.transCode ? '保存':'提交'}}
       </div>
     </div>
@@ -862,7 +862,7 @@ export default {
   .dealer-page{
     background: #f6f6f6;
   }
-  .each_property{
+  .each_property1{
     .property_val{
       display: flex;
       input{
