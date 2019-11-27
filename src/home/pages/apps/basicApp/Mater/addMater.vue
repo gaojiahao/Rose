@@ -2,12 +2,12 @@
   <div class='childPage matter-page'>
     <r-scroll :options="scrollOptions" class='content'>
       <div class='mater_baseinfo'>
-        <div class="mater_pic">
+        <div class="mater_pic1">
           <span class="title">物料照片</span>
           <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
         </div>
       </div>
-      <div v-for="(item, index) in matterConfig" :key="index" class="each-info">
+      <div v-for="(item, index) in matterConfig" :key="index" class="each-info1">
         <template v-if="!item.readOnly">
           <!-- 下拉框 -->
           <template v-if="!item.isService && (item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.fieldCode !== 'technicsCode' && item.fieldCode !== 'inventoryStatus'">
@@ -16,21 +16,21 @@
           </template>
           <!-- 输入框（数字） -->
           <template v-else-if="!item.isService && item.xtype === 'r2Numberfield'">
-            <div class='each_property vux-1px-t'>
+            <div class='each_property1 vux-1px-t'>
               <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
               <input type='number' class='property_val' placeholder="请输入" v-model.number="inventory[item.fieldCode]" @focus="getFocus($event)"/>
             </div>
           </template>
           <!-- 输入框（文字） -->
           <template v-else-if="!item.isService && !item.isProcurement && !item.isCustomerSupplier && item.xtype === 'r2Textfield'">
-            <div class='each_property vux-1px-t'>
+            <div class='each_property1 vux-1px-t'>
               <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
               <input type='text' class='property_val' placeholder="请输入" v-model="inventory[item.fieldCode]" @focus="getFocus($event)"/>
             </div>
           </template>
           <!-- 日期 -->
           <template v-else-if="!item.isService && item.xtype === 'r2Datefield'">
-            <div class='each_property' @click="getDate(inventory,item)">
+            <div class='each_property1' @click="getDate(inventory,item)">
               <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
               <span class='property_val'>{{inventory[item.fieldCode] || "请选择"}}</span>
             </div>
@@ -67,7 +67,7 @@
           </template>
         </template>
         <template v-else-if="!item.isService && !item.isProcurement && !item.isCustomerSupplier && item.xtype !== 'r2Spacer'">
-          <div class='each_property readonly vux-1px-t'>
+          <div class='each_property1 readonly vux-1px-t'>
             <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
             <input type='text' disabled class='property_val' v-model="inventory[item.fieldCode]"/>
           </div>
@@ -77,7 +77,7 @@
       <duplicate-component v-if="!isService" :config="matterDuplicateConfig" :defaultValue="matterDuplicateData" v-model="matterDuplicateData"></duplicate-component>
     </r-scroll>
     <div class='btn vux-1px-t'>
-      <div class="cfm_btn" @click="save">{{this.transCode? '保存':'提交'}}</div>
+      <div class="cfm_btn1" @click="save">{{this.transCode? '保存':'提交'}}</div>
     </div>
   </div>
 </template>

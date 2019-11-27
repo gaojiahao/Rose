@@ -2,15 +2,15 @@
   <div class='pages warehouse-page'>
     <r-scroll class='content' :options="scrollOptions">
       <div class='mater_baseinfo'>
-        <div class="mater_pic">
+        <div class="mater_pic1">
           <span class="title">仓库照片</span>
           <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
         </div>
       </div>
-      <div v-for="(item, index) in warehouseConfig" :key="index" class="each-info">
+      <div v-for="(item, index) in warehouseConfig" :key="index" class="each-info1">
         <template  v-if="!item.hiddenInRun">
           <!-- 文本框 -->
-          <div class='each_property vux-1px-t' v-if="item.xtype === 'r2Textfield'">
+          <div class='each_property1 vux-1px-t' v-if="item.xtype === 'r2Textfield'">
             <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}</label>
             <input type='text' v-model="warehouse[item.fieldCode]" placeholder="请填写" class='property_val' />
           </div>
@@ -37,7 +37,7 @@
           </template>
           <!-- 省市区 -->
           <template v-else-if="item.fieldCode === 'warehouseProvince'">
-            <div class='each_property vux-1px-t' @click="showAddress = true">
+            <div class='each_property1 vux-1px-t' @click="showAddress = true">
               <label>省市区</label>
               <div class='picker'>
                 <span class='mater_nature' v-if="warehouse.warehouseProvince === '' && warehouse.warehouseCity === '' 
@@ -60,7 +60,7 @@
                         :defaultValue="typeSubMap[typeSub].value" @sel-group="selGroup" @list-search="getTypeSubList">
     </pop-warelabe-list> -->
     <div class='btn '>
-      <div class="cfm_btn" @click="save">{{this.transCode ? '保存' : '提交'}}</div>
+      <div class="cfm_btn1" @click="save">{{this.transCode ? '保存' : '提交'}}</div>
     </div>
   </div>
 </template>
