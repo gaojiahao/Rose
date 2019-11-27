@@ -40,9 +40,9 @@
 
 <script>
   import {Tab, Icon, TabItem,} from 'vux'
-  import {getList, getDictByType, getListViewById} from 'service/commonService'
+  import {getList, getDictByType} from 'service/commonService'
   import {getMatList} from 'service/materService'
-  import {getAppDetail} from 'service/app-basic/appSettingService'
+  import {getAppDetail,getListMobileView} from 'service/app-basic/appSettingService'
   import RScroll from 'plugins/scroll/RScroll'
   import RSearch from 'components/search/search'
   import addBtn from 'components/list/commonPart/addBtn'
@@ -179,7 +179,7 @@
           limit: this.limit,
           page: this.page,
           filter: JSON.stringify(filter),
-          listViewID: 2132,
+          listViewID: this.listViewId,
           sort: JSON.stringify([
             {property: 'effectiveTime', direction: 'desc'},
             {property: 'inventoryName', direction: 'desc'}
@@ -290,7 +290,7 @@
       },
       // 获取列表展示字段
       getListViewById() {
-        return getListViewById('eae9040e-bcb3-4ab9-bef6-639041b1d21b').then(([data = {}]) => {
+        return getListMobileView(this.$route.params.listId).then(([data = {}]) => {
           let content = JSON.parse(data.content || '{}');
           let {fields = []} = content;
           let showFieldList = [
@@ -299,6 +299,7 @@
             'measureUnit',
             'processing',
           ];
+          this.listViewId = data.id;
           this.listFields = fields.filter(item => !item.isHidden && showFieldList.includes(item.fieldCode));
         })
       },
