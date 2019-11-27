@@ -374,6 +374,7 @@ export default {
                 scanVoice.error();
                 return;
             }
+            scanVoice.success();
             this.boxCodesMap[uuid] =uuid;
             this.handlerAddBoxCodeToMatter();
             this.scanCodeInfo.boxCode = '';

@@ -503,14 +503,14 @@ export default {
                 this.$HandleLoad.hide();
                 let {success = false, message = '提交失败'} = data;
                 if (success) {
-                    releaseSortingOrder(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res => {
-                        if(!res.success){
-                            this.$vux.toast.show({
-                                type: 'warn',
-                                text: res.message
-                            });
-                        }
-                    });
+                    // releaseSortingOrder(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res => {
+                    //     if(!res.success){
+                    //         this.$vux.toast.show({
+                    //             type: 'warn',
+                    //             text: res.message
+                    //         });
+                    //     }
+                    // });
 
                     this.$vux.alert.show({
                         content: message,

@@ -132,7 +132,8 @@ export default {
       dealerDuplicateConfig: [], // 往来重复项的配置
       dealerDuplicateData: {}, // 往来重复项数据,
       uniqueId: '',
-      hasDefault: false
+      hasDefault: false,
+      dealerLabelName:''
     }
   },
   computed: {
@@ -140,11 +141,11 @@ export default {
     disabledSubmit() {
       return this.PhoneWarn || this.MobileWarn || this.EmailWarn || this.codeWarn;
     },
-    dealerLabelName() {
-      return this.dealer.dealerLabelName
-    },
-    mianTypes() {
-      return this.dealer.mianTypes
+    // dealerLabelName() {
+    //   return this.dealer.dealerLabelName
+    // },
+    mainTypes() {
+      return this.dealer.mainTypes
     },
     country() {
       return this.dealer.country
@@ -183,13 +184,30 @@ export default {
         })
       }
     },
-    mianTypes(val) {
+    mainTypes(val) {
       if (val){
         for (let item of this.dealerConfig) {
           // 主题类型为机构时，税号显示
           if (item.fieldCode === 'taxNo') {
             item.hiddenInRun = val === '机构' ? false : true;
-            break
+          }
+          if (item.fieldCode === 'officialWebsite') {
+            item.hiddenInRun = val === '机构' ? false : true;
+          }
+          if (item.fieldCode === 'dealerCurrency') {
+            item.hiddenInRun = val === '机构' ? false : true;
+          }
+          if (item.fieldCode === 'paymentTerm') {
+            item.hiddenInRun = val === '机构' ? false : true;
+          }
+          if (item.fieldCode === 'wayOfPayment') {
+            item.hiddenInRun = val === '机构' ? false : true;
+          }
+          if (item.fieldCode === 'dealerLogisticsTerms') {
+            item.hiddenInRun = val === '机构' ? false : true;
+          }
+           if (item.fieldCode === 'methodOfPayment') {
+            item.hiddenInRun = val === '机构' ? false : true;
           }
         }
       } 
@@ -363,9 +381,7 @@ export default {
           }
           this.dealerType.push(obj);
         })
-        
       }
-     
     },
     onShow() {
       this.$nextTick(() => {
@@ -402,6 +418,7 @@ export default {
         }
         this.dealer.dealerLabelName += item.name
       })
+      this.dealerLabelName = this.dealer.dealerLabelName
     },
     // 校验字段
     check(item, sItem){
@@ -486,6 +503,7 @@ export default {
           }
         this.baseinfo = {...this.baseinfo, ...baseinfo,};
         this.dealer = {...this.dealer, ...dealer,};
+        this.dealerLabelName = this.dealer.dealerLabelName;
         if (this.dealer.dealerPic.length>0) {
           this.picShow = true;
           this.MatPic = `/H_roleplay-si/ds/download?url=${this.dealer.dealerPic}&width=400&height=400`;
@@ -561,6 +579,7 @@ export default {
             }
           })
           if (this.transCode){
+            submitData.biReferenceId = this.dealer.referenceId;
             dealerService.update(submitData).then( data => {
               if (data.success){
                 this.submitSuccess = true;
@@ -754,6 +773,9 @@ export default {
               break;
             case 'dealerCertificateRel':
               item.title = '证件';
+              break;
+            case 'taxDealerRel':
+              item.title = '税率';
               break;
           }
           let arr = []
