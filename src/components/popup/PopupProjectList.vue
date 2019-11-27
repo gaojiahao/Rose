@@ -17,7 +17,7 @@
               {{item.name}}
             </div>
             <div class="matter_unit" v-if="item.amount">单价: ￥{{item.amount}}</div>
-            <div class="matter_unit" v-if="item.num5" style="display: none;">系数: {{item.num5}}</div>
+            <div class="matter_unit" v-if="item.num5" >系数: {{item.num5}}</div>
             <!-- icon -->
             <x-icon class="selIcon" type="ios-circle-outline" size="20"></x-icon>
             <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>

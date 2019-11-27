@@ -152,7 +152,7 @@
         let total = 0;
         this.arr.forEach(item => {
           if (item.qty) {
-            total = accAdd(total, accMul(item.qty, item.amount));
+            total = accAdd(total, accMul(item.qty, item.amount,item.num1));
           }
         });
         total = accAdd(total, this.Aclass);
