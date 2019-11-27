@@ -1,7 +1,7 @@
 <template>
   <div class='childPage matter-page'>
     <r-scroll :options="scrollOptions" class='content'>
-      <div class='mater_baseinfo'>
+      <div class='mater_baseinfo1'>
         <div class="mater_pic1">
           <span class="title">物料照片</span>
           <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
@@ -37,7 +37,7 @@
           </template>
           <!-- 多行文本 -->
           <template v-else-if="item.xtype === 'r2TextArea'">
-            <div class='each_property1'>
+            <div class='each_property vux-1px-t'>
               <x-textarea 
                 class='property_val textRight'
                 v-model="inventory[item.fieldCode]" 
@@ -76,7 +76,7 @@
       <!-- 重复项 -->
       <duplicate-component v-if="!isService" :config="matterDuplicateConfig" :defaultValue="matterDuplicateData" v-model="matterDuplicateData"></duplicate-component>
     </r-scroll>
-    <div class='btn vux-1px-t'>
+    <div class='btn1 vux-1px-t'>
       <div class="cfm_btn1" @click="save">{{this.transCode? '保存':'提交'}}</div>
     </div>
   </div>
@@ -207,6 +207,7 @@ export default {
     },
     // 监听 物料属性
     'inventory.processing'(val) {
+      //根据物料属性变化清空选择器内容
       let [ value, config, inventory, typeParentId ] = [ '', this.matterConfig, this.inventory, '' ];
 
       val === '服务' ? this.isService = true : this.isService = false;
@@ -218,6 +219,12 @@ export default {
                 item.isService = true;
               }else{
                 item.isService = false;
+              }
+            }else if(item.r2Bind.hidden === '{!isService}'){
+              if(val === '服务'){
+                item.isService = false;
+              }else{
+                item.isService = true;
               }
             }else{
               if(item.r2Bind.hidden !== '{!isCustomerSupplier}') item.isService = true;
@@ -267,8 +274,8 @@ export default {
               this.handleRequest(requestArr);
             })
           }
-          // 获取 物料大类
-          if (item.fieldCode === 'inventoryType') {
+          // 获取 物料子类
+          if (item.fieldCode === 'inventorySubclass') {
             Object.keys(item.requestParams.data).forEach(key => {
               if (key === 'parentId') {
                 item.requestParams.data[key] = typeParentId
@@ -278,7 +285,7 @@ export default {
               }
             })
             requestData(item.requestParams).then(({ tableContent }) => {
-              const requestArr = ['inventoryType', 'name', item, tableContent];
+              const requestArr = ['inventorySubclass', 'name', item, tableContent];
               // 处理数据
               this.handleRequest(requestArr);
             })
@@ -434,14 +441,6 @@ export default {
         item.invCompQty = Math.abs(toFixed(invCompQty));
       }
     },
-    // 选择工艺路线名称
-    selTechnics(val) {
-      this.inventory = {
-        ...this.inventory,
-        technicsName: val.technicsName,
-        technicsCode: val.technicsCode,
-      };
-    },
     // 提交/修改物料
     save() {
       let requiredMap = {
@@ -508,9 +507,6 @@ export default {
           content: warn,
         });
         return
-      }
-      if(this.inventory.inventoryCode != ''){
-        delete this.inventory.inventoryCode;
       }
       let formData = {
         baseinfo: this.baseinfo,
@@ -616,11 +612,36 @@ export default {
     },
     // 选择名称
     selSelectorName(val) {
-      this.inventory = {
-        ...this.inventory,
-        procedureName: val.procedureName,
-        procedureCode: val.procedureCode,
-      };
+      switch(val.type) {
+        case 'technicsName':
+          this.inventory = {
+            ...this.inventory,
+            technicsName: val.sItem.technicsName,
+            technicsCode: val.sItem.technicsCode
+          };
+          break;
+        case 'procedureName':
+          this.inventory = {
+            ...this.inventory,
+            procedureName: val.sItem.procedureName,
+            procedureCode: val.sItem.procedureCode
+          };
+          break;
+        case 'productDealerName':
+          this.inventory = {
+            ...this.inventory,
+            productDealerName: val.sItem.dealerName,
+            productDealerCode: val.sItem.dealerCode
+          };
+          break;
+        case 'costName':
+          this.inventory = {
+            ...this.inventory,
+            costName: val.sItem.costName,
+            costCode: val.sItem.costCode
+          };
+          break;
+      }
     },
     // 处理配置中的接口请求
     handlerParams(item) {
@@ -715,12 +736,11 @@ export default {
         })
         this.matterConfig.forEach(item => {
           if(item.r2Bind && item.r2Bind.hidden){
-            if(item.r2Bind.hidden === '{isService}'){
+            if(item.r2Bind.hidden === '{isService}' ||item.r2Bind.hidden === '{isService || procurement}'){
               item.isService = false;
               item.isProcurement = false;
-            }else if(item.r2Bind.hidden === '{isService || procurement}'){
+            }else if(item.r2Bind.hidden === '{!isService}'){
               item.isService = false;
-              item.isProcurement = false;
             }else if(item.r2Bind.hidden === '{!isCustomerSupplier}'){
               item.isCustomerSupplier = true;
             }else{
