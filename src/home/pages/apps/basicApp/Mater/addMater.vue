@@ -1,7 +1,7 @@
 <template>
   <div class='childPage matter-page'>
     <r-scroll :options="scrollOptions" class='content'>
-      <div class='mater_baseinfo'>
+      <div class='mater_baseinfo1'>
         <div class="mater_pic1">
           <span class="title">物料照片</span>
           <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
@@ -76,7 +76,7 @@
       <!-- 重复项 -->
       <duplicate-component v-if="!isService" :config="matterDuplicateConfig" :defaultValue="matterDuplicateData" v-model="matterDuplicateData"></duplicate-component>
     </r-scroll>
-    <div class='btn vux-1px-t'>
+    <div class='btn1 vux-1px-t'>
       <div class="cfm_btn1" @click="save">{{this.transCode? '保存':'提交'}}</div>
     </div>
   </div>

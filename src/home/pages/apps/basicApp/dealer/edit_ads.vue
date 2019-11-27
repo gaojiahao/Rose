@@ -1,7 +1,7 @@
 <template>
   <div class='childPage dealer-page'>
     <r-scroll :options="scrollOptions" class="content" ref="bScroll">
-      <div class='mater_baseinfo'>
+      <div class='mater_baseinfo1'>
         <div class="mater_pic1">
           <span class="title">往来照片</span>
           <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
@@ -71,7 +71,7 @@
       </popup>
     </div>
     <!--提交按钮-->
-    <div class='btn vux-1px-t'>
+    <div class='btn1 vux-1px-t'>
       <div class="cfm_btn1" @click="save" :class='{disabled : disabledSubmit}'>
         {{this.transCode ? '保存':'提交'}}
       </div>

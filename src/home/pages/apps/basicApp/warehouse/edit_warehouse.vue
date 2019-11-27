@@ -1,7 +1,7 @@
 <template>
   <div class='pages warehouse-page'>
     <r-scroll class='content' :options="scrollOptions">
-      <div class='mater_baseinfo'>
+      <div class='mater_baseinfo1'>
         <div class="mater_pic1">
           <span class="title">仓库照片</span>
           <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
@@ -59,7 +59,7 @@
     <!-- <pop-warelabe-list :show="showPop" :data="typeSubMap[typeSub].list" v-model="showPop"
                         :defaultValue="typeSubMap[typeSub].value" @sel-group="selGroup" @list-search="getTypeSubList">
     </pop-warelabe-list> -->
-    <div class='btn '>
+    <div class='btn1 '>
       <div class="cfm_btn1" @click="save">{{this.transCode ? '保存' : '提交'}}</div>
     </div>
   </div>
