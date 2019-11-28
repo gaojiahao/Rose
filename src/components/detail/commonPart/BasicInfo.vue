@@ -10,7 +10,8 @@
         <div class="basic_code">
           <span class="basic_code_title">交易号：</span>{{orderInfo.transCode}}
         </div>
-        <div class="basic_status">{{orderInfo.biStatus}}</div>
+        <!-- <div class="basic_status" >{{orderInfo.biStatus}}</div> -->
+        <span class="biStatus" v-instanceStateDirective="{status:orderInfo.biStatus}" >12312</span>
       </div>
       <div class="basic_detail">
         <div class="basic_detail_wrapper">
@@ -216,5 +217,12 @@
         margin-left: .05rem;
       }
     }
+  }
+
+.biStatus{
+    color: white;
+    padding: 0.02rem 0.04rem;
+    border-radius: 0.10rem;
+    font-size: 0.12rem;
   }
 </style>

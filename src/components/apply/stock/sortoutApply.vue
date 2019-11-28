@@ -628,6 +628,7 @@ export default {
                 transMatchedCode: box.transMatchedCode,
                 transObjCode: box.outPutMatCode,
                 inventoryCode:box.outPutMatCode,
+                outPutMatCode:box.outPutMatCode,
                 inventoryName:box.inventoryName_outPutMatCode,
                 tdProcessing: box.tdProcessing,
                 assMeasureUnit: box.assMeasureUnit,
