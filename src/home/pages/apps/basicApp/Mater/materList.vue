@@ -359,7 +359,7 @@
 
   .childPage {
     bottom: 0;
-    z-index: 5;
+    z-index: 100;
     width: 100%;
     height: 100%;
     position: absolute;
