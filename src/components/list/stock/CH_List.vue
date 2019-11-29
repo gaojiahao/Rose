@@ -3,7 +3,7 @@
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
-        <searchIcon @search='searchList' :place-holder="'名称或编码'"></searchIcon>
+        <searchIcon @search='searchList'></searchIcon>
         <div class="tab-container" ref="tabContainer">
           <div class="tab-item" :class="{active: index === activeIndex}" v-for="(item, index) in listView"
                @click="tabClick(item, index)" ref="tabs" :key="index">
