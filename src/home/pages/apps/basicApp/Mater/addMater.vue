@@ -55,12 +55,6 @@
           <template v-else-if="!item.isService && !item.isProcurement && !item.isCustomerSupplier && item.xtype === 'r2Selector'">
             <pop-selector @sel-item="selSelectorName" :default-value="inventory" :itemData="item" class="vux-1px-t"></pop-selector>
           </template>
-          <!-- <template v-else-if="!item.isService && !item.isProcurement && item.fieldCode === 'procedureName'">
-            <pop-procedure-list @sel-item="selProcedure" :default-value="inventory" class="vux-1px-t"></pop-procedure-list>
-          </template>
-          <template v-else-if="!item.isService && !item.isProcurement && item.fieldCode === 'technicsName'">
-            <pop-technics-list class="vux-1px-t" @sel-item="selTechnics" :default-value="inventory"></pop-technics-list>
-          </template> -->
           <template v-else-if="!item.isService && !item.isProcurement && item.fieldCode === 'inventoryStatus'">
             <r-picker class="vux-1px-t" :title="item.fieldLabel" :data="item.remoteData" :value="inventoryStatus" 
                       v-model="inventoryStatus" :required="!item.allowBlank" ></r-picker>
@@ -841,12 +835,11 @@ export default {
     }
     .confirm {
       color: #FF9900;
-
     }
   }
   .textRight /deep/ .weui-textarea{
     text-align: right;
-    margin-left: .36rem;
+    margin-left: .15rem;
 }
 </style>
 
