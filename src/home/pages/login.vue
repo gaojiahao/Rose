@@ -1,13 +1,21 @@
+<!--
+ * @Descripttion: 
+ * @version: 1.0.0
+ * @Author: Gabriel.gaojiahao
+ * @Date: 2019-05-29 11:46:54
+ * @LastEditors: Gabriel.gaojiahao
+ * @LastEditTime: 2019-11-29 11:03:42
+ -->
 <template>
     <div class="login-container">
-        <div class="login-banner"></div>
+        <div class="login-banner"><img src='../../assets/default/login/logo.png' /></div>
         <div class="login-form">
             <div class="login-text">登录</div>
             <group class="loginGroup">
                 <x-input :class="[isLoginInpFoc?'loginInpFoc':'loginInput']"  @on-focus="isLoginInpFoc=true" 
-                 @on-blur="isLoginInpFoc=false" text-align="left" placeholder="请输入用户名" v-model="userCode"></x-input>
+                 @on-blur="isLoginInpFoc=false" text-align="left" placeholder="用户名" v-model="userCode"></x-input>
                 <x-input :class="[isLoginInpFocS?'loginInpFoc':'loginInput']"  @on-focus="isLoginInpFocS=true"  
-                @on-blur="isLoginInpFocS=false" text-align="left" placeholder="请输入密码" v-model="passWord" type="password"></x-input>
+                @on-blur="isLoginInpFocS=false" text-align="left" placeholder="密码" v-model="passWord" type="password"></x-input>
             </group>
         </div>
         <x-button class="login-btn" @click.native="login">
@@ -33,7 +41,8 @@ export default {
             passWord: '',
             show: false,
             isLoginInpFoc: false,
-            isLoginInpFocS: false
+            isLoginInpFocS: false,
+            theme:''
         }
     },
     methods: {
@@ -55,12 +64,14 @@ export default {
 <style lang="scss" scoped>
     .login-container {
         background-color: #FDFBF6;
-        height: 100%
+        height: 100%;
     }
     .login-form {
-        margin-top: 10%;
-        margin-left: 6%;
-        margin-right: 6%;
+        margin: {
+            top:10%;
+            left:6%;
+            right:6%;
+        }
         height: 2.5rem;
         background: #fff;
         box-shadow: 0px 6px 12px 0px #FAF5E7;
@@ -77,7 +88,6 @@ export default {
         }   
         .loginInput {
             font-size: 1em;
-            border-bottom: 1px solid #989898;
             padding-top: 0.3rem;
             width: 80%;
             margin: 0 auto;
@@ -104,7 +114,7 @@ export default {
     }
     .login-btn{
         margin-top: 0.4rem;
-        background: #7E0600;
+        @include bg_color();
         color: #fff;
         width: 90%;
         height: 0.5rem;
@@ -112,6 +122,12 @@ export default {
     .login-banner {
         width: 100%;
         height: 1.6rem;
-        background: #111 url('../../assets/loginBanner.png') top / cover no-repeat;
+        text-align: center;
+        @include login_banner();
+        img{
+            height: 0.8rem;
+            margin-top: 0.5rem;
+            width: 0.8rem;
+        }
     }
 </style>

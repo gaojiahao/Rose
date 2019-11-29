@@ -15,7 +15,8 @@
     box-sizing: border-box;
     > p {
       padding-left: .04rem;
-      border-left: 4px solid #3296FA;
+      @include boder_color();
+      border-left: 4px solid;
     }
   }
   .app-list {
@@ -56,7 +57,7 @@
           font-size: .12rem;
         }
         .app_detail_btn {
-          color: #006DFF;
+          @include font_color();
           font-size: .1rem;
           font-weight: bold;
           margin-top: .06rem;

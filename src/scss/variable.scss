@@ -1,0 +1,68 @@
+/*
+ * @Descripttion: 变量参数
+ * @version: 1.0.0
+ * @Author: Gabriel.gaojiahao
+ * @Date: 2019-11-25 14:12:32
+ * @LastEditors: Gabriel.gaojiahao
+ * @LastEditTime: 2019-11-29 18:13:51
+ */
+ @charset "utf-8";
+//roletask蓝主题
+$default-theme : (
+    background-banner-theme: "/default/login/loginBanner.jpg",
+    background-color-theme: #3296FA,
+    font-color-theme : #3296FA,
+);
+//国富红主题
+$re-theme : (
+    background-banner-theme: '/theme1/login/loginBanner.png',
+    background-color-theme: #720e05,
+    font-color-theme : #720e05,
+);
+//翡冷翠主题
+$gr-theme : (
+    background-banner-theme: '/default/login/loginBanner.jpg',
+    background-color-theme: #3f8e4d,
+    font-color-theme : #3f8e4d,
+);
+//柠檬黄主题
+$ye-theme : (
+    background-banner-theme: '/default/login/loginBanner.jpg',
+    background-color-theme: #edc148,
+    font-color-theme : #edc148,
+);
+//黑加仑紫主题
+$pu-theme : (
+    background-banner-theme: '/default/login/loginBanner.jpg',
+    background-color-theme: #652BF5,
+    font-color-theme : #652BF5,
+);
+
+$font-color-shallow0 : #000;
+$font-color-shallow1 : #111;
+$font-color-shallow2 : #222;
+$font-color-shallow3 : #333;
+$font-color-shallow4 : #444;
+$font-color-shallow5 : #555;
+$font-color-shallow6 : #666;
+$font-color-shallow7 : #777;
+$font-color-shallow8 : #888;
+$font-color-shallow9 : #999;
+$font-color-shallowdb : #dbdbdb;
+ 
+//字体定义规范
+$font_little_s:10px;
+$font_little:12px;
+$font_medium_s:14px;
+$font_medium:16px;
+$font_large_s:18px;
+$font_large:20px;
+
+ //定义主题对象
+ $themes: (
+    default-theme: $default-theme,
+    re-theme: $re-theme,
+    gr-theme: $gr-theme,
+    ye-theme: $ye-theme,
+    pu-theme: $pu-theme,
+);
