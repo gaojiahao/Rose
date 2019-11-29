@@ -31,12 +31,39 @@ export default {
         {title: '消息', path: '/notice', icon: 'icon-message'},
       ],
       newsNumber:0,
+      theme:'',
     }
   },
   components:{
     Badge
   },
+  methods:{
+    /**
+     * @description: 获取默认主题
+     * @param {type} 
+     * @return: 
+     * @author: Gabriel.gaojiahao
+     */        
+    getTheme(){
+      this.theme = sessionStorage.getItem('theme') || window.document.documentElement.getAttribute('data-theme');
+      if(!this.theme){
+        this.theme = 'default-theme';
+        window.document.documentElement.setAttribute('data-theme', 'default-theme');
+        sessionStorage.setItem('theme','default-theme');
+      } else {
+        window.document.documentElement.setAttribute('data-theme', this.theme);  
+      }
+    },
+    setTheme(theme){
+      if(theme){
+        sessionStorage.setItem('theme',theme);
+        this.theme = theme;
+        window.document.documentElement.setAttribute('data-theme', theme);  
+      }
+    }
+  },
   created() {
+    this.getTheme();
     this.$event.$on('badgeNum', (val) => {
       this.newsNumber = val;
     })
@@ -105,7 +132,10 @@ export default {
     background: #FFF;
     z-index: 10;
   }
-  // 导航标签
+  
+</style>
+<style lang="scss" scoped>
+// 导航标签
   .tabs {
     left: 0;
     bottom: 0;
@@ -149,7 +179,7 @@ export default {
     .tab.router-link-active {
       .tabicon,
       .title {
-        color: #5077aa;
+        @include font_color();
       }
     }
   }

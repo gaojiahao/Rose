@@ -109,7 +109,7 @@ export default {
             font-size: 0.12rem;
           }
           .app_detail_btn {
-            color: #006dff;
+            @include font_color();
             font-size: 0.1rem;
             font-weight: bold;
             margin-top: 0.06rem;

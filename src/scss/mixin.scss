@@ -1,0 +1,53 @@
+/*
+ * @Descripttion: 混合函数
+ * @version: 1.0.0
+ * @Author: Gabriel.gaojiahao
+ * @Date: 2019-11-25 14:11:52
+ * @LastEditors: Gabriel.gaojiahao
+ * @LastEditTime: 2019-11-29 11:20:50
+ */
+
+@charset "utf-8";
+@import './variable';
+
+/*登录banner图*/
+@mixin login_banner(){
+  @each $themename , $theme in $themes {
+    [data-theme = '#{$themename}'] & {
+      $bg:map-get($map: $theme, $key: background-banner-theme );
+      background: url('../../assets#{$bg}') top / cover no-repeat;
+    }
+  }
+}
+
+/*通过该函数设置字体颜色*/
+@mixin font_color(){
+  @each $themename , $theme in $themes {
+    [data-theme = '#{$themename}'] & {
+      color:  map-get($map: $theme, $key: font-color-theme ) !important;
+    }
+  }
+}
+
+/*通过该函数设置边框颜色*/
+@mixin boder_color(){
+  @each $themename , $theme in $themes {
+    [data-theme = '#{$themename}'] & {
+      border-color:  map-get($map: $theme, $key: font-color-theme ) !important;
+    }
+  }
+}
+
+/*通过该函数设置主题颜色*/
+@mixin bg_color(){
+  @each $themename , $theme in $themes {
+    [data-theme = '#{$themename}'] & {
+      background-color:  map-get($map: $theme, $key: background-color-theme ) !important;
+    }
+  }
+}
+
+/*通过该函数设置字体大小*/
+@mixin font_size($size){
+  @include font-dpr($size);
+}

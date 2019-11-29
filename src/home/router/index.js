@@ -26,6 +26,7 @@ import TASKLOG from 'components/detail/commonPart/form-part/TaskLog'
 import APPDETAIL from '../pages/apps/bizApp/appDetail/appDetail.vue'
 import ADDLOG from '../pages/apps/bizApp/appDetail/addLog.vue'
 import ADDADMINCOMMENT from '../pages/apps/bizApp/appDetail/addAdminComment.vue'
+import THEMESETTING from '@/home/pages/components/home-related/themeSetting'
 
 export default [
   { path: '/home', name: 'HOME', component: HOME,
@@ -120,6 +121,12 @@ export default [
         meta:{ title:'新增管理员评论' }
       },
     ]
+  },
+  {
+    path:'/themeSetting',
+    name:'THEMESETTING',
+    component:THEMESETTING,
+    meta:{ title:'主体设置' }
   },
   {
     path:'/adress',
