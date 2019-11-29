@@ -26,13 +26,15 @@
         <group label-align='left' :title="index > 0?'':'请选择对应的产品'" v-for="( item ,index ) in arr" :key="index" v-else>
           <cell class="each_part" title="项目类产品" :value="item.value" value-align="right"></cell>
           <cell class="each_part" title="单价"
-                :value="'￥'+item.amount | numberComma" value-align="right"
+                :value="'￥'+item['trans_detail_uncalc.price'] | numberComma" value-align="right"
                 v-if="item.value.length>0"></cell>
           <!-- 数量输入 -->
           <x-input title="数量" v-model.number="item.qty" text-align="right" placeholder="请输入数量"
                    v-if="item.value !== '无'"></x-input>
 
           <cell class="each_part" title="系数" :value="item.num1 || 0" value-align="right" style="display: none;"
+                v-if="item.value.length>0"></cell>
+          <cell class="each_part" title="含税金额" :value="item.amount || 0" value-align="right" style="display: none;"
                 v-if="item.value.length>0"></cell>
         </group>
 
@@ -149,10 +151,12 @@
     },
     computed: {
       AclassTotal() {
+        debugger
         let total = 0;
         this.arr.forEach(item => {
           if (item.qty) {
-            total = accAdd(total, accMul(item.qty, item.amount,item.num1));
+            item.amount = accMul(item.qty, item['trans_detail_uncalc.price'],item.num1)
+            total = accAdd(total, item.amount);
           }
         });
         total = accAdd(total, this.Aclass);
@@ -352,7 +356,7 @@
             containerCode: "项目类产品", //类型
             qty: item.qty,
             taxAmount: item.taxAmount,
-            amount: item.qty * item.amount, //总金额
+            amount: item.amount, //总金额
             fgCode: "",
             num1: item.num1, // 套数
           });

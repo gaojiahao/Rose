@@ -1,5 +1,4 @@
-let target = 'https://www.gofuit.com';
-// let target = 'http://192.168.3.207';
+let target = 'http://192.168.3.160';
 // let target = 'http://cpacn2012.3322.org:4456';
 module.exports = {
     proxy: {
