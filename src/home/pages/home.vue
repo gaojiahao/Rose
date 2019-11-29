@@ -5,7 +5,7 @@
         <div class="top-part-container">
           <div class="top-part">
             <div class="user-info-container">
-              <div class="user_avatar">
+              <div class="user_avatar" @click="goThemeSetting()">
                 <img :src="userInfo.avatar">
               </div>
               <div class="user-info">
@@ -362,6 +362,13 @@ export default {
     scrollToTop() {
       this.homeScroll.scrollTo(0, 0, 400);
     },
+    goThemeSetting(){
+      this.$router.push({
+        path: '/themesetting',
+        query: {
+        }
+      })    
+    }
   },
   watch: {
     $route: {
@@ -613,7 +620,7 @@ export default {
     }
   }
   .active {
-    color: #006dff;
+    @include font_color();
     font-weight: bold;
   }
 }
