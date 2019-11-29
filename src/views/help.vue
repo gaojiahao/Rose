@@ -359,6 +359,7 @@
             amount: item.amount, //总金额
             fgCode: "",
             num1: item.num1, // 套数
+            price: item['trans_detail_uncalc.price'],//单价
           });
         }
         jsonData.baseinfoExt.varchar2 = newVar2;
