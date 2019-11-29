@@ -37,7 +37,7 @@
           </template>
           <!-- 多行文本 -->
           <template v-else-if="item.xtype === 'r2TextArea'">
-            <div class='each_property vux-1px-t'>
+            <div class='each_property1 vux-1px-t'>
               <x-textarea 
                 class='property_val textRight'
                 v-model="inventory[item.fieldCode]" 
@@ -46,7 +46,7 @@
                 <template slot="label">
                 <label 
                     :class="{required : !item.allowBlank}" 
-                    style="display:block;margin-left:-.15rem;">{{item.fieldLabel}}</label>
+                    style="margin-left:-.15rem;">{{item.fieldLabel}}</label>
                 </template>
               </x-textarea>
             </div>
@@ -839,7 +839,7 @@ export default {
   }
   .textRight /deep/ .weui-textarea{
     text-align: right;
-    margin-left: .15rem;
+    margin-left: .35rem;
 }
 </style>
 
