@@ -96,7 +96,7 @@ import {
     getPriceFromSalesContractAndPrice, 
     updateData} from 'service/commonService'
 import WebContext from 'service/commonService'
-import {getStorageShelf, getInventoryInfoByMatCode ,getPreShelfInvInfoByBoxCode} from 'service/wmsService'
+import {getStorageShelf, getInventoryInfoByMatCode ,getPreShelfInvInfoByBoxCode,getLocationByPallet} from 'service/wmsService'
  
 import { getSOList } from 'service/detailService'
 import scanVoice from '@/plugins/scanVoice'
@@ -227,6 +227,20 @@ export default {
             }
 
             if(!this.scanCodeInfo.trayCode) return;
+
+            getLocationByPallet(this.scanCodeInfo.trayCode).then(res => {
+                let warehouseInfo;
+                if(res.tableContent.length > 0){
+                    warehouseInfo = res.tableContent[0];
+                    scanVoice.error();
+                    this.showTost = true;
+                    this.tostText = `这个托盘已经在仓库${warehouseInfo.warehouseName}的库位${warehouseInfo.location}上了，请重新扫托盘！`;
+                    this.scanCodeInfo.trayCode = '';
+                    this.$refs.trayCode.focus();
+                    return;
+                }
+            })
+
 
             if(this.trayCode && this.scanCodeInfo.trayCode != this.trayCode && this.matters.length>0){
                scanVoice.error();
