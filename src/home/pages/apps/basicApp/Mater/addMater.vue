@@ -190,9 +190,9 @@ export default {
       }
     },
     // 拼接 物料编码
-    inventoryCode() {
-      return `${this.processId}${this.typeId}${this.subclassId}X`
-    },
+    // inventoryCode() {
+    //   return `${this.processId}${this.typeId}${this.subclassId}X`
+    // },
   },
   watch: {
     // 临保天数
@@ -378,9 +378,9 @@ export default {
       }, 0)
     },    
     // 监听 物料编码
-    inventoryCode(val) {
-      this.inventory.inventoryCode = val;
-    },
+    // inventoryCode(val) {
+    //   this.inventory.inventoryCode = val;
+    // },
     // 监听辅助计量，重新计算包装规格
     'matterDuplicateData.invMoreUnit': {
       handler(val) {
