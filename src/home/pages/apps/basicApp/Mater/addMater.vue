@@ -78,7 +78,7 @@
 <script>
 // 请求引入
 import { save, update, findData } from 'service/materService'
-import { requestData, getFormViews, getFormConfig, getBaseInfoDataBase } from 'service/commonService'
+import { requestData, getFormViews, getFormConfig, getBaseInfoDataBase,findConfigInfo } from 'service/commonService'
 // 组件引入
 import RScroll from 'plugins/scroll/RScroll'
 import RPicker from 'components/public/basicPicker';
@@ -585,6 +585,35 @@ export default {
         }
       });
     },
+    //二次配置覆盖
+    getNewFormConfig(old,New) {
+      let firstCongif = old;
+      New = JSON.parse(New)
+      let containerCfg =  New && New.container,
+          fieldsCfg = New && New.fields;
+      if(New){
+        for(let i = 0; i < old.length; i++) {
+          let name = old[i].name,
+          isList = old[i].isMultiple,
+          fields = old[i].items,
+          grid;
+
+          if ((JSON.stringify(fieldsCfg)!='{}') && old[i].items) {
+            for(let k = 0; k < old[i].items.length; k++) {
+              var key = isList ? [name, old[i].items[k].fieldCode].join('.') : old[i].items[k].fieldCode;
+              for(var prop in fieldsCfg) {
+                if(old[i].items[k].fieldCode == prop) {
+                  for(var prop2 in fieldsCfg[key]) {
+                    old[i].items[k][prop2] = fieldsCfg[key][prop2]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+    },
     // 获取默认图片
     getDefaultImg() {
       this.MatPic = require('assets/wl_default03.png');
@@ -696,83 +725,86 @@ export default {
       await getFormConfig(this.uniqueId).then(({config = []}) => {
         let matterConfig = [], matterDuplicateConfig = [];
         // 配置拆分成 基本信息 / 重复项
-        config.forEach(item => {
-          if (!item.isMultiple) {
-            matterConfig = JSON.parse(JSON.stringify(item.items));
-          }
-          else {
-            if (!item.hiddenInRun && item.xtype !== 'r2Fileupload' && item.name === 'invMoreUnit') {
-              matterDuplicateConfig.push(JSON.parse(JSON.stringify(item)))
-            }
-          }
-        })
-        // 处理 物料 *基本信息* 配置 
-        matterConfig.forEach(item => {
-          if (!item.hiddenInRun) {
-            //下拉框的数据请求
-            if ((item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.dataSource && item.dataSource.type === 'remoteData' ) {
-              this.handlerParams(item)
-            }
-            else if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData') {
-              this.$set(item, 'remoteData', item.dataSource.data)
-            }
-            // 在渲染的配置中添加字段
-            if (item.fieldCode !== 'inventoryPic') {
-              this.matterConfig.push(item);
-            }
-            // 如果用户是从某个tab状态点进来 则属性默认为选中的tab状态栏
-            if (item.fieldCode === 'processing') {
-              if (this.$route.query.matterType) {
-                this.inventory.processing  = this.$route.query.matterType;
+        //兼容二次配置
+          findConfigInfo(this.uniqueId).then(data => {
+              this.getNewFormConfig(config,data.data);
+              config.forEach(item => {
+                if (!item.isMultiple) {
+                  matterConfig = JSON.parse(JSON.stringify(item.items));
+                }else {
+                  if (!item.hiddenInRun && item.xtype !== 'r2Fileupload' && item.name === 'invMoreUnit') {
+                    matterDuplicateConfig.push(JSON.parse(JSON.stringify(item)))
+                  }
+                }
+            })
+            // 处理 物料 *基本信息* 配置 
+            matterConfig.forEach(item => {
+              if (!item.hiddenInRun) {
+                //下拉框的数据请求
+                if ((item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.dataSource && item.dataSource.type === 'remoteData' ) {
+                  this.handlerParams(item)
+                }
+                else if (item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData') {
+                  this.$set(item, 'remoteData', item.dataSource.data)
+                }
+                // 在渲染的配置中添加字段
+                if (item.fieldCode !== 'inventoryPic') {
+                  this.matterConfig.push(item);
+                }
+                // 如果用户是从某个tab状态点进来 则属性默认为选中的tab状态栏
+                if (item.fieldCode === 'processing') {
+                  if (this.$route.query.matterType) {
+                    this.inventory.processing  = this.$route.query.matterType;
+                  }
+                }
               }
-            }
-          }
-        })
-        this.matterConfig.forEach(item => {
-          if(item.r2Bind && item.r2Bind.hidden){
-            if(item.r2Bind.hidden === '{isService}' ||item.r2Bind.hidden === '{isService || procurement}'){
-              item.isService = false;
-              item.isProcurement = false;
-            }else if(item.r2Bind.hidden === '{!isService}'){
-              item.isService = false;
-            }else if(item.r2Bind.hidden === '{!isCustomerSupplier}'){
-              item.isCustomerSupplier = true;
-            }else{
-              item.isService = true;
-              item.isProcurement = true;
-            }
-          }else{
-            item.isService = false;
-            item.isProcurement = false;
-          }
-        })
-        // 处理 物料 *重复项* 配置
-        matterDuplicateConfig.forEach(item => {
-          switch(item.name) {
-            case 'invMoreUnit':
-              item.title = '辅助计量';
-              break;
-            case 'invNetWeight':
-              item.title = '净含量';
-              break;
-            case 'invDealerRel':
-              item.title = '客户';
-              break;
-            case 'invCustomerRel':
-              item.title = '供应商';
-              break;
-          }
+            })
+            this.matterConfig.forEach(item => {
+              if(item.r2Bind && item.r2Bind.hidden){
+                if(item.r2Bind.hidden === '{isService}' ||item.r2Bind.hidden === '{isService || procurement}'){
+                  item.isService = false;
+                  item.isProcurement = false;
+                }else if(item.r2Bind.hidden === '{!isService}'){
+                  item.isService = false;
+                }else if(item.r2Bind.hidden === '{!isCustomerSupplier}'){
+                  item.isCustomerSupplier = true;
+                }else{
+                  item.isService = true;
+                  item.isProcurement = true;
+                }
+              }else{
+                item.isService = false;
+                item.isProcurement = false;
+              }
+            })
+            // 处理 物料 *重复项* 配置
+            matterDuplicateConfig.forEach(item => {
+              switch(item.name) {
+                case 'invMoreUnit':
+                  item.title = '辅助计量';
+                  break;
+                case 'invNetWeight':
+                  item.title = '净含量';
+                  break;
+                case 'invDealerRel':
+                  item.title = '客户';
+                  break;
+                case 'invCustomerRel':
+                  item.title = '供应商';
+                  break;
+              }
 
-          let arr = []
-          item.items.forEach((sItem, sIndex) => {
-            if (!sItem.hidden) {
-              arr.push(sItem)
-            }
-          })
-          item.items = arr;
-          this.$set(this.matterDuplicateData, item.name, [])
-        })
-        this.matterDuplicateConfig = matterDuplicateConfig;
+              let arr = []
+              item.items.forEach((sItem, sIndex) => {
+                if (!sItem.hidden) {
+                  arr.push(sItem)
+                }
+              })
+              item.items = arr;
+              this.$set(this.matterDuplicateData, item.name, [])
+            })
+            this.matterDuplicateConfig = matterDuplicateConfig;
+          });
         if (!this.transCode) this.$loading.hide();
       })
 
