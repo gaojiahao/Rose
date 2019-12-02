@@ -280,7 +280,7 @@ export default {
                 if(res.tableContent.length === 0){
                     scanVoice.error();
                     this.showTost = true;
-                    this.tostText = '此箱码不存在！';
+                    this.tostText = '此箱码不存在或者与推荐的生产日期生产批号不一致，请仔细核对!';
                     this.scanCodeInfo.boxCode = "";
                     this.$refs.boxCode.focus();
                     return;
