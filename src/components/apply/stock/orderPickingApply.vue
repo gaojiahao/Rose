@@ -217,6 +217,7 @@ export default {
             if(!this.scanCodeInfo.postCode) return;
 
             this.matters = [];
+            this.boxCodesMap = {};
             getOrderPickingData(this.scanCodeInfo.postCode).then(res => {
                 if(res.tableContent.length > 0){
                     scanVoice.success();
