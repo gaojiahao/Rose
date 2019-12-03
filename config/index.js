@@ -52,12 +52,12 @@ module.exports = {
 
   build: {
     // Template for index.html
-    index: path.resolve(__dirname, '../dist/index.html'),
+    index: path.resolve(__dirname, ['../',process.env.isApk?'apk':'dist','/index.html'].join('')),
 
     // Paths
-    assetsRoot: path.resolve(__dirname, '../dist'),
+    assetsRoot: path.resolve(__dirname, process.env.isApk?'../apk':'../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/Hermes/',
+    assetsPublicPath: process.env.isApk?'/android_asset/www/':'/Hermes/',
 
     /**
      * Source Maps

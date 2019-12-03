@@ -4,6 +4,7 @@ npm-debug.log
 yarn-error.log
 .vsode
 dist/
+apk/
 # Editor directories and files
 .idea
 .vscode
