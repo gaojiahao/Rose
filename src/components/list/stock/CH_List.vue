@@ -565,6 +565,8 @@ export default {
         let paddingLeft = parseFloat(getComputedStyle($container).paddingLeft);
         let $activate = this.$refs.tabs[index];
         $container.scrollLeft = $activate.offsetLeft - paddingLeft;
+        this.resetCondition();
+        this.getList();
       }
     }
 }
