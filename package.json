@@ -9,6 +9,7 @@
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "build": "npm run clean && node build/build.js",
+    "buildApk": "node build/buildApk.js",
     "dll": "webpack --config ./build/webpack.dll.config.js"
   },
   "dependencies": {

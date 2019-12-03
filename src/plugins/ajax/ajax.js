@@ -99,6 +99,7 @@ let Rxports = {
     return new Promise((resolve, reject) => {
       let params = {
         method: opts.type || opts.method || 'GET',
+        baseURL:window.baseURL||'',
         url: ensureUrl(opts.url),
         headers: {
           'Content-Type': opts.contentType || '*/*',
