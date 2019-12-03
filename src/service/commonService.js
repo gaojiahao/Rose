@@ -109,7 +109,7 @@ export let update = (data = {}) => {
 // 获取当前用户信息(基础对象调用)
 export let getBaseInfoDataBase = () => {
   return new Promise(async (resolve, reject) => {
-    let {currentUser} = await getBasicInfo().then(data => {
+    let {currentUser,clientFlag} = await getBasicInfo().then(data => {
       return data
     })
     let {nickname, userId} = currentUser;
@@ -137,6 +137,7 @@ export let getBaseInfoDataBase = () => {
     }).then(({tableContent = []}) => {
       let [role = {}] = tableContent;
       resolve({
+        clientFlag: clientFlag,
         handler: userId,
         handlerName: nickname,
         handlerUnit: userGroupId,

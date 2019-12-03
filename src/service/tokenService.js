@@ -78,8 +78,8 @@ let tokenService = {
     return new Promise((resolve, reject) => {
       let params = {
         method: 'post',
-        baseURL: '/H_roleplay-si',
-        url: '/login',
+        baseURL: window.baseURL ||'',
+        url: '/H_roleplay-si/login',
         headers: {
           'Content-Type': 'application/json',
         },

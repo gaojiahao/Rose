@@ -10,7 +10,7 @@ Vue.use(Router)
 let router = window.router;
 if (router == null) {
   window.router =  new Router({
-    mode:'history',
+    mode:!!cordova?'hash':'history',
     base:'/Hermes',
     routes: [
       ...HomeRouter,

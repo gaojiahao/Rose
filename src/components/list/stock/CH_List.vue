@@ -3,7 +3,7 @@
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
-        <searchIcon @search='searchList' :place-holder="'名称或编码'"></searchIcon>
+        <searchIcon @search='searchList'></searchIcon>
         <div class="tab-container" ref="tabContainer">
           <div class="tab-item" :class="{active: index === activeIndex}" v-for="(item, index) in listView"
                @click="tabClick(item, index)" ref="tabs" :key="index">
@@ -100,10 +100,10 @@
                         <span class="classification_detail_title">主计量单位: </span>{{item.measureUnit || '无'}}
                       </div>
                       <div class="classification_detail_item">
-                        <span class="classification_detail_title">仓库名称: </span>{{item.warehouseName || '无'}}
+                        <span class="classification_detail_title">仓库名称: </span>{{item.storehouseName || warehouseName || '无'}}
                       </div>
                       <div class="classification_detail_item">
-                        <span class="classification_detail_title">仓库编码: </span>{{item.whCode || '无'}}
+                        <span class="classification_detail_title">仓库编码: </span>{{item.storehouseCode || whCode || '无'}}
                       </div>
                       <div class="classification_detail_item">
                         <span class="classification_detail_title">仓库关系类型: </span>{{item.warehouseType || '无'}}
@@ -111,36 +111,16 @@
                     </div>
                   </div>
                   <div class="classification-split"></div>
-                  <div class="classification-bottom">
-                    <div class="classification_bottom_item days">
-                      <div class="classification_bottom_value">{{item.drQty || 0 | numberComma}}</div>
-                      <div class="classification_bottom_title">入库数量</div>
-                    </div>
-                    <div class="classification_bottom_item">
-                      <div class="classification_bottom_value">{{item.crQty || 0 | numberComma }}</div>
-                      <div class="classification_bottom_title">出库数</div>
+                  <div class="classification-bottom" :style="{textAlign:'left'}">
+                    <div class="classification_bottom_item noticed">
+                      <div class="classification_bottom_value">{{item.safeBalance | numberComma }}</div>
+                      <div class="classification_bottom_title">安全库存</div>
                     </div>
                     <div class="classification_bottom_item amt noticed">
                       <div class="classification_bottom_value">
                         {{item.qtyBalance | numberComma}}
                       </div>
-                      <div class="classification_bottom_title">在库库存</div>
-                    </div>
-                  </div>
-                  <div class="classification-bottom">
-                    <div class="classification_bottom_item days noticed">
-                      <div class="classification_bottom_value">{{item.orderQtyLocked || 0 | numberComma }}</div>
-                      <div class="classification_bottom_title">计划占用</div>
-                    </div>
-                    <div class="classification_bottom_item noticed">
-                      <div class="classification_bottom_value">{{item.qtyLocked || 0 | numberComma}}</div>
-                      <div class="classification_bottom_title">工作流占用</div>
-                    </div>
-                    <div class="classification_bottom_item amt noticed">
-                      <div class="classification_bottom_value">
-                        {{item.useAbleQtyBalance | numberComma}}
-                      </div>
-                      <div class="classification_bottom_title">可用库存</div>
+                      <div class="classification_bottom_title">数量余额</div>
                     </div>
                   </div>
                 </div>
@@ -166,7 +146,7 @@
                           <span class="classification_detail_title">应用类型: </span>{{item.appType}}
                         </div>
                         <div class="classification_detail_item">
-                          <span class="classification_detail_title">记账日期与时间: </span>{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}
+                          <span class="classification_detail_title">生效时间: </span>{{item.effectiveTime}}
                         </div>
                       </div>
                       <div class="classification_detail_part">
