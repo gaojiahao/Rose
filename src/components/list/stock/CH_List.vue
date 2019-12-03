@@ -100,10 +100,10 @@
                         <span class="classification_detail_title">主计量单位: </span>{{item.measureUnit || '无'}}
                       </div>
                       <div class="classification_detail_item">
-                        <span class="classification_detail_title">仓库名称: </span>{{item.storehouseName || warehouseName || '无'}}
+                        <span class="classification_detail_title">仓库名称: </span>{{item.storehouseName || item.warehouseName || '无'}}
                       </div>
                       <div class="classification_detail_item">
-                        <span class="classification_detail_title">仓库编码: </span>{{item.storehouseCode || whCode || '无'}}
+                        <span class="classification_detail_title">仓库编码: </span>{{item.storehouseCode || item.whCode || '无'}}
                       </div>
                       <div class="classification_detail_item">
                         <span class="classification_detail_title">仓库关系类型: </span>{{item.warehouseType || '无'}}
