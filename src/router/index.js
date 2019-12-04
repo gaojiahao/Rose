@@ -4,14 +4,14 @@
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-12-03 09:54:38
  * @LastEditors: Gabriel.gaojiahao
- * @LastEditTime: 2019-12-03 10:00:16
+ * @LastEditTime: 2019-12-04 16:07:34
  */
 import Vue from 'vue'
 import Router from 'vue-router'
 import HomeRouter from '@/home/router'
 import MsgRouter from '@/msg/router'
 
-import { getFieldSetting }  from "service/fieldModelService"
+import { getFieldSetting, getAllDict}  from "service/fieldModelService"
 
 Vue.use(Router)
 
@@ -40,6 +40,7 @@ async function initFieldSetting(){
     await  getFieldSetting().then( res=>{
     Vue.prototype.$r2FieldSetting = {};
     res.tableContent.map(it=>{
+      it.config = JSON.parse(it.config);
       Vue.prototype.$r2FieldSetting[it.fieldCode] = it;
     });
   });

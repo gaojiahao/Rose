@@ -65,6 +65,9 @@ export default {
       },
       otherFilter: {},
       action: {}, // 表单允许的操作
+      viewConfig: {},
+      _cachedFieldSettings:[],
+      filterFieldSettings:[],
     }
   },
   components: {
@@ -448,8 +451,66 @@ export default {
             });
 
           });
+          this.getViewFields();
         }
       });
+    },
+    cachedFieldSettings: function (codes) {
+      var me = this,
+          ret;
+
+      if (Array.isArray(codes)) {
+          ret = codes.map(function (c) {
+              return me.$r2FieldSetting[c];
+          });
+          ret = ret.filter(function (it) {
+              return !!it;
+          });
+          return ret;
+      } else {
+          return me.$r2FieldSetting[codes];
+      }
+    },
+    getViewFields:function(){
+      var me = this,
+          trueFields = this.viewConfig.fields.filter(function(f){return !f.hidden;}),
+          fieldCodes = trueFields.map(function (f) {
+            return f.fieldCode;
+          }),
+          fieldSettings = this.cachedFieldSettings(fieldCodes),
+          result =trueFields.map(function(f){
+            var fieldSetting = fieldSettings.find(function(fs){
+              return f.fieldCode === fs.fieldCode;
+            });
+            var ret = {
+                name: f.alias||f.fieldName,
+                code: f.fieldCode,
+                type: f.fieldType,
+                text: f.text,
+                sequence: f.sequence,
+            };
+            if (fieldSetting) {
+                ret.config = fieldSetting.config;
+                if (fieldSetting.optionItems) {
+                    ret.config.optionState = JSON.stringify(fieldSetting.optionItems.filter(function (option) {
+                        return option.listId === undefined || option.listId === me.appId;
+                    }));
+                }
+            }
+            if (fieldSetting && fieldSetting.valueType && fieldSetting.valueType.gridFilter) {
+                ret.filter = {
+                    fieldLabel: f.text,
+                    type: fieldSetting.valueType.gridFilter
+                };
+            } else {
+                ret.filter = {
+                    fieldLabel: f.text,
+                    type: f.type
+                };
+            }
+            return ret;
+          });
+      this.filterFieldSettings = result.sort(function(a, b){return a.sequence - b.sequence});
     }
   },
   filters: {

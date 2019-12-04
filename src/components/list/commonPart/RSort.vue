@@ -18,8 +18,25 @@
       <popup position="right" v-model="showFilter" @on-hide="onHide" @on-show="onShow">
         <div class="filter-container-part">
           <r-scroll class="list_wrapper" :options="scrollOptions" ref="bScroll">
-            <!-- 流程状态 -->
-            <div class="process-status-container vux-1px-b" v-for="(val, key, index) in statusList" :key="key">
+            <!-- 循环快速过滤 -->
+            <template v-for="(item,key) in filterFiled" >
+              <!-- 单选 -->
+              <div class="process-status-container vux-1px-b" v-if="item.type='radio'" :key="key">
+                <template v-if="item.name">
+                  <div class="process-wrapper">
+                    <div class="filter_title">{{item.name}}</div>
+                    <div class="process_status">
+                      <div class="each_status"  :class="{'active vux-1px' : showFilterSelIcon(value, item.code)}"
+                          v-for="(value, vindex) in item.child" :key="vindex"
+                          @click="selFilter(value, item.code, key)">
+                        <div class="status_content">{{value.name}}</div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </template>
+            <div class="process-status-container vux-1px-b" v-for="(val, key) in statusList" :key="key">
               <template v-if="val.value.length">
                 <div class="process-wrapper">
                   <div class="filter_title">{{statusList[key].alias}}</div>
@@ -33,7 +50,6 @@
                 </div>
               </template>
             </div>
-            <!-- 时间 -->
             <div class="time-filter-container vux-1px-b">
               <div class="filter_title">时间段</div>
               <div class="specific_time">
@@ -54,7 +70,7 @@
                 </div>
               </div>
             </div>
-            <div class="process-status-container vux-1px-b" v-for="(val, key, index) in filtersList" :key="index" v-if="key !== 'biProcessStatus'&& key !=='biStatus' && val.value.length">
+            <div class="process-status-container vux-1px-b" v-for="(val, key, index) in filtersList" :key="index+999" v-if="key !=='biStatus' && val.value.length">
               <div class="process-wrapper">
                 <div class="filter_title " @click="val.showAll = !val.showAll">
                   <span>{{val.alias}}</span>
@@ -109,7 +125,13 @@ export default {
     hasFormStatus: {
       type: Boolean,
       default: true
-    }
+    },
+    filterFieldSettings:{
+      type: Array,
+      default() {
+          return []
+      }
+    },
   },
   data() {
     return {
@@ -135,7 +157,15 @@ export default {
       },
       showFilter: false,  // 是否展示筛选
       specificTimeList: ['今日', '昨日', '本周'],
+      filterFiled : [],
     }
+  },
+  watch:{
+    filterFieldSettings:{
+      handler(val) {
+        this.getDefindFilterItems(val);
+      }
+    }  
   },
   methods: {
     // 排序
@@ -226,7 +256,7 @@ export default {
       }
       else {
         let obj = {};
-        if (key !== 'biProcessStatus' && key !== 'bugProcessStatus' && key !== 'processStatus' && key !=='biStatus'){
+        if (key !== 'bugProcessStatus' && key !== 'processStatus' && key !=='biStatus'){
           obj = {
             alias: this.filtersList[key].alias,
             value: [sItem]
@@ -237,6 +267,36 @@ export default {
             alias: this.statusList[key].alias,
             value: [sItem]
           }
+        }
+        this.$set(this.fieldVlaue, key, {...obj})
+      }
+    },
+    showFilterSelIcon(sItem, key) {
+      if (this.fieldVlaue[key]){
+        return this.fieldVlaue[key].value.findIndex(item => item === sItem.value) !== -1;
+      }
+    },
+    //选择过滤条件
+    selFilter(sItem,key,index) {
+      if (this.fieldVlaue[key]){
+        let arr = this.fieldVlaue[key].value;
+        let delIndex = arr.findIndex(item => item === sItem.value);
+        // 若存在重复的 则清除
+        if (delIndex !== -1) {
+          arr.splice(delIndex, 1);
+          //当值为空是，删除该过滤条件
+          if (!arr.length) {
+            delete this.fieldVlaue[key]
+          }
+          return;
+        }
+        arr.push(sItem.value);
+      }
+      else {
+        let obj = {};
+        obj = {
+          alias: this.filterFiled[index].name,
+          value: [sItem.value]
         }
         this.$set(this.fieldVlaue, key, {...obj})
       }
@@ -351,7 +411,7 @@ export default {
         }
         for (let key of Object.keys(data)){
           let item = data[key];
-          if (key !== 'biProcessStatus' && key !== 'bugProcessStatus' && key !== 'processStatus' && key !=='biStatus'){
+          if (key !== 'bugProcessStatus' && key !== 'processStatus' && key !=='biStatus'){
             filtersList[key] = {
               ...item,
               showValue: item.value.slice(0,9),
@@ -370,7 +430,63 @@ export default {
         this.filtersList = {...filtersList};
         this.statusList = {...statusList};
       })
-    }
+    },
+    getDefindFilterItems:function(val){
+      var me = this,
+          isMenu = false,
+          menu=[],
+          fields = val;
+
+      for (let item of fields) {
+          if (item.config && item.config.quickFilter) {
+              var a = JSON.parse(item.config.quickFilter);
+              item.child = [];
+              item.type = 'radio';
+              for(var i = 0 ; i<a.length; i++){
+                var temp = { 
+                    name:a[i].text,
+                    value:a[i].key
+                  }
+                item.child.push(temp);
+              }
+              this.filterFiled.push(item);
+          }
+          if(item.config && item.config.optionState) {
+            var a = JSON.parse(item.config.optionState);
+            item.child = [];
+            item.type = 'checkbox';
+            for(var i = 0 ; i<a.length; i++){
+                var temp = { 
+                    name:a[i].name,
+                    value:a[i].id
+                  }
+                item.child.push(temp);
+              }
+            this.filterFiled.push(item);
+          }
+          if(item.config && item.config.format && (item.config.format=="Y-m-d H:i:s")) {
+            var a = [
+              {name:'过去7天',value:'$last7Days$'},
+              {name:'过去30天',value:'$last30Days$'},
+              {name:'过去90天',value:'$last90Days$'},
+              {name:'近两天',value:'$lastTowDay$'},
+              {name:'昨天',value:'$yesterday$'},
+              {name:'今日',value:'$today$'},
+              {name:'本周',value:'$thisWeek$'},
+              {name:'本月',value:'$thisMonth$'},
+              {name:'本季度',value:'$thisQuarter$'},
+              {name:'本年',value:'$thisYear$'},
+              {name:'上周',value:'$preWeek$'},
+              {name:'上月',value:'$preMonth$'},
+              {name:'上季度',value:'$preQuarter$'},
+              {name:'上年',value:'$preYear$'},
+            ]
+            item.child = a;
+            item.type = 'datetime';
+            this.filterFiled.push(item);
+          }
+      }
+    },
   },
   created(){
     let { listId } = this.$route.params;
