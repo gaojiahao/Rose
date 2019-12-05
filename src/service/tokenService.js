@@ -118,9 +118,6 @@ let tokenService = {
     return new Promise((resolve, reject) => {
       let query = querystring.parse(location.search.slice(1));
       let code = query.code || '';
-      if(query.tag='share'){
-        var reShareUrl = window.location.href;
-      }
       fly.get(`/H_roleplay-si/wxLogin?code=${code}&state=1&corpsecret=${secret}`).then((res) => {
         let data = res.data;
         this.setToken({
@@ -133,9 +130,7 @@ let tokenService = {
           avatar: data.avatar || '',
           position: data.position || ''
         });
-        console.log(query);
         resolve(data[key])
-        window.location.href = reShareUrl;
       }).catch(function (error) {
         let res = error.response;
         let data = (res && res.data) || {};

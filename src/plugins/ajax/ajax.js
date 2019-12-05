@@ -28,7 +28,13 @@ fly.interceptors.request.use((request) => {
     fly.lock();
     return tokenService.login().then((token) => {
       if(token){
+        let query = querystring.parse(location.search.slice(1));
+        console.log(query)
         request.headers.Authorization = token;
+
+        if(query.tag='share'){
+          location.reload();
+        }
       // 请求token成功之后，即将进入第一个请求
         return request;
       }
