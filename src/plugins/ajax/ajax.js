@@ -33,6 +33,7 @@ fly.interceptors.request.use((request) => {
         request.headers.Authorization = token;
 
         if(query.tag='share'){
+          alert(window.location.href)
           location.reload();
           return ;
         }
