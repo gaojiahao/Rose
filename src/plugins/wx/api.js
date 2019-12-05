@@ -40,7 +40,7 @@ export const shareContent = (shareInfo = {}) => {
       title: shareInfo.title, // 分享标题
       desc: shareInfo.desc, // 分享描述
       imgUrl: shareInfo.imgUrl, // 分享图标
-      link:shareInfo.link,
+      link:redirect_uri+shareInfo.link,
       success: function () {
         alert('分享成功！');
       },
