@@ -1,4 +1,5 @@
 import {mediaUpload} from 'service/commonService';
+import { corpid, secret, agentid, redirect_uri } from '@/plugins/ajax/conf'
 
 // 扫一扫
 export const scanQRCode = (options = {}) => {
@@ -34,17 +35,32 @@ export const scanQRCode = (options = {}) => {
 };
 // 分享
 export const shareContent = (shareInfo = {}) => {
-  return wx.onMenuShareAppMessage({
-    title: shareInfo.title, // 分享标题
-    desc: shareInfo.desc, // 分享描述
-    imgUrl: shareInfo.imgUrl, // 分享图标
-    success: function () {
-      alert('分享成功！');
-    },
-    cancel: function () {
-      alert('分享失败！');
-    },
-  });
+  if(shareInfo.link){
+    return wx.onMenuShareAppMessage({
+      title: shareInfo.title, // 分享标题
+      desc: shareInfo.desc, // 分享描述
+      imgUrl: shareInfo.imgUrl, // 分享图标
+      link:shareInfo.link,
+      success: function () {
+        alert('分享成功！');
+      },
+      cancel: function () {
+        alert('分享失败！');
+      },
+    });
+  } else {
+    return wx.onMenuShareAppMessage({
+      title: shareInfo.title, // 分享标题
+      desc: shareInfo.desc, // 分享描述
+      imgUrl: shareInfo.imgUrl, // 分享图标
+      success: function () {
+        alert('分享成功！');
+      },
+      cancel: function () {
+        alert('分享失败！');
+      },
+    });
+  }
 };
 
 // 选择图片
