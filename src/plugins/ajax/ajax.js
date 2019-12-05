@@ -26,10 +26,9 @@ fly.interceptors.request.use((request) => {
   else {
     // token 不存在，锁住请求，优先请求token，后序请求进入队列
     fly.lock();
+    let query = qs.parse(location.search.slice(1));
     return tokenService.login().then((token) => {
       if(token){
-        let query = qs.parse(location.search.slice(1));
-        console.log(query)
         request.headers.Authorization = token;
 
         if(query.tag='share'){
