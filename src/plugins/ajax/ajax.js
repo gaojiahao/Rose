@@ -27,13 +27,14 @@ fly.interceptors.request.use((request) => {
     // token 不存在，锁住请求，优先请求token，后序请求进入队列
     fly.lock();
     let query = qs.parse(location.search.slice(1));
+    let reurl = window.location.href;
     return tokenService.login().then((token) => {
       if(token){
         request.headers.Authorization = token;
 
         if(query.tag='share'){
-          alert(window.location.href)
-          location.reload();
+          alert(reurl);
+          window.location.href = reurl;
           return ;
         }
       // 请求token成功之后，即将进入第一个请求
