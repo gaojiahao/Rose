@@ -34,6 +34,7 @@ fly.interceptors.request.use((request) => {
 
         if(query.tag='share'){
           location.reload();
+          return ;
         }
       // 请求token成功之后，即将进入第一个请求
         return request;
