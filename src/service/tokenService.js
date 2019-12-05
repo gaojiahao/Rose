@@ -130,6 +130,7 @@ let tokenService = {
           avatar: data.avatar || '',
           position: data.position || ''
         });
+        console.log(query);
         resolve(data[key])
       }).catch(function (error) {
         let res = error.response;

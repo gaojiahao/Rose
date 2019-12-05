@@ -550,22 +550,21 @@ export default {
     this.init();
     let { query,meta,path,fullPath} = this.$route;
         let shareInfo = {
-          title: query.transCode || query.name,
+          title: query.transCode,
           desc: meta.title,
           imgUrl: '',
-          link: redirect_uri_share+'/Hermes'+fullPath,
+          link: redirect_uri_share+'/Hermes'+fullPath+'&tag=share',
         }
         console.log(shareInfo);
     wx.ready(() => {
         let { query,meta,path,fullPath} = this.$route;
         // 分享
         let shareInfo = {
-          title: query.name + query.transCode,
+          title: query.name,
           desc: meta.title,
           imgUrl: '',
-          link: redirect_uri_share+'/Hermes'+fullPath,
+          link: redirect_uri_share+'/Hermes'+fullPath+'&tag=share',
         }
-        console.log(shareInfo);
         shareContent(shareInfo);
       })
     this.$on('on-upload',this.onUpload);
