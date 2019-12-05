@@ -1,3 +1,11 @@
+/*
+ * @Descripttion: 
+ * @version: 1.0.0
+ * @Author: Gabriel.gaojiahao
+ * @Date: 2019-04-09 14:05:57
+ * @LastEditors: Gabriel.gaojiahao
+ * @LastEditTime: 2019-12-05 11:37:22
+ */
 /**
  * corpid 企微-公司的id
  * secret 企微-企业应用secret
@@ -50,6 +58,7 @@ export const corpid = window.ROLETASK_LoginConfig && window.ROLETASK_LoginConfig
 export const secret = window.ROLETASK_LoginConfig && window.ROLETASK_LoginConfig.qw_secret; // 应用凭证
 export const agentid = window.ROLETASK_LoginConfig && window.ROLETASK_LoginConfig.qw_agentid; // 企业应用的id
 export const redirect_uri = window.ROLETASK_LoginConfig && window.ROLETASK_LoginConfig.qw_redirect_uri_mobile; // 首页路径
+export const redirect_uri_share = window.ROLETASK_LoginConfig && window.ROLETASK_LoginConfig.qw_redirect_uri_mobile_share; // 分享路径
 
 export default {
   corpid,

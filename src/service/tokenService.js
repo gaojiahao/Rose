@@ -55,7 +55,7 @@ let tokenService = {
     let code = query.code;
 
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
-    
+    console.log(window.location.href);
     // 根据环境不同 调用不同的登录接口
     if (isDebug){
       return this.toLoginPage();

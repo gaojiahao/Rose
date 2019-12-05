@@ -1,3 +1,11 @@
+<!--
+ * @Descripttion: 
+ * @version: 1.0.0
+ * @Author: Gabriel.gaojiahao
+ * @Date: 2019-09-17 17:04:27
+ * @LastEditors: Gabriel.gaojiahao
+ * @LastEditTime: 2019-12-03 17:12:41
+ -->
 <template>
   <div class="pages" :class="{'no-add': true}" ref="list">
     <div class="content">
@@ -5,7 +13,7 @@
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search="searchList" ref="search"></searchIcon>
         <div class="filter_part">
-          <r-sort @on-sort="onSortList" @on-filter="onFilter" :list-id="listId" ref="sort"></r-sort>
+          <r-sort @on-sort="onSortList" @on-filter="onFilter" :list-id="listId" ref="sort" :filterFieldSettings="filterFieldSettings"></r-sort>
         </div>
       </div>
       <r-scroll

@@ -29,6 +29,7 @@ fly.interceptors.request.use((request) => {
     return tokenService.login().then((token) => {
       if(token){
         request.headers.Authorization = token;
+
       // 请求token成功之后，即将进入第一个请求
         return request;
       }
