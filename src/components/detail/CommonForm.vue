@@ -553,7 +553,7 @@ export default {
           title: query.transCode || query.name,
           desc: meta.title,
           imgUrl: '',
-          link: redirect_uri+'/Hermes'+fullPath,
+          link: redirect_uri_share+'/Hermes'+fullPath,
         }
         console.log(shareInfo);
     wx.ready(() => {

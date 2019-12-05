@@ -36,7 +36,6 @@ export const scanQRCode = (options = {}) => {
 // 分享
 export const shareContent = (shareInfo = {}) => {
   if(shareInfo.link){
-    console.log("1"+shareInfo);
     return wx.onMenuShareAppMessage({
       title: shareInfo.title, // 分享标题
       desc: shareInfo.desc, // 分享描述
@@ -50,7 +49,6 @@ export const shareContent = (shareInfo = {}) => {
       },
     });
   } else {
-    console.log("2"+shareInfo);
     return wx.onMenuShareAppMessage({
       title: shareInfo.title, // 分享标题
       desc: shareInfo.desc, // 分享描述
