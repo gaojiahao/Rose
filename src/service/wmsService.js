@@ -60,7 +60,7 @@ export let getSortingOrderByBoxCode = (data = {}) => {
 //获取库位存货
 export let  getLocationOfinventory =  (data = {}) =>{
   return $flyio.ajax({
-    url: '/H_roleplay-si/ds/getSumInvBalance_STCK',
+    url: '/H_roleplay-si/ds/getSumInvBalance_STCK_PDA',
     data
   })
 }
