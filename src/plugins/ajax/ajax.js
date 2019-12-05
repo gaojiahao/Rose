@@ -32,13 +32,14 @@ fly.interceptors.request.use((request) => {
       if(token){
         request.headers.Authorization = token;
 
-        if(query.tag='share'){
+        if(query.tag=='share'){
           alert(reurl);
           window.location.href = reurl;
           return ;
-        }
+        } else {
       // 请求token成功之后，即将进入第一个请求
         return request;
+        }
       }
     }).finally(() => {
       // 解锁队列，后序请求恢复正常
