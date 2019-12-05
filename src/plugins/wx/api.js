@@ -42,7 +42,8 @@ export const shareContent = (shareInfo = {}) => {
       imgUrl: shareInfo.imgUrl, // 分享图标
       link:shareInfo.link,
       success: function () {
-        alert('分享成功！');
+        this.$vux.toast.text('分享成功！');
+        //alert('分享成功！');
       },
       cancel: function () {
         alert('分享失败！');
@@ -54,7 +55,8 @@ export const shareContent = (shareInfo = {}) => {
       desc: shareInfo.desc, // 分享描述
       imgUrl: shareInfo.imgUrl, // 分享图标
       success: function () {
-        alert('分享成功！');
+        this.$vux.toast.text('分享成功！');
+        //alert('分享成功！');
       },
       cancel: function () {
         alert('分享失败！');
