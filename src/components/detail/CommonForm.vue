@@ -46,7 +46,7 @@ import {findConfigInfo} from 'service/commonService'
 import Bscroll from "better-scroll";
 /* 引入微信相关 */
 import {register} from 'plugins/wx'
-import { corpid, secret, agentid, redirect_uri } from '@/plugins/ajax/conf'
+import { corpid, secret, agentid, redirect_uri,redirect_uri_share } from '@/plugins/ajax/conf'
 import {shareContent } from 'plugins/wx/api'
 import {
   isMyflow,
@@ -563,7 +563,7 @@ export default {
           title: query.name + query.transCode,
           desc: meta.title,
           imgUrl: '',
-          link: redirect_uri+'/Hermes'+fullPath,
+          link: redirect_uri_share+'/Hermes'+fullPath,
         }
         console.log(shareInfo);
         shareContent(shareInfo);
