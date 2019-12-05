@@ -28,7 +28,7 @@ fly.interceptors.request.use((request) => {
     fly.lock();
     return tokenService.login().then((token) => {
       if(token){
-        let query = querystring.parse(location.search.slice(1));
+        let query = qs.parse(location.search.slice(1));
         console.log(query)
         request.headers.Authorization = token;
 
