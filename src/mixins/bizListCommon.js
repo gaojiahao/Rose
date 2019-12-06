@@ -254,15 +254,27 @@ export default {
       if (Object.keys(this.otherFilter).length) {
         let keyArr = Object.keys(this.otherFilter);
         for (let key in this.otherFilter) {
-          let obj = {
-            property: key,
-            operator: 'in'
+          if(this.otherFilter[key].kind){
+            let obj = {
+              property: key,
+              operator: 'btw'
+            }
+            this.otherFilter[key].value.forEach((item, index) => {
+              let key = 'value';
+              obj[key] = item;
+            })
+            filter.push(obj);
+          } else {
+            let obj = {
+              property: key,
+              operator: 'in'
+            }
+            this.otherFilter[key].value.forEach((item, index) => {
+              let key = `value${index + 1}`;
+              obj[key] = item;
+            })  
+            filter.push(obj);
           }
-          this.otherFilter[key].value.forEach((item, index) => {
-            let key = `value${index + 1}`;
-            obj[key] = item;
-          })
-          filter.push(obj);
         }
 
       }
@@ -484,7 +496,7 @@ export default {
             });
             var ret = {
                 name: f.alias||f.fieldName,
-                code: f.fieldCode,
+                code: f.parentCode ? f.fieldCode+'_'+f.parentCode : f.fieldCode,
                 type: f.fieldType,
                 text: f.text,
                 sequence: f.sequence,
