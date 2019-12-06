@@ -64,9 +64,9 @@
         </group>
         <group title="个性化产品">
           <x-input title="个性化产品A" v-model.number="SpecificClassASet" text-align="right" placeholder="请输入金额"></x-input>
-          <cell class="each_part" title="个性化产品A合计" disabled :value="SpecificClassA" value-align="right"></cell>
+          <cell class="each_part" title="个性化产品A合计" disabled :value="SpecificClassA" value-align="right" style=" display:none;"></cell>
           <x-input title="个性化产品B " v-model.number="SpecificClassBSet" text-align="right" placeholder="请输入金额"></x-input>
-          <cell class="each_part" title="个性化产品B合计" disabled :value="SpecificClassB" value-align="right"></cell>
+          <cell class="each_part" title="个性化产品B合计" disabled :value="SpecificClassB" value-align="right" style=" display:none;"></cell>
           <cell title="个性化产品合计" disabled :value="SpecificClassTotal"></cell>
         </group>
 
