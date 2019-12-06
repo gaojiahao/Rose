@@ -36,7 +36,7 @@
                 </template>
               </div>
             </template>
-            <div class="process-status-container vux-1px-b" v-for="(val, key) in statusList" :key="key">
+            <!-- <div class="process-status-container vux-1px-b" v-for="(val, key) in statusList" :key="key">
               <template v-if="val.value.length">
                 <div class="process-wrapper">
                   <div class="filter_title">{{statusList[key].alias}}</div>
@@ -84,7 +84,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
           </r-scroll>
           <div class="handle-part vux-1px-t">
             <span class="reset_btn" @click="filterReset">重置</span>
@@ -163,7 +163,7 @@ export default {
   watch:{
     filterFieldSettings:{
       handler(val) {
-        this.getDefindFilterItems(val);
+        this.filterFiled = this.getDefindFilterItems(val);
       }
     }  
   },
@@ -279,24 +279,45 @@ export default {
     //选择过滤条件
     selFilter(sItem,key,index) {
       if (this.fieldVlaue[key]){
-        let arr = this.fieldVlaue[key].value;
-        let delIndex = arr.findIndex(item => item === sItem.value);
-        // 若存在重复的 则清除
-        if (delIndex !== -1) {
-          arr.splice(delIndex, 1);
-          //当值为空是，删除该过滤条件
-          if (!arr.length) {
-            delete this.fieldVlaue[key]
+        if(("radio,datetime").indexOf(this.filterFiled[index].kind) == -1){
+          let arr = this.fieldVlaue[key].value;
+          let delIndex = arr.findIndex(item => item === sItem.value);
+          // 若存在重复的 则清除
+          if (delIndex !== -1) {
+            arr.splice(delIndex, 1);
+            //当值为空是，删除该过滤条件
+            if (!arr.length) {
+              delete this.fieldVlaue[key]
+            }
+            return;
           }
-          return;
+          arr.push(sItem.value);
+        } else {
+          let arr = this.fieldVlaue[key].value;
+          let delIndex = arr.findIndex(item => item === sItem.value);
+          if (delIndex !== -1) {
+            arr.splice(delIndex, 1);
+            //当值为空是，删除该过滤条件
+            if (!arr.length) {
+              delete this.fieldVlaue[key]
+            }
+            return;
+          }
+          let obj = {};
+          obj = {
+            alias: this.filterFiled[index].name,
+            value: [sItem.value],
+            kind: this.filterFiled[index].kind,
+          }
+          this.$set(this.fieldVlaue, key, {...obj})  
         }
-        arr.push(sItem.value);
       }
       else {
         let obj = {};
         obj = {
           alias: this.filterFiled[index].name,
-          value: [sItem.value]
+          value: [sItem.value],
+          kind: this.filterFiled[index].kind,
         }
         this.$set(this.fieldVlaue, key, {...obj})
       }
@@ -435,64 +456,66 @@ export default {
       var me = this,
           isMenu = false,
           menu=[],
-          fields = val;
+          fields = val,
+          tempFields=[];
 
       for (let item of fields) {
-          if (item.config && item.config.quickFilter) {
-              var a = JSON.parse(item.config.quickFilter);
-              item.child = [];
-              item.type = 'radio';
-              for(var i = 0 ; i<a.length; i++){
-                var temp = { 
-                    name:a[i].text,
-                    value:a[i].key
-                  }
-                item.child.push(temp);
-              }
-              this.filterFiled.push(item);
-          }
-          if(item.config && item.config.optionState) {
-            var a = JSON.parse(item.config.optionState);
-            item.child = [];
-            item.type = 'checkbox';
+        var temparr = {...item};
+        if(item.config && item.config.quickFilter) {
+            var a = JSON.parse(item.config.quickFilter);
+            temparr.child = [];
+            temparr.kind = 'radio';
             for(var i = 0 ; i<a.length; i++){
-                var temp = { 
-                    name:a[i].name,
-                    value:a[i].id
-                  }
-                item.child.push(temp);
+              var temp = { 
+                  name:a[i].text,
+                  value:a[i].key
+                }
+              temparr.child.push(temp);
+            }
+            tempFields.push(temparr);
+        }
+        else if(item.config && item.config.optionState) {
+          var a = JSON.parse(item.config.optionState);
+          temparr.child = [];
+          // temparr.kind = 'checkbox';
+          for(var i = 0 ; i<a.length; i++){
+            var temp = { 
+                name:a[i].name,
+                value:a[i].id
               }
-            this.filterFiled.push(item);
+            temparr.child.push(temp);
           }
-          if(item.config && item.config.format && (item.config.format=="Y-m-d H:i:s")) {
-            var a = [
-              {name:'过去7天',value:'$last7Days$'},
-              {name:'过去30天',value:'$last30Days$'},
-              {name:'过去90天',value:'$last90Days$'},
-              {name:'近两天',value:'$lastTowDay$'},
-              {name:'昨天',value:'$yesterday$'},
-              {name:'今日',value:'$today$'},
-              {name:'本周',value:'$thisWeek$'},
-              {name:'本月',value:'$thisMonth$'},
-              {name:'本季度',value:'$thisQuarter$'},
-              {name:'本年',value:'$thisYear$'},
-              {name:'上周',value:'$preWeek$'},
-              {name:'上月',value:'$preMonth$'},
-              {name:'上季度',value:'$preQuarter$'},
-              {name:'上年',value:'$preYear$'},
-            ]
-            item.child = a;
-            item.type = 'datetime';
-            this.filterFiled.push(item);
-          }
+          tempFields.push(temparr);
+        }
+        else if(item.config && item.config.format && (item.config.format=="Y-m-d H:i:s")) {
+          var a = [
+            {name:'过去7天',value:'$last7Days$'},
+            {name:'过去30天',value:'$last30Days$'},
+            {name:'过去90天',value:'$last90Days$'},
+            {name:'近两天',value:'$lastTowDay$'},
+            {name:'昨天',value:'$yesterday$'},
+            {name:'今日',value:'$today$'},
+            {name:'本周',value:'$thisWeek$'},
+            {name:'本月',value:'$thisMonth$'},
+            {name:'本季度',value:'$thisQuarter$'},
+            {name:'本年',value:'$thisYear$'},
+            {name:'上周',value:'$preWeek$'},
+            {name:'上月',value:'$preMonth$'},
+            {name:'上季度',value:'$preQuarter$'},
+            {name:'上年',value:'$preYear$'},
+          ]
+          temparr.child = a;
+          temparr.kind = 'datetime';
+          tempFields.push(temparr);
+        }
       }
+      return tempFields;
     },
   },
   created(){
     let { listId } = this.$route.params;
     this.toDay = dateFormat(new Date(), 'YYYY-MM-DD');
     this.preDate = dateFormat(new Date(new Date().getTime() - 24 * 60 * 60 * 1000), 'YYYY-MM-DD');
-    this.getFilterFields()
   }
 }
 </script>
