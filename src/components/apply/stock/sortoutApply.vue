@@ -314,7 +314,7 @@ export default {
                                 containerCodeOut: box.warehouseCode,
                                 warehouseName_storehouseOutCode: box.storehouseName,
                                 storehouseOutCode: box.storehouseCode,
-                                tdQty: this.curQrCodeInfo.boxRule,
+                                tdQty: box.qty,
                                 batchNo: box.batchNo,
                                 productionDate: dateFormat(box.productionDate,'YYYY-MM-DD'),
                                 boxRule:this.curQrCodeInfo.boxRule,
@@ -370,7 +370,7 @@ export default {
                 getSortOutBoxInfoByPallet(this.trayCode,this.scanCodeInfo.postCode).then(res=>{
                     if(res.dataCount){
                         res.tableContent.map(box=>{
-                            this.scanCodeInfo.boxCode = `${box.inventoryCode},${box.batchNo},${box.productionDate},${box.qty},${box.boxCode}`;
+                            this.scanCodeInfo.boxCode = `${box.matCode},${box.batchNo},${box.productionDate},${box.qty},${box.boxCode}`;
                             this.handlerScanBoxCode();
                         });
                     }else{
