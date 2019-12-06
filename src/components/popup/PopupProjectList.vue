@@ -160,6 +160,7 @@
             num5: 0,
             qty: '',
             num1: '',
+            'trans_detail_uncalc.price':'0'
           }];
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? [...none, ...tableContent] : [...this.listData, ...tableContent];

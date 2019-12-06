@@ -28,6 +28,12 @@
         header-label="金额"
         :header-value="bClassAmt | numberComma" :body-items="bClassList">
       </form-preview>
+      <load-more tip="个性化产品" :show-loading='false'></load-more>
+      <form-preview
+        class="project_part"
+        header-label="金额"
+        :header-value="sClassAmt | numberComma">
+      </form-preview>
     </div>
 
 
@@ -85,6 +91,7 @@
         childInfo: "",
         listSalesAmt: [],
         bClassList: [], // b类产品展示的item
+        sClassAmt:'',
       };
     },
     filters: {
@@ -126,7 +133,8 @@
             list4_num = 0, // 最终合计 数量
             totalNum1 = 0, // 最终合计 套数
             listSalesAmt = [],
-            bClassList = [];
+            bClassList = [],
+            sClassAmt = 0;
 
         //从缓存中拿到上个页面提交的数据
         let jsonData = JSON.parse(this.childInfo.jsonData);
@@ -170,6 +178,9 @@
                 });
               }
               break;
+            case 'S':
+              sClassAmt = item.amount;
+              break;
             default:
               break;
           }
@@ -177,6 +188,7 @@
         this.projectAmt = "￥" + projectAmt;
         this.aClassAmt = "￥" + aClassAmt;
         this.bClassAmt = "￥" + bClassAmt;
+        this.sClassAmt = "￥" + sClassAmt;
         this.bClassList = bClassList;
         this.finalAmt = "￥" + accAdd(Number(aClassAmt), Number(bClassAmt));
         this.finalList = [

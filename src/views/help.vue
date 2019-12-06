@@ -26,15 +26,15 @@
         <group label-align='left' :title="index > 0?'':'请选择对应的产品'" v-for="( item ,index ) in arr" :key="index" v-else>
           <cell class="each_part" title="项目类产品" :value="item.value" value-align="right"></cell>
           <cell class="each_part" title="单价"
-                :value="'￥'+(item['trans_detail_uncalc.price'] | numberComma) || 0" value-align="right"
+                :value="'￥'+item['trans_detail_uncalc.price'] | numberComma" value-align="right"
                 v-if="item.value.length>0"></cell>
           <!-- 数量输入 -->
           <x-input title="数量" v-model.number="item.qty" text-align="right" placeholder="请输入数量"
                    v-if="item.value !== '无'"></x-input>
 
-          <cell class="each_part" title="系数" :value="item.num1 || 0" value-align="right" style="display: block;"
+          <cell class="each_part" title="系数" :value="item.num1 || 0" value-align="right" style="display: none;"
                 v-if="item.value.length>0"></cell>
-          <cell class="each_part" title="含税金额" :value="item.amount || 0" value-align="right" style="display: block;"
+          <cell class="each_part" title="含税金额" :value="item.amount || 0" value-align="right" style="display: none;"
                 v-if="item.value.length>0"></cell>
         </group>
 
@@ -62,7 +62,13 @@
           <cell class="each_part" title="B类产品套数(线下)" disabled :value="BSetDown" value-align="right"></cell>
           <cell class="each_part" title="B类产品套数合计" disabled :value="BSetTotal" value-align="right"></cell>
         </group>
-        
+        <group title="个性化产品">
+          <x-input title="个性化产品A" v-model.number="SpecificClassASet" text-align="right" placeholder="请输入金额"></x-input>
+          <cell class="each_part" title="个性化产品A合计" disabled :value="SpecificClassA" value-align="right"></cell>
+          <x-input title="个性化产品B " v-model.number="SpecificClassBSet" text-align="right" placeholder="请输入金额"></x-input>
+          <cell class="each_part" title="个性化产品B合计" disabled :value="SpecificClassB" value-align="right"></cell>
+          <cell title="个性化产品合计" disabled :value="SpecificClassTotal"></cell>
+        </group>
 
         <group title="费用明细">
           <x-input title="住宿费" v-model.number="hotelAmt" text-align="right" placeholder="请输入住宿费"
@@ -179,6 +185,15 @@
       BSetTotal() {
         return toFixed(accAdd(this.BSet, this.BSetDown))
       },
+      SpecificClassA(){
+        return toFixed(accMul(this.SpecificClassASet,0.3));
+      },
+      SpecificClassB(){
+        return toFixed(accMul(this.SpecificClassBSet,0.15));
+      },
+      SpecificClassTotal(){
+        return accAdd(this.SpecificClassA, this.SpecificClassB); 
+      }
     },
     methods: {
       //提交
@@ -204,6 +219,8 @@
           {key: 'Aclass', msg: '其他A类产品销售金额'},
           {key: 'Bclass', msg: 'B类产品(线上)销售金额'},
           {key: 'BclassDown', msg: 'B类产品(线下)销售金额'},
+          {key: 'SpecificClassASet', msg: '个性化产品A销售金额'},
+          {key: 'SpecificClassBSet', msg: '个性化产品B销售金额'},
           {key: 'hotelAmt', msg: '住宿金额'},
           {key: 'trafficAmt', msg: '市内交通费'},
           {key: 'lTrafficAmt', msg: '长途交通费'},
@@ -337,6 +354,29 @@
             qty: "",
             amount: Number(this.BclassTotal), //总金额
             fgCode: "",
+          },{
+            id: this.guid(),
+            transObjCode: "个性化产品A", //项目类产品名称
+            containerCode: "S1", //类型
+            qty: "",
+            amount: Number(this.SpecificClassA), //总金额
+            fgCode: "",
+            num1: 0.3,
+          },{
+            id: this.guid(),
+            transObjCode: "个性化产品B", //项目类产品名称
+            containerCode: "S2", //类型
+            qty: "",
+            amount: Number(this.SpecificClassB), //总金额
+            fgCode: "",
+            num1: 0.15,
+          },{
+            id: this.guid(),
+            transObjCode: "个性化产品", //项目类产品名称
+            containerCode: "S", //类型
+            qty: "",
+            amount: Number(this.SpecificClassTotal), //总金额
+            fgCode: "",
           },
           ],
           transCode: "XHXSDD"
@@ -402,6 +442,10 @@
             Aclass: this.Aclass,
             Bclass: this.Bclass,
             BclassDown: this.BclassDown,
+            SpecificClassA: this.SpecificClassA,
+            SpecificClassB: this.SpecificClassB,
+            SpecificClassASet: this.SpecificClassASet,
+            SpecificClassBSet: this.SpecificClassBSet,
             saleReportArr: this.arr,
             comments: this.comments,
             hotelAmt: this.hotelAmt,

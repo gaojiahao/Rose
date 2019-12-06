@@ -54,6 +54,10 @@ export default {
         varchar21: '', // 下周银行渠道
         varchar22: '', // 明日所在渠道
       },
+      // SpecificClassA:'',
+      // SpecificClassB:'',
+      SpecificClassASet:'',
+      SpecificClassBSet:'',
     };
   },
   computed: {
@@ -257,7 +261,7 @@ export default {
     // 回显表单内容
     echoStorage(basicSrg = {}, formSrc = {}) {
       let {member, governor, captain} = basicSrg;
-      let {Aclass, Bclass, BclassDown, comments, saleReportArr, hotelAmt, otherAmt, trafficAmt, lTrafficAmt, baseinfoExt} = formSrc;
+      let {Aclass, Bclass, BclassDown, comments, saleReportArr, hotelAmt, otherAmt, trafficAmt, lTrafficAmt, baseinfoExt,SpecificClassASet,SpecificClassBSet} = formSrc;
       if (basicSrg) {
         this.member = member;
         this.governor = governor;
@@ -269,6 +273,8 @@ export default {
         this.Aclass = Aclass;
         this.Bclass = Bclass;
         this.BclassDown = BclassDown;
+        this.SpecificClassASet = SpecificClassASet,
+        this.SpecificClassBSet = SpecificClassBSet,
         this.arr = saleReportArr;
         this.comments = comments;
         this.hotelAmt = hotelAmt;
