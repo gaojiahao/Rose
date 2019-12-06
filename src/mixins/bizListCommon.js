@@ -496,7 +496,7 @@ export default {
             });
             var ret = {
                 name: f.alias||f.fieldName,
-                code: f.fieldCode,
+                code: f.parentCode ? f.fieldCode+'_'+f.parentCode : f.fieldCode,
                 type: f.fieldType,
                 text: f.text,
                 sequence: f.sequence,
