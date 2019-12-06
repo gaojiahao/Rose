@@ -23,8 +23,8 @@
         <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
           <div class="content-item"
                :class="{'final-total': item.total,
-               'title': item.total,
-               'indent': !item.total}" 
+               'title': item.total}" 
+               :style="{paddingLeft:`${item.indent*.5}em`}"
                ref="partLeft">
                {{item.financeName}}
           </div>
