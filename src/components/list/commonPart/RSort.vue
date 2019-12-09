@@ -487,7 +487,7 @@ export default {
           }
           tempFields.push(temparr);
         }
-        else if(item.config && item.config.format && (item.config.format=="Y-m-d H:i:s")) {
+        else if(item.config && (item.config.format && item.config.format=="Y-m-d H:i:s") || (item.type && item.type=="date")) {
           var a = [
             {name:'过去7天',value:'$last7Days$'},
             {name:'过去30天',value:'$last30Days$'},

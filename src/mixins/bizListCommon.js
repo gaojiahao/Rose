@@ -497,7 +497,7 @@ export default {
             var ret = {
                 name: f.alias||f.fieldName,
                 code: f.parentCode ? f.fieldCode+'_'+f.parentCode : f.fieldCode,
-                type: f.fieldType,
+                type: fieldSetting.fieldType,
                 text: f.text,
                 sequence: f.sequence,
             };
@@ -505,8 +505,9 @@ export default {
                 ret.config = fieldSetting.config;
                 if (fieldSetting.optionItems) {
                     ret.config.optionState = JSON.stringify(fieldSetting.optionItems.filter(function (option) {
-                        return option.listId === undefined || option.listId === me.appId;
+                        return option.listId === undefined || option.listId === me.applyCode;
                     }));
+                    // (ret.config.optionState).sort(function(a, b){return a.sort - b.sort});
                 }
             }
             if (fieldSetting && fieldSetting.valueType && fieldSetting.valueType.gridFilter) {
