@@ -32,7 +32,6 @@ fly.interceptors.request.use((request) => {
 
       // 请求token成功之后，即将进入第一个请求
       console.log(request);
-      return ;
         return request;
       }
     }).finally(() => {
