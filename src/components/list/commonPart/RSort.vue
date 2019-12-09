@@ -627,9 +627,9 @@ export default {
       font-size: .12rem;
       .each_status {
         width: .7rem;
-        height: .36rem;
+        height: .26rem;
         color: #333;
-        line-height: .36rem;
+        line-height: .26rem;
         text-align: center;
         margin: 0  .16rem .14rem 0;
         box-sizing: border-box;
