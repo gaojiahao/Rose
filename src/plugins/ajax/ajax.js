@@ -31,6 +31,7 @@ fly.interceptors.request.use((request) => {
         request.headers.Authorization = token;
 
       // 请求token成功之后，即将进入第一个请求
+      console.log(request);
         return request;
       }
     }).finally(() => {
