@@ -599,8 +599,9 @@ export default {
   }
   .filter_title {
     color: #666;
-    font-size: .12rem;
-    padding: 0  0 .17rem .06rem;
+    font-size: .14rem;
+    font-weight: 600;
+    padding: 0  0 .06rem .06rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -617,12 +618,13 @@ export default {
   }
   .process-status-container {
     .process-wrapper {
-      padding: .17rem .23rem .08rem .24rem;
+      padding: .06rem .23rem .08rem .24rem;
     }
     .process_status {
       overflow: hidden;
       display: flex;
       flex-flow: wrap;
+      font-size: .12rem;
       .each_status {
         width: .7rem;
         height: .36rem;
