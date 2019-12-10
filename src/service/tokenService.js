@@ -61,8 +61,10 @@ let tokenService = {
       return this.toLoginPage();
     }else if (isQYWX) {
       if(code != null){
+        console.log('1')
         return this.QYWXLogin();
       } else {
+        console.log('2')
         window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redirect_uri}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
       }
     } else if (dd.ios || dd.android) {
