@@ -55,7 +55,7 @@ let tokenService = {
     let code = query.code;
 
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
-    console.log(window.location.href);
+    //return this.pcLogin('rfd113', 'rfd123456','token');
     // 根据环境不同 调用不同的登录接口
     if (isDebug){
       return this.toLoginPage();
@@ -63,7 +63,11 @@ let tokenService = {
       if(code != null){
         return this.QYWXLogin();
       } else {
-        window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redirect_uri}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
+        var redUrl = redirect_uri;
+        if(window.sessionStorage.getItem('shareUrl')){
+          redUrl = window.sessionStorage.getItem('shareUrl');
+        }
+        window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redUrl}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
       }
     } else if (dd.ios || dd.android) {
       return this.DDLogin();
