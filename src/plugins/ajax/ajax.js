@@ -32,7 +32,6 @@ fly.interceptors.request.use((request) => {
 
       // 请求token成功之后，即将进入第一个请求
       if(window.sessionStorage.getItem('shareUrl')){
-        console.log(window.sessionStorage.getItem('shareUrl'))
         return window.sessionStorage.getItem('shareUrl');
       }
         return request;
