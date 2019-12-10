@@ -67,6 +67,7 @@ let tokenService = {
         if(window.sessionStorage.getItem('shareUrl')){
           redUrl = encodeURI(window.sessionStorage.getItem('shareUrl'),"utf-8");
         }
+        console.log('redUrl',redUrl);
         window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redUrl}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
       }
     } else if (dd.ios || dd.android) {
