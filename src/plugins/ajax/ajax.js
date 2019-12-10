@@ -31,8 +31,9 @@ fly.interceptors.request.use((request) => {
         request.headers.Authorization = token;
 
       // 请求token成功之后，即将进入第一个请求
-      console.log(request);
-      return;
+      if(window.sessionStorage.getItem('shareUrl')){
+        return window.sessionStorage.getItem('shareUrl');
+      }
         return request;
       }
     }).finally(() => {

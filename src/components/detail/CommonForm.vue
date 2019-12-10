@@ -555,7 +555,6 @@ export default {
           imgUrl: '',
           link: redirect_uri_share+'/Hermes'+fullPath+'&tag=share',
         }
-        console.log(shareInfo);
     wx.ready(() => {
         let { query,meta,path,fullPath} = this.$route;
         // 分享
@@ -567,6 +566,9 @@ export default {
         }
         shareContent(shareInfo);
       })
+    if(query.tag&&query.tag=='share'){
+      window.sessionStorage.removeItem('shareUrl');
+    }
     this.$on('on-upload',this.onUpload);
   }
 };

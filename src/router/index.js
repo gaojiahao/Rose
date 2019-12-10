@@ -4,7 +4,7 @@
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-12-03 09:54:38
  * @LastEditors: Gabriel.gaojiahao
- * @LastEditTime: 2019-12-09 16:38:16
+ * @LastEditTime: 2019-12-10 10:42:46
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -14,6 +14,9 @@ import MsgRouter from '@/msg/router'
 import { getFieldSetting, getAllDict, getAllFieldSettingListLevel}  from "service/fieldModelService"
 
 Vue.use(Router)
+
+const storage = window['sessionStorage'];
+const r2_cachedListLevelFieldSetting = 'r2_cachedListLevelFieldSetting';
 
 let router = window.router;
 if (router == null) {
@@ -27,6 +30,10 @@ if (router == null) {
   })
 
   window.router.beforeEach((to, from, next) => {
+    let {query,fullPath} = to;
+    if(query.tag&&query.tag=='share'){
+      storage.setItem('shareUrl',ensureUrl(fullPath));
+    }
     if(to.name !== 'Login'){
       if(!storage.getItem('r2_cachedListLevelFieldSetting')){
         initListLevelFieldSetting();   
@@ -41,9 +48,6 @@ if (router == null) {
     next();
   })
 }
-
-const storage = window['sessionStorage'];
-const r2_cachedListLevelFieldSetting = 'r2_cachedListLevelFieldSetting';
 
 //获取系统字段模型
 async function initFieldSetting(){
@@ -113,5 +117,19 @@ async function initDicts() {
     //console.log('_cachedDicts',_cachedDicts);
     storage.setItem('r2_cachedDicts',  JSON.stringify(_cachedDicts));
   });
+}
+
+function ensureUrl(url) {
+  if (/^\/H_roleplay-si/i.test(url)) {
+      return url;
+  } else if (/^\/R_roleplay-si/i.test(url)) {
+      return url.replace(/^\/R_roleplay-si/i, '/H_roleplay-si');
+  } else if (/^\/account-api/i.test(url)) {
+      return url;
+  } else if (/^\/corebiz-api/i.test(url)) {
+      return url;
+  } else {
+      return '/H_roleplay-si' + url;
+  }
 }
 export default window.router
