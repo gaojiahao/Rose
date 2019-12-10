@@ -65,7 +65,7 @@ let tokenService = {
       } else {
         var redUrl = redirect_uri;
         if(window.sessionStorage.getItem('shareUrl')){
-          redUrl = window.sessionStorage.getItem('shareUrl');
+          redUrl = urlencode(window.sessionStorage.getItem('shareUrl'));
         }
         window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redUrl}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
       }
