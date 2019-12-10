@@ -65,9 +65,9 @@ let tokenService = {
       } else {
         var redUrl = redirect_uri;
         if(window.sessionStorage.getItem('shareUrl')){
-          redUrl = encodeURI(window.sessionStorage.getItem('shareUrl'));
+          redUrl = encodeURI(window.sessionStorage.getItem('shareUrl'),"utf-8");
         }
-        window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redUrl}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
+        window.location.replace("https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&"+encodeURI("redirect_uri="+redUrl,"utf-8")+"&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect")
       }
     } else if (dd.ios || dd.android) {
       return this.DDLogin();
