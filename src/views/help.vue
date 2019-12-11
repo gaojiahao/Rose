@@ -34,7 +34,7 @@
 
           <cell class="each_part" title="系数" :value="item.num1 || 0" value-align="right" style="display: none;"
                 v-if="item.value.length>0"></cell>
-          <cell class="each_part" title="含税金额" :value="item.amount || 0" value-align="right" style="display: none;"
+          <cell class="each_part" title="含税金额" :value="accMul(item.amount,item.qty) || 0" value-align="right" style="display: block;"
                 v-if="item.value.length>0"></cell>
         </group>
 
@@ -395,7 +395,7 @@
             containerCode: "项目类产品", //类型
             qty: item.qty,
             taxAmount: item.taxAmount,
-            amount: item.amount, //总金额
+            amount: accMul(item.qty,item.num1,item['trans_detail_uncalc.price']), //总金额
             fgCode: "",
             num1: item.num1, // 套数
             price: item['trans_detail_uncalc.price'],//单价
@@ -456,6 +456,9 @@
             baseinfoExt: this.baseinfoExt,
           })
         );
+      },
+      accMul(a,b){
+        return accMul(a, b);
       }
     },
     created() {
