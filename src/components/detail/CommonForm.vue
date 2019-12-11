@@ -566,6 +566,7 @@ export default {
         nextUrl = "?" + arr.join("&");
       }
       url = beforeUrl + nextUrl;
+      console.log(url);
       return url;
     }
   },
