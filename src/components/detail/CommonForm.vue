@@ -571,14 +571,17 @@ export default {
   },
   created() {
     this.init();
-    let { query,meta,path,fullPath} = this.$route;
+    let { query,meta,path,fullPath} = this.$route,
+        title = ecodeURIComponent(query.name),
+        desc = decodeURIComponent(meta.title);
+        console.log(title+desc);
     wx.ready(() => {
         let { query,meta,path,fullPath} = this.$route;
         var fullPath2 = this.delParam(fullPath);
         // 分享
         let shareInfo = {
-          title: decodeURIComponent(query.name),
-          desc: decodeURIComponent(meta.title),
+          title: title,
+          desc: desc,
           imgUrl: '',
           link: redirect_uri_share+'/Hermes'+fullPath2+'&tag=share',
         }
