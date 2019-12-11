@@ -566,7 +566,6 @@ export default {
         nextUrl = "?" + arr.join("&");
       }
       url = beforeUrl + nextUrl;
-      console.log(url);
       return url;
     }
   },
@@ -578,8 +577,8 @@ export default {
         var fullPath2 = this.delParam(fullPath);
         // 分享
         let shareInfo = {
-          title: query.name,
-          desc: meta.title,
+          title: decodeURIComponent(query.name),
+          desc: decodeURIComponent(meta.title),
           imgUrl: '',
           link: redirect_uri_share+'/Hermes'+fullPath2+'&tag=share',
         }
