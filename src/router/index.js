@@ -4,7 +4,7 @@
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-12-03 09:54:38
  * @LastEditors: Gabriel.gaojiahao
- * @LastEditTime: 2019-12-10 10:42:46
+ * @LastEditTime: 2019-12-10 14:07:28
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -32,7 +32,7 @@ if (router == null) {
   window.router.beforeEach((to, from, next) => {
     let {query,fullPath} = to;
     if(query.tag&&query.tag=='share'){
-      storage.setItem('shareUrl',ensureUrl(fullPath));
+      storage.setItem('shareUrl',window.location.href);
     }
     if(to.name !== 'Login'){
       if(!storage.getItem('r2_cachedListLevelFieldSetting')){
