@@ -34,7 +34,7 @@
 
           <cell class="each_part" title="系数" :value="item.num1 || 0" value-align="right" style="display: none;"
                 v-if="item.value.length>0"></cell>
-          <cell class="each_part" title="含税金额" :value="accMul(item.amount,item.qty) || 0" value-align="right" style="display: block;"
+          <cell class="each_part" title="含税金额" :value="accMul(item.amount,item.qty) || 0" value-align="right" style="display: none;"
                 v-if="item.value.length>0"></cell>
         </group>
 
