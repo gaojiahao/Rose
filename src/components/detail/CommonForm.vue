@@ -544,17 +544,34 @@ export default {
     },
     onUpload(data) {
       this.biReferenceId = data.biReferenceId;
+    },
+    delParam(fullPath) {
+      var url = fullPath;    //页面url
+      var urlParam = fullPath.substr(1);   //页面参数
+      var beforeUrl = url.substr(0, url.indexOf("?"));   //页面主地址（参数之前地址）
+      var nextUrl = "";
+
+      var arr = new Array();
+      if (urlParam != "") {
+        var urlParamArr = urlParam.split("&"); //将参数按照&符分成数组
+        for (var i = 0; i < urlParamArr.length; i++) {
+          var paramArr = urlParamArr[i].split("="); //将参数键，值拆开
+          //如果键雨要删除的不一致，则加入到参数中
+          if (('code,state,tag').indexOf(paramArr[0]) == -1) {
+              arr.push(urlParamArr[i]);
+          }
+        }
+      }
+      if (arr.length > 0) {
+        nextUrl = "?" + arr.join("&");
+      }
+      url = beforeUrl + nextUrl;
+      return url;
     }
   },
   created() {
     this.init();
     let { query,meta,path,fullPath} = this.$route;
-        let shareInfo = {
-          title: query.transCode,
-          desc: meta.title,
-          imgUrl: '',
-          link: redirect_uri_share+'/Hermes'+fullPath+'&tag=share',
-        }
     wx.ready(() => {
         let { query,meta,path,fullPath} = this.$route;
         // 分享
@@ -562,7 +579,7 @@ export default {
           title: query.name,
           desc: meta.title,
           imgUrl: '',
-          link: redirect_uri_share+'/Hermes'+fullPath+'&tag=share',
+          link: redirect_uri_share+'/Hermes'+this.delParam(fullPath)+'&tag=share',
         }
         shareContent(shareInfo);
       })
