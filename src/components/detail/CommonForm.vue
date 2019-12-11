@@ -575,7 +575,7 @@ export default {
     let { query,meta,path,fullPath} = this.$route;
     wx.ready(() => {
         let { query,meta,path,fullPath} = this.$route;
-        fullPath2 = this.delParam(fullPath);
+        var fullPath2 = this.delParam(fullPath);
         // 分享
         let shareInfo = {
           title: query.name,
