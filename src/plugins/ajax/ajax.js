@@ -32,7 +32,6 @@ fly.interceptors.request.use((request) => {
 
       // 请求token成功之后，即将进入第一个请求
       if(window.sessionStorage.getItem('shareUrl')){
-        //console.log(window.sessionStorage.getItem('shareUrl'))
         return window.sessionStorage.getItem('shareUrl');
       }
         return request;
@@ -151,7 +150,10 @@ let Rxports = {
   // POST请求
   post(opts = {}) {
     return new Promise((resolve, reject) => {
-      fly.post(opts.url, opts.data).then(res => resolve(res.data));
+      fly.post(opts.url, opts.data).then(res => resolve(res.data)).catch( err => {
+        reject(err);
+        console.log('err:', err);
+      })
     })
   },
   postJSON(opts = {}){
