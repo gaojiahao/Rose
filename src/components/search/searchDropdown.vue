@@ -94,7 +94,7 @@
       }
       // 选中状态
       &.selected {
-        color: #3296FA;
+        @include font_color();
       }
     }
   }

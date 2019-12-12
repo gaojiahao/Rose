@@ -1,6 +1,6 @@
 <template>
     <div class="notice-container" >
-        <tab active-color='#2196F3'>
+        <tab :active-color='activeColor'>
            
         <tab-item 
             :selected="$route.name=='flowTodo'" 
@@ -32,23 +32,51 @@ export default {
     TabItem,
     RScroll
   },
-  data(){
-      return {
+    data(){
+        return {
             todoBadge:'',
-            praiseBadge:''
-      }
-  },
-  methods:{
-    onSwitch(name){
-        this.$router.push({
-            name:name
-        });
+            praiseBadge:'',
+            activeColor:'#2196F3',
+        }
     },
-    loadData(val){
-        this.todoBadge = String(val);
-    }
-  },
-  mounted(){
+    methods:{
+        onSwitch(name){
+            this.$router.push({
+                name:name
+            });
+        },
+        loadData(val){
+            this.todoBadge = String(val);
+        },
+        getTheme(){
+            this.activeColor = '#3296FA';
+            var theme = window.localStorage.getItem('theme');
+            switch(theme){
+                case 'default-theme':
+                    this.activeColor = '#3296FA';
+                    break;
+                case 're-theme':
+                    this.activeColor = '#720e05';
+                    break;
+                case 'gr-theme':
+                    this.activeColor = '#3f8e4d';
+                    break;
+                case 'ye-theme':
+                    this.activeColor = '#edc148';
+                    break;
+                case 'pu-theme':
+                    this.activeColor = '#652BF5';
+                    break;
+            }
+        }
+    },
+    created(){
+        this.getTheme();
+    },
+    activated(){
+        this.getTheme();
+    },
+    mounted(){
     }
 }
 

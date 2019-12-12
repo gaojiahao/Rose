@@ -1,3 +1,11 @@
+<!--
+ * @Descripttion: 
+ * @version: 1.0.0
+ * @Author: Gabriel.gaojiahao
+ * @Date: 2019-03-25 10:56:56
+ * @LastEditors: Gabriel.gaojiahao
+ * @LastEditTime: 2019-12-12 10:16:01
+ -->
 <template>
   <div class="loading-container" v-show="show">
     <div class="loading-wrapper">
@@ -45,8 +53,8 @@
       background: rgba(250, 250, 250, 0.7);
       .loading-animation {
         @extend %center;
-        fill: #366CAC;
-        stroke: #366CAC;
+        @include loading_fill_color();
+        @include loading_stroke_color();
       }
     }
   }

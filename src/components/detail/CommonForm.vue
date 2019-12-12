@@ -672,7 +672,7 @@ export default {
     flex: 1.5;
     color: #fff;
     text-align: center;
-    background: #3296fa;
+    @include bg_color();
     &.stop {
       color: #a1a1a1;
       background: #dfdfdf;

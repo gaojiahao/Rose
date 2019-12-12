@@ -530,14 +530,14 @@ export default {
 .vux-1px:before {
   width: 200%;
   border-radius: .08rem;
-  border-color: #3296FA;
+  @include boder_color();
 }
 /deep/ .vux-popup-dialog {
   background: #fff;
   overflow-y: auto;
 }
 .active  {
-  color: #3296FA;
+  @include font_color();
   background: #fff;
 }
 .sort-part {
@@ -552,10 +552,11 @@ export default {
     box-sizing: border-box;
     padding: .08rem .05rem .14rem;
     &.active {
-      color: #3296FA;
+      @include font_color();
     }
     &.vux-1px-b:after {
-      border-bottom: .06rem solid #3296FA;
+      border-bottom: .06rem solid;
+      @include boder_color();
     }
     .arrow {
       height: 100%;
@@ -715,7 +716,7 @@ export default {
     }
     .confirm_btn {
       color: #FFF;
-      background: #3296FA;
+      @include bg_color();
     }
   }
 }

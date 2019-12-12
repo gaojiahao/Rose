@@ -1,3 +1,11 @@
+<!--
+ * @Descripttion: 
+ * @version: 1.0.0
+ * @Author: Gabriel.gaojiahao
+ * @Date: 2019-03-25 10:56:56
+ * @LastEditors: Gabriel.gaojiahao
+ * @LastEditTime: 2019-12-11 17:06:41
+ -->
 <template>
   <div class="loadding" v-show="show">
     <spinner type='ripple' size='50px'></spinner>
@@ -31,8 +39,8 @@
     .vux-spinner {
       top: 50%;
       left: 50%;
-      fill: #366CAC;
-      stroke: #366CAC;
+      @include loading_fill_color();
+      @include loading_stroke_color();
       position: absolute;
       transform: translate(-50%, -50%);
     }

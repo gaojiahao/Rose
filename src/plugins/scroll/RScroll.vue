@@ -220,8 +220,8 @@
       font-size: .1rem;
       color: #757575;
       .vux-spinner {
-        fill: #366CAC;
-        stroke: #366CAC;
+        @include loading_fill_color();
+        @include loading_stroke_color();
       }
       .tips {
         margin-top: .04rem;

@@ -555,13 +555,14 @@ export default Vue.component('R2Combofield',cfg);
          border-radius: .04rem;
          box-shadow: 0 2px 10px 0 rgba(228, 228, 232, 0.5);
          &.selected {
-         border: 1px solid $main_color; 
+         border: 1px solid; 
+         @include boder_color();
          }
          .main {
             .name {
                .name {
                   font-weight: bold;
-                  color: #3296FA;   
+                  @include font_color();
                }
             }
             .info {
