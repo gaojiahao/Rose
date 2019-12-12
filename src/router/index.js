@@ -4,7 +4,7 @@
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-12-03 09:54:38
  * @LastEditors: Gabriel.gaojiahao
- * @LastEditTime: 2019-12-10 14:07:28
+ * @LastEditTime: 2019-12-12 14:16:17
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -41,9 +41,12 @@ if (router == null) {
       if(!storage.getItem('r2_cachedDicts')){
         initDicts();   
       }
-      if(!Vue.prototype.$r2FieldSetting){
-        initFieldSetting();
+      if(!storage.getItem('r2_fieldSetting')){
+        initFieldSetting();  
       }
+      // if(!Vue.prototype.$r2FieldSetting){
+      //   initFieldSetting();
+      // }
     }
     next();
   })
@@ -87,6 +90,7 @@ async function initFieldSetting(){
         }
     }
     Vue.prototype.$r2FieldSetting[field.fieldCode] = field;
+    storage.setItem('r2_fieldSetting',  JSON.stringify(field));
     });
   });
 }
