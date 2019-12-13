@@ -57,7 +57,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, process.env.isApk?'../apk':'../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: process.env.isApk?'/android_asset/www/':'/Hermes/',
+    assetsPublicPath: process.env.isApk?'':'/Hermes/',
 
     /**
      * Source Maps
