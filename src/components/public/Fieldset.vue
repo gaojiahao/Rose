@@ -241,7 +241,7 @@ export default Vue.component("RFieldset", component);
   label {
     &.required {
       font-weight: bold;
-      color: $main_color !important;
+      @include font_color();
     }
     &.readonly{
         color: #999;

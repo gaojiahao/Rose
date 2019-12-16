@@ -359,7 +359,7 @@ export default Vue.component("GridDetail", component);
       width: 100%;
       height: 0.44rem;
       line-height: 0.44rem;
-      background-color: $main_color;
+      @include bg_color();
       color: #fff;
       text-align: center;
     }

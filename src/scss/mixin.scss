@@ -4,7 +4,7 @@
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-11-25 14:11:52
  * @LastEditors: Gabriel.gaojiahao
- * @LastEditTime: 2019-11-29 11:20:50
+ * @LastEditTime: 2019-12-12 10:27:44
  */
 
 @charset "utf-8";
@@ -50,4 +50,22 @@
 /*通过该函数设置字体大小*/
 @mixin font_size($size){
   @include font-dpr($size);
+}
+
+/*通过该函数设置loading fill 颜色*/
+@mixin loading_fill_color(){
+  @each $themename , $theme in $themes {
+    [data-theme = '#{$themename}'] & {
+      fill:  map-get($map: $theme, $key: background-color-theme ) !important;
+    }
+  }
+}
+
+/*通过该函数设置loading stroke 颜色*/
+@mixin loading_stroke_color(){
+  @each $themename , $theme in $themes {
+    [data-theme = '#{$themename}'] & {
+      stroke:  map-get($map: $theme, $key: background-color-theme ) !important;
+    }
+  }
 }

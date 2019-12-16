@@ -425,6 +425,15 @@ export default {
             return dataSet;
         },
         handlerSubmit(){
+            let sortInventoryName = [];
+            this.matters.forEach((it,index) => {
+                let all = this.getGroupInfo(it).all,
+                    done = this.getGroupInfo(it).done;
+                if(all > done) {
+                    sortInventoryName.push(`<div>${it.inventoryName}还差<b>${all-done}</b>未分拣</div>`);
+                }
+            })
+
             if(!this.scanCodeInfo.postCode){
                 this.$vux.alert.show({
                 content:"申请单号不能为空!"
@@ -456,53 +465,58 @@ export default {
                 return;
             }
 
-             // 准备提交
-            this.$vux.confirm.show({
-                content: '确认提交?',
-                // 确定回调
-                onConfirm: () => {
-                    this.$HandleLoad.show();
-                    const currentUser = WebContext.WebContext.currentUser;
-                    let data={};
-                    let formData={
-                        handlerName: currentUser.name,
-                        handlerUnitName: currentUser.sysDeptList && currentUser.sysDeptList[0] ? currentUser.sysDeptList[0].groupName : '',
-                        handlerRoleName: currentUser.sysRoleList[0].name,
-                        handler: String(currentUser.userId),
-                        handlerUnit:  currentUser.sysDeptList && currentUser.sysDeptList[0] ? String(currentUser.sysDeptList[0].groupId) : '',
-                        handlerRole: String(currentUser.sysRoleList[0].id),
-                        creator: String(currentUser.userId),
-                        modifer: String(currentUser.userId),
-                        biId:'',
-                        handlerEntity: currentUser.entityId,
-                        biProcessStatus:null,
-                        containerOutWarehouseManager:'',
-                        biComment:'',
-                        outPut:{
-                            dataSet:this.getDataSet()
+            if(sortInventoryName.length > 0) {
+                sortInventoryName.push('<span>是否提交？</span>')
+                this.$vux.confirm.show({
+                    content: sortInventoryName.join(''),
+                    onCancel: () => {
+                        return;
+                    },
+                    // 确定回调
+                    onConfirm: () => {
+                        this.$HandleLoad.show();
+                        const currentUser = WebContext.WebContext.currentUser;
+                        let data={};
+                        let formData={
+                            handlerName: currentUser.name,
+                            handlerUnitName: currentUser.sysDeptList && currentUser.sysDeptList[0] ? currentUser.sysDeptList[0].groupName : '',
+                            handlerRoleName: currentUser.sysRoleList[0].name,
+                            handler: String(currentUser.userId),
+                            handlerUnit:  currentUser.sysDeptList && currentUser.sysDeptList[0] ? String(currentUser.sysDeptList[0].groupId) : '',
+                            handlerRole: String(currentUser.sysRoleList[0].id),
+                            creator: String(currentUser.userId),
+                            modifer: String(currentUser.userId),
+                            biId:'',
+                            handlerEntity: currentUser.entityId,
+                            biProcessStatus:null,
+                            containerOutWarehouseManager:'',
+                            biComment:'',
+                            outPut:{
+                                dataSet:this.getDataSet()
+                            }
+                        };
+
+                        let submitData = {
+                            listId: this.$route.params.listId,
+                            biComment: '',
+                            biReferenceId:this.biReferenceId,
+                            formData:JSON.stringify(formData)
+                        }, matCodeCollection  = [];
+                        
+                        formData.outPut.dataSet.forEach(val => {
+                            matCodeCollection.push(val.inventoryCode);
+                        })
+
+                        let opeartion = submitAndCalc;
+                        if(this.isModify){
+                            opeartion = updateData;
+                        }else{
+                            delete submitData.biReferenceId;
                         }
-                    };
-
-                    let submitData = {
-                        listId: this.$route.params.listId,
-                        biComment: '',
-                        biReferenceId:this.biReferenceId,
-                        formData:JSON.stringify(formData)
-                    }, matCodeCollection  = [];
-                    
-                    formData.outPut.dataSet.forEach(val => {
-                        matCodeCollection.push(val.inventoryCode);
-                    })
-
-                    let opeartion = submitAndCalc;
-                    if(this.isModify){
-                        opeartion = updateData;
-                    }else{
-                        delete submitData.biReferenceId;
+                        this.saveData(opeartion,submitData,matCodeCollection);
                     }
-                    this.saveData(opeartion,submitData,matCodeCollection);
-                }
-            })
+                });
+            }
         },
         saveData(request, submitData,matCodeCollection) {
             request(submitData).then(data => {

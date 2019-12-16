@@ -323,7 +323,7 @@ export default Vue.component("RGrid", component);
     line-height: 0.14rem;
     justify-content: space-between;
     .title {
-      color: #3296fa;
+      @include font_color();
       font-weight: bold;
     }
     .seleted_icon {
@@ -347,7 +347,7 @@ export default Vue.component("RGrid", component);
       color: #696969;
     }
     .edit {
-      color: #39f;
+      @include font_color();
     }
   }
   //明细数据容器
@@ -406,7 +406,7 @@ export default Vue.component("RGrid", component);
         height: 0.25rem;
         line-height: 0.25rem;
         font-size: .14rem;
-        color: #39f;
+        @include font_color();
         .icon-more {
           display: inline-block;
           width: 0.2rem;
@@ -449,14 +449,15 @@ export default Vue.component("RGrid", component);
   }
   .add-more {
     display: flex;
-    color: #3296fa;
+    @include font_color();
     font-weight: bold;
     text-align: center;
     align-items: center;
     margin: 0 auto 0.2rem;
     border-radius: 0.15rem;
     padding: 0.06rem 0.08rem;
-    border: 1px solid #3296fa;
+    border: 1px solid;
+    @include boder_color();
     .icon-add {
       width: 0.14rem;
       height: 0.14rem;

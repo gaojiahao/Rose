@@ -45,18 +45,18 @@ export default {
      * @author: Gabriel.gaojiahao
      */        
     getTheme(){
-      this.theme = sessionStorage.getItem('theme') || window.document.documentElement.getAttribute('data-theme');
+      this.theme = localStorage.getItem('theme') || window.document.documentElement.getAttribute('data-theme');
       if(!this.theme){
         this.theme = 'default-theme';
         window.document.documentElement.setAttribute('data-theme', 'default-theme');
-        sessionStorage.setItem('theme','default-theme');
+        localStorage.setItem('theme','default-theme');
       } else {
         window.document.documentElement.setAttribute('data-theme', this.theme);  
       }
     },
     setTheme(theme){
       if(theme){
-        sessionStorage.setItem('theme',theme);
+        localStorage.setItem('theme',theme);
         this.theme = theme;
         window.document.documentElement.setAttribute('data-theme', theme);  
       }

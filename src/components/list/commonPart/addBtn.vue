@@ -1,3 +1,11 @@
+<!--
+ * @Descripttion: 
+ * @version: 1.0.0
+ * @Author: Gabriel.gaojiahao
+ * @Date: 2019-09-11 16:20:08
+ * @LastEditors: Gabriel.gaojiahao
+ * @LastEditTime: 2019-12-11 18:25:52
+ -->
 <template>
   <div class="vux-1px-t btn" v-if="action.add">
     <div class="cfm_btn" @click="goEdit"> 
@@ -42,13 +50,14 @@ export default {
     width: 90%;
     display: flex;
     height: .44rem;
-    color: #4CA3FB;
+    @include font_color();
     position: absolute;
     border-radius: 4px;
     align-items: center;
     line-height: .44rem;
     justify-content: center;
-    border: 1px solid #4CA3FB;
+    border: 1px solid;
+    @include boder_color();
     transform: translate(-50%, -50%);
     background: #fff;
     box-shadow: 0 2px 5px #fff;

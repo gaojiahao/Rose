@@ -366,7 +366,8 @@ import { debug } from 'util';
         &:before {
           left: -.15rem;
           width: .08rem;
-          border-left: .08rem solid #3296FA;
+          border-left: .08rem solid;
+          @include boder_color();
         }
       }
     }
