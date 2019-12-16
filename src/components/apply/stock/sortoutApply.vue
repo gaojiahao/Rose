@@ -516,6 +516,53 @@ export default {
                         this.saveData(opeartion,submitData,matCodeCollection);
                     }
                 });
+            }else{
+                this.$vux.confirm.show({
+                    content: '确定提交？',
+                    // 确定回调
+                    onConfirm: () => {
+                        this.$HandleLoad.show();
+                        const currentUser = WebContext.WebContext.currentUser;
+                        let data={};
+                        let formData={
+                            handlerName: currentUser.name,
+                            handlerUnitName: currentUser.sysDeptList && currentUser.sysDeptList[0] ? currentUser.sysDeptList[0].groupName : '',
+                            handlerRoleName: currentUser.sysRoleList[0].name,
+                            handler: String(currentUser.userId),
+                            handlerUnit:  currentUser.sysDeptList && currentUser.sysDeptList[0] ? String(currentUser.sysDeptList[0].groupId) : '',
+                            handlerRole: String(currentUser.sysRoleList[0].id),
+                            creator: String(currentUser.userId),
+                            modifer: String(currentUser.userId),
+                            biId:'',
+                            handlerEntity: currentUser.entityId,
+                            biProcessStatus:null,
+                            containerOutWarehouseManager:'',
+                            biComment:'',
+                            outPut:{
+                                dataSet:this.getDataSet()
+                            }
+                        };
+
+                        let submitData = {
+                            listId: this.$route.params.listId,
+                            biComment: '',
+                            biReferenceId:this.biReferenceId,
+                            formData:JSON.stringify(formData)
+                        }, matCodeCollection  = [];
+                        
+                        formData.outPut.dataSet.forEach(val => {
+                            matCodeCollection.push(val.inventoryCode);
+                        })
+
+                        let opeartion = submitAndCalc;
+                        if(this.isModify){
+                            opeartion = updateData;
+                        }else{
+                            delete submitData.biReferenceId;
+                        }
+                        this.saveData(opeartion,submitData,matCodeCollection);
+                    }
+                });
             }
         },
         saveData(request, submitData,matCodeCollection) {
