@@ -60,7 +60,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     }),
   ]
 })
-
+//这个没有投入使用
 new webpack.DllReferencePlugin({
   context: __dirname,
   manifest: require('./vendor-manifest.json')

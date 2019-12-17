@@ -1,6 +1,7 @@
 'use strict'
 const path = require('path')
 const config = require('../config')
+//const MiniCssExtractPlugin = require('mini-css-extract-plugin');//当前webpack版本不兼容
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const pkg = require('../package.json')
 
@@ -27,6 +28,12 @@ exports.cssLoaders = function (options) {
       sourceMap: options.sourceMap
     }
   }
+  var vueStyleLoader = {
+    loader:'vue-style-loader',
+    options:{
+      sourceMap: options.sourceMap
+    }
+  }
 
   // generate loader string to be used with extract text plugin
   function generateLoaders (loader, loaderOptions) {
@@ -45,10 +52,11 @@ exports.cssLoaders = function (options) {
     if (options.extract) {
       return ExtractTextPlugin.extract({
         use: loaders,
+        publicPath: process.env.isApk?'../../':'',
         fallback: 'vue-style-loader'
       })
     } else {
-      return ['vue-style-loader'].concat(loaders)
+      return [vueStyleLoader].concat(loaders)
     }
   }
   //sass全局引用
@@ -63,17 +71,28 @@ exports.cssLoaders = function (options) {
         loader: 'sass-resources-loader',
         options: {
           // 多个文件时用数组的形式传入，单个文件时可以直接使用 path.resolve(__dirname, '../static/style/common.scss'
-          resources: [resolveResource('base.scss')]  
+          resources: [resolveResource('base.scss')],
+          publicPath:'./'  
         }
       }
       ];
       if (options.extract) {
         return ExtractTextPlugin.extract({
           use: loaders,
+          publicPath: process.env.isApk?'../../':'',
           fallback: 'vue-style-loader'
         })
+        // loaders.unshift({
+        //   loader: MiniCssExtractPlugin.loader,
+        //   options: {
+        //     // you can specify a publicPath here
+        //     // by default it uses publicPath in webpackOptions.output
+        //     publicPath: '../../',
+        //     hmr: process.env.NODE_ENV === 'development',
+        //   },
+        // });
       } else {
-        return ['vue-style-loader'].concat(loaders)
+        return [vueStyleLoader].concat(loaders)
       }
     }
 
