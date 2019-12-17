@@ -10,18 +10,20 @@ const baseWebpackConfig = require('./webpack.base.conf')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
+//const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin")
 const vConsolePlugin = require('vconsole-webpack-plugin')
 
-new webpack.DllReferencePlugin({
-  context: __dirname,
-  manifest: require('./vendor-manifest.json')
-})
+//好像不是这么用的,没有投入使用。
+// new webpack.DllReferencePlugin({
+//   context: __dirname,
+//   manifest: require('./vendor-manifest.json')
+// })
 
 const webpackConfig = merge(baseWebpackConfig, {
   module: {
     rules: utils.styleLoaders({
       sourceMap: config.build.productionSourceMap,
-      extract: true,
+      extract: config.build.extract,//导出css
       usePostCSS: true
     })
   },
@@ -34,6 +36,10 @@ const webpackConfig = merge(baseWebpackConfig, {
     chunkFilename: utils.assetsPath(`js/[id].[chunkhash].${Version}.js`)
   },
   plugins: [
+    // new webpack.DllReferencePlugin({
+    //   context: __dirname,
+    //   manifest: require('./vendor-manifest.json')
+    // }),
     new vConsolePlugin({
       filter: [],  // 需要过滤的入口文件
       enable: false // 发布代码前记得改回 false
@@ -50,7 +56,15 @@ const webpackConfig = merge(baseWebpackConfig, {
       sourceMap: config.build.productionSourceMap,
       parallel: true
     }),
-    // extract css into its own file
+    // new OptimizeCssAssetsPlugin({//压缩css
+    //   assetNameRegExp:/\.(css|scss)$/g,
+    //   cssProcessor:require("cssnano"),
+    //   cssProcessorPluginOptions:{
+    //     preset:['default',{discardComments:{removeAll:true}}]
+    //   },
+    //   canPrint:true
+    // }),
+    // extract css into its own file 导出css文件
     new ExtractTextPlugin({
       filename: utils.assetsPath('css/[name].[contenthash].css'),
       // set the following option to `true` if you want to extract CSS from
@@ -58,7 +72,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       // This will result in *all* of your app's CSS being loaded upfront.
       allChunks: false,
     }),
-    new CopyWebpackPlugin([
+    new CopyWebpackPlugin([ //copy 图片
       {
         from: path.resolve(__dirname, '../src/assets/obj'),
         to: config.dev.assetsSubDirectory,
@@ -70,7 +84,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
       filename: config.build.index,
-      template: 'index.html',
+      template: 'apk.html',
       inject: true,
       minify: {
         removeComments: true,
@@ -116,14 +130,14 @@ const webpackConfig = merge(baseWebpackConfig, {
       minChunks: 3
     }),
 
-    // copy custom static assets
-    new CopyWebpackPlugin([
-      {
-        from: path.resolve(__dirname, '../static'),
-        to: config.build.assetsSubDirectory,
-        ignore: ['.*']
-      }
-    ])
+    // copy custom static assets，因为没有合并第三方库
+    // new CopyWebpackPlugin([
+    //   {
+    //     from: path.resolve(__dirname, '../static'),
+    //     to: config.build.assetsSubDirectory,
+    //     ignore: ['.*']
+    //   }
+    // ])
   ]
 })
 if (config.build.bundleAnalyzerReport) {

@@ -21,7 +21,7 @@ const r2_cachedListLevelFieldSetting = 'r2_cachedListLevelFieldSetting';
 let router = window.router;
 if (router == null) {
   window.router =  new Router({
-    mode:!!window.cordova?'hash':'history',
+    mode:!!window.isApp?'hash':'history',
     base:'/Hermes',
     routes: [
       ...HomeRouter,

@@ -18,7 +18,7 @@
 </template>
 
 <script>
-require('../static/css/iconfont/iconfont.css')
+
 import platfrom from './plugins/platform/index'
 import { getMsgList } from 'service/msgService'
 import { Badge } from 'vux'
@@ -87,7 +87,8 @@ export default {
   @import '~vux/src/styles/reset.less';
   @import '~vux/src/styles/1px.less';
   @import './common/swiper-4.2.2.min.css';
-  @import './../static/css/icon.css';
+  @import './assets/iconfont/icon.css';
+  @import './assets/iconfont/iconfont.css';
 
   .vux-1px-t:before {
     border-color: #E8E8E8;

@@ -57,12 +57,12 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, process.env.isApk?'../apk':'../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: process.env.isApk?'':'/Hermes/',
+    assetsPublicPath: process.env.isApk?'./':'/Hermes/',
 
     /**
      * Source Maps
      */
-
+    extract:true,//是不是要导出css
     productionSourceMap: false,
     // https://webpack.js.org/configuration/devtool/#production
     devtool: '#source-map',
