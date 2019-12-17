@@ -1,3 +1,11 @@
+<!--
+ * @Descripttion: 
+ * @version: 1.0.0
+ * @Author: Gabriel.gaojiahao
+ * @Date: 2019-10-08 14:33:36
+ * @LastEditors: Gabriel.gaojiahao
+ * @LastEditTime: 2019-12-17 10:09:47
+ -->
 <template>
 <div v-show="!hidden" class="cell each_property vux-1px-b">
     <label :class="{'required':!cfg.allowBlank,'readonly':cfg.readOnly}">{{cfg.fieldLabel}}</label>
@@ -53,7 +61,7 @@ let cfg = {
     created () {
       var value;
       if (this.cfg.defaultValue.type == 'staticData') {
-        value = this.cfg.defaultValue.data[0];
+        value = this.getNum(this.cfg.defaultValue.data[0]);
       }
       if (value != null) {
         this.setValue(value);
