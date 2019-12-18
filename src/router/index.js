@@ -4,7 +4,7 @@
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-12-03 09:54:38
  * @LastEditors: Gabriel.gaojiahao
- * @LastEditTime: 2019-12-12 14:39:42
+ * @LastEditTime: 2019-12-18 17:50:47
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -33,6 +33,7 @@ if (router == null) {
     let {query,fullPath} = to;
     if(query.tag&&query.tag=='share'){
       storage.setItem('shareUrl',window.location.href);
+      initFieldSetting();
     }
     if(to.name !== 'Login'){
       if(!storage.getItem('r2_cachedListLevelFieldSetting')){
