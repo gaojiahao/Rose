@@ -52,7 +52,7 @@ exports.cssLoaders = function (options) {
     if (options.extract) {
       return ExtractTextPlugin.extract({
         use: loaders,
-        publicPath: process.env.isApk?'../../':'',
+        publicPath: '../../',// /static/css/ 回到www目录，然后再进入static
         fallback: 'vue-style-loader'
       })
     } else {
@@ -79,7 +79,7 @@ exports.cssLoaders = function (options) {
       if (options.extract) {
         return ExtractTextPlugin.extract({
           use: loaders,
-          publicPath: process.env.isApk?'../../':'',
+          publicPath:'../../', //css文件中要在static前面添加的路径，这个配置会覆盖前面output的publicPath.
           fallback: 'vue-style-loader'
         })
         // loaders.unshift({
