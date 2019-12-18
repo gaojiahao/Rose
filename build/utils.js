@@ -52,7 +52,7 @@ exports.cssLoaders = function (options) {
     if (options.extract) {
       return ExtractTextPlugin.extract({
         use: loaders,
-        publicPath: process.env.isApk?'../../':'',
+        publicPath: process.env.isApk?'../../':'/Hermes/',
         fallback: 'vue-style-loader'
       })
     } else {
@@ -79,7 +79,7 @@ exports.cssLoaders = function (options) {
       if (options.extract) {
         return ExtractTextPlugin.extract({
           use: loaders,
-          publicPath: process.env.isApk?'../../':'',
+          publicPath: process.env.isApk?'../../':'/Hermes/',
           fallback: 'vue-style-loader'
         })
         // loaders.unshift({
