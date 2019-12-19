@@ -43,7 +43,15 @@
         :header-value="'￥'+BClassTotal | numberComma"
         :body-items="bClassList">
       </form-preview>
-
+    </div>
+    <div class="my_info_part">
+      <divider>个性化产品</divider>
+      <form-preview
+        class="project_part"
+        header-label="销量金额"
+        :header-value="'￥'+SClassTotal | numberComma"
+        >
+      </form-preview>
     </div>
     <loading :show='spinner'></loading>
   </div>
@@ -90,6 +98,7 @@
         totalCoverNum: 0, // 销量套数
         costSalesRatio: '', // 费用销售比
         bClassList: [], // b类产品展示的item
+        SClassTotal: 0,
       };
     },
     filters: {
@@ -144,6 +153,7 @@
         this.list1Total = 0;
         this.list1.length = 0;
         this.list2.length = 0;
+        let SClassTotal = 0;
 
         for (let i = 0; i < m.length; i++) {
           let item = m[i];
@@ -212,6 +222,11 @@
                 });
               }
               break;
+            case 'S':
+              if (item.objName === '个性化产品') {
+                SClassTotal = accAdd(SClassTotal, item.amount);
+              }
+              break;
             default:
               break;
           }
@@ -222,6 +237,7 @@
         this.costSalesRatio = Number(AclassTotal) !== 0 ? `${toFixed(accMul(hotelAndElseCost / AclassTotal, 100))}%` : '∞';
         this.AclassTotal = AclassTotal;
         this.BClassTotal = toFixed(BClassTotal);
+        this.SClassTotal = toFixed(SClassTotal);
         this.list1Total = toFixed(this.list1Total);
       }
     },
@@ -259,5 +275,8 @@
     left: 50%;
     transform: translate3d(-50%, -50%, 0);
     z-index: 99;
+  }
+  .vux-divider {
+    background-color: #f5f5f5;   
   }
 </style>
