@@ -4,8 +4,9 @@
       <group>
         <datetime
           v-model="endDate"
+          :format="headInfo['currentYearName']?'YYYY-MM':'YYYY-MM-DD'"
           @on-change="endDateChange">
-          <h5 slot="title" :style="{fontSize:'.15rem'}">截至日期</h5>
+          <h5 slot="title" :style="{fontSize:'.15rem'}">{{headInfo['currentYearName']?'会计期间':'截至日期'}}</h5>
         </datetime>
       </group>
     </div>
@@ -15,6 +16,7 @@
         <div class="swiper-wrapper">
           <div class="swiper-slide">{{headInfo.firstName}}</div>
           <div class="swiper-slide">{{headInfo.LastName}}</div>
+          <div v-if="headInfo.currentYearName" class="swiper-slide">{{headInfo.currentYearName}}</div>
         </div>
       </div>
     </div>
@@ -24,7 +26,7 @@
           <div class="content-item"
                :class="{'final-total': item.total,
                'title': item.total}" 
-               :style="{paddingLeft:`${item.indent*.5}em`}"
+               :style="{paddingLeft:`${item.indent*.65}em`}"
                ref="partLeft">
                {{item.financeName}}
           </div>
@@ -50,6 +52,15 @@
               </div>
             </div>
           </div>
+          <div v-if="headInfo.currentYearName" class="swiper-slide">
+            <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
+              <div class="content-item"
+                   :class="{'final-total': item.total || item.bigSubject}"
+                   ref="partRightYear">
+                   {{item.thisYearAmount | formatNum}}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </r-scroll>
@@ -67,7 +78,7 @@
     name: "ZCFZForm",
     data() {
       return {
-        endDate: dateFormat(new Date(), 'YYYY-MM-DD'),
+        endDate: '',
         headerSwiper: null,         // 顶部swiper
         partRightSwiper: null,      // 右侧金额swiper
         code: '',  
@@ -85,6 +96,7 @@
             title: '利润表',
             firstName: '上期',
             LastName: '本期',
+            currentYearName: '本年',
             request: getProfit
           },
         },
@@ -123,6 +135,9 @@
       // 设置高度
       setHeight(left,rightInit,rightFinal) {
         let right = [rightInit,rightFinal];
+        if(this.$refs.partRightYear){
+          right.push(this.$refs.partRightYear);
+        }
         left.forEach((item,index) => {
           right.forEach(rRight => {
             if(item.clientHeight !== rRight[index].clientHeight){
@@ -163,6 +178,11 @@
       this.code = trancode;
       // 获取表格的表头信息
       this.headInfo = { ...this.listMap[trancode] };
+      if(this.headInfo['currentYearName']){
+        this.endDate = dateFormat(new Date(), 'YYYY-MM');
+      }else{
+        this.endDate = dateFormat(new Date(), 'YYYY-MM-DD');
+      }
       // 初始化数据
       this.initSwiper();
       this.getData();
