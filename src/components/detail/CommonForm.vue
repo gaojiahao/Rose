@@ -46,6 +46,7 @@ import {findConfigInfo} from 'service/commonService'
 import Bscroll from "better-scroll";
 /* 引入微信相关 */
 import {register} from 'plugins/wx'
+import { corpid, secret, agentid, redirect_uri,redirect_uri_share } from '@/plugins/ajax/conf'
 import {shareContent } from 'plugins/wx/api'
 import {
   isMyflow,
@@ -574,7 +575,6 @@ export default {
     wx.ready(() => {
         let { query,meta,path,fullPath} = this.$route;
         var fullPath2 = this.delParam(fullPath);
-        let redirect_uri_share = WebContext.enterpriseInfo.rtRedirectUrl;
         // 分享
         let shareInfo = {
           title: query.name,
