@@ -39,7 +39,7 @@
               <div class="content-item"
                    :class="{'final-total': item.total || item.bigSubject}"
                    ref="partRightInit">
-                   {{item.initAmount | formatNum}}
+                   {{headInfo['currentYearName']?item.finalAmount:item.initAmount | formatNum}}
               </div>
             </div>
           </div>
@@ -48,7 +48,7 @@
               <div class="content-item"
                    :class="{'final-total': item.total || item.bigSubject}"
                    ref="partRightFinal">
-                   {{item.finalAmount | formatNum}}
+                   {{headInfo['currentYearName']?item.initAmount:item.finalAmount | formatNum}}
               </div>
             </div>
           </div>
@@ -94,8 +94,8 @@
           },
           LR: {
             title: '利润表',
-            firstName: '上期',
-            LastName: '本期',
+            firstName: '本期',
+            LastName: '上期',
             currentYearName: '本年',
             request: getProfit
           },
