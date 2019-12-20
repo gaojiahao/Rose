@@ -145,6 +145,7 @@ var component = {
               }
           }
       });
+      console.log('this.keyFiled',this.keyFiled);
       return obj;
     },
     summaryValue:function(){
