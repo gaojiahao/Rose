@@ -122,6 +122,8 @@ var component = {
     curObj:function() {
       
       if(!this.values || this.values.length < 1) return;
+      console.log('this.$r2FieldSetting',this.$r2FieldSetting);
+      console.log('JSON.$r2FieldSetting',JSON.parse(window.sessionStorage.getItem('r2FieldSetting')));
       let fieldSettingData = this.$r2FieldSetting || JSON.parse(window.sessionStorage.getItem('r2FieldSetting')),
         obj,
         objKey,
