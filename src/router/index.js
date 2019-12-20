@@ -4,7 +4,7 @@
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-12-03 09:54:38
  * @LastEditors: Gabriel.gaojiahao
- * @LastEditTime: 2019-12-12 14:39:42
+ * @LastEditTime: 2019-12-19 10:52:37
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -42,6 +42,7 @@ if (router == null) {
         initDicts();   
       }
       if(!Vue.prototype.$r2FieldSetting){
+        console.log('initFieldSetting',Vue.prototype.$r2FieldSetting);
         initFieldSetting();
       }
     }
