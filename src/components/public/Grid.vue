@@ -176,6 +176,7 @@ var component = {
       detail: {},
       hasDs:false,
       notAddOneRow:false,
+      keyFiled
     };
   },
   methods: {
