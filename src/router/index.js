@@ -3,8 +3,8 @@
  * @version: 1.0.0
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-12-03 09:54:38
- * @LastEditors: Gabriel.gaojiahao
- * @LastEditTime: 2019-12-18 17:50:47
+ * @LastEditors  : Gabriel.gaojiahao
+ * @LastEditTime : 2019-12-23 10:05:12
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -33,7 +33,9 @@ if (router == null) {
     let {query,fullPath} = to;
     if(query.tag&&query.tag=='share'){
       storage.setItem('shareUrl',window.location.href);
-      initFieldSetting();
+      if(!storage.getItem('r2FieldSetting')){
+        initFieldSetting();
+      } 
     }
     if(to.name !== 'Login'){
       if(!storage.getItem('r2_cachedListLevelFieldSetting')){
@@ -43,6 +45,7 @@ if (router == null) {
         initDicts();   
       }
       if(!Vue.prototype.$r2FieldSetting){
+        console.log('initFieldSetting',Vue.prototype.$r2FieldSetting);
         initFieldSetting();
       }
     }
@@ -89,6 +92,9 @@ async function initFieldSetting(){
     }
     Vue.prototype.$r2FieldSetting[field.fieldCode] = field;
     });
+    if(!storage.getItem('r2FieldSetting')){
+      storage.setItem('r2FieldSetting',  JSON.stringify(Vue.prototype.$r2FieldSetting));
+    }
   });
 }
 async function initListLevelFieldSetting() {
