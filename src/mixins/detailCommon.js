@@ -26,6 +26,8 @@ import platfrom from '@/plugins/platform/index'
 import { accAdd } from 'plugins/calc/decimalsAdd'
 // 企业微信 JS-SDK 引入
 import { register } from 'plugins/wx'
+import { corpid, secret, agentid, redirect_uri,redirect_uri_share } from '@/plugins/ajax/conf'
+import {shareContent } from 'plugins/wx/api'
 
 export default {
   components: {
@@ -690,6 +692,22 @@ export default {
   created() {
     register()
     this.loadPage();
+    let { query,meta,path,fullPath} = this.$route;
+    wx.ready(() => {
+        let { query,meta,path,fullPath} = this.$route;
+        var fullPath2 = this.delParam(fullPath);
+        // 分享
+        let shareInfo = {
+          title: query.name,
+          desc: meta.title,
+          imgUrl: '',
+          link: redirect_uri_share+'/Hermes'+fullPath2+'&tag=share',
+        }
+        shareContent(shareInfo);
+      })
+    if(query.tag&&query.tag=='share'){
+      window.sessionStorage.removeItem('shareUrl');
+    }
   },
   mounted() {
     //解决android键盘收起input没有失去焦点，底部按钮遮挡输入框
