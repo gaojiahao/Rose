@@ -45,7 +45,6 @@ if (router == null) {
         initDicts();   
       }
       if(!Vue.prototype.$r2FieldSetting){
-        console.log('initFieldSetting',Vue.prototype.$r2FieldSetting);
         initFieldSetting();
       }
     }

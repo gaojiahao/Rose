@@ -26,6 +26,8 @@ import platfrom from '@/plugins/platform/index'
 import { accAdd } from 'plugins/calc/decimalsAdd'
 // 企业微信 JS-SDK 引入
 import { register } from 'plugins/wx'
+import { corpid, secret, agentid, redirect_uri,redirect_uri_share } from '@/plugins/ajax/conf'
+import {shareContent } from 'plugins/wx/api'
 
 export default {
   components: {
@@ -685,11 +687,50 @@ export default {
         matter.dates = dates;
         matter.matterComment = matterComment;
       });
+    },
+    delParam(fullPath) {
+      var url = fullPath;    //页面url
+      var urlParam = fullPath.substr(1);   //页面参数
+      var beforeUrl = url.substr(0, url.indexOf("?"));   //页面主地址（参数之前地址）
+      var nextUrl = "";
+
+      var arr = new Array();
+      if (urlParam != "") {
+        var urlParamArr = urlParam.split("&"); //将参数按照&符分成数组
+        for (var i = 0; i < urlParamArr.length; i++) {
+          var paramArr = urlParamArr[i].split("="); //将参数键，值拆开
+          //如果键雨要删除的不一致，则加入到参数中
+          if (('code,state,tag').indexOf(paramArr[0]) == -1) {
+              arr.push(urlParamArr[i]);
+          }
+        }
+      }
+      if (arr.length > 0) {
+        nextUrl = "?" + arr.join("&");
+      }
+      url = beforeUrl + nextUrl;
+      return url;
     }
   },
   created() {
     register()
     this.loadPage();
+    let { query,meta,path,fullPath} = this.$route;
+    wx.ready(() => {
+        let { query,meta,path,fullPath} = this.$route;
+        var fullPath2 = this.delParam(fullPath);
+        // 分享
+        let shareInfo = {
+          title: query.name,
+          desc: meta.title,
+          imgUrl: '',
+          link: redirect_uri_share+'/Hermes'+fullPath2+'&tag=share',
+        }
+        shareContent(shareInfo);
+      })
+    if(query.tag&&query.tag=='share'){
+      window.sessionStorage.removeItem('shareUrl');
+    }
   },
   mounted() {
     //解决android键盘收起input没有失去焦点，底部按钮遮挡输入框
