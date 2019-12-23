@@ -726,7 +726,6 @@ export default {
           imgUrl: '',
           link: redirect_uri_share+'/Hermes'+fullPath2+'&tag=share',
         }
-        console.log('shareInfo',shareInfo);
         shareContent(shareInfo);
       })
     if(query.tag&&query.tag=='share'){
