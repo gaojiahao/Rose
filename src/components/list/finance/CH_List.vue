@@ -108,19 +108,27 @@
                       <div class="classification_detail_item">
                         <span class="classification_detail_title">仓库关系类型: </span>{{item.warehouseType || '无'}}
                       </div>
+                      <div class="classification_detail_item">
+                        <span class="classification_detail_title">安全库存: </span>{{item.safeBalance | numberComma }}
+                      </div>
                     </div>
                   </div>
                   <div class="classification-split"></div>
                   <div class="classification-bottom" :style="{textAlign:'left'}">
-                    <div class="classification_bottom_item noticed">
-                      <div class="classification_bottom_value">{{item.safeBalance | numberComma }}</div>
-                      <div class="classification_bottom_title">安全库存</div>
+                    <div class="classification_bottom_item noticed right">
+                      <span class="classification_detail_title">入库数: </span>{{item.drQty | numberComma }}
+                      <!-- <div class="classification_bottom_title">入库数</div>
+                      <div class="classification_bottom_value">{{item.drQty | numberComma }}</div> -->
                     </div>
-                    <div class="classification_bottom_item amt noticed">
-                      <div class="classification_bottom_value">
-                        {{item.qtyBalance | numberComma}}
-                      </div>
-                      <div class="classification_bottom_title">数量余额</div>
+                    <div class="classification_bottom_item noticed right">
+                      <span class="classification_detail_title">出库数: </span>{{item.crQty | numberComma }}
+                      <!-- <div class="classification_bottom_title">出库数</div>
+                      <div class="classification_bottom_value">{{item.crQty | numberComma }}</div> -->
+                    </div>
+                    <div class="classification_bottom_item noticed right">
+                      <span class="classification_detail_title">数量余额: </span>{{item.qtyBalance | numberComma }}
+                      <!-- <div class="classification_bottom_title">数量余额</div>
+                      <div class="classification_bottom_value">{{item.qtyBalance | numberComma}}</div> -->
                     </div>
                   </div>
                 </div>
@@ -746,6 +754,10 @@ export default {
             font-weight: bold;
             font-size: .16rem;
           }
+        }
+        &.right {
+          float: right;
+          margin-right: .1rem;
         }
       }
       .classification_bottom_value {
