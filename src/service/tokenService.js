@@ -6,7 +6,7 @@ import * as dd from 'dingtalk-jsapi'
 import router from '../router';
 
 const fly = new Fly();
-const storage = window[isPC ? 'localStorage' : 'sessionStorage'];
+const storage = window[isPC||window.isApp ? 'localStorage' : 'sessionStorage'];
 const ROSE_TOKEN_KEY = 'ROSE_LOGIN_TOKEN';
 
 let tokenService = {
@@ -148,7 +148,9 @@ let tokenService = {
     })
   },
   toLoginPage(){
-    router.push('/login');
+    if(router.history.current.path != '/login'){
+      router.push('/login');
+    }
     return new Promise((resolve, reject)=>{
       resolve();
     })
