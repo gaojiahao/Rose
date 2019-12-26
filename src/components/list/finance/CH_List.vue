@@ -116,9 +116,9 @@
                   <div class="classification-split"></div>
                   <div class="classification-bottom" :style="{textAlign:'left'}">
                     <div class="classification_bottom_item noticed right">
-                      <span class="classification_detail_title">入库数: </span>{{item.drQty | numberComma }}
-                      <!-- <div class="classification_bottom_title">入库数</div>
-                      <div class="classification_bottom_value">{{item.drQty | numberComma }}</div> -->
+                      <span class="classification_detail_title">数量余额: </span>{{item.qtyBalance | numberComma }}
+                      <!-- <div class="classification_bottom_title">数量余额</div>
+                      <div class="classification_bottom_value">{{item.qtyBalance | numberComma}}</div> -->
                     </div>
                     <div class="classification_bottom_item noticed right">
                       <span class="classification_detail_title">出库数: </span>{{item.crQty | numberComma }}
@@ -126,9 +126,9 @@
                       <div class="classification_bottom_value">{{item.crQty | numberComma }}</div> -->
                     </div>
                     <div class="classification_bottom_item noticed right">
-                      <span class="classification_detail_title">数量余额: </span>{{item.qtyBalance | numberComma }}
-                      <!-- <div class="classification_bottom_title">数量余额</div>
-                      <div class="classification_bottom_value">{{item.qtyBalance | numberComma}}</div> -->
+                      <span class="classification_detail_title">入库数: </span>{{item.drQty | numberComma }}
+                      <!-- <div class="classification_bottom_title">入库数</div>
+                      <div class="classification_bottom_value">{{item.drQty | numberComma }}</div> -->
                     </div>
                   </div>
                 </div>

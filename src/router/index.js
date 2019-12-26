@@ -4,7 +4,7 @@
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-12-03 09:54:38
  * @LastEditors  : Gabriel.gaojiahao
- * @LastEditTime : 2019-12-24 15:16:12
+ * @LastEditTime : 2019-12-25 14:43:38
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -94,6 +94,8 @@ async function initFieldSetting(){
     if(!storage.getItem('r2FieldSetting')){
       storage.setItem('r2FieldSetting',  JSON.stringify(Vue.prototype.$r2FieldSetting));
     }
+  }).catch(e=>{
+    //console.log(e);
   });
 }
 async function initListLevelFieldSetting() {
@@ -110,6 +112,8 @@ async function initListLevelFieldSetting() {
       _cachedListLevelFieldSetting[val].sort(function(a, b){return a.sort - b.sort});
     }
     storage.setItem('r2_cachedListLevelFieldSetting', _cachedListLevelFieldSetting ? JSON.stringify(_cachedListLevelFieldSetting):'');
+  }).catch(e=>{
+    //console.log(e);
   });
 }
 
@@ -122,6 +126,8 @@ async function initDicts() {
     });
     //console.log('_cachedDicts',_cachedDicts);
     storage.setItem('r2_cachedDicts',  _cachedDicts ? JSON.stringify(_cachedDicts):'');
+  }).catch(e=>{
+    // console.log(e);
   });
 }
 
