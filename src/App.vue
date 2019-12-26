@@ -29,7 +29,7 @@
 
 <script>
 
-import platfrom from './plugins/platform/index'
+import platform from './plugins/platform/index'
 import { getMsgList } from 'service/msgService'
 import { Badge,XHeader} from 'vux'
 export default {
@@ -83,7 +83,7 @@ export default {
   },
   updated() {
     // 安卓的输入框会挡住input输入的解决办法
-    if (platfrom.isAndroid) {
+    if (platform.isAndroid) {
       window.addEventListener("resize", function() {
         if (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA") {
           setTimeout(() => {
