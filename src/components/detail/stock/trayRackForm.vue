@@ -2,7 +2,7 @@
 <!--采购入库，原料采购进货-->
   <div class="detail_wrapper">
     <div class="basicPart" v-if='orderInfo && orderInfo.outPut'>
-
+      <slot name="nav"></slot>
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 工作流 -->

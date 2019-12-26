@@ -1,6 +1,7 @@
-<template>
+<template> 
   <div class="pages" :class="{'no-add': !action.add}">
     <div class="content">
+      <slot name="nav"></slot>
       <!-- 顶部区域 -->
       <div class="app_top">
         <searchIcon @search='searchList' :placeHolder='placeHolder'></searchIcon>
@@ -53,7 +54,7 @@
     <add-btn :action="action" :goEdit="goEditAds"></add-btn>
     <router-view></router-view>
   </div>
-
+  
 </template>
 
 <script>

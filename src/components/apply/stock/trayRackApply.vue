@@ -1,6 +1,7 @@
 <template>
     <div class='pages stow-apply-container'>
         <div class="basicPart" ref="fill">
+            <slot name="nav"></slot>
             <div class="wrapper">
                 <checklist  :options="commonList" label-position="left" v-model="isPutawat" :max="1" @on-change="handlerChangeWay"></checklist>
                 <div class="scanCodeInfo">
