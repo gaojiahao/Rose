@@ -1,6 +1,7 @@
 <template>
   <!--通用form组件-->
   <div class="detail_wrapper" :class="{pages:scrollCt}" v-show="showTab">
+    <slot name="nav"></slot>
     <div class="form" :class="{scrollCt:scrollCt,'has-bbar':hasBbar}" ref="fill">
       <div class="fill_wrapper">
         <!-- 工作流组件 -->

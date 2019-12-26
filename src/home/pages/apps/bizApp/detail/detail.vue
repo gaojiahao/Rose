@@ -9,6 +9,7 @@
           @subscribeChange="setSubscribe"
           :showTab="showTab['comm']"
           ref="detailComponent">
+           <slot name="nav" slot="nav"></slot>
         </component>
         <auto-subject :showTab="showTab['subject']"></auto-subject>
         <app-example :showTab="showTab['example']" :tabData="tabData['example']"></app-example>

@@ -9,6 +9,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import HomeRouter from '@/home/router'
+import tokenService from 'service/tokenService'
 import MsgRouter from '@/msg/router'
 
 import { getFieldSetting, getAllDict, getAllFieldSettingListLevel}  from "service/fieldModelService"
@@ -37,7 +38,7 @@ if (router == null) {
         initFieldSetting();
       } 
     }
-    if(to.name !== 'Login'){
+    if(tokenService.getToken() != '' && to.name !== 'Login'){
       if(!storage.getItem('r2_cachedListLevelFieldSetting')){
         initListLevelFieldSetting();   
       }

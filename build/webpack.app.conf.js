@@ -49,21 +49,13 @@ const webpackConfig = merge(baseWebpackConfig, {
       'process.env': env
     }),
     // UglifyJs do not support ES6+, you can also use babel-minify for better treeshaking: https://github.com/babel/minify
-    new webpack.optimize.UglifyJsPlugin({
+   /* new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false
       },
       sourceMap: config.build.productionSourceMap,
       parallel: true
-    }),
-    // new OptimizeCssAssetsPlugin({//压缩css
-    //   assetNameRegExp:/\.(css|scss)$/g,
-    //   cssProcessor:require("cssnano"),
-    //   cssProcessorPluginOptions:{
-    //     preset:['default',{discardComments:{removeAll:true}}]
-    //   },
-    //   canPrint:true
-    // }),
+    }),*/
     // extract css into its own file 导出css文件
     new ExtractTextPlugin({
       filename: utils.assetsPath('css/[name].[contenthash].css'),

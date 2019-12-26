@@ -1,6 +1,8 @@
 <template>
   <div class="inPage">
-    <component :is="currentComponent" :refresh-request="isrefresh" ref="list"></component>
+    <component :is="currentComponent" :refresh-request="isrefresh" ref="list">
+      <slot name="nav" slot="nav"></slot>
+    </component>
   </div>
 </template>
 

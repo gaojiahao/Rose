@@ -5,6 +5,7 @@
       @sel-data='selData'
       @change='modifyRoute'
       ref="fillPage">
+      <slot name="nav" slot="nav"></slot>
     </component>
   </div>
 

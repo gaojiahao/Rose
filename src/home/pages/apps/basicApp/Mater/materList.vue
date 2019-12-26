@@ -1,6 +1,7 @@
 <template>
   <div class="pages" :class="{'no-add': !action.add}">
     <div class="content">
+      <slot name="nav"></slot>
       <!-- 顶部区域 -->
       <div class="app_top">
         <!-- 搜索栏 -->
