@@ -245,3 +245,11 @@
   background: url('~assets/iconfont/slide_bar.png');
   background-size: cover;
 }
+.icon-more2{
+  background: url('~assets/iconfont/more2.png');
+  background-size: cover;
+}
+.icon-taskSearch{
+  background: url('~assets/iconfont/taskSearch.png');
+  background-size: cover;
+}

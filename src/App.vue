@@ -2,16 +2,26 @@
   <div id="app">
     <keep-alive>
       <!-- 页面 -->
-      <router-view v-if="$route.meta.keepAlive"></router-view>
+      <router-view v-if="$route.meta.keepAlive">
+         <x-header
+      v-if="isShowNav()"
+      :title="$route.meta.title || ''"  slot = 'nav'>
+     </x-header>
+      </router-view>
     </keep-alive>
-    <router-view v-if="!$route.meta.keepAlive"></router-view>
+    <router-view v-if="!$route.meta.keepAlive">
+       <x-header
+      v-if="isShowNav()"
+      :title="$route.meta.title || ''"  slot = 'nav'>
+     </x-header>
+    </router-view>
 
     <!-- 底部导航栏 -->
     <nav class="tabs vux-1px-t" v-if="this.$route.path != '/login'">
       <router-link class="tab" v-for="(tab, index) in tablist" :to="tab.path" :key='index'>
         <span class="tabicon iconfont" :class="tab.icon"></span>
         <span class="title">{{tab.title}}</span>
-        <badge v-if='tab.title === "消息" && newsNumber != 0'></badge>
+        <badge v-if='tab.title === "任务" && newsNumber != 0'></badge>
       </router-link>
     </nav>
   </div>
@@ -19,9 +29,9 @@
 
 <script>
 
-import platfrom from './plugins/platform/index'
+import platform from './plugins/platform/index'
 import { getMsgList } from 'service/msgService'
-import { Badge } from 'vux'
+import { Badge,XHeader} from 'vux'
 export default {
   name: 'app',
   data() {
@@ -29,15 +39,19 @@ export default {
       tablist: [
         {title: '应用', path: '/home', icon: 'icon-1'},
         {title: '消息', path: '/notice', icon: 'icon-message'},
+        // {title: '任务', path: '/task', icon: 'icon-message'},
       ],
       newsNumber:0,
       theme:'',
     }
   },
   components:{
-    Badge
+    Badge,XHeader
   },
   methods:{
+    isShowNav(){
+      return platform.isIPhone && window.isApp
+    },
     /**
      * @description: 获取默认主题
      * @param {type} 
@@ -70,7 +84,7 @@ export default {
   },
   updated() {
     // 安卓的输入框会挡住input输入的解决办法
-    if (platfrom.isAndroid) {
+    if (platform.isAndroid) {
       window.addEventListener("resize", function() {
         if (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA") {
           setTimeout(() => {
@@ -121,6 +135,7 @@ export default {
   .inPage {
     width: 100%;
     height: 100%;
+    position: relative;
   }
   .pages {
     top: 0;

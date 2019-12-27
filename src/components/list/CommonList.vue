@@ -9,6 +9,7 @@
 <template>
   <div class="pages" :class="{'no-add': true}" ref="list">
     <div class="content">
+      <slot name="nav"></slot>
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search="searchList" ref="search"></searchIcon>

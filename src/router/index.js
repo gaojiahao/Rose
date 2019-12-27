@@ -4,11 +4,12 @@
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-12-03 09:54:38
  * @LastEditors  : Gabriel.gaojiahao
- * @LastEditTime : 2019-12-24 15:16:12
+ * @LastEditTime : 2019-12-26 14:56:50
  */
 import Vue from 'vue'
 import Router from 'vue-router'
 import HomeRouter from '@/home/router'
+import tokenService from 'service/tokenService'
 import MsgRouter from '@/msg/router'
 
 import { getFieldSetting, getAllDict, getAllFieldSettingListLevel}  from "service/fieldModelService"
@@ -37,7 +38,7 @@ if (router == null) {
         initFieldSetting();
       } 
     }
-    if(to.name !== 'Login'){
+    if(tokenService.getToken() != '' && to.name !== 'Login'){
       if(!storage.getItem('r2_cachedListLevelFieldSetting')){
         initListLevelFieldSetting();   
       }
@@ -56,8 +57,12 @@ if (router == null) {
 async function initFieldSetting(){
   await getFieldSetting().then( res=>{
     var me = this,
-        r2_cachedListLevelFieldSetting = JSON.parse(storage.getItem('r2_cachedListLevelFieldSetting')),
-        r2_cachedDicts = JSON.parse(storage.getItem('r2_cachedDicts'));
+        r2_cachedListLevelFieldSetting = storage.getItem('r2_cachedListLevelFieldSetting'),
+        r2_cachedDicts = storage.getItem('r2_cachedDicts');
+ 
+    r2_cachedListLevelFieldSetting = r2_cachedListLevelFieldSetting != null ? JSON.parse(r2_cachedListLevelFieldSetting) : null;
+    r2_cachedDicts = r2_cachedDicts != null ? JSON.parse(r2_cachedDicts) : null;
+    if(r2_cachedListLevelFieldSetting == null || r2_cachedDicts == null ) return;
 
     Vue.prototype.$r2FieldSetting = {};
     res.tableContent.map(field=>{
@@ -94,12 +99,13 @@ async function initFieldSetting(){
     if(!storage.getItem('r2FieldSetting')){
       storage.setItem('r2FieldSetting',  JSON.stringify(Vue.prototype.$r2FieldSetting));
     }
-  });
+  }).catch(e =>{e});
 }
 async function initListLevelFieldSetting() {
   await getAllFieldSettingListLevel().then(res=>{
     var me = this,
         _cachedListLevelFieldSetting = {};
+
     res.tableContent.map(it=>{
       _cachedListLevelFieldSetting[it.fieldCode] = _cachedListLevelFieldSetting[it.fieldCode] ? 
         Array.isArray(_cachedListLevelFieldSetting[it.fieldCode]) ? _cachedListLevelFieldSetting[it.fieldCode].concat(it) : [it, _cachedListLevelFieldSetting[it.fieldCode]] 
@@ -110,7 +116,7 @@ async function initListLevelFieldSetting() {
       _cachedListLevelFieldSetting[val].sort(function(a, b){return a.sort - b.sort});
     }
     storage.setItem('r2_cachedListLevelFieldSetting', _cachedListLevelFieldSetting ? JSON.stringify(_cachedListLevelFieldSetting):'');
-  });
+  }).catch(e =>{e});
 }
 
 async function initDicts() {
@@ -122,7 +128,7 @@ async function initDicts() {
     });
     //console.log('_cachedDicts',_cachedDicts);
     storage.setItem('r2_cachedDicts',  _cachedDicts ? JSON.stringify(_cachedDicts):'');
-  });
+  }).catch(e =>{e});
 }
 
 function ensureUrl(url) {

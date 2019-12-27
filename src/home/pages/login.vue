@@ -48,7 +48,7 @@ export default {
     methods: {
         login() {
             tokenService.pcLogin(this.userCode,this.passWord).then(data=>{
-                this.$router.push('/home');
+                this.$router.replace('/home');
             }).catch(err=>{
                  this.$vux.alert.show({
                     content: err.message
