@@ -220,6 +220,7 @@ export default {
             //表单校验
             if (!me.isValid())return;
             if(!me.initNumberVerSel())return;
+            if(me.initgetErrorsFn()==false)return;
             
             this.$vux.confirm.show({
                 content: '确认提交?',
@@ -260,6 +261,36 @@ export default {
                     }
                 });
                 return computed;
+            }
+        },
+        initgetErrorsFn(){
+            let me = this,
+                itemsEvent = me.viewInfo.getErrorsFn,
+                flag = true,
+                fn,
+                cmpMap = me.fields;
+            if(itemsEvent){
+                try {
+                    fn = eval('(' + itemsEvent + ')');
+                    var str = fn.apply(me);
+                    if(str){
+                        this.$vux.toast.show({
+                            text: str,
+                            position: 'middle',
+                            width: '50%',
+                            type: "text",
+                            time: 5000
+                        })
+                        return false;
+                    } else {
+                        return true;
+                    }
+                } catch (e) {
+                    console.error('表单校验函数bug', e);
+                    return false;
+                }    
+            } else  {
+                return flag;
             }
         },
         initItemsEvent: function () {
