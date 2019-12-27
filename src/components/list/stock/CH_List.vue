@@ -133,6 +133,76 @@
                   </div>
                 </div>
               </template>
+              <template v-else-if="activeTab.includes('存货出入库流水')">
+                <div class="classification-item-wrapper" v-for='(item, index) in listData' :key='index'>
+                  <div class="classification-header-wrapper">
+                    <img class="classification_img" :src="item.inventoryPic" alt="icon">
+                    <div class="classification_app">
+                      <div class="app_top">
+                        <div class="app_name">{{item.inventoryName}}</div>
+                        <div class="app_flow">{{item.invProcessing}}</div>
+                      </div>
+                      <div class="classification_detail_part">
+                        <div class="classification_detail_item">
+                          <span class="classification_detail_title">实例编码: </span>{{item.transCode}}
+                        </div>
+                        <div class="classification_detail_item">
+                          <span class="classification_detail_title">应用名称: </span>{{item.appName}}
+                        </div>
+                        <div class="classification_detail_item">
+                          <span class="classification_detail_title">应用类型: </span>{{item.appType}}
+                        </div>
+                        <div class="classification_detail_item">
+                          <span class="classification_detail_title">生效时间: </span>{{item.effectiveTime}}
+                        </div>
+                      </div>
+                      <div class="classification_detail_part">
+                        <div class="classification_detail_item">
+                          <span class="classification_detail_title">物料编码: </span>{{item.inventoryCode}}
+                        </div>
+                        <div class="classification_detail_item">
+                          <span class="classification_detail_title">产品规格: </span>{{item.specification || '无'}}
+                          <span class="classification_detail_title">主计量单位: </span>{{item.measureUnit || '无'}}
+                        </div>
+                        <div class="classification_detail_item">
+                          <span class="classification_detail_title">保质期天数: </span>{{item.shelfLife}}
+                          <span class="classification_detail_title">质龄: </span>{{item.qualityAge}}
+                          <span class="classification_detail_title">临保: </span>{{item.nearKeepingDays}}
+                        </div>
+                        <div class="classification_detail_item">
+                          <span class="classification_detail_title">生产日期: </span>{{item.productDate | dateFormat('YYYY-MM-DD')}}
+                          <span class="classification_detail_title">到期日期: </span>{{item.dueDate | dateFormat('YYYY-MM-DD')}}
+                        </div>
+                      </div>
+                      <div class="classification_detail_part">
+                        <div class="classification_detail_item">
+                          <span class="classification_detail_title">入库数: </span>{{item.inQty || 0 | numberComma}}
+                          <span class="classification_detail_title">出库数: </span>{{item.outQty || 0 | numberComma}}
+                        </div>
+                        <div class="classification_detail_item">
+                          <span class="classification_detail_title">可用库存: </span>{{item.qtyBalance || 0 | numberComma}}
+                          <span class="classification_detail_title">账龄天数: </span>{{item.agingTime || 0 | numberComma}}
+                          <span class="classification_detail_title">库龄天数: </span>{{item.stockTime || 0 | numberComma}}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="classification-split"></div>
+                  <div class="mater-info">
+                    <div class="mater_detail">
+                      <div class="mater">
+                        <span class="title">仓库名称: </span>{{item.warehouseName || '暂无'}}
+                      </div>
+                      <div class="mater">
+                        <span class="title">仓库编码: </span>{{item.whCode || '无'}}
+                      </div>
+                      <div class="mater">
+                        <span class="title">仓库关系类型: </span>{{item.warehouseType || '无'}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
               <!-- 核销余额表 -->
               <template v-else-if="activeTab.includes('核销余额')">
                 <div class="classification-item-wrapper" v-for='(item, index) in listData' :key='index'>
