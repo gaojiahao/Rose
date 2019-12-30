@@ -14,16 +14,18 @@
                 <div class="flow-task-item-header">
                     <div class="flow-task-item-header-wrapper">
                             <div>
-                            <span>{{task.title}}</span>
+                            <span>{{task.projectName_projectApprovalId}}</span>
                             </div>
                             <div>
-                            <span>{{task.TRANS_CODE}}</span>
+                            <span>{{task.transCode}}</span>
                             </div>
                     </div>
                 </div>
                 <div class="flow-task-item-center">
                     <div class="flow-task-item-center-wrapper">
-                        <span>{{task.nodeName}}</span>
+                        <span>{{task.projectType_projectApprovalId}}</span>
+                        <span>{{task.taskType_projectPlanTask}}</span>
+                        <span>{{task.biProcessStatus}}</span>
                     </div>
                     </div>
 
@@ -31,11 +33,11 @@
                         <div class="flow-task-item-foot-wrapper">
                             <div>
                                 <i class="icon icon-handler"></i>
-                                <span>创建人：{{task.creator_name}}</span>
+                                <span>创建人：{{task.creatorName}}</span>
                             </div>
                             <div>
                                 <i class="icon icon-mod-time"></i>
-                            <span>创建时间：{{task.crtTime}}</span>
+                            <span>创建时间：{{dateFormat(task.crtTime)}}</span>
                             </div>
                         </div>
                 </div>
@@ -45,10 +47,11 @@
 </template>
 
 <script>
-import { getMsgList} from "service/msgService";
+import { dateFormat } from 'vux'
+import { getList} from "service/msgService";
 import RScroll from "plugins/scroll/RScroll";
 export default {
-    name:"projectTask",
+    name:"flowTodo",
     components:{
         RScroll
     },
@@ -70,9 +73,16 @@ export default {
     },
     methods:{
         getTasks:function(){
-
-            getMsgList(this.params).then(({ dataCount = 0, tableContent = [] }) => {
-                this.$emit("loadData", dataCount);
+            let { page, limit } = this.params;
+            let filter = [
+                // {
+                // property: "type",
+                // operator: "eq",
+                // value: noticeType
+                // }
+            ];
+            getList('2270',this.params).then(({ dataCount = 0, tableContent = [] }) => {
+                this.$emit("loadData",'projectTask', dataCount);
                 this.hasNext = dataCount > (this.params.page - 1) * this.params.limit + tableContent.length;
                 this.tasks = this.params.page===1?tableContent:[...this.tasks,...tableContent];
                 this.$nextTick(() => {
@@ -94,6 +104,9 @@ export default {
             this.params.page=1;
             this.getTasks();
         },
+        dateFormat(time){
+            return dateFormat(time, 'YYYY-MM-DD HH:mm:ss');
+        }
         
     },
     mounted(){

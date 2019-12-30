@@ -72,7 +72,7 @@ export default {
         getTasks:function(){
 
             getMsgList(this.params).then(({ dataCount = 0, tableContent = [] }) => {
-                this.$emit("loadData", dataCount);
+                this.$emit("loadData", 'flowTodo',dataCount);
                 this.hasNext = dataCount > (this.params.page - 1) * this.params.limit + tableContent.length;
                 this.tasks = this.params.page===1?tableContent:[...this.tasks,...tableContent];
                 this.$nextTick(() => {
