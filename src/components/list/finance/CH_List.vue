@@ -134,6 +134,68 @@
                   </div>
                 </div>
               </template>
+              <template v-else-if="activeTab.includes('存货出入库流水')">
+                <div class="classification-item-wrapper" v-for='(item, index) in listData' :key='index'>
+                  <div class="classification-header-wrapper">
+                    <img class="classification_img" :src="item.inventoryPic" alt="icon">
+                    <div class="classification_app">
+                      <div class="app_top">
+                        <div class="app_name">{{item.inventoryName}}</div>
+                        <div class="app_flow">{{item.invProcessing}}</div>
+                      </div>
+                      <div class="classification_detail_part">
+                        <div class="classification_detail_item">
+                          <span class="classification_detail_title">实例编码: </span>{{item.transCode}}
+                        </div>
+                        <div class="classification_detail_item">
+                          <span class="classification_detail_title">应用名称: </span>{{item.appTitle}}
+                        </div>
+                        <div class="classification_detail_item">
+                          <span class="classification_detail_title">记账日期与时间: </span>{{item.effectiveTime}}
+                        </div>
+                        <div class="classification_detail_item">
+                          <span class="classification_detail_title">物料编码: </span>{{item.matCode}}
+                        </div>
+                      </div>
+                      <div class="classification_detail_part">
+                        <div class="classification_detail_item">
+                          <span class="classification_detail_title">产品规格: </span>{{item.specification || '无'}}
+                          <span class="classification_detail_title">主计量单位: </span>{{item.measureUnit || '无'}}
+                          <span class="classification_detail_title">安全库存: </span>{{item.safeBalance || 0 | numberComma}}
+                        </div>
+                        <div class="classification_detail_item">
+                          <span class="classification_detail_title">品牌: </span>{{item.brand || '无'}}
+                        </div>
+                        <div class="classification_detail_item">
+                          <span class="classification_detail_title">物料大类: </span>{{item.inventoryType}}
+                          <span class="classification_detail_title">物料小类: </span>{{item.inventorySubclass}}
+                        </div>
+                      </div>
+                      <div class="classification_detail_part">
+                        <div class="classification_detail_item">
+                          <span class="classification_detail_title">增加数量: </span>{{item.drQty || 0 | numberComma}}
+                          <span class="classification_detail_title">减少数量: </span>{{item.crQty || 0 | numberComma}}
+                          <span class="classification_detail_title">数量余额: </span>{{item.qtyBalance || 0 | numberComma}}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="classification-split"></div>
+                  <div class="mater-info">
+                    <div class="mater_detail">
+                      <div class="mater">
+                        <span class="title">仓库名称: </span>{{item.warehouseName || '暂无'}}
+                      </div>
+                      <div class="mater">
+                        <span class="title">仓库编码: </span>{{item.whCode || '无'}}
+                      </div>
+                      <div class="mater">
+                        <span class="title">仓库关系类型: </span>{{item.warehouseType || '无'}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
               <!-- 核销余额表 -->
               <template v-else-if="activeTab.includes('核销余额')">
                 <div class="classification-item-wrapper" v-for='(item, index) in listData' :key='index'>
