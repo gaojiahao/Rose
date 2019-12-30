@@ -1,5 +1,6 @@
 <template>
   <div class='childPage dealer-page'>
+    <slot name="nav"></slot>
     <r-scroll :options="scrollOptions" class="content" ref="bScroll">
       <div class='mater_baseinfo1'>
         <div class="mater_pic1">

@@ -96,6 +96,17 @@
     }
   }
 }
+.hasNav .no-add{
+  .list_wrapper {
+    height: calc(100% - .88rem - 46px);
+    &.has-sort {
+      height: calc(100% - 1.32rem - 46px);
+    }
+  }
+}
+.hasNav .list_wrapper{
+  height: calc(100% - 1.65rem - 46px);
+}
 .list_wrapper {
   overflow: hidden;
   position: relative;

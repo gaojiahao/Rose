@@ -7,7 +7,7 @@
  * @LastEditTime: 2019-12-03 17:12:41
  -->
 <template>
-  <div class="pages" :class="{'no-add': true}" ref="list">
+  <div class="pages" :class="{'no-add': false}" ref="list">
     <div class="content">
       <slot name="nav"></slot>
       <div class="list_top">

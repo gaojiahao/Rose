@@ -221,6 +221,9 @@
 .no_count{
   height: calc(100% - .44rem)
 }
+.hasNav .no_count{
+  height: calc(100% - .44rem - 46px)
+}
 // 全部是表格提交 并且底部只有(提交)格式
 .when-is-form {
   height: 90%;
