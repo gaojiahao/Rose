@@ -35,7 +35,7 @@ import { Badge,XHeader} from 'vux'
 export default {
   name: 'app',
   data() {
-    var hasNav = platform.isIPhone;// && window.isApp
+    var hasNav = platform.isIPhone && window.isApp
     return{
       tablist: [
         {title: '应用', path: '/home', icon: 'icon-1'},
