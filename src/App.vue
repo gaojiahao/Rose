@@ -1,17 +1,17 @@
 <template>
-  <div id="app">
+  <div id="app" :class="{'hasNav':hasNav}">
     <keep-alive>
       <!-- 页面 -->
       <router-view v-if="$route.meta.keepAlive">
          <x-header
-      v-if="isShowNav()"
+      v-if="hasNav"
       :title="$route.meta.title || ''"  slot = 'nav'>
      </x-header>
       </router-view>
     </keep-alive>
     <router-view v-if="!$route.meta.keepAlive">
        <x-header
-      v-if="isShowNav()"
+      v-if="hasNav"
       :title="$route.meta.title || ''"  slot = 'nav'>
      </x-header>
     </router-view>
@@ -35,6 +35,7 @@ import { Badge,XHeader} from 'vux'
 export default {
   name: 'app',
   data() {
+    var hasNav = platform.isIPhone;// && window.isApp
     return{
       tablist: [
         {title: '应用', path: '/home', icon: 'icon-1'},
@@ -42,6 +43,7 @@ export default {
         // {title: '任务', path: '/task', icon: 'icon-message'},
       ],
       newsNumber:0,
+      hasNav:hasNav,
       theme:'',
     }
   },
@@ -49,9 +51,6 @@ export default {
     Badge,XHeader
   },
   methods:{
-    isShowNav(){
-      return platform.isIPhone && window.isApp
-    },
     /**
      * @description: 获取默认主题
      * @param {type} 
@@ -148,7 +147,6 @@ export default {
     background: #FFF;
     z-index: 10;
   }
-  
 </style>
 <style lang="scss" scoped>
 // 导航标签

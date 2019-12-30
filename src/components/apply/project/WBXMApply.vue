@@ -1,5 +1,6 @@
 <template>
   <div class="pages xmlx-apply-container">
+    <slot name="nav"></slot>
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
