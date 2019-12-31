@@ -201,7 +201,7 @@ let tokenService = {
                 key1: data.key1,
                 active: data.active
               });
-              resolve(data[key])
+              resolve(data['token'])
             }).catch(function (error) {
               let res = error.response;
               let data = (res && res.data) || {};
