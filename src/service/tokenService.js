@@ -184,6 +184,7 @@ let tokenService = {
     var me = this;
     return new Promise((resolve, reject) => {
       dd.ready(function () {
+        console.log(ddCorpid);
         dd.runtime.permission.requestAuthCode({
           corpId: ddCorpid, // 企业id
           onSuccess: function (info) {
