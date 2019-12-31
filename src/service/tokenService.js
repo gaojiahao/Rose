@@ -59,7 +59,7 @@ let tokenService = {
     fly.get(`/H_roleplay-si/na/enterpriseInfo`).then((res) => {
       let data = {};
           res.data.map(p=>{
-            data[p.PROPERTY] = data.value;
+            data[p.PROPERTY] = p.VALUE;
           });
 
           // 根据环境不同 调用不同的登录接口
