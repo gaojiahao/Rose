@@ -62,7 +62,7 @@ let tokenService = {
           res.data.map(p=>{
             data[p.PROPERTY] = p.VALUE;
           });
-          console.log(data);
+          console.log('data',data);
           // 根据环境不同 调用不同的登录接口
             if (isDebug){
               return this.toLoginPage();
@@ -84,6 +84,7 @@ let tokenService = {
                   &state=1#wechat_redirect`)
               }
             } else if (dd.ios || dd.android) {
+              console.log('data.ddCorpid',data.ddCorpid);
               return this.DDLogin(data.ddCorpid);
             } else {
               return this.toLoginPage();
