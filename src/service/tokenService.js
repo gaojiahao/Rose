@@ -92,6 +92,7 @@ let tokenService = {
         }).catch(function (error) {
           let res = error.response;
           let data = (res && res.data) || {};
+          console.log('错误',error);
           let message = data.message || '请求异常';
           reject({
             success: false,
@@ -198,7 +199,7 @@ let tokenService = {
                 key1: data.key1,
                 active: data.active
               });
-              resolve(data[key])
+              resolve(data['token'])
             }).catch(function (error) {
               let res = error.response;
               let data = (res && res.data) || {};
