@@ -56,26 +56,50 @@ let tokenService = {
 
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
     //return this.pcLogin('rfd113', 'rfd123456','token');
-    // 根据环境不同 调用不同的登录接口
-    if (isDebug){
-      return this.toLoginPage();
-    }else if (isQYWX) {
-      if(code != null){
-        return this.QYWXLogin();
-      } else {
-        var redUrl = redirect_uri;
-        if(window.sessionStorage.getItem('shareUrl')){
-          //不能用encodeURI它不解析&符号
-          redUrl = encodeURIComponent(window.sessionStorage.getItem('shareUrl'));
-        }
-        window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redUrl}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
-      }
-    } else if (dd.ios || dd.android) {
-      return this.DDLogin();
-    } else {
-      return this.toLoginPage();
-    }
-    
+    return new Promise((resolve, reject) => { 
+      fly.get(`/H_roleplay-si/na/enterpriseInfo`).then((res) => {
+      let data = {};
+          res.data.map(p=>{
+            data[p.PROPERTY] = p.VALUE;
+          });
+
+          // 根据环境不同 调用不同的登录接口
+            if (isDebug){
+              return this.toLoginPage();
+            }else if (isQYWX) {
+              if(code != null){
+                return this.QYWXLogin();
+              } else {
+                var redUrl = redirect_uri;
+                if(window.sessionStorage.getItem('shareUrl')){
+                  //不能用encodeURI它不解析&符号
+                  redUrl = encodeURIComponent(window.sessionStorage.getItem('shareUrl'));
+                }
+                window.location.replace(
+                  `https://open.weixin.qq.com/connect/oauth2/authorize
+                  ?appid=${corpid}
+                  &redirect_uri=${redUrl}
+                  &response_type=code&scope=SCOPE
+                  &agentid=${agentid}
+                  &state=1#wechat_redirect`)
+              }
+            } else if (dd.ios || dd.android) {
+              return this.DDLogin(data.ddCorpid);
+            } else {
+              return this.toLoginPage();
+            }
+            resolve(data)
+        }).catch(function (error) {
+          let res = error.response;
+          let data = (res && res.data) || {};
+          console.log('错误',error);
+          let message = data.message || '请求异常';
+          reject({
+            success: false,
+            message: message
+          })
+        });
+      });
   },
   // PC端登录，默认返回token
   pcLogin(userCode, password, key = 'token') {
@@ -155,12 +179,12 @@ let tokenService = {
       resolve();
     })
   },
-  DDLogin(key = 'token') {
+  DDLogin(ddCorpid) {
     var me = this;
     return new Promise((resolve, reject) => {
       dd.ready(function () {
         dd.runtime.permission.requestAuthCode({
-          corpId: 'ding3ab6e5b6f4cecf64', // 企业id
+          corpId: ddCorpid, // 企业id
           onSuccess: function (info) {
             let code = info.code;
             fly.get(`/H_roleplay-si/ddLogin?code=${code}`).then((res) => {
