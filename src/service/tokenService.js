@@ -56,7 +56,8 @@ let tokenService = {
 
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
     //return this.pcLogin('rfd113', 'rfd123456','token');
-    fly.get(`/H_roleplay-si/na/enterpriseInfo`).then((res) => {
+    return new Promise((resolve, reject) => { 
+      fly.get(`/H_roleplay-si/na/enterpriseInfo`).then((res) => {
       let data = {};
           res.data.map(p=>{
             data[p.PROPERTY] = p.VALUE;
@@ -87,6 +88,7 @@ let tokenService = {
             } else {
               return this.toLoginPage();
             }
+            resolve(data)
         }).catch(function (error) {
           let res = error.response;
           let data = (res && res.data) || {};
@@ -96,6 +98,7 @@ let tokenService = {
             message: message
           })
         });
+      });
   },
   // PC端登录，默认返回token
   pcLogin(userCode, password, key = 'token') {
