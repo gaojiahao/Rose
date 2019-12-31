@@ -62,7 +62,7 @@ let tokenService = {
           res.data.map(p=>{
             data[p.PROPERTY] = p.VALUE;
           });
-
+          console.log(data);
           // 根据环境不同 调用不同的登录接口
             if (isDebug){
               return this.toLoginPage();
