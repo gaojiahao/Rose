@@ -46,61 +46,46 @@ let tokenService = {
       return ''
     }
   },
+  getEnterpriseInfo(){
+    fly.get(`/H_roleplay-si/na/enterpriseInfo`).then((res) => {
+      let data = {};
+      res.data.map(p=>{
+        data[p.PROPERTY] = data.value;
+      });
+      return data;
+    });      
+  },
   // 登录
   login() {
     // 清楚token缓存
     this.clean();
     let query = querystring.parse(location.search.slice(1)),
-        isDebug = query.debug == 'true';
+        isDebug = query.debug == 'true',
+        enterpriseInfo;
     let code = query.code;
 
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
+    enterpriseInfo = this.getEnterpriseInfo();
     //return this.pcLogin('rfd113', 'rfd123456','token');
-    return new Promise((resolve, reject) => { 
-      fly.get(`/H_roleplay-si/na/enterpriseInfo`).then((res) => {
-      let data = {};
-          res.data.map(p=>{
-            data[p.PROPERTY] = p.VALUE;
-          });
-          console.log('data',data);
-          // 根据环境不同 调用不同的登录接口
-            if (isDebug){
-              return this.toLoginPage();
-            }else if (isQYWX) {
-              if(code != null){
-                return this.QYWXLogin();
-              } else {
-                var redUrl = redirect_uri;
-                if(window.sessionStorage.getItem('shareUrl')){
-                  //不能用encodeURI它不解析&符号
-                  redUrl = encodeURIComponent(window.sessionStorage.getItem('shareUrl'));
-                }
-                window.location.replace(
-                  `https://open.weixin.qq.com/connect/oauth2/authorize
-                  ?appid=${corpid}
-                  &redirect_uri=${redUrl}
-                  &response_type=code&scope=SCOPE
-                  &agentid=${agentid}
-                  &state=1#wechat_redirect`)
-              }
-            } else if (dd.ios || dd.android) {
-              console.log('data.ddCorpid',data.ddCorpid);
-              return this.DDLogin(data.ddCorpid);
-            } else {
-              return this.toLoginPage();
-            }
-            resolve(data)
-        }).catch(function (error) {
-          let res = error.response;
-          let data = (res && res.data) || {};
-          console.log('错误',error);
-          let message = data.message || '请求异常';
-          reject({
-            success: false,
-            message: message
-          })
-        });
-      });
+    // 根据环境不同 调用不同的登录接口
+    if (isDebug){
+      return this.toLoginPage();
+    }else if (isQYWX) {
+      if(code != null){
+        return this.QYWXLogin();
+      } else {
+        var redUrl = redirect_uri;
+        if(window.sessionStorage.getItem('shareUrl')){
+          //不能用encodeURI它不解析&符号
+          redUrl = encodeURIComponent(window.sessionStorage.getItem('shareUrl'));
+        }
+        window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redUrl}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
+      }
+    } else if (dd.ios || dd.android) {
+      return this.DDLogin(enterpriseInfo.ddCorpid);
+    } else {
+      return this.toLoginPage();
+    }    
   },
   // PC端登录，默认返回token
   pcLogin(userCode, password, key = 'token') {
@@ -184,7 +169,6 @@ let tokenService = {
     var me = this;
     return new Promise((resolve, reject) => {
       dd.ready(function () {
-        console.log(ddCorpid);
         dd.runtime.permission.requestAuthCode({
           corpId: ddCorpid, // 企业id
           onSuccess: function (info) {
