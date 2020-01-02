@@ -46,7 +46,7 @@ let tokenService = {
       return ''
     }
   },
-  async getEnterpriseInfo(){
+  getEnterpriseInfo(){
     fly.get(`/H_roleplay-si/na/enterpriseInfo`).then((res) => {
       let data = {};
       res.data.map(p=>{
@@ -57,7 +57,7 @@ let tokenService = {
     });      
   },
   // 登录
-  async login() {
+  login() {
     // 清楚token缓存
     this.clean();
     let query = querystring.parse(location.search.slice(1)),
@@ -66,7 +66,7 @@ let tokenService = {
     let code = query.code;
 
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
-    enterpriseInfo = await this.getEnterpriseInfo();
+    enterpriseInfo = this.getEnterpriseInfo();
     //return this.pcLogin('rfd113', 'rfd123456','token');
     // 根据环境不同 调用不同的登录接口
     if (isDebug){
@@ -84,7 +84,7 @@ let tokenService = {
       }
     } else if (dd.ios || dd.android) {
       console.log(enterpriseInfo)
-      return await this.DDLogin(enterpriseInfo.ddCorpid);
+      return this.DDLogin(enterpriseInfo.ddCorpid);
     } else {
       return this.toLoginPage();
     }    
