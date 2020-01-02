@@ -46,12 +46,13 @@ let tokenService = {
       return ''
     }
   },
- getEnterpriseInfo(){
+  async getEnterpriseInfo(){
     fly.get(`/H_roleplay-si/na/enterpriseInfo`).then((res) => {
       let data = {};
       res.data.map(p=>{
         data[p.PROPERTY] = p.VALUE;
       });
+      console.log(data)
       return data;
     });      
   },
@@ -83,7 +84,7 @@ let tokenService = {
       }
     } else if (dd.ios || dd.android) {
       console.log(enterpriseInfo)
-      return this.DDLogin(enterpriseInfo.ddCorpid);
+      return await this.DDLogin(enterpriseInfo.ddCorpid);
     } else {
       return this.toLoginPage();
     }    
