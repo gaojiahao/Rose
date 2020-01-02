@@ -175,12 +175,12 @@ let tokenService = {
       resolve();
     })
   },
-  DDLogin(key = 'token') {
+  DDLogin(ddCorpid) {
     var me = this;
     return new Promise((resolve, reject) => {
       dd.ready(function () {
         dd.runtime.permission.requestAuthCode({
-          corpId: 'ding3ab6e5b6f4cecf64', // 企业id
+          corpId: ddCorpid, // 企业id
           onSuccess: function (info) {
             let code = info.code;
             fly.get(`/H_roleplay-si/ddLogin?code=${code}`).then((res) => {
@@ -195,7 +195,7 @@ let tokenService = {
                 key1: data.key1,
                 active: data.active
               });
-              resolve(data[key])
+              resolve(data['token'])
             }).catch(function (error) {
               let res = error.response;
               let data = (res && res.data) || {};
