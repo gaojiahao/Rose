@@ -4,7 +4,7 @@
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-12-03 09:54:38
  * @LastEditors  : Gabriel.gaojiahao
- * @LastEditTime : 2020-01-02 17:04:02
+ * @LastEditTime : 2020-01-02 17:09:05
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -38,10 +38,7 @@ if (router == null) {
     }
     if(query.tag&&query.tag=='share'){
       storage.setItem('shareUrl',window.location.href);
-      if(!storage.getItem('r2FieldSetting')){
-        console.log('a')
-        initFieldSetting();
-      } 
+      initFieldSetting();
     }
     next();
   })
