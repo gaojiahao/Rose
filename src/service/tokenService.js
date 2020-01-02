@@ -82,6 +82,7 @@ let tokenService = {
         window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redUrl}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
       }
     } else if (dd.ios || dd.android) {
+      console.log(enterpriseInfo)
       return this.DDLogin(enterpriseInfo.ddCorpid);
     } else {
       return this.toLoginPage();
