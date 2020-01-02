@@ -4,7 +4,7 @@
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-12-03 09:54:38
  * @LastEditors  : Gabriel.gaojiahao
- * @LastEditTime : 2019-12-26 14:56:50
+ * @LastEditTime : 2020-01-02 15:40:05
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -32,22 +32,22 @@ if (router == null) {
 
   window.router.beforeEach((to, from, next) => {
     let {query,fullPath} = to;
+    if(tokenService.getToken() != '' && to.name !== 'Login'){
+      // if(!storage.getItem('r2_cachedListLevelFieldSetting')){
+      //   initListLevelFieldSetting();   
+      // }
+      // if(!storage.getItem('r2_cachedDicts')){
+      //   initDicts();   
+      // }
+      if(!storage.getItem('r2FieldSetting')){
+        initFieldSetting();
+      }
+    }
     if(query.tag&&query.tag=='share'){
       storage.setItem('shareUrl',window.location.href);
       if(!storage.getItem('r2FieldSetting')){
         initFieldSetting();
       } 
-    }
-    if(tokenService.getToken() != '' && to.name !== 'Login'){
-      if(!storage.getItem('r2_cachedListLevelFieldSetting')){
-        initListLevelFieldSetting();   
-      }
-      if(!storage.getItem('r2_cachedDicts')){
-        initDicts();   
-      }
-      if(!Vue.prototype.$r2FieldSetting){
-        initFieldSetting();
-      }
     }
     next();
   })
@@ -55,14 +55,16 @@ if (router == null) {
 
 //获取系统字段模型
 async function initFieldSetting(){
+  let a =  storage.getItem('r2_cachedListLevelFieldSetting') || await initListLevelFieldSetting(),
+      b= storage.getItem('r2_cachedDicts') || await initDicts();
   await getFieldSetting().then( res=>{
     var me = this,
-        r2_cachedListLevelFieldSetting = storage.getItem('r2_cachedListLevelFieldSetting'),
-        r2_cachedDicts = storage.getItem('r2_cachedDicts');
+        r2_cachedListLevelFieldSetting = a,
+        r2_cachedDicts = b;
  
-    r2_cachedListLevelFieldSetting = r2_cachedListLevelFieldSetting != null ? JSON.parse(r2_cachedListLevelFieldSetting) : null;
-    r2_cachedDicts = r2_cachedDicts != null ? JSON.parse(r2_cachedDicts) : null;
-    if(r2_cachedListLevelFieldSetting == null || r2_cachedDicts == null ) return;
+    // r2_cachedListLevelFieldSetting = r2_cachedListLevelFieldSetting != null ? JSON.parse(r2_cachedListLevelFieldSetting) : null;
+    // r2_cachedDicts = r2_cachedDicts != null ? JSON.parse(r2_cachedDicts) : null;
+    // if(r2_cachedListLevelFieldSetting == null || r2_cachedDicts == null ) return;
 
     Vue.prototype.$r2FieldSetting = {};
     res.tableContent.map(field=>{
@@ -101,8 +103,8 @@ async function initFieldSetting(){
     }
   }).catch(e =>{e});
 }
-async function initListLevelFieldSetting() {
-  await getAllFieldSettingListLevel().then(res=>{
+function initListLevelFieldSetting() {
+  getAllFieldSettingListLevel().then(res=>{
     var me = this,
         _cachedListLevelFieldSetting = {};
 
@@ -111,37 +113,23 @@ async function initListLevelFieldSetting() {
         Array.isArray(_cachedListLevelFieldSetting[it.fieldCode]) ? _cachedListLevelFieldSetting[it.fieldCode].concat(it) : [it, _cachedListLevelFieldSetting[it.fieldCode]] 
         : it;
     });
-    //console.log('_cachedListLevelFieldSetting',_cachedListLevelFieldSetting);
     for(var val in _cachedListLevelFieldSetting){
       _cachedListLevelFieldSetting[val].sort(function(a, b){return a.sort - b.sort});
     }
     storage.setItem('r2_cachedListLevelFieldSetting', _cachedListLevelFieldSetting ? JSON.stringify(_cachedListLevelFieldSetting):'');
+    return _cachedListLevelFieldSetting ? JSON.stringify(_cachedListLevelFieldSetting):'';
   }).catch(e =>{e});
 }
 
-async function initDicts() {
-  await getAllDict().then(res=>{
+function initDicts() {
+  getAllDict().then(res=>{
     var me = this,
     _cachedDicts = {};
     res.tableContent.map(it=>{
       _cachedDicts[it.value] = it;
     });
-    //console.log('_cachedDicts',_cachedDicts);
     storage.setItem('r2_cachedDicts',  _cachedDicts ? JSON.stringify(_cachedDicts):'');
+    return _cachedDicts ? JSON.stringify(_cachedDicts):'';
   }).catch(e =>{e});
-}
-
-function ensureUrl(url) {
-  if (/^\/H_roleplay-si/i.test(url)) {
-      return url;
-  } else if (/^\/R_roleplay-si/i.test(url)) {
-      return url.replace(/^\/R_roleplay-si/i, '/H_roleplay-si');
-  } else if (/^\/account-api/i.test(url)) {
-      return url;
-  } else if (/^\/corebiz-api/i.test(url)) {
-      return url;
-  } else {
-      return '/H_roleplay-si' + url;
-  }
 }
 export default window.router
