@@ -46,17 +46,17 @@ let tokenService = {
       return ''
     }
   },
-  getEnterpriseInfo(){
+ getEnterpriseInfo(){
     fly.get(`/H_roleplay-si/na/enterpriseInfo`).then((res) => {
       let data = {};
       res.data.map(p=>{
-        data[p.PROPERTY] = data.value;
+        data[p.PROPERTY] = p.VALUE;
       });
       return data;
     });      
   },
   // 登录
-  login() {
+  async login() {
     // 清楚token缓存
     this.clean();
     let query = querystring.parse(location.search.slice(1)),
@@ -65,7 +65,7 @@ let tokenService = {
     let code = query.code;
 
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
-    enterpriseInfo = this.getEnterpriseInfo();
+    enterpriseInfo = await this.getEnterpriseInfo();
     //return this.pcLogin('rfd113', 'rfd123456','token');
     // 根据环境不同 调用不同的登录接口
     if (isDebug){
