@@ -46,15 +46,36 @@ let tokenService = {
       return ''
     }
   },
+  getEnterpriseInfo(){
+    return new Promise((resolve, reject) => {
+      fly.get(`/H_roleplay-si/na/enterpriseInfo`).then((res) => {
+        let data = {};
+        res.data.map(p=>{
+          data[p.PROPERTY] = p.VALUE;
+        });
+        resolve(data);
+      }).catch(function (error) {
+        let res = error.response;
+        let data = (res && res.data) || {};
+        let message = data.message || '请求异常';
+        reject({
+          success: false,
+          message: message
+        })
+      });
+    });
+  },
   // 登录
-  login() {
+  async login() {
     // 清楚token缓存
     this.clean();
     let query = querystring.parse(location.search.slice(1)),
-        isDebug = query.debug == 'true';
+        isDebug = query.debug == 'true',
+        enterpriseInfo;
     let code = query.code;
 
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
+    enterpriseInfo = await this.getEnterpriseInfo();
     //return this.pcLogin('rfd113', 'rfd123456','token');
     // 根据环境不同 调用不同的登录接口
     if (isDebug){
@@ -71,11 +92,10 @@ let tokenService = {
         window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redUrl}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
       }
     } else if (dd.ios || dd.android) {
-      return this.DDLogin();
+      return this.DDLogin(enterpriseInfo.ddCorpid);
     } else {
       return this.toLoginPage();
-    }
-    
+    }    
   },
   // PC端登录，默认返回token
   pcLogin(userCode, password, key = 'token') {
