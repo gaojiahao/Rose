@@ -4,7 +4,7 @@
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-12-03 09:54:38
  * @LastEditors  : Gabriel.gaojiahao
- * @LastEditTime : 2020-01-02 17:55:36
+ * @LastEditTime : 2020-01-02 18:06:01
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -30,6 +30,7 @@ if (router == null) {
   })
 
   window.router.beforeEach((to, from, next) => {
+    console.log(to)
     console.log("分享的我进来了吗");
     let {query,fullPath} = to;
     if(tokenService.getToken() != '' && to.name !== 'Login'){
@@ -39,7 +40,7 @@ if (router == null) {
       }
     }
     if(query.tag&&query.tag=='share'){
-      console.log("分享的我进来了吗1");
+      console.log("分享的我进来了吗2");
       storage.setItem('shareUrl',window.location.href);
       initFieldSetting();
     }
