@@ -4,7 +4,7 @@
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-12-03 09:54:38
  * @LastEditors  : Gabriel.gaojiahao
- * @LastEditTime : 2020-01-03 11:14:22
+ * @LastEditTime : 2020-01-03 11:33:22
  */
 import Vue from 'vue'
 
@@ -57,7 +57,7 @@ let model = {
         if(!storage.getItem('r2FieldSetting')){
         storage.setItem('r2FieldSetting',  JSON.stringify(Vue.prototype.$r2FieldSetting));
         }
-    }).catch(e =>{e});
+    }).catch(e =>{console.log(e)});
     },
     async initListLevelFieldSetting() {
     await getAllFieldSettingListLevel().then(res=>{
