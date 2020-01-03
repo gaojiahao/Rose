@@ -97,7 +97,7 @@ export default {
                 'dailyTask':''    
             },
             praiseBadge:'',
-            activeColor:'#2196F3',
+            activeColor:'#0099CC', //2196F3
             searchValue: '',
             showFilter:false,
             scrollOptions: {
@@ -116,11 +116,11 @@ export default {
             this.todoBadge[text] = String(val);
         },
         getTheme(){
-            this.activeColor = '#3296FA';
+            this.activeColor = '#0099CC';
             var theme = window.localStorage.getItem('theme');
             switch(theme){
                 case 'default-theme':
-                    this.activeColor = '#3296FA';
+                    this.activeColor = '#0099CC';
                     break;
                 case 're-theme':
                     this.activeColor = '#720e05';
@@ -197,6 +197,9 @@ export default {
 
 </script>
 <style lang="less" scoped>
+@blue:#0099CC;
+@font:#fff;
+@gray:#CCCCCC;
 .notice-container{
     overflow: hidden;
     height: 100%;
@@ -206,7 +209,7 @@ export default {
     }
     .list_top {
         width: 100%;
-        background-color: #fff;
+        background-color: @blue;
         }
         .search {
         width: 100%;
@@ -237,7 +240,7 @@ export default {
             }
             // 搜索 按钮
             .pop_cfm {
-            color: #999;
+            color: @font;
             font-size: .14rem;
             margin: 0 .15rem 0 .12rem;
             }
@@ -274,7 +277,7 @@ export default {
                 z-index: 1;
                 left: .10rem;
                 width: .14rem;
-                height: .16rem;
+                height: .2rem;
                 fill: #2d2d2d;
                 position: absolute;
                 -webkit-transform: translate(0, -50%);

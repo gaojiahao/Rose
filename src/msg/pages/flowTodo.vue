@@ -14,7 +14,7 @@
                 <div class="flow-task-item-header">
                     <div class="flow-task-item-header-wrapper">
                             <div>
-                            <span>{{task.title}}</span>
+                            <span class='title'>{{task.title}}</span>
                             </div>
                             <div>
                             <span>{{task.TRANS_CODE}}</span>
@@ -23,7 +23,7 @@
                 </div>
                 <div class="flow-task-item-center">
                     <div class="flow-task-item-center-wrapper">
-                        <span>{{task.nodeName}}</span>
+                        <span class="task">{{task.nodeName}}</span>
                     </div>
                     </div>
 
@@ -103,23 +103,41 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@blue:#0099CC;
+@blue2:#336699;
+@green:#99CCCC;
+@gray:#CCCCCC;
 .flow-task{
     padding: .15rem;
     font-size: .14rem;
 
     &-item{
-        box-shadow: 0 2px 10px 0 rgba(232, 232, 232, 0.7);
+        box-shadow: 0 2px 10px 0 @gray;
         margin-bottom: .15rem;
         &-header{
             padding: .05rem .1rem;
             &-wrapper{
                 display: flex;
                 justify-content: space-between;
+                .title{
+                    background-color: @green;
+                    padding: .1rem;
+                    color: #fff;
+                }
             }
         }
 
         &-center{
             padding: .05rem .1rem;
+            &-wrapper{
+                display: flex;
+                justify-content: space-between;
+                .task{
+                    background-color: @blue2;
+                    padding: 0 .1rem;
+                    color: #fff;
+                }
+            }
         }
 
         &-foot{

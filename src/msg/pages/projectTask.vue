@@ -14,7 +14,7 @@
                 <div class="flow-task-item-header">
                     <div class="flow-task-item-header-wrapper">
                             <div>
-                            <span>{{task.projectName_projectApprovalId}}</span>
+                            <span class="title">{{task.projectName_projectApprovalId}}</span>
                             </div>
                             <div>
                             <span>{{task.transCode}}</span>
@@ -23,9 +23,9 @@
                 </div>
                 <div class="flow-task-item-center">
                     <div class="flow-task-item-center-wrapper">
-                        <span>{{task.projectType_projectApprovalId}}</span>
-                        <span>{{task.taskType_projectPlanTask}}</span>
-                        <span>{{task.biProcessStatus}}</span>
+                        <span class="task">{{task.projectType_projectApprovalId}}</span>
+                        <span class="task2">{{task.taskType_projectPlanTask}}</span>
+                        <span class="task3">{{task.biProcessStatus}}</span>
                     </div>
                     </div>
 
@@ -116,23 +116,53 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@blue:#0099CC;
+@blue2:#336699;
+@green:#99CCCC;
+@green2:#CCCC99;
+@puplur:#666699;
+@gray:#CCCCCC;
 .flow-task{
     padding: .15rem;
     font-size: .14rem;
 
     &-item{
-        box-shadow: 0 2px 10px 0 rgba(232, 232, 232, 0.7);
+        box-shadow: 0 2px 10px 0 @gray;
         margin-bottom: .15rem;
         &-header{
             padding: .05rem .1rem;
             &-wrapper{
                 display: flex;
                 justify-content: space-between;
+                .title{
+                    background-color: @green;
+                    padding: .1rem;
+                    color: #fff;
+                }
             }
         }
 
         &-center{
             padding: .05rem .1rem;
+            &-wrapper{
+                // display: flex;
+                justify-content: space-between;
+                .task{
+                    background-color: @blue2;
+                    padding: 0 .1rem;
+                    color: #fff;
+                }
+                .task2{
+                    background-color: @green2;
+                    padding: 0 .1rem;
+                    color: #fff;
+                }
+                .task3{
+                    background-color: @puplur;
+                    padding: 0 .1rem;
+                    color: #fff;
+                }
+            }
         }
 
         &-foot{
