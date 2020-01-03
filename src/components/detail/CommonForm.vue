@@ -586,11 +586,14 @@ export default {
         }
         shareContent(shareInfo);
       })
+    this.$on('on-upload',this.onUpload);
+  },
+  beforeMount(){
+    let { query,meta,path,fullPath} = this.$route;
     if(query.tag&&query.tag=='share'){
       model.initFieldSetting();
       window.sessionStorage.removeItem('shareUrl');
     }
-    this.$on('on-upload',this.onUpload);
   }
 };
 </script>
