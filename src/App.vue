@@ -107,6 +107,7 @@ export default {
     border-color: #E8E8E8;
   }
   html {
+    font-size:62.5%;
     height: 100%;
   }
   body {

@@ -5,7 +5,7 @@
         <div class="top-part-container">
           <div class="top-part">
             <div class="user-info-container">
-              <div class="user_avatar" @click="goThemeSetting()">
+              <div class="user_avatar" @click="avatarClick()">
                 <img :src="userInfo.avatar">
               </div>
               <div class="user-info">
@@ -178,6 +178,13 @@ export default {
           this.dealMenu(res);
         });
       }
+    },
+    isSetHost:function(){
+      if(window.isApp && window.baseURL == null){
+        this.$router.push('/setHost');
+        return false
+      } else return true;
+      
     },
     dealMenu(res) {
       let BUSobj = this.BUSobj;
@@ -362,9 +369,9 @@ export default {
     scrollToTop() {
       this.homeScroll.scrollTo(0, 0, 400);
     },
-    goThemeSetting(){
+    avatarClick(){
       this.$router.push({
-        path: '/themesetting',
+        path: window.isApp?'/user':'/themesetting',
         query: {
         }
       })    
@@ -389,11 +396,20 @@ export default {
     }
   },
   activated() {
+    if(this.$route.query.refresh == true){
+       this.basicApp = [];
+    }
     if (this.BusApps.length == 0) {
-      this.initData();
+      if(this.isSetHost())this.initData();
     } else {
       this.$loading.hide();
     }
+  },
+  beforeRouteEnter(to,from,next){
+    if(from.path == "/login"){
+       to.query.refresh = true;
+    }
+    next()
   },
   mounted() {
     this.homeScroll = new Bscroll(this.$refs.home, {
