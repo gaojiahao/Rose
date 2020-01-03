@@ -42,6 +42,7 @@
 import platfrom from "@/plugins/platform/index";
 import submitMethod from "mixins/formSubmit";
 import secondConfig from 'mixins/secondConfig';
+import model from 'service/model';
 import {findConfigInfo} from 'service/commonService'
 // 插件 引入
 import Bscroll from "better-scroll";
@@ -586,6 +587,7 @@ export default {
         shareContent(shareInfo);
       })
     if(query.tag&&query.tag=='share'){
+      model.initFieldSetting();
       window.sessionStorage.removeItem('shareUrl');
     }
     this.$on('on-upload',this.onUpload);
