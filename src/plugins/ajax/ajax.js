@@ -1,7 +1,7 @@
 import Fly from 'flyio/dist/npm/fly'
 // 请求地址引入
 import tokenService from '../../service/tokenService'
-import model from '../../router/index'
+import model from '../../service/model'
 // 弹窗插件引入
 import { AlertModule } from 'vux'
 import errHandle from 'plugins/errHandle'
