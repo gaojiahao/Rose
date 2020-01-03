@@ -153,6 +153,15 @@
         provinceList: [],
         cityTodayList: [],
         countyTodayList: [],
+        Aclass:0,
+        Bclass:0,
+        BclassDown:0,
+        SpecificClassASet:0,
+        SpecificClassBSet:0,
+        hotelAmt:0,
+        trafficAmt:0,
+        lTrafficAmt:0,
+        otherAmt:0
       };
     },
     computed: {
