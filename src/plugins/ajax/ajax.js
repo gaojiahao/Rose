@@ -1,7 +1,7 @@
 import Fly from 'flyio/dist/npm/fly'
 // 请求地址引入
 import tokenService from '../../service/tokenService'
-import model from '../../router/index'
+import { initFieldSetting } from '../../router/index'
 // 弹窗插件引入
 import { AlertModule } from 'vux'
 import errHandle from 'plugins/errHandle'
@@ -33,7 +33,8 @@ fly.interceptors.request.use((request) => {
 
       // 请求token成功之后，即将进入第一个请求
       if(window.sessionStorage.getItem('shareUrl')){
-        model.initFieldSetting();
+        console.log('aa')
+        initFieldSetting();
         return window.sessionStorage.getItem('shareUrl');
       }
         return request;
