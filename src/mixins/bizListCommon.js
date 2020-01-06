@@ -472,15 +472,16 @@ export default {
           ret;
 
       if (Array.isArray(codes)) {
+        var r2FieldSetting = me.$r2FieldSetting || JSON.parse(window.sessionStorage.getItem('r2FieldSetting')),
           ret = codes.map(function (c) {
-              return me.$r2FieldSetting[c];
+              return r2FieldSetting[c];
           });
           ret = ret.filter(function (it) {
               return !!it;
           });
           return ret;
       } else {
-          return me.$r2FieldSetting[codes];
+          return r2FieldSetting[codes];
       }
     },
     getViewFields:function(){
