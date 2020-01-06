@@ -398,6 +398,7 @@ export default {
   activated() {
     if(this.$route.query.refresh == true){
        this.BusApps = [];
+       this.entityList = [];//主体列表
        commonService.clearBaseInfo();
        sessionStorage.removeItem(ROSE_MENU);
     }

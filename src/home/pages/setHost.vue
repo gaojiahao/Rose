@@ -15,12 +15,13 @@ export default{
        Checklist,XButton
      },
      data:function(){
+         var baseURL = localStorage.getItem('baseURL');
          return {
              hostList:[
                 {value:'测试服',key:'http://192.168.3.172'},
                 {value:'瑞福登',key:'https://refordom.roletask.com/'}
              ],
-             radioValue:[]
+             radioValue:[baseURL]
          }
      },
      methods:{

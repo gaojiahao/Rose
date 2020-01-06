@@ -37,9 +37,10 @@ export default {
         XButton
     },
     data() {
-        var  isApp = window.isApp;
+        var  isApp = window.isApp,
+             userCode = localStorage.getItem('userCode');
         return {
-            userCode: '',
+            userCode: userCode,
             isApp:isApp,
             passWord: '',
             show: false,
@@ -52,6 +53,7 @@ export default {
         login() {
             tokenService.pcLogin(this.userCode,this.passWord).then(data=>{
                 this.$router.replace('/home');
+                localStorage.setItem('userCode',this.userCode);
             }).catch(err=>{
                  this.$vux.alert.show({
                     content: err.message
