@@ -397,7 +397,9 @@ export default {
   },
   activated() {
     if(this.$route.query.refresh == true){
-       this.basicApp = [];
+       this.BusApps = [];
+       commonService.clearBaseInfo();
+       sessionStorage.removeItem(ROSE_MENU);
     }
     if (this.BusApps.length == 0) {
       if(this.isSetHost())this.initData();
