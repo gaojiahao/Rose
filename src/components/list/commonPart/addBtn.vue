@@ -3,13 +3,13 @@
  * @version: 1.0.0
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-09-11 16:20:08
- * @LastEditors: Gabriel.gaojiahao
- * @LastEditTime: 2019-12-11 18:25:52
+ * @LastEditors  : Gabriel.gaojiahao
+ * @LastEditTime : 2019-12-30 17:30:00
  -->
 <template>
   <div class="vux-1px-t btn" v-if="action.add">
     <div class="cfm_btn" @click="goEdit"> 
-      <span class="icon-add"></span>
+      <!-- <span class="icon-add"></span> -->
       <span>新建</span>
     </div>
   </div>
@@ -50,7 +50,8 @@ export default {
     width: 90%;
     display: flex;
     height: .44rem;
-    @include font_color();
+    // @include font_color();
+    color: #fff;
     position: absolute;
     border-radius: 4px;
     align-items: center;
@@ -58,6 +59,7 @@ export default {
     justify-content: center;
     border: 1px solid;
     @include boder_color();
+    @include bg_color();
     transform: translate(-50%, -50%);
     background: #fff;
     box-shadow: 0 2px 5px #fff;

@@ -58,20 +58,18 @@ export default {
             var cfg = this.cfg,
                 fieldSet = this.$parent,
                 form = this.form,
+                hasDataSource = cfg.dataSource && cfg.dataSource.type == "formData" ? true : false,
                 hasValueBind =cfg.watch ? false : cfg.dataSource && cfg.dataSource.type == "formData",
                 values = this.values,
                 hasSumbit = cfg.submitValue;
-            
-            if(form.model == 'new' && values[cfg.fieldCode] == null && cfg.readOnly == true && hasValueBind && cfg.allowBlank == true && hasSumbit){
-                this.hidden = true;
-            } 
-            // else if(fieldSet.styleType == 0 && cfg.readOnly == true){
-            //     // this.hidden = true;
-            //     fieldSet.$on('change-styleType',this.onStyleTypeChange)
+
+            this.hidden = cfg.hiddenInRun;
+            // if(form.model == 'new' && values[cfg.fieldCode] == null && cfg.readOnly == true && hasValueBind && cfg.allowBlank == true && hasSumbit){
+            //     this.hidden = true;
+            // } 
+            // else {
+            //     this.hidden = cfg.hiddenInRun;
             // }
-            else {
-                this.hidden = cfg.hiddenInRun;
-            }
             
         },
         initDataSource:function(ds){

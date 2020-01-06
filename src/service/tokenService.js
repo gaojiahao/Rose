@@ -46,15 +46,37 @@ let tokenService = {
       return ''
     }
   },
+  getEnterpriseInfo(){
+    return new Promise((resolve, reject) => {
+      fly.get(`/H_roleplay-si/na/enterpriseInfo`).then((res) => {
+        let data = {};
+        res.data.map(p=>{
+          data[p.PROPERTY] = p.VALUE;
+        });
+        console.log(data)
+        resolve(data);
+      }).catch(function (error) {
+        let res = error.response;
+        let data = (res && res.data) || {};
+        let message = data.message || '请求异常';
+        reject({
+          success: false,
+          message: message
+        })
+      });
+    });
+  },
   // 登录
-  login() {
+  async login() {
     // 清楚token缓存
     this.clean();
     let query = querystring.parse(location.search.slice(1)),
-        isDebug = query.debug == 'true';
+        isDebug = query.debug == 'true',
+        enterpriseInfo;
     let code = query.code;
 
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
+    enterpriseInfo = await this.getEnterpriseInfo();
     //return this.pcLogin('rfd113', 'rfd123456','token');
     // 根据环境不同 调用不同的登录接口
     if (isDebug){
@@ -71,11 +93,11 @@ let tokenService = {
         window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redUrl}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
       }
     } else if (dd.ios || dd.android) {
-      return this.DDLogin();
+      console.log(enterpriseInfo)
+      return this.DDLogin(enterpriseInfo.ddCorpid);
     } else {
       return this.toLoginPage();
-    }
-    
+    }    
   },
   // PC端登录，默认返回token
   pcLogin(userCode, password, key = 'token') {
@@ -155,12 +177,12 @@ let tokenService = {
       resolve();
     })
   },
-  DDLogin(key = 'token') {
+  DDLogin(ddCorpid) {
     var me = this;
     return new Promise((resolve, reject) => {
       dd.ready(function () {
         dd.runtime.permission.requestAuthCode({
-          corpId: 'ding3ab6e5b6f4cecf64', // 企业id
+          corpId: ddCorpid, // 企业id
           onSuccess: function (info) {
             let code = info.code;
             fly.get(`/H_roleplay-si/ddLogin?code=${code}`).then((res) => {
@@ -175,7 +197,7 @@ let tokenService = {
                 key1: data.key1,
                 active: data.active
               });
-              resolve(data[key])
+              resolve(data['token'])
             }).catch(function (error) {
               let res = error.response;
               let data = (res && res.data) || {};
