@@ -1,43 +1,46 @@
 <template>
     <r-scroll
-            class="wrapper"
-            :options="scrollOptions"
-            :has-next="hasNext"
-            :no-data="false"
-            @on-pulling-down="onPullingDown"
-            @on-pulling-up="onPullingUp"
-            ref="bScroll"
-            >
+        class="wrapper"
+        :options="scrollOptions"
+        :has-next="hasNext"
+        :no-data="false"
+        @on-pulling-down="onPullingDown"
+        @on-pulling-up="onPullingUp"
+        ref="bScroll"
+    >
         <div class="flow-task">
-            
             <div class="flow-task-item" v-for="(task,index) in tasks" :key="index" @click="handlerViewTask(task)" >
-                <div class="flow-task-item-header">
-                    <div class="flow-task-item-header-wrapper">
-                            <div>
-                            <span class='title'>{{task.title}}</span>
-                            </div>
-                            <div>
-                            <span>{{task.TRANS_CODE}}</span>
-                            </div>
+                <div class="top">
+                    <div class='img'>
+                        <img :src="task.photo || require('assets/ava01.png')" class="avatar">
                     </div>
-                </div>
-                <div class="flow-task-item-center">
-                    <div class="flow-task-item-center-wrapper">
-                        <span class="task">{{task.nodeName}}</span>
-                    </div>
-                    </div>
-
-                <div class="flow-task-item-foot vux-1px-t" >
-                        <div class="flow-task-item-foot-wrapper">
-                            <div>
-                                <i class="icon icon-handler"></i>
-                                <span>创建人：{{task.creator_name}}</span>
+                    <div class="">
+                        <div class="flow-task-item-header-wrapper">
+                            <div class='title'>
+                                <span>{{task.title}}</span>
                             </div>
-                            <div>
-                                <i class="icon icon-mod-time"></i>
-                            <span>创建时间：{{task.crtTime}}</span>
+                            <div class='code'>
+                                <span>{{task.TRANS_CODE}}</span>
                             </div>
                         </div>
+                        <div class="flow-task-item-center">
+                            <div class="flow-task-item-center-wrapper">
+                                <span class="task">{{task.nodeName}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="" >
+                    <div class="flow-task-item-foot-wrapper">
+                        <div>
+                            <i class="icon icon-handler"></i>
+                            <span>创建人：{{task.creator_name}}</span>
+                        </div>
+                        <div>
+                            <i class="icon icon-mod-time"></i>
+                        <span>创建时间：{{task.crtTime}}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -114,28 +117,59 @@ export default {
     &-item{
         box-shadow: 0 2px 10px 0 @gray;
         margin-bottom: .15rem;
+        width: 100%;
+        .top{
+            height: .55rem;
+        }
+        .img{
+            width: .45rem;
+            height: .45rem;
+            float: left;
+            padding: .05rem;
+            img{
+                height: .45rem;
+                border-radius: 0.3rem;
+            }
+        }
         &-header{
-            padding: .05rem .1rem;
+            padding: .05rem .05rem;
+            float: right;
             &-wrapper{
-                display: flex;
+                // display: flex;
                 justify-content: space-between;
+                height: .24rem;
+                padding-top: 0.05rem;
+                padding-right: 0.05rem;
                 .title{
-                    background-color: @green;
-                    padding: .1rem;
-                    color: #fff;
+                    // background-color: @green;
+                    color: #000;
+                    float: left;
+                    width: 100px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+                .code{
+                    float: right;
+                }
+                .value{
+                    width: 100%;
                 }
             }
         }
 
         &-center{
-            padding: .05rem .1rem;
+            padding: 0 .05rem .05rem;
+            font-size: .12rem;
+            padding-top: 0.02rem;
             &-wrapper{
-                display: flex;
                 justify-content: space-between;
                 .task{
                     background-color: @blue2;
                     padding: 0 .1rem;
                     color: #fff;
+                    float: left;
+                    margin-right: 0.05rem;
                 }
             }
         }
@@ -161,7 +195,7 @@ export default {
                 align-items: center;
                 padding: .05rem .1rem;
                 background-color: #f7f7f7;
-                border-radius: .2rem;
+                // border-radius: .2rem;
                 white-space: nowrap;
                 div{
                     display: -webkit-box;

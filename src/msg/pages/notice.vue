@@ -54,20 +54,15 @@
                             </div>
                         </template> -->
                         <div class="process-status-container vux-1px-b">
-                                <div class="process-wrapper">
-                                    <div class="filter_title">筛选</div>
-                                    <div class="process_status">
-                                    <div class="each_status"  :class="{'active vux-1px' : showFilterSelIcon(1, 1)}">
-                                        <div class="status_content">本日任务</div>
-                                        <div class="status_content">昨日任务</div>
-                                        <div class="status_content">本周任务</div>
-                                        <div class="status_content">本月任务</div>
-                                        <div class="status_content">未完成</div>
-                                        <div class="status_content">已完成</div>
-                                    </div>
-                                    </div>
-                                </div>
+                          <div class="process-wrapper">
+                            <div class="filter_title">筛选</div>
+                            <div class="process_status">
+                              <div class="each_status"  :class="{'active vux-1px' : showFilterSelIcon(1, 1)}" v-for="(value, vindex) in filterFiled" :key="vindex">
+                                  <div class="status_content" @click="selFilter(value, 'text', key)" >{{value.name}}</div>
+                              </div>
                             </div>
+                          </div>
+                        </div>
                     </r-scroll>
                     <div class="handle-part vux-1px-t">
                         <span class="reset_btn" @click="filterReset">重置</span>
@@ -103,7 +98,19 @@ export default {
             scrollOptions: {
                 click: true,
             },
-            filterFiled:{},
+            filterFiled:[
+              {name:'昨日',value:'$yesterday$'},
+              {name:'本日',value:'$today$'},
+              {name:'本周',value:'$thisWeek$'},
+              {name:'本月',value:'$thisMonth$'},
+              {name:'本季度',value:'$thisQuarter$'},
+              {name:'本年',value:'$thisYear$'},
+              {name:'上周',value:'$preWeek$'},
+              {name:'上月',value:'$preMonth$'},
+              {name:'上季度',value:'$preQuarter$'},
+              {name:'上年',value:'$preYear$'},
+            ],
+            fieldVlaue:'',
         }
     },
     methods:{
@@ -181,9 +188,14 @@ export default {
         filterConfirm(){
 
         },
-        showFilterSelIcon(){
-
-        }
+        showFilterSelIcon(key) {
+          if (this.fieldVlaue==key){
+            return this.fieldVlaue[key].value.findIndex(item => item === sItem.value) !== -1;
+          }
+        },
+        selFilter(){
+          
+        },
     },
     created(){
         this.getTheme();
