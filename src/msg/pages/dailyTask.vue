@@ -96,6 +96,16 @@ export default {
     components:{
         RScroll
     },
+    props: {
+        filterList: {
+            type: String,
+            default: ''
+        },
+        isFealter: {
+            type: Boolean,
+            default: false
+        },
+    },
     data(){
         return {
             tasks:[],
@@ -112,16 +122,28 @@ export default {
             }
         }
     },
+    watch:{
+        isFealter:{
+            handler(val){
+                if(this.isFealter){
+                    this.getTasks();
+                }
+            }
+        }    
+    },
     methods:{
         getTasks:function(){
             let { page, limit } = this.params;
-            let filter = [
-                // {
-                // property: "type",
-                // operator: "eq",
-                // value: noticeType
-                // }
-            ];
+            if(this.filterList){
+                let filter = [
+                    {
+                    property: "taskDate",
+                    operator: "btw",
+                    value: this.filterList
+                    }
+                ];
+                this.params.filter = JSON.stringify(filter);
+            }
             getList('2599',this.params).then(({ dataCount = 0, tableContent = [] }) => {
                 this.$emit("loadData", 'dailyTask', dataCount);
                 this.hasNext = dataCount > (this.params.page - 1) * this.params.limit + tableContent.length;
@@ -130,7 +152,7 @@ export default {
                     this.$refs.bScroll.finishPullUp();
                     this.$refs.bScroll.finishPullDown();
                 });
-
+                this.$emit("colseFilter",false);
             })
         },
         handlerViewTask(task){

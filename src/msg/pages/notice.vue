@@ -4,11 +4,12 @@
           <div class='search'>
             <form class="search_part" :class="'has-filter'" action="" @submit.prevent= "searchMenu">
                 <i class="icon-more icon-more2" @click="showFilter = true"></i>
-              <i class="icon icon-search"></i>
+              <!-- <i class="icon icon-search"></i>
               <input ref="searchInp" class="srh_inp" type="search" autocomplete="off"
                     placeholder="任务名称" @input='getSearchValue($event)' :value='searchValue'>
               <div class="pop_cfm" @click="searchMenu">搜索</div>
-              <i class="icon-clear clear_icon" @click="clearSearch"></i>
+              <i class="icon-clear clear_icon" @click="clearSearch"></i> -->
+              <span class="srh_text">{{fieldText}}</span>
             </form>
           </div>
         </div>
@@ -31,34 +32,17 @@
             @on-item-click="onSwitch('dailyTask')">任务日志</tab-item>
         </tab>
         
-        <router-view @loadData="loadData"></router-view>
+        <router-view @loadData="loadData" :filterList="fieldValue" :isFealter="isFealter" @colseFilter="colseFilter"></router-view>
         <div v-transfer-dom>
             <popup position="right" v-model="showFilter" @on-hide="onHide" @on-show="onShow">
                 <div class="filter-container-part">
                     <r-scroll class="list_wrapper" :options="scrollOptions" ref="bScroll">
-                        <!-- 循环快速过滤 -->
-                        <!-- <template v-for="(item,key) in filterFiled" >
-                            <div class="process-status-container vux-1px-b" v-if="item.type='radio'" :key="key">
-                                <template v-if="item.name">
-                                <div class="process-wrapper">
-                                    <div class="filter_title">{{item.name}}</div>
-                                    <div class="process_status">
-                                    <div class="each_status"  :class="{'active vux-1px' : showFilterSelIcon(value, item.code)}"
-                                        v-for="(value, vindex) in item.child" :key="vindex"
-                                        @click="selFilter(value, item.code, key)">
-                                        <div class="status_content">{{value.name}}</div>
-                                    </div>
-                                    </div>
-                                </div>
-                                </template>
-                            </div>
-                        </template> -->
                         <div class="process-status-container vux-1px-b">
                           <div class="process-wrapper">
                             <div class="filter_title">筛选</div>
                             <div class="process_status">
-                              <div class="each_status"  :class="{'active vux-1px' : showFilterSelIcon(1, 1)}" v-for="(value, vindex) in filterFiled" :key="vindex">
-                                  <div class="status_content" @click="selFilter(value, 'text', key)" >{{value.name}}</div>
+                              <div class="each_status"  :class="{'active vux-1px' : showFilterSelIcon(value)}" v-for="(value, vindex) in filterFiled" :key="vindex">
+                                  <div class="status_content" @click="selFilter(value)" >{{value.name}}</div>
                               </div>
                             </div>
                           </div>
@@ -110,7 +94,10 @@ export default {
               {name:'上季度',value:'$preQuarter$'},
               {name:'上年',value:'$preYear$'},
             ],
-            fieldVlaue:'',
+            fieldValue:'$thisWeek$',
+            fieldObj:{},
+            fieldText:'本周',
+            isFealter: false,
         }
     },
     methods:{
@@ -153,52 +140,35 @@ export default {
 
         },
         onHide() {
-            // let isRefreshList = false;
-            // // 时间过滤发生改变
-            // if (this.timeFilter.startDate !== this.lastFilter.timeFilter.startDate || this.timeFilter.endDate !== this.lastFilter.timeFilter.endDate) {
-            //     isRefreshList = true;
-            // }
-            // let str1 = JSON.stringify(this.fieldVlaue),
-            //     str2 = JSON.stringify(this.lastFilter.otherFilter);
-            // // 其他过滤发生改变
-            // if (str1 !== str2) {
-            //     isRefreshList = true;
-            // }
-            // if (isRefreshList) {
-            //     this.$emit('on-filter', {
-            //     timeFilter: this.timeFilter,
-            //     otherFilter: this.fieldVlaue
-            //     })
-            // }
+
         },
         onShow(){
-            // this.$nextTick(() => {
-            //     if (this.$refs.bScroll) {
-            //     this.$refs.bScroll.refresh();
-            //     }
-            // })
-            // this.lastFilter = {
-            //     timeFilter: JSON.parse(JSON.stringify(this.timeFilter)),
-            //     otherFilter: JSON.parse(JSON.stringify(this.fieldVlaue))
-            // };
+
         },
         filterReset(){
 
         },
         filterConfirm(){
-
+          this.showFilter = false;
+          this.isFealter = true;
+          this.fieldText = this.fieldObj.name;
         },
         showFilterSelIcon(key) {
-          if (this.fieldVlaue==key){
-            return this.fieldVlaue[key].value.findIndex(item => item === sItem.value) !== -1;
-          }
+          if (this.fieldValue==key.value){
+            return true;
+          } 
         },
-        selFilter(){
-          
+        selFilter(value){
+          this.fieldValue = value.value;
+          this.fieldObj = value;
         },
+        colseFilter(val){
+          this.isFealter = val;
+        }
     },
     created(){
         this.getTheme();
+        this.onSwitch('projectTask');
     },
     activated(){
         this.getTheme();
@@ -235,20 +205,35 @@ export default {
             box-sizing: border-box;
             // 搜索输入框
             .srh_inp {
-            flex: 1;
-            border: none;
-            outline: none;
-            color: #333;
-            appearance: none;
-            font-size: .14rem;
-            margin-left: .35rem;
-            padding-left: .35rem;
-            border-radius: .2rem;
-            background: #F6F6F6;
-            -webkit-appearance: none;
-            &::-webkit-search-cancel-button {
-                display: none;
+              flex: 1;
+              border: none;
+              outline: none;
+              color: #333;
+              appearance: none;
+              font-size: .14rem;
+              margin-left: .35rem;
+              padding-left: .35rem;
+              border-radius: .2rem;
+              background: #F6F6F6;
+              -webkit-appearance: none;
+              &::-webkit-search-cancel-button {
+                  display: none;
+              }
             }
+            .srh_text{
+              flex: 1;
+              border: none;
+              outline: none;
+              color: #fff;
+              appearance: none;
+              font-size: .14rem;
+              text-align: center;
+              border-radius: .2rem;
+              background: none;
+              -webkit-appearance: none;
+              &::-webkit-search-cancel-button {
+                  display: none;
+              }
             }
             // 搜索 按钮
             .pop_cfm {
@@ -370,15 +355,20 @@ export default {
         box-sizing: border-box;
         background: #F4F4F4;
         border-radius: .04rem;
+
         .status_content {
           overflow: hidden;
           padding: 0 .05rem;
           white-space: nowrap;
           text-overflow: ellipsis;
         }
-        &.active {
-          @extend .active
+      }
+      .active {
+          @include font_color();
         }
+      .vux-1px:before {
+        @include boder_color();
+        border-radius: .08rem;
       }
     }
   }

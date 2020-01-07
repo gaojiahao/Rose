@@ -4,7 +4,7 @@
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-09-20 11:02:44
  * @LastEditors  : Gabriel.gaojiahao
- * @LastEditTime : 2019-12-30 14:19:32
+ * @LastEditTime : 2020-01-07 17:39:44
  */
 import notice from '@/msg/pages/notice'
 import flowTodo from '@/msg/pages/flowTodo'
@@ -24,7 +24,7 @@ export default [
       path:'flowTodo',
       name:'flowTodo',
       component:flowTodo,
-      meta: { title: '待办', keepAlive: true},
+      meta: { title: '工作流任务', keepAlive: true},
     },{
       path:'comment',
       name:'comment',
