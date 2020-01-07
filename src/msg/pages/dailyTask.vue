@@ -137,10 +137,15 @@ export default {
             if(this.filterList){
                 let filter = [
                     {
-                    property: "taskDate",
-                    operator: "btw",
-                    value: this.filterList
-                    }
+                        property: "taskDate",
+                        operator: "btw",
+                        value: this.filterList
+                    },
+                    {
+                        property:"handlerName",
+                        operator:"in",
+                        value:"$currUserName$"
+                    },
                 ];
                 this.params.filter = JSON.stringify(filter);
             }

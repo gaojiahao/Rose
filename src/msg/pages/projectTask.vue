@@ -102,7 +102,12 @@ export default {
                     property: "startDate_projectPlanTask",
                     operator: "btw",
                     value: this.filterList
-                    }
+                    },
+                    {
+                        property:"dealerName_dealerCodeCredit",
+                        operator:"in",
+                        value:"$currUserName$"
+                    },
                 ];
                 this.params.filter = JSON.stringify(filter);
             }
