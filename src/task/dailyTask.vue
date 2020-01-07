@@ -17,7 +17,7 @@
                     <div class="">
                         <div class="flow-task-item-header-wrapper">
                             <div class='title'>
-                                <span>{{task.projectName_projectApprovalId}}</span>
+                                <span>{{task.logTitle}}</span>
                             </div>
                             <div class='code'>
                                 <span>{{task.transCode}}</span>
@@ -26,7 +26,7 @@
                         <div class="flow-task-item-center">
                             <div class="flow-task-item-center-wrapper">
                                 <span class="task">{{task.taskName_projectPlanTask}}</span>
-                                <span class="task2">{{task.projectType_projectApprovalId}}</span>
+                                <span class="task2">{{task.logType}}</span>
                                 <span class="task3">{{task.biProcessStatus}}</span>
                             </div>
                         </div>
@@ -46,15 +46,65 @@
                 </div>
             </div>
         </div>
+        <!-- <div class="flow-task">
+            
+            <div class="flow-task-item" v-for="(task,index) in tasks" :key="index" @click="handlerViewTask(task)" >
+                <div class="flow-task-item-header">
+                    <div class="flow-task-item-header-wrapper">
+<<<<<<< HEAD:src/msg/pages/dailyTask.vue
+                        <div class='img'>
+                            <img :src="task.photo || require('assets/ava01.png')" class="avatar">
+                        </div>
+                        <div>
+                            <span class="title">{{task.logTitle}}</span>
+                        </div>
+                        <div>
+                            <span>{{task.transCode}}</span>
+                        </div>
+=======
+                            <div>
+                            <span>{{task.title}}</span>
+                            </div>
+                            <div>
+                            <span>{{task.TRANS_CODE}}</span>
+                            </div>
+>>>>>>> parent of 3638f8ff... fixbug（消息改成任务）:src/task/dailyTask.vue
+                    </div>
+                </div>
+                <div class="flow-task-item-center">
+                    <div class="flow-task-item-center-wrapper">
+<<<<<<< HEAD:src/msg/pages/dailyTask.vue
+                        <span class="task">{{task.logType}}</span>
+                        <span class="task2">{{task.projectName_projectApprovalId}}</span>
+                        <span class="task3">{{task.biProcessStatus}}</span>
+=======
+                        <span>{{task.nodeName}}</span>
+>>>>>>> parent of 3638f8ff... fixbug（消息改成任务）:src/task/dailyTask.vue
+                    </div>
+                    </div>
+
+                <div class="flow-task-item-foot vux-1px-t" >
+                        <div class="flow-task-item-foot-wrapper">
+                            <div>
+                                <i class="icon icon-handler"></i>
+                                <span>创建人：{{task.creator_name}}</span>
+                            </div>
+                            <div>
+                                <i class="icon icon-mod-time"></i>
+                            <span>创建时间：{{task.crtTime}}</span>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div> -->
     </r-scroll>
 </template>
 
 <script>
-import { dateFormat } from 'vux'
-import { getList} from "service/msgService";
+import { getMsgList} from "service/msgService";
 import RScroll from "plugins/scroll/RScroll";
 export default {
-    name:"flowTodo",
+    name:"dailyTask",
     components:{
         RScroll
     },
@@ -76,16 +126,9 @@ export default {
     },
     methods:{
         getTasks:function(){
-            let { page, limit } = this.params;
-            let filter = [
-                // {
-                // property: "type",
-                // operator: "eq",
-                // value: noticeType
-                // }
-            ];
-            getList('2270',this.params).then(({ dataCount = 0, tableContent = [] }) => {
-                this.$emit("loadData",'projectTask', dataCount);
+
+            getMsgList(this.params).then(({ dataCount = 0, tableContent = [] }) => {
+                this.$emit("loadData", dataCount);
                 this.hasNext = dataCount > (this.params.page - 1) * this.params.limit + tableContent.length;
                 this.tasks = this.params.page===1?tableContent:[...this.tasks,...tableContent];
                 this.$nextTick(() => {
@@ -96,7 +139,7 @@ export default {
             })
         },
         handlerViewTask(task){
-            window.location.href = `/Hermes/detail/ee4ff0a1-c612-419d-afd7-471913d57a2a/0?name=项目任务&folder=project&fileName=XMRW&transCode=${task.transCode}`;
+            window.location.href = `/Hermes/detail/2750a13d-295d-4776-9673-290c51bfc568/0?name=日志任务&folder=project&fileName=RWRZ&transCode=${task.transCode}`;
         },
         // 上拉加载
         onPullingUp() {
@@ -107,9 +150,6 @@ export default {
             this.params.page=1;
             this.getTasks();
         },
-        dateFormat(time){
-            return dateFormat(time, 'YYYY-MM-DD HH:mm:ss');
-        }
         
     },
     mounted(){

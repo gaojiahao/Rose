@@ -1,11 +1,3 @@
-/*
- * @Descripttion: 
- * @version: 1.0.0
- * @Author: Gabriel.gaojiahao
- * @Date: 2019-09-20 11:02:44
- * @LastEditors: Gabriel.gaojiahao
- * @LastEditTime: 2019-12-30 14:58:02
- */
 import $flyio from 'plugins/ajax';
 
 
@@ -38,9 +30,3 @@ export let getNoticeByPraise = ( data = {}) => {
         data
     })
 }
-export let getList = (viewId = 0, data = {}) => {
-    return $flyio.ajax({
-      url: `/H_roleplay-si/seconds/getReportInfoByListViewId/${viewId}`,
-      data
-    })
-};
