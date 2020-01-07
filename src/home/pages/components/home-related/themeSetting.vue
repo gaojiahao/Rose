@@ -8,6 +8,7 @@
  -->
 <template>
   <div class="app-root">
+    <slot name="nav"></slot>
     <div class="app-container">
         <group title="主题设置">
             <radio :options="themes" @on-change="change" v-model="theme"></radio>

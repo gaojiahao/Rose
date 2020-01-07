@@ -21,6 +21,7 @@
         <x-button class="login-btn" @click.native="login">
                 登录
         </x-button>
+        <x-button v-if="isApp" class="host-btn" @click.native="goSetHost">切换服务器</x-button>
     </div>
     
 </template>
@@ -36,8 +37,10 @@ export default {
         XButton
     },
     data() {
+        var  isApp = window.isApp;
         return {
             userCode: '',
+            isApp:isApp,
             passWord: '',
             show: false,
             isLoginInpFoc: false,
@@ -55,6 +58,9 @@ export default {
                 });
             });
         },
+        goSetHost:function () {
+            this.$router.push('/setHost');
+        }
     },
     created() {
         this.$loading.hide();
@@ -119,6 +125,10 @@ export default {
         width: 90%;
         height: 0.5rem;
     }   
+    .host-btn{
+        height:0.5rem;
+        width:90%;
+    }
     .login-banner {
         width: 100%;
         height: 1.6rem;

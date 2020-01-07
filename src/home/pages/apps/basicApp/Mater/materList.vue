@@ -230,8 +230,10 @@
       },
       // 重置下拉刷新、上拉加载的状态
       resetScroll() {
-        this.$refs.bScroll.finishPullDown();
-        this.$refs.bScroll.finishPullUp();
+        if(this.$refs.bScroll){
+          this.$refs.bScroll.finishPullDown();
+          this.$refs.bScroll.finishPullUp();
+        }
       },
       // 搜索物料
       searchMat({val = '', property = ''}) {

@@ -76,7 +76,7 @@ let tokenService = {
     let code = query.code;
 
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null;
-    enterpriseInfo = await this.getEnterpriseInfo();
+    
     //return this.pcLogin('rfd113', 'rfd123456','token');
     // 根据环境不同 调用不同的登录接口
     if (isDebug){
@@ -93,6 +93,7 @@ let tokenService = {
         window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redUrl}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
       }
     } else if (dd.ios || dd.android) {
+      enterpriseInfo = await this.getEnterpriseInfo();
       console.log(enterpriseInfo)
       return this.DDLogin(enterpriseInfo.ddCorpid);
     } else {
