@@ -3,8 +3,8 @@
  * @version: 1.0.0
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-09-20 11:02:44
- * @LastEditors: Gabriel.gaojiahao
- * @LastEditTime: 2019-12-30 14:58:02
+ * @LastEditors  : Gabriel.gaojiahao
+ * @LastEditTime : 2020-01-09 14:46:29
  */
 import $flyio from 'plugins/ajax';
 
@@ -13,6 +13,12 @@ import $flyio from 'plugins/ajax';
 export let getMsgList = (data = {}) => {
     return $flyio.ajax({
         url:'/H_roleplay-si/ds/getTasksListData',
+        data
+    })
+}
+export let getMsgList2 = (data = {}) => {
+    return $flyio.ajax({
+        url:'/H_roleplay-si/mobile/getTasksListData',
         data
     })
 }

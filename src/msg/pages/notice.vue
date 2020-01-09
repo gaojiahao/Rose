@@ -49,7 +49,7 @@
                         </div>
                     </r-scroll>
                     <div class="handle-part vux-1px-t">
-                        <span class="reset_btn" @click="filterReset">重置</span>
+                        <!-- <span class="reset_btn" @click="filterReset">重置</span> -->
                         <span class="confirm_btn" @click="filterConfirm">确定</span>
                     </div>
                 </div>
@@ -146,7 +146,6 @@ export default {
 
         },
         filterReset(){
-
         },
         filterConfirm(){
           this.showFilter = false;

@@ -40,6 +40,7 @@ export default {
       tablist: [
         {title: '应用', path: '/home', icon: 'icon-1'},
         {title: '任务', path: '/notice', icon: 'icon-message'},
+        {title: '统计', path: '/tongji', icon: 'icon-tongji'},
       ],
       newsNumber:0,
       hasNav:hasNav,

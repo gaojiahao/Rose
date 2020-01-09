@@ -12,15 +12,15 @@
             <div class="flow-task-item" v-for="(task,index) in tasks" :key="index" @click="handlerViewTask(task)" >
                 <div class="top">
                     <div class='img'>
-                        <img :src="task.photo || require('assets/ava01.png')" class="avatar">
+                        <img :src="task.cretaorPhoto || require('assets/ava01.png')" class="avatar" alt='loading'>
                     </div>
                     <div class="">
                         <div class="flow-task-item-header-wrapper">
                             <div class='title'>
-                                <span>{{task.title}}</span>
+                                <span>{{task.listName}}</span>
                             </div>
                             <div class='code'>
-                                <span>{{task.TRANS_CODE}}</span>
+                                <span>{{task.transCode}}</span>
                             </div>
                         </div>
                         <div class="flow-task-item-center">
@@ -34,11 +34,11 @@
                     <div class="flow-task-item-foot-wrapper">
                         <div>
                             <i class="icon icon-handler"></i>
-                            <span>创建人：{{task.creator_name}}</span>
+                            <span>创建人：{{task.creatorName}}</span>
                         </div>
                         <div>
                             <i class="icon icon-mod-time"></i>
-                        <span>创建时间：{{task.crtTime}}</span>
+                        <span>创建时间：{{dateFormat(task.crtTime)}}</span>
                         </div>
                     </div>
                 </div>
@@ -48,7 +48,8 @@
 </template>
 
 <script>
-import { getMsgList} from "service/msgService";
+import { dateFormat } from 'vux'
+import { getMsgList2} from "service/msgService";
 import RScroll from "plugins/scroll/RScroll";
 export default {
     name:"flowTodo",
@@ -73,8 +74,7 @@ export default {
     },
     methods:{
         getTasks:function(){
-
-            getMsgList(this.params).then(({ dataCount = 0, tableContent = [] }) => {
+            getMsgList2(this.params).then(({ dataCount = 0, tableContent = [] }) => {
                 this.$emit("loadData", 'flowTodo',dataCount);
                 this.hasNext = dataCount > (this.params.page - 1) * this.params.limit + tableContent.length;
                 this.tasks = this.params.page===1?tableContent:[...this.tasks,...tableContent];
@@ -97,7 +97,9 @@ export default {
             this.params.page=1;
             this.getTasks();
         },
-        
+        dateFormat(time){
+            return dateFormat(time, 'YYYY-MM-DD HH:mm:ss');
+        },
     },
     mounted(){
         this.getTasks();

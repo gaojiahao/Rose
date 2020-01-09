@@ -253,3 +253,7 @@
   background: url('~assets/iconfont/taskSearch.png');
   background-size: cover;
 }
+.icon-taskDown{
+  background: url('~assets/iconfont/task_down.png');
+  background-size: cover;
+}
