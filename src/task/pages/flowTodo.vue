@@ -30,7 +30,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="" >
+                <div class="bottom" >
+                    <div class="content" v-for="(item,index) in task.primaryInfo" v-if="task.primaryInfo" :key='index'>
+                        <div class="title">{{item.fieldName}}</div>
+                        <div class="text">{{item.value}}</div>
+                    </div>
                     <div class="flow-task-item-foot-wrapper">
                         <div>
                             <i class="icon icon-handler"></i>
@@ -211,6 +215,21 @@ export default {
                 }
             }
 
+        }
+        .bottom{
+            .content{
+                width: 100%;
+                height: .15rem;
+                font-size: .12rem;
+                padding: 0 0 0.05rem 0.05rem;
+                .title{
+                    float: left;
+                }
+                .text{
+                    float: right;
+                    margin-right: 0.1rem;
+                }
+            }
         }
         
     }

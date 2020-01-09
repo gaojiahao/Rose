@@ -4,13 +4,14 @@
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-12-03 09:54:38
  * @LastEditors  : Gabriel.gaojiahao
- * @LastEditTime : 2019-12-26 14:56:50
+ * @LastEditTime : 2020-01-09 16:32:46
  */
 import Vue from 'vue'
 import Router from 'vue-router'
 import HomeRouter from '@/home/router'
 import tokenService from 'service/tokenService'
 import MsgRouter from '@/msg/router'
+import TaskRouter from '@/task/router'
 
 import { getFieldSetting, getAllDict, getAllFieldSettingListLevel}  from "service/fieldModelService"
 
@@ -26,7 +27,8 @@ if (router == null) {
     base:'/Hermes',
     routes: [
       ...HomeRouter,
-      ...MsgRouter
+      ...MsgRouter,
+      ...TaskRouter
     ]
   })
 
