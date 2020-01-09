@@ -125,7 +125,7 @@ export default {
   methods: {
     // 返回任务icon
     getTaskIcon(index) {
-      let icons = ["icon-task", "icon-task2", "icon-task3"];
+      let icons = ["icon-task4", "icon-task2", "icon-task3"];
       return icons[index % 3];
     }
   }

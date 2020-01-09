@@ -222,6 +222,7 @@ export default {
                 height: .15rem;
                 font-size: .12rem;
                 padding: 0 0 0.05rem 0.05rem;
+                color:#9E9E9E;
                 .title{
                     float: left;
                 }
