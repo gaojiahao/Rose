@@ -29,7 +29,7 @@
                       <div class="app_top">
                         <div class="app_name">{{item.appTitle}}</div>
                         <div class="app_flow" :class="item.flowWordClass">
-                          {{item.cashInOrOut}}<i :class="item.flowIconClass"></i>
+                          {{item.direction}}<i :class="item.flowIconClass"></i>
                         </div>
                       </div>
                       <div class="classification_detail_item">

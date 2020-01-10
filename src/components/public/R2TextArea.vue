@@ -3,7 +3,6 @@
         autosize
         :value="values[cfg.fieldCode]" 
         :placeholder="`请输入${cfg.fieldLabel}`" 
-        :max="100" 
         class="each_property textarea" 
         :class="{'readonly': cfg.readOnly,'textRinght':!values[cfg.fieldCode]}"
         @input="onInput" 
