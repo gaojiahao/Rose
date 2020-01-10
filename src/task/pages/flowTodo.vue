@@ -154,6 +154,7 @@ export default {
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
+                    font-weight: 600;
                 }
                 .code{
                     float: right;
@@ -221,14 +222,15 @@ export default {
                 width: 100%;
                 height: .15rem;
                 font-size: .12rem;
-                padding: 0 0 0.05rem 0.05rem;
+                padding: 0 0 0.05rem 0.55rem;
                 color:#9E9E9E;
                 .title{
                     float: left;
                 }
                 .text{
                     float: right;
-                    margin-right: 0.1rem;
+                    margin-right: 0.6rem;
+                    color: #000;
                 }
             }
         }
