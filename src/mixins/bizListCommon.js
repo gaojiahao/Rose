@@ -408,7 +408,7 @@ export default {
     onSortList(val) {
       this.sort = val.property ? [val] : [];
       this.resetCondition();
-      // this.getList();
+      this.getList();
     },
     // tab切换
     onTabClick({ status = '', index = 0 }) {
@@ -569,7 +569,7 @@ export default {
       direction:'desc',
       property:'crtTime'
     }
-    this.onSortList(deafalutSort);
+    // this.onSortList(deafalutSort);
   },
 
 }
