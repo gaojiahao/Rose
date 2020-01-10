@@ -27,7 +27,7 @@ export default{
      methods:{
          changeHost(){
             var baseUrl;
-            if(this.radioValue.length){
+            if (this.radioValue.length){
                 window.baseURL = baseUrl = this.radioValue[0];
                 window.localStorage.setItem('baseURL',baseUrl);
                 this.$router.replace('/login');

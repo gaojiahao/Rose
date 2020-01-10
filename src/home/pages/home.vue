@@ -82,6 +82,11 @@ import basicApp from "homePage/components/home-related/basicApp"; // 基础应�
 import Bscroll from "better-scroll";
 import { constants } from 'crypto';
 const ROSE_MENU = 'ROSE_MENU';
+var DS;
+if(window.isApp){
+   DS = require('deepstream.io-client-js');
+  // DS = require('@deepstream/client').DeepstreamClient;
+}
 export default {
   data() {
     return {
@@ -126,6 +131,39 @@ export default {
       await this.getNews();
       this.$loading.hide();
     },
+    initDs(dsUrl,uId){
+      var protocol = (window.baseURL||'').indexOf('https') == 0 ? 'wss':'ws',
+          subscribe = false,
+          status,
+          dsClient;
+      
+      if(window.dsClient){
+         window.dsClient.close();
+      }
+      dsClient = new DS(protocol + '://' + dsUrl);
+      dsClient.on( 'error', (error,type ) => {
+          // do something with error
+          if(type == "MESSAGE_DENIED")alert("服务器拒绝了一条消息")
+          else if(type == 'connectionError')console.log('服务器连接障碍！')
+      } );
+      dsClient.on( 'connectionStateChanged', connectionState => {
+          console.log('connectionState:',connectionState)
+      });
+      dsClient.login({
+          username:uId
+      },(success,data) => { //这里的函数reload时还会执行。
+          if(success){
+              console.log("login in");
+              window.dsClient = dsClient;
+              if(!subscribe){
+                  this.subscribePush(uId);
+                  subscribe = true;
+              }
+          }else{
+              if(data)console.log('login error',data.msg);
+          }
+      });
+    },
     //获取代办数量
     getNews() {
       let newsNumber;
@@ -141,7 +179,10 @@ export default {
     //获取当前用户信息
     getCurrentUser() {
       return commonService.getBasicInfo().then(baseInfo => {
-        var data = baseInfo.currentUser;
+        var data = baseInfo.currentUser,
+            deepStreamUrl = baseInfo.deepStreamUrl,
+            userId = data && data.userId;
+
         this.userInfo = {
           photo: data.photo, // 头像
           mobile: data.mobile, // 手机号
@@ -159,6 +200,10 @@ export default {
               }
             }
           });
+
+        if(deepStreamUrl && userId && window.isApp){
+          this.initDs(deepStreamUrl,userId);
+        }
       });
     },
     // 获取应用icon
@@ -358,6 +403,21 @@ export default {
             appList: { ...BUSobj[val.text] }
           });
         }
+      }
+    },
+    subscribePush(uid){
+      var ds = window.dsClient;
+      if(ds){
+          ds.event.subscribe('taskChange/'+ uid, data => {
+             console.log('taskChange:',data);
+             if(window.notification){
+               window.notification.schedule({
+                  title: '任务消息',
+                  text: data.data,
+                  foreground: true
+              });
+             }
+          });
       }
     },
     //清除菜单
