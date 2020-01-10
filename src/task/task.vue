@@ -21,20 +21,18 @@
                     <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="slide.hasNext"
                             :no-data="!slide.hasNext && !slide.listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                             ref="bScroll">
-                        <template v-if="activeTab=='flowTask'">
-                            <div class="verification-item-wrapper">
-                                aa
-                            </div>    
+                        <template>
+                            
                         </template>
-                        <template v-else-if="activeTab=='projectTask'">
-                            <div class="verification-item-wrapper">
-                                bb
-                            </div>  
+                        <template>
+                            
                         </template>
-                        <template v-else-if="activeTab=='dailyTask'">
-                            <div class="verification-item-wrapper">
-                                cc
-                            </div>    
+
+                        <template>
+                            
+                        </template>
+                        <template>
+                            
                         </template>
                     </r-scroll>
                 </div>
@@ -71,7 +69,9 @@ export default {
                 return;
             }
             this.activeIndex = index;
-            this.activeTab = val.key;
+            this.activeTab = val.view_name;
+            this.calc_rel_code = val.calc_rel_code;
+            this.view_id = val.view_id;
             this.currentScroll.scrollTo(0, 0);
             this.resetCondition();
             this.getList();
@@ -85,9 +85,11 @@ export default {
                 on: {
                 slideChangeTransitionStart: () => {
                     let index = this.listSwiper.activeIndex;
-                    let tab = this.tabItem[index];
+                    let tab = this.listView[index];
                     this.activeIndex = index;
-                    this.activeTab = tab.key;
+                    this.activeTab = tab.view_name;
+                    this.calc_rel_code = tab.calc_rel_code;
+                    this.view_id = tab.view_id;
                     this.scrollToShow(index);
                     // 已有数据则不重新请求
                     if (this.currentItem.listData.length) {
@@ -217,90 +219,4 @@ input::-ms-input-placeholder {
         }
     }
 }
-.verification-item-wrapper {
-    color: #333;
-    margin: .1rem;
-    position: relative;
-    border-radius: 4px;
-    background: #FFF;
-    padding: .2rem .15rem;
-    box-sizing: border-box;
-    width: calc(100% - .2rem);
-    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
-    .verification-main {
-      display: flex;
-      .verification_img {
-        width: .5rem;
-        height: .5rem;
-        border-radius: .04rem;
-      }
-      .verification_info {
-        margin-left: .12rem;
-        line-height: .12rem;
-        font-size: .12rem;
-      }
-      .app_name {
-        line-height: .18rem;
-        font-size: .14rem;
-        font-weight: 600;
-      }
-      .verification_info_item {
-        margin-top: .12rem;
-        & + .verification_info_item {
-          margin-top: .08rem;
-        }
-      }
-      .verification_info_title {
-        color: #999;
-      }
-    }
-
-    .verification-split {
-      position: relative;
-      margin: .2rem 0 .13rem;
-      height: 1px;
-      border-top: 1px dashed #DEDFE6;
-    }
-
-    .verification-bottom {
-      font-size: .12rem;
-      text-align: center;
-      position: relative;
-      line-height: .12rem;
-      .verification_bottom_item {
-        &.days, &.amt, &.acount_day {
-          position: absolute;
-        }
-        &.days {
-          left: 0;
-        }
-        &.amt {
-          top: -1px;
-          right: 0;
-          color: #FA7138;
-          .verification_bottom_value {
-            font-weight: bold;
-            font-size: .16rem;
-          }
-        }
-        &.acount_day {
-          top: -1px;
-          right: 0;
-        }
-      }
-      .verification_bottom_value {
-        font-size: .14rem;
-      }
-      .verification_bottom_title {
-        margin-top: .08rem;
-        color: #999;
-      }
-      .symbol {
-        font-size: .12rem;
-      }
-      & + .verification-bottom {
-        margin-top: .2rem;
-      }
-    }
-  }
 </style>

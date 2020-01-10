@@ -14,18 +14,16 @@
                 <div class="flow-task-item-header">
                     <div class="flow-task-item-header-wrapper">
                             <div>
-                            <span class="title">{{task.projectName_projectApprovalId}}</span>
+                            <span>{{task.title}}</span>
                             </div>
                             <div>
-                            <span>{{task.transCode}}</span>
+                            <span>{{task.TRANS_CODE}}</span>
                             </div>
                     </div>
                 </div>
                 <div class="flow-task-item-center">
                     <div class="flow-task-item-center-wrapper">
-                        <span class="task">{{task.projectType_projectApprovalId}}</span>
-                        <span class="task2">{{task.taskType_projectPlanTask}}</span>
-                        <span class="task3">{{task.biProcessStatus}}</span>
+                        <span>{{task.nodeName}}</span>
                     </div>
                     </div>
 
@@ -33,11 +31,11 @@
                         <div class="flow-task-item-foot-wrapper">
                             <div>
                                 <i class="icon icon-handler"></i>
-                                <span>创建人：{{task.creatorName}}</span>
+                                <span>创建人：{{task.creator_name}}</span>
                             </div>
                             <div>
                                 <i class="icon icon-mod-time"></i>
-                            <span>创建时间：{{dateFormat(task.crtTime)}}</span>
+                            <span>创建时间：{{task.crtTime}}</span>
                             </div>
                         </div>
                 </div>
@@ -47,11 +45,10 @@
 </template>
 
 <script>
-import { dateFormat } from 'vux'
-import { getList} from "service/msgService";
+import { getMsgList} from "service/msgService";
 import RScroll from "plugins/scroll/RScroll";
 export default {
-    name:"flowTodo",
+    name:"flowTask",
     components:{
         RScroll
     },
@@ -73,16 +70,9 @@ export default {
     },
     methods:{
         getTasks:function(){
-            let { page, limit } = this.params;
-            let filter = [
-                // {
-                // property: "type",
-                // operator: "eq",
-                // value: noticeType
-                // }
-            ];
-            getList('2270',this.params).then(({ dataCount = 0, tableContent = [] }) => {
-                this.$emit("loadData",'projectTask', dataCount);
+
+            getMsgList(this.params).then(({ dataCount = 0, tableContent = [] }) => {
+                this.$emit("loadData", dataCount);
                 this.hasNext = dataCount > (this.params.page - 1) * this.params.limit + tableContent.length;
                 this.tasks = this.params.page===1?tableContent:[...this.tasks,...tableContent];
                 this.$nextTick(() => {
@@ -104,9 +94,6 @@ export default {
             this.params.page=1;
             this.getTasks();
         },
-        dateFormat(time){
-            return dateFormat(time, 'YYYY-MM-DD HH:mm:ss');
-        }
         
     },
     mounted(){
@@ -116,53 +103,23 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@blue:#0099CC;
-@blue2:#336699;
-@green:#99CCCC;
-@green2:#CCCC99;
-@puplur:#666699;
-@gray:#CCCCCC;
 .flow-task{
     padding: .15rem;
     font-size: .14rem;
 
     &-item{
-        box-shadow: 0 2px 10px 0 @gray;
+        box-shadow: 0 2px 10px 0 rgba(232, 232, 232, 0.7);
         margin-bottom: .15rem;
         &-header{
             padding: .05rem .1rem;
             &-wrapper{
                 display: flex;
                 justify-content: space-between;
-                .title{
-                    background-color: @green;
-                    padding: .1rem;
-                    color: #fff;
-                }
             }
         }
 
         &-center{
             padding: .05rem .1rem;
-            &-wrapper{
-                // display: flex;
-                justify-content: space-between;
-                .task{
-                    background-color: @blue2;
-                    padding: 0 .1rem;
-                    color: #fff;
-                }
-                .task2{
-                    background-color: @green2;
-                    padding: 0 .1rem;
-                    color: #fff;
-                }
-                .task3{
-                    background-color: @puplur;
-                    padding: 0 .1rem;
-                    color: #fff;
-                }
-            }
         }
 
         &-foot{
