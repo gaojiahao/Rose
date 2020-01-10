@@ -391,7 +391,7 @@ export default {
         });
         return
       }
-      await this.getList();
+      // await this.getList();
 
     },
     // 修改是否访问的状态
@@ -408,7 +408,7 @@ export default {
     onSortList(val) {
       this.sort = val.property ? [val] : [];
       this.resetCondition();
-      this.getList();
+      // this.getList();
     },
     // tab切换
     onTabClick({ status = '', index = 0 }) {
