@@ -3,8 +3,8 @@
  * @version: 1.0.0
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-09-17 17:04:27
- * @LastEditors: Gabriel.gaojiahao
- * @LastEditTime: 2019-12-03 17:12:41
+ * @LastEditors  : Gabriel.gaojiahao
+ * @LastEditTime : 2020-01-10 11:32:35
  -->
 <template>
   <div class="pages" :class="{'no-add': false}" ref="list">
