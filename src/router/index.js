@@ -4,7 +4,7 @@
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-12-03 09:54:38
  * @LastEditors  : Gabriel.gaojiahao
- * @LastEditTime : 2020-01-14 10:13:58
+ * @LastEditTime : 2020-01-14 17:05:32
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -34,6 +34,9 @@ if (router == null) {
     let {query,fullPath} = to;
     if(query.tag&&query.tag=='share'){
       storage.setItem('shareUrl',window.location.href);
+      if(!storage.getItem('r2FieldSetting')){
+        initFieldSetting();
+      } 
     }
     if(tokenService.getToken() != '' && to.name !== 'Login'){
       if(!storage.getItem('r2_cachedListLevelFieldSetting')){
@@ -93,9 +96,9 @@ async function initFieldSetting(){
     }
     Vue.prototype.$r2FieldSetting[field.fieldCode] = field;
     });
-    // if(!storage.getItem('r2FieldSetting')){
-    //   storage.setItem('r2FieldSetting',  JSON.stringify(Vue.prototype.$r2FieldSetting));
-    // }
+    if(!storage.getItem('r2FieldSetting')){
+      storage.setItem('r2FieldSetting',  JSON.stringify(Vue.prototype.$r2FieldSetting));
+    }
   }).catch(e =>{e});
 }
 async function initListLevelFieldSetting() {
