@@ -3,11 +3,11 @@
  * @version: 1.0.0
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-12-09 16:39:19
- * @LastEditors: Gabriel.gaojiahao
- * @LastEditTime: 2019-12-10 14:09:07
+ * @LastEditors  : Gabriel.gaojiahao
+ * @LastEditTime : 2020-01-14 09:57:42
  */
 // let target = 'http://cpacn2012.3322.org:1175/'   //172
-let target = 'http://192.168.3.172'
+let target = 'http://192.168.3.175'
 // let target = 'http://192.168.3.179'
 // let target = 'https://refordom.roletask.com'
 // let target = 'http://192.168.3.251'
