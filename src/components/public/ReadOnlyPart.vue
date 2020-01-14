@@ -1,3 +1,11 @@
+<!--
+ * @Descripttion: 
+ * @version: 1.0.0
+ * @Author: Gabriel.gaojiahao
+ * @Date: 2020-01-02 17:43:35
+ * @LastEditors: Gabriel.gaojiahao
+ * @LastEditTime: 2020-01-14 10:12:22
+ -->
 <template>
     <div class="readonly-warp">
         <div v-if="curObj" class="obj-pic">
@@ -31,7 +39,7 @@ var component = {
         curObj:function() {
       
             if(!this.values || this.values.length < 1) return;
-            let fieldSettingData = this.$r2FieldSetting || JSON.parse(window.sessionStorage.getItem('r2FieldSetting')),
+            let fieldSettingData = this.$r2FieldSetting,
                 obj,
                 objKey,
                 fKey;

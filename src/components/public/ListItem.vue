@@ -99,7 +99,7 @@ export default Vue.component("ListItem", {
     curObj:function() {
       if(this.item.detailItem.length < 1) return;
 
-      let fieldSettingData = this.$r2FieldSetting || JSON.parse(window.sessionStorage.getItem('r2FieldSetting')),
+      let fieldSettingData = this.$r2FieldSetting,
           obj,
           objKey,
           fKey;
@@ -146,7 +146,7 @@ export default Vue.component("ListItem", {
       })
     },
     singleField:function(){
-      let fieldSettingData = this.$r2FieldSetting || JSON.parse(window.sessionStorage.getItem('r2FieldSetting')),
+      let fieldSettingData = this.$r2FieldSetting,
           val = [],
           fKey;
       for(var key in this.item){
