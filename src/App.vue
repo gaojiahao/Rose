@@ -50,6 +50,13 @@ export default {
   components:{
     Badge,XHeader
   },
+  watch: {
+    $route(to, from) {
+      if(to.name=='Login'&from.name=='LIST'){
+        from.meta.keepAlive = false;  
+      }
+    }
+  },
   methods:{
     /**
      * @description: 获取默认主题
