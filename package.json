@@ -15,7 +15,7 @@
   "dependencies": {
     "babel-runtime": "^6.26.0",
     "better-scroll": "^1.10.2",
-    "deepstream.io-client-js": "^2.3.4",
+    "deepstream.io-client-js": "^2.3.0",
     "dingtalk-jsapi": "^2.6.26",
     "echarts": "^4.1.0",
     "exif-js": "^2.3.0",
