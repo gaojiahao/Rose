@@ -408,12 +408,19 @@ export default {
     subscribePush(uid){
       var ds = window.dsClient;
       if(ds){
-          ds.event.subscribe('taskChange/'+ uid, data => {
-             console.log('taskChange:',data);
-             if(window.notification){
+          ds.event.subscribe('appTask/'+ uid, data => {
+             var msg;
+             console.log('appTask:',data);
+             if(window.notification && data.appName != null){
+               msg = [
+                   '实例编码：',data.transCode, '\n',
+                   '应用名称：',data.appName,'\n',
+                   '发起人：',data.nickname
+               ];
                window.notification.schedule({
-                  title: '任务消息',
-                  text: data.data,
+                  title: '新任务通知',
+                  text: msg.join(''),
+                  data: data,
                   foreground: true
               });
              }
