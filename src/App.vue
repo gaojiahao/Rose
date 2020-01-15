@@ -52,7 +52,9 @@ export default {
   },
   watch: {
     $route(to, from) {
-      if(to.name=='Login'&from.name=='LIST'){
+      console.log('to',to);
+      console.log('from',from);
+      if(to.name!='DETAIL'&&from.name=='LIST'){
         from.meta.keepAlive = false;  
       }
     }
