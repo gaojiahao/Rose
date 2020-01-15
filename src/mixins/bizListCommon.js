@@ -473,14 +473,14 @@ export default {
 
       if (Array.isArray(codes)) {
           ret = codes.map(function (c) {
-              return me.$r2FieldSetting;
+              return  me.$r2FieldSetting[c];
           });
           ret = ret.filter(function (it) {
               return !!it;
           });
           return ret;
       } else {
-          return me.$r2FieldSetting;
+          return  me.$r2FieldSetting[codes];
       }
     },
     getViewFields:function(){
