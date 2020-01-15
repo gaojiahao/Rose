@@ -52,8 +52,6 @@ export default {
   },
   watch: {
     $route(to, from) {
-      console.log('to',to);
-      console.log('from',from);
       if(to.name!='DETAIL'&&from.name=='LIST'){
         from.meta.keepAlive = false;  
       }
