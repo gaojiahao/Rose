@@ -1,18 +1,18 @@
 <template>
     <div class="notice-container" >
-        <div class="list_top">
+        <!-- <div class="list_top">
           <div class='search'>
             <form class="search_part" :class="'has-filter'" action="" @submit.prevent= "searchMenu">
                 <i class="icon-more icon-more2" @click="showFilter = true"></i>
-              <!-- <i class="icon icon-search"></i>
+              <i class="icon icon-search"></i>
               <input ref="searchInp" class="srh_inp" type="search" autocomplete="off"
                     placeholder="任务名称" @input='getSearchValue($event)' :value='searchValue'>
               <div class="pop_cfm" @click="searchMenu">搜索</div>
-              <i class="icon-clear clear_icon" @click="clearSearch"></i> -->
+              <i class="icon-clear clear_icon" @click="clearSearch"></i>
               <span class="srh_text">{{fieldText}}</span>
             </form>
           </div>
-        </div>
+        </div> -->
         <tab :active-color='activeColor'>
         <tab-item 
             :selected="$route.name=='flowTodo'" 
@@ -29,7 +29,7 @@
         <tab-item 
             :selected="$route.name=='dailyTask'" 
             :badge-label="todoBadge['dailyTask']"  
-            @on-item-click="onSwitch('dailyTask')">任务日志</tab-item>
+            @on-item-click="onSwitch('dailyTask')">日志任务</tab-item>
         </tab>
         
         <router-view @loadData="loadData" :filterList="fieldValue" :isFealter="isFealter" @colseFilter="colseFilter"></router-view>
@@ -167,7 +167,7 @@ export default {
     },
     created(){
         this.getTheme();
-        this.onSwitch('projectTask');
+        this.onSwitch('flowTodo');
     },
     activated(){
         this.getTheme();

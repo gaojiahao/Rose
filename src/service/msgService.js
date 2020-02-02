@@ -50,3 +50,11 @@ export let getList = (viewId = 0, data = {}) => {
       data
     })
 };
+
+//获取工作流任务信息
+export let getWorkFlowInfoByTransCode = (data = {}) => {
+    return $flyio.ajax({
+        url: '/H_roleplay-si/ds/getWorkFlowInfoByTransCode',
+        data
+    })
+}

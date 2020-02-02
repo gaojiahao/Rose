@@ -340,6 +340,7 @@ var component = {
     },
     // 同意
     agreement() {
+      debugger
       if(this.model == 'marking') {
         this.form.taskType = 1;
         this.$vux.confirm.prompt('', {

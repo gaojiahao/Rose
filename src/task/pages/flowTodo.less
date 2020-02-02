@@ -1,0 +1,154 @@
+@blue:#0099CC;
+@blue2:#336699;
+@green:#99CCCC;
+@gray:#CCCCCC;
+
+.flow-task{
+    padding: .15rem;
+    font-size: .14rem;
+    &-item{
+        border-radius: 0.05rem;
+        box-shadow: 0 2px 10px 0 @gray;
+        margin-bottom: .15rem;
+        width: 100%;
+        &-header{
+            border-radius: 0.05rem 0.05rem 0 0;
+            background-color: black;
+            color: #fff;
+            padding: 0.05rem;
+        }
+        .img{
+            width: .45rem;
+            height: .45rem;
+            float: left;
+            padding: .05rem;
+            img{
+                height: .45rem;
+                border-radius: 0.3rem;
+            }
+        }
+        &-top{
+            padding: .05rem .05rem;
+            img{
+                height: .35rem;
+                border-radius: 0.3rem;
+                display: inline;
+                float: left;
+            }
+            &-wrapper{
+                .nodename{
+                    margin-left: .10rem;
+                    color: #000;
+                    font-weight: 600;
+                }
+                .transCode{
+                    float: right;
+                }
+            }
+        }
+
+        &-center{
+            padding: 0 .05rem .05rem;
+            font-size: .12rem;
+            padding-top: 0.02rem;
+            &-wrapper{
+                justify-content: space-between;
+                .task{
+                    background-color: @blue2;
+                    padding: 0 .1rem;
+                    color: #fff;
+                    float: left;
+                    margin-right: 0.05rem;
+                }
+            }
+        }
+
+        &-foot{
+            padding: .05rem .1rem;
+            &-wrapper{
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-pack: justify;
+                -ms-flex-pack: justify;
+                justify-content: space-between;
+                font-size: .12rem;
+                color: #9E9E9E;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-pack: center;
+                -ms-flex-pack: center;
+                justify-content: center;
+                -webkit-box-align: center;
+                -ms-flex-align: center;
+                align-items: center;
+                padding: .1rem .1rem;
+                white-space: nowrap;
+                &-content{
+                    background-color: #f7f7f7;
+                    border-radius: .2rem;
+                }
+
+                div{
+                    display: -webkit-box;
+                    display: -ms-flexbox;
+                    display: flex;
+                    -webkit-box-align: center;
+                    -ms-flex-align: center;
+                    align-items: center;
+                    color: #999;
+                    margin-right: .05rem;
+                }
+            }
+            &-actions{
+                padding: .10rem;
+                text-align: center;
+                &-agreement{
+                    background-color: #388E3C;
+                    border-color: #388E3C;
+                }
+                &-disagree{
+                    background-color:#D32F2F;
+                    border-color: #D32F2F;
+                }
+                &-transfer{
+                    background-color:#9E9E9E;
+                    border-color: #9E9E9E;
+                }
+                &-stop{
+                    background-color:black;
+                    border-color: black;
+                }
+                button{
+                    border: 1px solid;
+                    color: #fff;
+                    border-radius: 0.02rem;
+                    width: 0.8rem;
+                    height: .30rem;
+                    border-radius: 0.5rem;
+                }
+            }
+        }
+        .primaryInfo{
+            padding: 0rem .15rem 0rem .5rem;
+
+            &-wrapper{
+                padding: 0rem 0rem 0.08rem 0rem;
+            }
+            &-item{
+                .title{
+                    color:#9E9E9E;
+                }
+                .text{
+                    float: right;
+                    color: #000;
+                }
+            }
+            &-tip{
+                font-size: .12rem;
+                color: #9E9E9E;
+            }
+        }
+        
+    }
+}
