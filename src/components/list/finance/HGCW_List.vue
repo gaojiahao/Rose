@@ -1,10 +1,45 @@
 <template>
   <!-- 合规财务报表 -->
-  <div class="pages hgcw-list-container">
-    <div class="btns">
-      <div class="btn-item" v-for="(item, index) in listData" @click="goDetail(item)" :key="index">
-        <span>{{item.title}}</span>
-        <x-icon type="ios-arrow-right" size="20"></x-icon>
+  <div class="pages">
+    <div class='content'>
+      <slot name="nav"></slot>
+      <div class="list_top">
+        <div class="header">
+          <div class="header-container">
+            <i class="icon icon-return" @click="goBack"></i>
+            <div class="center">财务会计报表</div>
+          </div>
+        </div>
+        <div class="tab-container" ref="tabContainer">
+          <div class="tab-item" :class="{active: index === activeIndex}" v-for="(item, index) in listData"
+               @click="tabClick(item, index)" ref="tabs" :key="index">
+            <div class="tab-item-title">{{item.title}}</div>
+          </div>
+        </div>
+      </div>
+      <div style="height:.1rem;width:100%;background-color:#eee"></div>
+      <!-- tab -->
+      <div class="swiper-container list-container">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide" v-for="(slide, key) in listMap" :key="key">
+            <!-- <r-scroll class="list_wrapper"  :options="scrollOptions" :has-next="true"
+                      :no-data="true" @on-pulling-up="onPullingUp"
+                      @on-pulling-down="onPullingDown" ref="bScroll"> -->
+              <!-- 利润表 -->
+              <template v-if="key === '0'">
+                <LRForm :transcode="slide.transcode" :folder="slide.folder" :name="slide.name"></LRForm>
+              </template>
+              <!-- 资产负债表 -->
+              <template v-else-if="key === '1'">
+                <ZCFZForm :transcode="slide.transcode" :folder="slide.folder" :name="slide.name"></ZCFZForm>
+              </template>
+              <!-- 现金流量表 -->
+              <template v-else-if="key === '2'">
+                <!-- <CWForm :transcode="slide.transcode" :folder="slide.folder" :name="slide.name"></CWForm> -->
+              </template>
+            <!-- </r-scroll> -->
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -12,6 +47,9 @@
 
 <script>
 import {Group, Cell} from 'vux'
+// 插件 引入
+import LRForm from 'components/list/finance/CWKJ/LRForm'
+import ZCFZForm from 'components/list/finance/CWKJ/ZCFZForm'
 export default {
   name: "HGCW_List",
   data() {
@@ -23,71 +61,135 @@ export default {
         }, {
           title: '资产负债表',
           code: 'ZCFZ',
+        },{
+          title: '现金流量表',
+          code: 'XJLL',
         },
-      ]
+      ],
+      listMap:{
+        '0':{ transcode:'LR', folder:'finance', name:'利润表' },
+        '1':{ transcode:'ZCFZ', folder:'finance', name:'资产负债表' },
+        '2':{ transcode:'XJLL', folder:'finance', name:'资产负债表' },
+      },
+      activeIndex: 0,
+      scrollOptions: {
+        click: true,
+        pullDownRefresh: true,
+        pullUpLoad: true,
+      },
     }
   },
   components: {
-    Cell, Group
+    Cell, Group , LRForm , ZCFZForm
   },
   methods: {
-    goDetail(item) {
-      let { folder, fileName } = this.$route.params;
-
-      this.$router.push({
-        path: `/detail/0/${fileName}`,
-        query: {
-          trancode: item.code,
-          folder, fileName,
-          name: item.title
-        }
+    goBack(){
+      window.history.go(-1);
+    },
+    initSwiper() {
+      this.$nextTick(() => {
+        this.listSwiper = new this.Swiper('.list-container', {
+          touchAngle: 30,
+          on: {
+            slideChangeTransitionStart: () => {
+              let index = this.listSwiper.activeIndex;
+              this.activeIndex = index;
+            },
+          },
+        });
       })
-    }
+    },
+    // tab切换
+    tabClick(val, index) {
+      this.activeIndex = index;
+      this.listSwiper.slideTo(index);
+    },
+    onPullingUp(){
+
+    },
+    onPullingDown(){
+
+    },
   },
   created() {
     this.$loading.hide();
+    this.initSwiper();
+    // this.$nextTick(() => {
+    //   this.listSwiper.update();
+    // })
   }
 }
 </script>
 
 <style scoped lang="scss">
-  .hgcw-list-container {
-    .tips-word {
-      top: 10%;
-      width: 100%;
-      color: #c8c8c8;
-      font-size: .4rem;
-      font-weight: 200;
-      text-align: center;
-      position: absolute;
+.content {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+  .list-container {
+    //height: calc(100% - .96rem);
+    height: 100%;
+    .list_wrapper {
+      height: 100%;
+      background-color: #fff;
     }
-    .btns {
-      left: 0;
-      top: 50%;
+  }
+  .header{
+    width: 100%;
+    height: 40px;
+    background-color: #e83030;
+    color: #FFF;
+    .header-container{
       width: 100%;
-      padding: 0 .2rem;
-      position: absolute;      
-      box-sizing: border-box;
-      transform: translateY(-50%);
-    }
-    .btn-item {
-      color: #fff;
-      font-size: .16rem;
-      font-weight: bold;
-      padding: .1rem 0;
-      margin-top: .2rem;
-      text-align: center;
+      display: flex;
+      height: .40rem;
       position: relative;
-      border-radius: .08rem;
-      background: #5077aa;
-      box-shadow: 0 2px 5px #5077aa;
+      line-height: .40rem;
+      box-sizing: border-box;
+      .icon {
+        top: .1rem;
+        z-index: 1;
+        left: .10rem;
+        width: .14rem;
+        height: .2rem;
+        position: absolute;
+      }
+      .center{
+        text-align: center;
+        width: 33.33%;
+        margin-left: 33.33%;
+      }
     }
-    .vux-x-icon-ios-arrow-right {
-      top: 50%;
-      right: 1%;
-      fill: #fff;
-      position: absolute;
-      transform: translate(0, -50%);
+  }
+  .tab-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: .36rem;
+    color: #333;
+    white-space: nowrap;
+    overflow: auto;
+    box-sizing: border-box;
+    .tab-item {
+      line-height: .34rem;
+      font-size: .14rem;
+      line-height: .34rem;
+      & + .tab-item {
+        //margin-left: .2rem;
+      }
+      .tab-item-title{
+        padding: 0 .15rem;
+      }
+      &:last-child {
+      }
+      // padding-right: .15rem;
+      &.active {
+        color: #cc1d0d;
+        // font-size: .18rem;
+        font-weight: 600;
+        border-bottom: 2px solid #cc1d0d;
+      }
     }
   }
 </style>
