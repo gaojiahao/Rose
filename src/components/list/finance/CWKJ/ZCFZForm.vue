@@ -12,7 +12,7 @@
     </div>
     <div class="header">
       <div class="title-form">{{`单位：${localCurrency}`}}</div>
-      <div class="swiper-container swiper-container-header">
+      <div class="swiper-container swiper-container-header1">
         <div class="swiper-wrapper">
           <div class="swiper-slide">{{headInfo.firstName}}</div>
           <div class="swiper-slide">{{headInfo.LastName}}</div>
@@ -32,7 +32,7 @@
           </div>
         </div>
       </div>
-      <div class="swiper-container part-right">
+      <div class="swiper-container part-right1">
         <div class="swiper-wrapper">
           <div class="swiper-slide">
             <div v-for="(item, index) in listData" :key="index">
@@ -94,13 +94,6 @@
             firstName: '期初',
             LastName: '期末',
             request: getOffBalance
-          },
-          LR: {
-            title: '利润表',
-            firstName: '本期',
-            LastName: '上期',
-            currentYearName: '本年',
-            request: getProfit
           },
         },
         scrollOptions: {
@@ -173,10 +166,10 @@
       // 初始化swiper
       initSwiper() {
         this.$nextTick(() => {
-          this.partRightSwiper = new this.Swiper('.part-right');
-          this.headerSwiper = new this.Swiper('.swiper-container-header');
-          this.partRightSwiper[1].controller.control = this.headerSwiper[1];
-          this.headerSwiper[1].controller.control = this.partRightSwiper[1];
+          this.partRightSwiper = new this.Swiper('.part-right1');
+          this.headerSwiper = new this.Swiper('.swiper-container-header1');
+          this.partRightSwiper.controller.control = this.headerSwiper;
+          this.headerSwiper.controller.control = this.partRightSwiper;
         })
       },
       //获取企业货币
@@ -258,7 +251,7 @@
       }
     }
     /* 顶部期初、期末 */
-    .swiper-container-header {
+    .swiper-container-header1 {
       margin: 0;
       width: 50%;
       height: 100%;
@@ -272,7 +265,7 @@
     /deep/ .scroll-wrapper {
       display: flex;
     }
-    .part-left, .part-right {
+    .part-left, .part-right1 {
       width: 50%;
       font-size: .14rem;
       .content-item {
@@ -329,7 +322,7 @@
         }
       }
     }
-    .part-right {
+    .part-right1 {
       text-align: right;
       .bg-color{
         background-color: #eee;

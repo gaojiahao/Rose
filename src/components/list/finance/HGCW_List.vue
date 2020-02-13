@@ -35,7 +35,7 @@
               </template>
               <!-- 现金流量表 -->
               <template v-else-if="key === '2'">
-                <!-- <CWForm :transcode="slide.transcode" :folder="slide.folder" :name="slide.name"></CWForm> -->
+                <XJLLForm :transcode="slide.transcode" :folder="slide.folder" :name="slide.name"></XJLLForm>
               </template>
             <!-- </r-scroll> -->
           </div>
@@ -50,6 +50,7 @@ import {Group, Cell} from 'vux'
 // 插件 引入
 import LRForm from 'components/list/finance/CWKJ/LRForm'
 import ZCFZForm from 'components/list/finance/CWKJ/ZCFZForm'
+import XJLLForm from 'components/list/finance/CWKJ/XJLLForm'
 export default {
   name: "HGCW_List",
   data() {
@@ -69,7 +70,7 @@ export default {
       listMap:{
         '0':{ transcode:'LR', folder:'finance', name:'利润表' },
         '1':{ transcode:'ZCFZ', folder:'finance', name:'资产负债表' },
-        '2':{ transcode:'XJLL', folder:'finance', name:'资产负债表' },
+        '2':{ transcode:'XJLL', folder:'finance', name:'现金流量表' },
       },
       activeIndex: 0,
       scrollOptions: {
@@ -80,7 +81,7 @@ export default {
     }
   },
   components: {
-    Cell, Group , LRForm , ZCFZForm
+    Cell, Group , LRForm , ZCFZForm , XJLLForm
   },
   methods: {
     goBack(){

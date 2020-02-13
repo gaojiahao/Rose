@@ -12,7 +12,7 @@
     </div>
     <div class="header">
       <div class="title-form">{{`单位：${localCurrency}`}}</div>
-      <div class="swiper-container swiper-container-header">
+      <div class="swiper-container swiper-container-header2">
         <div class="swiper-wrapper">
           <div class="swiper-slide">{{headInfo.firstName}}</div>
           <div class="swiper-slide">{{headInfo.LastName}}</div>
@@ -22,40 +22,43 @@
     </div>
     <r-scroll :options="scrollOptions" ref="bScroll">
       <div class="part-left">
-        <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
+        <div v-for="(item, index) in listData" :key="index">
           <div class="content-item"
                :class="{'final-total': item.total,
-               'title': item.total}" 
-               :style="{paddingLeft:`${item.indent*.65}em`}"
+               'title': item.total,
+               'bg-color': item.indent==0}" 
                ref="partLeft">
-               {{item.financeName}}
+               {{item.cashFlow}}
           </div>
         </div>
       </div>
-      <div class="swiper-container part-right">
+      <div class="swiper-container part-right2">
         <div class="swiper-wrapper">
           <div class="swiper-slide">
-            <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
+            <div v-for="(item, index) in listData" :key="index">
               <div class="content-item"
-                   :class="{'final-total': item.total || item.bigSubject}"
+                   :class="{'final-total': item.total || item.bigSubject,
+                   'bg-color': item.indent==0}"
                    ref="partRightInit">
                    {{headInfo['currentYearName']?item.finalAmount:item.initAmount | formatNum}}
               </div>
             </div>
           </div>
           <div class="swiper-slide">
-            <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
+            <div v-for="(item, index) in listData" :key="index">
               <div class="content-item"
-                   :class="{'final-total': item.total || item.bigSubject}"
+                   :class="{'final-total': item.total || item.bigSubject,
+                   'bg-color': item.indent==0}"
                    ref="partRightFinal">
                    {{headInfo['currentYearName']?item.initAmount:item.finalAmount | formatNum}}
               </div>
             </div>
           </div>
           <div v-if="headInfo.currentYearName" class="swiper-slide">
-            <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
+            <div v-for="(item, index) in listData" :key="index">
               <div class="content-item"
-                   :class="{'final-total': item.total || item.bigSubject}"
+                   :class="{'final-total': item.total || item.bigSubject,
+                   'bg-color': item.indent==0}"
                    ref="partRightYear">
                    {{item.thisYearAmount | formatNum}}
               </div>
@@ -68,14 +71,14 @@
 </template>
 
 <script>
-  import {getOffBalance, getProfit, getLocalCurrency} from 'service/kmService'
+  import {getOffBalance, getProfit, getLocalCurrency,getCashFlowSheet} from 'service/kmService'
   import RScroll from 'plugins/scroll/RScroll'
   import {toFixed} from '@/plugins/calc'
   import {accAdd} from "plugins/calc/decimalsAdd";
   import {numberComma,Datetime,Group,dateFormat} from 'vux'
 
   export default {
-    name: "LRForm",
+    name: "XJLLForm",
     data() {
       return {
         endDate: '',
@@ -86,18 +89,12 @@
         headInfo:{},                // 表头信息
         listData: {},
         listMap: {
-          ZCFZ: {
-            title: '资产负债表',
-            firstName: '期初',
-            LastName: '期末',
-            request: getOffBalance
-          },
-          LR: {
-            title: '利润表',
+          XJLL: {
+            title: '现金流量表',
             firstName: '本期',
             LastName: '上期',
             currentYearName: '本年',
-            request: getProfit
+            request: getCashFlowSheet
           },
         },
         scrollOptions: {
@@ -170,8 +167,8 @@
       // 初始化swiper
       initSwiper() {
         this.$nextTick(() => {
-          this.partRightSwiper = new this.Swiper('.part-right');
-          this.headerSwiper = new this.Swiper('.swiper-container-header');
+          this.partRightSwiper = new this.Swiper('.part-right2');
+          this.headerSwiper = new this.Swiper('.swiper-container-header2');
           this.partRightSwiper.controller.control = this.headerSwiper;
           this.headerSwiper.controller.control = this.partRightSwiper;
         })
@@ -255,7 +252,7 @@
       }
     }
     /* 顶部期初、期末 */
-    .swiper-container-header {
+    .swiper-container-header2 {
       margin: 0;
       width: 50%;
       height: 100%;
@@ -269,7 +266,7 @@
     /deep/ .scroll-wrapper {
       display: flex;
     }
-    .part-left, .part-right {
+    .part-left, .part-right2 {
       width: 50%;
       font-size: .14rem;
       .content-item {
@@ -326,7 +323,7 @@
         }
       }
     }
-    .part-right {
+    .part-right2 {
       text-align: right;
       .bg-color{
         background-color: #eee;
