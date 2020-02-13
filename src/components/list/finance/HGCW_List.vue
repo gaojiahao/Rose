@@ -23,8 +23,7 @@
         <div class="swiper-wrapper">
           <div class="swiper-slide" v-for="(slide, key) in listMap" :key="key">
             <!-- <r-scroll class="list_wrapper"  :options="scrollOptions" :has-next="true"
-                      :no-data="true" @on-pulling-up="onPullingUp"
-                      @on-pulling-down="onPullingDown" ref="bScroll"> -->
+                      :no-data="true" ref="bScroll"> -->
               <!-- 利润表 -->
               <template v-if="key === '0'">
                 <LRForm :transcode="slide.transcode" :folder="slide.folder" :name="slide.name"></LRForm>
@@ -47,6 +46,7 @@
 
 <script>
 import {Group, Cell} from 'vux'
+import RScroll from 'plugins/scroll/RScroll'
 // 插件 引入
 import LRForm from 'components/list/finance/CWKJ/LRForm'
 import ZCFZForm from 'components/list/finance/CWKJ/ZCFZForm'
@@ -75,13 +75,11 @@ export default {
       activeIndex: 0,
       scrollOptions: {
         click: true,
-        pullDownRefresh: true,
-        pullUpLoad: true,
       },
     }
   },
   components: {
-    Cell, Group , LRForm , ZCFZForm , XJLLForm
+    Cell, Group , LRForm , ZCFZForm , XJLLForm ,RScroll
   },
   methods: {
     goBack(){
@@ -91,6 +89,7 @@ export default {
       this.$nextTick(() => {
         this.listSwiper = new this.Swiper('.list-container', {
           touchAngle: 30,
+          noSwiping : true,
           on: {
             slideChangeTransitionStart: () => {
               let index = this.listSwiper.activeIndex;
@@ -129,8 +128,7 @@ export default {
   overflow: auto;
 }
   .list-container {
-    //height: calc(100% - .96rem);
-    height: 100%;
+    height: calc(100% - .86rem);
     .list_wrapper {
       height: 100%;
       background-color: #fff;
@@ -138,7 +136,7 @@ export default {
   }
   .header{
     width: 100%;
-    height: 40px;
+    height: .40rem;
     background-color: #025b80;
     color: #FFF;
     .header-container{

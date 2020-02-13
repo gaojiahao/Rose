@@ -101,6 +101,7 @@
           },
         },
         scrollOptions: {
+          click: true,
           bounce: {
             top: false
           }
@@ -250,8 +251,9 @@
       line-height: .25rem;
       box-sizing: border-box;
       .title-form{
-        font-size: .17rem;
-        font-weight: bold;
+        font-size: .16rem;
+        text-decoration:underline
+        // font-weight: bold;
       }
     }
     /* 顶部期初、期末 */
@@ -263,7 +265,7 @@
     }
 
     .scroll-container {
-      height: calc(100% - 1.6rem);
+      height: calc(100% - .76rem);
       font-size: 0;
     }
     /deep/ .scroll-wrapper {
