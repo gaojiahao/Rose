@@ -45,18 +45,20 @@
             </div>
           </div>
           <div class="swiper-slide">
-            <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
+            <div v-for="(item, index) in listData" :key="index">
               <div class="content-item"
-                   :class="{'final-total': item.total || item.bigSubject}"
+                   :class="{'final-total': item.total || item.bigSubject,
+                   'bg-color': item.indent==1}"
                    ref="partRightFinal">
                    {{headInfo['currentYearName']?item.initAmount:item.finalAmount | formatNum}}
               </div>
             </div>
           </div>
           <div v-if="headInfo.currentYearName" class="swiper-slide">
-            <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
+            <div v-for="(item, index) in listData" :key="index">
               <div class="content-item"
-                   :class="{'final-total': item.total || item.bigSubject}"
+                   :class="{'final-total': item.total || item.bigSubject,
+                   'bg-color': item.indent==1}"
                    ref="partRightYear">
                    {{item.thisYearAmount | formatNum}}
               </div>

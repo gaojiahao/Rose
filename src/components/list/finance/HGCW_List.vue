@@ -138,7 +138,7 @@ export default {
   .header{
     width: 100%;
     height: 40px;
-    background-color: #e83030;
+    background-color: #025b80;
     color: #FFF;
     .header-container{
       width: 100%;
@@ -185,10 +185,10 @@ export default {
       }
       // padding-right: .15rem;
       &.active {
-        color: #cc1d0d;
+        color: #025b80;
         // font-size: .18rem;
         font-weight: 600;
-        border-bottom: 2px solid #cc1d0d;
+        border-bottom: 2px solid #025b80;
       }
     }
   }
