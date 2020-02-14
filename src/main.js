@@ -42,6 +42,9 @@ import platfrom from './plugins/platform/index'
 import commonService from "service/commonService";
 
 require('@/directive')
+if(window.isApp){
+  require('service/pushService');
+}
 
 Vue.use(Loading)
 Vue.use(HandleLoad)

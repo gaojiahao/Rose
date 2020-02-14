@@ -1,5 +1,6 @@
 <template>
   <div class="work-flow-full-container">
+    <slot name="nav"></slot>
     <r-scroll>
         <header class="work-flow-header">点检表</header>
         <div class="work-flow-wrapper">
@@ -297,5 +298,8 @@ export default {
       font-size: 0.12rem;
     }
   }
+}
+.hasNav .scroll-container{
+   height: calc(100% - 46px);
 }
 </style>

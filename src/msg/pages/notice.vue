@@ -1,3 +1,11 @@
+<!--
+ * @Descripttion: 
+ * @version: 1.0.0
+ * @Author: Gabriel.gaojiahao
+ * @Date: 2020-01-07 13:53:36
+ * @LastEditors: Gabriel.gaojiahao
+ * @LastEditTime: 2020-01-07 13:54:04
+ -->
 <template>
     <div class="notice-container" >
         <tab :active-color='activeColor'>

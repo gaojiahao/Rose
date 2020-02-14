@@ -1,7 +1,7 @@
 <template>
   <div class="pages" :class="{'no-add': !action.add}">
     <div class="content">
-      <slot name="nav"></slot>
+       <slot name="nav" v-if ="$route.path =='/materlist'"></slot>
       <!-- 顶部区域 -->
       <div class="app_top">
         <!-- 搜索栏 -->
@@ -35,7 +35,7 @@
       </r-scroll>
     </div>
     <add-btn :action="action" :goEdit="goEditAds"></add-btn>
-    <router-view></router-view>
+    <router-view><slot name="nav" v-if ="$route.path !='/adress'" slot="nav"></slot></router-view>
   </div>
 </template>
 
@@ -230,8 +230,10 @@
       },
       // 重置下拉刷新、上拉加载的状态
       resetScroll() {
-        this.$refs.bScroll.finishPullDown();
-        this.$refs.bScroll.finishPullUp();
+        if(this.$refs.bScroll){
+          this.$refs.bScroll.finishPullDown();
+          this.$refs.bScroll.finishPullUp();
+        }
       },
       // 搜索物料
       searchMat({val = '', property = ''}) {

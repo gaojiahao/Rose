@@ -1,5 +1,6 @@
 <template>
   <div class="pages">
+    <slot name="nav"></slot>
     <div class="detail-container" :class="{'has-comment': hasComment}" ref='detail'>
       <v-touch @swipeleft="swiperleft" @swiperight="swiperright" class="wrapper">
         <component
@@ -9,7 +10,6 @@
           @subscribeChange="setSubscribe"
           :showTab="showTab['comm']"
           ref="detailComponent">
-           <slot name="nav" slot="nav"></slot>
         </component>
         <auto-subject :showTab="showTab['subject']"></auto-subject>
         <app-example :showTab="showTab['example']" :tabData="tabData['example']"></app-example>
@@ -393,5 +393,11 @@ export default {
         }
       }
     }
+  }
+  .hasNav .detail-container{
+      height: calc(100% - 46px);
+      &.has-comment{
+        height: calc(100% - .5rem - 46px);
+      }
   }
 </style>

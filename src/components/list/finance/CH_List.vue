@@ -1,6 +1,7 @@
 <template>
   <div class="pages" ref='list'>
     <div class='content'>
+      <slot name="nav"></slot>
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon @search='searchList'></searchIcon>
@@ -147,42 +148,34 @@
                           <span class="classification_detail_title">实例编码: </span>{{item.transCode}}
                         </div>
                         <div class="classification_detail_item">
-                          <span class="classification_detail_title">应用名称: </span>{{item.appName}}
+                          <span class="classification_detail_title">应用名称: </span>{{item.appTitle}}
                         </div>
                         <div class="classification_detail_item">
-                          <span class="classification_detail_title">应用类型: </span>{{item.appType}}
+                          <span class="classification_detail_title">记账日期与时间: </span>{{item.effectiveTime}}
                         </div>
                         <div class="classification_detail_item">
-                          <span class="classification_detail_title">生效时间: </span>{{item.effectiveTime}}
+                          <span class="classification_detail_title">物料编码: </span>{{item.matCode}}
                         </div>
                       </div>
                       <div class="classification_detail_part">
-                        <div class="classification_detail_item">
-                          <span class="classification_detail_title">物料编码: </span>{{item.inventoryCode}}
-                        </div>
                         <div class="classification_detail_item">
                           <span class="classification_detail_title">产品规格: </span>{{item.specification || '无'}}
                           <span class="classification_detail_title">主计量单位: </span>{{item.measureUnit || '无'}}
+                          <span class="classification_detail_title">安全库存: </span>{{item.safeBalance || 0 | numberComma}}
                         </div>
                         <div class="classification_detail_item">
-                          <span class="classification_detail_title">保质期天数: </span>{{item.shelfLife}}
-                          <span class="classification_detail_title">质龄: </span>{{item.qualityAge}}
-                          <span class="classification_detail_title">临保: </span>{{item.nearKeepingDays}}
+                          <span class="classification_detail_title">品牌: </span>{{item.brand || '无'}}
                         </div>
                         <div class="classification_detail_item">
-                          <span class="classification_detail_title">生产日期: </span>{{item.productDate | dateFormat('YYYY-MM-DD')}}
-                          <span class="classification_detail_title">到期日期: </span>{{item.dueDate | dateFormat('YYYY-MM-DD')}}
+                          <span class="classification_detail_title">物料大类: </span>{{item.inventoryType}}
+                          <span class="classification_detail_title">物料小类: </span>{{item.inventorySubclass}}
                         </div>
                       </div>
                       <div class="classification_detail_part">
                         <div class="classification_detail_item">
-                          <span class="classification_detail_title">入库数: </span>{{item.inQty || 0 | numberComma}}
-                          <span class="classification_detail_title">出库数: </span>{{item.outQty || 0 | numberComma}}
-                        </div>
-                        <div class="classification_detail_item">
-                          <span class="classification_detail_title">可用库存: </span>{{item.qtyBalance || 0 | numberComma}}
-                          <span class="classification_detail_title">账龄天数: </span>{{item.agingTime || 0 | numberComma}}
-                          <span class="classification_detail_title">库龄天数: </span>{{item.stockTime || 0 | numberComma}}
+                          <span class="classification_detail_title">增加数量: </span>{{item.drQty || 0 | numberComma}}
+                          <span class="classification_detail_title">减少数量: </span>{{item.crQty || 0 | numberComma}}
+                          <span class="classification_detail_title">数量余额: </span>{{item.qtyBalance || 0 | numberComma}}
                         </div>
                       </div>
                     </div>

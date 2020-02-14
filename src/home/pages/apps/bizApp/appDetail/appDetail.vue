@@ -1,5 +1,6 @@
 <template>
   <div class="pages app_detail">
+    <slot name="nav"></slot>
     <div class='content'>
       <r-scroll class="list_wrapper" :options="scrollOptions" ref="bScroll">
         <div class="app_top vux-1px-b">

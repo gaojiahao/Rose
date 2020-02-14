@@ -5,7 +5,7 @@
         <div class="top-part-container">
           <div class="top-part">
             <div class="user-info-container">
-              <div class="user_avatar" @click="goThemeSetting()">
+              <div class="user_avatar" @click="avatarClick()">
                 <img :src="userInfo.avatar">
               </div>
               <div class="user-info">
@@ -82,6 +82,11 @@ import basicApp from "homePage/components/home-related/basicApp"; // 基础应�
 import Bscroll from "better-scroll";
 import { constants } from 'crypto';
 const ROSE_MENU = 'ROSE_MENU';
+var DS;
+if(window.isApp){
+   DS = require('deepstream.io-client-js');
+  // DS = require('@deepstream/client').DeepstreamClient;
+}
 export default {
   data() {
     return {
@@ -126,6 +131,39 @@ export default {
       await this.getNews();
       this.$loading.hide();
     },
+    initDs(dsUrl,uId){
+      var protocol = (window.baseURL||'').indexOf('https') == 0 ? 'wss':'ws',
+          subscribe = false,
+          status,
+          dsClient;
+      
+      if(window.dsClient){
+         window.dsClient.close();
+      }
+      dsClient = new DS(protocol + '://' + dsUrl);
+      dsClient.on( 'error', (error,type ) => {
+          // do something with error
+          if(type == "MESSAGE_DENIED")alert("服务器拒绝了一条消息")
+          else if(type == 'connectionError')console.log('服务器连接障碍！')
+      } );
+      dsClient.on( 'connectionStateChanged', connectionState => {
+          console.log('connectionState:',connectionState)
+      });
+      dsClient.login({
+          username:uId
+      },(success,data) => { //这里的函数reload时还会执行。
+          if(success){
+              console.log("login in");
+              window.dsClient = dsClient;
+              if(!subscribe){
+                  this.subscribePush(uId);
+                  subscribe = true;
+              }
+          }else{
+              if(data)console.log('login error',data.msg);
+          }
+      });
+    },
     //获取代办数量
     getNews() {
       let newsNumber;
@@ -141,7 +179,10 @@ export default {
     //获取当前用户信息
     getCurrentUser() {
       return commonService.getBasicInfo().then(baseInfo => {
-        var data = baseInfo.currentUser;
+        var data = baseInfo.currentUser,
+            deepStreamUrl = baseInfo.deepStreamUrl,
+            userId = data && data.userId;
+
         this.userInfo = {
           photo: data.photo, // 头像
           mobile: data.mobile, // 手机号
@@ -159,6 +200,10 @@ export default {
               }
             }
           });
+
+        if(deepStreamUrl && userId && window.isApp){
+          this.initDs(deepStreamUrl,userId);
+        }
       });
     },
     // 获取应用icon
@@ -178,6 +223,13 @@ export default {
           this.dealMenu(res);
         });
       }
+    },
+    isSetHost:function(){
+      if(window.isApp && window.baseURL == null){
+        this.$router.push('/setHost');
+        return false
+      } else return true;
+      
     },
     dealMenu(res) {
       let BUSobj = this.BUSobj;
@@ -353,6 +405,28 @@ export default {
         }
       }
     },
+    subscribePush(uid){
+      var ds = window.dsClient;
+      if(ds){
+          ds.event.subscribe('appTask/'+ uid, data => {
+             var msg;
+             console.log('appTask:',data);
+             if(window.notification && data.appName != null){
+               msg = [
+                   '实例编码：',data.transCode, '\n',
+                   '应用名称：',data.appName,'\n',
+                   '发起人：',data.nickname
+               ];
+               window.notification.schedule({
+                  title: '新任务通知',
+                  text: msg.join(''),
+                  data: data,
+                  foreground: true
+              });
+             }
+          });
+      }
+    },
     //清除菜单
     clearSearch() {
       this.searchValue = '';
@@ -362,9 +436,9 @@ export default {
     scrollToTop() {
       this.homeScroll.scrollTo(0, 0, 400);
     },
-    goThemeSetting(){
+    avatarClick(){
       this.$router.push({
-        path: '/themesetting',
+        path: window.isApp?'/user':'/themesetting',
         query: {
         }
       })    
@@ -389,11 +463,23 @@ export default {
     }
   },
   activated() {
+    if(this.$route.query.refresh == true){
+       this.BusApps = [];
+       this.entityList = [];//主体列表
+       commonService.clearBaseInfo();
+       sessionStorage.removeItem(ROSE_MENU);
+    }
     if (this.BusApps.length == 0) {
-      this.initData();
+      if(this.isSetHost())this.initData();
     } else {
       this.$loading.hide();
     }
+  },
+  beforeRouteEnter(to,from,next){
+    if(from.path == "/login"){
+       to.query.refresh = true;
+    }
+    next()
   },
   mounted() {
     this.homeScroll = new Bscroll(this.$refs.home, {

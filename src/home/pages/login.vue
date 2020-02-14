@@ -21,6 +21,7 @@
         <x-button class="login-btn" @click.native="login">
                 登录
         </x-button>
+        <x-button v-if="isApp" class="host-btn" @click.native="goSetHost">切换服务器</x-button>
     </div>
     
 </template>
@@ -36,8 +37,11 @@ export default {
         XButton
     },
     data() {
+        var  isApp = window.isApp,
+             userCode = localStorage.getItem('userCode');
         return {
-            userCode: '',
+            userCode: userCode,
+            isApp:isApp,
             passWord: '',
             show: false,
             isLoginInpFoc: false,
@@ -49,12 +53,16 @@ export default {
         login() {
             tokenService.pcLogin(this.userCode,this.passWord).then(data=>{
                 this.$router.replace('/home');
+                localStorage.setItem('userCode',this.userCode);
             }).catch(err=>{
                  this.$vux.alert.show({
                     content: err.message
                 });
             });
         },
+        goSetHost:function () {
+            this.$router.push('/setHost');
+        }
     },
     created() {
         this.$loading.hide();
@@ -119,6 +127,10 @@ export default {
         width: 90%;
         height: 0.5rem;
     }   
+    .host-btn{
+        height:0.5rem;
+        width:90%;
+    }
     .login-banner {
         width: 100%;
         height: 1.6rem;

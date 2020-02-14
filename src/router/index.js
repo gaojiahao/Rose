@@ -4,7 +4,7 @@
  * @Author: Gabriel.gaojiahao
  * @Date: 2019-12-03 09:54:38
  * @LastEditors  : Gabriel.gaojiahao
- * @LastEditTime : 2020-01-14 17:05:32
+ * @LastEditTime : 2020-01-15 15:54:56
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -99,7 +99,8 @@ async function initFieldSetting(){
     if(!storage.getItem('r2FieldSetting')){
       storage.setItem('r2FieldSetting',  JSON.stringify(Vue.prototype.$r2FieldSetting));
     }
-  }).catch(e =>{e});
+    console.log('1',Vue.prototype.$r2FieldSetting);
+  }).catch(e =>{console.log(e)});
 }
 async function initListLevelFieldSetting() {
   await getAllFieldSettingListLevel().then(res=>{

@@ -610,6 +610,9 @@ export default {
     overflow: hidden;
   }
 }
+.hasNav .scrollCt.has-bbar{
+  height: calc(100% - .44rem - 46px);
+}
 // 底部栏
 .count_mode {
   // left: 0;
