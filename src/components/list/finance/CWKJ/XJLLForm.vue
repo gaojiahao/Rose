@@ -26,7 +26,9 @@
           <div class="content-item"
                :class="{'final-total': item.total,
                'title': item.total,
-               'bg-color': item.indent==0}" 
+               'bg-color': item.indent==0,
+               'pleft': item.indent==3,
+               'pleft2': item.indent==4.5}" 
                ref="partLeft">
                {{item.cashFlow}}
           </div>
@@ -37,7 +39,7 @@
           <div class="swiper-slide">
             <div v-for="(item, index) in listData" :key="index">
               <div class="content-item"
-                   :class="{'final-total': item.total || item.bigSubject,
+                   :class="{'final-total': item.indent == 4.5,
                    'bg-color': item.indent==0}"
                    ref="partRightInit">
                    {{headInfo['currentYearName']?item.finalAmount:item.initAmount | formatNum}}
@@ -47,7 +49,7 @@
           <div class="swiper-slide">
             <div v-for="(item, index) in listData" :key="index">
               <div class="content-item"
-                   :class="{'final-total': item.total || item.bigSubject,
+                   :class="{'final-total': item.indent == 4.5,
                    'bg-color': item.indent==0}"
                    ref="partRightFinal">
                    {{headInfo['currentYearName']?item.initAmount:item.finalAmount | formatNum}}
@@ -247,8 +249,8 @@
       line-height: .25rem;
       box-sizing: border-box;
       .title-form{
-        font-size: .16rem;
-        text-decoration:underline
+        font-size: .14rem;
+        // text-decoration:underline
         // font-weight: bold;
       }
     }
@@ -258,6 +260,7 @@
       width: 50%;
       height: 100%;
       text-align: right;
+      font-size: .14rem;
     }
 
     .scroll-container {
@@ -288,9 +291,8 @@
 
         /* 资产合计 */
         &.final-total {
-          line-height: .3rem;
           font-size: .14rem;
-          font-weight: bold;
+          font-weight: 600;
         }
 
         /* 利润表首行 */
@@ -299,6 +301,13 @@
           font-size: .2rem;
           font-weight: bold;
         }
+      }
+      .pleft{
+        padding-left: .26rem;
+      }
+      .pleft2{
+        padding-left: .3rem;
+        font-weight: 600;
       }
     }
     .part-left {
