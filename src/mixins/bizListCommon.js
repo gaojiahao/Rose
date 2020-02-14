@@ -439,7 +439,7 @@ export default {
       return getAppDetail(this.listId).then(([data = {}]) => {
         let { action } = data;
         this.action = action;
-      })
+      }).catch(e =>{console.log(e)});
     },
     getListMobileView() {
       var me = this;
