@@ -424,6 +424,7 @@ export default {
                     sortInventoryName.push(`<div>${it.inventoryName}还差<b>${all-done}</b>未拣</div>`);
                 }
             })
+
             if(!this.scanCodeInfo.postCode){
                 this.$vux.alert.show({
                 content:"申请单号不能为空!"
@@ -456,7 +457,6 @@ export default {
             }
 
             if(sortInventoryName.length > 0) sortInventoryName.push('<span>是否提交？</span>');
-
              // 准备提交
             this.$vux.confirm.show({
                 content: sortInventoryName.length > 0 ? sortInventoryName.join('') : '确认提交？',
@@ -514,14 +514,14 @@ export default {
                 this.$HandleLoad.hide();
                 let {success = false, message = '提交失败'} = data;
                 if (success) {
-                    // releaseSortingOrder(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res => {
-                    //     if(!res.success){
-                    //         this.$vux.toast.show({
-                    //             type: 'warn',
-                    //             text: res.message
-                    //         });
-                    //     }
-                    // });
+                    releaseSortingOrder(this.scanCodeInfo.postCode,matCodeCollection.join(',')).then(res => {
+                        if(!res.success){
+                            this.$vux.toast.show({
+                                type: 'warn',
+                                text: res.message
+                            });
+                        }
+                    });
 
                     this.$vux.alert.show({
                         content: message,
@@ -531,34 +531,34 @@ export default {
                             }
                         }
                     });
-                    // this.$vux.confirm.show({
-                    //     content:"拣货成功，是否生成出库单？",
-                    //     onConfirm:()=>{
-                    //         this.$HandleLoad.show();
-                    //         autoConfirmStockPick(this.scanCodeInfo.postCode,data.transCode).then(res=>{
-                    //             this.$HandleLoad.hide();
-                    //             message = data.message;
-                    //              this.$vux.alert.show({
-                    //                 content: message,
-                    //                 onHide: () => {
-                    //                     if (success) {
-                    //                         this.judgePage();
-                    //                     }
-                    //                 }
-                    //             });
-                    //         });
-                    //     },
-                    //     onCancel:()=>{
-                    //         this.$vux.alert.show({
-                    //             content: message,
-                    //             onHide: () => {
-                    //                 if (success) {
-                    //                     this.judgePage();
-                    //                 }
-                    //             }
-                    //         });
-                    //     }
-                    // });
+                    this.$vux.confirm.show({
+                        content:"拣货成功，是否生成出库单？",
+                        onConfirm:()=>{
+                            this.$HandleLoad.show();
+                            autoConfirmStockPick(this.scanCodeInfo.postCode,data.transCode).then(res=>{
+                                this.$HandleLoad.hide();
+                                message = data.message;
+                                 this.$vux.alert.show({
+                                    content: message,
+                                    onHide: () => {
+                                        if (success) {
+                                            this.judgePage();
+                                        }
+                                    }
+                                });
+                            });
+                        },
+                        onCancel:()=>{
+                            this.$vux.alert.show({
+                                content: message,
+                                onHide: () => {
+                                    if (success) {
+                                        this.judgePage();
+                                    }
+                                }
+                            });
+                        }
+                    });
                 }
             }).catch(e => {
                 this.$HandleLoad.hide();

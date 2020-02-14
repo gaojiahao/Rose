@@ -53,7 +53,6 @@ let tokenService = {
         res.data.map(p=>{
           data[p.PROPERTY] = p.VALUE;
         });
-        console.log(data)
         resolve(data);
       }).catch(function (error) {
         let res = error.response;
