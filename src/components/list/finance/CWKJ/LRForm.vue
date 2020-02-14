@@ -96,7 +96,7 @@
             title: '利润表',
             firstName: '本期',
             LastName: '上期',
-            currentYearName: '本年',
+            currentYearName: '本年累计',
             request: getProfit
           },
         },

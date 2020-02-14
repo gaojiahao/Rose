@@ -16,7 +16,7 @@
         <div class="swiper-wrapper">
           <div class="swiper-slide">{{headInfo.firstName}}</div>
           <div class="swiper-slide">{{headInfo.LastName}}</div>
-          <div v-if="headInfo.currentYearName" class="swiper-slide">{{headInfo.currentYearName}}</div>
+          <!-- <div v-if="headInfo.currentYearName" class="swiper-slide">{{headInfo.currentYearName}}</div> -->
         </div>
       </div>
     </div>
@@ -54,16 +54,16 @@
               </div>
             </div>
           </div>
-          <div v-if="headInfo.currentYearName" class="swiper-slide">
+          <!-- <div v-if="headInfo.currentYearName" class="swiper-slide">
             <div v-for="(item, index) in listData" :key="index">
               <div class="content-item"
                    :class="{'final-total': item.total || item.bigSubject,
                    'bg-color': item.indent==0}"
-                   ref="partRightYear">
+                   ref="partRightYear" v-if="headInfo['currentYearName']!='本年'">
                    {{item.thisYearAmount | formatNum}}
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </r-scroll>
@@ -91,8 +91,8 @@
         listMap: {
           XJLL: {
             title: '现金流量表',
-            firstName: '本期',
-            LastName: '上期',
+            firstName: '本期金额',
+            LastName: '上期金额',
             currentYearName: '本年',
             request: getCashFlowSheet
           },
