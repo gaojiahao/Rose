@@ -91,8 +91,8 @@
         listMap: {
           ZCFZ: {
             title: '资产负债表',
-            firstName: '期初',
-            LastName: '期末',
+            firstName: '期初余额',
+            LastName: '期末余额',
             request: getOffBalance
           },
         },
