@@ -26,7 +26,9 @@
           <div class="content-item"
                :class="{'final-total': item.total,
                'title': item.total,
-               'bg-color': item.indent==1}" 
+               'bg-color': item.indent==1,
+               'pleft': item.indent==3,
+               'pleft2': item.indent==5}" 
                ref="partLeft">
                {{item.financeName}}
           </div>
@@ -246,8 +248,8 @@
       line-height: .25rem;
       box-sizing: border-box;
       .title-form{
-        font-size: .16rem;
-        text-decoration:underline
+        font-size: .14rem;
+        // text-decoration:underline
         // font-weight: bold;
       }
     }
@@ -257,6 +259,7 @@
       width: 50%;
       height: 100%;
       text-align: right;
+      font-size: .14rem;
     }
 
     .scroll-container {
@@ -321,6 +324,12 @@
         &.indent {
           padding-left: 3em;
         }
+      }
+      .pleft{
+        padding-left: .26rem;
+      }
+      .pleft2{
+        padding-left: .3rem;
       }
     }
     .part-right1 {

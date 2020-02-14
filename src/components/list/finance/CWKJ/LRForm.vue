@@ -251,8 +251,8 @@
       line-height: .25rem;
       box-sizing: border-box;
       .title-form{
-        font-size: .16rem;
-        text-decoration:underline
+        font-size: .14rem;
+        // text-decoration:underline
         // font-weight: bold;
       }
     }
@@ -262,6 +262,7 @@
       width: 50%;
       height: 100%;
       text-align: right;
+      font-size: .14rem;
     }
 
     .scroll-container {
