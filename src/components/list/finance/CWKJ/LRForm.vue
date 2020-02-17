@@ -251,7 +251,7 @@
       line-height: .25rem;
       box-sizing: border-box;
       .title-form{
-        font-size: .14rem;
+        font-size: .16rem;
         // text-decoration:underline
         // font-weight: bold;
       }

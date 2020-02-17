@@ -4,7 +4,7 @@
     <div class='content'>
       <slot name="nav"></slot>
       <div class="list_top">
-        <div class="header" v-if="!hasNav">
+        <div class="header" v-if="hasNav">
           <div class="header-container">
             <i class="icon icon-return" @click="goBack"></i>
             <div class="center">财务会计报表</div>
@@ -19,7 +19,7 @@
       </div>
       <div style="height:.1rem;width:100%;background-color:#eee"></div>
       <!-- tab -->
-      <div class="swiper-container list-container">
+      <div class="swiper-container list-container" :class="{'list-container2':!hasNav}">
         <div class="swiper-wrapper">
           <div class="swiper-slide" v-for="(slide, key) in listMap" :key="key">
             <!-- <r-scroll class="list_wrapper"  :options="scrollOptions" :has-next="true"
@@ -132,6 +132,13 @@ export default {
 }
   .list-container {
     height: calc(100% - .86rem);
+    .list_wrapper {
+      height: 100%;
+      background-color: #fff;
+    }
+  }
+  .list-container2 {
+    height: calc(100% - .46rem);
     .list_wrapper {
       height: 100%;
       background-color: #fff;
