@@ -55,7 +55,6 @@ import XJLLForm from 'components/list/finance/CWKJ/XJLLForm'
 export default {
   name: "HGCW_List",
   data() {
-    var hasNav = platform.isQYWX || platform.isDD
     return {
       listData: [
         {
@@ -78,6 +77,7 @@ export default {
       scrollOptions: {
         click: true,
       },
+      hasNav:false,
     }
   },
   components: {
@@ -115,7 +115,7 @@ export default {
   },
   created() {
     this.$loading.hide();
-    this.hasNav = !this.$root.$children[0].hasNav;
+    this.hasNav = platform.isQYWX || platform.isDD
     this.initSwiper();
     // this.$nextTick(() => {
     //   this.listSwiper.update();
