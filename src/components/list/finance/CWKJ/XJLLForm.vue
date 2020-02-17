@@ -161,7 +161,7 @@
         left.forEach((item,index) => {
           right.forEach(rRight => {
             if(item.clientHeight !== rRight[index].clientHeight){
-              rRight[index].style.height = `${item.clientHeight-1}px`;
+              rRight[index].style.height = `.${item.clientHeight}rem`;
             }
           })
         })
