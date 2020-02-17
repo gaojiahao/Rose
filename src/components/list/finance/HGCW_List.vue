@@ -4,7 +4,7 @@
     <div class='content'>
       <slot name="nav"></slot>
       <div class="list_top">
-        <div class="header">
+        <div class="header" v-if="hasNav">
           <div class="header-container">
             <i class="icon icon-return" @click="goBack"></i>
             <div class="center">财务会计报表</div>
@@ -76,6 +76,7 @@ export default {
       scrollOptions: {
         click: true,
       },
+      hasNav:true,
     }
   },
   components: {
@@ -113,6 +114,7 @@ export default {
   },
   created() {
     this.$loading.hide();
+    this.hasNav = !this.$root.$children[0].hasNav;
     this.initSwiper();
     // this.$nextTick(() => {
     //   this.listSwiper.update();
