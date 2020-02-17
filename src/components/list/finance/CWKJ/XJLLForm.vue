@@ -161,7 +161,7 @@
         left.forEach((item,index) => {
           right.forEach(rRight => {
             if(item.clientHeight !== rRight[index].clientHeight){
-              rRight[index].style.height = `.${item.clientHeight}rem`;
+              rRight[index].style.height = `${item.clientHeight}px`;
             }
           })
         })
@@ -249,7 +249,7 @@
       line-height: .25rem;
       box-sizing: border-box;
       .title-form{
-        font-size: .15rem;
+        font-size: .14rem;
         // text-decoration:underline
         // font-weight: bold;
       }
