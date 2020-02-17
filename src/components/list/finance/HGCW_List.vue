@@ -4,7 +4,7 @@
     <div class='content'>
       <slot name="nav"></slot>
       <div class="list_top">
-        <div class="header" v-if="hasNav">
+        <div class="header" v-if="!hasNav">
           <div class="header-container">
             <i class="icon icon-return" @click="goBack"></i>
             <div class="center">财务会计报表</div>
@@ -47,6 +47,7 @@
 <script>
 import {Group, Cell} from 'vux'
 import RScroll from 'plugins/scroll/RScroll'
+import platform from 'plugins/platform/index'
 // 插件 引入
 import LRForm from 'components/list/finance/CWKJ/LRForm'
 import ZCFZForm from 'components/list/finance/CWKJ/ZCFZForm'
@@ -54,6 +55,7 @@ import XJLLForm from 'components/list/finance/CWKJ/XJLLForm'
 export default {
   name: "HGCW_List",
   data() {
+    var hasNav = platform.isQYWX || platform.isDD
     return {
       listData: [
         {
@@ -76,7 +78,6 @@ export default {
       scrollOptions: {
         click: true,
       },
-      hasNav:true,
     }
   },
   components: {
