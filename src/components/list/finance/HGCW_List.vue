@@ -19,7 +19,7 @@
       </div>
       <div style="height:.1rem;width:100%;background-color:#eee"></div>
       <!-- tab -->
-      <div class="swiper-container list-container" :class="{'list-container2':!hasNav}">
+      <div class="swiper-container list-container" :class="{'list-container2':hasNav}">
         <div class="swiper-wrapper">
           <div class="swiper-slide" v-for="(slide, key) in listMap" :key="key">
             <!-- <r-scroll class="list_wrapper"  :options="scrollOptions" :has-next="true"
