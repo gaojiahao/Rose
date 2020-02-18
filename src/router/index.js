@@ -99,7 +99,6 @@ async function initFieldSetting(){
     if(!storage.getItem('r2FieldSetting')){
       storage.setItem('r2FieldSetting',  JSON.stringify(Vue.prototype.$r2FieldSetting));
     }
-    console.log('1',Vue.prototype.$r2FieldSetting);
   }).catch(e =>{console.log(e)});
 }
 async function initListLevelFieldSetting() {

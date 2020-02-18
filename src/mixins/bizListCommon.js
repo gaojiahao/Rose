@@ -471,7 +471,6 @@ export default {
       var me = this,
           ret;
 
-      console.log('2',me.$r2FieldSetting);
       if (Array.isArray(codes)) {
         var r2FieldSetting = me.$r2FieldSetting || JSON.parse(window.sessionStorage.getItem('r2FieldSetting')),
           ret = codes.map(function (c) {
