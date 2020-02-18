@@ -24,11 +24,11 @@
       <div class="part-left">
         <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
           <div class="content-item"
-               :class="{'final-total': item.total,
-               'title': item.total}" 
-               :style="{paddingLeft:`${item.indent*.65}em`}"
-               ref="partLeft">
-               {{item.financeName}}
+              :class="{'final-total': item.total,
+              'title': item.total}" 
+              :style="{paddingLeft:`${item.indent*.65}em`}"
+              ref="partLeft">
+              {{item.financeName}}
           </div>
         </div>
       </div>
@@ -37,27 +37,27 @@
           <div class="swiper-slide">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
-                   :class="{'final-total': item.total || item.bigSubject}"
-                   ref="partRightInit">
-                   {{headInfo['currentYearName']?item.finalAmount:item.initAmount | formatNum}}
+                  :class="{'final-total': item.total || item.bigSubject}"
+                  ref="partRightInit">
+                  {{headInfo['currentYearName']?item.finalAmount:item.initAmount | formatNum}}
               </div>
             </div>
           </div>
           <div class="swiper-slide">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
-                   :class="{'final-total': item.total || item.bigSubject}"
-                   ref="partRightFinal">
-                   {{headInfo['currentYearName']?item.initAmount:item.finalAmount | formatNum}}
+                  :class="{'final-total': item.total || item.bigSubject}"
+                  ref="partRightFinal">
+                  {{headInfo['currentYearName']?item.initAmount:item.finalAmount | formatNum}}
               </div>
             </div>
           </div>
           <div v-if="headInfo.currentYearName" class="swiper-slide">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
-                   :class="{'final-total': item.total || item.bigSubject}"
-                   ref="partRightYear">
-                   {{item.thisYearAmount | formatNum}}
+                  :class="{'final-total': item.total || item.bigSubject}"
+                  ref="partRightYear">
+                  {{item.thisYearAmount | formatNum}}
               </div>
             </div>
           </div>
@@ -196,6 +196,7 @@
       }
     },
     created() {
+      this.$loading.show();
       let {trancode = ''} = this.$route.query;
       this.code = this.transcode;
       //获取表格的表头信息
