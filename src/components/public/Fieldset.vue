@@ -26,6 +26,7 @@
               :key="index"
             />
             <r2Datefield :cfg="item" :values="values" v-if="item.xtype == 'r2Datefield'" :key="index"/>
+            <r2Datetimefield :cfg="item" :values="values" v-if="item.xtype == 'r2DateTimefield'" :key="index"/>
             <r2Percentfield :cfg="item" :values="values" v-if="item.xtype == 'r2Percentfield'" :key="index"/>
             <r2Combofield
               :cfg="item"
