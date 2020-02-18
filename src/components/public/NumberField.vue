@@ -23,7 +23,6 @@ let  cfg = {
     watch: {
         values: {
             handler(val) {
-                console.log(val[this.cfg.fieldCode])
                 this.number = val[this.cfg.fieldCode] || this.number;
                 this.setValue(this.number);
             }
