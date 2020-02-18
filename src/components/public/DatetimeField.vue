@@ -12,13 +12,11 @@
 <script>
 import Vue from 'vue'
 import { dateFormat } from 'vux'
-import Datepicker from 'vuejs-datepicker';
 import fieldBase from 'mixins/fieldBase'
 let cfg = {
     mixins:[fieldBase],
     props:['cfg','values'],
     components: {
-        Datepicker    
     },
     data() {
         return {
