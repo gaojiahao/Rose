@@ -4,7 +4,7 @@
     <div class='content'>
       <slot name="nav"></slot>
       <div class="list_top">
-        <div class="header">
+        <div class="header" v-if="!hasNav">
           <div class="header-container">
             <i class="icon icon-return" @click="goBack"></i>
             <div class="center">财务会计报表</div>
@@ -19,7 +19,7 @@
       </div>
       <div style="height:.1rem;width:100%;background-color:#eee"></div>
       <!-- tab -->
-      <div class="swiper-container list-container">
+      <div class="swiper-container list-container" :class="{'list-container2':hasNav}">
         <div class="swiper-wrapper">
           <div class="swiper-slide" v-for="(slide, key) in listMap" :key="key">
             <!-- <r-scroll class="list_wrapper"  :options="scrollOptions" :has-next="true"
@@ -47,6 +47,7 @@
 <script>
 import {Group, Cell} from 'vux'
 import RScroll from 'plugins/scroll/RScroll'
+import platform from 'plugins/platform/index'
 // 插件 引入
 import LRForm from 'components/list/finance/CWKJ/LRForm'
 import ZCFZForm from 'components/list/finance/CWKJ/ZCFZForm'
@@ -76,6 +77,7 @@ export default {
       scrollOptions: {
         click: true,
       },
+      hasNav:false,
     }
   },
   components: {
@@ -113,6 +115,7 @@ export default {
   },
   created() {
     this.$loading.hide();
+    this.hasNav = platform.isQYWX || platform.isDD
     this.initSwiper();
     // this.$nextTick(() => {
     //   this.listSwiper.update();
@@ -134,10 +137,17 @@ export default {
       background-color: #fff;
     }
   }
+  .list-container2 {
+    height: calc(100% - .46rem);
+    .list_wrapper {
+      height: 100%;
+      background-color: #fff;
+    }
+  }
   .header{
     width: 100%;
     height: .40rem;
-    background-color: #025b80;
+    background-color: rgb(50, 150, 250);
     color: #FFF;
     .header-container{
       width: 100%;
@@ -174,6 +184,8 @@ export default {
       line-height: .34rem;
       font-size: .14rem;
       line-height: .34rem;
+      width: 33.333333333333333%;
+      text-align: center;
       & + .tab-item {
         //margin-left: .2rem;
       }
@@ -184,10 +196,10 @@ export default {
       }
       // padding-right: .15rem;
       &.active {
-        color: #025b80;
+        color: rgb(50, 150, 250);
         // font-size: .18rem;
         font-weight: 600;
-        border-bottom: 2px solid #025b80;
+        border-bottom: 2px solid rgb(50, 150, 250);
       }
     }
   }
