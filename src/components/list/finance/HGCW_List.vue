@@ -147,7 +147,7 @@ export default {
   .header{
     width: 100%;
     height: .40rem;
-    background-color: #025b80;
+    background-color: rgb(50, 150, 250);
     color: #FFF;
     .header-container{
       width: 100%;
@@ -184,6 +184,8 @@ export default {
       line-height: .34rem;
       font-size: .14rem;
       line-height: .34rem;
+      width: 33.333333333333333%;
+      text-align: center;
       & + .tab-item {
         //margin-left: .2rem;
       }
@@ -194,10 +196,10 @@ export default {
       }
       // padding-right: .15rem;
       &.active {
-        color: #025b80;
+        color: rgb(50, 150, 250);
         // font-size: .18rem;
         font-weight: 600;
-        border-bottom: 2px solid #025b80;
+        border-bottom: 2px solid rgb(50, 150, 250);
       }
     }
   }
