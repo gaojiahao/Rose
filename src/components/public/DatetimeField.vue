@@ -3,8 +3,12 @@
     <label :class="{'required':!cfg.allowBlank,'readonly':cfg.readOnly}">{{cfg.fieldLabel}}</label>
     <!-- <input v-if="cfg.readOnly == false" :value="values[cfg.fieldCode]" placeholder="请输入" type="date" @input="onInput"/> -->
     <div class="content">
-        <span v-if="cfg.readOnly == false" class="mater_nature" @click="getDate()" :class="{placeholder:!values[cfg.fieldCode]}">{{values[cfg.fieldCode] || '请选择'}}</span>
+        <span v-if="cfg.readOnly == false" class="mater_nature" @click="getDate()" :class="{placeholder:!values[cfg.fieldCode]}">{{dataTime || '请选择'}}</span>
         <span v-else class="mater_nature">{{values[cfg.fieldCode]||'无'}}</span>
+        <span v-if="cfg.readOnly == false&&values[cfg.fieldCode]" class="mater_nature" @click="getSecond()" :class="{placeholder:!values[cfg.fieldCode]}">
+            <span v-if="cfg.readOnly == false&&!values[cfg.fieldCode]">:</span>
+            {{second}}
+        </span>
         <span class="icon-right" v-if="cfg.readOnly == false"></span>
     </div>
 </div>
@@ -22,6 +26,23 @@ let cfg = {
         return {
             startDate: '',
             endDate: '',
+            second:'00',
+            dataTime:''
+        }
+    },
+    watch:{
+        values:{
+            handler(oldVal,newVal){
+                if(oldVal[this.cfg.fieldCode] != newVal[this.cfg.fieldCode]){
+                    this.dataTime = (this.values[this.cfg.fieldCode]).substring(0,17);
+                    this.second = (this.values[this.cfg.fieldCode]).substring(17);
+                }
+            }
+        }    
+    },
+    computed:{
+        fullDate(){
+            return this.dataTime+this.second;
         }
     },
     methods:{
@@ -38,10 +59,26 @@ let cfg = {
                 onConfirm: (val)=> {
                     var data = val;
                     this.cfg.format=='Y-m-d H:i:s'
-                    var str =  data + ':00';
-                    this.setValue(str);
+                    this.dataTime = val+':';
+                    // var str =  data + ':00';
+                    this.setValue(this.fullDate);
                 },
             });
+        },
+        //选择秒
+        getSecond(){
+            this.$vux.datetime.show({
+                value: '',  //放默认日期，如绑定的
+                startDate: this.startDate,
+                endDate: this.endDate,
+                format: 'mm',
+                confirmText: '确认',
+                cancelText: '取消',
+                onConfirm: (val)=> {
+                    this.second = val;
+                    this.setValue(this.fullDate);
+                },
+            });    
         },
         //判断是重复项的日期还是单一项的日期
         dealColumn:function() {
