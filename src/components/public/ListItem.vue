@@ -99,7 +99,7 @@ export default Vue.component("ListItem", {
     curObj:function() {
       if(this.item.detailItem.length < 1) return;
 
-      let fieldSettingData = this.$r2FieldSetting,
+      let fieldSettingData = JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||this.$r2FieldSetting,
           obj,
           objKey,
           fKey;
