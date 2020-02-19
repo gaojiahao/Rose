@@ -58,7 +58,7 @@
       </div>
     </div>
 
-    <div class="summary-info  vux-1px-t"  v-if="item.detailItem.length>1">
+    <div class="summary-info  vux-1px-t"  v-if="item.detailItem&&item.detailItem.length>1">
       <div class="summary-info-count" >
         <p>共{{item.detailItem.length}}条明细</p>
         <p v-if="item.detailItem.length>3">查看更多...</p>
