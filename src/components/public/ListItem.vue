@@ -58,7 +58,7 @@
       </div>
     </div>
 
-    <div class="summary-info  vux-1px-t"  v-if="item.detailItem.length>1">
+    <div class="summary-info  vux-1px-t"  v-if="item.detailItem&&item.detailItem.length>1">
       <div class="summary-info-count" >
         <p>共{{item.detailItem.length}}条明细</p>
         <p v-if="item.detailItem.length>3">查看更多...</p>
@@ -99,7 +99,7 @@ export default Vue.component("ListItem", {
     curObj:function() {
       if(this.item.detailItem.length < 1) return;
 
-      let fieldSettingData = this.$r2FieldSetting,
+      let fieldSettingData = JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||this.$r2FieldSetting,
           obj,
           objKey,
           fKey;
