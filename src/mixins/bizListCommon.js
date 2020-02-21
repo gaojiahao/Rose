@@ -299,7 +299,6 @@ export default {
         filter: JSON.stringify(filter),
         sort: JSON.stringify(this.sort),
       }).then(({ total = 0, instanceList = [],tableContent=[] }) => {
-        console.log(tableContent);
         let list = instanceList.length&&instanceList||tableContent;
         let [first = {}] = list;
         let [firstDetail = {}] = first.detailItem || [];
@@ -498,7 +497,7 @@ export default {
           ret;
 
       if (Array.isArray(codes)) {
-        var r2FieldSetting = me.$r2FieldSetting || JSON.parse(window.sessionStorage.getItem('r2FieldSetting')),
+        var r2FieldSetting = JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||me.$r2FieldSetting,
           ret = codes.map(function (c) {
               return r2FieldSetting[c];
           });
@@ -524,7 +523,7 @@ export default {
             var ret = {
                 name: f.alias||f.fieldName,
                 code: f.parentCode ? f.fieldCode+'_'+f.parentCode : f.fieldCode,
-                type: fieldSetting.fieldType,
+                type: (fieldSetting&&fieldSetting.fieldType)||'',
                 text: f.text,
                 sequence: f.sequence,
             };

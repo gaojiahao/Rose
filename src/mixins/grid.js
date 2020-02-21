@@ -385,7 +385,7 @@ export default {
             var me = this,
                 value = me.getValue();
 
-            if(!me.$parent.hidden) { 
+            if(!me.$parent.hidden&&me.$parent.submitValue&&(me.cfg.xtype!='r2AccountGrid')) { 
                 if (value == null || value.length == 0) {
                     me.$vux.alert.show({
                         content: '请选择' + (me.listTitle || '交易明细')

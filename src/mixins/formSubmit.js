@@ -353,10 +353,10 @@ export default {
                     } 
                } else {
                    containerCode = field.containerCode;
-                   if(field.$parent.submitValue&&!field.$parent.hidden){
+                   if(field.$parent.submitValue&&!field.$parent.hidden&&(field.cfg.xtype!='r2AccountGrid')){
                         values[containerCode] = field.getSubmitData();
                    }
-                   if(!field.cfg.notAddOneRow){
+                   if(!field.cfg.notAddOneRow&&(field.cfg.xtype!='r2AccountGrid')){
                         values[containerCode] = field.getSubmitData();
                    }
                }

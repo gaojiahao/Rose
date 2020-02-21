@@ -77,6 +77,19 @@ var component = {
       viewType:null
     };
   },
+  watch:{
+    // values:{
+    //   handler(val){
+    //     if(this.cfg.isMultiple){
+    //       if(val[this.cfg.name]&&val[this.cfg.name].length>0){
+    //         this.submitValue = true;
+    //       } else {
+    //         this.submitValue = false;
+    //       }
+    //     }
+    //   }
+    // }
+  },
   created: function() {
      var cfg = this.cfg;
   
