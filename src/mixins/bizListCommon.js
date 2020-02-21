@@ -299,7 +299,6 @@ export default {
         filter: JSON.stringify(filter),
         sort: JSON.stringify(this.sort),
       }).then(({ total = 0, instanceList = [],tableContent=[] }) => {
-        console.log(tableContent);
         let list = instanceList.length&&instanceList||tableContent;
         let [first = {}] = list;
         let [firstDetail = {}] = first.detailItem || [];
