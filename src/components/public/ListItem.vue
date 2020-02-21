@@ -97,9 +97,9 @@ export default Vue.component("ListItem", {
   props: ["fieldsObj", "item"],
   computed:{
     curObj:function() {
-      if(this.item.detailItem.length < 1) return;
+      if(this.item.detailItem.length < 1) return [];
 
-      let fieldSettingData = JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||this.$r2FieldSetting,
+      let fieldSettingData = this.$r2FieldSetting,
           obj,
           objKey,
           fKey;
@@ -146,7 +146,7 @@ export default Vue.component("ListItem", {
       })
     },
     singleField:function(){
-      let fieldSettingData = this.$r2FieldSetting,
+      let fieldSettingData = JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||this.$r2FieldSetting,
           val = [],
           fKey;
       for(var key in this.item){
@@ -155,7 +155,7 @@ export default Vue.component("ListItem", {
         }
       }
       return this.mainField.filter(it=>{
-        fKey = it.fieldCode.split('_')[0];
+        fKey = it.fieldCode&&it.fieldCode.indexOf('_') > -1 ? it.fieldCode.split('_')[0] : it.fieldCode;
         if(fieldSettingData[fKey]){
               if(fieldSettingData[fKey]['kField']===1){
                   it.kField = 1;
