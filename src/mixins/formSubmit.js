@@ -353,7 +353,13 @@ export default {
                     } 
                } else {
                    containerCode = field.containerCode;
-                   if(field.$parent.submitValue&&!field.$parent.hidden&&(field.cfg.xtype!='r2AccountGrid')){
+                   if(field.cfg.xtype=='r2AccountGrid'){
+                       if(field.values&&field.values.length>0){
+                        values[containerCode] = field.getSubmitData();
+                       }
+                    continue;
+                   }
+                   if(field.$parent.submitValue&&!field.$parent.hidden){
                         values[containerCode] = field.getSubmitData();
                    }
                    if(!field.cfg.notAddOneRow&&(field.cfg.xtype!='r2AccountGrid')){

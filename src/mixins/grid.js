@@ -10,8 +10,18 @@ export default {
     data() {
         return {
             isEdit: false,
-            selection: []
+            selection: [],
+            accsubmitValue:false,
         };
+    },
+    watch:{
+        values:{
+            handler(val){
+                if(this.cfg.xtype=='r2AccountGrid'){
+                    this.accsubmitValue = true;
+                }
+            }
+        }
     },
     methods: {
         addRecord: function(){
@@ -385,8 +395,11 @@ export default {
             var me = this,
                 value = me.getValue();
 
-            if(!me.$parent.hidden&&me.$parent.submitValue&&(me.cfg.xtype!='r2AccountGrid')) { 
+            if(!me.$parent.hidden&&me.$parent.submitValue) { 
                 if (value == null || value.length == 0) {
+                    if(me.cfg.xtype=='r2AccountGrid'){
+                        return true;
+                    }
                     me.$vux.alert.show({
                         content: '请选择' + (me.listTitle || '交易明细')
                     });
