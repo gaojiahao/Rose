@@ -126,6 +126,7 @@ let cfg = {
                 if(res){
                   this.displaysValue = res[this.cfg.displayField];
                   this.selection = res;
+                  this.form.$emit(this.valueChangeKey,this);
                 }else{
                   this.displaysValue = this.values[this.cfg.fieldCode];
                 }
@@ -470,10 +471,10 @@ let cfg = {
             this.selItem(selection);
             return ;
           }
-          if(selection == null&&!this.cfg.valueBind) {
-            this.reSet();
-            this.displaysValue = '';
-          }
+          // if(selection == null&&!this.cfg.valueBind) {
+          //   this.reSet();
+          //   this.displaysValue = '';
+          // }
       } else {
         if(listData.length&&this.cfg.defaultValue){
           selection = listData[0];
