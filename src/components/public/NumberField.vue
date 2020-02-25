@@ -16,7 +16,7 @@ let  cfg = {
     props:['cfg','values'],
     data() {
         return {
-            number:numberComma(this.getValue()||'')|| '',
+            number:this.getValue(),
             toFixNum: 2,
         }
     },
