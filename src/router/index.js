@@ -31,26 +31,27 @@ if (router == null) {
   })
 
   window.router.beforeEach((to, from, next) => {
-    let {query,fullPath} = to;
-    console.log('to',to);
-    if(query.tag&&query.tag=='share'){
-      storage.setItem('shareUrl',window.location.href);
-      if(!storage.getItem('r2FieldSetting')){
-        initFieldSetting();
-      } 
-    }
-    if(tokenService.getToken() != '' && to.name !== 'Login'){
-      if(!storage.getItem('r2_cachedListLevelFieldSetting')){
-        initListLevelFieldSetting();   
-      }
-      if(!storage.getItem('r2_cachedDicts')){
-        initDicts();   
-      }
-      if(!Vue.prototype.$r2FieldSetting){
-        console.log('to',to);
-        initFieldSetting();
-      }
-    }
+    // let {query,fullPath} = to;
+    // console.log('to',to);
+    // if(query.tag&&query.tag=='share'){
+    //   storage.setItem('shareUrl',window.location.href);
+    //   if(!storage.getItem('r2FieldSetting')){
+    //     initFieldSetting();
+    //   } 
+    // }
+    // if(tokenService.getToken() != '' && to.name !== 'Login'){
+    //   if(!storage.getItem('r2_cachedListLevelFieldSetting')){
+    //     initListLevelFieldSetting();   
+    //   }
+    //   if(!storage.getItem('r2_cachedDicts')){
+    //     initDicts();   
+    //   }
+    //   if(!Vue.prototype.$r2FieldSetting){
+    //     console.log('to',to);
+    //     initFieldSetting();
+    //   }
+    // }
+    load(to);
     next();
   })
 }
@@ -131,6 +132,30 @@ async function initDicts() {
     //console.log('_cachedDicts',_cachedDicts);
     storage.setItem('r2_cachedDicts',  _cachedDicts ? JSON.stringify(_cachedDicts):'');
   }).catch(e =>{e});
+}
+
+async function load(to){
+  let {query,fullPath} = to;
+  console.log('1',to);
+  if(query.tag&&query.tag=='share'){
+    storage.setItem('shareUrl',window.location.href);
+    if(!storage.getItem('r2FieldSetting')){
+      await initFieldSetting();
+    } 
+  }
+  if(tokenService.getToken() != '' && to.name !== 'Login'){
+    console.log('2',to);
+    if(!storage.getItem('r2_cachedListLevelFieldSetting')){
+      await initListLevelFieldSetting();   
+    }
+    if(!storage.getItem('r2_cachedDicts')){
+      await initDicts();   
+    }
+    if(!Vue.prototype.$r2FieldSetting){
+      console.log('3',to);
+      await initFieldSetting();
+    }
+  }
 }
 
 function ensureUrl(url) {
