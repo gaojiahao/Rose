@@ -11,7 +11,7 @@ import Router from 'vue-router'
 import HomeRouter from '@/home/router'
 import tokenService from 'service/tokenService'
 import MsgRouter from '@/msg/router'
-import {isPC,isQYWX,} from '@/plugins/platform/index'
+import {isPC,isQYWX,isDD} from '@/plugins/platform/index'
 
 import { getFieldSetting, getAllDict, getAllFieldSettingListLevel}  from "service/fieldModelService"
 
@@ -137,17 +137,15 @@ async function initDicts() {
 
 async function load(to){
   let {query,fullPath} = to;
-  console.log('1',to);
+
   if(query.tag&&query.tag=='share'){
     storage.setItem('shareUrl',window.location.href);
     if(!storage.getItem('r2FieldSetting')){
       await initFieldSetting();
     } 
   }
-  console.log('getToken',tokenService.getToken());
-  console.log('name',to.name);
+
   if(tokenService.getToken() != '' && to.name !== 'Login'){
-    console.log('2',to);
     if(!storage.getItem('r2_cachedListLevelFieldSetting')){
       await initListLevelFieldSetting();   
     }
@@ -155,28 +153,17 @@ async function load(to){
       await initDicts();   
     }
     if(!Vue.prototype.$r2FieldSetting){
-      console.log('3',to);
       await initFieldSetting();
     }
   } else if(isQYWX&&!Vue.prototype.$r2FieldSetting) {
-    console.log('4',to);
+    await initListLevelFieldSetting();  
+    await initDicts();   
+    await initFieldSetting();
+  } else if(isDD&&!window.sessionStorage.getItem('r2FieldSetting')){
     await initListLevelFieldSetting();  
     await initDicts();   
     await initFieldSetting();
   }
 }
 
-function ensureUrl(url) {
-  if (/^\/H_roleplay-si/i.test(url)) {
-      return url;
-  } else if (/^\/R_roleplay-si/i.test(url)) {
-      return url.replace(/^\/R_roleplay-si/i, '/H_roleplay-si');
-  } else if (/^\/account-api/i.test(url)) {
-      return url;
-  } else if (/^\/corebiz-api/i.test(url)) {
-      return url;
-  } else {
-      return '/H_roleplay-si' + url;
-  }
-}
 export default window.router

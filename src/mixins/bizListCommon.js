@@ -504,7 +504,6 @@ export default {
       if (Array.isArray(codes)) {
         var r2FieldSetting = JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||me.$r2FieldSetting;
 
-        console.log('r2FieldSetting',r2FieldSetting);
         ret = codes.map(function (c) {
             return r2FieldSetting[c];
         });
