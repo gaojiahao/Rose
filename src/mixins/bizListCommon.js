@@ -489,12 +489,16 @@ export default {
             });
 
           });
-          this.getViewFields();
+          // this.getViewFields();
         }
       });
     },
-    cachedFieldSettings: function (codes) {
+    cachedFieldSettings: function () {
       var me = this,
+          trueFields = this.viewConfig.fields.filter(function(f){return !f.hidden;}),
+          codes = trueFields.map(function (f) {
+              return f.fieldCode;
+          }),
           ret;
 
       if (Array.isArray(codes)) {
@@ -510,13 +514,10 @@ export default {
           return r2FieldSetting[codes];
       }
     },
-    getViewFields:function(){
+    getViewFields:function(fieldCodes){
       var me = this,
-          trueFields = this.viewConfig.fields.filter(function(f){return !f.hidden;}),
-          fieldCodes = trueFields.map(function (f) {
-            return f.fieldCode;
-          }),
-          fieldSettings = this.cachedFieldSettings(fieldCodes),
+          trueFields = this.viewConfig.fields.filter(function(f){return !f.hidden;}), 
+          fieldSettings = fieldCodes,
           result =trueFields.map(function(f){
             var fieldSetting = fieldSettings.find(function(fs){
               return f.fieldCode === fs.fieldCode;
@@ -555,6 +556,8 @@ export default {
     async load(){
       await this.getAppDetail();
       await this.getListMobileView();
+      var fieldCodes = await this.cachedFieldSettings();
+      await this.getViewFields(fieldCodes);
       await this.getData();
       this.$loading.hide();
     }
