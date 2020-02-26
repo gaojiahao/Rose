@@ -68,6 +68,7 @@ export default {
       viewConfig: {},
       _cachedFieldSettings:[],
       filterFieldSettings:[],
+      fieldsObj:[],
     }
   },
   components: {
@@ -550,6 +551,12 @@ export default {
             return ret;
           });
       this.filterFieldSettings = result.sort(function(a, b){return a.sequence - b.sequence});
+    },
+    async load(){
+      await this.getAppDetail();
+      await this.getListMobileView();
+      await this.getData();
+      this.$loading.hide();
     }
   },
   filters: {
@@ -570,26 +577,27 @@ export default {
     this.applyCode = this.$route.query.listId;
     let { name, listId, transCode } = this.$route.query;
     this.listId = listId;
-    this.getAppDetail();
-    this.getListMobileView();
-    this.getData(false).then(() => {
-      /*
-      * 第一次进入页面成功之后 隐藏动画
-      * 如果是从推送打开 则不关闭动画
-      */
-      if (!transCode) {
-        this.$loading.hide();
-      }
-      // wx.ready(() => {
-      //   // 分享
-      //   let shareInfo = {
-      //     title: `点击查看${name}列表`,
-      //     desc: `点击查看${name}列表，可创建新的订单`,
-      //     imgUrl: ''
-      //   }
-      //   shareContent(shareInfo);
-      // })
-    });
+    // await this.getAppDetail();
+    // await this.getListMobileView();
+    // await this.getData(false).then(() => {
+    //   /*
+    //   * 第一次进入页面成功之后 隐藏动画
+    //   * 如果是从推送打开 则不关闭动画
+    //   */
+    //   if (!transCode) {
+    //     this.$loading.hide();
+    //   }
+    //   // wx.ready(() => {
+    //   //   // 分享
+    //   //   let shareInfo = {
+    //   //     title: `点击查看${name}列表`,
+    //   //     desc: `点击查看${name}列表，可创建新的订单`,
+    //   //     imgUrl: ''
+    //   //   }
+    //   //   shareContent(shareInfo);
+    //   // })
+    // });
+    this.load();
     var deafalutSort = {
       direction:'desc',
       property:'crtTime'
