@@ -143,6 +143,8 @@ async function load(to){
       await initFieldSetting();
     } 
   }
+  console.log('getToken',tokenService.getToken());
+  console.log('name',to.name);
   if(tokenService.getToken() != '' && to.name !== 'Login'){
     console.log('2',to);
     if(!storage.getItem('r2_cachedListLevelFieldSetting')){
