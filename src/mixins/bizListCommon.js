@@ -502,14 +502,16 @@ export default {
           ret;
 
       if (Array.isArray(codes)) {
-        var r2FieldSetting = JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||me.$r2FieldSetting,
-          ret = codes.map(function (c) {
-              return r2FieldSetting[c];
-          });
-          ret = ret.filter(function (it) {
-              return !!it;
-          });
-          return ret;
+        var r2FieldSetting = JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||me.$r2FieldSetting;
+
+        console.log('r2FieldSetting',r2FieldSetting);
+        ret = codes.map(function (c) {
+            return r2FieldSetting[c];
+        });
+        ret = ret.filter(function (it) {
+            return !!it;
+        });
+        return ret;
       } else {
           return r2FieldSetting[codes];
       }
