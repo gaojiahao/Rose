@@ -11,6 +11,7 @@ import Router from 'vue-router'
 import HomeRouter from '@/home/router'
 import tokenService from 'service/tokenService'
 import MsgRouter from '@/msg/router'
+import {isPC,isQYWX,} from '@/plugins/platform/index'
 
 import { getFieldSetting, getAllDict, getAllFieldSettingListLevel}  from "service/fieldModelService"
 
@@ -157,6 +158,11 @@ async function load(to){
       console.log('3',to);
       await initFieldSetting();
     }
+  } else if(isQYWX&&!Vue.prototype.$r2FieldSetting) {
+    console.log('4',to);
+    await initListLevelFieldSetting();  
+    await initDicts();   
+    await initFieldSetting();
   }
 }
 
