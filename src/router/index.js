@@ -32,6 +32,7 @@ if (router == null) {
 
   window.router.beforeEach((to, from, next) => {
     let {query,fullPath} = to;
+    console.log('to',to);
     if(query.tag&&query.tag=='share'){
       storage.setItem('shareUrl',window.location.href);
       if(!storage.getItem('r2FieldSetting')){
@@ -46,6 +47,7 @@ if (router == null) {
         initDicts();   
       }
       if(!Vue.prototype.$r2FieldSetting){
+        console.log('to',to);
         initFieldSetting();
       }
     }
