@@ -46,6 +46,7 @@ export default {
     if (to.query.id || to.query.groupId || to.query.colId || to.query.transCode){
       to.meta.title = `编辑${name}`;
     }
+    window.document.title = to.meta.title == undefined?'Roletask':to.meta.title;
     initWebContext().then(()=>{
         next();
     })
