@@ -116,8 +116,8 @@ export default {
     submitLog() {
       const currentUser = WebContext.WebContext.currentUser;
       let formdata;
-      if(this.taskLog.taskDate < this.formatDate(new Date()) && !this.taskLog.logStatus){
-        this.$vux.toast.text('日期小于今日，日志类型应该为已办！');
+      if(this.taskLog.taskDate < this.formatDate(new Date())){
+        this.$vux.toast.text('日期小于今日，请重新选择日期！');
       }else if(this.taskLog.taskDate > this.formatDate(new Date()) && this.taskLog.logStatus){
         this.$vux.toast.text('日期大于今日，日志类型应该为待办！');
       }else if(!this.logTitle){
