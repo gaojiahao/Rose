@@ -462,8 +462,8 @@ let cfg = {
               this.selItem(selection);  
               return ;
             } else {
-              this.reSet();    
-              this.displaysValue = '';    
+              // this.reSet();    
+              // this.displaysValue = '';    
             }
           } 
           if(this.cfg.defaultValue){
