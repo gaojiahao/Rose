@@ -173,6 +173,8 @@ var component = {
       detail: {},
       hasDs:false,
       notAddOneRow:false,
+      keyFiled:[],
+      summaryField:[],
     };
   },
   methods: {
