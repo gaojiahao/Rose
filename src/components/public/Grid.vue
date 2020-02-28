@@ -122,6 +122,7 @@ var component = {
     curObj:function() {
       
       if(!this.values || this.values.length < 1) return;
+      console.log('fieldSettingData',JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||this.$r2FieldSetting)
       let fieldSettingData = JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||this.$r2FieldSetting,
         obj,
         objKey,
@@ -143,6 +144,7 @@ var component = {
               }
           }
       });
+      console.log('2',this.keyFiled)
       return obj;
     },
     summaryValue:function(){
@@ -255,6 +257,7 @@ var component = {
     this.keyFiled = this.cfg.columns.filter(it=>{
       return !it.hidden;
     });
+    console.log('1',this.keyFiled)
 
     this.summaryField = this.cfg.columns.filter(it=>{
       return !it.hidden;
