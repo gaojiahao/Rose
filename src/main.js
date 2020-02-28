@@ -41,6 +41,7 @@ import Loading from 'plugins/loading/pageLoad/loading'
 import HandleLoad from 'plugins/loading/handleLoad/handleLoading'
 import platfrom from './plugins/platform/index'
 import commonService from "service/commonService";
+import * as dd from 'dingtalk-jsapi'
 
 require('@/directive')
 if(window.isApp){
@@ -69,7 +70,19 @@ Vue.clone = function(a){
    return JSON.parse(JSON.stringify(a));
 };
 router.afterEach((to, from) => {
-  document.title = to.meta.title || '';
+  if (dd.ios || dd.android){
+    dd.ready(function() {
+      dd.biz.navigation.setTitle({
+        title: to.meta.title || 'Roletask', 
+        onSuccess: function(result) {
+          // alert('succcess')
+        },
+        onFail: function(err) {}
+      })
+    })
+  } else {
+    document.title = to.meta.title || '';
+  }
 })
 
 new Vue({

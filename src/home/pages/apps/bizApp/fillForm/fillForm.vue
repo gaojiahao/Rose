@@ -18,6 +18,7 @@ import {
 import platfrom from '@/plugins/platform'
 import { setTimeout } from 'timers';
 import { fileURLToPath } from 'url';
+import * as dd from 'dingtalk-jsapi'
 export default {
   data(){
     return {
@@ -46,7 +47,19 @@ export default {
     if (to.query.id || to.query.groupId || to.query.colId || to.query.transCode){
       to.meta.title = `编辑${name}`;
     }
-    window.document.title = to.meta.title == undefined?'Roletask':to.meta.title;
+    if (dd.ios || dd.android){
+      dd.ready(function() {
+        dd.biz.navigation.setTitle({
+          title: to.meta.title || '', 
+          onSuccess: function(result) {
+            // alert('succcess')
+          },
+          onFail: function(err) {}
+        })
+      })
+    } else {
+      window.document.title = to.meta.title || 'Roletask';
+    }
     initWebContext().then(()=>{
         next();
     })
