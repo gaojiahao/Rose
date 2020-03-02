@@ -383,12 +383,12 @@ var component = {
             value,
             callback: () => {
               let { listId} = this.$route.params,
-                  { folder, fileName, transCode } = this.$route.query;
+                  { folder, fileName, transCode ,name} = this.$route.query;
               this.$router.replace({
                 path: `/fillform/${listId}/0`,
                 query: {
                   fileName,folder,
-                  name: this.name,
+                  name: name,
                   transCode: this.code,
                 },
               });
