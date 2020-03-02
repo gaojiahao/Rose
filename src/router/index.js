@@ -32,6 +32,7 @@ if (router == null) {
   })
 
   window.router.beforeEach((to, from, next) => {
+    console.log('aa',to);
     // let {query,fullPath} = to;
     // console.log('to',to);
     // if(query.tag&&query.tag=='share'){
@@ -100,6 +101,7 @@ async function initFieldSetting(){
     }
     Vue.prototype.$r2FieldSetting[field.fieldCode] = field;
     });
+    console.log('bb',Vue.prototype.$r2FieldSetting);
     if(!storage.getItem('r2FieldSetting')){
       storage.setItem('r2FieldSetting',  JSON.stringify(Vue.prototype.$r2FieldSetting));
     }

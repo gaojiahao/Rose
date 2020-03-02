@@ -120,9 +120,9 @@ var component = {
   props: ["cfg", "values", "btnIsHide"],
   computed:{
     curObj:function() {
-      
+      console.log('cc',JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||this.$r2FieldSetting)
       if(!this.values || this.values.length < 1) return;
-      let fieldSettingData = this.fieldSetting,
+      let fieldSettingData = JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||this.$r2FieldSetting,
         obj,
         objKey,
         fKey;
@@ -173,9 +173,6 @@ var component = {
       detail: {},
       hasDs:false,
       notAddOneRow:false,
-      keyFiled:[],
-      summaryField:[],
-      fieldSetting:[],
     };
   },
   methods: {
@@ -252,10 +249,6 @@ var component = {
       values = this.values,
       name = fieldSet.name,
       notAddOneRow = this.cfg.notAddOneRow;
-    
-    this.fieldSetting = JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||this.$r2FieldSetting;
-
-    this.load();
     
     this.keyFiled = this.cfg.columns.filter(it=>{
       return !it.hidden;
