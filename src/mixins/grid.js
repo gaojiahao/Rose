@@ -1,6 +1,7 @@
 import util from '@/common/util';
 import Record from '@/common/record';
 import { accMul, accDiv } from "plugins/calc/decimalsAdd";
+import { getFieldSetting, getAllDict, getAllFieldSettingListLevel}  from "service/fieldModelService"
 import {
     getValuesByExp,
     convertDataType
@@ -12,6 +13,8 @@ export default {
             isEdit: false,
             selection: [],
             accsubmitValue:false,
+            ListLevelFieldSetting:[],
+            Dicts:[],
         };
     },
     watch:{
@@ -904,8 +907,8 @@ export default {
         initFieldSetting(){
             getFieldSetting().then( res=>{
               var me = this,
-                  r2_cachedListLevelFieldSetting = storage.getItem('r2_cachedListLevelFieldSetting'),
-                  r2_cachedDicts = storage.getItem('r2_cachedDicts');
+                  r2_cachedListLevelFieldSetting =  this.ListLevelFieldSetting,
+                  r2_cachedDicts =  this.Dicts;
            
               r2_cachedListLevelFieldSetting = r2_cachedListLevelFieldSetting != null ? JSON.parse(r2_cachedListLevelFieldSetting) : null;
               r2_cachedDicts = r2_cachedDicts != null ? JSON.parse(r2_cachedDicts) : null;
@@ -932,8 +935,40 @@ export default {
               }
               r2FieldSetting[field.fieldCode] = field;
               });
-              return r2FieldSetting;
+              console.log(r2FieldSetting)
+              this.fieldSetting = r2FieldSetting;
             }).catch(e =>{console.log(e)});
+        },
+        initListLevelFieldSetting() {
+            getAllFieldSettingListLevel().then(res=>{
+              var me = this,
+                  _cachedListLevelFieldSetting = {};
+          
+              res.tableContent.map(it=>{
+                _cachedListLevelFieldSetting[it.fieldCode] = _cachedListLevelFieldSetting[it.fieldCode] ? 
+                  Array.isArray(_cachedListLevelFieldSetting[it.fieldCode]) ? _cachedListLevelFieldSetting[it.fieldCode].concat(it) : [it, _cachedListLevelFieldSetting[it.fieldCode]] 
+                  : it;
+              });
+              for(var val in _cachedListLevelFieldSetting){
+                _cachedListLevelFieldSetting[val].sort(function(a, b){return a.sort - b.sort});
+              }
+              this.ListLevelFieldSetting = JSON.stringify(_cachedListLevelFieldSetting);
+            }).catch(e =>{e});
+          }, 
+        initDicts() {
+            getAllDict().then(res=>{
+              var me = this,
+              _cachedDicts = {};
+              res.tableContent.map(it=>{
+                _cachedDicts[it.value] = it;
+              });
+              this.Dicts = JSON.stringify(_cachedDicts);
+            }).catch(e =>{e});
+        },
+        async load(){
+            await this.initListLevelFieldSetting();
+            await this.initDicts();
+            await this.initFieldSetting();
         }
     }
 }

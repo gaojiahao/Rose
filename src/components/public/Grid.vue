@@ -253,7 +253,11 @@ var component = {
       name = fieldSet.name,
       notAddOneRow = this.cfg.notAddOneRow;
     
-    this.fieldSetting = JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||this.$r2FieldSetting|| this.initFieldSetting;
+    this.fieldSetting = JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||this.$r2FieldSetting;
+
+    if(this.fieldSetting.length<1){
+      this.load();
+    }
     
     this.keyFiled = this.cfg.columns.filter(it=>{
       return !it.hidden;
