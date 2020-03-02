@@ -901,5 +901,39 @@ export default {
         getExtraFieldValue:function(valueField){
             return this.getValue();
         },
+        initFieldSetting(){
+            getFieldSetting().then( res=>{
+              var me = this,
+                  r2_cachedListLevelFieldSetting = storage.getItem('r2_cachedListLevelFieldSetting'),
+                  r2_cachedDicts = storage.getItem('r2_cachedDicts');
+           
+              r2_cachedListLevelFieldSetting = r2_cachedListLevelFieldSetting != null ? JSON.parse(r2_cachedListLevelFieldSetting) : null;
+              r2_cachedDicts = r2_cachedDicts != null ? JSON.parse(r2_cachedDicts) : null;
+              if(r2_cachedListLevelFieldSetting == null || r2_cachedDicts == null ) return;
+          
+              var r2FieldSetting = {};
+              res.tableContent.map(field=>{
+                field.config = JSON.parse(field.config);
+                if (field.fieldType === 'dictionary' || field.fieldType === 'options') {
+                  if (r2_cachedListLevelFieldSetting[field.fieldCode]) {
+                    field.optionItems = r2_cachedListLevelFieldSetting[field.fieldCode].map(function (fs) {
+                      return {
+                        id: fs.fieldValue,
+                        name: fs.fieldValue,
+                        listId: fs.listId,
+                        sort: fs.sort
+                      };
+                    });
+                  } else if (field.fieldType === 'options') {
+                    field.optionItems = Array.isArray(field.config.optionState) ? [] : (field.config.optionState ? JSON.parse(field.config.optionState):'');
+                  } else if (field.config.dictCode) {
+
+                  }
+              }
+              r2FieldSetting[field.fieldCode] = field;
+              });
+              return r2FieldSetting;
+            }).catch(e =>{console.log(e)});
+        }
     }
 }
