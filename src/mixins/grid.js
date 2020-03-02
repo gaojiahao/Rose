@@ -935,8 +935,9 @@ export default {
               }
               r2FieldSetting[field.fieldCode] = field;
               });
-              console.log(r2FieldSetting)
-              this.fieldSetting = r2FieldSetting;
+                if(!window.sessionStorage.getItem('r2FieldSetting')){
+                    window.sessionStorage.setItem('r2FieldSetting',  JSON.stringify(r2FieldSetting));
+                }
             }).catch(e =>{console.log(e)});
         },
         initListLevelFieldSetting() {
@@ -966,7 +967,7 @@ export default {
             }).catch(e =>{e});
         },
         async load(){
-            if(!(this.fieldSetting&&this.fieldSetting.length>0)){
+            if(!(window.sessionStorage.getItem('r2FieldSetting')||this.$r2FieldSetting)){
                 await this.initListLevelFieldSetting();
                 await this.initDicts();
                 await this.initFieldSetting();

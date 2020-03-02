@@ -120,7 +120,6 @@ var component = {
   props: ["cfg", "values", "btnIsHide"],
   computed:{
     curObj:function() {
-      console.log('cc',JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||this.$r2FieldSetting)
       if(!this.values || this.values.length < 1) return;
       let fieldSettingData = JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||this.$r2FieldSetting,
         obj,
@@ -250,6 +249,7 @@ var component = {
       name = fieldSet.name,
       notAddOneRow = this.cfg.notAddOneRow;
     
+    this.load();
     this.keyFiled = this.cfg.columns.filter(it=>{
       return !it.hidden;
     });
