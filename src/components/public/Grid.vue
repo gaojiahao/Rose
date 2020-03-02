@@ -122,7 +122,7 @@ var component = {
     curObj:function() {
       
       if(!this.values || this.values.length < 1) return;
-      let fieldSettingData = this.$r2FieldSetting,
+      let fieldSettingData = this.fieldSetting,
         obj,
         objKey,
         fKey;
@@ -173,6 +173,9 @@ var component = {
       detail: {},
       hasDs:false,
       notAddOneRow:false,
+      keyFiled:[],
+      summaryField:[],
+      fieldSetting:[],
     };
   },
   methods: {
@@ -249,6 +252,8 @@ var component = {
       values = this.values,
       name = fieldSet.name,
       notAddOneRow = this.cfg.notAddOneRow;
+    
+    this.fieldSetting = JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||this.$r2FieldSetting|| this.initFieldSetting;
     
     this.keyFiled = this.cfg.columns.filter(it=>{
       return !it.hidden;
