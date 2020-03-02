@@ -966,9 +966,11 @@ export default {
             }).catch(e =>{e});
         },
         async load(){
-            await this.initListLevelFieldSetting();
-            await this.initDicts();
-            await this.initFieldSetting();
+            if(!(this.fieldSetting&&this.fieldSetting.length>0)){
+                await this.initListLevelFieldSetting();
+                await this.initDicts();
+                await this.initFieldSetting();
+            }
         }
     }
 }
