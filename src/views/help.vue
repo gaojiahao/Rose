@@ -368,7 +368,7 @@
             transObjCode: "个性化产品A", //项目类产品名称
             containerCode: "S1", //类型
             qty: "",
-            amount: Number(this.SpecificClassA), //总金额
+            amount: Number(this.SpecificClassASet), //总金额
             fgCode: "",
             num1: 0.3,
           },{
@@ -376,7 +376,7 @@
             transObjCode: "个性化产品B", //项目类产品名称
             containerCode: "S2", //类型
             qty: "",
-            amount: Number(this.SpecificClassB), //总金额
+            amount: Number(this.SpecificClassBSet), //总金额
             fgCode: "",
             num1: 0.15,
           },{
