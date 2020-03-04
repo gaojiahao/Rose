@@ -16,14 +16,13 @@ let  cfg = {
     props:['cfg','values'],
     data() {
         return {
-            number:numberComma(this.getValue()||'')|| '',
+            number:this.getValue(),
             toFixNum: 2,
         }
     },
     watch: {
         values: {
             handler(val) {
-                console.log(val[this.cfg.fieldCode])
                 this.number = val[this.cfg.fieldCode] || this.number;
                 this.setValue(this.number);
             }

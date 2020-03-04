@@ -341,7 +341,7 @@ export default {
       return getFormViewByUniqueId(this.viewId).then(data => {
         let { appName, config, dataSource, listInfo, formKey } = data;
 
-        window.document.title = appName;
+        // window.document.title = appName;
         listInfo.uniqueId = this.listId;
         WebContext.listInfo = listInfo;
         

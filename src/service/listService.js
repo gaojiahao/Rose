@@ -8,9 +8,9 @@ export let getList = (id,data = {}) => {
   })
 };
 // 获取销售订单列表
-export let getSellOrderList = (listId, data = {}) => {
+export let getSellOrderList = (url,listId, data = {}) => {
   return $flyio.ajax({
-    url: `/H_roleplay-si/seconds/mergeDetailItemList/${listId}`,
+    url: url+listId,
     data
   })
 };

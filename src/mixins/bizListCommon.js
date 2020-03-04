@@ -68,6 +68,7 @@ export default {
       viewConfig: {},
       _cachedFieldSettings:[],
       filterFieldSettings:[],
+      fieldsObj:[],
     }
   },
   components: {
@@ -288,19 +289,25 @@ export default {
         }
         filter.push(obj);
       }
-      return getSellOrderList(this.listId, {
+      var requestObj = this.dealGetDetailUrl();
+
+      return getSellOrderList(requestObj.url, requestObj.listId, {
+        noCount:1,
+        _dc:Date.now(),
+        start:0,
         limit: this.limit,
         page: this.page,
         filter: JSON.stringify(filter),
         sort: JSON.stringify(this.sort),
-      }).then(({ total = 0, instanceList = [] }) => {
-        let [first = {}] = instanceList;
+      }).then(({ total = 0, instanceList = [],tableContent=[] }) => {
+        let list = instanceList.length&&instanceList||tableContent;
+        let [first = {}] = list;
         let [firstDetail = {}] = first.detailItem || [];
         let picKeys = ['inventoryPic', 'inventoryPic_transObjCode', 'inventoryPic_outPutMatCode', 'facilityPic_facilityObjCode'];
         // 图片的key
         let picKey = Object.keys(firstDetail).find(item => picKeys.includes(item));
-        this.hasNext = total > (this.page - 1) * this.limit + instanceList.length;
-        instanceList.forEach(item => {
+        this.hasNext = (total||tableContent.length) > (this.page - 1) * this.limit + list.length;
+        list.forEach(item => {
           this.setStatus(item);
           item.count = 0;
           item.totalQty = 0;
@@ -308,48 +315,51 @@ export default {
           item.dealerName = item.dealerName_dealerDebit || item.dealerName_dealerCodeCredit;
           item.crtTime = dateFormat(item.crtTime, 'YYYY-MM-DD HH:mm:ss');
           item.modTime = dateFormat(item.modTime, 'YYYY-MM-DD HH:mm:ss');
-          item.itemCount = item.detailItem.length;
+          item.detailItem = item.detailItem;
+          item.itemCount = item.detailItem&&item.detailItem.length;
           // 列表当中每个订单最多展现3个物料
           // item.detailItem = item.detailItem.slice(0, 3);
-          item.detailItem.forEach(mItem => {
-            // 计算totalQty
-            if (mItem.assistQty != null) {
-              item.totalQty = toFixed(accAdd(item.totalQty, mItem.assistQty));
-            }
-            else if (mItem.assistQty == null && mItem.tdQty != null) {
-              item.totalQty = toFixed(accAdd(item.totalQty, mItem.tdQty));
-            }
-            // 有的应用不涉及金额合计 则不用计算
-            if (mItem.tdAmount) {
-              item.count = toFixed(accAdd(item.count, mItem.tdAmount));
-            }
-            // 有物料的增加统一渲染字段
-            if (mItem.inventoryName_transObjCode || mItem.inventoryName_outPutMatCode) {
-              mItem.inventoryName = mItem.inventoryName_transObjCode || mItem.inventoryName_outPutMatCode;
-              mItem.inventoryCode = mItem.inventoryCode_transObjCode || mItem.inventoryCode_outPutMatCode;
-              mItem.specification = mItem.specification_transObjCode || mItem.specification_outPutMatCod;
-              mItem.measureUnit = mItem.measureUnit_transObjCode || mItem.measureUnit_outPutMatCode;
-              mItem.inventoryPic = mItem[picKey]
-                // 请求图片
-                ? `/H_roleplay-si/ds/download?url=${mItem[picKey]}&width=400&height=400`
-                // 默认图片
-                : this.getDefaultImg();
-            }
-            // 设备
-            if (mItem.facilityCode_facilityObjCode) {
-              mItem.inventoryName = mItem.facilityName_facilityObjCode;
-              mItem.inventoryCode = mItem.facilityCode_facilityObjCode;
-              mItem.specification = mItem.facilitySpecification_facilityObjCode;
-              mItem.measureUnit = mItem.facilityUnit_facilityObjCode;
-              mItem.inventoryPic = mItem[picKey]
-                // 请求图片
-                ? `/H_roleplay-si/ds/download?url=${mItem[picKey]}&width=400&height=400`
-                // 默认图片
-                : this.getDefaultImg();
-            }
-          })
+          if(item.detailItem){
+            item.detailItem.forEach(mItem => {
+              // 计算totalQty
+              if (mItem.assistQty != null) {
+                item.totalQty = toFixed(accAdd(item.totalQty, mItem.assistQty));
+              }
+              else if (mItem.assistQty == null && mItem.tdQty != null) {
+                item.totalQty = toFixed(accAdd(item.totalQty, mItem.tdQty));
+              }
+              // 有的应用不涉及金额合计 则不用计算
+              if (mItem.tdAmount) {
+                item.count = toFixed(accAdd(item.count, mItem.tdAmount));
+              }
+              // 有物料的增加统一渲染字段
+              if (mItem.inventoryName_transObjCode || mItem.inventoryName_outPutMatCode) {
+                mItem.inventoryName = mItem.inventoryName_transObjCode || mItem.inventoryName_outPutMatCode;
+                mItem.inventoryCode = mItem.inventoryCode_transObjCode || mItem.inventoryCode_outPutMatCode;
+                mItem.specification = mItem.specification_transObjCode || mItem.specification_outPutMatCod;
+                mItem.measureUnit = mItem.measureUnit_transObjCode || mItem.measureUnit_outPutMatCode;
+                mItem.inventoryPic = mItem[picKey]
+                  // 请求图片
+                  ? `/H_roleplay-si/ds/download?url=${mItem[picKey]}&width=400&height=400`
+                  // 默认图片
+                  : this.getDefaultImg();
+              }
+              // 设备
+              if (mItem.facilityCode_facilityObjCode) {
+                mItem.inventoryName = mItem.facilityName_facilityObjCode;
+                mItem.inventoryCode = mItem.facilityCode_facilityObjCode;
+                mItem.specification = mItem.facilitySpecification_facilityObjCode;
+                mItem.measureUnit = mItem.facilityUnit_facilityObjCode;
+                mItem.inventoryPic = mItem[picKey]
+                  // 请求图片
+                  ? `/H_roleplay-si/ds/download?url=${mItem[picKey]}&width=400&height=400`
+                  // 默认图片
+                  : this.getDefaultImg();
+              }
+            })
+          }
         });
-        this.listData = this.page === 1 ? instanceList : [...this.listData, ...instanceList];
+        this.listData = this.page === 1 ? list : [...this.listData, ...list];
         if (!noReset) {
           this.$nextTick(() => {
             this.resetScroll();
@@ -376,6 +386,22 @@ export default {
       }).catch(e => {
         this.resetScroll();
       })
+    },
+    dealGetDetailUrl(){
+      var listId = this.listId;
+      var obj = {};
+      if(listId=='2971ecd0-d560-459c-aeb8-c97fc80ed4e7'){
+        obj = {
+          url: '/H_roleplay-si/ds/getRepairOrderReportDetail',
+          listId : ''
+        }
+      } else {
+        obj = {
+          url: '/H_roleplay-si/seconds/mergeDetailItemList/',
+          listId : listId
+        }
+      }
+      return obj;
     },
     async getData(noReset) {
       await this.getSession();
@@ -463,35 +489,36 @@ export default {
             });
 
           });
-          this.getViewFields();
+          // this.getViewFields();
         }
       });
     },
-    cachedFieldSettings: function (codes) {
+    cachedFieldSettings: function () {
       var me = this,
+          trueFields = this.viewConfig.fields.filter(function(f){return !f.hidden;}),
+          codes = trueFields.map(function (f) {
+              return f.fieldCode;
+          }),
           ret;
 
-      console.log('2',me.$r2FieldSetting);
       if (Array.isArray(codes)) {
-        var r2FieldSetting = me.$r2FieldSetting || JSON.parse(window.sessionStorage.getItem('r2FieldSetting')),
-          ret = codes.map(function (c) {
-              return r2FieldSetting[c];
-          });
-          ret = ret.filter(function (it) {
-              return !!it;
-          });
-          return ret;
+        var r2FieldSetting = JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||me.$r2FieldSetting;
+
+        ret = codes.map(function (c) {
+            return r2FieldSetting[c];
+        });
+        ret = ret.filter(function (it) {
+            return !!it;
+        });
+        return ret;
       } else {
           return r2FieldSetting[codes];
       }
     },
-    getViewFields:function(){
+    getViewFields:function(fieldCodes){
       var me = this,
-          trueFields = this.viewConfig.fields.filter(function(f){return !f.hidden;}),
-          fieldCodes = trueFields.map(function (f) {
-            return f.fieldCode;
-          }),
-          fieldSettings = this.cachedFieldSettings(fieldCodes),
+          trueFields = this.viewConfig.fields.filter(function(f){return !f.hidden;}), 
+          fieldSettings = fieldCodes,
           result =trueFields.map(function(f){
             var fieldSetting = fieldSettings.find(function(fs){
               return f.fieldCode === fs.fieldCode;
@@ -499,7 +526,7 @@ export default {
             var ret = {
                 name: f.alias||f.fieldName,
                 code: f.parentCode ? f.fieldCode+'_'+f.parentCode : f.fieldCode,
-                type: fieldSetting.fieldType,
+                type: (fieldSetting&&fieldSetting.fieldType)||'',
                 text: f.text,
                 sequence: f.sequence,
             };
@@ -526,6 +553,14 @@ export default {
             return ret;
           });
       this.filterFieldSettings = result.sort(function(a, b){return a.sequence - b.sequence});
+    },
+    async load(){
+      await this.getAppDetail();
+      await this.getListMobileView();
+      var fieldCodes = await this.cachedFieldSettings();
+      await this.getViewFields(fieldCodes);
+      await this.getData();
+      this.$loading.hide();
     }
   },
   filters: {
@@ -546,26 +581,27 @@ export default {
     this.applyCode = this.$route.query.listId;
     let { name, listId, transCode } = this.$route.query;
     this.listId = listId;
-    this.getAppDetail();
-    this.getListMobileView();
-    this.getData(false).then(() => {
-      /*
-      * 第一次进入页面成功之后 隐藏动画
-      * 如果是从推送打开 则不关闭动画
-      */
-      if (!transCode) {
-        this.$loading.hide();
-      }
-      // wx.ready(() => {
-      //   // 分享
-      //   let shareInfo = {
-      //     title: `点击查看${name}列表`,
-      //     desc: `点击查看${name}列表，可创建新的订单`,
-      //     imgUrl: ''
-      //   }
-      //   shareContent(shareInfo);
-      // })
-    });
+    // await this.getAppDetail();
+    // await this.getListMobileView();
+    // await this.getData(false).then(() => {
+    //   /*
+    //   * 第一次进入页面成功之后 隐藏动画
+    //   * 如果是从推送打开 则不关闭动画
+    //   */
+    //   if (!transCode) {
+    //     this.$loading.hide();
+    //   }
+    //   // wx.ready(() => {
+    //   //   // 分享
+    //   //   let shareInfo = {
+    //   //     title: `点击查看${name}列表`,
+    //   //     desc: `点击查看${name}列表，可创建新的订单`,
+    //   //     imgUrl: ''
+    //   //   }
+    //   //   shareContent(shareInfo);
+    //   // })
+    // });
+    this.load();
     var deafalutSort = {
       direction:'desc',
       property:'crtTime'

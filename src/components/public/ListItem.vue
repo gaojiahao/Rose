@@ -58,7 +58,7 @@
       </div>
     </div>
 
-    <div class="summary-info  vux-1px-t"  v-if="item.detailItem.length>1">
+    <div class="summary-info  vux-1px-t"  v-if="item.detailItem&&item.detailItem.length>1">
       <div class="summary-info-count" >
         <p>共{{item.detailItem.length}}条明细</p>
         <p v-if="item.detailItem.length>3">查看更多...</p>
@@ -97,7 +97,7 @@ export default Vue.component("ListItem", {
   props: ["fieldsObj", "item"],
   computed:{
     curObj:function() {
-      if(this.item.detailItem.length < 1) return;
+      if(this.item.detailItem.length < 1) return [];
 
       let fieldSettingData = this.$r2FieldSetting,
           obj,
@@ -146,7 +146,7 @@ export default Vue.component("ListItem", {
       })
     },
     singleField:function(){
-      let fieldSettingData = this.$r2FieldSetting,
+      let fieldSettingData = JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||this.$r2FieldSetting,
           val = [],
           fKey;
       for(var key in this.item){
@@ -155,7 +155,7 @@ export default Vue.component("ListItem", {
         }
       }
       return this.mainField.filter(it=>{
-        fKey = it.fieldCode.split('_')[0];
+        fKey = it.fieldCode&&it.fieldCode.indexOf('_') > -1 ? it.fieldCode.split('_')[0] : it.fieldCode;
         if(fieldSettingData[fKey]){
               if(fieldSettingData[fKey]['kField']===1){
                   it.kField = 1;
