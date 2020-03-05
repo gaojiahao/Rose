@@ -257,3 +257,15 @@
   background: url('~assets/iconfont/return.png');
   background-size: cover;
 }
+.icon-g-add{
+  background: url('~assets/iconfont/g-add.png');
+  background-size: cover;
+}
+.icon-g-up{
+  background: url('~assets/iconfont/g-up.png');
+  background-size: cover;
+}
+.icon-g-down{
+  background: url('~assets/iconfont/g-down.png');
+  background-size: cover;
+}
