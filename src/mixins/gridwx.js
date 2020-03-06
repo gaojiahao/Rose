@@ -27,7 +27,7 @@ export default {
         }
     },
     methods: {
-        addRecord: function(){
+        addRecord: function(vindex){
             var me = this,
                 rows,
                 index;
@@ -38,8 +38,18 @@ export default {
                 me.addRecords([{}]);
                 rows = me.getValue();
                 index = rows.length - 1;
-                me.onShowDetail(rows[index],index);
+                me.onShowDetail(rows[index],index,vindex);
             }
+        },
+        addGroup: function(){
+            var me = this;
+            for(let key in me.valueGroups){
+                if(!(me.valueGroups[key]['facilityName_facilityObjCode'])){
+                    this.$vux.toast.text('已存在可编辑空白行，请先编辑内容在新增', 'middle')
+                    return ;
+                }
+            }
+            this.valueGroups.push({});
         },
         addRecords: function (selection) {
             var value = this.getValue() || [],
