@@ -49,7 +49,19 @@
             <r-grid
               :cfg="item"
               :values="values[cfg.name]"
-              v-if="item.xtype.indexOf('Grid') != -1"
+              v-if="['r2AccountGrid'].indexOf(item.xtype)!=-1"
+              :key="index"
+            />
+            <r-grid
+              :cfg="item"
+              :values="values[cfg.name]"
+              v-if="['r2Grid'].indexOf(item.xtype)!=-1"
+              :key="index"
+            />
+            <GridWX
+              :cfg="item"
+              :values="values[cfg.name]"
+              v-if="['r2GridWX'].indexOf(item.xtype)!=-1"
               :key="index"
             />
         </template>
