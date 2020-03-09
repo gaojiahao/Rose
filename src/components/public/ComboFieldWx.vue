@@ -1,7 +1,7 @@
 <template>
 <div v-show="!hidden" class="cell each_property vux-1px-b combo" >
   <label :class="{'required':!cfg.allowBlank,'readonly':cfg.readOnly}">{{cfg.fieldLabel}}</label>
-  <div v-if="cfg.readOnly == false" class="content" @click="clickShowPop">
+  <div v-if="cfg.readOnly == false && (!selection)" class="content" @click="clickShowPop">
     <span class='mater_nature' :class="{placeholder:!values[cfg.fieldCode]}">{{displaysValue || displaysEmptyDatasourceValue || "请选择"}}</span>
     <span v-if="cfg.dataSource" class="icon-right"></span>
   </div>
@@ -429,6 +429,7 @@ let cfg = {
       this.load();
     },
     selItem(item,status){
+      console.log('item',item)
       this.selection = item;
       this.showPop = false;
       this.value = item && item[this.cfg.valueField];
@@ -441,7 +442,7 @@ let cfg = {
         }
       }
       this.displayRealValue();
-      // this.$emit('getSelect',item);
+      this.$emit('getSelect',item);
     },
     
     showSelIcon(item){
@@ -506,6 +507,36 @@ let cfg = {
     this.initCombo();
     this.buildStore();
     this.values[this.cfg.fieldCode] && this.displayRealValue();
+    var selection =this.$parent.$parent.$parent.$parent.$parent.valueGroups[this.$parent.$parent.$parent.$parent.$parent.group];
+    if(selection['componentName_tdComponentCode']){
+      var selection2 = {
+        //...selection,
+        //componentName:selection.componentName_tdComponentCode,
+        facilityCode: selection.facilityObjCode,
+        //facilityResidualRatio: selection.componentName_tdComponentCode,
+        departMentId: selection.departmentId,
+        dealerName: selection.dealerName_dealerDebit,
+        componentCode: selection.tdComponentCode,
+        facilityType: selection.facilityTypebase_facilityObjCode,
+        facilitySubclass: selection.facilitySubclass_facilityObjCode,
+        //facilitySpecification: selection.componentName_tdComponentCode,
+        //facilityDepreciation: selection.componentName_tdComponentCode,
+        dealerCode: selection.dealerDebit,
+        cardCode: selection.cardCode,
+        //facilityStatus: selection.componentName_tdComponentCode,
+        departMent: selection.departmentName,
+        facilityBigType: selection.facilityBigType_facilityObjCode,
+        whCode: selection.facilityStorageAddress,
+        //facilityManufacturer: selection.componentName_tdComponentCode,
+        dateActivation: selection.dateActivation,
+        facilityName: selection.facilityName_facilityObjCode,
+        componentName: selection.componentName_tdComponentCode,
+        //colId: selection.componentName_tdComponentCode,
+        //tdAmount: selection.componentName_tdComponentCode,
+        facilityUnit: selection.facilityUnit_facilityObjCode,
+      };
+      this.selItem(selection2);  
+    }
   }
 }
 export default Vue.component('R2CombofieldWx',cfg);

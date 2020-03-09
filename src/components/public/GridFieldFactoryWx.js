@@ -39,12 +39,11 @@ let cmp = Vue.component('GridFieldFactoryWx', {
                 cfg: newCfg,
                 values: this.values
             },
-            // on:{
-            //     getSelect:function(val) {
-            //         self.seletion = val;
-            //         self.$emit('getSelects',val);
-            //     }
-            // }
+            on:{
+                getSelect:function(val) {
+                    self.seletion = val;
+                }
+            }
         });
     },
     methods: {

@@ -113,8 +113,47 @@ export default {
                     })
                     this.setValue(newValues);
                     this.isEdit = false;
+                    this.deleteGroup(newValues);
                 }
             });
+        },
+        deleteGroup(newValues){
+            if(newValues.length){
+                for(var i=0;i<this.valueGroups.length;i++){
+                    var temp = 0;
+                    for(var j=0;j<newValues.length;j++){
+                        if(this.valueGroups[i]['facilityObjCode']==newValues[j]['facilityObjCode']
+                        &&this.valueGroups[i]['tdComponentCode']==newValues[j]['tdComponentCode']
+                        &&this.valueGroups[i]['cardCode']==newValues[j]['cardCode']){
+                            temp = temp+1;
+                        }
+                    }
+                    if(!temp){
+                        this.valueGroups.splice(i,i);
+                    }
+                }
+            } else {
+                this.valueGroups = [];    
+            }
+        },
+        dealGroup(newValues){
+            this.valueGroups = [];   
+            if(newValues.length&&newValues[0]['componentName_tdComponentCode']){
+                if(!this.valueGroups.length){
+                    this.valueGroups.push(newValues[0]);
+                }
+                for(var i=0;i<newValues.length;i++){
+                    for(var j=0;j< this.valueGroups.length;j++){
+                        if((this.valueGroups[j]['facilityObjCode']!=newValues[i]['facilityObjCode'])
+                        &&(this.valueGroups[j]['componentCode_tdComponentCode']!=newValues[i]['componentCode_tdComponentCode'])
+                        &&(this.valueGroups[j]['cardCode']!=newValues[i]['cardCode'])){
+                            if(newValues[i]['componentCode_tdComponentCode']){
+                                this.valueGroups.push(newValues[i]);
+                            }
+                        }
+                    }
+                }
+            }
         },
         doDetailEdit(data) {
             var value = util.clone(data);

@@ -23,7 +23,7 @@
         </div>
       </div>
     </template>
-    <div class="detail" v-for="(vitem,vindex) in valueGroups" :key="vindex">
+    <div class="detail" v-for="(vitem,vindex) in valueGroups" :key="vindex" v-if="values">
       <div class="title-left">资产:
         <span>{{vitem.facilityStorageAddress}}</span>-{{vitem.facilityName_facilityObjCode}}
         <span>(</span>
@@ -187,6 +187,14 @@ var component = {
       firstSelect:{},
       group: 0,
     };
+  },
+  watch:{
+    values:{
+      handler(val){
+        if(this.form.model!='new')
+        this.dealGroup(val);
+      }
+    }
   },
   methods: {
     //选择默认图片
