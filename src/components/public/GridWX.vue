@@ -23,64 +23,75 @@
         </div>
       </div>
     </template>
-
-    <div class="r-row-ct">
-      <div
-        class="r-row"
-        v-for="(row,rIndex) in values"
-        :key="rIndex"
-        :class="{row_delete : isEdit,'vux-1px-b' : rIndex < values.length - 1 }">
-        
-        <div class="edit-btn-wrapper">
-         <span class="icon-matter-bianji" @click.stop="onShowDetail(row,rIndex)" v-show="!isEdit && !cfg.readOnly"></span>
-        </div>
-
-        <div class="trans-item">
-          <div class="trans-item-img">
-            <img  :src="getImgPic(row)" >
-          </div>
-         
-          <div class="trans-item-info">
-            <template v-for="(item, index) in keyFiled" class="cell when-is-right">
-              <div class="" v-if="item.kField" :key="'keyFiled' + index" >
-                <span>{{item.text}}:</span>
-                <span   v-if="item.editorType=='r2Percentfield'">{{formatByType(row[item.fieldCode],item.editorType)}}%</span>
-                <span v-else  >{{formatByType(row[item.fieldCode],item.editorType)}}</span>
-              </div>
-            </template>
-
-          </div>
-        </div>
-
-        <div @click.stop="onShowDetail(row,rIndex)" class="show-more" v-show="!isEdit && cfg.readOnly">
-          其他
-          <i class="icon-more"></i>
-        </div>
-
-        <div class="delete_icon" @click="delClick(rIndex)" v-if="isEdit">
-          <x-icon type="ios-checkmark" size="20" class="checked" v-show="isChecked(rIndex)"></x-icon>
-          <x-icon type="ios-circle-outline" size="20" v-show="!isChecked(rIndex)"></x-icon>
-        </div>
-        
+    <div class="detail" v-for="(vitem,vindex) in valueGroups" :key="vindex" v-if="values">
+      <div class="title-left">资产:
+        <span>{{vitem.facilityStorageAddress}}</span>-{{vitem.facilityName_facilityObjCode}}
+        <span>(</span>
+        <span>{{vitem.facilityObjCode}}</span>
+        <span>)</span>-{{vitem.componentName_tdComponentCode}}
+        <span>(</span>
+        <span>{{vitem.tdComponentCode}}</span>
+        <span>)</span>-
+        <span>{{vitem.cardCode}}</span>
       </div>
-      <div class="summary-info" v-if="(values && values.length > 1)">
-        <div class="summarry-info-count">共{{this.values.length}}条明细</div>
-         <div>
-            <template v-for="(item, index) in summaryField" >
-              <div class="summary-item" v-if="item.hidden == false" :key="index">
-                <span class="summary-item-label">{{item.text}}：</span>
-                <span class="summary-item-value">{{formatByType(summaryValue[item.fieldCode],item.editorType)}}</span>
-              </div>
-            </template>
-         </div>
+      <div class="title-right">
+        <span class="icon-g-add" @click="addRecord(vindex)"></span>
+        <span class="icon-g-up"></span>
+      </div>
+      <div class="r-row-ct">
+        <div
+          class="r-row"
+          v-for="(row,rIndex) in values"
+          :key="rIndex"
+          :class="{row_delete : isEdit,'vux-1px-b' : rIndex < values.length - 1 }" v-if="(row.facilityObjCode==vitem.facilityObjCode)&&(row.tdComponentCode==vitem.tdComponentCode)&&(row.cardCode==vitem.cardCode)">
+          <div class="trans-item">
+            <div class="trans-item-img">
+              <img  :src="getImgPic(row)" >
+            </div>
+          
+            <div class="trans-item-info">
+              <template v-for="(item, index) in keyFiled" class="cell when-is-right">
+                <div class="" v-if="item.kField" :key="'keyFiled' + index" >
+                  <span>{{item.text}}:</span>
+                  <span   v-if="item.editorType=='r2Percentfield'">{{formatByType(row[item.fieldCode],item.editorType)}}%</span>
+                  <span v-else  >{{formatByType(row[item.fieldCode],item.editorType)}}</span>
+                </div>
+              </template>
+            </div>
+            <div class="edit-btn-wrapper">
+              <span class="icon-matter-bianji" @click.stop="onShowDetail(row,rIndex,vindex)" v-show="!isEdit && !cfg.readOnly"></span>
+            </div>
+          </div>
+
+          <div @click.stop="onShowDetail(row,rIndex)" class="show-more" v-show="!isEdit && cfg.readOnly">
+            其他
+            <i class="icon-more"></i>
+          </div>
+
+          <div class="delete_icon" @click="delClick(rIndex)" v-if="isEdit">
+            <x-icon type="ios-checkmark" size="20" class="checked" v-show="isChecked(rIndex)"></x-icon>
+            <x-icon type="ios-circle-outline" size="20" v-show="!isChecked(rIndex)"></x-icon>
+          </div>
+          
+        </div>
+        <!-- <div class="summary-info" v-if="(values && values.length > 1)">
+          <div class="summarry-info-count">共{{this.values.length}}条明细</div>
+          <div>
+              <template v-for="(item, index) in summaryField" >
+                <div class="summary-item" v-if="item.hidden == false" :key="index">
+                  <span class="summary-item-label">{{item.text}}：</span>
+                  <span class="summary-item-value">{{formatByType(summaryValue[item.fieldCode],item.editorType)}}</span>
+                </div>
+              </template>
+          </div>
+        </div> -->
       </div>
     </div>
-    
     <div
       class="add-more-wrapper"
       v-if="!cfg.readOnly && (cfg.allowMutilRow ||cfg.allowAddorDel) && ((values &&values.length) ||!hasDs) && !isEdit"
     >
-      <div class="add-more" @click="addRecord">
+      <div class="add-more" @click="addGroup">
         <span class="icon-add"></span>
         <span class="add_text">新增</span>
       </div>
@@ -88,7 +99,7 @@
 
     <grid-picker v-if="!cfg.readOnly && hasDs" ref="gridPicker" @on-select="addRecords"/>
     <div class="grid-detail-wrapper" v-if="showDetail">
-      <grid-detail v-model="showDetail" @on-confirm="doDetailEdit" ref="gridDetail"/>
+      <grid-detail-wx v-model="showDetail" @on-confirm="doDetailEdit" ref="gridDetail" :cfg="cfg" @get-firstselect="getFirstselect"/>
     </div>
     <div
       class="count_mode grid-manger-wrapper vux-1px-t"
@@ -112,7 +123,7 @@
 import Vue from "vue";
 import dao from "plugins/ajax";
 import gridPicker from "./GridPicker";
-import girdMix from "mixins/grid";
+import girdMix from "mixins/gridwx";
 import objList from '../../common/const/obj-app';
 var component = {
   mixins: [girdMix],
@@ -172,7 +183,18 @@ var component = {
       detail: {},
       hasDs:false,
       notAddOneRow:false,
+      valueGroups:[],
+      firstSelect:{},
+      group: 0,
     };
+  },
+  watch:{
+    values:{
+      handler(val){
+        if(this.form.model!='new')
+        this.dealGroup(val);
+      }
+    }
   },
   methods: {
     //选择默认图片
@@ -234,11 +256,15 @@ var component = {
         }
       }
     },  
-    onShowDetail(row, rowIndex) {
+    onShowDetail(row, rowIndex,vindex) {
+      this.group = vindex;
       this.detail = row;
       this.detailRowNumer = rowIndex;
       this.showDetail = true;
-    }
+    },
+    getFirstselect(val){
+        this.valueGroups[this.group] = val;
+    },
   },
   created() {
     var cfg = this.cfg,
@@ -271,6 +297,7 @@ var component = {
     this.initDefaultValueCfg();
     this.initValueBindAndExpressionCfg();
     this.initEditorParamsCfg();
+    this.valueGroups.push({});
     if(this.cfg.notAddOneRow==false){
       var value = this.getValue() || [],
         record,
@@ -291,7 +318,7 @@ var component = {
     }
   }
 };
-export default Vue.component("RGrid", component);
+export default Vue.component("GridWX", component);
 </script>
 
 <style lang="scss">
@@ -350,6 +377,41 @@ export default Vue.component("RGrid", component);
       @include font_color();
     }
   }
+  .detail{
+    width: 100%;
+    position: relative;
+    margin-top: 0.05rem;
+    .title-left{
+      font-weight: 600;
+      font-size: 14px;
+      width: 70%;
+    }
+    .title-right{
+      width: 30%;
+      float: right;
+      .icon-g-add {
+        width: .16rem;
+        height: .16rem;
+        position: absolute;
+        right: .2rem;
+        top: .01rem;
+      }
+      .icon-g-up {
+        width: .16rem;
+        height: .16rem;
+        position: absolute;
+        right: 0;
+        top: .01rem;
+      }
+      .icon-g-down {
+        width: .16rem;
+        height: .16rem;
+        position: absolute;
+        right: 0;
+        top: .01rem;
+      }
+    }
+  }
   //明细数据容器
   .r-row-ct{
     .r-row {
@@ -359,6 +421,7 @@ export default Vue.component("RGrid", component);
 
       .trans-item{
         display: flex;
+        position: relative;
         .trans-item-img{
           img{
             width: 0.85rem;
@@ -377,6 +440,18 @@ export default Vue.component("RGrid", component);
             }
           }
         }
+        .edit-btn-wrapper{
+          position:absolute;
+          float:right;
+          right:0;
+          .icon-matter-bianji {
+            width: .28rem;
+            height: .28rem;
+            position: absolute;
+            right: 0;
+            top: .03rem;
+          }
+        }
       }
       span:nth-child(2n + 1) {
         color: #aaa;
@@ -391,16 +466,16 @@ export default Vue.component("RGrid", component);
       &.vux-1px-b:last-child:after {
         border: none;
       }
-      .edit-btn-wrapper{
-        position: relative;
-      }
-      .icon-matter-bianji {
-        width: .28rem;
-        height: .28rem;
-        position: absolute;
-        right: 0;
-        top: .03rem;
-      }
+      // .edit-btn-wrapper{
+      //   position: relative;
+      // }
+      // .icon-matter-bianji {
+      //   width: .28rem;
+      //   height: .28rem;
+      //   position: absolute;
+      //   right: 0;
+      //   top: .03rem;
+      // }
       .show-more {
         text-align: right;
         height: 0.25rem;
