@@ -110,7 +110,7 @@
 
     <grid-picker v-if="!cfg.readOnly && hasDs" ref="gridPicker" @on-select="addRecords"/>
     <div class="grid-detail-wrapper" v-if="showDetail">
-      <grid-detail-wx v-model="showDetail" @on-confirm="doDetailEdit" ref="gridDetail" :cfg="cfg" @get-firstselect="getFirstselect"/>
+      <grid-detail-wx v-model="showDetail" @on-confirm="doDetailEdit" ref="gridDetail" :cfg="cfg" @get-firstselect="getFirstselect" @deal-value-null="dealValueNull"/>
     </div>
     <div
       class="count_mode grid-manger-wrapper vux-1px-t"
@@ -203,7 +203,7 @@ var component = {
   watch:{
     values:{
       handler(val){
-        if(this.form.model!='new')
+        if(this.form.model!='new'&&(this.flag<3))
         this.dealGroup(val);
       }
     }
@@ -292,6 +292,17 @@ var component = {
     toggleStyleType(index) {
       this.$set(this.styleTypeStatus,index,this.styleTypeStatus[index] ? 0 : 1)
     },
+    dealValueNull(){
+      debugger
+      var rowIndex,
+          newValues = [];
+      this.values.forEach((row, rowIndex) => {
+        if (row['cardCode']) {
+            newValues.push(row);
+        }
+      })
+      this.setValue(newValues);
+    }
   },
   created() {
     var cfg = this.cfg,

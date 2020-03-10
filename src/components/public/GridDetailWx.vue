@@ -124,6 +124,7 @@ var component = {
       });
     },
     onHide() {
+      this.$emit("deal-value-null",1);
       setTimeout(() => {
         this.$emit("input", false);
       }, 500);
