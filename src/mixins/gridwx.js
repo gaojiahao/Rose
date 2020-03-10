@@ -15,6 +15,7 @@ export default {
             accsubmitValue:false,
             ListLevelFieldSetting:[],
             Dicts:[],
+            flag:0,
         };
     },
     watch:{
@@ -156,6 +157,7 @@ export default {
                     }
                 }
             }
+            this.flag=this.flag+1;
         },
         doDetailEdit(data) {
             var value = util.clone(data);
