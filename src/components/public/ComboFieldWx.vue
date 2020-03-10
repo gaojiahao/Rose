@@ -429,7 +429,6 @@ let cfg = {
       this.load();
     },
     selItem(item,status){
-      console.log('item',item)
       this.selection = item;
       this.showPop = false;
       this.value = item && item[this.cfg.valueField];

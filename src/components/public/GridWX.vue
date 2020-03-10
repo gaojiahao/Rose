@@ -35,7 +35,7 @@
         <span>{{vitem.cardCode}}</span>
       </div>
       <div class="title-right">
-        <span class="icon-g-add" @click="addRecord(vindex)"></span>
+        <span class="icon-g-add" @click="addRecord(vindex)" v-show="!isEdit && !cfg.readOnly"></span>
         <span class="icon-g-up"></span>
       </div>
       <div class="r-row-ct">
@@ -64,7 +64,7 @@
           </div>
 
           <div @click.stop="onShowDetail(row,rIndex)" class="show-more" v-show="!isEdit && cfg.readOnly">
-            其他
+            详情
             <i class="icon-more"></i>
           </div>
 
@@ -74,8 +74,8 @@
           </div>
           
         </div>
-        <!-- <div class="summary-info" v-if="(values && values.length > 1)">
-          <div class="summarry-info-count">共{{this.values.length}}条明细</div>
+        <!-- <div class="summary-info" v-if="(values && ((values['outPut']&&values['outPut'].length > 1) || (values.length > 1)))">
+          <div class="summarry-info-count">共{{(values['outPut']&&this.values['outPut'].length )|| values.length}}条明细</div>
           <div>
               <template v-for="(item, index) in summaryField" >
                 <div class="summary-item" v-if="item.hidden == false" :key="index">
@@ -85,6 +85,17 @@
               </template>
           </div>
         </div> -->
+      </div>
+    </div>
+    <div class="summary-info" v-if="(values && ((values['outPut']&&values['outPut'].length > 1) || (values.length > 1)))">
+      <div class="summarry-info-count">共{{(values['outPut']&&this.values['outPut'].length )|| values.length}}条明细</div>
+      <div>
+          <template v-for="(item, index) in summaryField" >
+            <div class="summary-item" v-if="item.hidden == false" :key="index">
+              <span class="summary-item-label">{{item.text}}：</span>
+              <span class="summary-item-value">{{formatByType(summaryValue[item.fieldCode],item.editorType)}}</span>
+            </div>
+          </template>
       </div>
     </div>
     <div
@@ -263,8 +274,20 @@ var component = {
       this.showDetail = true;
     },
     getFirstselect(val){
+      if(!this.judgeValueGroup(val)){
         this.valueGroups[this.group] = val;
+      }
     },
+    judgeValueGroup(newValues){
+      for(var i=0;i<this.valueGroups.length;i++){
+        if( (this.valueGroups[i]['facilityObjCode']==newValues['facilityObjCode'])
+          &&(this.valueGroups[i]['componentCode_tdComponentCode']==newValues['componentCode_tdComponentCode'])
+          &&(this.valueGroups[i]['cardCode']==newValues['cardCode']) ){
+            return true;
+        }
+      }
+      return false;
+    }
   },
   created() {
     var cfg = this.cfg,
@@ -410,6 +433,28 @@ export default Vue.component("GridWX", component);
         right: 0;
         top: .01rem;
       }
+    }
+  }
+  .summary-info{
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    border-top: 1px solid #ddd;
+    padding: 0.05rem 0rem;
+    color:#605a5a;
+    .summary-item{
+      display: flex;
+      justify-content: space-between;
+
+      .summary-item-label{
+
+      }
+
+      .summary-item-value{
+        color: #4CA3FB;
+      }
+
     }
   }
   //明细数据容器
