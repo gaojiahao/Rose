@@ -145,10 +145,12 @@ export default {
                 for(var i=0;i<newValues.length;i++){
                     for(var j=0;j< this.valueGroups.length;j++){
                         if((this.valueGroups[j]['facilityObjCode']!=newValues[i]['facilityObjCode'])
-                        &&(this.valueGroups[j]['componentCode_tdComponentCode']!=newValues[i]['componentCode_tdComponentCode'])
+                        &&(this.valueGroups[j]['tdComponentCode']!=newValues[i]['tdComponentCode'])
                         &&(this.valueGroups[j]['cardCode']!=newValues[i]['cardCode'])){
-                            if(newValues[i]['componentCode_tdComponentCode']){
-                                this.valueGroups.push(newValues[i]);
+                            if(newValues[i]['tdComponentCode']){
+                                if(!this.judgeValueGroup(newValues[i])){
+                                    this.valueGroups.push(newValues[i]);
+                                }
                             }
                         }
                     }
