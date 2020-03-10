@@ -36,9 +36,9 @@
       </div>
       <div class="title-right">
         <span class="icon-g-add" @click="addRecord(vindex)" v-show="!isEdit && !cfg.readOnly"></span>
-        <span class="icon-g-up"></span>
+        <span :class="styleTypeStatus[vindex]?'icon-g-up':'icon-g-down'" @click="toggleStyleType(vindex)"></span>
       </div>
-      <div class="r-row-ct">
+      <div class="r-row-ct" v-show="!styleTypeStatus[vindex]">
         <div
           class="r-row"
           v-for="(row,rIndex) in values"
@@ -197,6 +197,7 @@ var component = {
       valueGroups:[],
       firstSelect:{},
       group: 0,
+      styleTypeStatus:[0],
     };
   },
   watch:{
@@ -287,7 +288,10 @@ var component = {
         }
       }
       return false;
-    }
+    },
+    toggleStyleType(index) {
+      this.$set(this.styleTypeStatus,index,this.styleTypeStatus[index] ? 0 : 1)
+    },
   },
   created() {
     var cfg = this.cfg,
