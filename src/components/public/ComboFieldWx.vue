@@ -507,7 +507,7 @@ let cfg = {
     this.buildStore();
     this.values[this.cfg.fieldCode] && this.displayRealValue();
     var selection =this.$parent.$parent.$parent.$parent.$parent.valueGroups[this.$parent.$parent.$parent.$parent.$parent.group];
-    if(selection['componentName_tdComponentCode']){
+    if(selection&&selection['componentName_tdComponentCode']){
       var selection2 = {
         //...selection,
         //componentName:selection.componentName_tdComponentCode,
