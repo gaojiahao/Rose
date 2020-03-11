@@ -198,12 +198,13 @@ var component = {
       firstSelect:{},
       group: 0,
       styleTypeStatus:[0],
+      keyFiled:[],
     };
   },
   watch:{
     values:{
       handler(val){
-        if(this.form.model!='new'&&(this.flag<3))
+        //if(this.form.model!='new'&&(this.flag<3))
         this.dealGroup(val);
       }
     }
@@ -282,7 +283,8 @@ var component = {
     judgeValueGroup(newValues){
       for(var i=0;i<this.valueGroups.length;i++){
         if( (this.valueGroups[i]['facilityObjCode']==newValues['facilityObjCode'])
-          &&(this.valueGroups[i]['componentCode_tdComponentCode']==newValues['componentCode_tdComponentCode'])
+          &&((this.valueGroups[i]['componentCode_tdComponentCode']==newValues['componentCode_tdComponentCode'])||
+          (this.valueGroups[i]['tdComponentCode']==newValues['tdComponentCode']))
           &&(this.valueGroups[i]['cardCode']==newValues['cardCode']) ){
             return true;
         }
@@ -293,7 +295,6 @@ var component = {
       this.$set(this.styleTypeStatus,index,this.styleTypeStatus[index] ? 0 : 1)
     },
     dealValueNull(){
-      debugger
       var rowIndex,
           newValues = [];
       this.values.forEach((row, rowIndex) => {
@@ -315,7 +316,9 @@ var component = {
     
     this.load();
     this.keyFiled = this.cfg.columns.filter(it=>{
-      return !it.hidden;
+      if(!(it['fieldCode']=='price')){
+        return !it.hidden;
+      }
     });
 
     this.summaryField = this.cfg.columns.filter(it=>{
@@ -421,32 +424,32 @@ export default Vue.component("GridWX", component);
     margin-top: 0.05rem;
     .title-left{
       font-weight: 600;
-      font-size: 14px;
-      width: 70%;
+      font-size: .15rem;
+      width: 80%;
     }
     .title-right{
       width: 30%;
       float: right;
       .icon-g-add {
-        width: .16rem;
-        height: .16rem;
+        width: .22rem;
+        height: .22rem;
         position: absolute;
-        right: .2rem;
-        top: .01rem;
+        right: .27rem;
+        top: .04rem;
       }
       .icon-g-up {
-        width: .16rem;
-        height: .16rem;
+        width: .22rem;
+        height: .22rem;
         position: absolute;
         right: 0;
-        top: .01rem;
+        top: .04rem;
       }
       .icon-g-down {
-        width: .16rem;
-        height: .16rem;
+        width: .22rem;
+        height: .22rem;
         position: absolute;
         right: 0;
-        top: .01rem;
+        top: .04rem;
       }
     }
   }
