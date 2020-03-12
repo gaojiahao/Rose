@@ -198,7 +198,7 @@
     .search_filter {
       left: 0;
       bottom: 0;
-      top: .8rem;
+      top: .45rem;
       width: 100%;
       z-index: 100;
       font-size: .14rem;
