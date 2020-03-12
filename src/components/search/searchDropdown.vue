@@ -1,10 +1,18 @@
 <template>
   <div class="r-dropdown">
     <ul class="r-dropdown-list">
-       <li class="r-dropdown-item" :class="{'selected': selItem.value === item.value}" v-for="(item, index) in list"
-          @click.stop="dropItemClick(item)" :key="index">
+      <li class="r-dropdown-item" :class="{'selected': selItem.value === item.value}" v-for="(item, index) in list"
+          @click.stop="dropItemClick(item)" :key="index" v-show="index < 5">
         <span>{{item.name}}</span>
         <span class="icon-check icon-selected" v-show="selItem.value === item.value"></span>
+      </li>
+      <li class="r-dropdown-item" :class="{'selected': selItem.value === item.value}" v-for="(item, index) in list"
+          @click.stop="dropItemClick(item)" :key="`m${index}`" v-show="showMore && (index > 4)">
+        <span>{{item.name}}</span>
+        <span class="icon-check icon-selected" v-show="selItem.value === item.value"></span>
+      </li>
+      <li class="r-dropdown-item r-dropdown-more" v-show="list.length > 4">
+        <span class="text" @click="clickMore()">{{showMore ? '收起' : '更多'}}</span>
       </li>
     </ul>
   </div>
@@ -29,6 +37,7 @@
     data() {
       return {
         selItem: {},
+        showMore: 0,
       }
     },
     watch: {
@@ -46,6 +55,9 @@
         this.selItem = {...item};
         this.$emit('on-selected', this.selItem);
       },
+      clickMore(){
+        this.showMore = this.showMore ? 0:1;
+      }
     },
   }
 </script>
@@ -95,6 +107,15 @@
       // 选中状态
       &.selected {
         @include font_color();
+      }
+    }
+    .r-dropdown-more{
+      width: 100%;
+      .text{
+        width: 33.33333%;
+        text-align: center;
+        margin-left: 33.33333%;
+        font-size: .12rem;
       }
     }
   }

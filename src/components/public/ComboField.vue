@@ -9,7 +9,7 @@
   <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide" style="z-index: 502;">
         <div class="trade_pop">
-          <d-search @search="searchList" @turn-off="onHide" :isFill="true" :defaultValue="searchValue" :searchBoxShows="searchBoxShow"></d-search>
+          <d-search @search="searchList" @turn-off="onHide" :isFill="true" :defaultValue="searchValue" :searchBoxShows="searchBoxShow" :filterList="fields"></d-search>
           <!-- 往来列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" @search-box-show="searchBox" ref="bScroll">
@@ -67,6 +67,7 @@ let cfg = {
           pullDownRefresh: true,
         },
         searchBoxShow:true,
+        property:'',
       }
     },
     watch: {
@@ -198,6 +199,8 @@ let cfg = {
       if(me.cfg.xtype == 'r2Selector'){
           for(i =0,l= dataSourceCols.length;i<l;i++){
             col = dataSourceCols[i];
+            col['name'] = dataSourceCols[i].v;
+            col['value'] = dataSourceCols[i].k;
             if(hFieldKeys.indexOf(col.k) ==-1){
                 fields.push(col);
             }
@@ -312,6 +315,7 @@ let cfg = {
       var cfg = this.cfg,
           value = this.getValue();
 
+      this.property = this.cfg.displayField;
       this.blankText = '请选择'+cfg.fieldLabel;
       if(value != null){
           if(cfg.xtype != 'r2Combo')this.searchValue = ''+value;
@@ -339,7 +343,8 @@ let cfg = {
             {
             operator: 'like',
             value: this.searchValue,
-            property: this.cfg.displayField,
+            // property: this.cfg.displayField,
+            property: this.property,
             }
           ];
           data.filter = JSON.stringify(filter);
@@ -423,8 +428,9 @@ let cfg = {
       }
     },
 
-    searchList({val}){
+    searchList({val,property}){
       this.searchValue = val;
+      this.property = property;
       this.page = 1;
       this.load();
     },
