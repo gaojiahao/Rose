@@ -9,11 +9,14 @@
   <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide" style="z-index: 502;">
         <div class="trade_pop">
-          <d-search @search="searchList" @turn-off="onHide" :isFill="true" :defaultValue="searchValue" :searchBoxShows="searchBoxShow"></d-search>
+          <d-search @search="searchList" @turn-off="onHide" :isFill="true" :defaultValue="searchValue" :searchBoxShows="searchBoxShow" :filterList="fields"></d-search>
           <!-- 往来列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" @search-box-show="searchBox" ref="bScroll">
             <div class="pop-list-item" v-for="(item, index) in listData" :key='index' @click.stop="selItem(item,true)" :class="{selected: showSelIcon(item)}">
+              <div class="trans-item-img">
+                <img  :src="getImgPic(item)" >
+              </div>
               <div class="main">
                   <div class="name">
                      <span class="name">{{item[cfg.displayField]}}</span>
@@ -67,6 +70,7 @@ let cfg = {
           pullDownRefresh: true,
         },
         searchBoxShow:true,
+        property:'',
       }
     },
     watch: {
@@ -198,6 +202,8 @@ let cfg = {
       if(me.cfg.xtype == 'r2Selector'){
           for(i =0,l= dataSourceCols.length;i<l;i++){
             col = dataSourceCols[i];
+            col['name'] = dataSourceCols[i].v;
+            col['value'] = dataSourceCols[i].k;
             if(hFieldKeys.indexOf(col.k) ==-1){
                 fields.push(col);
             }
@@ -312,6 +318,7 @@ let cfg = {
       var cfg = this.cfg,
           value = this.getValue();
 
+      this.property = this.cfg.displayField;
       this.blankText = '请选择'+cfg.fieldLabel;
       if(value != null){
           if(cfg.xtype != 'r2Combo')this.searchValue = ''+value;
@@ -339,7 +346,8 @@ let cfg = {
             {
             operator: 'like',
             value: this.searchValue,
-            property: this.cfg.displayField,
+            // property: this.cfg.displayField,
+            property: this.property,
             }
           ];
           data.filter = JSON.stringify(filter);
@@ -423,8 +431,9 @@ let cfg = {
       }
     },
 
-    searchList({val}){
+    searchList({val,property}){
       this.searchValue = val;
+      this.property = property;
       this.page = 1;
       this.load();
     },
@@ -500,7 +509,19 @@ let cfg = {
       }).then(res => {
         return res;
       })
-    }
+    },
+    //选择默认图片
+    getImgPic(d) {
+      let url;
+      if(d){
+        let pic = this.curObj ? this.curObj.picKey : '',
+            defaultUrl = this.curObj ? this.curObj.defaultUrl : 'wl_default03.png';
+        url =  d[pic] ? d[pic] : '/static/' + defaultUrl;
+      }else{
+        url = require('assets/wl_default03.png');
+      }
+      return url;
+    },
   },
   created(){
     this.initCombo();
@@ -590,7 +611,14 @@ export default Vue.component('R2CombofieldWx',cfg);
          border: 1px solid; 
          @include boder_color();
          }
+         .trans-item-img{
+           width: 1rem;
+           img{
+             width: .85rem;
+           }
+         }
          .main {
+            width: 70%;
             .name {
                .name {
                   font-weight: bold;
