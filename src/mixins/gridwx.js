@@ -50,6 +50,7 @@ export default {
                     return ;
                 }
             }
+            this.addRecord();
             this.valueGroups.push({});
         },
         addRecords: function (selection) {
@@ -138,23 +139,27 @@ export default {
             }
         },
         dealGroup(newValues){
+            if(!this.flag) {
+                this.flag=this.flag+1;
+                return;
+            }
             this.valueGroups = [];   
             if(newValues.length&&newValues[0]['componentName_tdComponentCode']){
                 if(!this.valueGroups.length){
                     this.valueGroups.push(newValues[0]);
                 }
                 for(var i=0;i<newValues.length;i++){
-                    for(var j=0;j< this.valueGroups.length;j++){
-                        if((this.valueGroups[j]['facilityObjCode']!=newValues[i]['facilityObjCode'])
-                        &&(this.valueGroups[j]['tdComponentCode']!=newValues[i]['tdComponentCode'])
-                        &&(this.valueGroups[j]['cardCode']!=newValues[i]['cardCode'])){
-                            if(newValues[i]['tdComponentCode']){
+                    // for(var j=0;j< this.valueGroups.length;j++){
+                    //     if((this.valueGroups[j]['facilityObjCode']!=newValues[i]['facilityObjCode'])
+                    //     &&(this.valueGroups[j]['tdComponentCode']!=newValues[i]['tdComponentCode'])
+                    //     &&(this.valueGroups[j]['cardCode']!=newValues[i]['cardCode'])){
+                    //         if(newValues[i]['tdComponentCode']){
                                 if(!this.judgeValueGroup(newValues[i])){
                                     this.valueGroups.push(newValues[i]);
                                 }
-                            }
-                        }
-                    }
+                    //         }
+                    //     }
+                    // }
                 }
             }
             this.flag=this.flag+1;
