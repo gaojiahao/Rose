@@ -289,8 +289,17 @@ export default {
                 res.tableContent.map(box => {
                     this.matters.map(mat => {
                         if(box.inventoryCode === mat.inventoryCode){
+                            var demandBal = this.getGroupInfo(mat).todo;
+                            var dfTdQty = 0;
+                            //当需求余额>箱码库存==箱码库存
+                            //当需求余额<箱码库存==需求余额
+                            if(demandBal > box.boxQtyBal){
+                                dfTdQty = box.boxQtyBal
+                            }else{
+                               dfTdQty = demandBal; 
+                            }
                             mat.boxCodes.unshift({
-                                ...this.transformDataSource(box),
+                                ...this.transformDataSource(box,parseFloat(dfTdQty.toFixed(2))),
                                 cardCode:this.trayCode
                             })
                         }
@@ -636,7 +645,7 @@ export default {
 
             })
         },
-        transformDataSource(box){
+        transformDataSource(box,dfTdQty){
             return{
                 expend:true,
                 transMatchedCode: box.transCode,
@@ -656,8 +665,8 @@ export default {
                 thenTotalQtyBal: box.thenTotalQtyBal,//待上架
                 thenLockQty: box.thenLockQty,//已上架
                 thenQtyBal: box.thenQtyBal,//
-                tdQty: box.boxQtyBal,//本次出库
-                assistQty:  Math.ceil(box.boxQtyBal/box.invSubUnitMulti),
+                tdQty:dfTdQty,//本次出库
+                assistQty:  Math.ceil(dfTdQty/box.invSubUnitMulti),
                 batchNo: box.batchNo,
                 productionDate: box.productionDate,
                 boxCode: box.boxCode,
