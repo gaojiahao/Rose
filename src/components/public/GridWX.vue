@@ -580,6 +580,7 @@ export default Vue.component("GridWX", component);
     }
   }
   .add-more-wrapper {
+    margin-top: .05rem;
     width: 100%;
     display: flex;
     text-align: center;

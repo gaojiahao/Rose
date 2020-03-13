@@ -613,12 +613,13 @@ export default Vue.component('R2CombofieldWx',cfg);
          }
          .trans-item-img{
            width: 1rem;
+           margin-right: .1rem;
            img{
              width: .85rem;
            }
          }
          .main {
-            width: 70%;
+            // width: 70%;
             .name {
                .name {
                   font-weight: bold;
