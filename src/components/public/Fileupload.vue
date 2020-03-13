@@ -1,13 +1,17 @@
 <template>
   <div class="upload-file-container" :class="{'no-upload vux-1px-t':cfg.readOnly}" :style="containStyle"
-       v-if="values.length|| cfg.readOnly == false">
+       v-if="values.length|| cfg.readOnly == false" ref="uContainer">
     <header class="upload-file-header">
       <div class="upload-file-title vux-1px-l">附件</div>
     </header>
     <div class="upload-file-list">
       <div class="upload-file-text" v-for="(item, index) in comFiles" :key="item.attr1+index">
-        <template v-if="item.iconType != 'image'">
+        <template v-if="item.iconType != 'image'&&item.iconType != 'video'&&item.iconType != 'music'">
           <div class="text" @click="downLoadFile(item)">{{item.attr1}}</div>
+          <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="cfg.readOnly == false"></i>
+        </template>
+        <template v-else-if="item.iconType == 'video'||item.iconType == 'music'">
+          <div class="text" @click="playVideo(item)">{{item.attr1}}</div>
           <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="cfg.readOnly == false"></i>
         </template>  
       </div>
@@ -26,6 +30,14 @@
         </div>
       </div>
     </div>
+    <div class="grid-detail-wrapper" v-if="playerShow">
+      <player-pop v-model="playerShow" :playerSrc="`/H_roleplay-si/ds/download?url=${playerSrc}`"></player-pop>
+    </div>
+    <div class="zhezhao-wrapper" v-show="uploadStatus">
+      <div class="zhezhao-wrapper-container" ref="zContainer">
+        <load-more :tip="`上传中`"></load-more>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -34,7 +46,8 @@
   import {deleteFile,upload} from 'service/commonService';
   import {chooseImage, uploadImage} from 'plugins/wx/api'
   import {isIOS,isIPhone,isIPad,isAndroid,isPC,isQYWX} from '@/plugins/platform/index'
-import { debug } from 'util';
+  import { debug } from 'util';
+  import { LoadMore } from 'vux'
 
   var component = {
     props: {
@@ -68,6 +81,7 @@ import { debug } from 'util';
         }
       },
     },
+    components: { LoadMore },
     data() {
       return {
         files: [],
@@ -76,6 +90,9 @@ import { debug } from 'util';
         showLoading: false,
         imgFiles:[],
         comFiles:[],
+        playerShow: false,
+        playerSrc:'',
+        uploadStatus:false,
       }
     },
     watch: {
@@ -154,7 +171,14 @@ import { debug } from 'util';
           }, {
             reg: /\.txt$/gi,
             type: 'txt'
+          }, {
+            reg: /\.(mp4|webm|ogg|avi|bmp|)$/gi,
+            type: 'video'  
           },
+          {
+            reg: /\.(mp3)$/gi,
+            type: 'music'  
+          }
         ];
         typeList.every(item => {
           if (item.reg.test(url)) {
@@ -246,7 +270,7 @@ import { debug } from 'util';
             if(!checkFileSize(files[i].size)) {
               textBlankSize = textBlankSize + files[i].name + ',' + '</br>';
               vm.$vux.toast.show({
-                text:textBlankSize + '上传大小不能超过10M！',
+                text:textBlankSize + '上传大小不能超过1G！',
                 position:'middle',
                 type:'warn',
                 width:'15em',
@@ -257,6 +281,10 @@ import { debug } from 'util';
             arrFiles.push(files[i]);
           }
           if(arrFiles.length){
+            var height = (this.$refs.uContainer.clientHeight);
+            height = height+(height/2);
+            this.$refs.zContainer.style.marginTop = `${height}px`;
+            this.uploadStatus = true;
             handler(arrFiles[0],function(){
               for(i = 1;i < arrFiles.length; i++){
                 file = arrFiles[i];
@@ -283,6 +311,7 @@ import { debug } from 'util';
                     status: 1,
                   };
               vm.uploadSuccess(detail);
+              vm.uploadStatus = false;
               if(cb)cb();
             }
           });
@@ -298,7 +327,7 @@ import { debug } from 'util';
         }
         //文件大小校验
         function checkFileSize(filesize) {
-          if(filesize > 10485760) {
+          if(filesize > 1073741824) {
             return false
           } else return true;
         }
@@ -337,6 +366,14 @@ import { debug } from 'util';
             this.comFiles.push(files[i]);
           }
         }
+      },
+      playVideo(item){
+        if(item){
+          this.playerSrc = item.attacthment;
+          this.playerShow = true;
+        } else {
+          console.log('播放地址不存在！')
+        }
       }
     },
     created() {
@@ -355,6 +392,27 @@ import { debug } from 'util';
     background-color: #fff;
     color: #333;
     box-sizing: border-box;
+    .zhezhao-wrapper{
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      .zhezhao-wrapper-container{
+        //margin-bottom: 20%;
+        .weui-loadmore {
+          width: 65%;
+          margin: 1.5em auto;
+          line-height: 1.6em;
+          font-size: 14px;
+          text-align: center;
+          color: white
+        }
+      }
+    }
     .upload-file-header {
       display: flex;
       justify-content: space-between;
