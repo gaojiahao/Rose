@@ -14,6 +14,9 @@
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" @search-box-show="searchBox" ref="bScroll">
             <div class="pop-list-item" v-for="(item, index) in listData" :key='index' @click.stop="selItem(item,true)" :class="{selected: showSelIcon(item)}">
+              <div class="trans-item-img">
+                <img  :src="getImgPic(item)" >
+              </div>
               <div class="main">
                   <div class="name">
                      <span class="name">{{item[cfg.displayField]}}</span>
@@ -505,7 +508,19 @@ let cfg = {
       }).then(res => {
         return res;
       })
-    }
+    },
+    //选择默认图片
+    getImgPic(d) {
+      let url;
+      if(d){
+        let pic = this.curObj ? this.curObj.picKey : '',
+            defaultUrl = this.curObj ? this.curObj.defaultUrl : 'wl_default03.png';
+        url =  d[pic] ? d[pic] : '/static/' + defaultUrl;
+      }else{
+        url = require('assets/wl_default03.png');
+      }
+      return url;
+    },
   },
   created(){
     this.initCombo();
@@ -564,6 +579,13 @@ export default Vue.component('R2Combofield',cfg);
          &.selected {
          border: 1px solid; 
          @include boder_color();
+         }
+         .trans-item-img{
+           width: 1rem;
+           margin-right: .1rem;
+           img{
+             width: .85rem;
+           }
          }
          .main {
             .name {
