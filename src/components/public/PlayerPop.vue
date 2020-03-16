@@ -82,7 +82,7 @@ var component = {
 export default Vue.component("PlayerPop", component);
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "~@/scss/color";
 .grid-detail-container {
   width: 100%;
