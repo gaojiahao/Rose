@@ -1,5 +1,5 @@
 <template>
-  <div class="r-grid">
+  <div class="r-grid-wx">
     <!-- 没有选择物料 -->
     <template v-if="(!values || values.length == 0)&& cfg.readOnly == false && hasDs">
       <div class="no-data-header" @click="showGridPicker">
@@ -382,7 +382,7 @@ export default Vue.component("GridWX", component);
 .no-data{
   text-align:center;
 }
-.r-grid {
+.r-grid-wx {
   // 没有物料title样式
   .no-data-header {
     display: flex;
