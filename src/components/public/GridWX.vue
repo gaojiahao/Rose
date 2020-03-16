@@ -431,22 +431,22 @@ export default Vue.component("GridWX", component);
       width: 30%;
       float: right;
       .icon-g-add {
-        width: .22rem;
-        height: .22rem;
+        width: .26rem;
+        height: .26rem;
         position: absolute;
-        right: .27rem;
+        right: .31rem;
         top: .04rem;
       }
       .icon-g-up {
-        width: .22rem;
-        height: .22rem;
+        width: .26rem;
+        height: .26rem;
         position: absolute;
         right: 0;
         top: .04rem;
       }
       .icon-g-down {
-        width: .22rem;
-        height: .22rem;
+        width: .26rem;
+        height: .26rem;
         position: absolute;
         right: 0;
         top: .04rem;
@@ -480,7 +480,7 @@ export default Vue.component("GridWX", component);
     .r-row {
       margin: 0.05rem 0 0.05rem;
       line-height: 0.20rem;
-      font-size: 0.12rem;
+      font-size: 0.13rem;
 
       .trans-item{
         display: flex;
@@ -508,16 +508,16 @@ export default Vue.component("GridWX", component);
           float:right;
           right:0;
           .icon-matter-bianji {
-            width: .28rem;
-            height: .28rem;
+            width: .49rem;
+            height: .49rem;
             position: absolute;
-            right: 0;
+            right: -.115rem;
             top: .03rem;
           }
         }
       }
       span:nth-child(2n + 1) {
-        color: #aaa;
+        color: #333;
       }
       span:nth-child(2n) {
         font-weight: 400;
