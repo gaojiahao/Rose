@@ -47,7 +47,7 @@
       },
       placeHolder: {
         type: String,
-        default: '多字段搜索以英文逗号隔开,编码,名称'
+        default: '多字段搜索以英文逗号隔开,如：编码,名称'
       }
     },
     watch: {
