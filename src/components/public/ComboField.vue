@@ -9,7 +9,7 @@
   <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide" style="z-index: 502;">
         <div class="trade_pop">
-          <d-search @search="searchList" @turn-off="onHide" :isFill="true" :defaultValue="searchValue" :searchBoxShows="searchBoxShow" :filterList="fields"></d-search>
+          <d-search @search="searchList" @turn-off="onHide" :isFill="true" :searchBoxShows="searchBoxShow" :filterList="fields"></d-search>
           <!-- 往来列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" @search-box-show="searchBox" ref="bScroll">
@@ -339,18 +339,34 @@ let cfg = {
             limit: this.limit,
             page: this.page,
             start: (this.page - 1) * this.limit
-          }
+          },
+          pArr=[];
       
-      if (this.searchValue) {
-          filter = [
-            {
-            operator: 'like',
-            value: this.searchValue,
-            // property: this.cfg.displayField,
-            property: this.property,
+      if (this.searchValue&&this.searchValue[0]) {
+        filter = [
+          {
+          operator: 'like',
+          value: this.searchValue&&this.searchValue[0],
+          // property: this.cfg.displayField,
+          property: this.property,
+          }
+        ];
+        pArr = Object.values(this.property);
+        if(this.property.constructor === Object){
+          filter = [];
+          for(var i=0;i<pArr.length;i++){
+            if(this.searchValue[i]){
+              var a = {
+                operator: 'like',
+                value: this.searchValue[i],
+                // property: this.cfg.displayField,
+                property: pArr[i]['value'],
+              }
             }
-          ];
-          data.filter = JSON.stringify(filter);
+            filter.push(a);
+          }
+        }
+        data.filter = JSON.stringify(filter);
       };
       if(this.cfg.valueBind&&valueBind&&this.cfg.xtype=='r2Selector'&&valueBind.value&&this.cfg.readOnly){
         data = {
@@ -432,10 +448,13 @@ let cfg = {
     },
 
     searchList({val,property}){
-      this.searchValue = val;
+      this.searchValue = val? this.stringToObject(val):'';
       this.property = property;
       this.page = 1;
       this.load();
+    },
+    stringToObject(str){
+      return str.split(',');
     },
     selItem(item,status){
       this.selection = item;

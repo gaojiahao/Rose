@@ -155,13 +155,17 @@ export default {
     },
     //搜索
     searchList({ val = '', property = '' }) {
-      this.serachVal = val;
+      //this.serachVal = val;
+      this.serachVal = val? this.stringToObject(val):'';
       this.filterProperty = property;
       this.otherFilter = {};
       this.timeFilter = {};
       this.$refs.sort && this.$refs.sort.filterReset()
       this.resetCondition();
       this.getList();
+    },
+    stringToObject(str){
+      return str.split(',');
     },
     // 设置状态的class和显示的名称
     setStatus(item) {
@@ -227,7 +231,8 @@ export default {
     },
     // 获取订单数据
     getList(noReset = false) {
-      let filter = [];
+      let filter = [],
+      pArr=[];
       // tab 切换
       if (this.activeTab) {
         filter = [{
@@ -237,19 +242,27 @@ export default {
         }]
       }
       // 搜索
-      if (this.serachVal) {
-        let obj = {
-          operator: "like",
-          property: this.filterProperty,
-          value: this.serachVal
+      if (this.serachVal&&this.serachVal[0]) {
+        pArr = Object.values(this.filterProperty);
+        // let obj = {
+        //   operator: "like",
+        //   property: this.filterProperty,
+        //   value: this.serachVal&&this.serachVal[0]
+        // }
+        for(var i=0;i<pArr.length;i++){
+          if(this.serachVal[i]){
+            var obj = {
+              operator: 'like',
+              value: this.serachVal[i],
+              // property: this.cfg.displayField,
+              property: pArr[i]['value'],
+            }
+            if (this.activeTab) {
+              obj.attendedOperation = 'and';
+            }
+          }
+          filter.push(obj);
         }
-        if (this.activeTab) {
-          obj.attendedOperation = 'and';
-        }
-        filter = [
-          ...filter,
-          obj
-        ];
       }
       // 过滤
       if (Object.keys(this.otherFilter).length) {
