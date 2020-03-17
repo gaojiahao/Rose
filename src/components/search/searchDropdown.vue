@@ -1,16 +1,20 @@
 <template>
   <div class="r-dropdown">
     <ul class="r-dropdown-list">
-      <li class="r-dropdown-item" :class="{'selected': selItem.value === item.value}" v-for="(item, index) in list"
-          @click.stop="dropItemClick(item)" :key="index" v-show="index < 5">
-        <span>{{item.name}}</span>
-        <span class="icon-check icon-selected" v-show="selItem.value === item.value"></span>
-      </li>
-      <li class="r-dropdown-item" :class="{'selected': selItem.value === item.value}" v-for="(item, index) in list"
-          @click.stop="dropItemClick(item)" :key="`m${index}`" v-show="showMore && (index > 4)">
-        <span>{{item.name}}</span>
-        <span class="icon-check icon-selected" v-show="selItem.value === item.value"></span>
-      </li>
+      <template v-for="(item, index) in list">
+        <li class="r-dropdown-item" :class="{'selected': selItem[item.value]&&(selItem[item.value]['value']==item.value)}"
+            @click.stop="dropItemClick(item)" :key="index" v-show="index < 5">
+          <span>{{item.name}}</span>
+          <span class="icon-check icon-selected" v-show="selItem[item.value]&&(selItem[item.value]['value']==item.value)"></span>
+        </li>
+      </template>
+      <template v-for="(item, index) in list">
+        <li class="r-dropdown-item" :class="{'selected': selItem[item.value]&&(selItem[item.value]['value']==item.value)}"
+            @click.stop="dropItemClick(item)" :key="`m${index}`" v-show="showMore && (index > 4)">
+          <span>{{item.name}}</span>
+          <span class="icon-check icon-selected" v-show="selItem[item.value]&&(selItem[item.value]['value']==item.value)"></span>
+        </li>
+      </template>
       <li class="r-dropdown-item r-dropdown-more" v-show="list.length > 4">
         <span class="text" @click="clickMore()">{{showMore ? '收起' : '更多'}}</span>
       </li>
@@ -43,8 +47,10 @@
     watch: {
       list: {
         handler() {
-          this.selItem = this.list[0];
-          this.$emit('on-selected', this.selItem);
+          if(this.list[0]&&this.list[0].value){
+            this.selItem[this.list[0].value] = this.list[0];
+            this.$emit('on-selected', this.selItem);
+          }
         },
         immediate: true
       },
@@ -52,7 +58,12 @@
     methods: {
       // 选择单条记录
       dropItemClick(item) {
-        this.selItem = {...item};
+        if(this.selItem[item.value]&&(this.selItem[item.value]['value']==item.value)){
+          this.$delete(this.selItem,item.value);
+          this.$emit('on-selected', this.selItem);
+          return ;
+        }
+        this.$set(this.selItem,item.value,item);
         this.$emit('on-selected', this.selItem);
       },
       clickMore(){
