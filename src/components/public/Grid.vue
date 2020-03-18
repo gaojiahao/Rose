@@ -130,14 +130,14 @@ var component = {
           objKey = it.fieldCode.indexOf('_') > -1 ? it.fieldCode.split('_')[1] : it.fieldCode;
           fKey = it.fieldCode.split('_')[0];
 
-          if(fieldSettingData[objKey]){
+          if(fieldSettingData&&fieldSettingData[objKey]){
               if(fieldSettingData[objKey]['objCode']){
                   obj = objList.getObjectByName(fieldSettingData[objKey]['objCode'])[0];
               }
           }
-          if(fieldSettingData[fKey]){
+          if(fieldSettingData&&fieldSettingData[fKey]){
             
-              if(fieldSettingData[fKey]['kField']===1){
+              if(fieldSettingData&&fieldSettingData[fKey]['kField']===1){
                   it.kField = 1;
               }
           }
