@@ -2,7 +2,7 @@
 <div v-show="!hidden" class="cell each_property vux-1px-b">
     <label :class="{'required':!cfg.allowBlank,'readonly': cfg.readOnly}">{{cfg.fieldLabel}}</label>
     <input type="nubmer" v-if="cfg.readOnly == false" :value="values[cfg.fieldCode]" placeholder="请输入" @blur="onInput" style="display:none;"/>
-    <input :class="{'red':!(values[cfg.fieldCode]||number)}" type="text" v-if="cfg.readOnly == false" :value="values[cfg.fieldCode]||number" placeholder="请输入" @blur="valueDeal" />
+    <input :class="{'red':!(values[cfg.fieldCode]||number)}" type="text" v-if="cfg.readOnly == false" :value="values[cfg.fieldCode]||number" placeholder="请输入" @blur="valueDeal" @focus="valueFocus"/>
     <span v-else >{{values[cfg.fieldCode]||'无'}}</span>
 </div>
 </template>
@@ -114,6 +114,11 @@ let  cfg = {
             }
             return value;
         },
+        valueFocus(e){
+            if(e.target.value==0){
+                e.target.value = '';
+            }    
+        }
     },
     created () {
         this.toFixNum = this.cfg.decimalPrecision;
