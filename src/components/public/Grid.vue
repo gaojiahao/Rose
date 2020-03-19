@@ -126,22 +126,22 @@ var component = {
         objKey,
         fKey;
 
-      this.keyFiled.map(it=>{
-          objKey = it.fieldCode.indexOf('_') > -1 ? it.fieldCode.split('_')[1] : it.fieldCode;
-          fKey = it.fieldCode.split('_')[0];
+      // this.keyFiled.map(it=>{
+      //     objKey = it.fieldCode.indexOf('_') > -1 ? it.fieldCode.split('_')[1] : it.fieldCode;
+      //     fKey = it.fieldCode.split('_')[0];
 
-          if(fieldSettingData&&fieldSettingData[objKey]){
-              if(fieldSettingData[objKey]['objCode']){
-                  obj = objList.getObjectByName(fieldSettingData[objKey]['objCode'])[0];
-              }
-          }
-          if(fieldSettingData&&fieldSettingData[fKey]){
+      //     if(fieldSettingData&&fieldSettingData[objKey]){
+      //         if(fieldSettingData[objKey]['objCode']){
+      //             obj = objList.getObjectByName(fieldSettingData[objKey]['objCode'])[0];
+      //         }
+      //     }
+      //     if(fieldSettingData&&fieldSettingData[fKey]){
             
-              if(fieldSettingData&&fieldSettingData[fKey]['kField']===1){
-                  it.kField = 1;
-              }
-          }
-      });
+      //         if(fieldSettingData&&fieldSettingData[fKey]['kField']===1){
+      //             it.kField = 1;
+      //         }
+      //     }
+      // });
       return obj;
     },
     summaryValue:function(){
@@ -251,7 +251,7 @@ var component = {
         fKey;
       
       console.log('dd',fieldSettingData)
-      this.keyFiled.map(it=>{
+      this.keyFiled = this.keyFiled.map(function(it,index,arr) {
           objKey = it.fieldCode.indexOf('_') > -1 ? it.fieldCode.split('_')[1] : it.fieldCode;
           fKey = it.fieldCode.split('_')[0];
 
@@ -266,7 +266,8 @@ var component = {
                   it.kField = 1;
               }
           }
-      });
+          return it;
+      },this);
     }
   },
   created() {
