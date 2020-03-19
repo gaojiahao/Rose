@@ -52,6 +52,7 @@ if (router == null) {
     //     initFieldSetting();
     //   }
     // }
+    console.log('aa',Vue.prototype.$r2FieldSetting);
     load(to);
     next();
   })
@@ -100,6 +101,7 @@ async function initFieldSetting(){
     }
     Vue.prototype.$r2FieldSetting[field.fieldCode] = field;
     });
+    console.log('cc',Vue.prototype.$r2FieldSetting);
     if(!storage.getItem('r2FieldSetting')){
       storage.setItem('r2FieldSetting',  JSON.stringify(Vue.prototype.$r2FieldSetting));
     }
@@ -146,6 +148,7 @@ async function load(to){
   }
 
   if(tokenService.getToken() != '' && to.name !== 'Login'){
+    console.log('bb',Vue.prototype.$r2FieldSetting);
     if(!storage.getItem('r2_cachedListLevelFieldSetting')){
       await initListLevelFieldSetting();   
     }

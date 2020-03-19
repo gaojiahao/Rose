@@ -125,7 +125,8 @@ var component = {
         obj,
         objKey,
         fKey;
-          
+
+      console.log('dd',JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||this.$r2FieldSetting);
       this.keyFiled.map(it=>{
           objKey = it.fieldCode.indexOf('_') > -1 ? it.fieldCode.split('_')[1] : it.fieldCode;
           fKey = it.fieldCode.split('_')[0];
