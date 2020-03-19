@@ -937,8 +937,8 @@ export default {
               });
                 if(!window.sessionStorage.getItem('r2FieldSetting')){
                     window.sessionStorage.setItem('r2FieldSetting',  JSON.stringify(r2FieldSetting));
-                    this.dealKeyFiled();
                 }
+                this.dealKeyFiled();
             }).catch(e =>{console.log(e)});
         },
         initListLevelFieldSetting() {
