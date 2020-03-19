@@ -148,23 +148,22 @@ var component = {
         objKey,
         fKey;
           
-      this.keyFiled = this.keyFiled.map(function(it,index,arr) {
+      this.keyFiled.map(it=>{
           objKey = it.fieldCode.indexOf('_') > -1 ? it.fieldCode.split('_')[1] : it.fieldCode;
           fKey = it.fieldCode.split('_')[0];
 
-          if(fieldSettingData&&fieldSettingData[objKey]){
+          if(fieldSettingData[objKey]){
               if(fieldSettingData[objKey]['objCode']){
                   obj = objList.getObjectByName(fieldSettingData[objKey]['objCode'])[0];
               }
           }
-          if(fieldSettingData&&fieldSettingData[fKey]){
+          if(fieldSettingData[fKey]){
             
-              if(fieldSettingData&&fieldSettingData[fKey]['kField']===1){
+              if(fieldSettingData[fKey]['kField']===1){
                   it.kField = 1;
               }
           }
-          return it;
-      },this);
+      });
       return obj;
     },
     summaryValue:function(){
@@ -304,6 +303,33 @@ var component = {
         }
       })
       this.setValue(newValues);
+    },
+    async initKeyFiled(){
+      await this.load();
+      //await this.dealKeyFiled();
+    },
+    dealKeyFiled(){
+      let fieldSettingData = JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||this.$r2FieldSetting,
+          obj,
+          objKey,
+          fKey;
+      
+      this.keyFiled = this.keyFiled.map(function(it,index,arr) {
+        objKey = it.fieldCode.indexOf('_') > -1 ? it.fieldCode.split('_')[1] : it.fieldCode;
+        fKey = it.fieldCode.split('_')[0];
+
+        if(fieldSettingData&&fieldSettingData[objKey]){
+            if(fieldSettingData[objKey]['objCode']){
+              obj = objList.getObjectByName(fieldSettingData[objKey]['objCode'])[0];
+            }
+        }
+        if(fieldSettingData&&fieldSettingData[fKey]){
+          if(fieldSettingData&&fieldSettingData[fKey]['kField']===1){
+            it.kField = 1;
+          }
+        }
+        return it;
+      },this);
     }
   },
   created() {
@@ -321,6 +347,7 @@ var component = {
         return !it.hidden;
       }
     });
+    this.initKeyFiled();
 
     this.summaryField = this.cfg.columns.filter(it=>{
       return !it.hidden;

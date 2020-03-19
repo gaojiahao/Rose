@@ -52,7 +52,6 @@ if (router == null) {
     //     initFieldSetting();
     //   }
     // }
-    console.log('aa',Vue.prototype.$r2FieldSetting);
     load(to);
     next();
   })
