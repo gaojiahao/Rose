@@ -250,7 +250,6 @@ var component = {
         objKey,
         fKey;
       
-      console.log('dd',fieldSettingData)
       this.keyFiled = this.keyFiled.map(function(it,index,arr) {
           objKey = it.fieldCode.indexOf('_') > -1 ? it.fieldCode.split('_')[1] : it.fieldCode;
           fKey = it.fieldCode.split('_')[0];
