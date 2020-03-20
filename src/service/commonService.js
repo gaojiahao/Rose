@@ -162,6 +162,9 @@ export let getBasicInfo = (data ={})=> {
           }
         }).then(data=>{
           baseInfo = data;
+          if(!localStorage.getItem('userInfo')){
+            localStorage.setItem('userInfo',JSON.stringify(baseInfo.currentUser));
+          }
           resolve(data);
         }).catch(()=>{
           reject();

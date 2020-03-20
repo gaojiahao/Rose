@@ -6,7 +6,7 @@
         <check-icon
           type="plain" 
           :value.sync="taskLog.logStatus">
-          {{ taskLog.logStatus?'已办':'待办' }}
+          {{ !taskLog.logStatus?'代办':'已办' }}
         </check-icon>
       </div>
       <div class="task_log_user">
@@ -143,7 +143,7 @@ export default {
                     modifer: currentUser.userId,
                     id:'',
                     handlerEntity: currentUser.entityId,
-                    biProcessStatus: this.taskLog.logStatus ? '已办' : '待办',
+                    biProcessStatus: this.taskLog.logStatus ? '代办' : '已办',
                     transType: 'YW146'
                 },
                 jobLog:{
