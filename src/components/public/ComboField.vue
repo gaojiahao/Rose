@@ -454,8 +454,12 @@ let cfg = {
       this.load();
     },
     stringToObject(str){
-      return str.split(',');
+      var s = str;
+      s = s.replace(/\s/g,",");
+      s = s.replace('，',",");
+      return s.split(',');
     },
+
     selItem(item,status){
       this.selection = item;
       this.showPop = false;
