@@ -48,7 +48,7 @@
         <x-textarea 
           :max="200" 
           v-model="taskLog.comments" 
-          placeholder="请输入您特别想要备注的信息">
+          placeholder="请输入您的成果">
         </x-textarea>
       </div>
       <div class="task_log_footer">
