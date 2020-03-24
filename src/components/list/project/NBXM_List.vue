@@ -43,7 +43,7 @@
                       <span class="project_detail_value">{{item.dealerName_dealerDebit}}</span>
                     </div>
                     <div class="project_detail_item">
-                      <span class="project_detail_title">经理电话：</span>
+                      <span class="project_detail_title">手机号：</span>
                       <span class="project_detail_value">{{item.phoneNumber_projectApprovalId || '无'}}</span>
                     </div>
                   </div>
