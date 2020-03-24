@@ -5,7 +5,8 @@
     <price-total :amt="amt" :tax-amt="taxAmt" :count="count" v-if="count"></price-total>
     <!-- 备注 -->
     <div class="comment-container" v-if="showComment">
-      <span class="comment_title">备注：</span>
+      <span v-if="this.$route.params.listId === '2750a13d-295d-4776-9673-290c51bfc568'" class="comment_title">成果：</span>
+      <span v-else class="comment_title">备注：</span>
       <span class="comment_value">{{otherInfo.biComment || '无'}}</span>
     </div>
     <!-- 附件 -->
