@@ -17,8 +17,8 @@
         <template v-for="(field,index) in singleField" >
             <div :key="index" class="main-single-item" v-if="field.kField">
               <span class="fieldLabel">{{field.alias ? field.alias : field.fieldName}}:</span>
-              <span class="fieldValue" v-if="field.fieldCode !== 'biComment'">{{formatValues(item[field.fieldCode])}}</span>
-              <span class="fieldValue" v-else >{{formatValues(item[field.fieldCode])}}</span>
+              <span class="fieldValue" v-if="field.fieldCode !== 'biComment'">{{formatValues(item[field.fieldCode],field)}}</span>
+              <span class="fieldValue" v-else >{{formatValues(item[field.fieldCode],field)}}</span>
             </div>
         </template> 
 
@@ -41,14 +41,14 @@
                 <div :key="index"   v-if="field.kField">
                   <div >
                     <span >{{field.alias ? field.alias : field.fieldName}}:</span>
-                    <span>{{formatValues(detail[field.fieldCode])}}</span>
+                    <span>{{formatValues(detail[field.fieldCode],field)}}</span>
                   </div>
                 </div>
               </template>
               <template v-for="(field,index) in summaryField">
                 <div :key="1+'-'+index" class="summary-item" v-if="detail[field.fieldCode]">
                   <span class="summary-item-label">{{field.alias ? field.alias : field.fieldName}}:</span>
-                  <span class="summary-item-value">{{numberCommaNumer(detail[field.fieldCode])}}</span>
+                  <span class="summary-item-value">{{numberCommaNumer(detail[field.fieldCode],field)}}</span>
                 </div>
               </template>
             </div>
@@ -230,7 +230,10 @@ export default Vue.component("ListItem", {
      
      return url;
     },
-    formatValues(val){
+    formatValues(val,item){
+      if(('okrPlanMonth,okrPlanYear').indexOf(item.fieldCode)!=-1){
+        return val;  
+      }
       if(typeof(val) === 'number'){
         return this.numberCommaNumer(val);
       }
