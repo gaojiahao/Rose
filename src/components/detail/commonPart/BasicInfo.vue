@@ -4,14 +4,22 @@
     <div class="basic-info-main">
       <header class="basic_header">
         <div class="basic_title vux-1px-l">经办信息</div>
-        <div class="basic_process_status">{{orderInfo.biProcessStatus || '暂无流程'}}</div>
+        <!-- <div class="basic_process_status">{{orderInfo.biProcessStatus || '暂无流程'}}</div> -->
+        <div class="basic_process_status">
+          <r-picker title="" 
+          :data="statusList" 
+          :value="nowStatus" 
+          v-model="nowStatus" 
+          @input="updateProcessStatus">
+          </r-picker>
+        </div>
       </header>
       <div class="basic_top">
         <div class="basic_code">
           <span class="basic_code_title">交易号：</span>{{orderInfo.transCode}}
         </div>
         <!-- <div class="basic_status" >{{orderInfo.biStatus}}</div> -->
-        <span class="biStatus" v-instanceStateDirective="{status:orderInfo.biStatus}" >12312</span>
+        <span class="biStatus" v-instanceStateDirective="{status:orderInfo.biStatus}" >{{orderInfo.biStatus}}</span>
       </div>
       <div class="basic_detail">
         <div class="basic_detail_wrapper">
@@ -71,6 +79,7 @@
 <script>
   import { dateFormat } from 'vux'
   import { fail } from 'assert';
+  import RPicker from 'components/public/basicPicker'
 
   export default {
     name: "BasicInfo",
@@ -88,6 +97,16 @@
         }
       },
     },
+    components:{
+      RPicker
+    },
+    watch:{
+      orderInfo:{
+        handler(val) {
+          this.nowStatus = val.biProcessStatus;
+        }
+      }
+    },
     computed: {
       projectInfo() {
         let {outPut = {}, inPut = {}} = this.orderInfo;
@@ -103,7 +122,17 @@
     data() {
       return {
         showMore: false,
+        statusList:[],
+        nowStatus:''
       }
+    },
+    methods:{
+      updateProcessStatus(){
+
+      }
+    },
+    created(){
+      this.nowStatus = this.orderInfo.biProcessStatus;
     }
   }
 </script>
@@ -138,7 +167,7 @@
       .basic_process_status {
         color: #FB880B;
         font-size: .1rem;
-        border: 1px solid;
+        //border: 1px solid;
         line-height: .12rem;
         border-radius: .04rem;
         padding: .04rem .06rem;

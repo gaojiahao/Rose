@@ -6,7 +6,7 @@
         <check-icon
           type="plain" 
           :value.sync="taskLog.logStatus">
-          {{ !taskLog.logStatus?'代办':'已办' }}
+          {{ !taskLog.logStatus?'待办':'已办' }}
         </check-icon>
       </div>
       <div class="task_log_user">
@@ -78,7 +78,7 @@ export default {
       logTypelist: [[]],
       selectUsers: [],
       taskLog: {
-        logStatus: false,
+        logStatus: true,
         taskDate: "",
         comments: "",
         logDeclarationHours: 1,
