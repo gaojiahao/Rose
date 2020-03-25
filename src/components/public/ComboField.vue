@@ -456,7 +456,8 @@ let cfg = {
     stringToObject(str){
       var s = str;
       s = s.replace(/\s/g,",");
-      s = s.replace('，',",");
+      s = s.replace(/，/g,",");
+      console.log('s',s);
       return s.split(',');
     },
 
