@@ -36,11 +36,29 @@ export default {
             if(me.hasDs){
                 me.showGridPicker();
             } else {
-                me.addRecords([{}]);
+                if(this.form.model!='new'){
+                    me.addRecords(this.copyValue(vindex));
+                } else {
+                    me.addRecords([{}]);
+                }
                 rows = me.getValue();
                 index = rows.length - 1;
                 me.onShowDetail(rows[index],index,vindex);
             }
+        },
+        copyValue(vindex){
+            var copyValue = this.valueGroups[vindex];
+            var arr = [{}];
+                arr = [{
+                    'warehouseName_containerCode':copyValue['warehouseName_containerCode'],
+                    'containerCode':copyValue['containerCode'],
+                    'thenTotalQtyBal':copyValue['thenTotalQtyBal'],
+                    'warehouseName_containerCodeOut':copyValue['warehouseName_containerCodeOut'],
+                    'containerCodeOut':copyValue['containerCodeOut'],
+                    'thenQtyStock':copyValue['thenQtyStock'],
+                    'standardPrice':copyValue['standardPrice'],
+                }]
+            return arr;
         },
         addGroup: function(){
             var me = this;
@@ -73,6 +91,9 @@ export default {
                 dataSourceBind = this.dataSourceBind;
 
             this.setDefaultValue(record);
+            if(this.form.model!='new'){
+                this.copyRecord(record,row);
+            }
             if (dataSourceBind) {
                 editorFieldCode = dataSourceBind.k;
                 data[editorFieldCode] = row ? row[dataSourceBind.v] : '';
@@ -88,8 +109,11 @@ export default {
             me.executeExpression(record, editorFieldCode);
             return record;
         },
-        
-        
+        copyRecord(record,row){
+            for(var item in row){
+                record.set(item, row[item]);
+            }
+        },
         checkAll() {
             // 如果已全部选中 则清除所有选中状态
             if (this.selection.length === this.values.length) {
