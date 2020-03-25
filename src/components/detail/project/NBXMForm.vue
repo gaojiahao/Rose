@@ -7,6 +7,7 @@
       <only-word :config="otherConfig" :info="approval"></only-word>
       <!-- 备注 -->
       <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
+      <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       <!-- 操作栏 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -32,6 +33,7 @@ export default {
     return {
       approval: {},
       comment: {},
+      biReferenceId:''
     }
   },
   filters: {
@@ -53,6 +55,7 @@ export default {
           ...formData.comment,
           biStatus: '已生效'
         };
+        this.biReferenceId = formData.biReferenceId;
       })
     },
     // 使用千分符

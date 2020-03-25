@@ -130,7 +130,9 @@ let cfg = {
                 if(res){
                   this.displaysValue = res[this.cfg.displayField];
                   this.selection = res;
-                  this.form.$emit(this.valueChangeKey,this);
+                  if(!this.cfg.readOnly){
+                    this.form.$emit(this.valueChangeKey,this);
+                  }
                 }else{
                   this.displaysValue = this.values[this.cfg.fieldCode];
                 }
@@ -456,7 +458,7 @@ let cfg = {
     stringToObject(str){
       var s = str;
       s = s.replace(/\s/g,",");
-      s = s.replace('，',",");
+      s = s.replace(/，/g,",");
       return s.split(',');
     },
 

@@ -80,6 +80,7 @@
   import { dateFormat } from 'vux'
   import { fail } from 'assert';
   import RPicker from 'components/public/basicPicker'
+  import { isMyflow,getProcessStatusByListId,getStatusProcessByTransCode,updateProcessStatus} from "service/detailService";
 
   export default {
     name: "BasicInfo",
@@ -127,12 +128,29 @@
       }
     },
     methods:{
-      updateProcessStatus(){
-
-      }
+      updateProcessStatus(val) {
+        let data = {
+            transCode : this.$route.query.transCode,
+            processStatus: val
+        };
+        return updateProcessStatus(data).then(data => {
+          this.$vux.toast.text(data.message, 'top')  
+        });    
+      },
+      getProcessStatusByListId() {
+        let data = {
+            listId : this.$route.params.listId
+        };
+        return getProcessStatusByListId(data).then(({tableContent = []}) => {
+          for(let item of tableContent) {
+            this.statusList.push(item.fieldValue); 
+          }
+        });
+      },
     },
     created(){
       this.nowStatus = this.orderInfo.biProcessStatus;
+      this.getProcessStatusByListId();
     }
   }
 </script>
