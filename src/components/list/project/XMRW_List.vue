@@ -17,7 +17,7 @@
           <div class="instance-main">
             <div class="instance-header">
               <span class="instance_code vux-1px-l">{{item.transCode}}</span>
-              <span class="instance_status" :class="item.statusClass">{{item.biStatus}}</span>
+              <span class="instance_status" :class="item.statusClass">{{dealStatus(item.biStatus)}}</span>
             </div>
             <div class="instance-project-container">
               <div class="project_name" :class="{'time-to-wrap': item.projectName_projectApprovalId.length > 12}">项目名称: {{item.projectName_projectApprovalId}}</div>
@@ -34,7 +34,7 @@
                   <div class="task_info">
                     <div class="task_info_item">
                       <span class="task_info_title">执行者: </span>
-                      <span class="task_info_amt">{{item.dealerName_dealerCodeCredit || '暂无'}}</span>
+                      <span class="task_info_amt">{{item.dealerName_dealerDebit || '暂无'}}</span>
                     </div>
                     <div class="task_info_item">
                       <span class="task_info_title">计划开始日期: </span>
@@ -121,6 +121,24 @@ export default {
       let icons = ['icon-task', 'icon-task2', 'icon-task3'];
       return icons[index % 3]
     },
+    dealStatus(val){
+      var status='';
+      switch (val) {
+        case 1:
+            status = '已生效';
+        case 0:
+            status = '草稿';
+        case 2:
+            status = '进行中';
+        case -1:
+            status = '已失效';
+        case -2:
+            status = '已删除';
+        case -3:
+            status = '已归档';
+      }
+      return status;
+    }
   }
 }
 </script>

@@ -10,6 +10,7 @@
           <only-word :config="otherConfig" :info="projectTask"></only-word>
           <!-- 备注 -->
           <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
+          <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
           <!-- 审批操作 -->
           <r-action :code="transCode" :task-id="taskId" :actions="actions"
                     :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -97,7 +98,8 @@ export default {
       projectTask: {},
       defaultUserInfo: {},//默认用户信息
       logList: [],
-      pageSwiper: null
+      pageSwiper: null,
+      biReferenceId:''
     }
   },
   watch:{
@@ -151,6 +153,7 @@ export default {
           ...formData.baseinfo,
           biStatus: '已生效'
         };
+        this.biReferenceId = formData.biReferenceId;
       })
     },
     // 选择日期
