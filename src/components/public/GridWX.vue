@@ -385,6 +385,7 @@ var component = {
       value.push(record.data);
       this.setValue(value);
     }
+    this.dealGroup(this.values);
   }
 };
 export default Vue.component("GridWX", component);

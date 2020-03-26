@@ -176,6 +176,11 @@ export let getCheckItemInfoByTransCode = (data={}) => {
             ...data,
         }
     })
-}
+};
+export let getConfig = (listId,featureId) => {
+    return $flyio.ajax({
+      url: `/H_roleplay-si/app/feature/config?listId=${listId}&featureId=${featureId}`
+    })
+};
 
 export default {}

@@ -5,8 +5,8 @@
     <div class="content">
         <span v-if="cfg.readOnly == false" class="mater_nature" @click="getDate()" :class="{placeholder:!values[cfg.fieldCode]}">{{dataTime || '请选择'}}</span>
         <span v-else class="mater_nature">{{values[cfg.fieldCode]||'无'}}</span>
-        <span v-if="cfg.readOnly == false&&values[cfg.fieldCode]" class="mater_nature" @click="getSecond()" :class="{placeholder:!values[cfg.fieldCode]}">
-            <span v-if="cfg.readOnly == false&&!values[cfg.fieldCode]">:</span>
+        <span v-if="cfg.readOnly == false&&dataTime" class="mater_nature" @click="getSecond()" :class="{placeholder:!values[cfg.fieldCode]}">
+            <span v-if="cfg.readOnly == false&&!dataTime">:</span>
             {{second}}
         </span>
         <span class="icon-right" v-if="cfg.readOnly == false"></span>
@@ -33,10 +33,11 @@ let cfg = {
     watch:{
         values:{
             handler(oldVal,newVal){
-                if(oldVal[this.cfg.fieldCode] != newVal[this.cfg.fieldCode]){
-                    this.dataTime = (this.values[this.cfg.fieldCode]).substring(0,17);
-                    this.second = (this.values[this.cfg.fieldCode]).substring(17);
-                }
+                this.getR2Bind();
+                // if(oldVal[this.cfg.fieldCode] != newVal[this.cfg.fieldCode]){
+                    this.dataTime = this.values[this.cfg.fieldCode]&&(this.values[this.cfg.fieldCode]).substring(0,17);
+                    this.second = this.values[this.cfg.fieldCode]&&(this.values[this.cfg.fieldCode]).substring(17)||'00';
+                // }
             }
         }    
     },
@@ -121,6 +122,29 @@ let cfg = {
             endDate = this.form.fieldMap[Id].getValue();
             this.endDate = endDate;
         },
+        evalDateFormat(val,format){
+            return dateFormat(val,format);
+        },
+        getR2Bind:function(){
+            if(!this.getValue()){
+                var fn = this.cfg.r2Bind; 
+                if(fn){  
+                    var obj =  JSON.parse(fn);
+                    var ex = obj.values;
+                    ex = ex.replace(/Ext.Date.format/g,"this.evalDateFormat");
+                    ex = ex.replace(/Y-m-d H:i:s/g,"YYYY-MM-DD HH:mm:ss");
+                    try{
+                        var data = eval(ex);
+                        this.dataTime = (data).substring(0,17);
+                        this.second = (data).substring(17);
+                        console.log(data)
+                        this.setValue(data);
+                    } catch(e){
+                        console.log(this.cfg.fieldCode+':'+'R2bind公式有误')
+                    }
+                }
+            }
+        },
         //日期格式
         format:function() {
             var format = 'YYYY-MM-DD HH:mm';
@@ -128,7 +152,7 @@ let cfg = {
         },
     },
     created () {
-
+        this.getR2Bind()
     }
 }
 export default Vue.component('R2Datetimefield',cfg);

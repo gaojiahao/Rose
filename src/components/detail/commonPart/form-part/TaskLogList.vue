@@ -80,6 +80,7 @@ export default {
         pullUpLoad: true,
         pullDownRefresh: true
       },
+      tdDescribe:'',
     }
   },
   components: { CheckIcon, XButton, RScroll },
@@ -168,8 +169,9 @@ export default {
         name: 'TASKLOG',
         params: {
           transCode: this.$route.query.transCode,
-          listId: this.$route.query.listId
-        }
+          listId: this.$route.query.listId,
+          tdDescribe : this.$route.query.tdDescribe,
+        },
       })
     },
     // 获取 默认图片
@@ -198,6 +200,7 @@ export default {
   },
   created() {
       this.getLogList();
+      this.tdDescribe = this.$route.query.tdDescribe;
   }
 }
 </script>
