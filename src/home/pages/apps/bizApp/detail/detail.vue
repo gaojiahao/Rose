@@ -287,6 +287,8 @@ export default {
       getConfig(this.$route.params.listId,this.featureId).then(res=>{
         if(res.success)
           this.defaultTitle = res.data;
+      }).catch(function(error) {
+          console.log(error);
       });
     },
   },
