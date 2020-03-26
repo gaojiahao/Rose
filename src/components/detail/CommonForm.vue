@@ -72,6 +72,12 @@ export default {
       type: Boolean,
       default: true,
     },
+    defaultTitle:{
+      type:Object,
+      default(){
+        return {}
+      }
+    }
   },
   mixins: [submitMethod, secondConfig],
   data() {
@@ -96,13 +102,25 @@ export default {
       workflows: [],
       workflowLogs:[],
       baseinfoConfig: {},
-      formStatus: []//表单状态,是否草稿
+      formStatus: [],//表单状态,是否草稿
+      defaultTitleValue:'',
+      titleFieldCode:'',
     };
   },
   computed:{
     hasBbar:function(){
        return this.model!='view' && this.model!='flowNode'
     }
+  },
+  watch:{
+    defaultTitle:{
+      handler(val){
+        if(val){
+          var obj = JSON.parse(this.defaultTitle.defaultTitle);
+          this.titleFieldCode = obj.fieldCode;
+        }
+      }
+    }  
   },
   methods: {
     // 获取查看视图的listId
@@ -188,6 +206,7 @@ export default {
       //   this.formData= formData;
       // });
       this.formData = formData;
+      this.defaultTitleValue = this.formData[this.titleFieldCode];
       //预估以下mapping在未来业务上是确定的所以可以通过以下代码进行固化
       //mapping 基本信息
       this.baseinfo = {

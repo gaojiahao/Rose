@@ -143,7 +143,7 @@ export default {
                     modifer: currentUser.userId,
                     id:'',
                     handlerEntity: currentUser.entityId,
-                    biProcessStatus: this.taskLog.logStatus ? '代办' : '已办',
+                    biProcessStatus: this.taskLog.logStatus ? '已办' : '待办',
                     transType: 'YW146'
                 },
                 jobLog:{
@@ -214,6 +214,7 @@ export default {
         this.taskLog.taskDate = this.formatDate(new Date());
         this.getLogType()
     })
+    this.logTitle = this.$route.params.tdDescribe;
     
   }
 }
