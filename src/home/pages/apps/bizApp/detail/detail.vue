@@ -283,7 +283,9 @@ export default {
           });
         }
       })
-      await this.getConfig();
+      if(this.featureId){
+        await this.getConfig();
+      }
     },
     getConfig(){
       getConfig(this.$route.params.listId,this.featureId).then(res=>{
