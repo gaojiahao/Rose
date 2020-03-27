@@ -1,7 +1,7 @@
 <template>
 <div v-show="!hidden" class="cell each_property vux-1px-b combo" >
   <label :class="{'required':!cfg.allowBlank,'readonly':cfg.readOnly}">{{cfg.fieldLabel}}</label>
-  <div v-if="cfg.readOnly == false && (!selection)" class="content" @click="clickShowPop">
+  <div v-if="cfg.readOnly == false && (!selection2['facilityCode'])" class="content" @click="clickShowPop">
     <span class='mater_nature' :class="{placeholder:!values[cfg.fieldCode]}">{{displaysValue || displaysEmptyDatasourceValue || "请选择"}}</span>
     <span v-if="cfg.dataSource" class="icon-right"></span>
   </div>
@@ -71,6 +71,7 @@ let cfg = {
         },
         searchBoxShow:true,
         property:'',
+        selection2:{},
       }
     },
     watch: {
@@ -346,11 +347,14 @@ let cfg = {
         filter = [
           {
           operator: 'like',
-          value: this.searchValue&&this.searchValue[0],
+          value: this.searchValue,
           // property: this.cfg.displayField,
           property: this.property,
           }
         ];
+        if(this.property.searchValue === Object){
+          filter.value = this.searchValue[0]
+        }
         pArr = Object.values(this.property);
         if(this.property.constructor === Object){
           filter = [];
@@ -451,7 +455,9 @@ let cfg = {
       this.searchValue = val? this.stringToObject(val):'';
       this.property = property;
       this.page = 1;
-      this.load();
+      if(!this.selection2['facilityCode']){
+        this.load();
+      }
     },
     stringToObject(str){
       var s = str;
@@ -551,7 +557,7 @@ let cfg = {
     this.values[this.cfg.fieldCode] && this.displayRealValue();
     var selection =this.$parent.$parent.$parent.$parent.$parent.valueGroups[this.$parent.$parent.$parent.$parent.$parent.group];
     if(selection&&selection['componentName_tdComponentCode']){
-      var selection2 = {
+       this.selection2 = {
         //...selection,
         //componentName:selection.componentName_tdComponentCode,
         facilityCode: selection.facilityObjCode,
@@ -577,7 +583,7 @@ let cfg = {
         //tdAmount: selection.componentName_tdComponentCode,
         facilityUnit: selection.facilityUnit_facilityObjCode,
       };
-      this.selItem(selection2);  
+      this.selItem(this.selection2);  
     }
   }
 }
