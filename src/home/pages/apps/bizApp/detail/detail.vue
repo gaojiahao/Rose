@@ -94,7 +94,9 @@ export default {
         if(val.name == oldVal.name) {
           if(val.query.transCode != oldVal.query.transCode) {
             this.getAppFeature();
-            this.getConfig();
+            if(this.featureId){
+              this.getConfig();
+            }
             initWebContext().then(()=>{
                 this.initPage();
             });
