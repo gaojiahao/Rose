@@ -94,7 +94,9 @@ export default {
         if(val.name == oldVal.name) {
           if(val.query.transCode != oldVal.query.transCode) {
             this.getAppFeature();
-            this.getConfig();
+            if(this.featureId){
+              this.getConfig();
+            }
             initWebContext().then(()=>{
                 this.initPage();
             });
@@ -281,7 +283,9 @@ export default {
           });
         }
       })
-      await this.getConfig();
+      if(this.featureId){
+        await this.getConfig();
+      }
     },
     getConfig(){
       getConfig(this.$route.params.listId,this.featureId).then(res=>{
