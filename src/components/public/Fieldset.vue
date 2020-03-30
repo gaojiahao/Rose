@@ -49,7 +49,7 @@
             <r-grid
               :cfg="item"
               :values="values[cfg.name]"
-              v-if="['r2AccountGrid'].indexOf(item.xtype)!=-1"
+              v-if="['r2AccountGrid','r2AutoLoadGrid'].indexOf(item.xtype)!=-1"
               :key="index"
             />
             <r-grid
