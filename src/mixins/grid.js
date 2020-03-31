@@ -403,6 +403,9 @@ export default {
                     if(me.cfg.xtype=='r2AccountGrid'){
                         return true;
                     }
+                    if(me.cfg.notAddOneRow){
+                        return true;
+                    }
                     me.$vux.alert.show({
                         content: '请选择' + (me.listTitle || '交易明细')
                     });
