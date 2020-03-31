@@ -33,6 +33,10 @@ function render (el, bind) {
                 el.innerText = '已归档';
                 el.style.backgroundColor = '#1f5ec5';
                 break;
+            default:
+                el.innerText = bind.value.status;
+                el.style.backgroundColor = bind.value.color ? bind.value.color : '#35baf6';
+                break;
         }
     }else{
         switch (bind.value.status) {
@@ -50,6 +54,10 @@ function render (el, bind) {
                 break;
             case "已归档":
                 el.style.backgroundColor = '#1f5ec5';
+                break;
+            default:
+                el.innerText = bind.value.status;
+                el.style.backgroundColor = bind.value.color ? bind.value.color : '#35baf6';
                 break;
         }
     }
