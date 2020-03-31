@@ -710,7 +710,10 @@ export default {
       }
       url = beforeUrl + nextUrl;
       return url;
-    }
+    },
+    onUploadFile({biReferenceId}) {
+      this.biReferenceId = biReferenceId;
+    },
   },
   created() {
     register()

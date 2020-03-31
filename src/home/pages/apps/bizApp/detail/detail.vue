@@ -1,5 +1,6 @@
 <template>
   <div class="pages">
+    <slot name="nav"></slot>
     <div class="detail-container" :class="{'has-comment': hasComment}" ref='detail'>
       <v-touch @swipeleft="swiperleft" @swiperight="swiperright" class="wrapper">
         <component
@@ -8,8 +9,8 @@
           @refresh-scroll="refresh"
           @subscribeChange="setSubscribe"
           :showTab="showTab['comm']"
+          :defaultTitle="defaultTitle"
           ref="detailComponent">
-           <slot name="nav" slot="nav"></slot>
         </component>
         <auto-subject :showTab="showTab['subject']"></auto-subject>
         <app-example :showTab="showTab['example']" :tabData="tabData['example']"></app-example>
@@ -51,7 +52,7 @@ import {
 } from "service/commonService";
 // 请求 引入
 import { isSubscribeByRelationKey, subscribeApp, unsubscribeApp, getUserList } from 'service/commentService'
-import { getAppExampleDetails,getAutoSubjectCount,getAppFeaturesData } from "service/detailService";
+import { getAppExampleDetails,getAutoSubjectCount,getAppFeaturesData,getConfig } from "service/detailService";
 /* 引入微信相关 */
 import {register} from 'plugins/wx'
 import { constants } from 'crypto';
@@ -81,6 +82,8 @@ export default {
       },
       appExample: [],
       autoSubjectCount: 0,
+      featureId: '',
+      defaultTitle:{},
     }
   },
   watch: {
@@ -91,6 +94,9 @@ export default {
         if(val.name == oldVal.name) {
           if(val.query.transCode != oldVal.query.transCode) {
             this.getAppFeature();
+            if(this.featureId){
+              this.getConfig();
+            }
             initWebContext().then(()=>{
                 this.initPage();
             });
@@ -131,7 +137,8 @@ export default {
         path: '/taskLog',
         query: {
           listId: this.$route.params.listId,
-          transCode: this.transCode
+          transCode: this.transCode,
+          tdDescribe: this.$refs.detailComponent.defaultTitleValue,
         }
       })
     },
@@ -250,10 +257,10 @@ export default {
       });    
     },
     //获取应用特性管理数据
-    getAppFeature() {
+    async getAppFeature() {
       this.isDiscuss = false;
       this.isTaskLog = false;
-      getAppFeaturesData(this.$route.params.listId).then(res => {
+      await getAppFeaturesData(this.$route.params.listId).then(res => {
         if(res.success){
           res.data.forEach(val => {
             if(val.status === '1'){
@@ -265,6 +272,7 @@ export default {
                   if (this.$route.params.listId !=='2750a13d-295d-4776-9673-290c51bfc568') {     
                       this.isTaskLog = true;
                   }
+                  this.featureId = val.id;
               }
             }
           })
@@ -275,7 +283,18 @@ export default {
           });
         }
       })
-    }
+      if(this.featureId){
+        await this.getConfig();
+      }
+    },
+    getConfig(){
+      getConfig(this.$route.params.listId,this.featureId).then(res=>{
+        if(res.success)
+          this.defaultTitle = res.data;
+      }).catch(function(error) {
+          console.log(error);
+      });
+    },
   },
   created() {
     initWebContext().then(()=>{
@@ -393,5 +412,11 @@ export default {
         }
       }
     }
+  }
+  .hasNav .detail-container{
+      height: calc(100% - 46px);
+      &.has-comment{
+        height: calc(100% - .5rem - 46px);
+      }
   }
 </style>

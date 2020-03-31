@@ -9,11 +9,14 @@
   <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide" style="z-index: 502;">
         <div class="trade_pop">
-          <d-search @search="searchList" @turn-off="onHide" :isFill="true" :defaultValue="searchValue" :searchBoxShows="searchBoxShow"></d-search>
+          <d-search @search="searchList" @turn-off="onHide" :isFill="true" :searchBoxShows="searchBoxShow" :filterList="fields"></d-search>
           <!-- 往来列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" @search-box-show="searchBox" ref="bScroll">
             <div class="pop-list-item" v-for="(item, index) in listData" :key='index' @click.stop="selItem(item,true)" :class="{selected: showSelIcon(item)}">
+              <div class="trans-item-img">
+                <img  :src="getImgPic(item)" >
+              </div>
               <div class="main">
                   <div class="name">
                      <span class="name">{{item[cfg.displayField]}}</span>
@@ -67,6 +70,7 @@ let cfg = {
           pullDownRefresh: true,
         },
         searchBoxShow:true,
+        property:'',
       }
     },
     watch: {
@@ -126,6 +130,9 @@ let cfg = {
                 if(res){
                   this.displaysValue = res[this.cfg.displayField];
                   this.selection = res;
+                  if(!this.cfg.readOnly){
+                    this.form.$emit(this.valueChangeKey,this);
+                  }
                 }else{
                   this.displaysValue = this.values[this.cfg.fieldCode];
                 }
@@ -197,6 +204,8 @@ let cfg = {
       if(me.cfg.xtype == 'r2Selector'){
           for(i =0,l= dataSourceCols.length;i<l;i++){
             col = dataSourceCols[i];
+            col['name'] = dataSourceCols[i].v;
+            col['value'] = dataSourceCols[i].k;
             if(hFieldKeys.indexOf(col.k) ==-1){
                 fields.push(col);
             }
@@ -311,6 +320,7 @@ let cfg = {
       var cfg = this.cfg,
           value = this.getValue();
 
+      this.property = this.cfg.displayField;
       this.blankText = '请选择'+cfg.fieldLabel;
       if(value != null){
           if(cfg.xtype != 'r2Combo')this.searchValue = ''+value;
@@ -331,17 +341,34 @@ let cfg = {
             limit: this.limit,
             page: this.page,
             start: (this.page - 1) * this.limit
-          }
+          },
+          pArr=[];
       
-      if (this.searchValue) {
-          filter = [
-            {
-            operator: 'like',
-            value: this.searchValue,
-            property: this.cfg.displayField,
+      if (this.searchValue&&this.searchValue[0]) {
+        filter = [
+          {
+          operator: 'like',
+          value: this.searchValue&&this.searchValue[0],
+          // property: this.cfg.displayField,
+          property: this.property,
+          }
+        ];
+        pArr = Object.values(this.property);
+        if(this.property.constructor === Object){
+          filter = [];
+          for(var i=0;i<pArr.length;i++){
+            if(this.searchValue[i]){
+              var a = {
+                operator: 'like',
+                value: this.searchValue[i],
+                // property: this.cfg.displayField,
+                property: pArr[i]['value'],
+              }
             }
-          ];
-          data.filter = JSON.stringify(filter);
+            filter.push(a);
+          }
+        }
+        data.filter = JSON.stringify(filter);
       };
       if(this.cfg.valueBind&&valueBind&&this.cfg.xtype=='r2Selector'&&valueBind.value&&this.cfg.readOnly){
         data = {
@@ -422,11 +449,19 @@ let cfg = {
       }
     },
 
-    searchList({val}){
-      this.searchValue = val;
+    searchList({val,property}){
+      this.searchValue = val? this.stringToObject(val):'';
+      this.property = property;
       this.page = 1;
       this.load();
     },
+    stringToObject(str){
+      var s = str;
+      s = s.replace(/\s/g,",");
+      s = s.replace(/，/g,",");
+      return s.split(',');
+    },
+
     selItem(item,status){
       this.selection = item;
       this.showPop = false;
@@ -461,8 +496,8 @@ let cfg = {
               this.selItem(selection);  
               return ;
             } else {
-              this.reSet();    
-              this.displaysValue = '';    
+              // this.reSet();    
+              // this.displaysValue = '';    
             }
           } 
           if(this.cfg.defaultValue){
@@ -470,10 +505,10 @@ let cfg = {
             this.selItem(selection);
             return ;
           }
-          if(selection == null&&!this.cfg.valueBind) {
-            this.reSet();
-            this.displaysValue = '';
-          }
+          // if(selection == null&&!this.cfg.valueBind) {
+          //   this.reSet();
+          //   this.displaysValue = '';
+          // }
       } else {
         if(listData.length&&this.cfg.defaultValue){
           selection = listData[0];
@@ -498,7 +533,19 @@ let cfg = {
       }).then(res => {
         return res;
       })
-    }
+    },
+    //选择默认图片
+    getImgPic(d) {
+      let url;
+      if(d){
+        let pic = this.curObj ? this.curObj.picKey : '',
+            defaultUrl = this.curObj ? this.curObj.defaultUrl : 'wl_default03.png';
+        url =  d[pic] ? d[pic] : '/static/' + defaultUrl;
+      }else{
+        url = require('assets/wl_default03.png');
+      }
+      return url;
+    },
   },
   created(){
     this.initCombo();
@@ -557,6 +604,13 @@ export default Vue.component('R2Combofield',cfg);
          &.selected {
          border: 1px solid; 
          @include boder_color();
+         }
+         .trans-item-img{
+           width: 1rem;
+           margin-right: .1rem;
+           img{
+             width: .85rem;
+           }
          }
          .main {
             .name {

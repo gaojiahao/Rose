@@ -6,7 +6,7 @@
         <check-icon
           type="plain" 
           :value.sync="taskLog.logStatus">
-          {{ taskLog.logStatus?'已办':'待办' }}
+          {{ !taskLog.logStatus?'待办':'已办' }}
         </check-icon>
       </div>
       <div class="task_log_user">
@@ -48,7 +48,7 @@
         <x-textarea 
           :max="200" 
           v-model="taskLog.comments" 
-          placeholder="请输入您特别想要备注的信息">
+          placeholder="请输入您的成果">
         </x-textarea>
       </div>
       <div class="task_log_footer">
@@ -78,7 +78,7 @@ export default {
       logTypelist: [[]],
       selectUsers: [],
       taskLog: {
-        logStatus: false,
+        logStatus: true,
         taskDate: "",
         comments: "",
         logDeclarationHours: 1,
@@ -116,8 +116,8 @@ export default {
     submitLog() {
       const currentUser = WebContext.WebContext.currentUser;
       let formdata;
-      if(this.taskLog.taskDate < this.formatDate(new Date()) && !this.taskLog.logStatus){
-        this.$vux.toast.text('日期小于今日，日志类型应该为已办！');
+      if(this.taskLog.taskDate < this.formatDate(new Date())){
+        this.$vux.toast.text('日期小于今日，请重新选择日期！');
       }else if(this.taskLog.taskDate > this.formatDate(new Date()) && this.taskLog.logStatus){
         this.$vux.toast.text('日期大于今日，日志类型应该为待办！');
       }else if(!this.logTitle){
@@ -214,6 +214,7 @@ export default {
         this.taskLog.taskDate = this.formatDate(new Date());
         this.getLogType()
     })
+    this.logTitle = this.$route.params.tdDescribe;
     
   }
 }

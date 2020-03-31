@@ -5,6 +5,7 @@ export const isIPad = ua.indexOf('ipad') > 0; // 是否为iPad
 export const isAndroid = ua.indexOf('android') > 0; // 是否为安卓机
 export const isPC = !(isIOS || isAndroid); // 是否为PC
 export const isQYWX = ua.match(/wxwork/) !== null; // 是否为企业微信
+export const isDD = ua.match(/dingtalk/) !== null; // 是否钉钉
 
 if(ua.indexOf('chrome')>0) window.isDebug = true;
 export default {
@@ -14,4 +15,5 @@ export default {
   isIPad,
   isIPhone,
   isAndroid,
+  isDD,
 }

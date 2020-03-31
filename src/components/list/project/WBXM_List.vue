@@ -1,8 +1,8 @@
 <template>
   <div class="pages xmlx-list-container" :class="{'no-add': !action.add}" ref='list'>
     <div class='content'>
+      <slot name="nav"></slot>
       <div class="list_top">
-        <slot name="nav"></slot>
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search='searchList' ref="search"></searchIcon>
         <div class="filter_part">
@@ -42,7 +42,7 @@
                       <span class="project_detail_value">{{item.dealerName_dealerDebit}}</span>
                     </div>
                     <div class="project_detail_item">
-                      <span class="project_detail_title">经理电话：</span>
+                      <span class="project_detail_title">手机号：</span>
                       <span class="project_detail_value">{{item.phoneNumber_projectApprovalId || '无'}}</span>
                     </div>
                   </div>

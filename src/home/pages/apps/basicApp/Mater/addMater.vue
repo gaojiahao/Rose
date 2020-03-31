@@ -1,5 +1,6 @@
 <template>
   <div class='childPage matter-page'>
+     <slot name="nav"></slot>
     <r-scroll :options="scrollOptions" class='content'>
       <div class='mater_baseinfo1'>
         <div class="mater_pic1">

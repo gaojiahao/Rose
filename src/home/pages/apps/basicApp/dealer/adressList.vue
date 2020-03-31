@@ -1,7 +1,7 @@
 <template> 
   <div class="pages" :class="{'no-add': !action.add}">
     <div class="content">
-      <slot name="nav"></slot>
+      <slot name="nav" v-if ="$route.path =='/adress'"></slot>
       <!-- 顶部区域 -->
       <div class="app_top">
         <searchIcon @search='searchList' :placeHolder='placeHolder'></searchIcon>
@@ -52,7 +52,7 @@
       </r-scroll>
     </div>
     <add-btn :action="action" :goEdit="goEditAds"></add-btn>
-    <router-view></router-view>
+    <router-view><slot name="nav" v-if ="$route.path !='/adress'" slot="nav"></slot></router-view>
   </div>
   
 </template>
@@ -375,7 +375,6 @@
     z-index: 100;
     background: #fff;
   }
-
   .vux-1px-b:after, .vux-1px-l:before {
     border-color: #e8e8e8;
     color: #e8e8e8;

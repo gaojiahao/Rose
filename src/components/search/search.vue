@@ -47,7 +47,7 @@
       },
       placeHolder: {
         type: String,
-        default: ''
+        default: '多字段搜索以英文逗号隔开,如：编码,名称'
       }
     },
     watch: {
@@ -64,7 +64,7 @@
       return {
         srhInpTx: "",
         timer: null,
-        property: '',
+        property: {},
         isShowDrop: false,
       };
     },
@@ -121,7 +121,7 @@
       },
       // 选择过滤条件
       popSelected(item) {
-        this.property = item.value;
+        this.property = item;
         this.$refs.searchInp.focus();
       },
       // 过滤时清除搜索
@@ -198,7 +198,7 @@
     .search_filter {
       left: 0;
       bottom: 0;
-      top: .8rem;
+      top: .45rem;
       width: 100%;
       z-index: 100;
       font-size: .14rem;

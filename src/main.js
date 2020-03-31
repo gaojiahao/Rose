@@ -7,10 +7,12 @@ import Swiper from './common/swiper-4.2.2.min.js'
 import VueTouch from 'vue-touch'
 import RText from './components/public/RText'
 import RDateField from './components/public/DateField'
+import RDatetimeField from './components/public/DatetimeField'
 import RPermilField from './components/public/PermilField'
 import RPercentField from './components/public/PercentField'
 import RNumberField from './components/public/NumberField'
 import RComboField from './components/public/ComboField'
+import RComboFieldWx from './components/public/ComboFieldWx'
 import R2MultiSelector from './components/public/MultiSelector'
 import R2Checkbox from './components/public/CheckboxField'
 import R2TextArea from './components/public/R2TextArea'
@@ -19,9 +21,11 @@ import columnTitle from './components/public/column/Title'
 import fieldset from './components/public/Fieldset'
 import fieldsetCt from './components/public/FieldsetCt'
 import grid from './components/public/Grid'
+import GridWX from './components/public/GridWX'
 import ReadOnlyPart from './components/public/ReadOnlyPart'
 import BaseInfoPart from './components/public/BaseInfoPart'
 import gridDetail from './components/public/GridDetail'
+import gridDetailWx from './components/public/GridDetailWx'
 import transactorView from './components/public/TransactorView'
 import matterListView from './components/public/MatterListView'
 import matterItem from './components/public/MatterItem'
@@ -29,6 +33,7 @@ import BaseinfoView from './components/public/BaseinfoView'
 import BomListView from './components/public/BomListView'
 import WFlow from './components/public/WFlow'
 import Fileupload from './components/public/Fileupload'
+import PlayerPop from './components/public/PlayerPop'
 import ContentView from './components/public/ContentView'
 import R2Action from './components/public/R2Action'
 import SlideBar from './components/public/SlideBar'
@@ -40,8 +45,12 @@ import Loading from 'plugins/loading/pageLoad/loading'
 import HandleLoad from 'plugins/loading/handleLoad/handleLoading'
 import platfrom from './plugins/platform/index'
 import commonService from "service/commonService";
+import * as dd from 'dingtalk-jsapi'
 
 require('@/directive')
+if(window.isApp){
+  require('service/pushService');
+}
 
 Vue.use(Loading)
 Vue.use(HandleLoad)
@@ -65,7 +74,19 @@ Vue.clone = function(a){
    return JSON.parse(JSON.stringify(a));
 };
 router.afterEach((to, from) => {
-  document.title = to.meta.title || '';
+  if (dd.ios || dd.android){
+    dd.ready(function() {
+      dd.biz.navigation.setTitle({
+        title: to.meta.title || 'Roletask', 
+        onSuccess: function(result) {
+          // alert('succcess')
+        },
+        onFail: function(err) {}
+      })
+    })
+  } else {
+    document.title = to.meta.title || '';
+  }
 })
 
 new Vue({

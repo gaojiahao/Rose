@@ -30,6 +30,9 @@ export let convertDataType = function (editorType, value) {
   }
   return value;
 }
+export let clearBaseInfo = ()=>{
+  baseInfo = null;
+}
 // 删除文件
 export let deleteFile = (id = '') => {
   return $flyio.ajax({
@@ -159,6 +162,9 @@ export let getBasicInfo = (data ={})=> {
           }
         }).then(data=>{
           baseInfo = data;
+          if(!localStorage.getItem('userInfo')){
+            localStorage.setItem('userInfo',JSON.stringify(baseInfo.currentUser));
+          }
           resolve(data);
         }).catch(()=>{
           reject();
@@ -551,6 +557,7 @@ export default {
   getProcess,
   getDictByType,
   getBasicInfo,
+  clearBaseInfo,
   submitAndCalc,
   getDictByValue,
   saveAndStartWf,

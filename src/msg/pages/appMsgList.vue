@@ -1,5 +1,6 @@
 <template>
   <div class="pages">
+    <slot name="nav"></slot>
     <div class="list_top">
       <search class="search" @search='searchList'></search>
     </div>

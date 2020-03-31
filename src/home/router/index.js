@@ -1,5 +1,7 @@
 import HOME from '../pages/home'
 import Login from '../pages/login'
+import SetHost from '../pages/setHost'
+import User from '../pages/user'
 
 // ------> 基础应用 <-------
 import ADRESS from '../pages/apps/basicApp/dealer/adressList'
@@ -38,6 +40,22 @@ export default [
     // redirect: '/Login',
     meta: {
       title: '登录'
+    }
+  },
+  {
+    path:'/setHost',
+    name:'setHost',
+    component:SetHost,
+    meta:{
+       title:'服务器设置'
+    }
+  },
+  {
+    path:'/user',
+    name:'user',
+    component:User,
+    meta:{
+       title:'用户中心'
     }
   },
   {
@@ -126,7 +144,7 @@ export default [
     path:'/themeSetting',
     name:'THEMESETTING',
     component:THEMESETTING,
-    meta:{ title:'主体设置' }
+    meta:{ title:'主题设置' }
   },
   {
     path:'/adress',

@@ -2,6 +2,7 @@
 <!--低值易耗品采购申请-->
   <div class="pages xsbj-list-conatiner" :class="{'no-add': !action.add}" ref='list'>
     <div class='content'>
+      <slot name="nav"></slot>
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search='searchList' ref="search"></searchIcon>

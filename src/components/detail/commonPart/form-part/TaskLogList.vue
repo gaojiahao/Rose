@@ -80,6 +80,7 @@ export default {
         pullUpLoad: true,
         pullDownRefresh: true
       },
+      tdDescribe:'',
     }
   },
   components: { CheckIcon, XButton, RScroll },
@@ -136,7 +137,7 @@ export default {
       if(new Date(log.taskDate) > new Date() && log.logStatus === '已办'){
         this.$vux.confirm.show({
             title: '提示',
-            content: '如果更新为已办，日志的日期将自动更新为今天!',
+            content: '您要更改的日志任务日期大于今日，应为待办，如果更新为已办，日志的日期将自动更新为今天!',
             onConfirm : () => {
                 this.handlerUpdateLogStatus(log);
             }
@@ -168,8 +169,9 @@ export default {
         name: 'TASKLOG',
         params: {
           transCode: this.$route.query.transCode,
-          listId: this.$route.query.listId
-        }
+          listId: this.$route.query.listId,
+          tdDescribe : this.$route.query.tdDescribe,
+        },
       })
     },
     // 获取 默认图片
@@ -198,6 +200,7 @@ export default {
   },
   created() {
       this.getLogList();
+      this.tdDescribe = this.$route.query.tdDescribe;
   }
 }
 </script>

@@ -1,5 +1,6 @@
 <template>
   <div class='childPage'>
+    <slot name="nav"></slot>
     <r-scroll class='detail_content' ref="bScroll">
       <div class="dealer_baseinfo has_margin">
         <div class="baseInfo_top">
@@ -418,6 +419,9 @@ export default {
       transform: translate(-50%, -50%);
       box-shadow: 0 2px 5px #5077aa;
     }
+  }
+  .hasNav .detail_content{
+    height:calc(100% - 46px); 
   }
 
 </style>

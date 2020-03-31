@@ -48,6 +48,15 @@ export let getLocalCurrency = () => {
     url: '/H_roleplay-si/foreignExchange/get'
   })
 };
+// 获取现金流量表数据
+export let getCashFlowSheet = (endDate) => {
+  return $flyio.ajax({
+    url: '/account-api/composite/getCashFlowSheet',
+    data: {
+      end: endDate
+    }
+  })
+};
 //获取自动分录数据 view_id 区分会计类科目与非会计类科目
 export let prolxyGetAutomaticEntry = (data = {}) => {
   return  $flyio.ajax({

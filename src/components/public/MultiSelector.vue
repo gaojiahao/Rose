@@ -381,7 +381,7 @@ let cfg = {
 }
 export default Vue.component('R2MultiSelector',cfg);
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 @import '~@/scss/color';
 .combo {
   .content{
@@ -402,6 +402,9 @@ export default Vue.component('R2MultiSelector',cfg);
     }
   }
 }
+  .vux-popup-dialog {
+    z-index: 502;
+  }
 .trade_pop_part {
   background: #fff !important;
   .trade_pop{

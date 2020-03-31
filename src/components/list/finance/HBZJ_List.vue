@@ -1,6 +1,7 @@
 <template>
   <div class="pages">
     <div class='content'>
+      <slot name="nav"></slot>
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon @search='searchList' :place-holder="tipsWord"></searchIcon>

@@ -1,6 +1,7 @@
 import util from '@/common/util';
 import Record from '@/common/record';
 import { accMul, accDiv } from "plugins/calc/decimalsAdd";
+import { getFieldSetting, getAllDict, getAllFieldSettingListLevel}  from "service/fieldModelService"
 import {
     getValuesByExp,
     convertDataType
@@ -10,8 +11,20 @@ export default {
     data() {
         return {
             isEdit: false,
-            selection: []
+            selection: [],
+            accsubmitValue:false,
+            ListLevelFieldSetting:[],
+            Dicts:[],
         };
+    },
+    watch:{
+        values:{
+            handler(val){
+                if(this.cfg.xtype=='r2AccountGrid'){
+                    this.accsubmitValue = true;
+                }
+            }
+        }
     },
     methods: {
         addRecord: function(){
@@ -385,8 +398,11 @@ export default {
             var me = this,
                 value = me.getValue();
 
-            if(!me.$parent.hidden) { 
+            if(!me.$parent.hidden&&me.$parent.submitValue) { 
                 if (value == null || value.length == 0) {
+                    if(me.cfg.xtype=='r2AccountGrid'){
+                        return true;
+                    }
                     me.$vux.alert.show({
                         content: '请选择' + (me.listTitle || '交易明细')
                     });
@@ -888,5 +904,75 @@ export default {
         getExtraFieldValue:function(valueField){
             return this.getValue();
         },
+        initFieldSetting(){
+            getFieldSetting().then( res=>{
+              var me = this,
+                  r2_cachedListLevelFieldSetting =  this.ListLevelFieldSetting,
+                  r2_cachedDicts =  this.Dicts;
+           
+              r2_cachedListLevelFieldSetting = r2_cachedListLevelFieldSetting != null ? JSON.parse(r2_cachedListLevelFieldSetting) : null;
+              r2_cachedDicts = r2_cachedDicts != null ? JSON.parse(r2_cachedDicts) : null;
+              if(r2_cachedListLevelFieldSetting == null || r2_cachedDicts == null ) return;
+          
+              var r2FieldSetting = {};
+              res.tableContent.map(field=>{
+                field.config = JSON.parse(field.config);
+                if (field.fieldType === 'dictionary' || field.fieldType === 'options') {
+                  if (r2_cachedListLevelFieldSetting[field.fieldCode]) {
+                    field.optionItems = r2_cachedListLevelFieldSetting[field.fieldCode].map(function (fs) {
+                      return {
+                        id: fs.fieldValue,
+                        name: fs.fieldValue,
+                        listId: fs.listId,
+                        sort: fs.sort
+                      };
+                    });
+                  } else if (field.fieldType === 'options') {
+                    field.optionItems = Array.isArray(field.config.optionState) ? [] : (field.config.optionState ? JSON.parse(field.config.optionState):'');
+                  } else if (field.config.dictCode) {
+
+                  }
+              }
+              r2FieldSetting[field.fieldCode] = field;
+              });
+                if(!window.sessionStorage.getItem('r2FieldSetting')){
+                    window.sessionStorage.setItem('r2FieldSetting',  JSON.stringify(r2FieldSetting));
+                }
+                this.dealKeyFiled();
+            }).catch(e =>{console.log(e)});
+        },
+        initListLevelFieldSetting() {
+            getAllFieldSettingListLevel().then(res=>{
+              var me = this,
+                  _cachedListLevelFieldSetting = {};
+          
+              res.tableContent.map(it=>{
+                _cachedListLevelFieldSetting[it.fieldCode] = _cachedListLevelFieldSetting[it.fieldCode] ? 
+                  Array.isArray(_cachedListLevelFieldSetting[it.fieldCode]) ? _cachedListLevelFieldSetting[it.fieldCode].concat(it) : [it, _cachedListLevelFieldSetting[it.fieldCode]] 
+                  : it;
+              });
+              for(var val in _cachedListLevelFieldSetting){
+                _cachedListLevelFieldSetting[val].sort(function(a, b){return a.sort - b.sort});
+              }
+              this.ListLevelFieldSetting = JSON.stringify(_cachedListLevelFieldSetting);
+            }).catch(e =>{e});
+          }, 
+        initDicts() {
+            getAllDict().then(res=>{
+              var me = this,
+              _cachedDicts = {};
+              res.tableContent.map(it=>{
+                _cachedDicts[it.value] = it;
+              });
+              this.Dicts = JSON.stringify(_cachedDicts);
+            }).catch(e =>{e});
+        },
+        async load(){
+            if(!(window.sessionStorage.getItem('r2FieldSetting')||this.$r2FieldSetting)){
+                await this.initListLevelFieldSetting();
+                await this.initDicts();
+                await this.initFieldSetting();
+            }
+        }
     }
 }

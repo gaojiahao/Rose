@@ -17,8 +17,8 @@
         <template v-for="(field,index) in singleField" >
             <div :key="index" class="main-single-item" v-if="field.kField">
               <span class="fieldLabel">{{field.alias ? field.alias : field.fieldName}}:</span>
-              <span class="fieldValue" v-if="field.fieldCode !== 'biComment'">{{formatValues(item[field.fieldCode])}}</span>
-              <span class="fieldValue" v-else >{{formatValues(item[field.fieldCode])}}</span>
+              <span class="fieldValue" v-if="field.fieldCode !== 'biComment'">{{formatValues(item[field.fieldCode],field)}}</span>
+              <span class="fieldValue" v-else >{{formatValues(item[field.fieldCode],field)}}</span>
             </div>
         </template> 
 
@@ -41,14 +41,14 @@
                 <div :key="index"   v-if="field.kField">
                   <div >
                     <span >{{field.alias ? field.alias : field.fieldName}}:</span>
-                    <span>{{formatValues(detail[field.fieldCode])}}</span>
+                    <span>{{formatValues(detail[field.fieldCode],field)}}</span>
                   </div>
                 </div>
               </template>
               <template v-for="(field,index) in summaryField">
                 <div :key="1+'-'+index" class="summary-item" v-if="detail[field.fieldCode]">
                   <span class="summary-item-label">{{field.alias ? field.alias : field.fieldName}}:</span>
-                  <span class="summary-item-value">{{numberCommaNumer(detail[field.fieldCode])}}</span>
+                  <span class="summary-item-value">{{numberCommaNumer(detail[field.fieldCode],field)}}</span>
                 </div>
               </template>
             </div>
@@ -58,7 +58,7 @@
       </div>
     </div>
 
-    <div class="summary-info  vux-1px-t"  v-if="item.detailItem.length>1">
+    <div class="summary-info  vux-1px-t"  v-if="item.detailItem&&item.detailItem.length>1">
       <div class="summary-info-count" >
         <p>共{{item.detailItem.length}}条明细</p>
         <p v-if="item.detailItem.length>3">查看更多...</p>
@@ -97,7 +97,7 @@ export default Vue.component("ListItem", {
   props: ["fieldsObj", "item"],
   computed:{
     curObj:function() {
-      if(this.item.detailItem.length < 1) return;
+      if(this.item.detailItem.length < 1) return [];
 
       let fieldSettingData = this.$r2FieldSetting,
           obj,
@@ -146,7 +146,7 @@ export default Vue.component("ListItem", {
       })
     },
     singleField:function(){
-      let fieldSettingData = this.$r2FieldSetting,
+      let fieldSettingData = JSON.parse(window.sessionStorage.getItem('r2FieldSetting'))||this.$r2FieldSetting,
           val = [],
           fKey;
       for(var key in this.item){
@@ -155,7 +155,7 @@ export default Vue.component("ListItem", {
         }
       }
       return this.mainField.filter(it=>{
-        fKey = it.fieldCode.split('_')[0];
+        fKey = it.fieldCode&&it.fieldCode.indexOf('_') > -1 ? it.fieldCode.split('_')[0] : it.fieldCode;
         if(fieldSettingData[fKey]){
               if(fieldSettingData[fKey]['kField']===1){
                   it.kField = 1;
@@ -230,7 +230,10 @@ export default Vue.component("ListItem", {
      
      return url;
     },
-    formatValues(val){
+    formatValues(val,item){
+      if(('okrPlanMonth,okrPlanYear').indexOf(item.fieldCode)!=-1){
+        return val;  
+      }
       if(typeof(val) === 'number'){
         return this.numberCommaNumer(val);
       }

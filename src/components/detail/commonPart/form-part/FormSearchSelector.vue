@@ -116,7 +116,8 @@ export default {
       scrollOptions: {
         click: true,
         pullUpLoad: true
-      }
+      },
+      defaultNickname:'',
     };
   },
   components: { 
@@ -203,7 +204,7 @@ export default {
       this.onHide();
     },
     // 请求列表数据
-    getlistDatas() {
+    getlistDatas(flag) {
         let filter = [];
 
         if (this.searchContent) {
@@ -223,6 +224,11 @@ export default {
                   val.selected = true;
                 }
               })
+              if(val[this.listName] === this.defaultNickname&&flag){
+                val.selected = true;
+                this.confirmItems.push(val);
+                this.$emit('getSelectData', this.confirmItems);
+              }
             })
 
             this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
@@ -230,10 +236,16 @@ export default {
                 this.$refs.bScroll.finishPullUp();
             })
         });
+    },
+    defaultValue(){
+      
     }
   },
   created() {
-      this.getlistDatas();
+      var userInfo = localStorage.getItem('userInfo'),
+      flag=true;
+      this.defaultNickname = JSON.parse(userInfo).nickname;
+      this.getlistDatas(flag);
   }
 };
 </script>
