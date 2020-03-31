@@ -8,7 +8,7 @@
               <span v-if="item.biProcessStatus">{{item.biProcessStatus}}</span>
             </strong>
             <span v-if="field.fieldCode==='biStatus'&&!item.processNodeName" v-instanceStateDirective="{status:item[field.fieldCode]}" >{{item[field.fieldCode]}}</span>
-            <span v-else-if="field.fieldCode==='biStatus'&&item.processNodeName" v-instanceStateDirective="{status:item.processNodeName}">{{item.processNodeName}}1</span>
+            <span v-else-if="field.fieldCode==='biStatus'&&item.processNodeName&&item[field.fieldCode]==2" v-instanceStateDirective="{status:item.processNodeName}">{{item.processNodeName}}1</span>
           </div>
         </template>
     </div>
