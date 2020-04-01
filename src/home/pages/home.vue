@@ -85,7 +85,6 @@ const ROSE_MENU = 'ROSE_MENU';
 var DS;
 if(window.isApp){
    DS = require('deepstream.io-client-js');
-  // DS = require('@deepstream/client').DeepstreamClient;
 }
 export default {
   data() {
