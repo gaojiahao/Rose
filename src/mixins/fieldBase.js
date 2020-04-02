@@ -191,7 +191,7 @@ export default {
                 value = me.getValue(),
                 errors = [];
            
-            if(!me.allowBlank && (value == null||value==''||!value) && me.submitValue){
+            if(!me.allowBlank && (value == null||value=='') && me.submitValue){
                 errors.push(me.blankText);
                 this.$vux.alert.show({
                     content: me.blankText
