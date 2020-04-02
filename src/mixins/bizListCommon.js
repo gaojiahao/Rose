@@ -165,7 +165,10 @@ export default {
       this.getList();
     },
     stringToObject(str){
-      return str.split(',');
+      var s = str;
+      s = s.replace(/\s/g,",");
+      s = s.replace(/，/g,",");
+      return s.split(',');
     },
     // 设置状态的class和显示的名称
     setStatus(item) {

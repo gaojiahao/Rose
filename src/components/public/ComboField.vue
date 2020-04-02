@@ -201,7 +201,7 @@ let cfg = {
 
       this.store = store;
 
-      if(me.cfg.xtype == 'r2Selector'){
+      if(me.cfg.xtype == 'r2Selector'||me.cfg.xtype == 'r2SelectorPlus'){
           for(i =0,l= dataSourceCols.length;i<l;i++){
             col = dataSourceCols[i];
             col['name'] = dataSourceCols[i].v;
@@ -348,11 +348,14 @@ let cfg = {
         filter = [
           {
           operator: 'like',
-          value: this.searchValue&&this.searchValue[0],
+          value: this.searchValue,
           // property: this.cfg.displayField,
           property: this.property,
           }
         ];
+        if(this.property.searchValue === Object){
+          filter.value = this.searchValue[0]
+        }
         pArr = Object.values(this.property);
         if(this.property.constructor === Object){
           filter = [];
