@@ -1,6 +1,9 @@
 import HOME from '../pages/home'
 import Login from '../pages/login'
 import SetHost from '../pages/setHost'
+import Msg from '../pages/msg'
+import MsgList from '../pages/msgList'
+import Contacts from '../pages/contacts'
 import User from '../pages/user'
 
 // ------> 基础应用 <-------
@@ -31,6 +34,29 @@ import ADDADMINCOMMENT from '../pages/apps/bizApp/appDetail/addAdminComment.vue'
 import THEMESETTING from '@/home/pages/components/home-related/themeSetting'
 
 export default [
+  { 
+    path: '/msg', name: 'MSG', component: Msg,
+    meta:{ 
+      title:'消息' , 
+      keepAlive: true
+    },
+    children: [
+      {
+        path: 'group/:groupId',
+        component: MsgList
+      },
+      {
+        path: 'list/:groupId',
+        component: MsgList
+      }
+    ]
+  },
+  { path: '/contacts', name: 'CONTACTS', component: Contacts,
+    meta:{ 
+      title:'通讯录' , 
+      keepAlive: true
+    } 
+  },
   { path: '/home', name: 'HOME', component: HOME,
   meta:{ title:'首页' , keepAlive: true} },
   {
@@ -206,7 +232,7 @@ export default [
       }
     ]
   },
-  { path: '/', redirect:'/home' },
-  { path:'*', redirect:'/home' },
+  { path: '/', redirect:'/msg' },
+  { path:'*', redirect:'/msg' },
 ]
 

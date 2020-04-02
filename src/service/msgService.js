@@ -30,3 +30,15 @@ export let getNoticeByPraise = ( data = {}) => {
         data
     })
 }
+
+export let getGroupMsg = ()=>{
+    return $flyio.ajax({
+        url:'/im/message/getGroupMessage'
+    })
+}
+export let getMyGroups = ()=>{
+    return $flyio.ajax({
+        url:'/im/group/getMyGroups'
+    })
+}
+
