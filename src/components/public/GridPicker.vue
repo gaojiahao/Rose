@@ -110,7 +110,8 @@ export default {
         pullUpLoad: true
       },
       filterProperty: "", // 过滤的key
-      requestMethods: null
+      requestMethods: null,
+      name:'GridPicker',
     };
   },
   watch: {
@@ -265,17 +266,33 @@ export default {
     },
     // 获取物料列表
     requestData() {
-      let filter = [];
+      let filter = [],
+      pArr=[];
       //成品,商品,服务
       if (this.srhInpTx) {
         filter = [
           {
             operator: "like",
             value: this.srhInpTx,
-            property: this.filterProperty
+            property: this.filterProperty['value']
           }
         ];
       }
+      pArr = Object.values(this.filterProperty);
+      if(this.filterProperty.constructor === Object&&this.srhInpTx){
+          filter = [];
+          for(var i=0;i<pArr.length;i++){
+            if(this.srhInpTx[i]){
+              var a = {
+                operator: 'like',
+                value: this.srhInpTx[i],
+                // property: this.cfg.displayField,
+                property: pArr[i]['value'],
+              }
+            }
+            filter.push(a);
+          }
+        }
       let data = {
         limit: this.limit,
         page: this.page,
@@ -290,10 +307,17 @@ export default {
     },
     // 搜索物料
     searchList({ val = "", property = "" }) {
-      this.srhInpTx = val;
+      //this.srhInpTx = val;
+      this.srhInpTx = val? this.stringToObject(val):'';
       this.filterProperty = property;
       this.resetCondition();
       this.requestData();
+    },
+    stringToObject(str){
+      var s = str;
+      s = s.replace(/\s/g,",");
+      s = s.replace(/，/g,",");
+      return s.split(',');
     },
     // 删除选中项
     delSelItem(dItem) {

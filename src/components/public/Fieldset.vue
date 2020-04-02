@@ -121,7 +121,7 @@ var component = {
         displayItems = items.filter(it=>{
           return !it.hiddenInRun;
         });
-        this.editParts = hiddenItems.concat(displayItems); // 可编辑部分 
+        this.editParts = displayItems.concat(hiddenItems); // 可编辑部分 
         // this.editParts = items;
     },
     formatByType(value,type){

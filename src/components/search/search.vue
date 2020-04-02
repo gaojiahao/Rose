@@ -131,7 +131,7 @@
       }
     },
     created(){
-      this.showPop = this.$parent.$parent.selItems.length?false:true;
+      this.showPop = (this.$parent.$parent.name=="GridPicker")?true:false;
     }
   };
 </script>
