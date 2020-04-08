@@ -150,7 +150,7 @@ let Rxports = {
   // POST请求
   post(opts = {}) {
     return new Promise((resolve, reject) => {
-      fly.post(opts.url, opts.data).then(res => resolve(res.data)).catch( err => {
+      fly.post(ensureUrl(opts.url), opts.data).then(res => resolve(res.data)).catch( err => {
         reject(err);
         console.log('err:', err);
       })

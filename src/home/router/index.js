@@ -3,6 +3,7 @@ import Login from '../pages/login'
 import SetHost from '../pages/setHost'
 import Msg from '../pages/msg'
 import MsgList from '../pages/msgList'
+import GroupInfo from '../pages/groupInfo'
 import Contacts from '../pages/contacts'
 import User from '../pages/user'
 
@@ -42,11 +43,23 @@ export default [
     },
     children: [
       {
-        path: 'group/:groupId',
-        component: MsgList
+        path: 'group',
+        meta:{ 
+          tile:'聊天页面',
+          keepAlive: true
+        },
+        component: MsgList,
+        children:[{
+          path:'info',
+          meta:{ 
+            tile:'群组信息',
+            keepAlive: true
+          },
+          component:GroupInfo
+        }]
       },
       {
-        path: 'list/:groupId',
+        path: 'list',
         component: MsgList
       }
     ]

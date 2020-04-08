@@ -10,8 +10,7 @@
                 <h4>
                     {{group.groupName}}
                 </h4>
-                <div class="msg-lastMsg">
-                    {{group.lastMsg}}
+                <div class="msg-lastMsg" v-html="group.lastMsg.content">
                 </div> 
                </div>
                <div class="modTime">
@@ -19,52 +18,112 @@
                </div> 
            </div>
         </div>
-        <router-view></router-view>
+        <router-view :group="group"></router-view>
     </div>
 </template>
 <script>
 import {getGroupMsg,getMyGroups} from 'service/msgService'
+import commonService from 'service/commonService'
+import tokenService from 'service/tokenService'
 import util from '@/common/util';
 export default {
     created:function(){
         this.initGroup();
+        this.initDs();
     },
     data(){
         return {
-           groups:[{
-                groupType: "G",
-                groupName: "hehehe",
-                modTime: 1585656282000,
-                groupId: "123456",
-                focus: false,
-                msgCount: 0,
-                lastMsg:'好的',
-                img:require('assets/ava01.png'),
-           },{
-                groupType: "P",
-                groupName: "黄孝辉",
-                modTime: 1585656534000,
-                groupId: "4fb52de88f72694edbf64c2438a5f024",
-                focus: false,
-                msgCount: 0,
-                lastMsg:'http://192.168.100.85/roleplay/eletas……',
-                img:require('assets/ava02.png')
-           }]
+           groups:[],
+           group:null
         }
     },
     methods:{
         initGroup:function(){
             getMyGroups().then(data=>{
-                console.log(data);
+                var groupIdToIndex = {};//建立一个映射关系，方便以后使用
+                data.forEach((group,index)=>{
+                    groupIdToIndex[group.groupId] = index;
+                });
+                this.groupIdToIndex = groupIdToIndex;
+                this.groups = data;
             })
         },
+        initDs:function(){
+            var vm = this,
+                describe = false,
+                app = this.getApp();
+
+            return commonService.getBasicInfo().then(baseInfo => {
+                var data = baseInfo.currentUser,
+                    deepStreamUrl = baseInfo.deepStreamUrl,
+                    userId = data && data.userId;
+                
+                if(deepStreamUrl && userId){
+                    app.getDs(deepStreamUrl,userId).then(ds=>{
+                         if (describe == false){//防止断线重连时重复订阅
+                             describe = true;
+                             vm.describeDs(ds);
+                         }
+                    });
+                }
+            })
+        },
+        describeDs(ds){
+            var token = tokenService.getToken();
+            ds.event.subscribe('roletaskIm/'+ token, data => {
+                console.log('msg',data);
+                this.subscribeMsg(data);
+            });
+        },
+        /**
+         * 分发消息
+         * 1	text
+           2	image
+            100 group create
+            101 add member
+            102 del member
+            103 im check
+            104 group rename
+            105 group owner
+         */
+        subscribeMsg(msg){
+            var type = msg.imType;
+            switch(type){
+                case '1':
+                    this.addTextMsg(msg);
+                    break;
+                default:
+                    break;
+            }
+        },
+        /**
+         * 处理文字信息
+         */
+        addTextMsg(msg){
+            var groupId = msg.groupId,
+                index,
+                group;
+
+            if (this.groups.length){
+                index = this.groupIdToIndex[groupId];
+                group = this.groups[index];
+                if (group != null){
+                    group.modTime = msg.crtTime;//修改时间
+                    group.lastMsg.content = msg.content;
+                    if (this.group && this.group.groupId == groupId){//如果是当前消息页面的消息
+                        this.$emit('addTextMsg',msg);
+                    }
+                }
+            }
+        },
         toMsg:function(group){
-            this.$router.push('/msg/group/'+group.groupId)
+            this.group = group;
+            this.$router.push('/msg/group')
         }
     },
     filters:{
        timeChange:function(time){
-           var diffTime = (new Date().getTime() - time)/1000,
+           var diffTime = (new Date().getTime() - new Date(time))/1000,
                str = '';
            
            if(diffTime < 60){

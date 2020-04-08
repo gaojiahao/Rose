@@ -41,4 +41,10 @@ export let getMyGroups = ()=>{
         url:'/im/group/getMyGroups'
     })
 }
+export let sendMsg = (data)=>{
+    return $flyio.postJSON({
+        url:'/im/message/save',
+        data
+    })
+}
 

@@ -17,7 +17,7 @@
     </router-view>
 
     <!-- 底部导航栏 -->
-    <nav class="tabs vux-1px-t" v-if="this.$route.path != '/login'">
+    <nav class="tabs vux-1px-t" v-if="hasTab">
       <router-link class="tab" v-for="(tab, index) in tablist" :to="tab.path" :key='index'>
         <span class="tabicon iconfont" :class="tab.icon"></span>
         <span class="title">{{tab.title}}</span>
@@ -32,6 +32,7 @@
 import platform from './plugins/platform/index'
 import { getMsgList } from 'service/msgService'
 import { Badge,XHeader} from 'vux'
+var DS = require('deepstream.io-client-js');
 export default {
   name: 'app',
   data() {
@@ -47,6 +48,7 @@ export default {
       ],
       newsNumber:0,
       hasNav:hasNav,
+      hasTab:true,
       theme:'',
     }
   },
@@ -83,13 +85,50 @@ export default {
         this.theme = theme;
         window.document.documentElement.setAttribute('data-theme', theme);  
       }
-    }
+    },
+    getDs(dsUrl,uId){
+      var protocol = (window.baseURL||'').indexOf('https') == 0 ? 'wss':'ws',
+          vm = this,
+          status,
+          dsClient;
+      
+      return new Promise((resolve,reject)=>{
+          if(vm.dsClient != null){
+              resolve(vm.dsClient);
+              return;
+          }
+          dsClient = new DS(protocol + '://' + dsUrl);
+          dsClient.on( 'error', (error,type ) => {
+              // do something with error
+              if(type == "MESSAGE_DENIED")alert("服务器拒绝了一条消息")
+              else if(type == 'connectionError')console.log('服务器连接障碍！')
+          } );
+          dsClient.on('connectionStateChanged', connectionState => {
+              console.log('connectionState:',connectionState)
+          });
+          dsClient.login({
+              username:uId
+          },(success,data) => { //这里的函数reload时还会执行。
+              if(success){
+                  console.log("login in");
+                  window.dsClient = vm.dsClient = dsClient;
+                  resolve(dsClient);
+              }else{
+                  if(data)console.log('login error',data.msg);
+                  dsClient.close();
+              }
+          });
+      });
+     
+    },
   },
   created() {
+    var Vue = this.$parent.constructor;
     this.getTheme();
     this.$event.$on('badgeNum', (val) => {
       this.newsNumber = val;
-    })
+    });
+    Vue.prototype.getApp= ()=> this;
   },
   updated() {
     // 安卓的输入框会挡住input输入的解决办法

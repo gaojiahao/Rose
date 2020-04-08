@@ -66,6 +66,11 @@ export default {
     },
     created() {
         this.$loading.hide();
+        this.getApp().hasTab = false;
+    },
+    beforeRouteLeave:function(to,from,next){
+        this.getApp().hasTab = true;
+        next();
     }
 }
 </script>
