@@ -1,4 +1,39 @@
 // 保留小数位
+export function accAdd(arg1, arg2) {
+  var r1, r2, m, c;
+  try {
+    let arr1 = arg1.toString().split(".");
+    r1 = arr1[1] && arr1[1].length || 0;
+  }
+  catch (e) {
+      r1 = 0;
+      console.error(e)
+  }
+  try {
+    let arr2 = arg2.toString().split(".");
+    r2 = arr2[1] && arr2[1].length || 0;
+  }
+  catch (e) {
+      r2 = 0;
+    console.error(e)
+  }
+  c = Math.abs(r1 - r2);
+  m = Math.pow(10, Math.max(r1, r2));
+  if (c > 0) {
+      var cm = Math.pow(10, c);
+      if (r1 > r2) {
+          arg1 = Number(arg1.toString().replace(".", ""));
+          arg2 = Number(arg2.toString().replace(".", "")) * cm;
+      } else {
+          arg1 = Number(arg1.toString().replace(".", "")) * cm;
+          arg2 = Number(arg2.toString().replace(".", ""));
+      }
+  } else {
+      arg1 = Number(arg1.toString().replace(".", ""));
+      arg2 = Number(arg2.toString().replace(".", ""));
+  }
+  return (arg1 + arg2) / m;
+}
 export default (val, length = 2) => {
   if (val === undefined || !/^-?\d*\.?\d*$/.test(val)) {
     //console.error('the value can not change to number');
