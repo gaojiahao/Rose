@@ -18,7 +18,7 @@
                </div> 
            </div>
         </div>
-        <router-view :group="group"></router-view>
+        <router-view :group="group" :msgList="msgList" ref="groupMsg"></router-view>
     </div>
 </template>
 <script>
@@ -34,7 +34,8 @@ export default {
     data(){
         return {
            groups:[],
-           group:null
+           group:null,
+           msgList:[]
         }
     },
     methods:{
@@ -102,24 +103,42 @@ export default {
         addTextMsg(msg){
             var groupId = msg.groupId,
                 index,
+                vm = this,
                 group;
 
             if (this.groups.length){
                 index = this.groupIdToIndex[groupId];
                 group = this.groups[index];
-                if (group != null){
+                if (group != null){ //如果群消息页面打开了。
                     group.modTime = msg.crtTime;//修改时间
                     group.lastMsg.content = msg.content;
                     if (this.group && this.group.groupId == groupId){//如果是当前消息页面的消息
-                        this.$emit('addTextMsg',msg);
+                        let l = this.msgList.length;
+                        this.$set(this.msgList,l,msg);
+                        setTimeout(()=>{
+                            this.$refs.groupMsg.scrollToButtom();
+                        })
                     }
+                } else {//要添加新群了。
+                    
                 }
             }
         },
+        /**
+         * 跳转到groupMsg页面
+         */
         toMsg:function(group){
-            this.group = group;
-            this.$router.push('/msg/group')
-        }
+            if(group != this.group){
+                this.group = group;
+                getGroupMsg(group.groupId).then(msgList=>{
+                    this.msgList = msgList;
+                    this.$router.push('/msg/group')
+                });       
+            } else {
+                this.$router.push('/msg/group')
+            }
+        },
+        
     },
     filters:{
        timeChange:function(time){

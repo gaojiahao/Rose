@@ -11,9 +11,11 @@
                 用户
             </div>
         </div>
-        <div class="msg-container">
-            <div v-for="(msg,index) in msgList" :key="index" class="singleMsg">
-                <div v-if="msg.imType == 1" v-html="msg.content"></div>
+        <div class="msg-container-wrapper" ref="msgBody">
+            <div class="msg-container">
+                <div v-for="(msg,index) in msgList" :key="index" class="singleMsg">
+                    <div v-if="msg.imType == 1" v-html="msg.content"></div>
+                </div>
             </div>
         </div>
         <div class="msgList-footer">
@@ -23,22 +25,34 @@
             </div>
             <button @click="sendTextMsg">发送</button>
         </div>
+        <div class="el-fade-in">
+            <div class="page-component-up" @click="scrollToTop" v-show="toTopShow">
+            <span class="icon icon-scroll-top"></span>
+            </div>
+        </div>
         <router-view :group="group"></router-view>
     </div>
 </template>
 <script>
 import {sendMsg} from 'service/msgService'
+import Bscroll from "better-scroll";
 export default {
-    props:['group'],
+    props:['group','msgList'],
     data(){
         return {
             msg:'',
-            msgList:[]
+            toTopShow:false
         }
     },
     methods:{
         goBack(){
             this.$router.replace('/msg');
+        },
+        scrollToTop:function(){
+            var scroll = this.scroll;
+            if(scroll){
+                scroll.scrollTo(0, 0, 400);
+            }
         },
         sendTextMsg(){
             var  groupId = this.group.groupId,
@@ -54,6 +68,18 @@ export default {
             }
             
         },
+        /**
+         * 将消息页面滚动到底部
+         */
+        scrollToButtom(){
+            this.$nextTick(()=>{
+                var scroll = this.scroll;
+                    
+                if(scroll){
+                    scroll.scrollTo(0,scroll.maxScrollY,400);
+                }
+            })
+        }
     },
     created:function(){
         var parent = this.$parent,
@@ -64,9 +90,28 @@ export default {
         } else {
             this.$router.replace('/msg');
         }
-        parent.$on('addTextMsg',msg=>{
-            var l = this.msgList.length;
-            this.$set(this.msgList,l,msg);
+    },
+    mounted() {
+        var scrollWrapper = this.$refs.msgBody;
+        if(!scrollWrapper)return;
+        this.scroll = new Bscroll(scrollWrapper, {
+            click: true,
+            pullUpLoad: true,
+            pullDownRefresh: true,
+        });
+        this.scroll.on('scroll', ({x, y}) => {
+            if(Math.abs(y)>1000)
+            this.toTopShow = true;
+            else if(Math.abs(y)<1000)
+            this.toTopShow = false; 
+        });
+        this.getApp().$on('resize',()=>{
+            this.scroll.refresh();
+        })
+        this.scrollToButtom();
+    },
+    beforeRouteEnter:function(to,form,next){
+        next(vm=>{
         })
     },
     beforeRouteLeave:function(to,from,next){
@@ -102,6 +147,13 @@ export default {
 }
 .msg-header .toGroupAdmin{
     padding-right:0.2rem;
+}
+.msg-container-wrapper{
+    height: calc(100% - 1rem);
+    overflow: hidden;
+}
+.singleMsg img{
+    height:100px;
 }
 .msgList-footer{
     position:absolute;

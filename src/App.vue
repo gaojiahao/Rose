@@ -131,6 +131,7 @@ export default {
     Vue.prototype.getApp= ()=> this;
   },
   updated() {
+    var app = this;
     // 安卓的输入框会挡住input输入的解决办法
     if (platform.isAndroid) {
       window.addEventListener("resize", function() {
@@ -139,6 +140,7 @@ export default {
             document.activeElement.scrollIntoViewIfNeeded();
           }, 0);
         }
+        app.$emit('resize');
       })
     }
   }

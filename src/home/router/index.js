@@ -2,7 +2,7 @@ import HOME from '../pages/home'
 import Login from '../pages/login'
 import SetHost from '../pages/setHost'
 import Msg from '../pages/msg'
-import MsgList from '../pages/msgList'
+import GroupMsg from '../pages/groupMsg'
 import GroupInfo from '../pages/groupInfo'
 import Contacts from '../pages/contacts'
 import User from '../pages/user'
@@ -48,7 +48,7 @@ export default [
           tile:'聊天页面',
           keepAlive: true
         },
-        component: MsgList,
+        component: GroupMsg,
         children:[{
           path:'info',
           meta:{ 
@@ -60,7 +60,7 @@ export default [
       },
       {
         path: 'list',
-        component: MsgList
+        component: GroupMsg
       }
     ]
   },
