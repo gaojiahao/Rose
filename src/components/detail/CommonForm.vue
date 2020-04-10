@@ -65,6 +65,8 @@ import {
   loadModelCfg,
   getFormViewByUniqueId
 } from "service/commonService";
+import decimalsAdd from "plugins/calc/jisuancalc";
+import dao from "plugins/ajax";
 
 export default {
   props: {
@@ -591,6 +593,8 @@ export default {
   },
   created() {
     this.init();
+    this.decimalsAdd = decimalsAdd;
+    this.dao = dao;
     let { query,meta,path,fullPath} = this.$route;
     wx.ready(() => {
         let { query,meta,path,fullPath} = this.$route;
