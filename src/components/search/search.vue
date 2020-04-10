@@ -12,7 +12,7 @@
       <div class="pop_cfm" v-else @click="searchMat(srhInpTx)">搜索</div>
       <i class="icon-clear clear_icon" v-if="srhInpTx" @click="clear"></i>
     </form>
-    <div class="search_filter" v-show="isShowDrop" v-if="filterList.length">
+    <div class="search_filter" v-show="isShowDrop" v-if="filterList.length" :class="{'margin-rem':showPop}">
       <r-dropdown :list="filterList" @on-selected="popSelected"></r-dropdown>
       <div class="layer" @click="isShowDrop = false"></div>
     </div>
@@ -66,6 +66,7 @@
         timer: null,
         property: {},
         isShowDrop: false,
+        showPop:false,
       };
     },
     components: {
@@ -128,6 +129,9 @@
       clearVal() {
         this.srhInpTx = ''
       }
+    },
+    created(){
+      this.showPop = (this.$parent.$parent.name=="GridPicker")?true:false;
     }
   };
 </script>
@@ -209,6 +213,9 @@
         height: 100%;
         background: #000;
       }
+    }
+    .margin-rem{
+      top: .85rem;  
     }
   }
 </style>
