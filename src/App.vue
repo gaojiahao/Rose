@@ -3,17 +3,21 @@
     <keep-alive>
       <!-- 页面 -->
       <router-view v-if="$route.meta.keepAlive">
-         <x-header
-      v-if="hasNav"
-      :title="$route.meta.title || ''"  slot = 'nav'>
-     </x-header>
+        <x-header
+          v-if="hasNav"
+          :title="$route.meta.title || ''"  
+          slot = 'nav'
+        >
+        </x-header>
       </router-view>
     </keep-alive>
     <router-view v-if="!$route.meta.keepAlive">
-       <x-header
-      v-if="hasNav"
-      :title="$route.meta.title || ''"  slot = 'nav'>
-     </x-header>
+      <x-header
+        v-if="hasNav"
+        :title="$route.meta.title || ''"  
+        slot = 'nav'
+      >
+      </x-header>
     </router-view>
 
     <!-- 底部导航栏 -->

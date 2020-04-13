@@ -4,6 +4,9 @@ const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
 const vuxLoader = require('vux-loader')
+const HappyPack = require('happypack') //多进程工具
+
+const HappyPackThreadPool = HappyPack.ThreadPool({size:5})
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -30,8 +33,8 @@ let webpackConfig = {
       'assets': resolve('src/assets'),
       'service': resolve('src/service'),
       'plugins': resolve('src/plugins'),
-      'msgPage': resolve('src/msg/pages'),
-      'homePage': resolve('src/home/pages'),
+      'msgPage': resolve('src/views/msg/pages'),
+      'homePage': resolve('src/views/home/pages'),
       'components': resolve('src/components'),
       'directive': resolve('src/directive'),
     }
@@ -43,12 +46,14 @@ let webpackConfig = {
         loader: 'vue-loader',
         options: vueLoaderConfig
       },
+      //vue 里用了之后不编译模板,搞得我好气,我猜是因为vux里有什么bug。
+      // {
+      //   test: /\.vue$/,
+      //   use: ['happypack/loader?id=vue'] 
+      // },
       {
         test: /\.js$/,
-        loader: 'babel-loader',
-        options : {
-          cacheDirectory: true
-        },
+        loader: 'happypack/loader?id=babel',
         include: [resolve('src')],
         exclude: /node_modules/
       },
@@ -78,10 +83,29 @@ let webpackConfig = {
         }
      }
     ]
-  }
+  },//module end
+  plugins: [
+    // new HappyPack({
+    //   id:'vue',
+    //   loaders:[
+    //     {
+    //       loader:'vue-loader',
+    //       options: vueLoaderConfig
+    //     }
+    //   ],
+    //   threadPool:HappyPackThreadPool
+    // }),
+    new HappyPack({
+      id: 'babel',
+      loaders: ['babel-loader?cacheDirectory'],
+      threadPool: HappyPackThreadPool
+    })
+  ]
 }
 
-
+/**
+ * merge第二个参数是vuxConfig
+ */
 module.exports = vuxLoader.merge(webpackConfig, {
   plugins: [
     'vux-ui',

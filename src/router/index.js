@@ -8,9 +8,16 @@
  */
 import Vue from 'vue'
 import Router from 'vue-router'
-import HomeRouter from '@/home/router'
+
+import SetHost from '@/views/setHost'
+import Login from '@/views/login'
+import MsgRouter from '@/views/msg/router'
+import Contacts from '@/views/contacts'
+import HomeRouter from '@/views/home/router'
+import User from '@/views/user'
+
+
 import tokenService from 'service/tokenService'
-import MsgRouter from '@/msg/router'
 import {isPC,isQYWX,isDD} from '@/plugins/platform/index'
 
 import { getFieldSetting, getAllDict, getAllFieldSettingListLevel}  from "service/fieldModelService"
@@ -26,8 +33,44 @@ if (router == null) {
     mode:!!window.isApp?'hash':'history',
     base:'/Hermes',
     routes: [
+      { path: '/', redirect:'/msg' },
+      { path:'*', redirect:'/msg' },
+      ...MsgRouter,
+      { 
+        path: '/contacts', 
+        name: 'CONTACTS', 
+        component: Contacts,
+        meta:{ 
+          title:'通讯录' , 
+          keepAlive: true
+        } 
+      },
       ...HomeRouter,
-      ...MsgRouter
+      {
+        path:'/user',
+        name:'user',
+        component:User,
+        meta:{
+           title:'我'
+        }
+      },
+      {
+        path:'/setHost',
+        name:'setHost',
+        component:SetHost,
+        meta:{
+           title:'服务器设置'
+        }
+      },
+      {
+        path: '/login',
+        name: 'Login',
+        component: Login,
+        // redirect: '/Login',
+        meta: {
+          title: '登录'
+        }
+      }
     ]
   })
 

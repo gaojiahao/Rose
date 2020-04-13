@@ -35,7 +35,6 @@
 </template>
 <script>
 import {sendMsg} from 'service/msgService'
-import Bscroll from "better-scroll";
 export default {
     props:['group','msgList'],
     data(){
@@ -94,7 +93,7 @@ export default {
     mounted() {
         var scrollWrapper = this.$refs.msgBody;
         if(!scrollWrapper)return;
-        this.scroll = new Bscroll(scrollWrapper, {
+        this.scroll = new this.Bscroll(scrollWrapper, {
             click: true,
             pullUpLoad: true,
             pullDownRefresh: true,

@@ -4,6 +4,7 @@ import router from './router'
 import FastClick from 'fastclick'
 import adapation from './common/adapation'
 import Swiper from './common/swiper-4.2.2.min.js'
+import Bscroll from "better-scroll";
 import VueTouch from 'vue-touch'
 import RText from './components/public/RText'
 import RDateField from './components/public/DateField'
@@ -62,6 +63,7 @@ Vue.use(VueTouch,{name:'v-touch'})
 Vue.directive('transfer-dom', TransferDom)
 
 Vue.prototype.Swiper = Swiper;
+Vue.prototype.Bscroll = Bscroll;
 FastClick.attach(document.body)
 
 const isDebug_mode = process.env.NODE_ENV !== 'production'

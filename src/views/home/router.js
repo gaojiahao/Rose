@@ -1,102 +1,35 @@
-import HOME from '../pages/home'
-import Login from '../pages/login'
-import SetHost from '../pages/setHost'
-import Msg from '../pages/msg'
-import GroupMsg from '../pages/groupMsg'
-import GroupInfo from '../pages/groupInfo'
-import Contacts from '../pages/contacts'
-import User from '../pages/user'
+import HOME from './pages/home'
 
 // ------> 基础应用 <-------
-import ADRESS from '../pages/apps/basicApp/dealer/adressList'
-import EDIT_ADS from '../pages/apps/basicApp/dealer/edit_ads'
-import ADRESSDETAL from '../pages/apps/basicApp/dealer/adressDetail'
-import MATERLIST from '../pages/apps/basicApp/Mater/materList'
-import ADDMATER from '../pages/apps/basicApp/Mater/addMater'
-import MATERDETAIL from '../pages/apps/basicApp/Mater/materDetail'
-import WAREHOUSE from '../pages/apps/basicApp/warehouse/warehouseList'
-import EDIT_WAREHOUSE from '../pages/apps/basicApp/warehouse/edit_warehouse'
-import WAREHOUSEDETAIL from '../pages/apps/basicApp/warehouse/warehouseDetail'
+import ADRESS from './pages/apps/basicApp/dealer/adressList'
+import EDIT_ADS from './pages/apps/basicApp/dealer/edit_ads'
+import ADRESSDETAL from './pages/apps/basicApp/dealer/adressDetail'
+import MATERLIST from './pages/apps/basicApp/Mater/materList'
+import ADDMATER from './pages/apps/basicApp/Mater/addMater'
+import MATERDETAIL from './pages/apps/basicApp/Mater/materDetail'
+import WAREHOUSE from './pages/apps/basicApp/warehouse/warehouseList'
+import EDIT_WAREHOUSE from './pages/apps/basicApp/warehouse/edit_warehouse'
+import WAREHOUSEDETAIL from './pages/apps/basicApp/warehouse/warehouseDetail'
 // ------- >业务应用 <-------
-import LIST from '../pages/apps/bizApp/list/list'
-import FILLFORM from '../pages/apps/bizApp/fillForm/fillForm'
-import DETAIL from '../pages/apps/bizApp/detail/detail'
-import WORKFLOWFULL from '../pages/apps/bizApp/detail/workFlowFull'
-import CheckList from '../pages/apps/bizApp/detail/checkList'
-import RELATED from '../pages/apps/bizApp/detail/related/related'
-import COMMENTLIST from '@/home/pages/apps/bizApp/comment/commentList'
+import LIST from './pages/apps/bizApp/list/list'
+import FILLFORM from './pages/apps/bizApp/fillForm/fillForm'
+import DETAIL from './pages/apps/bizApp/detail/detail'
+import WORKFLOWFULL from './pages/apps/bizApp/detail/workFlowFull'
+import CheckList from './pages/apps/bizApp/detail/checkList'
+import RELATED from './pages/apps/bizApp/detail/related/related'
+import COMMENTLIST from './pages/apps/bizApp/comment/commentList'
 import TASKLOGLIST from 'components/detail/commonPart/form-part/TaskLogList'
 import TASKLOG from 'components/detail/commonPart/form-part/TaskLog'
 
 //应用详情
-import APPDETAIL from '../pages/apps/bizApp/appDetail/appDetail.vue'
-import ADDLOG from '../pages/apps/bizApp/appDetail/addLog.vue'
-import ADDADMINCOMMENT from '../pages/apps/bizApp/appDetail/addAdminComment.vue'
-import THEMESETTING from '@/home/pages/components/home-related/themeSetting'
+import APPDETAIL from './pages/apps/bizApp/appDetail/appDetail.vue'
+import ADDLOG from './pages/apps/bizApp/appDetail/addLog.vue'
+import ADDADMINCOMMENT from './pages/apps/bizApp/appDetail/addAdminComment.vue'
+import THEMESETTING from './pages/components/home-related/themeSetting'
 
 export default [
-  { 
-    path: '/msg', name: 'MSG', component: Msg,
-    meta:{ 
-      title:'消息' , 
-      keepAlive: true
-    },
-    children: [
-      {
-        path: 'group',
-        meta:{ 
-          tile:'聊天页面',
-          keepAlive: true
-        },
-        component: GroupMsg,
-        children:[{
-          path:'info',
-          meta:{ 
-            tile:'群组信息',
-            keepAlive: true
-          },
-          component:GroupInfo
-        }]
-      },
-      {
-        path: 'list',
-        component: GroupMsg
-      }
-    ]
-  },
-  { path: '/contacts', name: 'CONTACTS', component: Contacts,
-    meta:{ 
-      title:'通讯录' , 
-      keepAlive: true
-    } 
-  },
   { path: '/home', name: 'HOME', component: HOME,
   meta:{ title:'首页' , keepAlive: true} },
-  {
-    path: '/login',
-    name: 'Login',
-    component: Login,
-    // redirect: '/Login',
-    meta: {
-      title: '登录'
-    }
-  },
-  {
-    path:'/setHost',
-    name:'setHost',
-    component:SetHost,
-    meta:{
-       title:'服务器设置'
-    }
-  },
-  {
-    path:'/user',
-    name:'user',
-    component:User,
-    meta:{
-       title:'用户中心'
-    }
-  },
   {
     path: '/commentList',
     name: 'COMMENTLIST',
@@ -244,8 +177,6 @@ export default [
         meta:{ title:'仓库详情' }
       }
     ]
-  },
-  { path: '/', redirect:'/msg' },
-  { path:'*', redirect:'/msg' },
+  }
 ]
 

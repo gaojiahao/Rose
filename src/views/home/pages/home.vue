@@ -79,7 +79,6 @@ import basicMap from "./apps/basicApp/maps/basic";
 import busApp from "homePage/components/home-related/busAppList"; // 业务应用
 import basicApp from "homePage/components/home-related/basicApp"; // 基础应用
 // 插件引入
-import Bscroll from "better-scroll";
 import { constants } from 'crypto';
 const ROSE_MENU = 'ROSE_MENU';
 
@@ -457,6 +456,7 @@ export default {
     next()
   },
   mounted() {
+    var Bscroll = this.Bscroll;
     this.homeScroll = new Bscroll(this.$refs.home, {
         click: true,
         pullUpLoad: true,

@@ -8,7 +8,7 @@
  -->
 <template>
     <div class="login-container">
-        <div class="login-banner"><img src='../../assets/default/login/logo.png' /></div>
+        <div class="login-banner"><img src='./../assets/default/login/logo.png' /></div>
         <div class="login-form">
             <div class="login-text">登录</div>
             <group class="loginGroup">
