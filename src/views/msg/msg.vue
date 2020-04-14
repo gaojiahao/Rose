@@ -1,7 +1,10 @@
 <!--消息页面-->
 <template>
     <div class="msg-navigation page-hasTab">
-        <div class="scroller-wrapper" ref="scrollerWrapper">
+        <div class="page-navigation">
+
+        </div>
+        <div class="page-body-hasNav" ref="scrollerWrapper">
             <div class = 'group-cells'>
                 <div class="group-cell" v-for="group in groups" :key = "group.id" @click="toMsg(group)">
                     <div class="group-ava">
@@ -17,6 +20,9 @@
                             <span v-if="group.lastMsg.imType===2">文件</span>
                         </div> 
                     </div>
+                    <span class="msgCount" v-if="group.msgCount">
+                        <sup class="badge-count">{{group.msgCount}}</sup>
+                    </span>
                     <div class="modTime">
                         {{group.modTime | timeChange}}
                     </div> 
@@ -34,12 +40,13 @@ import util from '@/common/util';
 export default {
     created:function(){       
         this.initDs();
+        this.showLoading = true;
     },
     mounted:function(){
         this.initScoller();
+        this.initGroup();
     },
     activated:function(){
-        this.initGroup();
     },
     data(){
         return {
@@ -76,7 +83,7 @@ export default {
         },
         initGroup:function(cb){
             var loading = this.$loading;
-            loading.show();
+            this.showLoading && loading.show();
             getMyGroups().then(data=>{
                 var groupIdToIndex = {};//建立一个映射关系，方便以后使用
                 data.forEach((group,index)=>{
@@ -85,7 +92,10 @@ export default {
                 this.groupIdToIndex = groupIdToIndex;
                 this.groups = data;
                 this.scroller && this.scroller.refresh();
-                loading.hide();
+                if (this.showLoading == true){
+                    delete this.showLoading;
+                    loading.hide();
+                }
             })
         },
         initDs:function(){
@@ -229,6 +239,11 @@ export default {
       padding:5px;
       position: relative;
       display: flex;
+      .msgCount{
+          position: absolute;
+          left:40px;
+          top:0;
+      }
   }
   .group-ava{
       width:60px;

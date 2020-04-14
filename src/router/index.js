@@ -37,7 +37,7 @@ if (router == null) {
       { path:'*', redirect:'/msg' },
       ...MsgRouter,
       { 
-        path: '/contacts', 
+        path: '/contacts/:id', 
         name: 'CONTACTS', 
         component: Contacts,
         meta:{ 

@@ -47,8 +47,11 @@ export let getGroupMsg = groupId =>{
         url:'/im/message/getGroupMessage?groupId=' + groupId
     })
 }
-export let getAddressBook = ()=>{
+export let getAddressBook = (id)=>{
+    var data = id != '0'? {groupId:id}:undefined;
+
     return $flyio.ajax({
-        url:'/im/group/getAddressBook'
+        url:'/im/group/getAddressBook',
+        data
     })
 }
