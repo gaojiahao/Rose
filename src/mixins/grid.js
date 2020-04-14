@@ -15,6 +15,9 @@ export default {
             accsubmitValue:false,
             ListLevelFieldSetting:[],
             Dicts:[],
+            store:{
+                data:[]
+            },
         };
     },
     watch:{
@@ -49,6 +52,7 @@ export default {
             for (i; i < l; i++) {
                 row = selection[i];
                 record = this.createRecord(row);
+                this.store['data'].push(record);
                 value.push(record.data);
             }
             this.setValue(value);
