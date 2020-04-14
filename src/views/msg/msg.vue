@@ -5,12 +5,12 @@
             <div class = 'group-cells'>
                 <div class="group-cell" v-for="group in groups" :key = "group.id" @click="toMsg(group)">
                     <div class="group-ava">
-                        <img :src="group.groupIcon">
+                        <img :src="group.groupIcon" @error="getDefaultPhoto(group)">
                     </div>
                     <div class="group-body">
-                        <h4>
+                        <div>
                             {{group.groupName}}
-                        </h4>
+                        </div>
                         <div class="msg-lastMsg" v-if="group.lastMsg">
                             <span>{{group.lastMsg.creatorName}}:</span>
                             <span v-if="group.lastMsg.imType===1" v-html="group.lastMsg.content"></span>
@@ -50,6 +50,13 @@ export default {
         }
     },
     methods:{
+         getDefaultPhoto(group) {
+            let url = require("assets/ava01.png");
+            if (group) {
+                group.groupIcon = url;
+            }
+            return url;
+        },
         initScoller:function(){
             var scrollWrapper = this.$refs.scrollerWrapper;
 
@@ -239,8 +246,10 @@ export default {
     right:15px;
     top:5px;
     color: #898181;
+    font-size: 12px;
   }
   .msg-lastMsg{
     color: #898181;
+    font-size: 12px;
   }
 </style>
