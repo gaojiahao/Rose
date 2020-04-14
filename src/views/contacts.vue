@@ -1,6 +1,6 @@
 <!--通讯录-->
 <template>
-    <div class="address-book-wrapper" ref="scrollerWrapper">
+    <div class="address-book-wrapper page-hasTab" ref="scrollerWrapper">
         <div class="address-book">
             <div v-for="item in address" class="address-item" :key="item.id">
                 <div class="header">
@@ -64,7 +64,7 @@ export default {
 </script>
 <style lang="scss">
    @import '~@/scss/color.scss';
-   .address-book-wrapper{
+   .page-hasTab{
        height:calc(100% - 0.49rem);
        background:$weui-BG-0;
        overflow:hidden;

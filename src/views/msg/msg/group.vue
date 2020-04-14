@@ -1,5 +1,5 @@
 <template>
-    <div class="msgdetail msg-wrapper" v-if="group">
+    <div class="msg-detail page" v-if="group">
         <div class="msg-header">
             <div class="goback" @click="goBack()">
                 <-
@@ -11,7 +11,7 @@
                 用户
             </div>
         </div>
-        <div class="msg-container-wrapper" ref="msgBody">
+        <div class="msg-container-wrapper" ref="scoller-wrapper">
             <div class="msg-container">
                 <div v-for="(msg,index) in msgList" :key="index" class="singleMsg">
                     <div v-if="msg.imType == 1" v-html="msg.content"></div>
@@ -70,12 +70,12 @@ export default {
         /**
          * 将消息页面滚动到底部
          */
-        scrollToButtom(){
+        scrollToButtom(time=400){
             this.$nextTick(()=>{
                 var scroll = this.scroll;
                     
                 if(scroll){
-                    scroll.scrollTo(0,scroll.maxScrollY,400);
+                    scroll.scrollTo(0,scroll.maxScrollY,time);
                 }
             })
         }
@@ -91,8 +91,10 @@ export default {
         }
     },
     mounted() {
-        var scrollWrapper = this.$refs.msgBody;
+        var scrollWrapper = this.$refs.scollerWrapper;
+
         if(!scrollWrapper)return;
+
         this.scroll = new this.Bscroll(scrollWrapper, {
             click: true,
             pullUpLoad: true,
@@ -103,11 +105,12 @@ export default {
             this.toTopShow = true;
             else if(Math.abs(y)<1000)
             this.toTopShow = false; 
-        });
+        })
+        this.scrollToButtom(0);
+
         this.getApp().$on('resize',()=>{
             this.scroll.refresh();
         })
-        this.scrollToButtom();
     },
     beforeRouteEnter:function(to,form,next){
         next(vm=>{
@@ -120,7 +123,7 @@ export default {
 }
 </script>
 <style>
-.msg-wrapper{
+.page{
    position:absolute;
    width:100%;
    height:100%;

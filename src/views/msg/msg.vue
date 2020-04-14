@@ -1,22 +1,26 @@
 <!--消息页面-->
 <template>
-    <div>
-        <div class = 'group-cells'>
-           <div class="group-cell" v-for="group in groups" :key = "group.id" @click="toMsg(group)">
-               <div class="group-ava">
-                   <img :src="group.img">
-               </div>
-               <div class="group-body">
-                <h4>
-                    {{group.groupName}}
-                </h4>
-                <div class="msg-lastMsg" v-html="group.lastMsg.content">
-                </div> 
-               </div>
-               <div class="modTime">
-                  {{group.modTime | timeChange}}
-               </div> 
-           </div>
+    <div class="msg-navigation page-hasTab">
+        <div class="scroller-wrapper" ref="scroller-wrapper">
+            <div class = 'group-cells'>
+                <div class="group-cell" v-for="group in groups" :key = "group.id" @click="toMsg(group)">
+                    <div class="group-ava">
+                        <img :src="group.groupIcon">
+                    </div>
+                    <div class="group-body">
+                        <h4>
+                            {{group.groupName}}
+                        </h4>
+                        <div class="msg-lastMsg">
+                            <span>{{group.lastMsg.creatorName}}:</span>
+                            <span v-html="group.lastMsg.content"></span>
+                        </div> 
+                    </div>
+                    <div class="modTime">
+                        {{group.modTime | timeChange}}
+                    </div> 
+                </div>
+            </div>
         </div>
         <router-view :group="group" :msgList="msgList" ref="groupMsg"></router-view>
     </div>
@@ -27,9 +31,12 @@ import commonService from 'service/commonService'
 import tokenService from 'service/tokenService'
 import util from '@/common/util';
 export default {
-    created:function(){
-        this.initGroup();
+    created:function(){       
         this.initDs();
+        this.initScoller();
+    },
+    activated:function(){
+        this.initGroup();
     },
     data(){
         return {
@@ -39,7 +46,24 @@ export default {
         }
     },
     methods:{
-        initGroup:function(){
+        initScoller:function(){
+            var scrollWrapper = this.$refs.scollerWrapper;
+
+            if(!scrollWrapper)return;
+
+            this.scroller = new this.Bscroll(scrollWrapper, {
+                click: true,
+                pullUpLoad: true,
+                pullDownRefresh: true,
+            });
+            this.scroller.on('scroll', ({x, y}) => {
+                if(Math.abs(y)>1000)
+                this.toTopShow = true;
+                else if(Math.abs(y)<1000)
+                this.toTopShow = false; 
+            })
+        },
+        initGroup:function(cb){
             getMyGroups().then(data=>{
                 var groupIdToIndex = {};//建立一个映射关系，方便以后使用
                 data.forEach((group,index)=>{
@@ -47,6 +71,7 @@ export default {
                 });
                 this.groupIdToIndex = groupIdToIndex;
                 this.groups = data;
+                this.scroller.refresh();
             })
         },
         initDs:function(){
@@ -72,8 +97,7 @@ export default {
         describeDs(ds){
             var token = tokenService.getToken();
             ds.event.subscribe('roletaskIm/'+ token, data => {
-                console.log('msg',data);
-                this.subscribeMsg(data);
+                this.distributeMsg(data);
             });
         },
         /**
@@ -87,7 +111,7 @@ export default {
             104 group rename
             105 group owner
          */
-        subscribeMsg(msg){
+        distributeMsg(msg){
             var type = msg.imType;
             switch(type){
                 case '1':
@@ -167,6 +191,12 @@ export default {
 }
 </script>
 <style>
+  .page-hasTab{
+     height: calc(100%-0.68rem);
+  }
+  .group-cells{
+      background: #fff;
+  }
   .group-cell::before{
     content: " ";
     position: absolute;
