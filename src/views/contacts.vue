@@ -63,7 +63,6 @@ export default {
 }
 </script>
 <style lang="scss">
-     @import '~@/scss/color.scss';
     .page-hasTab{
        height:calc(100% - 0.49rem);
        background:$weui-BG-0;

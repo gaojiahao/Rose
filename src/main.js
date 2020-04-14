@@ -52,13 +52,14 @@ require('@/directive')
 if(window.isApp){ //处理消息推送专用代码
   require('service/pushService');
 }
-
+/**plugin */
 Vue.use(Loading)
 Vue.use(HandleLoad)
 Vue.use(ToastPlugin)
 Vue.use(AlertPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(DatetimePlugin)
+
 Vue.use(VueTouch,{name:'v-touch'})
 Vue.directive('transfer-dom', TransferDom)
 

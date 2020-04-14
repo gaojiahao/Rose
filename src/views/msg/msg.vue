@@ -75,6 +75,8 @@ export default {
             })
         },
         initGroup:function(cb){
+            var loading = this.$loading;
+            loading.show();
             getMyGroups().then(data=>{
                 var groupIdToIndex = {};//建立一个映射关系，方便以后使用
                 data.forEach((group,index)=>{
@@ -83,6 +85,7 @@ export default {
                 this.groupIdToIndex = groupIdToIndex;
                 this.groups = data;
                 this.scroller && this.scroller.refresh();
+                loading.hide();
             })
         },
         initDs:function(){
@@ -202,12 +205,6 @@ export default {
 }
 </script>
 <style lang="scss">
-    @import '~@/scss/color.scss';
-    .page-hasTab{
-       height:calc(100% - 0.49rem);
-       background:$weui-BG-0;
-       overflow:hidden;
-    }
     .scroller-wrapper{
         height: 100%;
     }

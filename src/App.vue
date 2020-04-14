@@ -155,6 +155,8 @@ export default {
 <style lang="less">
   @import '~vux/src/styles/reset.less';
   @import '~vux/src/styles/1px.less';
+  @import './assets/app.less';
+
   @import './common/swiper-4.2.2.min.css';
   @import './assets/iconfont/icon.css';
   @import './assets/iconfont/iconfont.css';
