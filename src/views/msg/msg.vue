@@ -7,9 +7,9 @@
                    <img :src="group.groupIcon">
                </div>
                <div class="group-body">
-                <h4>
+                <div>
                     {{group.groupName}}
-                </h4>
+                </div>
                 <div class="msg-lastMsg" v-if="group.lastMsg">
                     <div  v-if="group.lastMsg.imType===1" v-html="group.lastMsg.content"></div>
                     <div  v-if="group.lastMsg.imType===2">文件</div>
@@ -184,21 +184,25 @@ export default {
     transform: scaleY(0.5);
   }
   .group-cell{
-      padding:16px;
+      padding:5px;
       position: relative;
       display: flex;
   }
   .group-ava{
       width:60px;
-      height:60px;margin-right: 16px;
+      height:60px;
   }
   .group-ava img{
-      width:100%;
+      width:50px;
       border-radius: 2px;
   }
   .group-cell .modTime{
-      position:absolute;
-      right:15px;
-      top:5px;
+    position:absolute;
+    right:15px;
+    top:5px;
+    color: #898181;
+  }
+  .msg-lastMsg{
+    color: #898181;
   }
 </style>
