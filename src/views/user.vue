@@ -1,6 +1,6 @@
 <!--我-->
 <template>
-  <div class="app-root">
+  <div class="page-hasTab">
     <slot name="nav"></slot>
     <div class="app-container">
         <group>

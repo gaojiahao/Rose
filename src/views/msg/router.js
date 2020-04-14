@@ -19,7 +19,7 @@ import GroupInfo from './msg/groupInfo'
 
 export default [
   { 
-    path: '/msg', name: 'MSG', component: Msg,
+    path: '/msg', name: 'MsgNavigation', component: Msg,
     meta:{ 
       title:'消息' , 
       keepAlive: true

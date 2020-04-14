@@ -1,6 +1,6 @@
 <!--消息页面-->
 <template>
-    <div class="group-info msg-wrapper">
+    <div class="group-info page">
          <div class="msg-header">
             <div class="goback" @click="goBack()">
                 <-
