@@ -11,9 +11,10 @@
                         <h4>
                             {{group.groupName}}
                         </h4>
-                        <div class="msg-lastMsg">
+                        <div class="msg-lastMsg" v-if="group.lastMsg">
                             <span>{{group.lastMsg.creatorName}}:</span>
-                            <span v-html="group.lastMsg.content"></span>
+                            <span v-if="group.lastMsg.imType===1" v-html="group.lastMsg.content"></span>
+                            <span v-if="group.lastMsg.imType===2">文件</span>
                         </div> 
                     </div>
                     <div class="modTime">
@@ -217,10 +218,12 @@ export default {
       display: flex;
   }
   .group-ava{
-      width:60px;height:60px;margin-right: 16px;
+      width:60px;
+      height:60px;margin-right: 16px;
   }
   .group-ava img{
       width:100%;
+      border-radius: 2px;
   }
   .group-cell .modTime{
       position:absolute;
