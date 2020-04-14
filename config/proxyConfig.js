@@ -35,6 +35,10 @@ module.exports = {
           '/content': {
             target,
             changeOrigin: true,
+          },
+          '/gimgs': {
+            target: 'http://172.roletask.com',
+            changeOrigin: true
           }
 
     }

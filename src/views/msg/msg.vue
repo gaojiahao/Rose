@@ -4,13 +4,15 @@
         <div class = 'group-cells'>
            <div class="group-cell" v-for="group in groups" :key = "group.id" @click="toMsg(group)">
                <div class="group-ava">
-                   <img :src="group.img">
+                   <img :src="group.groupIcon">
                </div>
                <div class="group-body">
                 <h4>
                     {{group.groupName}}
                 </h4>
-                <div class="msg-lastMsg" v-html="group.lastMsg.content">
+                <div class="msg-lastMsg" v-if="group.lastMsg">
+                    <div  v-if="group.lastMsg.imType===1" v-html="group.lastMsg.content"></div>
+                    <div  v-if="group.lastMsg.imType===2">文件</div>
                 </div> 
                </div>
                <div class="modTime">
@@ -187,10 +189,12 @@ export default {
       display: flex;
   }
   .group-ava{
-      width:60px;height:60px;margin-right: 16px;
+      width:60px;
+      height:60px;margin-right: 16px;
   }
   .group-ava img{
       width:100%;
+      border-radius: 2px;
   }
   .group-cell .modTime{
       position:absolute;
