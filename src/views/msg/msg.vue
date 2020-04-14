@@ -1,7 +1,7 @@
 <!--消息页面-->
 <template>
     <div class="msg-navigation page-hasTab">
-        <div class="scroller-wrapper" ref="scroller-wrapper">
+        <div class="scroller-wrapper" ref="scrollerWrapper">
             <div class = 'group-cells'>
                 <div class="group-cell" v-for="group in groups" :key = "group.id" @click="toMsg(group)">
                     <div class="group-ava">
@@ -34,6 +34,8 @@ import util from '@/common/util';
 export default {
     created:function(){       
         this.initDs();
+    },
+    mounted:function(){
         this.initScoller();
     },
     activated:function(){
@@ -43,12 +45,13 @@ export default {
         return {
            groups:[],
            group:null,
-           msgList:[]
+           msgList:[],
+           toTopShow:false
         }
     },
     methods:{
         initScoller:function(){
-            var scrollWrapper = this.$refs.scollerWrapper;
+            var scrollWrapper = this.$refs.scrollerWrapper;
 
             if(!scrollWrapper)return;
 
@@ -72,7 +75,7 @@ export default {
                 });
                 this.groupIdToIndex = groupIdToIndex;
                 this.groups = data;
-                this.scroller.refresh();
+                this.scroller && this.scroller.refresh();
             })
         },
         initDs:function(){
@@ -191,10 +194,16 @@ export default {
     }
 }
 </script>
-<style>
-  .page-hasTab{
-     height: calc(100%-0.68rem);
-  }
+<style lang="scss">
+    @import '~@/scss/color.scss';
+    .page-hasTab{
+       height:calc(100% - 0.49rem);
+       background:$weui-BG-0;
+       overflow:hidden;
+    }
+    .scroller-wrapper{
+        height: 100%;
+    }
   .group-cells{
       background: #fff;
   }
