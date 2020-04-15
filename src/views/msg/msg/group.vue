@@ -134,9 +134,6 @@ export default {
 }
 </script>
 <style>
-
-
-
 .page{
    position:absolute;
    width:100%;
@@ -163,23 +160,6 @@ export default {
     overflow: hidden;
     background-color: #9e9e9e1c;
 }
-.singleMsg img{
-    /* height:100px; */
-}
-.singleMsgContent{
-    border-radius: 5px;
-    padding: .05rem;
-    position: relative;
-    display: inline-block;
-    margin: .02rem .06rem;
-}
-
-.creator-ava{
-    height: 40px;
-    border-radius: 3px;
-}
-
-
 .msgList-footer{
     position:absolute;
     width:100%;
@@ -193,11 +173,9 @@ export default {
    /* flex:1*/
 }
 .msg-input{
-    /* width:100%; */
     flex:1
 }
 .singleMsg{
     margin: 0.2rem 0.1rem;
-    /* width: 100%; */
 }
 </style>
