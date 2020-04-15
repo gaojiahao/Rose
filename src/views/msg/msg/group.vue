@@ -14,23 +14,6 @@
         <div class="msg-container-wrapper" ref="scoller-wrapper">
             <div class="msg-container" style="width: 100%;">
                 <div v-for="(msg,index) in msgList" :key="index" class="singleMsg">
-                    <!-- <div v-if="msg.imType == 1" 
-                        :style="{textAlign: msg.isMySelf?'right':'left'}" >
-                        
-                        <div >
-                            <div v-if="!msg.isMySelf" style="font-size: 10px;margin: 0 .06rem;color: #9E9E9E;">{{msg.creatorName}}</div>
-                            <div v-html="msg.content" class="singleMsgContent " 
-                                :class="[msg.isMySelf==1?'rightarrow':'leftarrow']"
-                                :style="{backgroundColor:msg.isMySelf?'rgb(191, 221, 255)':'#FFF'}" >
-                            </div>
-                        </div>
-
-                        <img 
-                            :style="{float: msg.isMySelf?'right':'left'}" 
-                            :src="msg.photo"  
-                            class="creator-ava" 
-                            @error="getDefaultPhoto(msg)">
-                    </div> -->
                     <MessageTpl :msg="msg"></MessageTpl>
                 </div>
             </div>
