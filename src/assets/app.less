@@ -3,11 +3,14 @@
 .flex{
     display: flex;
 }
+.page-wrapper{
+    height: 100%;
+}
 .page{
     position:absolute;
     width:100%;
     height:100%;
-    background: #fff;
+    background:@weui-BG-0;
     top:0;
     left:0;
  }
@@ -15,13 +18,13 @@
     height:calc(~"100% - 0.49rem");
     background:@weui-BG-0;
     overflow:hidden;
-    position: relative;
 }
 .page-navigation{
     background:rgb(26, 146, 236);
     color: #fff;
     height:0.5rem;
     padding:0 0.2rem;
+    position: relative;
     line-height: 0.5rem;
 }
 .page-body-hasNav{

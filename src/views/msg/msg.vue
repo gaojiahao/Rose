@@ -1,6 +1,6 @@
 <!--消息页面-->
 <template>
-    <div class="msg-navigation-wrapper">
+    <div class="msg-navigation page-wrapper">
         <div class="page-hasTab">
             <div class="page-navigation">
                 消息
