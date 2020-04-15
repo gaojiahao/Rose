@@ -2,7 +2,7 @@
     <div class="msg-detail page" v-if="group">
         <div class="msg-header page-navigation">
             <div class="goback" @click="goBack()">
-                <-
+                <i class="iconfont" >&#xe70e;</i>
             </div>
             <div class="groupName body">
                 {{group.groupName}}<span v-if="group.groupType == 'G'">({{group.msgCount}})</span>
@@ -147,6 +147,10 @@ export default {
 }
 .msg-header .goback{
     width:0.5rem;
+}
+
+.msg-header .goback i{
+    font-size: 30px;
 }
 .msg-header .body{
     flex: 1;
