@@ -11,7 +11,7 @@
                 用户
             </div>
         </div>
-        <div class="msg-container-wrapper" ref="scoller-wrapper">
+        <div class="msg-container-wrapper" ref="scollerWrapper">
             <div class="msg-container">
                 <div v-for="(msg,index) in msgList" :key="index" class="singleMsg">
                     <div v-if="msg.imType == 1" 
@@ -43,7 +43,9 @@
             <span class="icon icon-scroll-top"></span>
             </div>
         </div>
+        <!-- groupInfo 消息信息页面-->
         <router-view :group="group"></router-view>
+        <!-- groupInfo end -->
     </div>
 </template>
 <script>

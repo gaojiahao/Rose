@@ -64,11 +64,6 @@ export default {
             })
         }
     },
-    filters:{
-        photo(val){
-           return val || '';
-        }
-    },
     created(){
         this.initAddress(this.$route)
     },
