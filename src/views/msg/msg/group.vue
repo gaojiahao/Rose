@@ -2,7 +2,7 @@
     <div class="msg-detail page" v-if="group">
         <div class="msg-header page-navigation">
             <div class="goback" @click="goBack()">
-                <-
+                <i class="iconfont" >&#xe70e;</i>
             </div>
             <div class="groupName body">
                 {{group.groupName}}<span v-if="group.groupType == 'G'">({{group.msgCount}})</span>
@@ -11,23 +11,10 @@
                 用户
             </div>
         </div>
-        <div class="msg-container-wrapper" ref="scollerWrapper">
-            <div class="msg-container">
+        <div class="msg-container-wrapper" ref="scoller-wrapper">
+            <div class="msg-container" style="width: 100%;">
                 <div v-for="(msg,index) in msgList" :key="index" class="singleMsg">
-                    <div v-if="msg.imType == 1" 
-                        :style="{textAlign: msg.isMySelf?'right':'left'}" >
-
-                        <div v-html="msg.content" class="singleMsgContent arrow" 
-                            :style="{backgroundColor:msg.isMySelf?'rgb(191, 221, 255)':'#FFF'}" >
-                        </div>
-                        <img :src="msg.photo"  class="creator-ava"  >
-
-
-
-                        <!-- <span  :style="{float: msg.isMySelf?'right':'left'}" >{{msg.creatorName}}</span> -->
-                    </div>
-
-                    
+                    <MessageTpl :msg="msg"></MessageTpl>
                 </div>
             </div>
         </div>
@@ -50,6 +37,7 @@
 </template>
 <script>
 import {sendMsg} from 'service/msgService'
+import MessageTpl from '@/views/msg/msg/messageTpl'
 export default {
     props:['group','msgList'],
     data(){
@@ -58,7 +46,17 @@ export default {
             toTopShow:false
         }
     },
+    components:{
+        MessageTpl
+    },
     methods:{
+        getDefaultPhoto(msg) {
+            let url = require("assets/ava01.png");
+            if (msg) {
+                msg.photo = url;
+            }
+            return url;
+        },
         goBack(){
             this.$router.replace('/msg');
         },
@@ -138,36 +136,6 @@ export default {
 }
 </script>
 <style>
-.arrow::before{
-    position: absolute;
-    display: block;
-    left: -13px;
-    top: 12px;
-    margin-right: 3px;
-    width: 0;
-    height: 0;
-    border-color: transparent;
-    border-style: solid;
-    border-width: 12px;
-    border-left-width: 0;
-    border-right-color: #e5e5e5;
-    -webkit-filter: drop-shadow(0 2px 12px rgba(0, 0, 0, 0.03));
-    filter: drop-shadow(0 2px 12px rgba(0, 0, 0, 0.03));
-}
-.arrow:after{
-    content: " ";
-    border-width: 12px;
-    position: absolute;
-    display: block;
-    width: 0;
-    height: 0;
-    border-color: transparent;
-    border-style: solid;
-    top: -12px;
-    margin-left: 1px;
-    border-left-width: 0;
-    border-right-color: #fff;
-}
 .page{
    position:absolute;
    width:100%;
@@ -182,6 +150,10 @@ export default {
 .msg-header .goback{
     width:0.5rem;
 }
+
+.msg-header .goback i{
+    font-size: 30px;
+}
 .msg-header .body{
     flex: 1;
 }
@@ -190,48 +162,10 @@ export default {
 }
 .msg-container-wrapper{
     height: calc(100% - 1rem);
+    width: 100%;
     overflow: hidden;
     background-color: #9e9e9e1c;
 }
-.singleMsg img{
-    /* height:100px; */
-}
-.singleMsgContent{
-    border-radius: 5px;
-    padding: .02rem .05rem;
-    position: relative;
-    display: inline-block;
-}
-
-/* .singleMsgContent:before{
-     right: 65px;
-    top: 65px;
-    border-color: transparent transparent #ddd;
-    content: "";
-    width: 0;
-    height: 0;
-    position: absolute;
-    display: block;
-    border-width: 10px;
-    border-style: solid;
-}
-
-.singleMsgContent:after{
-   content: "";
-    width: 0;
-    height: 0;
-    position: absolute;
-    display: block;
-    border-width: 10px;
-    border-style: solid;
-
-} */
-.creator-ava{
-    height: 30px;
-    border-radius: 3px;
-}
-
-
 .msgList-footer{
     position:absolute;
     width:100%;
@@ -245,10 +179,9 @@ export default {
    /* flex:1*/
 }
 .msg-input{
-    /* width:100%; */
     flex:1
 }
 .singleMsg{
-    margin:0.1rem;
+    margin: 0.2rem 0.1rem;
 }
 </style>

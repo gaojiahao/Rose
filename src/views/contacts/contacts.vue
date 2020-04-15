@@ -117,7 +117,7 @@ export default {
 
    .address-item .header{
         margin-right: 0.2rem;
-        width: .58rem;
+        width: .50rem;
         text-align: center;
         background-color: #07648f29;
         border-radius: .01rem;

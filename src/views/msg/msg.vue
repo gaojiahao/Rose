@@ -2,7 +2,7 @@
 <template>
     <div class="msg-navigation page-hasTab">
         <div class="page-navigation">
-
+            消息
         </div>
         <div class="page-body-hasNav" ref="scrollerWrapper">
             <div class = 'group-cells'>
@@ -224,7 +224,7 @@ export default {
   .group-cell::before{
     content: " ";
     position: absolute;
-    left: 92px;
+    left: 65px;
     top: 0;
     right: 0;
     height: 1px;
@@ -245,6 +245,9 @@ export default {
           top:0;
       }
   }
+  .group-body{
+      line-height: 28px;
+  }
   .group-ava{
       width:60px;
       height:60px;
@@ -263,5 +266,9 @@ export default {
   .msg-lastMsg{
     color: #898181;
     font-size: 12px;
+    width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 </style>
