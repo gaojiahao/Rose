@@ -6,8 +6,14 @@
         class="message-ava" 
         @error="getDefaultPhoto(msg)">
 
-        <span class ="message-creator" v-if="!msg.isMySelf">{{msg.creatorName}}</span>
-        <div class="message-content" :class="[msg.isMySelf==1?'rightarrow':'leftarrow']"  v-html="msg.content"></div>
+        <span class ="message-creator"
+             v-if="!msg.isMySelf">{{msg.creatorName}}
+        </span>
+        
+        <div class="message-content" 
+            :class="[msg.isMySelf==1?'rightarrow':'leftarrow']"  
+            v-html="msg.content">
+        </div>
     </div>
 </template>
 
