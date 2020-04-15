@@ -1,7 +1,7 @@
 <template>
     <div class="task-container" >
         <div class="header">
-            <div class="search">
+            <!-- <div class="search">
                 <form class='search_part' action="#" method="post">
                     <i class="icon icon-more2"></i>
                     <input type="search" autocomplete="off" placeholder="任务名称" class="srh_inp">
@@ -13,7 +13,7 @@
                     @click="tabClick(item, index)" ref="tabs" :key="index">
                     {{item.name}}
                 </div>
-            </div>
+            </div> -->
         </div>
         <div class="swiper-container list-container">
             <div class="swiper-wrapper">

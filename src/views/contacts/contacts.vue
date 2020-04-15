@@ -2,11 +2,14 @@
 <template>
     <div class="address-book-wrapper page-hasTab">
         <div class="page-navigation">
-            {{addressName}}
+             <div class="goback" >
+                <i class="iconfont" >&#xe70e;</i>
+                {{addressName}}
+            </div>
         </div>
         <div class="page-body-hasNav" ref="scrollerWrapper">
             <div class="address-book">
-                <div v-for="item in address" class="address-item" :key="item.id" @click="goto(item)">
+                <div v-for="item in address" class="address-item" :key="item.id" @click="goto(item)" v-show="item.id != 7">
                     <div class="header">
                         <img :src="item.photo"  v-if="item.type!='G'"  @error="getDefaultPhoto(item)"/>
                         <i class="address-icon iconfont" v-if="item.type=='G'">&#xe62b;</i>
@@ -28,6 +31,7 @@
 </template>
 <script>
 import {getAddressBook} from 'service/msgService'
+import WebContext from 'service/commonService'
 export default {
     data(){
         return {
@@ -52,8 +56,7 @@ export default {
         initAddress:function(router,cb){
             var params = router.params,
                 query = router.query;
-
-            this.addressName = query.name || 'root';
+            this.addressName = query.name || '通讯录';
             this.loading = this.$loading;
             this.loading.show();
             getAddressBook(params.id).then(rs=>{
@@ -133,6 +136,9 @@ export default {
    }
    .address-item .body{
        flex: 1;
+   }
+   .goback i{
+       font-size: 30px;
    }
    
 </style>
