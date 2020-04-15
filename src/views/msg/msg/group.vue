@@ -1,39 +1,41 @@
 <template>
-    <div class="msg-detail page" v-if="group">
-        <div class="msg-header page-navigation">
-            <div class="goback" @click="goBack()">
-                <i class="iconfont" >&#xe70e;</i>
-            </div>
-            <div class="groupName body">
-                {{group.groupName}}<span v-if="group.groupType == 'G'">({{group.msgCount}})</span>
-            </div>
-            <div class="toGroupAdmin" @click="$router.push('/msg/group/info')">
-                用户
-            </div>
-        </div>
-        <div class="msg-container-wrapper" ref="scoller-wrapper">
-            <div class="msg-container" style="width: 100%;">
-                <div v-for="(msg,index) in msgList" :key="index" class="singleMsg">
-                    <MessageTpl :msg="msg"></MessageTpl>
+    <div class="msg-detail-wrapper">
+        <div class="msg-detail page" v-if="group">
+            <div class="msg-header page-navigation">
+                <div class="goback" @click="goBack()">
+                    <i class="iconfont" >&#xe70e;</i>
+                </div>
+                <div class="groupName body">
+                    {{group.groupName}}<span v-if="group.groupType == 'G'">({{group.msgCount}})</span>
+                </div>
+                <div class="toGroupAdmin" @click="$router.push('/msg/group/info')">
+                    用户
                 </div>
             </div>
-        </div>
-        <div class="msgList-footer">
-             <textarea class="msg-input"  v-model="msg" type="text"></textarea>
-            <div class="msg-input-wrapper">
-               
+            <div class="msg-container-wrapper" ref="scollerWrapper">
+                <div class="msg-container">
+                    <div v-for="(msg,index) in msgList" :key="index" class="singleMsg">
+                        <MessageTpl :msg="msg"></MessageTpl>
+                    </div>
+                </div>
             </div>
-            <button @click="sendTextMsg">发送</button>
-        </div>
-        <div class="el-fade-in">
-            <div class="page-component-up" @click="scrollToTop" v-show="toTopShow">
-            <span class="icon icon-scroll-top"></span>
+            <div class="msgList-footer">
+                <textarea class="msg-input"  v-model="msg" type="text"></textarea>
+                <div class="msg-input-wrapper">
+                
+                </div>
+                <button @click="sendTextMsg">发送</button>
             </div>
-        </div>
+            <div class="el-fade-in">
+                <div class="page-component-up" @click="scrollToTop" v-show="toTopShow">
+                <span class="icon icon-scroll-top"></span>
+                </div>
+            </div>
+        </div> <!--page end-->
         <!-- groupInfo 消息信息页面-->
-        <router-view :group="group"></router-view>
+        <router-view :group="group" ref="groupInfo"></router-view>
         <!-- groupInfo end -->
-    </div>
+    </div><!--wrapper end-->
 </template>
 <script>
 import {sendMsg} from 'service/msgService'

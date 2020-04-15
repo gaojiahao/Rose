@@ -1,36 +1,38 @@
 <!--消息页面-->
 <template>
-    <div class="msg-navigation page-hasTab">
-        <div class="page-navigation">
-            消息
-        </div>
-        <div class="page-body-hasNav" ref="scrollerWrapper">
-            <div class = 'group-cells'>
-                <div class="group-cell" v-for="group in groups" :key = "group.id" @click="toMsg(group)">
-                    <div class="group-ava">
-                        <img :src="group.groupIcon" @error="getDefaultPhoto(group)">
-                    </div>
-                    <div class="group-body">
-                        <div>
-                            {{group.groupName}}
+    <div class="msg-navigation-wrapper">
+        <div class="page-hasTab">
+            <div class="page-navigation">
+                消息
+            </div>
+            <div class="page-body-hasNav" ref="scrollerWrapper">
+                <div class = 'group-cells'>
+                    <div class="group-cell" v-for="group in groups" :key = "group.id" @click="toMsg(group)">
+                        <div class="group-ava">
+                            <img :src="group.groupIcon" @error="getDefaultPhoto(group)">
                         </div>
-                        <div class="msg-lastMsg" v-if="group.lastMsg">
-                            <span>{{group.lastMsg.creatorName}}:</span>
-                            <span v-if="group.lastMsg.imType===1" v-html="group.lastMsg.content"></span>
-                            <span v-if="group.lastMsg.imType===2">文件</span>
+                        <div class="group-body">
+                            <div>
+                                {{group.groupName}}
+                            </div>
+                            <div class="msg-lastMsg" v-if="group.lastMsg">
+                                <span>{{group.lastMsg.creatorName}}:</span>
+                                <span v-if="group.lastMsg.imType===1" v-html="group.lastMsg.content"></span>
+                                <span v-if="group.lastMsg.imType===2">文件</span>
+                            </div> 
+                        </div>
+                        <span class="msgCount" v-if="group.msgCount">
+                            <sup class="badge-count">{{group.msgCount}}</sup>
+                        </span>
+                        <div class="modTime">
+                            {{group.modTime | timeChange}}
                         </div> 
                     </div>
-                    <span class="msgCount" v-if="group.msgCount">
-                        <sup class="badge-count">{{group.msgCount}}</sup>
-                    </span>
-                    <div class="modTime">
-                        {{group.modTime | timeChange}}
-                    </div> 
                 </div>
             </div>
-        </div>
+        </div><!--page end-->
         <router-view :group="group" :msgList="msgList" ref="groupMsg"></router-view>
-    </div>
+    </div><!-- wrapper end-->
 </template>
 <script>
 import {getGroupMsg,getMyGroups} from 'service/msgService'
