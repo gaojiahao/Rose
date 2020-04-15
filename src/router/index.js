@@ -12,7 +12,7 @@ import Router from 'vue-router'
 import SetHost from '@/views/setHost'
 import Login from '@/views/login'
 import MsgRouter from '@/views/msg/router'
-import Contacts from '@/views/contacts'
+import ContactsRouter from '@/views/contacts/router'
 import HomeRouter from '@/views/home/router'
 import User from '@/views/user'
 
@@ -36,15 +36,7 @@ if (router == null) {
       { path: '/', redirect:'/msg' },
       { path:'*', redirect:'/msg' },
       ...MsgRouter,
-      { 
-        path: '/contacts', 
-        name: 'CONTACTS', 
-        component: Contacts,
-        meta:{ 
-          title:'通讯录' , 
-          keepAlive: true
-        } 
-      },
+      ...ContactsRouter,
       ...HomeRouter,
       {
         path:'/user',

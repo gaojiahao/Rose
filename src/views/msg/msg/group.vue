@@ -14,7 +14,20 @@
         <div class="msg-container-wrapper" ref="scoller-wrapper">
             <div class="msg-container">
                 <div v-for="(msg,index) in msgList" :key="index" class="singleMsg">
-                    <div v-if="msg.imType == 1" v-html="msg.content"></div>
+                    <div v-if="msg.imType == 1" 
+                        :style="{textAlign: msg.isMySelf?'right':'left'}" >
+
+                        <div v-html="msg.content" class="singleMsgContent arrow" 
+                            :style="{backgroundColor:msg.isMySelf?'rgb(191, 221, 255)':'#FFF'}" >
+                        </div>
+                        <img :src="msg.photo"  class="creator-ava"  >
+
+
+
+                        <!-- <span  :style="{float: msg.isMySelf?'right':'left'}" >{{msg.creatorName}}</span> -->
+                    </div>
+
+                    
                 </div>
             </div>
         </div>
@@ -123,6 +136,36 @@ export default {
 }
 </script>
 <style>
+.arrow::before{
+    position: absolute;
+    display: block;
+    left: -13px;
+    top: 12px;
+    margin-right: 3px;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 12px;
+    border-left-width: 0;
+    border-right-color: #e5e5e5;
+    -webkit-filter: drop-shadow(0 2px 12px rgba(0, 0, 0, 0.03));
+    filter: drop-shadow(0 2px 12px rgba(0, 0, 0, 0.03));
+}
+.arrow:after{
+    content: " ";
+    border-width: 12px;
+    position: absolute;
+    display: block;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    top: -12px;
+    margin-left: 1px;
+    border-left-width: 0;
+    border-right-color: #fff;
+}
 .page{
    position:absolute;
    width:100%;
@@ -153,10 +196,47 @@ export default {
 .msg-container-wrapper{
     height: calc(100% - 1rem);
     overflow: hidden;
+    background-color: #9e9e9e1c;
 }
 .singleMsg img{
-    height:100px;
+    /* height:100px; */
 }
+.singleMsgContent{
+    border-radius: 5px;
+    padding: .02rem .05rem;
+    position: relative;
+    display: inline-block;
+}
+
+/* .singleMsgContent:before{
+     right: 65px;
+    top: 65px;
+    border-color: transparent transparent #ddd;
+    content: "";
+    width: 0;
+    height: 0;
+    position: absolute;
+    display: block;
+    border-width: 10px;
+    border-style: solid;
+}
+
+.singleMsgContent:after{
+   content: "";
+    width: 0;
+    height: 0;
+    position: absolute;
+    display: block;
+    border-width: 10px;
+    border-style: solid;
+
+} */
+.creator-ava{
+    height: 30px;
+    border-radius: 3px;
+}
+
+
 .msgList-footer{
     position:absolute;
     width:100%;
@@ -175,7 +255,5 @@ export default {
 }
 .singleMsg{
     margin:0.1rem;
-    border:1px solid rgba(0,0,0,0.1);
-    border-radius: 0.1rem;
 }
 </style>
