@@ -44,12 +44,11 @@ export default {
     var hasNav = platform.isIPhone && window.isApp
     return{
       tablist: [
-        {title: '消息', path: '/msg', icon: 'icon-message',iCode:'&#xe650;'},
-        // {title: '消息', path: '/notice', icon: 'icon-message'},
-        {title: '通讯录',path: '/contacts/0',icon:'icon-organization',iCode:'&#xe62a;'},
-        {title: '应用', path: '/home', icon: 'icon-1',iCode:'&#xe7a0;'},
-        {title: '我',path:'/user',icon:'icon-my',iCode:'&#xe60d;'}
-        // {title: '任务', path: '/task', icon: 'icon-message'},
+        {title: '消息', path: '/msg', iCode:'&#xe650;'},
+        {title: '任务', path: '/notice/flowTodo', iCode:'&#xe651;'},
+        {title: '通讯录',path: '/contacts/0',iCode:'&#xe62a;'},
+        {title: '应用', path: '/home',iCode:'&#xe7a0;'},
+        {title: '我',path:'/user',iCode:'&#xe60d;'}
       ],
       newsNumber:0,
       hasNav:hasNav,

@@ -8,9 +8,9 @@
  -->
 <template>
     <div class="notice-container" >
-        <tab :active-color='activeColor'>
+        <!-- <tab :active-color='activeColor'> -->
            
-        <tab-item 
+        <!-- <tab-item 
             :selected="$route.name=='flowTodo'" 
             :badge-label='todoBadge'  
             @on-item-click="onSwitch('flowTodo')"  > 
@@ -24,7 +24,7 @@
         <tab-item 
             :selected="$route.name=='praise'" 
             @on-item-click="onSwitch('praise')">点赞</tab-item>
-        </tab>
+        </tab> -->
         
         <router-view @loadData="loadData"></router-view>
         
@@ -95,7 +95,7 @@ export default {
     overflow: hidden;
     height: 100%;
     .wrapper {
-        height: calc(100% - 10.99rem);
+        height: 94%
         // height: 7.2rem;
     }
 }
