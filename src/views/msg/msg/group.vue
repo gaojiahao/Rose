@@ -1,6 +1,6 @@
 <template>
     <div class="msg-detail page" v-if="group">
-        <div class="msg-header">
+        <div class="msg-header page-navigation">
             <div class="goback" @click="goBack()">
                 <-
             </div>
@@ -176,16 +176,9 @@ export default {
 }
 .msg-header{
     display: flex;
-    background:rgb(26, 146, 236);
-    color: #fff;
-    justify-content: start;
-    height:0.5rem;
-    line-height: 0.5rem;
-    align-items: flex-start;
 }
 .msg-header .goback{
     width:0.5rem;
-    padding-left:0.2rem;
 }
 .msg-header .body{
     flex: 1;

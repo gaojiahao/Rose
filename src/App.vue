@@ -46,7 +46,7 @@ export default {
       tablist: [
         {title: '消息', path: '/msg', icon: 'icon-message',iCode:'&#xe650;'},
         // {title: '消息', path: '/notice', icon: 'icon-message'},
-        {title: '通讯录',path: '/contacts',icon:'icon-organization',iCode:'&#xe62a;'},
+        {title: '通讯录',path: '/contacts/0',icon:'icon-organization',iCode:'&#xe62a;'},
         {title: '应用', path: '/home', icon: 'icon-1',iCode:'&#xe7a0;'},
         {title: '我',path:'/user',icon:'icon-my',iCode:'&#xe60d;'}
         // {title: '任务', path: '/task', icon: 'icon-message'},
@@ -155,6 +155,8 @@ export default {
 <style lang="less">
   @import '~vux/src/styles/reset.less';
   @import '~vux/src/styles/1px.less';
+  @import './assets/app.less';
+
   @import './common/swiper-4.2.2.min.css';
   @import './assets/iconfont/icon.css';
   @import './assets/iconfont/iconfont.css';

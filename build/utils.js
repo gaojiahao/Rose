@@ -65,36 +65,37 @@ exports.cssLoaders = function (options) {
   }
   function generateSassResourceLoader() {
     var loaders = [
-      cssLoader,
-      'sass-loader',
-      {
-        loader: 'sass-resources-loader',
-        options: {
-          // 多个文件时用数组的形式传入，单个文件时可以直接使用 path.resolve(__dirname, '../static/style/common.scss'
-          resources: [resolveResource('base.scss')],
-          publicPath:'./'  
-        }
-      }
-      ];
-      if (options.extract) {
-        return ExtractTextPlugin.extract({
-          use: loaders,
-          publicPath: process.env.isApk?'../../':'/Hermes/', //css文件中要在static前面添加的路径，这个配置会覆盖前面output的publicPath.
-          fallback: 'vue-style-loader'
-        })
-        // loaders.unshift({
-        //   loader: MiniCssExtractPlugin.loader,
-        //   options: {
-        //     // you can specify a publicPath here
-        //     // by default it uses publicPath in webpackOptions.output
-        //     publicPath: '../../',
-        //     hmr: process.env.NODE_ENV === 'development',
-        //   },
-        // });
-      } else {
-        return [vueStyleLoader].concat(loaders)
-      }
+          cssLoader,
+          'sass-loader',
+          {
+            loader: 'sass-resources-loader',
+            options: {
+              // 多个文件时用数组的形式传入，单个文件时可以直接使用 path.resolve(__dirname, '../static/style/common.scss'
+              resources: [resolveResource('base.scss')],
+              publicPath:'./'  
+            }
+          }
+        ];
+        
+    if (options.extract) {
+      return ExtractTextPlugin.extract({
+        use: loaders,
+        publicPath: process.env.isApk?'../../':'/Hermes/', //css文件中要在static前面添加的路径，这个配置会覆盖前面output的publicPath.
+        fallback: 'vue-style-loader'
+      })
+      // loaders.unshift({
+      //   loader: MiniCssExtractPlugin.loader,
+      //   options: {
+      //     // you can specify a publicPath here
+      //     // by default it uses publicPath in webpackOptions.output
+      //     publicPath: '../../',
+      //     hmr: process.env.NODE_ENV === 'development',
+      //   },
+      // });
+    } else {
+      return [vueStyleLoader].concat(loaders)
     }
+  }
 
   // https://vue-loader.vuejs.org/en/configurations/extract-css.html
   return {

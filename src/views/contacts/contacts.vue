@@ -1,18 +1,24 @@
 <!--通讯录-->
 <template>
-    <div class="address-book-wrapper page-hasTab" ref="scrollerWrapper">
-        <div class="address-book">
-            <div v-for="item in address" class="address-item" :key="item.id" @click="toContactItem(item)">
-                <div class="header">
-                    <!-- <img :src="item.photo"  @error="getDefaultPhoto(item)"/> -->
-                    <i class="address-icon iconfont" >&#xe62b;</i>
-                </div>
-                <div class="body">
-                    <div class="address-name-g" v-if="item.type == 'P'">
-                        {{item.name}}
+    <div class="address-book-wrapper page-hasTab">
+        <div class="page-navigation">
+            {{addressName}}
+        </div>
+        <div class="page-body-hasNav" ref="scrollerWrapper">
+            <div class="address-book">
+                <div v-for="item in address" class="address-item" :key="item.id" @click="goto(item)">
+                    <div class="header">
+                        <img :src="item.photo"  v-if="item.type!='G'"  @error="getDefaultPhoto(item)"/>
+                        <i class="address-icon iconfont" v-if="item.type=='G'">&#xe62b;</i>
+
                     </div>
-                    <div class="address-name-p" v-if="item.type == 'G'">
-                        {{item.name}}
+                    <div class="body">
+                        <div class="address-name-g" v-if="item.type == 'P'">
+                            {{item.name}}
+                        </div>
+                        <div class="address-name-p" v-if="item.type == 'G'">
+                            {{item.name}}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -25,6 +31,7 @@ import {getAddressBook} from 'service/msgService'
 export default {
     data(){
         return {
+            addressName:'root',
             address:null
         }
     },
@@ -36,20 +43,25 @@ export default {
             }
             return url;
         },
-        toContactItem(item){
+        goto(item){
+           if(!item.leaf){
+               if(item.id == this.$route.params.id) return //避免产生重复路由错误
+               this.$router.push({name:'CONTACTS',params:{id:item.id},query:{name:item.name}})
+           }
+        },
+        initAddress:function(router,cb){
+            var params = router.params,
+                query = router.query;
 
-                //第一种写法
-                // this.$router.push( { path: `/contacts/contactItem/${item.id}`});
-
-                //第二种写法
-                this.$router.push(
-                    {
-                        name:'contactItem',
-                        params:{
-                            groupId:item.id
-                        }
-                    }
-                );
+            this.addressName = query.name || 'root';
+            this.loading = this.$loading;
+            this.loading.show();
+            getAddressBook(params.id).then(rs=>{
+                this.address = rs;
+                this.loading.hide();
+                delete this.loading;
+                cb&&cb();
+            })
         }
     },
     filters:{
@@ -58,9 +70,10 @@ export default {
         }
     },
     created(){
-        getAddressBook().then(rs=>{
-            this.address = rs;
-        })
+        this.initAddress(this.$route)
+    },
+    beforeRouteUpdate(to,from,next){//向下一级或上一级变化
+        this.initAddress(to,next);
     },
     mounted(){
         var scrollWrapper = this.$refs.scrollerWrapper;
@@ -80,12 +93,6 @@ export default {
 }
 </script>
 <style lang="scss">
-     @import '~@/scss/color.scss';
-    .page-hasTab{
-       height:calc(100% - 0.49rem);
-       background:$weui-BG-0;
-       overflow:hidden;
-    }
    .address-item{
        background:#fff;
        display: flex;

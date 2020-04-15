@@ -1,8 +1,12 @@
 <!--我-->
 <template>
-  <div class="page-hasTab">
-    <slot name="nav"></slot>
-    <div class="app-container">
+  <div class="page-hasTab me">
+    <div class="page-navigation">
+        <div class="nav-hd">
+            我
+        </div>
+    </div>
+    <div class="page-body-hasNav">
         <group>
             <cell title="主题设置" is-link link="/themesetting"/>
             <cell title="退出"  @click.native="loginOut"/>
@@ -34,6 +38,10 @@ export default {
     }
 }
 </script>
-<style lang='scss' scoped>
-
+<style lang='less'>
+.me{
+   .page-navigation{
+       display: flex;
+   }
+}
 </style>

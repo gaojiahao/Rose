@@ -13,6 +13,7 @@ import SetHost from '@/views/setHost'
 import Login from '@/views/login'
 import MsgRouter from '@/views/msg/router'
 import ContactsRouter from '@/views/contacts/router'
+import Contacts from '@/views/contacts/contacts'
 import HomeRouter from '@/views/home/router'
 import User from '@/views/user'
 
@@ -36,7 +37,15 @@ if (router == null) {
       { path: '/', redirect:'/msg' },
       { path:'*', redirect:'/msg' },
       ...MsgRouter,
-      ...ContactsRouter,
+      { 
+        path: '/contacts/:id', 
+        name: 'CONTACTS', 
+        component: Contacts,
+        meta:{ 
+          title:'通讯录' , 
+          keepAlive: true
+        } 
+      },
       ...HomeRouter,
       {
         path:'/user',
