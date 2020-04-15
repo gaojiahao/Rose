@@ -64,6 +64,12 @@
               v-if="['r2GridWX'].indexOf(item.xtype)!=-1"
               :key="index"
             />
+            <BomGrid
+              :cfg="item"
+              :values="values[cfg.name]"
+              v-if="['r2BomGridIPPIZ4'].indexOf(item.xtype)!=-1"
+              :key="index"
+            />
         </template>
             </div>
 
@@ -122,7 +128,16 @@ var component = {
           return !it.hiddenInRun;
         });
         this.editParts = displayItems.concat(hiddenItems); // 可编辑部分 
+        this.dealBomGrid();
         // this.editParts = items;
+    },
+    //针对xtype不是fieldset的bom之类的控件
+    dealBomGrid(){
+      if(this.cfg.xtype!='r2FieldSet'){
+        var items = {};
+        items = this.cfg;
+        this.editParts.push(items);
+      }
     },
     formatByType(value,type){
       if(value == null) return '-';
