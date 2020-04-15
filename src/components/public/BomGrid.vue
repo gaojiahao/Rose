@@ -78,7 +78,7 @@
     
     <div
       class="add-more-wrapper"
-      v-if="cfg.allowEdit && (cfg.allowMutilRow ||cfg.allowAddorDel) && ((values &&values.length) ||!hasDs) && !isEdit"
+      v-if="cfg.allowEdit && ((values &&values.length) ||!hasDs) && !isEdit"
     >
       <div class="add-more" @click="addRecord">
         <span class="icon-add"></span>
@@ -86,21 +86,36 @@
       </div>
     </div>
 
-    <grid-picker v-if="cfg.allowEdit && hasDs" ref="gridPicker" @on-select="addRecords"/>
+    <bom-grid-picker v-if="cfg.allowEdit && hasDs" ref="gridPicker" @on-select="addRecords"/>
     <div class="grid-detail-wrapper" v-if="showDetail">
       <grid-detail v-model="showDetail" @on-confirm="doDetailEdit" ref="gridDetail"/>
     </div>
-    <div
-      class="count_mode grid-manger-wrapper vux-1px-t"
-      :class="{btn_hide : btnIsHide}"
-      v-show="isEdit"
-      v-transfer-dom
-    >
+    <div class="count_mode grid-manger-wrapper vux-1px-t" :class="{btn_hide : btnIsHide}" v-show="isEdit" v-transfer-dom>
       <div class="count_num all_checked" @click="checkAll">
         <x-icon type="ios-circle-outline" size="20" class="outline" v-show="!isCheckAll()"></x-icon>
         <x-icon type="ios-checkmark" size="20" class="checked" v-show="isCheckAll()"></x-icon>全选
       </div>
       <div class="delete_btn" @click="doDelete">删除</div>
+    </div>
+    <!-- bom明细 -->
+    <div class="materiel_list work_list" v-show="boms.length">
+      <bom-list :boms="boms">
+        <template slot-scope="{bom}" slot="specification">
+          <div class="content-unit">
+            <span>计量单位: {{bom.measureUnit}}</span>
+            <span>物料属性: {{bom.processing}}</span>
+            <span>获取方式: {{bom.productSource}}</span>
+          </div>
+        </template>
+        <template slot-scope="{bom}" slot="number">
+          <div class="number-part">
+            <span class="main-number">bom需求: {{bom.demandQty || 0}}</span>
+            <span class="number-unit">在库余额: {{bom.thenTotalQtyStock||0}}</span>
+            <span class="number-unit">在途余额: {{bom.transitBalance||0}}</span>
+            <span class="number-unit">领料需求: {{bom.tdQty||0}}</span>
+          </div>
+        </template>
+      </bom-list>
     </div>
   </div>
   <!--grid-->
@@ -111,12 +126,13 @@
 <script>
 import Vue from "vue";
 import dao from "plugins/ajax";
-import gridPicker from "./GridPicker";
+import bomGridPicker from "./BomGridPicker";
 import girdMix from "mixins/bomgrid";
 import objList from '../../common/const/obj-app';
+import BomList from 'components/detail/commonPart/BomList'
 var component = {
   mixins: [girdMix],
-  components: { gridPicker },
+  components: { bomGridPicker,BomList },
   props: ["cfg", "values", "btnIsHide"],
   computed:{
     curObj:function() {
@@ -142,7 +158,6 @@ var component = {
               }
           }
       });
-      return obj;
     },
     summaryValue:function(){
       let val = {};
@@ -172,8 +187,18 @@ var component = {
       detail: {},
       hasDs:false,
       notAddOneRow:false,
-      keyFiled:{}
+      keyFiled:{},
+      bomFiled:[],
     };
+  },
+  watch:{
+    // bomData:{
+    //   handler(val){
+    //     console.log(val);
+    //     console.log(this.boms);
+    //     this.initBomDataStorageSum(this.bomData);
+    //   }
+    // }
   },
   methods: {
     //选择默认图片
@@ -250,9 +275,9 @@ var component = {
         objKey,
         fKey;
       
-      this.keyFiled = this.keyFiled.map(function(it,index,arr) {
-          objKey = it.fieldCode.indexOf('_') > -1 ? it.fieldCode.split('_')[1] : it.fieldCode;
-          fKey = it.fieldCode.split('_')[0];
+      this.bomFiled = this.bomFiled.map(function(it,index,arr) {
+          objKey = it.v.indexOf('_') > -1 ? it.v.split('_')[1] : it.v;
+          fKey = it.v.split('_')[0];
 
           if(fieldSettingData&&fieldSettingData[objKey]){
               if(fieldSettingData[objKey]['objCode']){
@@ -281,6 +306,14 @@ var component = {
     this.keyFiled = this.cfg.columns.filter(it=>{
       return !it.hidden;
     });
+    //暂时不清楚bom的字段名称从哪里取，导致dealKeyFiled函数不知道从哪里取中文？关键字段取貌似对不上，疑似pc端写死
+    // for(var item in this.cfg.bomDataIndexMap){
+    //   var data = {
+    //     k: this.cfg.bomDataIndexMap[item],
+    //     v: item,
+    //   }
+    //   this.bomFiled.push(data);
+    // }
     this.initKeyFiled();
 
     this.summaryField = this.cfg.columns.filter(it=>{

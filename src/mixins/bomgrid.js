@@ -4,7 +4,9 @@ import { accMul, accDiv } from "plugins/calc/decimalsAdd";
 import { getFieldSetting, getAllDict, getAllFieldSettingListLevel}  from "service/fieldModelService"
 import {
     getValuesByExp,
-    convertDataType
+    convertDataType,
+    getBomByPInvCode,
+    getInProcessingStorageSumSource
 } from "service/commonService";
 
 export default {
@@ -18,6 +20,8 @@ export default {
             store:{
                 data:[]
             },
+            bomData:[],
+            boms:[],
         };
     },
     watch:{
@@ -44,17 +48,19 @@ export default {
                 me.onShowDetail(rows[index],index);
             }
         },
-        addRecords: function (selection) {
+        addRecords: async function (selection) {
             var value = this.getValue() || [],
                 record,
                 row, i = 0, l = selection.length;
 
             for (i; i < l; i++) {
                 row = selection[i];
+                await this.initBomData(row.inventoryCode);
                 record = this.createRecord(row);
                 this.store['data'].push(record);
                 value.push(record.data);
             }
+            await this.initBomDataStorageSum(this.bomData);
             this.setValue(value);
         },
         createRecord: function (row,editorFieldCode) {
@@ -98,13 +104,20 @@ export default {
                 onConfirm: () => {
                     var selection = this.selection,
                         rowIndex,
-                        newValues = [];
+                        newValues = [],
+                        bomNewValue = [];
 
                     this.values.forEach((row, rowIndex) => {
                         if (selection.indexOf(rowIndex) == -1) {
                             newValues.push(row);
                         }
                     })
+                    this.bomData.forEach((row, rowIndex) => {
+                        if (selection.indexOf(rowIndex) == -1) {
+                            bomNewValue.push(row);
+                        }
+                    })
+                    this.bomData = bomNewValue;
                     this.setValue(newValues);
                     this.isEdit = false;
                 }
@@ -973,6 +986,44 @@ export default {
               });
               this.Dicts = JSON.stringify(_cachedDicts);
             }).catch(e =>{e});
+        },
+        //bom接口
+        async initBomData(row){
+            await getBomByPInvCode(row).then(res=>{
+                this.bomData.push(res.tableContent);
+            }).catch(e =>{e});
+        },
+        async initBomDataStorageSum(bomData){
+            var me = this;
+            for(var i = 0; i < bomData.length; i++){
+                for(var j = 0 ; j < bomData[i].length;j++){
+                    var data = {
+                        inventoryCode:bomData[i][j]['inventoryCode'],
+                        whCode: this.form.formData['containerCodeOut'],
+                    }
+                    if(!this.judgeBomAdd(bomData[i][j]['inventoryCode'])){
+                        await deal(data);
+                    }
+                }
+            }
+            async function deal(data){
+                await getInProcessingStorageSumSource(data).then(res=>{ 
+                    var data = res.tableContent;
+                    if(data.length){
+                        for(var i=0;i<data.length;i++){
+                            data[i]['productSource'] = bomData[i][j]['productSource'];
+                            me.boms.push(data[i]);
+                        }
+                    }
+                }).catch(e =>{e});
+            }
+        },
+        judgeBomAdd(inventoryCode){
+            for(var i =0;i<this.boms.length;i++){
+                if(inventoryCode==this.boms[i]['inventoryCode']){
+                    return true;
+                }
+            }
         },
         async load(){
             if(!(window.sessionStorage.getItem('r2FieldSetting')||this.$r2FieldSetting)){
