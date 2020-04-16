@@ -99,7 +99,7 @@
     </div>
     <!-- bom明细 -->
     <div class="materiel_list work_list" v-show="boms.length">
-      <bom-list :boms="boms">
+      <bom-list :boms="bomList">
         <template slot-scope="{bom}" slot="specification">
           <div class="content-unit">
             <span>计量单位: {{bom.measureUnit}}</span>
@@ -179,7 +179,12 @@ var component = {
         }
       }
       return val;
-    }
+    },
+    bomList: {
+      get: function(){
+        return this.boms; // 在这里把临时对象的值通过计算属性赋值给页面中用到的对象
+      }
+    },
   },
   data() {
     return {
@@ -193,10 +198,10 @@ var component = {
   },
   watch:{
     // bomData:{
-    //   handler(val){
+    //    handler(val){
     //     console.log(val);
     //     console.log(this.boms);
-    //     this.initBomDataStorageSum(this.bomData);
+    //     //await this.initBomDataStorageSum(this.bomData);
     //   }
     // }
   },

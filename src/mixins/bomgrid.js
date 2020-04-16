@@ -56,12 +56,60 @@ export default {
             for (i; i < l; i++) {
                 row = selection[i];
                 await this.initBomData(row.inventoryCode);
+                var bom = [];
+                for(var j=0; j<this.bomData[i].length;j++){
+                    var obj={};
+                    obj = {
+                        'transMatchedCode':row.orderCode,
+                        'qualityQty': this.bomData[i][j].qualityQty||0, //?要接口算处理
+                        'bomSpecificLoss': this.bomData[i][j].specificLoss||0,
+                        'tdProcessing': this.bomData[i][j].processing||0,
+                        'inventoryName': this.bomData[i][j].inventoryName,
+                        'demandQty': this.bomData[i][j].demandQty||0,
+                        'transObjCode': this.bomData[i][j].inventoryCode,
+                        'measureUnit': this.bomData[i][j].measureUnit,
+                        'bomType': this.bomData[i][j].bomType||0,
+                        'bomQty': this.bomData[i][j].qty||0,
+                        'productSource': this.bomData[i][j].productSource,
+                        'parentInventoryCode': this.bomData[i][j].parentInventoryCode,
+                    }
+                    bom.push(obj);
+                }
+                row = {
+                    ...row,
+                    bom:[...bom]
+                }
                 record = this.createRecord(row);
                 this.store['data'].push(record);
                 value.push(record.data);
             }
             await this.initBomDataStorageSum(this.bomData);
             this.setValue(value);
+            // var outPut = {},
+            //     bomlist = this.boms;
+            //     outPut['dataSet'] = [];
+            // for(var m =0;m<bomlist.length;m++ ){
+            //     var obj2 = {};
+            //     obj2 = {
+            //         'inventoryName_outPutMatCode': bomlist[i].inventoryName,
+            //         'outPutMatCode': bomlist[i].inventoryCode,
+            //         'demandQty': bomlist[i].demandQty,
+            //         'measureUnit_outPutMatCode': bomlist[i].measureUnit,
+            //         'thenTotalQtyStock': bomlist[i].thenTotalQtyStock,
+            //         'transitBalance': bomlist[i].transitBalance,
+            //         'workflowLockQty': bomlist[i].workflowLockQty,
+            //         'thenQtyBalCopy1': bomlist[i].qtyBal,
+            //         'tdQty': bomlist[i].tdQty,
+            //         'tdProcessing': bomlist[i].processing,
+            //         'productSource': bomlist[i].productSource,
+            //         'processingStartDate': bomlist[i].processingStartDate,
+            //         'containerCodeOut': bomlist[i].containerCodeOut,
+            //         'warehouseName_containerCodeOut': bomlist[i].containerNameOut,
+            //         'tdId': bomlist[i].tdId,
+            //     }
+            //     outPut['dataSet'].push(obj2);
+            // }
+            // this.$set(this.form.formData, 'outPut', outPut);
         },
         createRecord: function (row,editorFieldCode) {
             var me = this,
@@ -71,13 +119,15 @@ export default {
                 dataSourceBind = this.dataSourceBind;
 
             this.setDefaultValue(record);
+            var dataIndexMap = me.cfg.dataIndexMap;
+            dataIndexMap['bom'] = 'bom';
             if (dataSourceBind) {
                 editorFieldCode = dataSourceBind.k;
                 data[editorFieldCode] = row ? row[dataSourceBind.v] : '';
                 this.setValueBindValue(record, editorFieldCode, row);
-            } else if (me.cfg.dataIndexMap && !editorFieldCode) {
+            } else if (dataIndexMap && !editorFieldCode) {
                 //适配AccountGrid
-                me.handlerValueBindByIndexMap(record, row, me.cfg.dataIndexMap);
+                me.handlerValueBindByIndexMap(record, row, dataIndexMap);
             }
             //form字段改变事件处理record
             if(editorFieldCode){
@@ -118,6 +168,7 @@ export default {
                         }
                     })
                     this.bomData = bomNewValue;
+                    this.initBomDataStorageSum(this.bomData);
                     this.setValue(newValues);
                     this.isEdit = false;
                 }
@@ -247,13 +298,14 @@ export default {
                 value,
                 newRow;
 
+            submitFieldCodes.push('bom');
             values.map(function (row) {
                 newRow = {};
                 util.each(submitFieldCodes, function (key) {
                     value = row[key];
                     if (typeof value == 'undefined') {
                         newRow[key] = null;
-                    } else if (typeof value != 'object') {
+                    } else {
                         newRow[key] = row[key];
                     }
                 });
@@ -1001,29 +1053,59 @@ export default {
                         inventoryCode:bomData[i][j]['inventoryCode'],
                         whCode: this.form.formData['containerCodeOut'],
                     }
-                    if(!this.judgeBomAdd(bomData[i][j]['inventoryCode'])){
+                    if(!judgeBomAdd(bomData[i][j]['inventoryCode'])){
                         await deal(data);
                     }
                 }
+                await this.dealBom();
             }
             async function deal(data){
                 await getInProcessingStorageSumSource(data).then(res=>{ 
-                    var data = res.tableContent;
-                    if(data.length){
-                        for(var i=0;i<data.length;i++){
-                            data[i]['productSource'] = bomData[i][j]['productSource'];
-                            me.boms.push(data[i]);
+                    var json = res.tableContent;
+                    if(json.length){
+                        for(var k=0;k<json.length;k++){
+                            json[k]['productSource'] = bomData[i][j]['productSource'];
+                            me.boms.push(json[k]);
                         }
                     }
                 }).catch(e =>{e});
             }
+            function judgeBomAdd(inventoryCode){
+                for(var i =0;i<me.boms.length;i++){
+                    if(inventoryCode==me.boms[i]['inventoryCode']){
+                        return true;
+                    }
+                }
+            }
         },
-        judgeBomAdd(inventoryCode){
-            for(var i =0;i<this.boms.length;i++){
-                if(inventoryCode==this.boms[i]['inventoryCode']){
+        judgeBomData(inventoryCode){
+            for(var i =0;i<this.bomData.length;i++){
+                if(inventoryCode==this.bomData[i]['inventoryCode']){
                     return true;
                 }
             }
+        },
+        // judgeBomAdd(inventoryCode){
+        //     for(var i =0;i<this.boms.length;i++){
+        //         if(inventoryCode==this.boms[i]['inventoryCode']){
+        //             return true;
+        //         }
+        //     }
+        // },
+        dealBom(){
+            for(var b = 0; b<this.boms.length; b++){
+                var flag =false;
+                for(var i = 0; i < this.bomData.length; i++){
+                    for(var j = 0 ; j < this.bomData[i].length;j++){
+                        if(this.boms[b]['inventoryCode']==this.bomData[i][j]['inventoryCode']){
+                            flag = true;
+                        }
+                    }
+                }
+                if(!flag){
+                    this.boms.splice(b,1);
+                }
+            }    
         },
         async load(){
             if(!(window.sessionStorage.getItem('r2FieldSetting')||this.$r2FieldSetting)){
