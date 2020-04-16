@@ -2,13 +2,19 @@
 <template>
     <div class="address-book-wrapper page-hasTab">
         <div class="page-navigation">
-             <div class="goback" >
-                <i class="iconfont" >&#xe70e;</i>
+             <div class="goback">
+                <i class="iconfont" @click="goBack()" v-if="routes.length">&#xe70e;</i>
                 {{addressName}}
             </div>
         </div>
-        <div class="page-body-hasNav" ref="scrollerWrapper">
-            <div class="address-book">
+        <RScroll 
+            class="page-body-hasNav" 
+            :options="scrollOptions"
+            :has-next="hasNext"
+            :no-data="false"
+        >
+        <!-- <div class="page-body-hasNav" ref="scrollerWrapper">
+            <div class="address-book"> -->
                 <div v-for="item in address" class="address-item" :key="item.id" @click="goto(item)" v-show="item.id != 7">
                     <div class="header">
                         <img :src="item.photo"  v-if="item.type!='G'"  @error="getDefaultPhoto(item)"/>
@@ -24,21 +30,31 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            <!-- </div>
+        </div> -->
+        </RScroll>
         <router-view></router-view>
     </div>
 </template>
 <script>
 import {getAddressBook} from 'service/msgService'
+import RScroll from "plugins/scroll/RScroll";
 import WebContext from 'service/commonService'
 export default {
     data(){
         return {
+            hasNext:true,
+            scrollOptions:{
+                click: true,
+                pullUpLoad: false,//上拉刷新
+                pullDownRefresh: false //下拉刷新
+            },
             addressName:'root',
+            routes:[],
             address:null
         }
     },
+    components:{RScroll},
     methods:{
         getDefaultPhoto(item) {
             let url = require("assets/ava01.png");
@@ -48,21 +64,29 @@ export default {
             return url;
         },
         goto(item){
+            var routerId = this.$route.params.id,
+                routerName = this.$route.query.name;
+
            if(!item.leaf){
-               if(item.id == this.$route.params.id) return //避免产生重复路由错误
-               this.$router.push({name:'CONTACTS',params:{id:item.id},query:{name:item.name}})
+               if(item.id == routerId) return //避免产生重复路由错误    
+               this.$router.push({name:'CONTACTS',params:{id:item.id},query:{name:item.name}},()=>{
+                     this.routes.push({id:routerId,name:routerName});
+               })
            }
+        },
+        goBack(){
+           var item = this.routes.pop();
+           this.$router.push({name:'CONTACTS',params:{id:item.id},query:{name:item.name}});
         },
         initAddress:function(router,cb){
             var params = router.params,
                 query = router.query;
             this.addressName = query.name || '通讯录';
-            this.loading = this.$loading;
-            this.loading.show();
+            this.address = [];
+            this.hasNext = true;
             getAddressBook(params.id).then(rs=>{
                 this.address = rs;
-                this.loading.hide();
-                delete this.loading;
+                this.hasNext = false;
                 cb&&cb();
             })
         }
@@ -70,23 +94,25 @@ export default {
     created(){
         this.initAddress(this.$route)
     },
+    activated(){
+    },
     beforeRouteUpdate(to,from,next){//向下一级或上一级变化
         this.initAddress(to,next);
     },
     mounted(){
-        var scrollWrapper = this.$refs.scrollerWrapper;
-        if(!scrollWrapper)return;
-        this.scroller = new this.Bscroll(scrollWrapper, {
-            click: true,
-            pullUpLoad: true,
-            pullDownRefresh: true,
-        });
-        this.scroller.on('scroll', ({x, y}) => {
-            if(Math.abs(y)>1000)
-            this.toTopShow = true;
-            else if(Math.abs(y)<1000)
-            this.toTopShow = false; 
-        });
+        // var scrollWrapper = this.$refs.scrollerWrapper;
+        // if(!scrollWrapper)return;
+        // this.scroller = new this.Bscroll(scrollWrapper, {
+        //     click: true,
+        //     pullUpLoad: true,
+        //     pullDownRefresh: true,
+        // });
+        // this.scroller.on('scroll', ({x, y}) => {
+        //     if(Math.abs(y)>1000)
+        //     this.toTopShow = true;
+        //     else if(Math.abs(y)<1000)
+        //     this.toTopShow = false; 
+        // });
     }
 }
 </script>

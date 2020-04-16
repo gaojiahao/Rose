@@ -6,6 +6,7 @@
                 消息
             </div>
             <div class="page-body-hasNav" ref="scrollerWrapper">
+                <LoadMore :show-loading="showLoading" v-show="showLoading"></LoadMore>
                 <div class = 'group-cells'>
                     <div class="group-cell" v-for="group in groups" :key = "group.id" @click="toMsg(group)">
                         <div class="group-ava">
@@ -35,6 +36,7 @@
     </div><!-- wrapper end-->
 </template>
 <script>
+import {LoadMore} from 'vux'
 import {getGroupMsg,getMyGroups} from 'service/msgService'
 import commonService from 'service/commonService'
 import tokenService from 'service/tokenService'
@@ -42,7 +44,6 @@ import util from '@/common/util';
 export default {
     created:function(){       
         this.initDs();
-        this.showLoading = true;
     },
     mounted:function(){
         this.initScoller();
@@ -55,9 +56,11 @@ export default {
            groups:[],
            group:null,
            msgList:[],
+           showLoading:true,
            toTopShow:false
         }
     },
+    components:{LoadMore},
     methods:{
          getDefaultPhoto(group) {
             let url = require("assets/ava01.png");
@@ -84,8 +87,7 @@ export default {
             })
         },
         initGroup:function(cb){
-            var loading = this.$loading;
-            this.showLoading && loading.show();
+            this.showLoading  = true;
             getMyGroups().then(data=>{
                 var groupIdToIndex = {};//建立一个映射关系，方便以后使用
                 data.forEach((group,index)=>{
@@ -94,10 +96,7 @@ export default {
                 this.groupIdToIndex = groupIdToIndex;
                 this.groups = data;
                 this.scroller && this.scroller.refresh();
-                if (this.showLoading == true){
-                    delete this.showLoading;
-                    loading.hide();
-                }
+                this.showLoading = false
             })
         },
         initDs:function(){
@@ -268,6 +267,8 @@ export default {
   .msg-lastMsg{
     color: #898181;
     font-size: 12px;
+    height:18px;
+    line-height: 18px;
     width: 220px;
     overflow: hidden;
     text-overflow: ellipsis;

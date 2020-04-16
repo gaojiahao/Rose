@@ -179,17 +179,18 @@ async function initDicts() {
   }).catch(e =>{e});
 }
 
-async function load(to){
+async function load(to){ //在路由拦截中添加缓存
+  var fieldSettingCache = storage.getItem('r2FieldSetting');
   let {query,fullPath} = to;
 
   if(query.tag&&query.tag=='share'){
     storage.setItem('shareUrl',window.location.href);
-    if(!storage.getItem('r2FieldSetting')){
+    if(!fieldSettingCache){
       await initFieldSetting();
     } 
   }
 
-  if(tokenService.getToken() != '' && to.name !== 'Login'){
+  if (tokenService.getToken() != '' && to.name !== 'Login'){
     if(!storage.getItem('r2_cachedListLevelFieldSetting')){
       await initListLevelFieldSetting();   
     }
@@ -197,7 +198,15 @@ async function load(to){
       await initDicts();   
     }
     if(!Vue.prototype.$r2FieldSetting){
-      await initFieldSetting();
+      if(fieldSettingCache != null){
+        try{
+          Vue.prototype.$r2FieldSetting = JSON.parse(fieldSettingCache);
+        } catch(e){
+           console.log('fieldSetting cache parse error');
+        }      
+      } else {
+        await initFieldSetting();//添加缓存
+      }
     }
   } else if(isQYWX&&!Vue.prototype.$r2FieldSetting) {
     await initListLevelFieldSetting();  
