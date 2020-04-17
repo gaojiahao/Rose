@@ -20,7 +20,30 @@
             <group>
                 <cell title="群成员" is-link />
                 <div class="weui-cell">这个部分要放图片</div>
-                <cell title="添加群成员"/>
+                <div class="add-member">
+                    <div class="members">
+                        <div class="members-top">
+                            <span>群成员</span>
+                            <span class="members-top-num">4人</span>
+                        </div>
+                        <div class="members-bottom">
+                            <span>
+                                <img :src="getDefaultPhoto()" />
+                            </span>
+                            <span>
+                                <img :src="getDefaultPhoto()" />
+                            </span>
+                            <span>
+                                <img :src="getDefaultPhoto()" />
+                            </span>
+                        </div>
+                    </div>
+                    <div class="add-btn" @click="showMemberSelector">
+                        <span class="add-icon">+</span>
+                        <span class="add-text">添加成员</span>
+                    </div>
+                </div>
+
             </group>
             <div class="weui-cells">
                 <div class="weui-cell weui-cell_access">
@@ -47,20 +70,35 @@
             </group>
              </div><!-- scroller-body-->
          </div>
+         <member-selector ref="memberSelector"></member-selector>
     </div>
 </template>
 <script>
 import { Group, Cell,InlineXSwitch} from 'vux'
+import MemberSelector from './memberSelector';
 export default {
     props:['group'],
     components: {
         Cell,
         Group,
-        InlineXSwitch
+        InlineXSwitch,
+        MemberSelector
     },
     data(){
         return {
 
+        }
+    },
+    methods:{
+        goBack(){
+            this.$router.replace('/msg/group');
+        },
+        showMemberSelector() {
+            this.$refs["memberSelector"].showMemberSelector = true;
+        },
+        getDefaultPhoto(msg) {
+            let url = require("assets/ava01.png");
+            return url;
         }
     },
     mounted() {
@@ -79,21 +117,71 @@ export default {
             else if(Math.abs(y)<1000)
             this.toTopShow = false; 
         })
-        this.scrollToButtom(0);
+        this.scrollToButtom && this.scrollToButtom(0);
 
         this.getApp().$on('resize',()=>{
             this.scroll.refresh();
         })
     },
-    methods:{
-        goBack(){
-            this.$router.replace('/msg/group');
-        }
-    }
 }
 </script>
-<style>
+<style lang="less" scoped>
   .scroller-body{
       position: relative;
+      .add-member{
+          padding: 10px 15px 10px 0px;
+          margin-left: 15px;
+          border-top: 1px solid #eee;
+          .members{
+              margin-bottom: 5px;
+              .members-top{
+                  display: flex;
+                  justify-content: space-between;
+                  margin-bottom: 5px;
+                  &-num{
+                      color: #C8C8CD;
+                      margin-right: 15px;
+                  }
+              }
+              .members-bottom{
+                  img{
+                    width: 35px;
+                    height: 35px;
+                    border-radius: 2px;
+                  }
+              }
+              .members-top:after{
+                  content: " ";
+                display: inline-block;
+                height: 6px;
+                width: 6px;
+                border-width: 2px 2px 0 0;
+                border-color: #C8C8CD;
+                border-style: solid;
+                -webkit-transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+                -ms-transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+                transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+                position: absolute;
+                top: 47%;
+                right: 15px;
+              }
+          }
+          .members:hover{
+              background-color: #eee;
+          }
+          .add-btn{
+            display: flex;
+            align-items: center;
+            .add-icon {
+                color: #39f;
+                font-size: 28px;
+                margin-right: 5px;
+                margin-bottom: 5px;
+            }
+          }
+          .add-btn:hover{
+              background-color: #eee;
+          }
+      }
   }
 </style>
