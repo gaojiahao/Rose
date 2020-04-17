@@ -55,3 +55,26 @@ export let getAddressBook = (id)=>{
         data
     })
 }
+
+/**
+ * 获取所有员工
+ */
+export let getEmployee = ()=>{
+    return $flyio.ajax({
+        url:'/ds/getEmployee'
+    })
+}
+
+/**
+ * 获取所有员工
+ */
+export let getMembers = (groupId)=>{
+    var data = {
+        groupId: groupId
+    };
+
+    return $flyio.ajax({
+        url:'/im/group/getMembers', 
+        data
+    })
+}

@@ -24,17 +24,13 @@
                     <div class="members">
                         <div class="members-top">
                             <span>群成员</span>
-                            <span class="members-top-num">4人</span>
+                            <span class="members-top-num">{{allMembers.length}}人</span>
                         </div>
                         <div class="members-bottom">
-                            <span>
-                                <img :src="getDefaultPhoto()" />
-                            </span>
-                            <span>
-                                <img :src="getDefaultPhoto()" />
-                            </span>
-                            <span>
-                                <img :src="getDefaultPhoto()" />
+                            <span v-for="member of allMembers" :key="member.userId">
+                                <img 
+                                    :src="member.photo || getDefaultPhoto()" 
+                                    @error="getDefaultPhoto(member)"/>
                             </span>
                         </div>
                     </div>
@@ -70,12 +66,16 @@
             </group>
              </div><!-- scroller-body-->
          </div>
-         <member-selector ref="memberSelector"></member-selector>
+         <member-selector 
+            ref="memberSelector" 
+            :selectedMembers="allMembers">
+         </member-selector>
     </div>
 </template>
 <script>
 import { Group, Cell,InlineXSwitch} from 'vux'
 import MemberSelector from './memberSelector';
+import { getMembers } from '@/service/msgService'
 export default {
     props:['group'],
     components: {
@@ -86,7 +86,7 @@ export default {
     },
     data(){
         return {
-
+            allMembers: []
         }
     },
     methods:{
@@ -96,9 +96,19 @@ export default {
         showMemberSelector() {
             this.$refs["memberSelector"].showMemberSelector = true;
         },
-        getDefaultPhoto(msg) {
+        getDefaultPhoto(member) {
             let url = require("assets/ava01.png");
+            if (member) {
+                member.photo = url;
+            }
             return url;
+        },
+        getAllMembers() {
+            if(this.group.groupId){
+                getMembers(this.group.groupId).then(res => {
+                    this.allMembers = res;
+                })
+            }
         }
     },
     mounted() {
@@ -123,6 +133,9 @@ export default {
             this.scroll.refresh();
         })
     },
+    created() {
+        this.getAllMembers()
+    }
 }
 </script>
 <style lang="less" scoped>
@@ -147,7 +160,8 @@ export default {
                   img{
                     width: 35px;
                     height: 35px;
-                    border-radius: 2px;
+                    border-radius: 5px;
+                    padding: .02rem;
                   }
               }
               .members-top:after{
