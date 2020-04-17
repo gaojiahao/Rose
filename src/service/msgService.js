@@ -46,7 +46,7 @@ export let getGroupMsg = (groupId,page=0) =>{
     var data = {},
         pageSize = 20;
     if (page){
-        data.start = page;//(page-1)*pageSize;
+        data.page = page;//(page-1)*pageSize;
        // data.limit = pageSize;
     }
     return $flyio.ajax({

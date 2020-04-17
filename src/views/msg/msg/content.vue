@@ -105,7 +105,7 @@ export default {
             })
         },
         onPullingDown(){
-            if(this.hasNext == false)return;
+            if(this.hasNext == false || this.loading == true)return;
             this.loading = true;
             getGroupMsg(this.group.groupId,this.page + 1).then(rs=>{
                 var  msgList = this.$parent.msgList;
