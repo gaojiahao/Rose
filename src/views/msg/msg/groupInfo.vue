@@ -3,7 +3,7 @@
     <div class="group-info page">
          <div class="page-navigation flex">
             <div class="goback" @click="goBack()">
-                <-
+                <i class="iconfont icon-back1"></i>
             </div>
             <div class="body">
                 聊天信息<span v-if="group.groupType == 'G'">({{group.msgCount}})</span>

@@ -13,8 +13,8 @@ import comment from './pages/comment'
 import praise from './pages/praise'
 import MSGLIST from './pages/appMsgList'
 
-import Msg from './msg'
-import GroupMsg from './msg/group'
+import Msg from './navigation'
+import GroupMsg from './msg/content'
 import GroupInfo from './msg/groupInfo'
 
 export default [
