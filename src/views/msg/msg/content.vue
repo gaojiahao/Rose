@@ -139,13 +139,6 @@ export default {
 .msg-header{
     display: flex;
 }
-.msg-header .goback{
-    width:0.5rem;
-}
-
-.msg-header .goback i{
-    font-size: 24px;
-}
 .msg-header .body{
     flex: 1;
 }
