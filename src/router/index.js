@@ -14,6 +14,7 @@ import achievementDetail from 'views/achievement/achievementDetail'
 import saleRecord from 'views/achievement/sale_record'
 import saleRecordPerson from 'views/achievement/sale_record_person'
 import AchievementEnrty from 'views/achievement/achievementEntry'
+import incomeCalc from 'views/income/incomeCalc'
 Vue.use(Router)
 
 export default new Router({
@@ -101,6 +102,14 @@ export default new Router({
       component: AchievementEnrty,
       meta: {
         title: '销售业绩',
+      }
+    },
+    {
+      path: '/incomeCalc',
+      name: 'incomeCalc',
+      component: incomeCalc,
+      meta: {
+        title: '收入计算器',
       }
     },
     {
