@@ -11,13 +11,21 @@
                 <i class="iconfont icon-users" ></i>
             </div>
         </div>
-        <div class="msg-container-wrapper" ref="scrollerWrapper">
+        <r-scroll
+            class="msg-container-wrapper"
+            :options="scrollOptions"
+            :has-next="false"
+            :no-data="false"
+            @on-pulling-down="onPullingDown"
+            ref="scroller"
+        >
             <div class="msg-container">
+                <LoadMore v-if="loading"></LoadMore>
                 <div v-for="(msg,index) in msgList" :key="index" class="singleMsg">
                     <MessageTpl :msg="msg"></MessageTpl>
                 </div>
             </div>
-        </div>
+        </r-scroll>
         <div class="msgList-footer">
             <textarea class="msg-input"  v-model="msg" type="text"></textarea>
             <div class="msg-input-wrapper">
@@ -25,29 +33,33 @@
             </div>
             <button @click="sendTextMsg">发送</button>
         </div>
-        <div class="el-fade-in">
-            <div class="page-component-up" @click="scrollToTop" v-show="toTopShow">
-            <span class="icon icon-scroll-top"></span>
-            </div>
-        </div>
         <!-- groupInfo 消息信息页面-->
         <router-view :group="group" ref="groupInfo"></router-view>
         <!-- groupInfo end -->
     </div> <!--page end-->
 </template>
 <script>
-import {sendMsg} from 'service/msgService'
+import {LoadMore} from 'vux'
+import {sendMsg,getGroupMsg} from 'service/msgService'
 import MessageTpl from '@/views/msg/msg/messageTpl'
+import RScroll from "plugins/scroll/RScroll";
 export default {
     props:['group','msgList'],
     data(){
         return {
             msg:'',
-            toTopShow:false
+            scrollOptions:{
+                
+            },
+            page:1,
+            loading:false,
+            hasNext:true
         }
     },
     components:{
-        MessageTpl
+        MessageTpl,
+        RScroll,
+        LoadMore
     },
     methods:{
         getDefaultPhoto(msg) {
@@ -61,7 +73,7 @@ export default {
             this.$router.replace('/msg');
         },
         scrollToTop:function(){
-            var scroll = this.scroll;
+            var scroll = this.scroller;
             if(scroll){
                 scroll.scrollTo(0, 0, 400);
             }
@@ -85,10 +97,25 @@ export default {
          */
         scrollToButtom(time=400){
             this.$nextTick(()=>{
-                var scroll = this.scroll;
+                var scroll = this.scroller;
                     
                 if(scroll){
                     scroll.scrollTo(0,scroll.maxScrollY,time);
+                }
+            })
+        },
+        onPullingDown(){
+            if(this.hasNext == false)return;
+            this.loading = true;
+            getGroupMsg(this.group.groupId,this.page + 1).then(rs=>{
+                var  msgList = this.$parent.msgList;
+                this.loading = false;
+                if(rs.length){
+                    this.page ++;
+                    msgList.unshift(...rs);
+                    this.$parent.msgList = msgList;
+                } else {
+                    this.hasNext = false;
                 }
             })
         }
@@ -103,27 +130,7 @@ export default {
             this.$router.replace('/msg');
         }
     },
-    mounted() {
-        var scrollWrapper = this.$refs.scrollerWrapper;
-
-        if(!scrollWrapper)return;
-
-        this.scroll = new this.Bscroll(scrollWrapper, {
-            click: true,
-            pullUpLoad: true,
-            pullDownRefresh: true,
-        });
-        this.scroll.on('scroll', ({x, y}) => {
-            if(Math.abs(y)>1000)
-            this.toTopShow = true;
-            else if(Math.abs(y)<1000)
-            this.toTopShow = false; 
-        })
-        this.scrollToButtom(0);
-
-        this.getApp().$on('resize',()=>{
-            this.scroll.refresh();
-        })
+    mounted:function(){
     },
     beforeRouteEnter:function(to,form,next){
         next(vm=>{

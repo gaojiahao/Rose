@@ -136,6 +136,7 @@
                 },2000)
             } 
           });
+          this.$parent.scroller = this.bScroll;
         })
       },
       // 刷新

@@ -18,7 +18,7 @@ export default{
          var baseURL = localStorage.getItem('baseURL');
          return {
              hostList:[
-                {value:'测试服',key:'http://192.168.3.172'},
+                {value:'测试服',key:'http://172.roletask.com/'},
                 {value:'瑞福登',key:'https://refordom.roletask.com/'}
              ],
              radioValue:[baseURL]

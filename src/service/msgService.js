@@ -42,9 +42,16 @@ export let sendMsg = (data)=>{
         data
     })
 }
-export let getGroupMsg = groupId =>{
+export let getGroupMsg = (groupId,page=0) =>{
+    var data = {},
+        pageSize = 20;
+    if (page){
+        data.start = page;//(page-1)*pageSize;
+       // data.limit = pageSize;
+    }
     return $flyio.ajax({
-        url:'/im/message/getGroupMessage?groupId=' + groupId
+        url:'/im/message/getGroupMessage?groupId=' + groupId,
+        data
     })
 }
 export let getAddressBook = (id)=>{
