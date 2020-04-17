@@ -37,6 +37,8 @@ export default {
                 wfPara[proCode] = me.getApprovalData(values);
                 param.wfPara = JSON.stringify(wfPara);
             } 
+            // this.$HandleLoad.hide();
+            // return ;
             //3.提交表单数据
             submitHandler(param).then((res)=>{
                 me.handlerResopnse(res);
@@ -361,6 +363,10 @@ export default {
                    }
                    if(field.$parent.submitValue&&!field.$parent.hidden){
                         values[containerCode] = field.getSubmitData();
+                        if(field.cfg.xtype.indexOf("r2BomGrid")!=-1){
+                            //针对bom控件
+                            values['outPut'] = field.getOutput();
+                        }
                    }
                    if(!field.cfg.notAddOneRow&&(field.cfg.xtype!='r2AccountGrid')){
                         values[containerCode] = field.getSubmitData();
