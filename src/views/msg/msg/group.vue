@@ -2,13 +2,13 @@
     <div class="msg-detail page" v-if="group">
         <div class="msg-header page-navigation">
             <div class="goback" @click="goBack()">
-                <i class="iconfont" >&#xe70e;</i>
+                <i class="iconfont icon-back1" ></i>
             </div>
             <div class="groupName body">
                 {{group.groupName}}<span v-if="group.groupType == 'G'">({{group.msgCount}})</span>
             </div>
             <div class="toGroupAdmin" @click="$router.push('/msg/group/info')">
-                用户
+                <i class="iconfont icon-users" ></i>
             </div>
         </div>
         <div class="msg-container-wrapper" ref="scrollerWrapper">
@@ -144,14 +144,18 @@ export default {
 }
 
 .msg-header .goback i{
-    font-size: 30px;
+    font-size: 24px;
 }
 .msg-header .body{
     flex: 1;
 }
 .msg-header .toGroupAdmin{
-    padding-right:0.2rem;
 }
+
+.msg-header .toGroupAdmin i{
+    font-size: 24px;
+}
+
 .msg-container-wrapper{
     height: calc(100% - 1rem);
     width: 100%;

@@ -23,8 +23,7 @@
     <!-- 底部导航栏 -->
     <nav class="tabs vux-1px-t" v-if="hasTab">
       <router-link class="tab" v-for="(tab, index) in tablist" :to="tab.path" :key='index'>
-        <!-- <span class="tabicon iconfont" :class="tab.icon"></span> -->
-        <i class=" tabicon iconfont" v-html="tab.iCode"></i>
+        <span class="tabicon iconfont" :class="tab.icon"></span>
         <span class="title">{{tab.title}}</span>
         <badge v-if='tab.title === "任务" && newsNumber != 0'></badge>
       </router-link>
@@ -44,11 +43,11 @@ export default {
     var hasNav = platform.isIPhone && window.isApp
     return{
       tablist: [
-        {title: '消息', path: '/msg', iCode:'&#xe650;'},
-        {title: '任务', path: '/notice/flowTodo', iCode:'&#xe651;'},
-        {title: '通讯录',path: '/contacts/0',iCode:'&#xe62a;'},
-        {title: '应用', path: '/home',iCode:'&#xe7a0;'},
-        {title: '我',path:'/user',iCode:'&#xe60d;'}
+        {title: '消息', path: '/msg', icon:'icon-message1'},
+        {title: '任务', path: '/notice/flowTodo',icon:'icon-task1'},
+        {title: '应用', path: '/home',icon:'icon-apps'},
+         {title: '通讯录',path: '/contacts/0',icon:'icon-Organization'},
+        {title: '我',path:'/user',icon:'icon-my'}
       ],
       newsNumber:0,
       hasNav:hasNav,
