@@ -197,13 +197,13 @@ var component = {
     };
   },
   watch:{
-    // bomData:{
-    //    handler(val){
-    //     console.log(val);
-    //     console.log(this.boms);
-    //     //await this.initBomDataStorageSum(this.bomData);
-    //   }
-    // }
+    values:{
+      handler(val){
+        if(this.form.formData.outPut){
+          this.boms = this.form.formData.outPut;
+        }
+      }
+    }
   },
   methods: {
     //选择默认图片

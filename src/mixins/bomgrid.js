@@ -22,6 +22,7 @@ export default {
             },
             bomData:[],
             boms:[],
+            outPut:[],
         };
     },
     watch:{
@@ -85,31 +86,30 @@ export default {
             }
             await this.initBomDataStorageSum(this.bomData);
             this.setValue(value);
-            // var outPut = {},
-            //     bomlist = this.boms;
-            //     outPut['dataSet'] = [];
-            // for(var m =0;m<bomlist.length;m++ ){
-            //     var obj2 = {};
-            //     obj2 = {
-            //         'inventoryName_outPutMatCode': bomlist[i].inventoryName,
-            //         'outPutMatCode': bomlist[i].inventoryCode,
-            //         'demandQty': bomlist[i].demandQty,
-            //         'measureUnit_outPutMatCode': bomlist[i].measureUnit,
-            //         'thenTotalQtyStock': bomlist[i].thenTotalQtyStock,
-            //         'transitBalance': bomlist[i].transitBalance,
-            //         'workflowLockQty': bomlist[i].workflowLockQty,
-            //         'thenQtyBalCopy1': bomlist[i].qtyBal,
-            //         'tdQty': bomlist[i].tdQty,
-            //         'tdProcessing': bomlist[i].processing,
-            //         'productSource': bomlist[i].productSource,
-            //         'processingStartDate': bomlist[i].processingStartDate,
-            //         'containerCodeOut': bomlist[i].containerCodeOut,
-            //         'warehouseName_containerCodeOut': bomlist[i].containerNameOut,
-            //         'tdId': bomlist[i].tdId,
-            //     }
-            //     outPut['dataSet'].push(obj2);
-            // }
-            // this.$set(this.form.formData, 'outPut', outPut);
+            var bomlist = this.boms;
+            this.outPut['dataSet'] = [];
+            for(var m =0;m<bomlist.length;m++ ){
+                var obj2 = {};
+                obj2 = {
+                    'inventoryName_outPutMatCode': bomlist[i].inventoryName,
+                    'outPutMatCode': bomlist[i].inventoryCode,
+                    'demandQty': bomlist[i].demandQty,
+                    'measureUnit_outPutMatCode': bomlist[i].measureUnit,
+                    'thenTotalQtyStock': bomlist[i].thenTotalQtyStock,
+                    'transitBalance': bomlist[i].transitBalance,
+                    'workflowLockQty': bomlist[i].workflowLockQty,
+                    'thenQtyBalCopy1': bomlist[i].qtyBal,
+                    'tdQty': bomlist[i].tdQty,
+                    'tdProcessing': bomlist[i].processing,
+                    'productSource': bomlist[i].productSource,
+                    'processingStartDate': bomlist[i].processingStartDate,
+                    'containerCodeOut': bomlist[i].containerCodeOut,
+                    'warehouseName_containerCodeOut': bomlist[i].containerNameOut,
+                    'tdId': bomlist[i].tdId,
+                }
+                this.outPut['dataSet'].push(obj2);
+            }
+            this.$set(this.form.formData, 'outPut', this.outPut);
         },
         createRecord: function (row,editorFieldCode) {
             var me = this,
@@ -313,6 +313,9 @@ export default {
             })
 
             return data;
+        },
+        getOutput(){
+            return this.outPut;
         },
         getComponentByCfg: function (cfg) {
             if (cfg.contrl) {
