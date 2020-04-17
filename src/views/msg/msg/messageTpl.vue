@@ -12,7 +12,13 @@
         
         <div class="message-content" 
             :class="[msg.isMySelf==1?'rightarrow':'leftarrow']"  
-            v-html="msg.content">
+            v-html="msg.content" v-if="msg.imType==1">
+        </div>
+        <div class="message-content" v-else-if="msg.imType==2 || msg.imType==3">
+            <template v-for="file in msg.content" v-bind="key">
+                <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ file.id" v-if="file.imType==2"/>
+                <div v-html="file.content" v-else-if="file.imType==1"></div>
+            </template>
         </div>
     </div>
 </template>
@@ -28,6 +34,11 @@ export default {
             }
         }
     },
+    data(){
+        return {
+            baseURL:window.baseURL||''
+        }
+    },
      methods:{
         getDefaultPhoto(msg) {
             let url = require("assets/ava01.png");
@@ -39,7 +50,6 @@ export default {
      }
 }
 </script>
-
 <style lang="less" scoped>
 .rightarrow:after{
     content: " ";
@@ -97,11 +107,15 @@ export default {
     }
 
 }
-
 .isMySelf{
     text-align: right;
     .message-content{
         background-color: rgb(191, 221, 255);
     }
+}
+</style>
+<style>
+.message-content img{
+    height:100px;
 }
 </style>

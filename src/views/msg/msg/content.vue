@@ -111,6 +111,17 @@ export default {
                 var  msgList = this.$parent.msgList;
                 this.loading = false;
                 if(rs.length){
+                    rs.map(msg=>{
+                        var json;
+                        if(msg.imType == 3 || msg.imType == 2){
+                            try{
+                                json = JSON.parse(msg.content);
+                                msg.content = json;
+                            }catch(e){
+                                console.log('msg content parse error',msg.content);
+                            }
+                        }
+                    });
                     this.page ++;
                     msgList.unshift(...rs);
                     this.$parent.msgList = msgList;
@@ -179,5 +190,6 @@ export default {
 }
 .singleMsg{
     margin: 0.2rem 0.1rem;
+    clear: both;
 }
 </style>

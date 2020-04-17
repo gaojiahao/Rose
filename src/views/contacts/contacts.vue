@@ -1,11 +1,11 @@
 <!--通讯录-->
 <template>
     <div class="address-book-wrapper page-hasTab">
-        <div class="page-navigation">
+        <div class="page-navigation flex">
              <div class="goback">
                 <i class="iconfont" @click="goBack()" v-if="routes.length">&#xe70e;</i>
-                {{addressName}}
             </div>
+             {{addressName}}
         </div>
         <RScroll 
             class="page-body-hasNav" 

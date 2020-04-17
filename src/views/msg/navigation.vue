@@ -180,6 +180,17 @@ export default {
             if(group != this.group){
                 this.group = group;
                 getGroupMsg(group.groupId).then(msgList=>{
+                    msgList.map(msg=>{
+                        var json;
+                        if(msg.imType == 3 || msg.imType == 2){
+                            try{
+                                json = JSON.parse(msg.content);
+                                msg.content = json;
+                            }catch(e){
+                                console.log('msg content parse error',msg.content);
+                            }
+                        }
+                    })
                     this.msgList = msgList;
                     this.$router.push('/msg/group')
                 });       
