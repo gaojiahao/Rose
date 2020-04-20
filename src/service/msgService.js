@@ -66,9 +66,15 @@ export let getAddressBook = (id)=>{
 /**
  * 获取所有员工
  */
-export let getEmployee = ()=>{
+export let getEmployee = (filter,page,limit)=>{
+    let data = {
+        filter: filter,
+        limit: limit,
+        page: page
+    }
     return $flyio.ajax({
-        url:'/ds/getEmployee'
+        url:'/ds/getEmployee',
+        data
     })
 }
 
@@ -85,3 +91,23 @@ export let getMembers = (groupId)=>{
         data
     })
 }
+
+// 添加群成员
+export let addMember = (data = {}) => {
+    return $flyio.ajax({
+      type: 'POST',
+      contentType: 'application/x-www-form-urlencoded',
+      url: '/im/group/addMember',
+      data
+    })
+  };
+
+  // 新增群组
+export let createGroup = (data = {}) => {
+    return $flyio.ajax({
+      type: 'POST',
+      contentType: 'application/x-www-form-urlencoded',
+      url: '/im/group/create',
+      data
+    })
+  };
