@@ -1,5 +1,5 @@
 <template>    
-    <div class="pages">
+    <div class="pages2">
         <!-- 头部 -->
         <div class="header">
             <div class="header-container">
@@ -32,55 +32,61 @@
               <div class="dashboard_title">月收入目标</div>
               <div class="dashboard_count"><span>￥</span>222</div>
             </div>
-            <!-- <div class="each-dashboard when-month">
-              <div class="dashboard_title">当月完成</div>
-              <div class="dashboard_count">33</div>
-            </div> -->
           </div>
           <div class="place-holder"></div>
         </div>
         <div class="main-container-part">
             <div class="main-container-part-bg">
-                <transition-group class="expert-detail" tag="div" mode="">
-                    <div v-for="item in list" :key="item" class="detail" :ref="`stateopen${index}`" v-show="showDetail===index">
-                        <div>
+                <div v-for="(item,index) in list" :key="index" class="detail">
+                        <div class='title' @click="toggleClass(index,item)">
                             {{item.title}}
-                            <div style="float:right"   >↓</div>
+                            <div style="float:right">↓</div>
                         </div>
-                        <div>
-                            <x-button mini type="primary">+</x-button>
-                            <x-button mini type="warn">x</x-button>
+                        <div class="content" :class="{'open':item.showContent}">
+                            <div class="button">
+                                <div class="left"><x-button mini type="primary" @click.native="clickProject()">新增</x-button></div>
+                                <div class="left"><x-button mini type="warn">管理</x-button></div>
+                            </div>
+                            <div class="list">
+                                <div>product1</div>  
+                                <div>product1</div> 
+                                <div>product1</div>         
+                            </div>
                         </div>
-                        <div>
-                            <div>product1</div>  
-                            <div>product1</div> 
-                            <div>product1</div>         
-                        </div>
-                    </div>
-                </transition-group>
+                </div>
             </div>   
         </div>
+        <popup-income-calc :show="showPopupIncomeCalc" v-model="showPopupIncomeCalc" ref="PopupIncomeCalc"></popup-income-calc>
     </div>
-  
 </template>
 
 <script>
 import {XButton, Confirm, querystring} from 'vux'
+import PopupIncomeCalc from 'components/popup/PopupIncomeCalc'
 export default {
   data(){
     return{
-        list:[{title:'四月第一周',showContent:false},{title:'四月第二周',showContent:false}],
-        showDetail:'',
+        list:[{title:'四月第一周',showContent:true},{title:'四月第二周',showContent:false},{title:'四月第二周',showContent:false},
+        {title:'四月第二周',showContent:false},{title:'四月第二周',showContent:false},{title:'四月第二周',showContent:false}],
+        showDetail:0,
+        showPopupIncomeCalc:false,
     }
   },
   components: {
     XButton,
     Confirm,
+    PopupIncomeCalc
   },
   methods:{
     changeContent(index){                       //通过index拿到当前值
         this.list[index].showContent=!this.list[index].showContent;
-    }
+    },
+    toggleClass(index,item){
+        this.list[index]['showContent'] =  this.list[index]['showContent'] ? false : true;
+    },
+    clickProject() {
+      this.showPopupIncomeCalc = true;
+    },
   }
   
 
@@ -88,12 +94,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.pages {
+.pages2 {
     left: 0;
     width: 100%;
-    overflow: hidden;
     background: #f5f5f5;
-
+    height: 100%;
     .header {
         width: 100%;
         height: .4rem;
@@ -241,20 +246,55 @@ export default {
     }
     .main-container-part {
         width: 100%;
-        padding: 0 .1rem;
-        margin-top: .1rem;
         //background: #FFF;
         box-sizing: border-box;
         position: relative;
         top: 2rem;
+        height: 100%;
+        background-color: #f5f5f5;
         .main-container-part-bg{
-            .expert-detail{
-                .detail{
-                    width: 100%;
-                    border-radius: 5px;
-                    background: white;
-                    margin-top: .1rem;
-                }    
+            padding: 0rem .1rem .1rem .1rem;
+            background-color: #f5f5f5;
+            .detail{
+                width: 100%;
+                border-radius: 5px;
+                background: white;
+                margin-top: .1rem;
+                .title{
+                    padding: .05rem;
+                    font-size: .14rem;
+                }
+                .content{
+                    // max-height: 0;
+                    // transition: max-height .3s;
+                    display: none;
+                    .button{
+                        width: 100%;
+                        height: .3rem;
+                        .left{
+                            float: right;
+                            margin: 0 .05rem;
+                            .weui-btn_mini {
+                                display: inline-block;
+                                padding: 0 1.32em;
+                                line-height: 2.3;
+                                font-size: 12px;
+                            }
+                        }
+                    }
+                    .list{
+
+                    }
+                }
+                .open {
+                    // max-height: 600px;
+                    // transition: max-height .5s;
+                    display: block;
+                    
+                }
+            }
+            .list{
+                padding: 0 .05rem;
             }     
         }
     }
