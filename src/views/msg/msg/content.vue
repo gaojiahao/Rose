@@ -27,11 +27,14 @@
             </div>
         </r-scroll>
         <div class="msgList-footer">
-            <textarea class="msg-input"  v-model="msg" type="text"></textarea>
-            <div class="msg-input-wrapper">
-            
+            <div class="input-wrapper">
+                <textarea class="msg-input"  v-model="msg" type="text" @keyup.enter="sendTextMsg"></textarea>
+                <i class="iconfont icon-jia" @click="toggleWrapper"></i>
             </div>
-            <button @click="sendTextMsg">发送</button>
+            <div class="extra-input-wrapper" v-show="showExtraInput">
+                <i class="iconfont icon-3801wenjian"></i>
+                <i class="iconfont icon-file-f"></i>
+            </div>
         </div>
         <!-- groupInfo 消息信息页面-->
         <router-view :group="group" ref="groupInfo"></router-view>
@@ -53,7 +56,8 @@ export default {
             },
             page:1,
             loading:false,
-            hasNext:true
+            hasNext:true,
+            showExtraInput:false
         }
     },
     components:{
@@ -91,6 +95,9 @@ export default {
                 })
             }
             
+        },
+        toggleWrapper(){
+            this.showExtraInput = !this.showExtraInput;
         },
         /**
          * 将消息页面滚动到底部
@@ -153,40 +160,53 @@ export default {
     }
 }
 </script>
-<style>
+<style lang="scss">
+.msg-detail{
+   display: flex;
+   flex-direction: column;
+}
 .msg-header{
     display: flex;
 }
 .msg-header .body{
     flex: 1;
 }
-.msg-header .toGroupAdmin{
-}
-
 .msg-header .toGroupAdmin i{
     font-size: 24px;
 }
 
 .msg-container-wrapper{
-    height: calc(100% - 1rem);
-    width: 100%;
-    overflow: hidden;
+    flex:1;
     background-color: #9e9e9e1c;
 }
-.msgList-footer{
-    position:absolute;
-    width:100%;
-    height:0.5rem;
-    bottom: 0;
-    left:0;
+.msgList-footer {
+    position: relative;
+    .input-wrapper{
+        display: flex;
+        height: 0.5rem;
+        border-top: 1px solid rgba(0,0,0,0.1); 
+        textarea{
+            flex: 1;
+        } 
+        i{
+            width:0.5rem;
+            font-size: 0.3rem;
+            text-align: center;
+        }
+        .icon-jia:before{
+            border: 1px solid #000;
+            border-radius: 0.5rem;
+        }
+    }  
+}
+.extra-input-wrapper{
     display: flex;
-    border-top: 1px solid rgba(0,0,0,0.1);
-}
-.msg-input-wrapper{
-   /* flex:1*/
-}
-.msg-input{
-    flex:1
+    text-align: center;
+    i{
+        height: 0.6rem;
+        font-size:0.4rem;
+        width: 0.6rem;
+    }
 }
 .singleMsg{
     margin: 0.2rem 0.1rem;
