@@ -30,7 +30,7 @@
             <div class="input-wrapper">
                 
                 <textarea class="msg-input"  v-model="msg" type="text" @keyup.enter="sendTextMsg"></textarea>
-                <i class="icon-emotion"></i>
+                <i class="icon-emotion" @click="showEmotion = !showEmotion;showExtraInput=false;"></i>
                 <i class="icon-add-more" @click="toggleWrapper" v-if="!msg"></i>
                 <span class="btn-send" v-if="msg" @click="sendTextMsg">发送</span>
             </div>
@@ -56,6 +56,7 @@
                     
                 </div>
             </div>
+            <r-emotion :show="showEmotion" @on-select="emotionSelected" ref="emotion"></r-emotion>
         </div>
         <!-- groupInfo 消息信息页面-->
         <router-view :group="group" ref="groupInfo"></router-view>
@@ -68,6 +69,7 @@ import {upload} from 'service/commonService'
 import {sendMsg,getGroupMsg} from 'service/msgService'
 import MessageTpl from '@/views/msg/msg/messageTpl'
 import RScroll from "plugins/scroll/RScroll";
+import REmotion from 'homePage/components/comment-related/REmotion'
 export default {
     props:['group','msgList'],
     data(){
@@ -76,6 +78,7 @@ export default {
             scrollOptions:{
                 
             },
+            showEmotion:false,
             page:1,
             loading:false,
             hasNext:true,
@@ -85,7 +88,8 @@ export default {
     components:{
         MessageTpl,
         RScroll,
-        LoadMore
+        LoadMore,
+        REmotion
     },
     methods:{
         getDefaultPhoto(msg) {
@@ -103,6 +107,10 @@ export default {
             if(scroll){
                 scroll.scrollTo(0, 0, 400);
             }
+        },
+         // 选中表情
+        emotionSelected(val) {
+            this.msg += val;
         },
         sendTextMsg(){
             var  groupId = this.group.groupId,
@@ -167,6 +175,7 @@ export default {
         },
         toggleWrapper(){
             this.showExtraInput = !this.showExtraInput;
+            this.showEmotion = false;
         },
         /**
          * 将消息页面滚动到底部
@@ -305,15 +314,6 @@ export default {
             vertical-align: top;
             font-size: .16rem;
         }
-        // i{
-        //     width:0.5rem;
-        //     font-size: 0.3rem;
-        //     text-align: center;
-        // }
-        // .icon-jia:before{
-        //     border: 1px solid #000;
-        //     border-radius: 0.5rem;
-        // }
     }  
 }
 .extra-input-wrapper{
