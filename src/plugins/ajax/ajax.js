@@ -208,9 +208,17 @@ let Rxports = {
   // 上传图片，单个文件
   upload(data) {
     // 创建form对象
-    let param = new FormData(); 
+    let param = new FormData(),
+        file; 
+    
     // 通过append向form对象添加数据
-    param.append('file', data.file);  
+    if (data.file instanceof FileList){
+       for(var i=0,l=data.file.length;i<l;i++){
+          param.append('file',data.file[i]);
+       }
+    } else {
+       param.append('file', data.file);
+    }
     // 添加form表单中其他数据
     if (data.biReferenceId) {
       param.append('biReferenceId', data.biReferenceId); 
