@@ -14,32 +14,24 @@
              <!-- <div class="weui-cells"></div> -->
              <group>
                 <cell title="群聊名称" is-link link="/themesetting" :value="group.groupName" />
-                <cell title="群二维码" is-link ><span slot="value"></span></cell>
-                <cell title="群公号" is-link />
+                <!-- <cell title="群二维码" is-link ><span slot="value"></span></cell> -->
+                <!-- <cell title="群公号" is-link /> -->
             </group>
             <group>
-                <cell title="群成员" is-link />
-                <div class="weui-cell">这个部分要放图片</div>
-                <div class="add-member">
-                    <div class="members">
-                        <div class="members-top" v-if="allMembers.length > 1">
-                            <span>群成员</span>
-                            <span class="members-top-num">{{allMembers.length}}人</span>
-                        </div>
-                        <div class="members-bottom">
-                            <span v-for="member of allMembers" :key="member.userId">
-                                <img 
-                                    :src="member.photo || getDefaultPhoto()" 
-                                    @error="getDefaultPhoto(member)"/>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="add-btn" @click="showMemberSelector">
-                        <span class="add-icon">+</span>
-                        <span class="add-text">添加成员</span>
+                <cell title="群成员" is-link :value="allMembers.length" />
+                <div class="members">
+                    <div class="members-item" v-for="(member,index) of allMembers" :key="index">
+                        <img 
+                            v-if="index<6"
+                            :src="member.photo || getDefaultPhoto()" 
+                            @error="getDefaultPhoto(member)"/>
+                        <i v-if="index===6" class="iconfont icon-more1"></i>
                     </div>
                 </div>
-
+                <div class="add-btn" @click="showMemberSelector">
+                    <span class="add-icon">+</span>
+                    <span class="add-text">添加成员</span>
+                </div>
             </group>
             <div class="weui-cells">
                 <div class="weui-cell weui-cell_access">
@@ -50,20 +42,29 @@
                         更多
                     </div>
                 </div> 
-                <div class="weui-cell">这里要放图标</div>
+                <div class="weui-cell">
+                    <div class="msg-type-item">
+                        <i class="iconfont icon-wenjian"/>
+                        <div>文件</div>
+                    </div>
+                    <div class="msg-type-item">
+                        <i class="iconfont icon-i-img"/>
+                        <div>图片</div>
+                    </div>
+                </div>
             </div>
-            <group>
+            <!-- <group>
                 <cell title="群聊天机器人" is-link value="未添加"/>    
-            </group>
+            </group> -->
             <group>
-                <cell title="消息免打扰"><inline-x-switch slot="value"/></cell>
+                <!-- <cell title="消息免打扰"><inline-x-switch slot="value"/></cell> -->
                 <cell title="置顶聊天"><inline-x-switch value="true" slot="value"/></cell>
-                <cell title="保存到通讯录"><inline-x-switch value="true" slot="value"/></cell>
+                <!-- <cell title="保存到通讯录"><inline-x-switch value="true" slot="value"/></cell> -->
             </group>
-            <group>
+            <!-- <group>
                 <cell title="邀请群成员语音通话" is-link/>    
                 <cell title="给群成员发邮件" is-link/>    
-            </group>
+            </group> -->
              </div><!-- scroller-body-->
          </div>
          <member-selector 
@@ -194,51 +195,21 @@ export default {
 <style lang="less" scoped>
   .scroller-body{
       position: relative;
-      .add-member{
-          padding: 10px 15px 10px 0px;
-          margin-left: 15px;
-          border-top: 1px solid #eee;
-          .members{
-              margin-bottom: 5px;
-              .members-top{
-                  display: flex;
-                  justify-content: space-between;
-                  margin-bottom: 5px;
-                  &-num{
-                      color: #C8C8CD;
-                      margin-right: 15px;
+      .members{
+          padding:0rem .10rem;
+          &-item{
+              display: inline-block;
+               img{
+                    height: .45rem;
+                    border-radius: .04rem;
+                    margin: .04rem;
                   }
-              }
-              .members-bottom{
-                  img{
-                    width: 35px;
-                    height: 35px;
-                    border-radius: 5px;
-                    padding: .02rem;
-                  }
-              }
-              .members-top:after{
-                  content: " ";
-                display: inline-block;
-                height: 6px;
-                width: 6px;
-                border-width: 2px 2px 0 0;
-                border-color: #C8C8CD;
-                border-style: solid;
-                -webkit-transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
-                -ms-transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
-                transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
-                position: absolute;
-                top: 46%;
-                right: 15px;
-              }
           }
-          .members:hover{
-              background-color: #eee;
-          }
-          .add-btn{
+      }
+       .add-btn{
             display: flex;
             align-items: center;
+            padding: 0rem .10rem;
             .add-icon {
                 color: #39f;
                 font-size: 28px;
@@ -246,9 +217,20 @@ export default {
                 margin-bottom: 5px;
             }
           }
-          .add-btn:hover{
-              background-color: #eee;
-          }
-      }
+        .add-btn:hover{
+            background-color: #eee;
+        }
+
+        .msg-type-item{
+            margin-right: .15rem;
+            i{
+                font-size: .24rem;
+                color: #999999;
+            }
+            div{
+                font-size: .14rem;
+            }
+        }
   }
+  
 </style>
