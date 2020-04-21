@@ -18,14 +18,16 @@
                 <!-- <cell title="群公号" is-link /> -->
             </group>
             <group>
-                <cell title="群成员" is-link :value="allMembers.length" />
-                <div class="members">
-                    <div class="members-item" v-for="(member,index) of allMembers" :key="index">
-                        <img 
-                            v-if="index<6"
-                            :src="member.photo || getDefaultPhoto()" 
-                            @error="getDefaultPhoto(member)"/>
-                        <i v-if="index===6" class="iconfont icon-more1"></i>
+                <div @click="showMemberDetail">
+                    <cell title="群成员" is-link :value="allMembers.length" />
+                    <div class="members">
+                        <div class="members-item" v-for="(member,index) of allMembers" :key="index">
+                            <img 
+                                v-if="index<6"
+                                :src="member.photo || getDefaultPhoto()" 
+                                @error="getDefaultPhoto(member)"/>
+                            <i v-if="index===6" class="iconfont icon-more1"></i>
+                        </div>
                     </div>
                 </div>
                 <div class="add-btn" @click="showMemberSelector">
@@ -72,11 +74,19 @@
             :selectedMembers="allMembers"
             :confirmCallback="addMember">
          </member-selector>
+         <member-list 
+         ref="memberList"
+         :selectedMembers="allMembers"
+         :group="group"
+         :currentUser="currentUser"
+         @deleteMember="deleteMember">
+         </member-list>
     </div>
 </template>
 <script>
 import { Group, Cell,InlineXSwitch} from 'vux'
 import MemberSelector from './memberSelector';
+import MemberList from './member-list';
 import WebContext from 'service/commonService'
 import { initWebContext } from 'service/commonService'
 import { getMembers,addMember,createGroup } from '@/service/msgService'
@@ -87,11 +97,13 @@ export default {
         Cell,
         Group,
         InlineXSwitch,
-        MemberSelector
+        MemberSelector,
+        MemberList
     },
     data(){
         return {
-            allMembers: []
+            allMembers: [],
+            currentUser: {}
         }
     },
     methods:{
@@ -100,6 +112,12 @@ export default {
         },
         showMemberSelector() {
             this.$refs["memberSelector"].showMemberSelector = true;
+        },
+        showMemberDetail() {
+            this.$refs["memberList"].showMemberList = true;
+        },
+        deleteMember() {
+            this.getAllMembers()
         },
         getDefaultPhoto(member) {
             let url = require("assets/ava01.png");

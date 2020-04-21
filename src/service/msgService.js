@@ -102,7 +102,7 @@ export let addMember = (data = {}) => {
     })
   };
 
-  // 新增群组
+// 新增群组
 export let createGroup = (data = {}) => {
     return $flyio.ajax({
       type: 'POST',
@@ -111,3 +111,13 @@ export let createGroup = (data = {}) => {
       data
     })
   };
+
+ //删除群成员
+export let removeMember = (data={}) => {
+    return $flyio.ajax({
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded',
+        url: '/im/group/removeMember',
+        data
+      })
+}
