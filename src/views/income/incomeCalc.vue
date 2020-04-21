@@ -39,8 +39,8 @@
             <div class="main-container-part-bg">
                 <div v-for="(item,index) in list" :key="index" class="detail">
                         <div class='title' @click="toggleClass(index,item)">
-                            {{item.title}}
-                            <div style="float:right">↓</div>
+                            <span class="">{{item.title}}</span>
+                            <span :class="item.showContent ? 'icon-down':'icon-up'" ></span>
                         </div>
                         <div class="content" :class="{'open':item.showContent}">
                             <div class="button">
@@ -48,9 +48,21 @@
                                 <div class="left"><x-button mini type="warn">管理</x-button></div>
                             </div>
                             <div class="list">
-                                <div>product1</div>  
-                                <div>product1</div> 
-                                <div>product1</div>         
+                                <div style="100%">
+                                    <span style="">fsdfsdf产品</span>
+                                    <span style="">1000<span>/套</span></span>
+                                    <span><span class="icon-edit"></span><span class="icon-del"></span></span>
+                                </div>  
+                                <div style="100%">
+                                    <span style="">fsdfsdf产品</span>
+                                    <span style="">1000<span>/套</span></span>
+                                    <span><span class="icon-edit"></span><span class="icon-del"></span></span>
+                                </div>  
+                                <div style="100%">
+                                    <span style="">fsdfsdf产品</span>
+                                    <span style="">1000<span>/套</span></span>
+                                    <span><span class="icon-edit"></span><span class="icon-del"></span></span>
+                                </div>     
                             </div>
                         </div>
                 </div>
@@ -102,7 +114,7 @@ export default {
     .header {
         width: 100%;
         height: .4rem;
-        background-color: #3296fa;
+        background-color: #8e2416;
         color: #fff;
         .header-container {
             width: 100%;
@@ -263,6 +275,19 @@ export default {
                 .title{
                     padding: .05rem;
                     font-size: .14rem;
+                    line-height: .26rem;
+                    .icon-up{
+                        width: .26rem;
+                        height: .26rem;
+                        position: absolute;
+                        right: .15rem;
+                    }
+                    .icon-down{
+                        width: .26rem;
+                        height: .26rem;
+                        position: absolute;
+                        right: .15rem;
+                    }
                 }
                 .content{
                     // max-height: 0;
@@ -277,13 +302,24 @@ export default {
                             .weui-btn_mini {
                                 display: inline-block;
                                 padding: 0 1.32em;
-                                line-height: 2.3;
-                                font-size: 12px;
+                                line-height: 18px;
+                                font-size: 10px;
                             }
                         }
                     }
                     .list{
-
+                        .icon-edit{
+                            width: .25rem;
+                            height: .25rem;
+                            position: absolute;
+                            right: .45rem;    
+                        }
+                        .icon-del{
+                            width: .26rem;
+                            height: .26rem;
+                            position: absolute;
+                            right: .15rem;    
+                        }
                     }
                 }
                 .open {

@@ -1,0 +1,24 @@
+.icon-down {
+    background: url('~assets/iconfont/down.png');
+    background-size: cover;
+}
+.icon-up {
+    background: url('~assets/iconfont/up.png');;
+    background-size: cover;
+}
+.icon-edit {
+    background: url('~assets/iconfont/edit.png');;
+    background-size: cover;
+}
+.icon-add {
+    background: url('~assets/iconfont/add.png');;
+    background-size: cover;
+}
+.icon-manger {
+    background: url('~assets/iconfont/manger.png');;
+    background-size: cover;
+}
+.icon-del {
+    background: url('~assets/iconfont/del.png');;
+    background-size: cover;
+}

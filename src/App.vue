@@ -57,3 +57,6 @@ body {
 }
 
 </style>
+<style lang='scss' >
+@import './assets/iconfont/icon.css';
+</style>
