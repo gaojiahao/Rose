@@ -32,8 +32,12 @@
                 <i class="iconfont icon-jia" @click="toggleWrapper"></i>
             </div>
             <div class="extra-input-wrapper" v-show="showExtraInput">
-                <i class="iconfont icon-3801wenjian"></i>
-                <i class="iconfont icon-file-f"></i>
+                <i class="iconfont icon-3801wenjian uploader">
+                    <input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" multiple="" @change="sendImgMsg">
+                </i>  
+                <i class="iconfont icon-file-f uploader">
+                    <input id="uploaderInput" class="weui-uploader__input" type="file" accept="*" multiple="" @change="sendFileMsg">
+                </i>  
             </div>
         </div>
         <!-- groupInfo 消息信息页面-->
@@ -43,6 +47,7 @@
 </template>
 <script>
 import {LoadMore} from 'vux'
+import {upload} from 'service/commonService'
 import {sendMsg,getGroupMsg} from 'service/msgService'
 import MessageTpl from '@/views/msg/msg/messageTpl'
 import RScroll from "plugins/scroll/RScroll";
@@ -95,6 +100,53 @@ export default {
                 })
             }
             
+        },
+        sendImgMsg(e){
+            var files = e.target.files,
+                groupId = this.group.groupId,
+                name2Size = {},
+                params = {
+                    groupId:groupId,
+                    content:[],
+                    imType:2
+                },file;
+            
+            if (!files) {
+               return;
+            }
+            for(var i= 0,l= files.length;i < l; i++){
+                file = files[i];
+                name2Size[file.name] = (file.size/1024) + 'KB'
+            }
+            upload({
+                file:files
+            }).then(rs=>{
+                var fileName;
+                if (rs.success){
+                   e.target.value = null;
+                   rs.data.forEach(file=>{
+                       fileName = file.attr1;
+                       params.content.push({
+                            id:file.id,
+                            name:fileName,
+                            imType:2,
+                            size:name2Size[fileName]
+                       })
+                   });
+                   params.content = JSON.stringify(params.content);
+                   sendMsg(params).then(rs=>{
+                       e.target.value = null;
+                   })
+                }
+            })
+        },
+        sendFileMsg(e){
+            var files = e.target.files;
+            upload({
+                file:files
+            }).then(rs=>{
+                console.log(rs);
+            })
         },
         toggleWrapper(){
             this.showExtraInput = !this.showExtraInput;
@@ -203,9 +255,19 @@ export default {
     display: flex;
     text-align: center;
     i{
-        height: 0.6rem;
         font-size:0.4rem;
-        width: 0.6rem;
+        margin:0 0.1rem;
+        &.uploader{
+           position: relative;
+        }
+    }
+    .weui-uploader__input{
+        position:absolute;
+        width:0.4rem;
+        height:0.4rem;
+        opacity: 0;
+        left:0;
+        top:0.1rem;
     }
 }
 .singleMsg{
