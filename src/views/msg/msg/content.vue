@@ -13,6 +13,7 @@
         </div>
         <r-scroll
             class="msg-container-wrapper"
+            id="msg-container-wrapper"
             :options="scrollOptions"
             :has-next="false"
             :no-data="false"
@@ -139,6 +140,7 @@ export default {
             if (!files) {
                return;
             }
+            this.showExtraInput = false;
             for(var i= 0,l= files.length;i < l; i++){
                 file = files[i];
                 name2Size[file.name] = (file.size/1024) + 'KB'
@@ -253,10 +255,17 @@ export default {
     font-size: 24px;
 }
 
-.msg-container-wrapper{
+#msg-container-wrapper{
     flex:1;
     position: relative;
     background-color: #9e9e9e1c;
+    .page-component-up{
+        position:absolute;
+        bottom:0.2rem;
+        span{
+            background-color:$weui-BG-1;
+        }
+    }
 }
 .msgList-footer {
     position: relative;
@@ -333,11 +342,11 @@ export default {
     }
     .weui-uploader__input{
         position:absolute;
-        width:0.4rem;
-        height:0.4rem;
+        width:100%;
+        height:100%;
         opacity: 0;
         left:0;
-        top:0.1rem;
+        top:0;
     }
     .extra-input-item-text{
         font-size: .12rem;

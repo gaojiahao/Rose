@@ -144,7 +144,10 @@ export default {
             var type = msg.imType;
             switch(type){
                 case '1':
-                    this.addTextMsg(msg);
+                    this.addMsg(msg,1);
+                    break;
+                case '2':
+                    this.addMsg(msg,2);
                     break;
                 default:
                     break;
@@ -153,12 +156,15 @@ export default {
         /**
          * 处理文字信息
          */
-        addTextMsg(msg){
+        addMsg(msg,type){
             var groupId = msg.groupId,
                 index,
                 vm = this,
                 group;
 
+            if(type == 2 || type == 3){
+                msg.content = JSON.parse(msg.content);
+            }
             if (this.groups.length){
                 index = this.groupIdToIndex[groupId];
                 group = this.groups[index];
