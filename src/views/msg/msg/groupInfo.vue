@@ -22,7 +22,7 @@
                 <div class="weui-cell">这个部分要放图片</div>
                 <div class="add-member">
                     <div class="members">
-                        <div class="members-top">
+                        <div class="members-top" v-if="allMembers.length > 1">
                             <span>群成员</span>
                             <span class="members-top-num">{{allMembers.length}}人</span>
                         </div>
@@ -68,14 +68,18 @@
          </div>
          <member-selector 
             ref="memberSelector" 
-            :selectedMembers="allMembers">
+            :selectedMembers="allMembers"
+            :confirmCallback="addMember">
          </member-selector>
     </div>
 </template>
 <script>
 import { Group, Cell,InlineXSwitch} from 'vux'
 import MemberSelector from './memberSelector';
-import { getMembers } from '@/service/msgService'
+import WebContext from 'service/commonService'
+import { initWebContext } from 'service/commonService'
+import { getMembers,addMember,createGroup } from '@/service/msgService'
+import Bus from '@/common/eventBus.js';
 export default {
     props:['group'],
     components: {
@@ -107,8 +111,54 @@ export default {
             if(this.group.groupId){
                 getMembers(this.group.groupId).then(res => {
                     this.allMembers = res;
+                    if(this.group.groupType === 'P'){
+                        for(let i=0;i<this.allMembers.length;i++){
+                            if(this.currentUser.userId == this.allMembers[i].userId){
+                                this.allMembers.splice(i,1)
+                            }
+                        }
+                    }
                 })
             }
+        },
+        addMember(userList){
+            let userIds = [],
+                userNames = [],
+                params = {},
+                requestUrl = addMember;
+
+            userList.forEach(user =>{
+                userIds.push(user.userId);
+                userNames.push(user.nickname);
+            })
+
+            
+            params = {
+                groupId: this.group.groupId || null,
+                users: userIds.join(','),
+                name: userNames.join(',')
+            };
+            if(this.group.groupType === 'G'){
+                delete params.name;
+            }else{
+                requestUrl = createGroup;
+                userNames.push(this.currentUser.name);
+                userNames.push(this.allMembers[0].nickname);
+                userIds.push(this.currentUser.userId);
+                userIds.push(this.allMembers[0].userId);
+                params.users = userIds.join(',');
+                params.name = userNames.join(',');
+            }
+
+            requestUrl(params).then(res => {
+                res.message && this.$vux.toast.show({text: res.message});
+                this.$refs["memberSelector"].showMemberSelector = false;
+                if(this.group.groupType === 'G'){
+                    this.getAllMembers()
+                }else{
+                    Bus.$emit('toMsg',res)
+                }
+            })
         }
     },
     mounted() {
@@ -134,7 +184,10 @@ export default {
         })
     },
     created() {
-        this.getAllMembers()
+        initWebContext().then(() => {
+            this.currentUser = WebContext.WebContext.currentUser
+            this.getAllMembers()
+        })
     }
 }
 </script>
@@ -176,7 +229,7 @@ export default {
                 -ms-transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
                 transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
                 position: absolute;
-                top: 47%;
+                top: 46%;
                 right: 15px;
               }
           }

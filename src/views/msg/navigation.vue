@@ -41,6 +41,7 @@ import {getGroupMsg,getMyGroups} from 'service/msgService'
 import commonService from 'service/commonService'
 import tokenService from 'service/tokenService'
 import util from '@/common/util';
+import Bus from '@/common/eventBus.js';
 export default {
     created:function(){       
         this.initDs();
@@ -48,6 +49,9 @@ export default {
     mounted:function(){
         this.initScoller();
         this.initGroup();
+        Bus.$on('toMsg',group => {
+            this.toMsg(group)
+        })
     },
     activated:function(){
     },
