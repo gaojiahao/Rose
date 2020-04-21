@@ -28,16 +28,33 @@
         </r-scroll>
         <div class="msgList-footer">
             <div class="input-wrapper">
+                
                 <textarea class="msg-input"  v-model="msg" type="text" @keyup.enter="sendTextMsg"></textarea>
-                <i class="iconfont icon-jia" @click="toggleWrapper"></i>
+                <i class="icon-emotion"></i>
+                <i class="icon-add-more" @click="toggleWrapper" v-if="!msg"></i>
+                <span class="btn-send" v-if="msg" @click="sendTextMsg">发送</span>
             </div>
             <div class="extra-input-wrapper" v-show="showExtraInput">
-                <i class="iconfont icon-3801wenjian uploader">
-                    <input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" multiple="" @change="sendImgMsg">
-                </i>  
-                <i class="iconfont icon-file-f uploader">
-                    <input id="uploaderInput" class="weui-uploader__input" type="file" accept="*" multiple="" @change="sendFileMsg">
-                </i>  
+                <div>
+                
+                    <i class="iconfont icon-3801wenjian uploader">
+                        <input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" multiple="" @change="sendImgMsg">
+                    </i>  
+                    <div class="extra-input-item-text">
+                        图片
+                    </div>
+                    
+                </div>
+                <div>
+                    
+                    <i class="iconfont icon-file-f uploader">
+                        <input id="uploaderInput" class="weui-uploader__input" type="file" accept="*" multiple="" @change="sendFileMsg">
+                    </i>  
+                     <div class="extra-input-item-text">
+                         文件
+                     </div>
+                    
+                </div>
             </div>
         </div>
         <!-- groupInfo 消息信息页面-->
@@ -234,21 +251,69 @@ export default {
 .msgList-footer {
     position: relative;
     .input-wrapper{
-        display: flex;
-        height: 0.5rem;
-        border-top: 1px solid rgba(0,0,0,0.1); 
+        padding: .08rem .1rem;
+        height: .5rem;
+        background-color: #f3f1f2;
+        font-size: 0;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        .icon-emotion{
+            display: inline-block;
+            margin-left: .1rem;
+            width: .3rem;
+            height: .3rem;
+            background: url(~@/assets/emotion.png) no-repeat;
+            background-size: 100% 100%;
+            vertical-align: top;
+        }
+        .icon-add-more{
+            display: inline-block;
+            margin-left: .2rem;
+            width: .3rem;
+            height: .3rem;
+            background: url(~@/assets/iconfont/add.png) no-repeat;
+            background-size: 100% 100%;
+            vertical-align: top;
+        }
         textarea{
-            flex: 1;
+            display: inline-block;
+            padding: .05rem .1rem;
+            width: calc(100% - 1rem);
+            height: 100%;
+            outline: none;
+            border-radius: 0.05rem;
+            border: none;
+            background-color: #fff;
+            color: #2d2d2d;
+            font-size: .16rem;
+            resize: none;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
         } 
-        i{
-            width:0.5rem;
-            font-size: 0.3rem;
+        .btn-send{
+            display: inline-block;
+            margin-left: .1rem;
+            width: .5rem;
+            line-height: .34rem;
+            border-radius: .03rem;
+            background-color: #5077aa;
+            color: #fff;
             text-align: center;
+            vertical-align: top;
+            font-size: .16rem;
         }
-        .icon-jia:before{
-            border: 1px solid #000;
-            border-radius: 0.5rem;
-        }
+        // i{
+        //     width:0.5rem;
+        //     font-size: 0.3rem;
+        //     text-align: center;
+        // }
+        // .icon-jia:before{
+        //     border: 1px solid #000;
+        //     border-radius: 0.5rem;
+        // }
     }  
 }
 .extra-input-wrapper{
@@ -259,6 +324,10 @@ export default {
         margin:0 0.1rem;
         &.uploader{
            position: relative;
+            background-color: white;
+            border-radius: .03rem;
+            padding: .08rem;
+            color: #999999;
         }
     }
     .weui-uploader__input{
@@ -268,6 +337,10 @@ export default {
         opacity: 0;
         left:0;
         top:0.1rem;
+    }
+    .extra-input-item-text{
+        font-size: .12rem;
+        color: #353535;
     }
 }
 .singleMsg{
