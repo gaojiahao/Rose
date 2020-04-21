@@ -21,7 +21,7 @@
                 <cell title="群成员" is-link />
                 <div class="weui-cell">这个部分要放图片</div>
                 <div class="add-member">
-                    <div class="members">
+                    <div class="members" @click="showMemberDetail">
                         <div class="members-top" v-if="allMembers.length > 1">
                             <span>群成员</span>
                             <span class="members-top-num">{{allMembers.length}}人</span>
@@ -71,11 +71,19 @@
             :selectedMembers="allMembers"
             :confirmCallback="addMember">
          </member-selector>
+         <member-list 
+         ref="memberList"
+         :selectedMembers="allMembers"
+         :group="group"
+         :currentUser="currentUser"
+         @deleteMember="deleteMember">
+         </member-list>
     </div>
 </template>
 <script>
 import { Group, Cell,InlineXSwitch} from 'vux'
 import MemberSelector from './memberSelector';
+import MemberList from './member-list';
 import WebContext from 'service/commonService'
 import { initWebContext } from 'service/commonService'
 import { getMembers,addMember,createGroup } from '@/service/msgService'
@@ -86,11 +94,13 @@ export default {
         Cell,
         Group,
         InlineXSwitch,
-        MemberSelector
+        MemberSelector,
+        MemberList
     },
     data(){
         return {
-            allMembers: []
+            allMembers: [],
+            currentUser: {}
         }
     },
     methods:{
@@ -99,6 +109,12 @@ export default {
         },
         showMemberSelector() {
             this.$refs["memberSelector"].showMemberSelector = true;
+        },
+        showMemberDetail() {
+            this.$refs["memberList"].showMemberList = true;
+        },
+        deleteMember() {
+            this.getAllMembers()
         },
         getDefaultPhoto(member) {
             let url = require("assets/ava01.png");
