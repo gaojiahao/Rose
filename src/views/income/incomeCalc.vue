@@ -1,11 +1,11 @@
 <template>    
     <div class="pages2">
         <!-- 头部 -->
-        <div class="header">
+        <!-- <div class="header">
             <div class="header-container">
                 <div class="center">xxx项目</div>
             </div>
-        </div>
+        </div> -->
         <!-- banner -->
         <div class="avatar-part"></div>
         <!-- 目标详情 -->
@@ -14,8 +14,8 @@
           <div class="top-part">
             <div>
               <div class="date-part">
-                <span>jiahao</span> 
-                <span>xxx人民币项目</span>
+                <span>{{username}}</span> 
+                <span>{{prjectInfo.VARCHAR1}}</span>
               </div>
               <!-- <div class="tips-title">
                 <div >欢迎,111</div>
@@ -26,7 +26,7 @@
           <div class="dashboard-part">
             <div class="each-dashboard least-num">
               <div class="dashboard_title">销售目标</div>
-              <div class="dashboard_count">xxx<span>/套</span></div>
+              <div class="dashboard_count">{{prjectInfo.VARCHAR3}}<span>/套</span></div>
             </div>
             <div class="each-dashboard when-today">
               <div class="dashboard_title">月收入目标</div>
@@ -69,12 +69,19 @@
             </div>   
         </div>
         <popup-income-calc :show="showPopupIncomeCalc" v-model="showPopupIncomeCalc" ref="PopupIncomeCalc"></popup-income-calc>
+        <loading :show="showLoading"></loading>
     </div>
 </template>
 
 <script>
 import {XButton, Confirm, querystring} from 'vux'
 import PopupIncomeCalc from 'components/popup/PopupIncomeCalc'
+import tokenService from 'service/tokenService'
+import { getProductCount, getCurrMonthStatus } from 'service/homeService'
+import Loading from 'components/common/loading'
+import incomeService from "service/incomeService";
+const ROSE_OPTION_KEY = 'ROSE_OPTION'
+const ROSE_LOGIN_CODE = 'ROSE_CODE'
 export default {
   data(){
     return{
@@ -82,12 +89,16 @@ export default {
         {title:'四月第二周',showContent:false},{title:'四月第二周',showContent:false},{title:'四月第二周',showContent:false}],
         showDetail:0,
         showPopupIncomeCalc:false,
+        username:'',
+        prjectInfo:[],
+        showLoading: false,
     }
   },
   components: {
     XButton,
     Confirm,
-    PopupIncomeCalc
+    PopupIncomeCalc,
+    Loading
   },
   methods:{
     changeContent(index){                       //通过index拿到当前值
@@ -99,8 +110,81 @@ export default {
     clickProject() {
       this.showPopupIncomeCalc = true;
     },
+    getToday(){
+      let now = new Date();
+      let date = now.getDate();
+      let whichDay = ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
+      let Today = `${(now.getMonth()+1)}月${now.getDate()}号 ${whichDay[now.getDay()]}`;
+      // 获取月天数
+      now.setMonth(now.getMonth()+1);
+      now.setDate(0);
+      this.DaysInMonth = now.getDate() - date;
+      this.Today = Today;
+    }
+  },
+  beforeCreate() {
+    let query = querystring.parse(location.search.slice(1));
+    let code = sessionStorage.getItem(ROSE_LOGIN_CODE);
+    if (query.code) { // 获取到登录的code存储到session
+      sessionStorage.setItem(ROSE_LOGIN_CODE, query.code);
+    }
+    if (process.env.NODE_ENV !== 'development' && !code && !query.code) { // 若不为开发环境，且链接没有code，sessionStorage也没有存储，则认为当前环境为非企业微信环境
+      window.location.replace('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx5311bd8608c14d98&redirect_uri=https%3a%2f%2fwww.gofuit.com%2fGfSrmn&response_type=code&scope=SCOPE&agentid=1000004&state=1#wechat_redirect')
+    }
+  },
+  created() {
+    (async () => {
+      this.showLoading = true;
+      await tokenService.getToken().catch(err => {
+        this.$vux.alert.show({
+          content: err.message
+        })
+      });
+      await tokenService.isPresident().then(data => {
+        this.username = data.nickname; //拿到当前用户
+        if (`${data.statu}` === '1') { // statu为1则为总裁
+          this.showLookReport = true
+        }
+      })
+      await tokenService.getUser().then(userInfo => {
+        // 获取当前时间
+        this.getToday();
+        let {completeData = {}, userCode = ''} = userInfo;
+        let allowList = ['0414', '1204', '1207', '1129', 'rfd9527', 'rfd125', '2025'];
+        this.showLookSales = allowList.includes(userCode);
+        this.userInfo = {
+          bank: completeData[0].homeBank || '',         //银行
+          region: completeData[0].homeProvince || '',   //省份地区
+          dept: completeData[0].area || '',             //事业部
+        };
+        localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({
+          bank: completeData[0].homeBank || '',         //银行
+          region: completeData[0].homeProvince || '',   //省份地区
+          dept: completeData[0].area || '',             //事业部
+          groupName: completeData[0].dept || '',    //部门
+          captain: completeData[0].bmName || '',        //队长（暂无）
+          userCode: completeData[0].userCode || '',      //工号
+          subSector: completeData[0].subSector || '',      //三级部门
+          userId: completeData[0].userId || ''
+        }))
+      })
+      await getCurrMonthStatus().then(({ differ, currMonthTarget }) => {
+        this.saleStatus = {
+          differ,                   // 距离目标还差多少
+          currMonthTarget           // 每个月的目标
+        }
+      })
+      await getProductCount().then(({ tableContent }) => {
+        let [ Count = {} ] = tableContent;
+        this.ProductCount = Count; 
+      })
+      await incomeService.getIncomeInfo().then(data => {
+          this.prjectInfo = data.tableContent[0]
+        console.log(data)
+      })
+      this.showLoading = false;
+    })()
   }
-  
 
 }
 </script>
@@ -131,7 +215,7 @@ export default {
         }
     }
     .avatar-part{
-        top: .4rem;
+        top: 0;
         width: 100%;
         height: 2rem;
         position: absolute;

@@ -196,7 +196,7 @@
     created() {
       this.setDefaultValue();
       // 请求物料
-      this.getList();
+      //this.getList();
     }
   }
 </script>
