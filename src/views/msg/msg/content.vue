@@ -229,6 +229,7 @@ export default {
 
 .msg-container-wrapper{
     flex:1;
+    position: relative;
     background-color: #9e9e9e1c;
 }
 .msgList-footer {
