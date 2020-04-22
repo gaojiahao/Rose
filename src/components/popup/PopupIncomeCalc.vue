@@ -8,9 +8,10 @@
         </div> -->
         <!-- 物料列表 -->
         <group title="新建收入">
-          <cell class="each_part" title="项目类产品" :value=" '请选择产品'" value-align="right" @click.native="clickProject"
+          <cell class="each_part" title="项目类产品" :value=" setvalue? setvalue:'请选择产品'" value-align="right" @click.native="clickProject"
                 is-link></cell>
-           <x-input title="其他A类产品" text-align="right" placeholder="请输入数量"></x-input>
+          <!-- <popup-picker title="项目类产品" :data="products" v-model="value1" @on-show="onShow" @on-hide="onHide" @on-change="onChange" placeholder="请选择产品"></popup-picker> -->
+          <x-input title="数量" text-align="right" placeholder="请输入"></x-input>
         </group>
       </div>
       <!-- 底部栏 -->
@@ -18,15 +19,18 @@
         <span class="count_btn" @click="confirm">确定</span>
       </div>
     </popup>
+    <popup-income-calc-list :show1="showProjectPopup" :list="products"
+                          @on-sel="selProject" v-model="showProjectPopup" ref="projectPopup"></popup-income-calc-list>
   </div>
 </template>
 
 <script>
-  import {Icon, Popup,Group,Cell,XInput} from 'vux'
+  import {Icon, Popup,Group,Cell,XInput,PopupPicker} from 'vux'
   import RScroll from 'components/common/RScroll'
   import RSearch from 'components/common/RSearch'
   // 请求 引入
   import saleRepotService from "service/saleRepotService";
+  import PopupIncomeCalcList from 'components/popup/PopupIncomeCalcList'
 
   export default {
     name: "PopupIncomeCalc",
@@ -42,9 +46,15 @@
           return []
         }
       },
+      products: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
     },
     components: {
-      Icon, Popup, RScroll, RSearch,Group,Cell,XInput
+      Icon, Popup, RScroll, RSearch,Group,Cell,XInput,PopupPicker,PopupIncomeCalcList
     },
     data() {
       return {
@@ -60,6 +70,9 @@
           click: true,
           pullUpLoad: true,
         },
+        showProjectPopup: false, // 是否展示项目类产品的选项
+        arr: [],
+        setvalue:'',
       }
     },
     watch: {
@@ -165,23 +178,6 @@
           })
         });
       },
-      // 搜索物料
-      searchList({val = '', property = ''}) {
-        this.srhInpTx = val;
-        this.listData = [];
-        this.page = 1;
-        this.hasNext = true;
-        this.$refs.bScroll.scrollTo(0, 0);
-        this.getList();
-      },
-      // 删除选中项
-      delSelItem(dItem) {
-        let delIndex = this.findIndex(this.selItems, dItem);
-        if (delIndex !== -1) {
-          this.selItems.splice(delIndex, 1);
-        }
-        this.tmpItems = [...this.selItems];
-      },
       // 上拉加载
       onPullingUp() {
         this.page++;
@@ -189,14 +185,20 @@
       },
       // 设置默认值
       setDefaultValue() {
-        this.tmpItems = [...this.defaultValue];
-        this.selItems = [...this.defaultValue];
+
       },
+      onChange(){
+
+      },
+      selProject(index){
+        this.setvalue = this.products[index]['name'];
+      },
+      clickProject(){
+        this.showProjectPopup = true;
+      }
     },
     created() {
-      this.setDefaultValue();
-      // 请求物料
-      //this.getList();
+
     }
   }
 </script>

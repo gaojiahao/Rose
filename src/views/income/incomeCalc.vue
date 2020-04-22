@@ -14,7 +14,7 @@
           <div class="top-part">
             <div>
               <div class="date-part">
-                <span>{{username}}</span> 
+                <span>欢迎您，{{username}}加入</span> 
                 <span>{{prjectInfo.VARCHAR1}}</span>
               </div>
               <!-- <div class="tips-title">
@@ -38,37 +38,28 @@
         <div class="main-container-part">
             <div class="main-container-part-bg">
                 <div v-for="(item,index) in list" :key="index" class="detail">
-                        <div class='title' @click="toggleClass(index,item)">
-                            <span class="">{{item.title}}</span>
-                            <span :class="item.showContent ? 'icon-down':'icon-up'" ></span>
-                        </div>
-                        <div class="content" :class="{'open':item.showContent}">
-                            <div class="button">
-                                <div class="left"><x-button mini type="primary" @click.native="clickProject()">新增</x-button></div>
-                                <div class="left"><x-button mini type="warn">管理</x-button></div>
-                            </div>
-                            <div class="list">
-                                <div style="100%">
-                                    <span style="">fsdfsdf产品</span>
-                                    <span style="">1000<span>/套</span></span>
-                                    <span><span class="icon-edit"></span><span class="icon-del"></span></span>
-                                </div>  
-                                <div style="100%">
-                                    <span style="">fsdfsdf产品</span>
-                                    <span style="">1000<span>/套</span></span>
-                                    <span><span class="icon-edit"></span><span class="icon-del"></span></span>
-                                </div>  
-                                <div style="100%">
-                                    <span style="">fsdfsdf产品</span>
-                                    <span style="">1000<span>/套</span></span>
-                                    <span><span class="icon-edit"></span><span class="icon-del"></span></span>
-                                </div>     
-                            </div>
-                        </div>
+                  <div class='title' @click="toggleClass(index,item)">
+                      <span class="">{{item.timeText}}</span>
+                      <span :class="item.showContent ? 'icon-down':'icon-up'" ></span>
+                  </div>
+                  <div class="content" :class="{'open':item.showContent}">
+                      <div class="button">
+                          <div class="left"><x-button mini type="primary" @click.native="clickProject()">新增</x-button></div>
+                          <div class="left"><x-button mini type="warn">管理</x-button></div>
+                      </div>
+                      <div class="list"> 
+                          <div style="100%">
+                              <span style="">产品</span>
+                              <span style="">1000<span>/套</span></span>
+                              <span style="">提成<span>1000</span></span>
+                              <span><span class="icon-edit"></span><span class="icon-del"></span></span>
+                          </div>     
+                      </div>
+                  </div>
                 </div>
             </div>   
         </div>
-        <popup-income-calc :show="showPopupIncomeCalc" v-model="showPopupIncomeCalc" ref="PopupIncomeCalc"></popup-income-calc>
+        <popup-income-calc :show="showPopupIncomeCalc" v-model="showPopupIncomeCalc" :products="products" ref="PopupIncomeCalc"></popup-income-calc>
         <loading :show="showLoading"></loading>
     </div>
 </template>
@@ -85,13 +76,14 @@ const ROSE_LOGIN_CODE = 'ROSE_CODE'
 export default {
   data(){
     return{
-        list:[{title:'四月第一周',showContent:true},{title:'四月第二周',showContent:false},{title:'四月第二周',showContent:false},
-        {title:'四月第二周',showContent:false},{title:'四月第二周',showContent:false},{title:'四月第二周',showContent:false}],
+        list:[],
         showDetail:0,
         showPopupIncomeCalc:false,
         username:'',
         prjectInfo:[],
         showLoading: false,
+        invList:[],
+        products:[],
     }
   },
   components: {
@@ -100,13 +92,28 @@ export default {
     PopupIncomeCalc,
     Loading
   },
+  watch:{
+    invList:{
+      handler(val){
+        this.products = [];
+        for(var i =0 ; i<this.invList.length; i++){
+          if(!this.judgeInvList(this.invList[i])){
+            var arr = {
+              name:this.invList[i]['invName'],
+              value:this.invList[i]['invCode'],
+            }
+            this.products.push(arr);
+          }  
+        }
+      }
+    }
+  },
   methods:{
-    changeContent(index){                       //通过index拿到当前值
-        this.list[index].showContent=!this.list[index].showContent;
-    },
+    //切换折叠
     toggleClass(index,item){
         this.list[index]['showContent'] =  this.list[index]['showContent'] ? false : true;
     },
+    //新建收入pop
     clickProject() {
       this.showPopupIncomeCalc = true;
     },
@@ -120,7 +127,39 @@ export default {
       now.setDate(0);
       this.DaysInMonth = now.getDate() - date;
       this.Today = Today;
-    }
+    },
+    judgeInvList(temp){
+      for(var i=0;i<this.products.length;i++){
+        if(temp['invCode']==this.products[i]['value']){
+          return true;
+        }
+      }
+    },
+    getWeek(a, b, c){
+      var today = new Date(); //获取当前时间 
+      var y = today.getFullYear();
+      var m = today.getMonth() + 1;
+      var d = today.getDate();
+
+      function getMonthWeek(a, b, c){
+        var date = new Date(a, parseInt(b) - 1, c),
+            w = date.getDay(),
+            d = date.getDate();
+        return Math.ceil((d + 6 - w) / 7);
+      }
+      var count =  getMonthWeek(y, m, d);
+      var arr = [];
+      for(var i = 1; i<= count ; i++){
+        var a = {
+          time : m,
+          timeText: m+'月第'+i+'周',
+          showContent: i==count ? true : false,
+        }
+        arr.push(a);
+      }
+      this.list = arr;
+      console.log("今天是"+ m + "月的第 " + getMonthWeek(y, m, d) + " 周");
+    },
   },
   beforeCreate() {
     let query = querystring.parse(location.search.slice(1));
@@ -179,9 +218,14 @@ export default {
         this.ProductCount = Count; 
       })
       await incomeService.getIncomeInfo().then(data => {
-          this.prjectInfo = data.tableContent[0]
-        console.log(data)
+        this.prjectInfo = data.tableContent[0]
+        this.prjectReferenceId = data.tableContent[0].REFERENCE_ID;
       })
+      await incomeService.getXmcpjlInv(this.prjectInfo.REFERENCE_ID).then(data => {
+        this.invList = data.tableContent;
+        //this.products();
+      })
+      this.getWeek();
       this.showLoading = false;
     })()
   }

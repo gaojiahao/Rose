@@ -10,5 +10,17 @@ let incomeService = {
       });
     },
 
+    //获取我的收入模拟
+    getXmcpjlInv(data) {
+      return $axios.ajax({
+        url: '/ds/getXmcpjlInv',
+        data: {
+          REFERENCE_ID: data,
+        }
+      });
+    },
+
+
+
 };
 export default incomeService;
