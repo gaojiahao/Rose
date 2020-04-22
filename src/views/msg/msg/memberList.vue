@@ -1,10 +1,24 @@
 <template>
     <div class="member-list" v-transfer-dom>
-       <popup v-model="showMemberList" position="right" width="100%">
+       <popup 
+       v-model="showMemberList" 
+       position="right" 
+       width="100%" 
+       :show-mask="false" 
+       :popup-style="{zIndex:0}">
+          <div class="list-header">
+            <span @click="goBack">
+              <i class="iconfont icon-back1"></i>
+              <span>返回</span>
+            </span>
+            <span>群成员{{`(${selectedMembers.length})`}}</span>
+            <span @click="addMember">添加</span>
+          </div>
           <ul class="content">
             <li 
               v-for="(item,index) of selectedMembers"
               :key="item.userId"
+              @click="openUserDetail(item)"
               :class="{move:candelete.userId==item.userId,list:true}"
               @touchstart="touchStart(item)"
               @touchend="touchEnd(item)">
@@ -24,15 +38,18 @@
             </li>
           </ul>
         </popup>
+        <user-detail ref="userDetail" :userItem="userItem"></user-detail>
     </div> 
 </template>  
 <script>
 import { Popup } from 'vux'
 import { removeMember } from '@/service/msgService'
+import UserDetail from './userDetail'
 export default{  
     name: "MemberList",
     components: {
-        Popup
+        Popup,
+        UserDetail
     },
     props: {
       selectedMembers: {
@@ -49,7 +66,8 @@ export default{
         return {
             clientNum: {}, // 记录开始滑动（x1）,结束滑动（x2）的鼠标指针的位置
             candelete: {}, // 滑动的item
-            showMemberList: false
+            showMemberList: false,
+            userItem: {}
         }
     },
     watch: {
@@ -69,6 +87,12 @@ export default{
             }
             return url;
         },
+        goBack() {
+          this.showMemberList = false
+        },
+        addMember() {
+          this.$emit("addMembers")
+        },
         deleteMember(item,index){
           let data = {
             groupId: this.group.groupId
@@ -84,6 +108,10 @@ export default{
                 }
             })
           }
+        },
+        openUserDetail(item) {
+          this.userItem = item;
+          this.$refs["userDetail"].showUserDetail = true
         },
         touchStart(item) {
             if(this.currentUser.userId!=this.groupOwner) return
@@ -121,8 +149,17 @@ export default{
 <style lang="less" scoped>
 .member-list{
   padding: 10px;
+  .list-header{
+    padding: .1rem;
+    background: #39f;
+    color: #fff;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+  }
   .content{
     overflow-x: hidden;
+    margin-top: .1rem;
     .list{
       background: #fdfdfd;
       border-bottom: 1px solid #e1e1e1;

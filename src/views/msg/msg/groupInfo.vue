@@ -75,18 +75,19 @@
             :confirmCallback="addMember">
          </member-selector>
          <member-list 
-         ref="memberList"
-         :selectedMembers="allMembers"
-         :group="group"
-         :currentUser="currentUser"
-         @deleteMember="deleteMember">
+            ref="memberList"
+            :selectedMembers="allMembers"
+            :group="group"
+            :currentUser="currentUser"
+            @deleteMember="deleteMember"
+            @addMembers="showMemberSelector">
          </member-list>
     </div>
 </template>
 <script>
 import { Group, Cell,InlineXSwitch} from 'vux'
 import MemberSelector from './memberSelector';
-import MemberList from './member-list';
+import MemberList from './memberList';
 import WebContext from 'service/commonService'
 import { initWebContext } from 'service/commonService'
 import { getMembers,addMember,createGroup } from '@/service/msgService'
@@ -114,7 +115,11 @@ export default {
             this.$refs["memberSelector"].showMemberSelector = true;
         },
         showMemberDetail() {
-            this.$refs["memberList"].showMemberList = true;
+            if(this.group.groupType === "P"){
+                this.$refs["memberList"].openUserDetail(this.allMembers[0]);
+            }else{
+                this.$refs["memberList"].showMemberList = true;
+            }
         },
         deleteMember() {
             this.getAllMembers()

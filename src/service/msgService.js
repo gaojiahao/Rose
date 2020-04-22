@@ -121,3 +121,14 @@ export let removeMember = (data={}) => {
         data
       })
 }
+
+/// 新增单聊
+export let getGroupByUserId = (userId) => {
+    var data = {
+        userId: userId
+    };
+    return $flyio.ajax({
+        url:'/im/group/getGroupByUserId', 
+        data
+    })
+}
