@@ -189,7 +189,8 @@ export default {
         toMsg:function(group){
             if(group != this.group){
                 this.group = group;
-                getGroupMsg(group.groupId).then(msgList=>{
+                getGroupMsg(group.groupId).then(res=>{
+                    var msgList = res.msgs;
                     msgList.map(msg=>{
                         var json;
                         if(msg.imType == 3 || msg.imType == 2){
