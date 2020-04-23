@@ -1,6 +1,6 @@
 <template>
     <div class="member-selector" v-transfer-dom>
-        <popup v-model="showMemberSelector" height="100%">
+        <popup v-model="showMemberSelector" height="100%" :show-mask="false">
           <div class="container">
             <div class="header">
               <div @click="cancelSelect">取消</div>
@@ -75,7 +75,10 @@ export default {
     },
     props: {
       selectedMembers: {
-        type: Array
+        type: Array,
+        default: function() {
+          return []
+        }
       },
       confirmCallback:{
         type: Function
@@ -104,7 +107,8 @@ export default {
           this.searchValue = "";
           this.currentPage = 1
           this.selectMembers = []
-        } this.getAllusers()
+          this.getAllusers()
+        } 
       },
       searchValue: function(text) {
         this.getAllusers()

@@ -13,7 +13,11 @@
              <div class="scroller-body">
              <!-- <div class="weui-cells"></div> -->
              <group>
-                <cell title="群聊名称" is-link link="/themesetting" :value="group.groupName" />
+                     <cell 
+                        title="群聊名称" 
+                        is-link
+                        :value="group.groupName"
+                        @click.native="showUpdateName" />
                 <!-- <cell title="群二维码" is-link ><span slot="value"></span></cell> -->
                 <!-- <cell title="群公号" is-link /> -->
             </group>
@@ -69,28 +73,37 @@
             </group> -->
              </div><!-- scroller-body-->
          </div>
+         <!-- 成员选择器 -->
          <member-selector 
             ref="memberSelector" 
             :selectedMembers="allMembers"
             :confirmCallback="addMember">
          </member-selector>
+         <!-- 群成员列表 -->
          <member-list 
-         ref="memberList"
-         :selectedMembers="allMembers"
-         :group="group"
-         :currentUser="currentUser"
-         @deleteMember="deleteMember">
+            ref="memberList"
+            :selectedMembers="allMembers"
+            :group="group"
+            :currentUser="currentUser"
+            @deleteMember="deleteMember"
+            @addMembers="showMemberSelector">
          </member-list>
+         <!-- 修改群名称 -->
+         <update-group-name 
+            ref="updateGroupName"
+            :group="group">
+         </update-group-name>
     </div>
 </template>
 <script>
 import { Group, Cell,InlineXSwitch} from 'vux'
 import MemberSelector from './memberSelector';
-import MemberList from './member-list';
+import MemberList from './memberList';
 import WebContext from 'service/commonService'
 import { initWebContext } from 'service/commonService'
 import { getMembers,addMember,createGroup } from '@/service/msgService'
 import Bus from '@/common/eventBus.js';
+import UpdateGroupName from './updateGroupName';
 export default {
     props:['group'],
     components: {
@@ -98,7 +111,8 @@ export default {
         Group,
         InlineXSwitch,
         MemberSelector,
-        MemberList
+        MemberList,
+        UpdateGroupName
     },
     data(){
         return {
@@ -113,8 +127,15 @@ export default {
         showMemberSelector() {
             this.$refs["memberSelector"].showMemberSelector = true;
         },
+        showUpdateName() {
+            this.$refs["updateGroupName"].showUpdateName = true;
+        },
         showMemberDetail() {
-            this.$refs["memberList"].showMemberList = true;
+            if(this.group.groupType === "P"){
+                this.$refs["memberList"].openUserDetail(this.allMembers[0]);
+            }else{
+                this.$refs["memberList"].showMemberList = true;
+            }
         },
         deleteMember() {
             this.getAllMembers()

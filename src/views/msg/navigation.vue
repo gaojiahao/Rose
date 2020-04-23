@@ -3,7 +3,11 @@
     <div class="msg-navigation page-wrapper">
         <div class="page-hasTab">
             <div class="page-navigation">
-                消息
+                <div>消息</div>
+                <div class="navigation-add" @click="showNavList">+</div>
+            </div>
+            <div class="navigation-add-list" v-if="showList">
+                <p @click="showCreateGroupList">发起群聊</p>
             </div>
             <div class="page-body-hasNav" ref="scrollerWrapper">
                 <LoadMore :show-loading="showLoading" v-show="showLoading"></LoadMore>
@@ -33,23 +37,33 @@
             </div>
         </div><!--page end-->
         <router-view :group="group" :msgList="msgList" ref="groupMsg"></router-view>
+        <member-selector 
+            ref="memberSelector"
+            :confirmCallback="addGroup">
+        </member-selector>
     </div><!-- wrapper end-->
 </template>
 <script>
-import {LoadMore} from 'vux'
-import {getGroupMsg,getMyGroups} from 'service/msgService'
+import { LoadMore } from 'vux'
+import { getGroupMsg,getMyGroups,createGroup,getGroupByUserId } from 'service/msgService'
 import commonService from 'service/commonService'
 import tokenService from 'service/tokenService'
 import util from '@/common/util';
 import Bus from '@/common/eventBus.js';
+import WebContext from 'service/commonService'
+import { initWebContext } from 'service/commonService'
+import MemberSelector from './msg/memberSelector';
 export default {
     created:function(){       
         this.initDs();
+        initWebContext().then(() => {
+            this.currentUser = WebContext.WebContext.currentUser;
+        })
     },
     mounted:function(){
         this.initScoller();
         this.initGroup();
-        Bus.$on('toMsg',group => {
+        Bus.$on('toMsg', group => {
             this.toMsg(group)
         })
     },
@@ -61,10 +75,14 @@ export default {
            group:null,
            msgList:[],
            showLoading:true,
-           toTopShow:false
+           toTopShow:false,
+           showList: false
         }
     },
-    components:{LoadMore},
+    components:{
+        LoadMore,
+        MemberSelector
+    },
     methods:{
          getDefaultPhoto(group) {
             let url = require("assets/ava01.png");
@@ -202,13 +220,50 @@ export default {
                             }
                         }
                     })
-                    this.msgList = msgList;
+                    this.msgList = msgList.msgs;
                     this.$router.push('/msg/group')
                 });       
             } else {
                 this.$router.push('/msg/group')
             }
         },
+        showNavList() {
+            this.showList = !this.showList;
+        },
+        showCreateGroupList() {
+            this.$refs["memberSelector"].showMemberSelector = true;
+        },
+        addGroup(userList) {
+            let userIds = [],
+                userNames = [],
+                params = {},
+                requestUrl = createGroup;
+
+            userList.forEach(user =>{
+                userIds.push(user.userId);
+                userNames.push(user.nickname);
+            })
+
+            if(userList.length === 1){
+                params = userIds.join(',')
+                requestUrl = getGroupByUserId;
+            }else{
+                userNames.push(this.currentUser.name);
+                userIds.push(this.currentUser.userId);
+                params = {
+                    groupId: null,
+                    users: userIds.join(','),
+                    name: userNames.join(',')
+                };
+            }
+            
+            requestUrl(params).then(res => {
+                res.message && this.$vux.toast.show({text: res.message});
+                this.$refs["memberSelector"].showMemberSelector = false;
+                this.showList = false;
+                this.toMsg(res);
+            })
+        }
         
     },
     filters:{
@@ -238,9 +293,34 @@ export default {
 }
 </script>
 <style lang="scss">
-    .scroller-wrapper{
-        height: 100%;
-    }
+  .msg-navigation{
+      .page-navigation{
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          .navigation-add{
+            font-size: .3rem;
+            line-height: .16rem;
+            text-align: center;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            width: .21rem;
+            height: .21rem;
+          }
+      }
+      .navigation-add-list{
+        position: absolute;
+        top: .42rem;
+        z-index: 100;
+        background-color: #eee;
+        right: .01rem;
+        padding: .1rem;
+        border-radius: .03rem;
+      }
+  }
+  .scroller-wrapper{
+    height: 100%;
+  }
   .group-cells{
       background: #fff;
   }
