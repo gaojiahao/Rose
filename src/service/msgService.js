@@ -132,3 +132,13 @@ export let getGroupByUserId = (userId) => {
         data
     })
 }
+
+ //修改群名称
+ export let setGroupName = (data={}) => {
+    return $flyio.ajax({
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded',
+        url: '/im/group/setName',
+        data
+      })
+}

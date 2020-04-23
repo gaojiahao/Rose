@@ -75,7 +75,10 @@ export default {
     },
     props: {
       selectedMembers: {
-        type: Array
+        type: Array,
+        default: function() {
+          return []
+        }
       },
       confirmCallback:{
         type: Function
