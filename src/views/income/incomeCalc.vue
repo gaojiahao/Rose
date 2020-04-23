@@ -1,12 +1,5 @@
 <template>    
     <div class="pages2">
-        <!-- 头部 -->
-        <!-- <div class="header">
-            <div class="header-container">
-                <div class="center">xxx项目</div>
-            </div>
-        </div> -->
-        <!-- banner -->
         <div class="avatar-part"></div>
         <!-- 目标详情 -->
         <div class="dashboard-container-part">
@@ -17,10 +10,6 @@
                 <span>欢迎您，{{username}}加入</span> 
                 <span>{{prjectInfo.VARCHAR1}}</span>
               </div>
-              <!-- <div class="tips-title">
-                <div >欢迎,111</div>
-                <div >距离完成 1111111</div>
-              </div> -->
             </div>
           </div>
           <div class="dashboard-part">
@@ -44,14 +33,15 @@
                   </div>
                   <div class="content" :class="{'open':item.showContent}">
                       <div class="button">
-                          <div class="left"><x-button mini type="primary" @click.native="clickProject()">新增</x-button></div>
+                          <div class="left"><x-button mini type="primary" @click.native="clickProject(index)">新增</x-button></div>
                           <div class="left"><x-button mini type="warn">管理</x-button></div>
                       </div>
-                      <div class="list"> 
+                      <div class="list" v-for="(dItem,dIndex) in item.detail" :key="dIndex"> 
                           <div style="100%">
-                              <span style="">产品</span>
-                              <span style="">1000<span>/套</span></span>
-                              <span style="">提成<span>1000</span></span>
+                              <span style="">{{dItem.name}}</span>
+                              <span style="display:none">{{dItem.value}}</span>
+                              <span style="">{{dItem.nums}}<span>/套</span></span>
+                              <span style="">提成<span>{{dItem.ticheng}}</span></span>
                               <span><span class="icon-edit"></span><span class="icon-del"></span></span>
                           </div>     
                       </div>
@@ -59,7 +49,7 @@
                 </div>
             </div>   
         </div>
-        <popup-income-calc :show="showPopupIncomeCalc" v-model="showPopupIncomeCalc" :products="products" ref="PopupIncomeCalc"></popup-income-calc>
+        <popup-income-calc :show="showPopupIncomeCalc" v-model="showPopupIncomeCalc" :products="products" ref="PopupIncomeCalc" @on-sel="selProject"></popup-income-calc>
         <loading :show="showLoading"></loading>
     </div>
 </template>
@@ -114,8 +104,9 @@ export default {
         this.list[index]['showContent'] =  this.list[index]['showContent'] ? false : true;
     },
     //新建收入pop
-    clickProject() {
+    clickProject(index) {
       this.showPopupIncomeCalc = true;
+      this.xindex = index;
     },
     getToday(){
       let now = new Date();
@@ -154,12 +145,20 @@ export default {
           time : m,
           timeText: m+'月第'+i+'周',
           showContent: i==count ? true : false,
+          detail: [],
         }
         arr.push(a);
       }
       this.list = arr;
       console.log("今天是"+ m + "月的第 " + getMonthWeek(y, m, d) + " 周");
     },
+    selProject(item){
+      var arr = {
+        ...item,
+        ticheng: 0, //需要计算
+      }
+      this.list[this.xindex]['detail'].push(arr);
+    }
   },
   beforeCreate() {
     let query = querystring.parse(location.search.slice(1));

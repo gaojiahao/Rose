@@ -8,10 +8,10 @@
         </div> -->
         <!-- 物料列表 -->
         <group title="新建收入">
-          <cell class="each_part" title="项目类产品" :value=" setvalue? setvalue:'请选择产品'" value-align="right" @click.native="clickProject"
+          <cell class="each_part" title="项目类产品" :value=" setvalue.name? setvalue.name:'请选择产品'" value-align="right" @click.native="clickProject"
                 is-link></cell>
           <!-- <popup-picker title="项目类产品" :data="products" v-model="value1" @on-show="onShow" @on-hide="onHide" @on-change="onChange" placeholder="请选择产品"></popup-picker> -->
-          <x-input title="数量" text-align="right" placeholder="请输入"></x-input>
+          <x-input title="数量" v-model="nums" text-align="right" placeholder="请输入"></x-input>
         </group>
       </div>
       <!-- 底部栏 -->
@@ -72,7 +72,8 @@
         },
         showProjectPopup: false, // 是否展示项目类产品的选项
         arr: [],
-        setvalue:'',
+        setvalue:[],
+        nums:0,
       }
     },
     watch: {
@@ -103,85 +104,17 @@
         this.tmpItems = [...this.selItems];
         this.$emit('input', false);
       },
-      // 匹配相同项的索引
-      findIndex(arr, sItem) {
-        return arr.findIndex(item => {
-          return item.value === sItem.value
-        });
-      },
-      // 判断是否展示选中图标
-      showSelIcon(sItem) {
-        return this.findIndex(this.tmpItems, sItem) !== -1;
-      },
-      // 选择物料
-      selThis(sItem, sIndex) {
-        let arr = this.tmpItems;
-        let delIndex = this.findIndex(arr, sItem);
-        // 若存在重复的 则清除
-        if (delIndex !== -1) {
-          arr.splice(delIndex, 1);
-          return;
-        }
-        arr.push(sItem);
-      },
       // 确定选择物料
       confirm() {
-        let sels = [];
         this.showPop = false;
-        this.tmpItems.sort((a, b) => a['trans_detail_uncalc.bankCharge'] - b['trans_detail_uncalc.bankCharge']);
-        this.selItems = [...this.tmpItems];
-        // 触发父组件选中事件
-        this.$emit('on-sel', JSON.parse(JSON.stringify(this.selItems)));
-      },
-      // 获取物料列表
-      getList() {
-        let filter = [{"operator":"like","value":"0","property":"trans_detail_uncalc.var1"}];
-        //成品,商品,服务
-        if (this.srhInpTx) {
-          filter = [
-            ...filter,
-            {
-              operator: 'like',
-              value: this.srhInpTx,
-              property: 'trans_detail_uncalc.transObjCode',
-            },
-          ];
+        var arr = {
+          ...this.setvalue,
+          nums:this.nums
         }
-        return saleRepotService.saleRepotList({
-          page: this.page,
-          limit: this.limit,
-          start: (this.page - 1) * this.limit,
-          filter: JSON.stringify(filter),
-        }).then(({tableContent = [], dataCount = 0}) => {
-          let none = [{
-            name: '无',
-            value: '无',
-            taxAmount: '',
-            amount: 0,
-            num5: 0,
-            qty: '',
-            num1: '',
-            'trans_detail_uncalc.price':'0'
-          }];
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.listData = this.page === 1 ? [...none, ...tableContent] : [...this.listData, ...tableContent];
-          tableContent.forEach(item => {
-            item.name = item["trans_detail_uncalc.transObjCode"];
-            item.value = item["trans_detail_uncalc.transObjCode"];
-            item.taxAmount = item["trans_detail_uncalc.qty"];
-            item.amount = item["trans_detail_uncalc.price"];
-            item.num5 = item["trans_detail_uncalc.num5"];
-            item.qty = '';
-          });
-          this.$nextTick(() => {
-            this.$refs.bScroll.finishPullUp();
-          })
-        });
+        this.$emit('on-sel', arr);
       },
       // 上拉加载
       onPullingUp() {
-        this.page++;
-        this.getList();
       },
       // 设置默认值
       setDefaultValue() {
@@ -191,7 +124,8 @@
 
       },
       selProject(index){
-        this.setvalue = this.products[index]['name'];
+        this.setvalue = this.products[index];
+        this.showProjectPopup = false;
       },
       clickProject(){
         this.showProjectPopup = true;
