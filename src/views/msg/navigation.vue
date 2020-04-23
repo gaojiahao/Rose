@@ -220,7 +220,7 @@ export default {
                             }
                         }
                     })
-                    this.msgList = msgList.msgs;
+                    this.msgList = msgList;
                     this.$router.push('/msg/group')
                 });       
             } else {
