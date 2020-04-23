@@ -87,7 +87,6 @@
       },
       // 弹窗隐藏时调用
       onHide1() {
-        console.log('aa')
         this.showPop1 = false;
         this.$emit('on-sel',this.rindex);  
       },

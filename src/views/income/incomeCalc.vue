@@ -58,7 +58,6 @@
 import {XButton, Confirm, querystring} from 'vux'
 import PopupIncomeCalc from 'components/popup/PopupIncomeCalc'
 import tokenService from 'service/tokenService'
-import { getProductCount, getCurrMonthStatus } from 'service/homeService'
 import Loading from 'components/common/loading'
 import incomeService from "service/incomeService";
 const ROSE_OPTION_KEY = 'ROSE_OPTION'
@@ -74,6 +73,8 @@ export default {
         showLoading: false,
         invList:[],
         products:[],
+        listId:'d45606e4-c905-4d6c-9555-b379e4aa683f',
+        userId:''
     }
   },
   components: {
@@ -205,16 +206,7 @@ export default {
           subSector: completeData[0].subSector || '',      //三级部门
           userId: completeData[0].userId || ''
         }))
-      })
-      await getCurrMonthStatus().then(({ differ, currMonthTarget }) => {
-        this.saleStatus = {
-          differ,                   // 距离目标还差多少
-          currMonthTarget           // 每个月的目标
-        }
-      })
-      await getProductCount().then(({ tableContent }) => {
-        let [ Count = {} ] = tableContent;
-        this.ProductCount = Count; 
+        this.userId = completeData[0].userId;
       })
       await incomeService.getIncomeInfo().then(data => {
         this.prjectInfo = data.tableContent[0]
@@ -222,8 +214,33 @@ export default {
       })
       await incomeService.getXmcpjlInv(this.prjectInfo.REFERENCE_ID).then(data => {
         this.invList = data.tableContent;
-        //this.products();
       })
+      await incomeService.getIsHasSrmnInfo({listId:this.listId,userId:this.userId}).then(data => {
+        if(data.dataCount){
+          this.view = 'updata';
+          this.REFERENCE_ID = data.tableContent[0].REFERENCE_ID;
+          this.TRANS_CODE = data.tableContent[0].TRANS_CODE;
+          console.log('已经提交过收入模拟，RefenceId:'+this.REFERENCE_ID);
+          incomeService.getJsonDataByReferenceId(this.TRANS_CODE).then(data=>{
+            console.log(JSON.parse(JSON.stringify(data.tableContent[0].json_data)))
+          })
+        } else {
+          this.view = 'new'
+        }
+      })
+      var json = {
+        conn: 20000,
+        list: 'trans_form_data',
+        transCode: 'SRMN',
+        jsonData: {
+          "listId": "d45606e4-c905-4d6c-9555-b379e4aa683f",
+          "referenceId": "a5f2b2ec-d748-471d-947c-67c2cbb7a01f",
+
+        }
+      }
+      incomeService.saveData(json).then(data => {
+        console.log(data)
+      });
       this.getWeek();
       this.showLoading = false;
     })()
