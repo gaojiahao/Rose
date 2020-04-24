@@ -122,7 +122,7 @@ export let removeMember = (data={}) => {
       })
 }
 
-/// 新增单聊
+// 新增单聊
 export let getGroupByUserId = (userId) => {
     var data = {
         userId: userId
@@ -141,4 +141,15 @@ export let getGroupByUserId = (userId) => {
         url: '/im/group/setName',
         data
       })
+}
+
+// 根据搜索关键词获取导航信息
+export let getGroupsByName = (name) => {
+    var data = {
+        name: name
+    };
+    return $flyio.ajax({
+        url:'/im/group/getGroupsByName', 
+        data
+    })
 }
