@@ -225,7 +225,7 @@ let Rxports = {
     }
     let token = tokenService.getToken(true);
     return this.post({
-      url: '/H_roleplay-si/ds/upload',
+      url: (window.baseURL||'') + '/H_roleplay-si/ds/upload',
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': token.token

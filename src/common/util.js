@@ -241,5 +241,15 @@ export default{
         minute = minute < 10 ? ('0' + minute) : minute;
         second = second < 10 ? ('0' + second) : second;
         return y + '/' + m + '/' + d;
+    },
+    formatFileSize:function(b,length){
+       var size = b/1024,
+           ext = 'K';
+        
+        if(size > 1024){
+            ext = 'M';
+            size = size/1024;
+        }
+        return size.toFixed(length||2)+ext;
     }
 }
