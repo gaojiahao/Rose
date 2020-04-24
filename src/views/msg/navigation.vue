@@ -9,7 +9,10 @@
             <div class="navigation-add-list" v-if="showList">
                 <p @click="showCreateGroupList">发起群聊</p>
             </div>
-            <div class="page-body-hasNav" ref="scrollerWrapper">
+            <div class="nav-search">
+                <x-input placeholder="搜索" @on-focus="onSearchFocus"></x-input>
+            </div>
+            <div class="page-body-hasNav body-nav" ref="scrollerWrapper">
                 <LoadMore :show-loading="showLoading" v-show="showLoading"></LoadMore>
                 <div class = 'group-cells'>
                     <div class="group-cell" v-for="group in groups" :key = "group.id" @click="toMsg(group)">
@@ -41,10 +44,11 @@
             ref="memberSelector"
             :confirmCallback="addGroup">
         </member-selector>
+        <nav-search ref="navSearch" @searchToMsg="searchToMsg"></nav-search>
     </div><!-- wrapper end-->
 </template>
 <script>
-import { LoadMore } from 'vux'
+import { LoadMore,XInput } from 'vux'
 import { getGroupMsg,getMyGroups,createGroup,getGroupByUserId } from 'service/msgService'
 import commonService from 'service/commonService'
 import tokenService from 'service/tokenService'
@@ -53,6 +57,7 @@ import Bus from '@/common/eventBus.js';
 import WebContext from 'service/commonService'
 import { initWebContext } from 'service/commonService'
 import MemberSelector from './msg/memberSelector';
+import NavSearch from './msg/navSearch';
 export default {
     created:function(){       
         this.initDs();
@@ -81,7 +86,9 @@ export default {
     },
     components:{
         LoadMore,
-        MemberSelector
+        MemberSelector,
+        NavSearch,
+        XInput
     },
     methods:{
          getDefaultPhoto(group) {
@@ -90,6 +97,12 @@ export default {
                 group.groupIcon = url;
             }
             return url;
+        },
+        onSearchFocus() {
+            this.$refs["navSearch"].showSearchList = true;
+        },
+        searchToMsg(item) {
+            this.toMsg(item);
         },
         initScoller:function(){
             var scrollWrapper = this.$refs.scrollerWrapper;
@@ -295,8 +308,15 @@ export default {
     }
 }
 </script>
-<style lang="scss">
+<style lang="less" scoped>
   .msg-navigation{
+      .body-nav{
+          height: calc(~'100% - 1rem') !important;
+      }
+      .nav-search{
+        background-color: #fff;
+        margin-bottom: .05rem;
+      }
       .page-navigation{
           display: flex;
           justify-content: space-between;

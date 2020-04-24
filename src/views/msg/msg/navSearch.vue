@@ -1,0 +1,195 @@
+<template>
+    <div class="search-list" v-transfer-dom>
+       <popup 
+       v-model="showSearchList" 
+       position="right" 
+       width="100%" 
+       :show-mask="false">
+          <div class="list-header">
+            <span @click="cancel">
+              <span>取消</span>
+            </span>
+          </div>
+          <div class="list-search">
+            <x-input ref="searchInput" placeholder="搜索" v-model="searchValue"></x-input>
+          </div>
+          <div class="search-content">
+            <div 
+            class="list-top" 
+            v-for="(item,index) of data" 
+            :key="index">
+              <p style="padding-left:.1rem;color:#999;margin-bottom:.1rem">{{item.title}}</p>
+              <ul class="list-top-content">
+                <li 
+                  v-for="(child,ci) of item.children"
+                  :key="ci"
+                  @click="toMsg(child)"
+                  class="list">
+                  <div class="list-left">
+                    <div class="list-photo" @click.stop="openUserDetail(child)">
+                      <img :src="getDefaultPhoto(child)" />
+                    </div>
+                    <div class="list-desc">
+                        <p>{{child.nickname || child.groupName}}</p>
+                        <span v-if="child.type==='群聊'">包括：{{child.users}}</span>
+                        <span v-else>{{child.role}}</span>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </popup>
+        <user-detail ref="userDetail" :userItem="userItem"></user-detail>
+    </div> 
+</template>  
+<script>
+import { Popup,XInput } from 'vux'
+import { getGroupByUserId,getGroupsByName } from '@/service/msgService'
+import UserDetail from './userDetail'
+export default{  
+    name: "NavSearch",
+    components: {
+        Popup,
+        XInput,
+        UserDetail
+    },
+    data() {
+        return {
+            showSearchList: false,
+            searchValue: "",
+            data: [],
+            userItem: {}
+        }
+    },
+    watch: {
+      showSearchList: function(value) {
+        if(value){
+          this.data = [];
+          this.searchValue = "";
+          setTimeout(() => {
+            this.$refs["searchInput"].focus();
+          },100)
+        }
+      },
+      searchValue: function() {
+        this.getSearchName()
+      }
+    },
+    methods: {
+        getDefaultPhoto(item) {
+            let url = require("assets/ava01.png");
+            if (item) {
+                item.photo = url;
+            }
+            return url;
+        },
+        cancel() {
+          this.showSearchList = false
+        },
+        getSearchName() {
+          if(this.searchValue){
+            this.data = [
+              {
+                  title: '联系人',
+                  children: []
+              },
+              {
+                  title: '群聊',
+                  children: []
+              }
+            ]
+            getGroupsByName(this.searchValue).then(res => {
+              if(res.length > 0){
+                res.forEach(item => {
+                  if(item.type === "群聊"){
+                    this.data[1] && this.data[1].children.push(item)
+                  }else{
+                    this.data[0] && this.data[0].children.push(item)
+                  }
+                })
+              }else{
+                this.data = [];
+              }
+            })
+          }else{
+            this.data = []
+          }
+        },
+        openUserDetail(item) {
+          this.userItem = item;
+          this.$refs["userDetail"].showUserDetail = true
+        },
+        toMsg(item) {
+          if(item.groupId){
+            this.$emit('searchToMsg',item)
+            this.showSearchList = false
+          }else{
+            getGroupByUserId(item.userId).then(res => {
+              this.$emit('searchToMsg',res)
+              this.showSearchList = false
+            })
+          }
+        }
+    }
+}  
+</script>  
+<style lang="less" scoped>
+.search-list{
+  padding: 10px;
+  .list-header{
+    padding: .1rem;
+    background-color: #39f;
+    color: #fff;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+  }
+  .list-search{
+    background-color: #fff;
+    margin-top: .1rem;
+  }
+  .search-content{
+    overflow-x: hidden;
+    margin-top: .1rem;
+    .list-top{
+      padding: .1rem 0rem;
+      background-color: #fff;
+      margin-bottom: .1rem;
+      &-content{
+        .list{
+          background: #fdfdfd;
+          border-top: 1px solid #eee;
+          height: .5rem;
+          padding: 10px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          &-left{
+            display: flex;
+            align-items: center;
+          }
+          &-photo{
+            img{
+              width: .45rem;
+              height: .45rem;
+            }
+          }
+          &-desc{
+            margin-left: .1rem;
+            span{
+              color: #999;
+              font-size: .14rem;
+              width: 2.5rem;
+              display: inline-block;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+</style>
