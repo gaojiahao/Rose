@@ -11,15 +11,15 @@
               <i class="iconfont icon-back1"></i>
               <span>返回</span>
             </span>
-            <span>群成员{{`(${selectedMembers.length})`}}</span>
+            <span>群成员{{`(${memberData.length})`}}</span>
             <span @click="addMember">添加</span>
           </div>
-          <!-- <div class="list-search">
+          <div class="list-search">
             <x-input placeholder="搜索" v-model="searchValue"></x-input>
-          </div> -->
+          </div>
           <ul class="content">
             <li 
-              v-for="(item,index) of selectedMembers"
+              v-for="(item,index) of memberData"
               :key="item.userId"
               @click="openUserDetail(item)"
               :class="{move:candelete.userId==item.userId,list:true}"
@@ -37,7 +37,7 @@
               <div class="list-owner" v-if="item.isOwner">
                 群主
               </div>
-              <div class="delete" @click="deleteMember(item,index)">移除</div>
+              <div class="delete" @click.stop="deleteMember(item,index)">移除</div>
             </li>
           </ul>
         </popup>
@@ -72,31 +72,27 @@ export default{
             candelete: {}, // 滑动的item
             userItem: {},
             showMemberList: false,
-            searchValue: ""
+            searchValue: "",
+            memberData: []
         }
     },
     watch: {
       selectedMembers: function(value) {
         if(value.length > 0){
+          this.memberData = value;
+          this.copyData = JSON.stringify(value);
+          this.searchMethod();
           value.forEach(item => {
               if(item.isOwner) this.groupOwner = item.userId;
           })
         }
       },
-      searchValue: function(value) {
-        if(!this.copySelectMembers){
-          this.copySelectMembers = JSON.stringify(this.selectedMembers);
-        }else{
-          if(value){
-            this.selectedMembers = [];
-            JSON.parse(this.copySelectMembers).forEach(item => {
-              if(item.nickname.indexOf(value) > -1){
-                this.selectedMembers.push(item);
-              }
-            })
-          }else{
-            this.selectedMembers = JSON.parse(this.copySelectMembers);
-          }
+      searchValue: function() {
+        this.searchMethod()
+      },
+      showMemberList: function(value) {
+        if(value) {
+          this.searchValue = "";
         }
       }
     },
@@ -114,6 +110,18 @@ export default{
         addMember() {
           this.$emit("addMembers")
         },
+        searchMethod() {
+          if(this.searchValue){
+            this.memberData = [];
+            JSON.parse(this.copyData).forEach(item => {
+              if(item.nickname.indexOf(this.searchValue) > -1){
+                this.memberData.push(item);
+              }
+            })
+          }else{
+            this.memberData = JSON.parse(this.copyData);
+          }
+        },
         deleteMember(item,index){
           let data = {
             groupId: this.group.groupId
@@ -123,8 +131,7 @@ export default{
             removeMember(data).then(res => {
               if(res.success){
                     this.$vux.toast.show({text: res.message})
-                    this.selectedMembers.splice(index,1)
-                    this.showMemberList = false
+                    this.memberData.splice(index,1)
                     this.$emit('deleteMember')
                 }
             })
