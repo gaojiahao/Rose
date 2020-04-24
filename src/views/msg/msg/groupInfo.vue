@@ -12,7 +12,7 @@
          <div class="page-body-hasNav" ref="scrollerWrapper">
              <div class="scroller-body">
              <!-- <div class="weui-cells"></div> -->
-             <group>
+             <group v-if="group.groupType=='G'">
                      <cell 
                         title="群聊名称" 
                         is-link

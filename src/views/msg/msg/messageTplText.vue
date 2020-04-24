@@ -53,7 +53,7 @@ export default {
     height: 0;
     border-color: transparent;
     border-style: solid;
-    top: 3px;
+    top: 10px;
     margin-left: 1px;
     border-right-width: 0;
     border-left-color: rgb(191, 221, 255);

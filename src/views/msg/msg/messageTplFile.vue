@@ -6,10 +6,10 @@
         class="message-ava" 
         @error="getDefaultPhoto(msg)">
 
-        <span class ="message-creator"
+        <span class ="message-creator" 
              v-if="!msg.isMySelf">{{msg.creatorName}}
         </span>
-        <div class="message-content">
+        <div class="message-content"  :class="[msg.isMySelf==1?'rightarrow':'leftarrow']"  >
             <template v-for="file in msg.content" v-bind="key">
                 <div v-if="file.imType == 4" class="file-msg-container">
                     <div class="file-content-info">
@@ -72,7 +72,7 @@ export default {
     height: 0;
     border-color: transparent;
     border-style: solid;
-    top: 3px;
+    top: 10px;
     margin-left: 1px;
     border-right-width: 0;
     border-left-color: rgb(191, 221, 255);

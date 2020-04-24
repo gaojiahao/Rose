@@ -9,9 +9,9 @@
         <span class ="message-creator"
              v-if="!msg.isMySelf">{{msg.creatorName}}
         </span>
-        <div class="message-content img-msg-content">
+        <div class="message-content img-msg-content "  :class="[msg.isMySelf==1?'rightarrow':'leftarrow']"  >
             <template v-for="file in msg.content" v-bind="key">
-                <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ file.id" v-if="file.imType==2" />
+                <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ file.id" v-if="file.imType==2" height="100" />
                 <div v-html="file.content" v-else-if="file.imType==1"></div>
             </template>
         </div>
@@ -54,7 +54,7 @@ export default {
     height: 0;
     border-color: transparent;
     border-style: solid;
-    top: 3px;
+    top: 10px;
     margin-left: 1px;
     border-right-width: 0;
     border-left-color: rgb(191, 221, 255);

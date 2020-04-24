@@ -12,13 +12,16 @@
             <div class="navigation-add-list" v-if="showList">
                 <p @click="showCreateGroupList">发起群聊</p>
             </div>
-            <div class="page-body-hasNav" ref="scrollerWrapper">
+                <RScroll 
+                    class="page-body-hasNav" 
+                    :options="scrollOptions"
+                    :has-next="hasNext"
+                    :no-data="false"
+                >
                 <LoadMore :show-loading="showLoading" v-show="showLoading"></LoadMore>
                 <div class = 'group-cells'>
                     <div class="group-cell" v-for="group in groups" :key = "group.id" @click="toMsg(group)">
-                        <div class="group-ava">
-                            <img :src="group.groupIcon" @error="getDefaultPhoto(group)">
-                        </div>
+                        <img class="group-ava" :src="group.groupIcon" @error="getDefaultPhoto(group)">
                         <div class="group-body">
                             <div>
                                 {{group.groupName}}
@@ -37,7 +40,7 @@
                         </div> 
                     </div>
                 </div>
-            </div>
+                </RScroll>
         </div><!--page end-->
         <router-view :group="group" :msgList="msgList" ref="groupMsg"></router-view>
         <member-selector 
@@ -58,6 +61,7 @@ import WebContext from 'service/commonService'
 import { initWebContext } from 'service/commonService'
 import MemberSelector from './msg/memberSelector';
 import NavSearch from './msg/navSearch';
+import RScroll from "plugins/scroll/RScroll";
 export default {
     created:function(){       
         this.initDs();
@@ -66,7 +70,6 @@ export default {
         })
     },
     mounted:function(){
-        this.initScoller();
         this.initGroup();
         Bus.$on('toMsg', group => {
             this.toMsg(group)
@@ -76,6 +79,12 @@ export default {
     },
     data(){
         return {
+             scrollOptions:{
+                click: true,
+                pullUpLoad: false,//上拉刷新
+                pullDownRefresh: false //下拉刷新
+            },
+            hasNext:false,
            groups:[],
            group:null,
            msgList:[],
@@ -85,6 +94,7 @@ export default {
         }
     },
     components:{
+        RScroll,
         LoadMore,
         MemberSelector,
         NavSearch,
@@ -104,23 +114,6 @@ export default {
         },
         searchToMsg(item) {
             this.toMsg(item);
-        },
-        initScoller:function(){
-            var scrollWrapper = this.$refs.scrollerWrapper;
-
-            if(!scrollWrapper)return;
-
-            this.scroller = new this.Bscroll(scrollWrapper, {
-                click: true,
-                pullUpLoad: true,
-                pullDownRefresh: true,
-            });
-            this.scroller.on('scroll', ({x, y}) => {
-                if(Math.abs(y)>1000)
-                this.toTopShow = true;
-                else if(Math.abs(y)<1000)
-                this.toTopShow = false; 
-            })
         },
         initGroup:function(cb){
             this.showLoading  = true;
@@ -375,15 +368,20 @@ export default {
   }
   .group-body{
       line-height: 28px;
+      width: calc(100% - 1.4rem);
+      div{
+        width: 2rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
   }
   .group-ava{
-      width:60px;
-      height:60px;
+    width: 50px;
+    margin-right: .10rem;
+    border-radius: .02rem;
   }
-  .group-ava img{
-      width:50px;
-      border-radius: 2px;
-  }
+  
   .group-cell .modTime{
     position:absolute;
     right:15px;

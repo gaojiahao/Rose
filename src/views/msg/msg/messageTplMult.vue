@@ -14,9 +14,9 @@
             :class="[msg.isMySelf==1?'rightarrow':'leftarrow']"  
             v-html="msg.content" v-if="msg.imType==1">
         </div>
-        <div class="message-content">
+        <div class="message-content" :class="[msg.isMySelf==1?'rightarrow':'leftarrow']"   >
             <template v-for="file in msg.content" v-bind="key">
-                <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ file.id" v-if="file.imType==2"/>
+                <img height="100" :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ file.id" v-if="file.imType==2"/>
                 <div v-html="file.content" v-else-if="file.imType==1"></div>
             </template>
         </div>
@@ -59,7 +59,7 @@ export default {
     height: 0;
     border-color: transparent;
     border-style: solid;
-    top: 3px;
+    top: 10px;
     margin-left: 1px;
     border-right-width: 0;
     border-left-color: rgb(191, 221, 255);
