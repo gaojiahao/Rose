@@ -17,6 +17,8 @@
 .page-hasTab{
     height:calc(~"100% - 0.49rem");
     background:@weui-BG-0;
+    display: flex;
+    flex-direction: column;
     overflow:hidden;
 }
 .page-navigation{
@@ -35,7 +37,7 @@
 }
 .page-body-hasNav{
     overflow: hidden;
-    height: calc(~'100% - 0.5rem');
+    flex:1;
 }
 .badge-count{
     font-family: "Monospaced Number";

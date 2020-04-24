@@ -310,9 +310,6 @@ export default {
 </script>
 <style lang="less" scoped>
   .msg-navigation{
-      .body-nav{
-          height: calc(~'100% - 1rem') !important;
-      }
       .nav-search{
         background-color: #fff;
         margin-bottom: .05rem;

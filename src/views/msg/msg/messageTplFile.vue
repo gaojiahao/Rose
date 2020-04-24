@@ -17,7 +17,7 @@
                             <a  :href="'/H_roleplay-si/ds/downloadById?id='+file.id">{{file.content}}</a>
                         </p>
                         <p>
-                            {{file.size}}
+                            {{file.size}}KB
                         </p>
                     </div>
                     <img class="flie-img" width="38" :src="file.content|filedTypeFilter" @error= "getFileImg()">
@@ -130,6 +130,7 @@ export default {
     display: flex;
    .file-content-info {
        flex:1;
+       text-align: left;
    }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div class="search-list" v-transfer-dom>
+    <div class="search-list" v-show="showSearchList" v-transfer-dom>
        <popup 
        v-model="showSearchList" 
        position="right" 

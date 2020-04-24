@@ -150,7 +150,7 @@ let Rxports = {
   // POST请求
   post(opts = {}) {
     return new Promise((resolve, reject) => {
-      fly.post(ensureUrl(opts.url), opts.data).then(res => resolve(res.data)).catch( err => {
+      fly.post(ensureUrl(opts.url), opts.data,{baseURL:window.baseURL||''}).then(res => resolve(res.data)).catch( err => {
         reject(err);
         console.log('err:', err);
       })
@@ -225,7 +225,7 @@ let Rxports = {
     }
     let token = tokenService.getToken(true);
     return this.post({
-      url: (window.baseURL||'') + '/H_roleplay-si/ds/upload',
+      url:'/H_roleplay-si/ds/upload',
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': token.token
