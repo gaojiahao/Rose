@@ -37,12 +37,16 @@
                           <div class="left"><x-button mini type="warn">管理</x-button></div>
                       </div>
                       <div class="list" v-for="(dItem,dIndex) in item.detail" :key="dIndex"> 
-                          <div style="100%">
+                          <div style="width: 100%;position: relative;">
+                            <div style="width:70%">
                               <span style="">{{dItem.name}}</span>
                               <span style="display:none">{{dItem.value}}</span>
-                              <span style="">{{dItem.nums}}<span>/套</span></span>
-                              <span style="">提成<span>{{dItem.ticheng}}</span></span>
+                              <span style="">{{dItem.nums}}<span>{{dItem.measureUnit}}</span></span>
+                              <span style="">---提成¥<span>{{dItem.ticheng}}</span></span>
+                            </div>
+                            <div style="width: 30%;position: absolute;top: 0;right: -.18rem;">
                               <span><span class="icon-edit"></span><span class="icon-del"></span></span>
+                            </div>
                           </div>     
                       </div>
                   </div>
@@ -74,7 +78,8 @@ export default {
         invList:[],
         products:[],
         listId:'d45606e4-c905-4d6c-9555-b379e4aa683f',
-        userId:''
+        userId:'',
+        baseinfo:{}
     }
   },
   components: {
@@ -91,7 +96,9 @@ export default {
           if(!this.judgeInvList(this.invList[i])){
             var arr = {
               name:this.invList[i]['invName'],
-              value:this.invList[i]['invCode'],
+              value:this.invList[i]['transObjId'],
+              code:this.invList[i]['invCode'],
+              measureUnit:this.invList[i]['measureUnit'],
             }
             this.products.push(arr);
           }  
@@ -120,9 +127,10 @@ export default {
       this.DaysInMonth = now.getDate() - date;
       this.Today = Today;
     },
+    //产品项目去重
     judgeInvList(temp){
       for(var i=0;i<this.products.length;i++){
-        if(temp['invCode']==this.products[i]['value']){
+        if(temp['transObjId']==this.products[i]['value']){
           return true;
         }
       }
@@ -151,14 +159,145 @@ export default {
         arr.push(a);
       }
       this.list = arr;
-      console.log("今天是"+ m + "月的第 " + getMonthWeek(y, m, d) + " 周");
+      //console.log("今天是"+ m + "月的第 " + getMonthWeek(y, m, d) + " 周");
     },
+    //计算提成
+    calcRoyalty(item){
+      var royalty = 0,
+          temp = item;
+      for(var i=0;i<this.invList.length;i++){
+        if(item.value==this.invList[i].transObjId){
+          if(temp.nums >= this.invList[i].qty){
+            temp = {
+              ...this.invList[i],
+              nums:temp.nums,
+            }
+          }
+        }
+      }
+      if(temp.qty){
+        //提成 = （金额*数量*提成比例）+ 奖金
+        console.log(temp.amount+'*'+temp.qty+'*'+(temp.ticheng/100))
+        royalty = Number(temp.amount*temp.qty*(temp.ticheng/100)) + temp.price
+      }
+      return royalty;
+    },
+    //选中项目开始计算
     selProject(item){
+      var ticheng = this.calcRoyalty(item);
       var arr = {
         ...item,
-        ticheng: 0, //需要计算
+        ticheng: ticheng, //需要计算
       }
       this.list[this.xindex]['detail'].push(arr);
+      this.submit();
+    },
+    guid() {
+      function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+      }
+      return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+    },
+    //提交
+    submit(){
+      if(this.view=='new'){
+        var json = {
+          isMobile: true,
+          conn: 20000,
+          list: 'trans_form_data',
+          transCode: 'SRMN',
+          //jsonData: JSON.stringify({
+          jsonData: {
+            listId: "d45606e4-c905-4d6c-9555-b379e4aa683f",
+            referenceId: this.guid(),
+            baseinfoExt: {
+              varchar2:this.prjectInfo.VARCHAR1,
+              varchar4: 5000,  //用户自己填收入目标
+              id: this.prjectInfo.REFERENCE_ID,
+              varchar3: this.prjectInfo.REFERENCE_ID
+            },
+            transDetailUncalc: [],
+            transCode: "SRMN",
+          }
+        }
+        for(var i = 0; i < this.list.length; i++){
+          if(this.list.length){
+            for(var j = 0; j < this.list[i]['detail'].length; j++){
+              var jitem = {
+                id: this.guid(),
+                var1 : this.list[i].timeText,   //日期周
+                objName: this.list[i]['detail'][j].name,  //产品名称
+                transObjCode: this.list[i]['detail'][j].code,
+                transObjId: this.list[i]['detail'][j].value,
+                qty: this.list[i]['detail'][j].nums,     //数量
+                amount: this.list[i]['detail'][j].ticheng,   //提成金额
+                fgCode: "",
+                measureUnit: this.list[i]['detail'][j].measureUnit, 
+              }
+              json.jsonData['transDetailUncalc'].push(jitem);
+            }
+          }
+        }
+        console.log('提交数据：'+JSON.stringify(json.jsonData))
+        json.jsonData = JSON.stringify(json.jsonData);
+        console.log('提交数据：'+json)
+        incomeService.saveData(querystring.stringify(json)).then(data => {
+          console.log(data)
+        });
+      } else {
+        console.log('开始修改');
+        console.log('baseinfo',this.baseinfo)
+        var json = {
+          isMobile: true,
+          conn: 20000,
+          list: 'trans_form_data',
+          transCode: this.TRANS_CODE,
+          //jsonData: JSON.stringify({
+          jsonData: {
+            listId: "d45606e4-c905-4d6c-9555-b379e4aa683f",
+            referenceId: this.referenceId ? this.referenceId : this.guid(),
+            baseinfo:{
+              ...this.baseinfo,
+              modTime: Date.now(),
+            },
+            baseinfoExt: {
+              varchar2:this.prjectInfo.VARCHAR1,
+              varchar4: 5000,  //用户自己填收入目标
+              id: this.prjectInfo.REFERENCE_ID,
+              varchar3: this.prjectInfo.REFERENCE_ID
+            },
+            transDetailUncalc: [],
+            transCode: this.TRANS_CODE,
+          }
+        }
+        for(var i = 0; i < this.list.length; i++){
+          if(this.list.length){
+            for(var j = 0; j < this.list[i]['detail'].length; j++){
+              var jitem = {
+                id: this.list[i]['detail'][j].id ? this.list[i]['detail'][j].id:this.guid(),
+                var1 : this.list[i].timeText,   //日期周
+                objName: this.list[i]['detail'][j].name,  //产品名称
+                transObjCode: this.list[i]['detail'][j].code,
+                transObjId: this.list[i]['detail'][j].value,
+                qty: this.list[i]['detail'][j].nums,     //数量
+                amount: this.list[i]['detail'][j].ticheng,   //提成金额
+                fgCode: "",
+                measureUnit: this.list[i]['detail'][j].measureUnit, 
+              }
+              json.jsonData['transDetailUncalc'].push(jitem);
+            }
+          }
+        }
+        console.log('提交数据：'+JSON.stringify(json.jsonData))
+        json.jsonData = JSON.stringify(json.jsonData);
+        console.log('提交数据：'+json)
+        console.log('baseinfo',json)
+        return;
+        incomeService.saveData(querystring.stringify(json)).then(data => {
+          console.log(data)
+        });
+
+      }
     }
   },
   beforeCreate() {
@@ -208,39 +347,50 @@ export default {
         }))
         this.userId = completeData[0].userId;
       })
+      //获取产品激励信息
       await incomeService.getIncomeInfo().then(data => {
         this.prjectInfo = data.tableContent[0]
         this.prjectReferenceId = data.tableContent[0].REFERENCE_ID;
       })
+      //获取产品激励产品列表
       await incomeService.getXmcpjlInv(this.prjectInfo.REFERENCE_ID).then(data => {
         this.invList = data.tableContent;
       })
+      //获取本项目提交过没有
       await incomeService.getIsHasSrmnInfo({listId:this.listId,userId:this.userId}).then(data => {
         if(data.dataCount){
-          this.view = 'updata';
-          this.REFERENCE_ID = data.tableContent[0].REFERENCE_ID;
+          ///this.view = 'updata';
+          this.view = 'updata'
+          this.referenceId = data.tableContent[0].REFERENCE_ID;
           this.TRANS_CODE = data.tableContent[0].TRANS_CODE;
           console.log('已经提交过收入模拟，RefenceId:'+this.REFERENCE_ID);
           incomeService.getJsonDataByReferenceId(this.TRANS_CODE).then(data=>{
-            console.log(JSON.parse(JSON.stringify(data.tableContent[0].json_data)))
+            var formdata = JSON.parse(data.tableContent[0].json_data);
+            console.log(JSON.parse(JSON.stringify(data.tableContent[0].json_data)));
+            var transDetailUncalc = formdata.transDetailUncalc;
+            this.baseinfo = formdata.baseinfo;
+            for(var i = 0; i< transDetailUncalc.length;i++){
+              for(var j = 0 ; j< this.list.length;j++){
+                if(transDetailUncalc[i]['var1']==this.list[j]['timeText']){
+                  var arr = {
+                    code: transDetailUncalc[i].transObjCode,
+                    measureUnit: transDetailUncalc[i].measureUnit,
+                    name: transDetailUncalc[i].objName,
+                    nums: transDetailUncalc[i].qty,
+                    ticheng: transDetailUncalc[i].amount,
+                    value: transDetailUncalc[i].transObjId,
+                    id: transDetailUncalc[i].id,
+                  }  
+                  this.list[j]['detail'].push(arr);
+                }
+              }
+            }
           })
         } else {
           this.view = 'new'
         }
       })
-      var json = {
-        conn: 20000,
-        list: 'trans_form_data',
-        transCode: 'SRMN',
-        jsonData: {
-          "listId": "d45606e4-c905-4d6c-9555-b379e4aa683f",
-          "referenceId": "a5f2b2ec-d748-471d-947c-67c2cbb7a01f",
-
-        }
-      }
-      incomeService.saveData(json).then(data => {
-        console.log(data)
-      });
+      
       this.getWeek();
       this.showLoading = false;
     })()
@@ -474,7 +624,8 @@ export default {
                 }
             }
             .list{
-                padding: 0 .05rem;
+              padding: 0 .05rem;
+              margin-bottom: .1rem;
             }     
         }
     }
