@@ -4,15 +4,15 @@
         <div class="page-hasTab">
             <div class="page-navigation">
                 <div>消息</div>
-                <div class="navigation-add" @click="showNavList">+</div>
+                <div :style="{display:'flex',alignItems:'center'}">
+                    <span @click="onSearchClick" class="navigation-search"><icon type="search"></icon></span>
+                    <span class="navigation-add" @click="showNavList">+</span>
+                </div>
             </div>
             <div class="navigation-add-list" v-if="showList">
                 <p @click="showCreateGroupList">发起群聊</p>
             </div>
-            <div class="nav-search">
-                <x-input placeholder="搜索" @on-focus="onSearchFocus"></x-input>
-            </div>
-            <div class="page-body-hasNav body-nav" ref="scrollerWrapper">
+            <div class="page-body-hasNav" ref="scrollerWrapper">
                 <LoadMore :show-loading="showLoading" v-show="showLoading"></LoadMore>
                 <div class = 'group-cells'>
                     <div class="group-cell" v-for="group in groups" :key = "group.id" @click="toMsg(group)">
@@ -48,7 +48,7 @@
     </div><!-- wrapper end-->
 </template>
 <script>
-import { LoadMore,XInput } from 'vux'
+import { LoadMore,XInput,Icon } from 'vux'
 import { getGroupMsg,getMyGroups,createGroup,getGroupByUserId } from 'service/msgService'
 import commonService from 'service/commonService'
 import tokenService from 'service/tokenService'
@@ -88,7 +88,8 @@ export default {
         LoadMore,
         MemberSelector,
         NavSearch,
-        XInput
+        XInput,
+        Icon
     },
     methods:{
          getDefaultPhoto(group) {
@@ -98,7 +99,7 @@ export default {
             }
             return url;
         },
-        onSearchFocus() {
+        onSearchClick() {
             this.$refs["navSearch"].showSearchList = true;
         },
         searchToMsg(item) {
@@ -310,22 +311,26 @@ export default {
 </script>
 <style lang="less" scoped>
   .msg-navigation{
-      .nav-search{
-        background-color: #fff;
-        margin-bottom: .05rem;
-      }
       .page-navigation{
           display: flex;
           justify-content: space-between;
           align-items: center;
           .navigation-add{
             font-size: .3rem;
-            line-height: .16rem;
+            line-height: .14rem;
             text-align: center;
             border: 2px solid #fff;
             border-radius: 50%;
-            width: .21rem;
-            height: .21rem;
+            width: .2rem;
+            height: .2rem;
+            display: inline-block;
+          }
+          .navigation-search{
+              margin-right: .1rem;
+          }
+          .navigation-search /deep/ .weui-icon-search{
+              font-size: .2rem;
+              color: #fff;
           }
       }
       .navigation-add-list{
