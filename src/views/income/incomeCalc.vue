@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import {XButton, Confirm, querystring} from 'vux'
+import {XButton, Confirm, querystring,dateFormat} from 'vux'
 import PopupIncomeCalc from 'components/popup/PopupIncomeCalc'
 import tokenService from 'service/tokenService'
 import Loading from 'components/common/loading'
@@ -258,7 +258,7 @@ export default {
             referenceId: this.referenceId ? this.referenceId : this.guid(),
             baseinfo:{
               ...this.baseinfo,
-              modTime: Date.now(),
+              modTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm:ss')
             },
             baseinfoExt: {
               varchar2:this.prjectInfo.VARCHAR1,
@@ -360,7 +360,7 @@ export default {
       await incomeService.getIsHasSrmnInfo({listId:this.listId,userId:this.userId}).then(data => {
         if(data.dataCount){
           ///this.view = 'updata';
-          this.view = 'updata'
+          this.view = 'new'
           this.referenceId = data.tableContent[0].REFERENCE_ID;
           this.TRANS_CODE = data.tableContent[0].TRANS_CODE;
           console.log('已经提交过收入模拟，RefenceId:'+this.REFERENCE_ID);
