@@ -207,8 +207,9 @@ export default {
         toMsg:function(group){
             if(group != this.group){
                 this.group = group;
-                getGroupMsg(group.groupId).then(msgList=>{
-                    msgList.msgs.map(msg=>{
+                getGroupMsg(group.groupId).then(res=>{
+                    var msgList = res.msgs;
+                    msgList.map(msg=>{
                         var json;
                         if(msg.imType == 3 || msg.imType == 2){
                             try{
@@ -219,7 +220,7 @@ export default {
                             }
                         }
                     })
-                    this.msgList = msgList.msgs;
+                    this.msgList = msgList;
                     this.$router.push('/msg/group')
                 });       
             } else {

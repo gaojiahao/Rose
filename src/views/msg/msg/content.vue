@@ -130,6 +130,7 @@ export default {
         sendImgMsg(e){
             var files = e.target.files,
                 groupId = this.group.groupId,
+                size,
                 name2Size = {},
                 params = {
                     groupId:groupId,
@@ -140,11 +141,17 @@ export default {
             if (!files) {
                return;
             }
-            this.showExtraInput = false;
+            
             for(var i= 0,l= files.length;i < l; i++){
                 file = files[i];
-                name2Size[file.name] = (file.size/1024) + 'KB'
+                size = (file.size/1024).toFixed(2);
+                if(size > 2048){
+                    alert('文件' + file.name + '大于2M');
+                    return;
+                }
+                name2Size[file.name] = size;
             }
+            this.showExtraInput = false;
             upload({
                 file:files
             }).then(rs=>{
@@ -168,12 +175,54 @@ export default {
             })
         },
         sendFileMsg(e){
-            var files = e.target.files;
+            var files = e.target.files,
+                groupId = this.group.groupId,
+                size,
+                name2Size = {},
+                params = {
+                    groupId:groupId,
+                    content:[],
+                    imType:3
+                },file;
+            
+            if (!files) {
+               return;
+            }
+            
+            for(var i= 0,l= files.length;i < l; i++){
+                file = files[i];
+                size = (file.size/1024).toFixed(2);
+                if(size > 2048){
+                    alert('文件' + file.name + '大于2M');
+                    return;
+                }
+                name2Size[file.name] = size;
+            }
+            this.showExtraInput = false;
             upload({
                 file:files
             }).then(rs=>{
-                console.log(rs);
-            })
+                var fileName;
+                if (rs.success){
+                   e.target.value = null;
+                   rs.data.forEach(file=>{
+                       fileName = file.attr1;
+                       params.content.push({
+                            id:file.id,
+                            name:fileName,
+                            imType:2,
+                            size:name2Size[fileName]
+                       })
+                   });
+                   params.content = JSON.stringify(params.content);
+                   sendMsg(params).then(rs=>{
+                       e.target.value = null;
+                   })
+                }
+            });
+        },
+        checkAndUpload(){
+
         },
         toggleWrapper(){
             this.showExtraInput = !this.showExtraInput;
