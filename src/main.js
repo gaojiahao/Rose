@@ -48,7 +48,8 @@ import platfrom from './plugins/platform/index'
 import commonService from "service/commonService";
 import * as dd from 'dingtalk-jsapi'
 
-require('@/directive')
+require('@/directive');
+require('@/filter');
 if(window.isApp){ //处理消息推送专用代码
   require('service/pushService');
 }

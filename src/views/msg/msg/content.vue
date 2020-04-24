@@ -23,7 +23,10 @@
             <div class="msg-container">
                 <LoadMore v-if="loading"></LoadMore>
                 <div v-for="(msg,index) in msgList" :key="index" class="singleMsg">
-                    <MessageTpl :msg="msg"></MessageTpl>
+                    <MessageTplText :msg="msg" v-if="msg.imType == 1"></MessageTplText>
+                    <MessageTplImg :msg="msg" v-else-if="msg.imType == 2"></MessageTplImg>
+                    <MessageTplMult :msg="msg" v-else-if="msg.imType == 3"></MessageTplMult>
+                    <MessageTplFile :msg="msg" v-else-if="msg.imType == 4"></MessageTplFile>
                 </div>
             </div>
         </r-scroll>
@@ -47,9 +50,8 @@
                     
                 </div>
                 <div>
-                    
                     <i class="iconfont icon-file-f uploader">
-                        <input id="uploaderInput" class="weui-uploader__input" type="file" accept="*" multiple="" @change="sendFileMsg">
+                        <input id="uploaderInput" class="weui-uploader__input" type="file" accept="*" multiple="" @change="showFileConfirm">
                     </i>  
                      <div class="extra-input-item-text">
                          文件
@@ -58,6 +60,7 @@
                 </div>
             </div>
             <r-emotion :show="showEmotion" @on-select="emotionSelected" ref="emotion"></r-emotion>
+            <FileDialog v-if="fileDlgContext" @cancel="cancleFile" @todo="sendFileMsg" :msg="fileDlgContext"></FileDialog>
         </div>
         <!-- groupInfo 消息信息页面-->
         <router-view :group="group" ref="groupInfo"></router-view>
@@ -66,10 +69,15 @@
 </template>
 <script>
 import {LoadMore} from 'vux'
+import util from '@/common/util'
 import {upload} from 'service/commonService'
 import {sendMsg,getGroupMsg} from 'service/msgService'
-import MessageTpl from '@/views/msg/msg/messageTpl'
+import MessageTplText from '@/views/msg/msg/messageTplText'
+import MessageTplImg from '@/views/msg/msg/messageTplImg'
+import MessageTplMult from '@/views/msg/msg/messageTplMult'
+import MessageTplFile from '@/views/msg/msg/messageTplFile'
 import RScroll from "plugins/scroll/RScroll";
+import FileDialog from  "./fileDialog"
 import REmotion from 'homePage/components/comment-related/REmotion'
 export default {
     props:['group','msgList'],
@@ -83,13 +91,18 @@ export default {
             page:1,
             loading:false,
             hasNext:true,
-            showExtraInput:false
+            showExtraInput:false,
+            fileDlgContext:null,//文件消息框
         }
     },
     components:{
-        MessageTpl,
+        MessageTplText,
+        MessageTplImg,
+        MessageTplMult,
+        MessageTplFile,
         RScroll,
         LoadMore,
+        FileDialog,
         REmotion
     },
     methods:{
@@ -174,21 +187,17 @@ export default {
                 }
             })
         },
-        sendFileMsg(e){
+        showFileConfirm(e){
             var files = e.target.files,
-                groupId = this.group.groupId,
                 size,
+                countSize = 0,
                 name2Size = {},
-                params = {
-                    groupId:groupId,
-                    content:[],
-                    imType:3
-                },file;
+                file;
             
             if (!files) {
                return;
             }
-            
+            this.fileInput = e.target;
             for(var i= 0,l= files.length;i < l; i++){
                 file = files[i];
                 size = (file.size/1024).toFixed(2);
@@ -196,27 +205,53 @@ export default {
                     alert('文件' + file.name + '大于2M');
                     return;
                 }
+                countSize += file.size;
                 name2Size[file.name] = size;
             }
             this.showExtraInput = false;
+            this.name2Size = name2Size;
+            this.fileDlgContext = {
+                to:'test',
+                content:files.length == 1?
+                    [files[0].name,'，',util.formatFileSize(files[0].size,1)].join('')
+                    :['已选',files.length,'个，共',util.formatFileSize(countSize,1)].join('')
+            }
+        },
+        cancleFile(){
+            this.fileInput.value = null;
+            this.fileDlgContext= null;
+        },
+        sendFileMsg(text){
+            var name2Size = this.name2Size;
+                
             upload({
-                file:files
+                file:this.fileInput.files
             }).then(rs=>{
-                var fileName;
+                var fileName,
+                    params = {
+                        groupId:this.group.groupId,
+                        content:[],
+                        imType:4
+                    };
+
                 if (rs.success){
-                   e.target.value = null;
                    rs.data.forEach(file=>{
                        fileName = file.attr1;
                        params.content.push({
                             id:file.id,
-                            name:fileName,
-                            imType:2,
+                            content:fileName,
+                            imType:4,
                             size:name2Size[fileName]
                        })
                    });
+                   if(text != '')params.content.push({
+                        content:text,
+                        imType:1
+                   });
                    params.content = JSON.stringify(params.content);
                    sendMsg(params).then(rs=>{
-                       e.target.value = null;
+                       this.fileDlgContext = null;
+                       this.fileInput.value = null;
                    })
                 }
             });
@@ -401,6 +436,10 @@ export default {
         font-size: .12rem;
         color: #353535;
     }
+}
+.file-msg-input-wrapper{
+    padding-top: 16px;
+    border-bottom:1px solid $weui-BG-0;
 }
 .singleMsg{
     margin: 0.2rem 0.1rem;

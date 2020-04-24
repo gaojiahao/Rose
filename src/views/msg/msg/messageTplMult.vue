@@ -14,7 +14,7 @@
             :class="[msg.isMySelf==1?'rightarrow':'leftarrow']"  
             v-html="msg.content" v-if="msg.imType==1">
         </div>
-        <div class="message-content" v-else-if="msg.imType==2 || msg.imType==3">
+        <div class="message-content">
             <template v-for="file in msg.content" v-bind="key">
                 <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ file.id" v-if="file.imType==2"/>
                 <div v-html="file.content" v-else-if="file.imType==1"></div>
@@ -25,7 +25,6 @@
 
 <script>
 export default {
-    name:'MessageTpl',
     props:{
         msg:{
             type:Object,
@@ -112,10 +111,5 @@ export default {
     .message-content{
         background-color: rgb(191, 221, 255);
     }
-}
-</style>
-<style>
-.message-content img{
-    height:100px;
 }
 </style>

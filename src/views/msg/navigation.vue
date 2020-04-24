@@ -167,6 +167,9 @@ export default {
                 case '2':
                     this.addMsg(msg,2);
                     break;
+                 case '4':
+                    this.addMsg(msg,4);
+                    break;
                 default:
                     break;
             }
@@ -180,7 +183,7 @@ export default {
                 vm = this,
                 group;
 
-            if(type == 2 || type == 3){
+            if(type != 1){
                 msg.content = JSON.parse(msg.content);
             }
             if (this.groups.length){
@@ -211,7 +214,7 @@ export default {
                     var msgList = res.msgs;
                     msgList.map(msg=>{
                         var json;
-                        if(msg.imType == 3 || msg.imType == 2){
+                        if([2,3,4].includes(msg.imType)){
                             try{
                                 json = JSON.parse(msg.content);
                                 msg.content = json;
