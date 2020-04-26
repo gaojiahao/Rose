@@ -41,7 +41,7 @@
             </li>
           </ul>
         </popup>
-        <user-detail ref="userDetail" :userItem="userItem"></user-detail>
+        <user-detail ref="userDetail" :userId="userId"></user-detail>
     </div> 
 </template>  
 <script>
@@ -70,7 +70,7 @@ export default{
         return {
             clientNum: {}, // 记录开始滑动（x1）,结束滑动（x2）的鼠标指针的位置
             candelete: {}, // 滑动的item
-            userItem: {},
+            userId: "",
             showMemberList: false,
             searchValue: "",
             memberData: []
@@ -138,7 +138,7 @@ export default{
           }
         },
         openUserDetail(item) {
-          this.userItem = item;
+          this.userId = item.userId;
           this.$refs["userDetail"].showUserDetail = true
         },
         touchStart(item) {

@@ -153,3 +153,34 @@ export let getGroupsByName = (name) => {
         data
     })
 }
+
+ //消息置顶
+ export let setFocus = (data={}) => {
+    return $flyio.ajax({
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded',
+        url: '/im/group/setFocus',
+        data
+      })
+}
+
+ //消息取消置顶
+ export let deleteFocus = (data={}) => {
+    return $flyio.ajax({
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded',
+        url: '/im/group/delFocus',
+        data
+      })
+}
+
+// 获取用户详情
+export let getUserInfoById = (userId) => {
+    var data = {
+        userId: userId
+    };
+    return $flyio.ajax({
+        url:'/ds/getUserInfoById', 
+        data
+    })
+}
