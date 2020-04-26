@@ -22,18 +22,36 @@
         >
             <div class="msg-container">
                 <LoadMore v-if="loading"></LoadMore>
-                <div v-for="(msg,index) in msgList" :key="index" class="singleMsg">
+                <div v-for="(msg,index) in msgList" :key="index" class="singleMsg" :class="{ 'isMySelf': msg.isMySelf }">
+                    <img 
+                    :src="msg.photo" 
+                    :style="{float: msg.isMySelf?'right':'left'}"  
+                    class="message-ava" 
+                    @error="getDefaultPhoto(msg)">
+
+                    <span class ="message-creator"
+                        v-if="!msg.isMySelf">{{msg.creatorName}}
+                    </span>
+                    <div class="message-content" @click="onMsgContextMenu(msg)">
                     <MessageTplText :msg="msg" v-if="msg.imType == 1"></MessageTplText>
                     <MessageTplImg :msg="msg" v-else-if="msg.imType == 2"></MessageTplImg>
                     <MessageTplMult :msg="msg" v-else-if="msg.imType == 3"></MessageTplMult>
                     <MessageTplFile :msg="msg" v-else-if="msg.imType == 4"></MessageTplFile>
+                    </div>
                 </div>
             </div>
         </r-scroll>
+        <ContextMenu v-show="showContextMenu" ref="contextMenu"/>
         <div class="msgList-footer">
+            <div class="replayMsg" v-if="replayMsg">
+                <span>{{replayMsg.creatorName}}:</span>
+                <div class="replayMsg-content"></div>
+                <span class="icon-close" @click="replayMsg = null">
+                </span>
+            </div> 
             <div class="input-wrapper">
                 
-                <textarea class="msg-input"  v-model="msg" type="text" @keyup.enter="sendTextMsg"></textarea>
+                <textarea class="msg-input"  v-model="msg" type="text"></textarea>
                 <i class="icon-emotion" @click="showEmotion = !showEmotion;showExtraInput=false;"></i>
                 <i class="icon-add-more" @click="toggleWrapper" v-if="!msg"></i>
                 <span class="btn-send" v-if="msg" @click="sendTextMsg">发送</span>
@@ -59,9 +77,10 @@
                     
                 </div>
             </div>
-            <r-emotion :show="showEmotion" @on-select="emotionSelected" ref="emotion"></r-emotion>
+            <r-emotion :show = "showEmotion" @on-select="emotionSelected" ref="emotion"></r-emotion>
             <FileDialog v-if="fileDlgContext" @cancel="cancleFile" @todo="sendFileMsg" :msg="fileDlgContext"></FileDialog>
-        </div>
+            
+        </div><!-- footer-->
         <!-- groupInfo 消息信息页面-->
         <router-view :group="group" ref="groupInfo"></router-view>
         <!-- groupInfo end -->
@@ -78,6 +97,7 @@ import MessageTplMult from '@/views/msg/msg/messageTplMult'
 import MessageTplFile from '@/views/msg/msg/messageTplFile'
 import RScroll from "plugins/scroll/RScroll";
 import FileDialog from  "./fileDialog"
+import ContextMenu from './contextMenu'
 import REmotion from 'homePage/components/comment-related/REmotion'
 export default {
     props:['group','msgList'],
@@ -90,8 +110,10 @@ export default {
             showEmotion:false,
             page:1,
             loading:false,
+            replayMsg:false,//回复消息
             hasNext:true,
-            showExtraInput:false,
+            showExtraInput:false,//图片和文件输入框
+            showContextMenu:false,//右键菜单
             fileDlgContext:null,//文件消息框
         }
     },
@@ -103,6 +125,7 @@ export default {
         RScroll,
         LoadMore,
         FileDialog,
+        ContextMenu,
         REmotion
     },
     methods:{
@@ -133,9 +156,15 @@ export default {
 			         content:this.msg,
 			         imType:1
                  };
+
+            
             if (this.msg != ''){
+                if(this.replayMsg){
+                   params.replayId = this.replayMsg.id;
+                }
                 sendMsg(params).then(rs=>{
                    this.msg = '';
+                   this.replayMsg = null;
                 })
             }
             
@@ -256,8 +285,24 @@ export default {
                 }
             });
         },
-        checkAndUpload(){
+        onMsgContextMenu(msg){
+            this.contextMenuMsg = msg;
+            this.showContextMenu = true;
+        },
+        initContextMenu(){
+            var contextMenu = this.$refs.contextMenu;
 
+            contextMenu.$on('replay',()=>{
+                this.showContextMenu = false;
+                if(this.contextMenuMsg){
+                    this.replay(this.contextMenuMsg);
+                    this.contextMenuMsg = null;
+                }
+            });
+        },
+        replay(msg){
+            this.replayMsg = msg;
+            this.msg += '@'+msg.creatorName+' ';
         },
         toggleWrapper(){
             this.showExtraInput = !this.showExtraInput;
@@ -313,6 +358,7 @@ export default {
         }
     },
     mounted:function(){
+        this.initContextMenu();
     },
     beforeRouteEnter:function(to,form,next){
         next(vm=>{
@@ -353,6 +399,16 @@ export default {
 }
 .msgList-footer {
     position: relative;
+    .replayMsg{
+        display:flex;
+        padding:15px;
+        .replayMsg-content{
+            flex:1
+        }
+        .icon-close{
+            width:.25rem;
+        }
+    }
     .input-wrapper{
         padding: .08rem .1rem;
         height: .5rem;
@@ -444,5 +500,64 @@ export default {
 .singleMsg{
     margin: 0.2rem 0.1rem;
     clear: both;
+}
+.message{
+    &-ava{
+        height: 40px;
+        border-radius: .01rem;
+    }
+
+    &-creator{
+        display: block;
+        margin-left: .50rem;
+        font-size: 10px;
+        color: #9E9E9E;
+    }
+    &-content{
+        border-radius: 5px;
+        padding: .05rem;
+        position: relative;
+        margin: .02rem .06rem;
+        display: inline-block;
+        max-width: 70%;
+        background-color: #ffffff;
+        &.rightarrow:after{
+            content: " ";
+            border-width: 7px;
+            position: absolute;
+            display: block;
+            width: 0;
+            height: 0;
+            border-color: transparent;
+            border-style: solid;
+            top: 10px;
+            margin-left: 1px;
+            border-right-width: 0;
+            border-left-color: rgb(191, 221, 255);
+            right: -6px;
+        }
+
+        &.leftarrow:after{
+            content: " ";
+            border-width: 7px;
+            position: absolute;
+            display: block;
+            width: 0;
+            height: 0;
+            border-color: transparent;
+            border-style: solid;
+            top: 3px;
+            margin-left: 1px;
+            border-left-width: 0;
+            border-right-color: rgb(255, 255, 255);
+            left: -8px;
+        }
+    }
+}
+.isMySelf{
+    text-align: right;
+    .message-content{
+        background-color: rgb(191, 221, 255);
+    }
 }
 </style>
