@@ -74,6 +74,9 @@ export default {
         Bus.$on('toMsg', group => {
             this.toMsg(group)
         })
+        Bus.$on('updateGroups', () => {
+            this.initGroup();
+        });
     },
     activated:function(){
         if(this.refresh){//如果需要刷新
