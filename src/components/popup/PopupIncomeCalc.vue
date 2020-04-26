@@ -41,7 +41,7 @@
       },
       // 默认值
       defaultValue: {
-        type: Array,
+        type: Object,
         default() {
           return []
         }
@@ -118,7 +118,8 @@
       },
       // 设置默认值
       setDefaultValue() {
-
+        this.nums = this.defaultValue.nums;
+        this.setvalue = this.defaultValue;
       },
       onChange(){
 

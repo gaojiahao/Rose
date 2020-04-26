@@ -19,7 +19,11 @@
             </div>
             <div class="each-dashboard when-today">
               <div class="dashboard_title">月收入目标</div>
-              <div class="dashboard_count"><span>￥</span>222</div>
+              <!-- <div class="dashboard_count"><span>￥</span>{{this.monthSaleGobal}}</div> -->
+              <div class="dashboard_count">
+                <div class="left">￥</div>
+                <div class="right"><input class="input" :value="this.monthSaleGobal" /></div
+              ></div>
             </div>
           </div>
           <div class="place-holder"></div>
@@ -34,26 +38,36 @@
                   <div class="content" :class="{'open':item.showContent}">
                       <div class="button">
                           <div class="left"><x-button mini type="primary" @click.native="clickProject(index)">新增</x-button></div>
-                          <div class="left"><x-button mini type="warn">管理</x-button></div>
+                          <!-- <div class="left"><x-button mini type="warn">管理</x-button></div> -->
                       </div>
-                      <div class="list" v-for="(dItem,dIndex) in item.detail" :key="dIndex"> 
-                          <div style="width: 100%;position: relative;">
-                            <div style="width:70%">
-                              <span style="">{{dItem.name}}</span>
+                      <template v-if="item.detail.length">
+                        <div class="list" v-for="(dItem,dIndex) in item.detail" :key="dIndex"> 
+                            <div style="width: 100%;position: relative;">
+                              <div style="width:70%">
+                                <span style="">{{dItem.name}}</span>
+                                <!-- <span style="display:none">{{dItem.value}}</span>
+                                <span style="">{{dItem.nums}}<span>{{dItem.measureUnit}}</span></span>
+                                <span style="">---提成¥<span>{{dItem.ticheng}}</span></span> -->
+                              </div>
+                              <div style="width: 30%;position: absolute;top: 0;right: -.18rem;">
+                                <span><span class="icon-edit" @click="edid(index,dIndex)"></span><span class="icon-del" @click="del(index,dIndex)"></span></span>
+                              </div>
+                            </div>
+                            <div>
                               <span style="display:none">{{dItem.value}}</span>
-                              <span style="">{{dItem.nums}}<span>{{dItem.measureUnit}}</span></span>
-                              <span style="">---提成¥<span>{{dItem.ticheng}}</span></span>
-                            </div>
-                            <div style="width: 30%;position: absolute;top: 0;right: -.18rem;">
-                              <span><span class="icon-edit"></span><span class="icon-del"></span></span>
-                            </div>
-                          </div>     
+                                <span style="">{{dItem.nums}}<span>{{dItem.measureUnit}}</span></span>
+                                <span style=" float:right">提成¥<span>{{dItem.ticheng}}</span></span> 
+                            </div>   
+                        </div>
+                      </template>
+                      <div  v-else>
+                        <div>{{item.timeText}}未填报！</div>
                       </div>
                   </div>
                 </div>
             </div>   
         </div>
-        <popup-income-calc :show="showPopupIncomeCalc" v-model="showPopupIncomeCalc" :products="products" ref="PopupIncomeCalc" @on-sel="selProject"></popup-income-calc>
+        <popup-income-calc :show="showPopupIncomeCalc" v-model="showPopupIncomeCalc" :products="products" ref="PopupIncomeCalc" @on-sel="selProject" :defaultValue='defaultValue'></popup-income-calc>
         <loading :show="showLoading"></loading>
     </div>
 </template>
@@ -79,7 +93,9 @@ export default {
         products:[],
         listId:'d45606e4-c905-4d6c-9555-b379e4aa683f',
         userId:'',
-        baseinfo:{}
+        baseinfo:{},
+        defaultValue:{},
+        monthSaleGobal:0,
     }
   },
   components: {
@@ -189,6 +205,13 @@ export default {
         ...item,
         ticheng: ticheng, //需要计算
       }
+      for(var i = 0 ; i < this.list[this.xindex]['detail'].length; i++){
+        if(this.list[this.xindex]['detail'][i]['value'] == item.value){
+          this.list[this.xindex]['detail'][i] = arr; 
+          this.submit();
+          return ; 
+        }
+      }
       this.list[this.xindex]['detail'].push(arr);
       this.submit();
     },
@@ -256,10 +279,10 @@ export default {
           jsonData: {
             listId: "d45606e4-c905-4d6c-9555-b379e4aa683f",
             referenceId: this.referenceId ? this.referenceId : this.guid(),
-            baseinfo:{
-              ...this.baseinfo,
-              modTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm:ss')
-            },
+            // baseinfo:{
+            //   ...this.baseinfo,
+            //   modTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm:ss')
+            // },
             baseinfoExt: {
               varchar2:this.prjectInfo.VARCHAR1,
               varchar4: 5000,  //用户自己填收入目标
@@ -292,13 +315,24 @@ export default {
         json.jsonData = JSON.stringify(json.jsonData);
         console.log('提交数据：'+json)
         console.log('baseinfo',json)
-        return;
+        //return;
         incomeService.saveData(querystring.stringify(json)).then(data => {
           console.log(data)
         });
 
       }
-    }
+    },
+    //删除
+    del(index,dIndex){
+      this.list[index]['detail'].splice(dIndex,1);
+      this.submit();
+    },
+    //修改
+    edid(index,dIndex){
+      this.defaultValue = this.list[index]['detail'][dIndex];
+      this.clickProject(index);
+    },
+    //新增月收入目标
   },
   beforeCreate() {
     let query = querystring.parse(location.search.slice(1));
@@ -360,7 +394,7 @@ export default {
       await incomeService.getIsHasSrmnInfo({listId:this.listId,userId:this.userId}).then(data => {
         if(data.dataCount){
           ///this.view = 'updata';
-          this.view = 'new'
+          this.view = 'updata'
           this.referenceId = data.tableContent[0].REFERENCE_ID;
           this.TRANS_CODE = data.tableContent[0].TRANS_CODE;
           console.log('已经提交过收入模拟，RefenceId:'+this.REFERENCE_ID);
@@ -521,7 +555,25 @@ export default {
                 font-size: .12rem;
                 }
                 .dashboard_count {
-                font-size: .22rem;
+                  font-size: .22rem;
+                  width: 100%;
+                  position: relative;
+                  height: .22rem;
+                  .left{
+                    width: 10%;
+                    float: left;
+                  }
+                  .right{
+                    width: 90%;
+                    height: .22rem;
+                    .input{
+                      width: 80%;
+                      font-size: .22rem;
+                      border: 0px;
+                      outline: none;
+                      cursor: pointer;
+                    }
+                  }
                 }
                 &.when-today {
                 // $bgColor: #2366FF;
