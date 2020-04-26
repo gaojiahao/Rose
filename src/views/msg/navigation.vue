@@ -76,6 +76,10 @@ export default {
         })
     },
     activated:function(){
+        if(this.refresh){//如果需要刷新
+            this.refresh = false;
+            this.initGroup();
+        }
     },
     data(){
         return {
@@ -126,6 +130,10 @@ export default {
                 this.groups = data;
                 this.scroller && this.scroller.refresh();
                 this.showLoading = false
+            }).catch(e=>{
+                if(e.message == 'nologin'){//没有登录
+                    this.refresh = true;
+                }
             })
         },
         initDs:function(){
