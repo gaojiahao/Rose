@@ -23,12 +23,12 @@
                     <div class="group-cell" v-for="group in groups" :key = "group.id" @click="toMsg(group)">
                         <img class="group-ava" :src="group.groupIcon" @error="getDefaultPhoto(group)">
                         <div class="group-body">
-                            <div>
+                            <div class="group-name">
                                 {{group.groupName}}
                             </div>
                             <div class="msg-lastMsg" v-if="group.lastMsg">
                                 <span>{{group.lastMsg.creatorName}}:</span>
-                                <span v-if="group.lastMsg.imType===1" v-html="group.lastMsg.content"></span>
+                                <span v-if="group.lastMsg.imType===1" v-html="formatToEmotion(group.lastMsg.content)"></span>
                                 <span v-if="group.lastMsg.imType===2">文件</span>
                             </div> 
                         </div>
@@ -369,6 +369,11 @@ export default {
   .group-body{
       line-height: 28px;
       width: calc(100% - 1.4rem);
+      margin-left: .15rem;
+      .group-name{
+          font-size: 14px;
+      }
+
       div{
         width: 2rem;
         overflow: hidden;
@@ -377,8 +382,8 @@ export default {
       }
   }
   .group-ava{
-    width: 50px;
-    margin-right: .10rem;
+    width: .45rem;
+    width: .45rem;
     border-radius: .02rem;
   }
   
@@ -398,5 +403,10 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+   span{
+        /deep/.static-emotion-gif{
+        height: .16rem;
+    }
+   }
   }
 </style>

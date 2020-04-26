@@ -135,7 +135,7 @@ export default {
                  };
             if (this.msg != ''){
                 sendMsg(params).then(rs=>{
-                   this.msg = '';
+                //    this.msg = '';
                 })
             }
             

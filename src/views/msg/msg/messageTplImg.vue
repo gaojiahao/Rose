@@ -12,7 +12,7 @@
         <div class="message-content img-msg-content "  :class="[msg.isMySelf==1?'rightarrow':'leftarrow']"  >
             <template v-for="file in msg.content" v-bind="key">
                 <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ file.id" v-if="file.imType==2" height="100" />
-                <div v-html="file.content" v-else-if="file.imType==1"></div>
+                <div v-html="formatToEmotion(file.content)" v-else-if="file.imType==1"></div>
             </template>
         </div>
     </div>
@@ -111,5 +111,6 @@ export default {
 <style>
 .img-msg-content img{
     height:100px;
+    max-width: 100%;
 }
 </style>

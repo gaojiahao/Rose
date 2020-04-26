@@ -37,7 +37,7 @@
 
 <script>
   import {savePraise} from 'service/commentService'
-  import emotion from 'plugins/emoji/emotion'
+  import {EMOTION} from 'plugins/emoji/emotion'
   import {WechatEmotion as Emotion, dateFormat} from 'vux'
 
   export default {
@@ -110,7 +110,7 @@
       },
       // 替换表情图片地址
       handleComment() {
-        let emotionList = [...emotion];
+        let emotionList = [...EMOTION];
         let comment = this.item.CONTENT;
         let reg = /\[(.+?)\]/g;
         // 处理PC的表情图片

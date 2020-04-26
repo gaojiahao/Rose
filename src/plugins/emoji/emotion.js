@@ -1,4 +1,27 @@
-export default [
+/**
+ * 转换移动端表情
+ */
+export const formatToEmotion=(value)=>{
+  let reg = /\[(.+?)\]/g;
+  let emotion = [...EMOTION];
+  value = value.replace(reg, (word) => {
+      // 寻找表情索引
+      let idx = emotion.findIndex(item => item === word.replace(/(\[|\])/g, ''));
+      // 没有匹配项则返回原文字
+      if (idx === -1) {
+      return word
+      }
+        let path = idx>104 ? '/img' : 'https://res.wx.qq.com/mpres/htmledition/images/icon';
+      return `<img class="static-emotion-gif" style="vertical-align: middle" src="${path}/emotion/${idx}.gif">`;
+  });
+  
+  return value;
+}
+
+
+
+
+export const EMOTION =  [
   '微笑',
   '撇嘴',
   '色',
