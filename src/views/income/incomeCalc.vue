@@ -566,7 +566,6 @@ export default {
                   position: relative;
                   height: .22rem;
                   .left{
-                    width: 10%;
                     float: left;
                   }
                   .right{
@@ -652,10 +651,10 @@ export default {
                             float: right;
                             margin: 0 .05rem;
                             .weui-btn_mini {
-                                display: inline-block;
-                                padding: 0 1.32em;
-                                line-height: 18px;
-                                font-size: 10px;
+                              display: inline-block;
+                              padding: 0 1.32em;
+                              line-height: 1.9;
+                              font-size: 11px;
                             }
                         }
                     }
