@@ -32,11 +32,17 @@
                     <span class ="message-creator"
                         v-if="!msg.isMySelf">{{msg.creatorName}}
                     </span>
-                    <div class="message-content" @click="onMsgContextMenu(msg)">
-                    <MessageTplText :msg="msg" v-if="msg.imType == 1"></MessageTplText>
-                    <MessageTplImg :msg="msg" v-else-if="msg.imType == 2"></MessageTplImg>
-                    <MessageTplMult :msg="msg" v-else-if="msg.imType == 3"></MessageTplMult>
-                    <MessageTplFile :msg="msg" v-else-if="msg.imType == 4"></MessageTplFile>
+                    <div class="message-content" @contextmenu="onMsgContextMenu(msg)" :class="[msg.isMySelf==1?'rightarrow':'leftarrow']" ref="contextMenu">
+                        <div v-if="msg.replayMsg" style="border-left: 3px solid rgb(153, 153, 153); padding: 0px 8px; cursor: pointer;">
+                             <MessageTplText :msg="msg.replayMsg" v-if="msg.replayMsg.imType == 1"></MessageTplText>
+                             <MessageTplImg :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 2"></MessageTplImg>
+                             <MessageTplMult :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 3"></MessageTplMult>
+                             <MessageTplFile :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 4"></MessageTplFile>
+                        </div>
+                        <MessageTplText :msg="msg" v-if="msg.imType == 1"></MessageTplText>
+                        <MessageTplImg :msg="msg" v-else-if="msg.imType == 2"></MessageTplImg>
+                        <MessageTplMult :msg="msg" v-else-if="msg.imType == 3"></MessageTplMult>
+                        <MessageTplFile :msg="msg" v-else-if="msg.imType == 4"></MessageTplFile>
                     </div>
                 </div>
             </div>
@@ -292,7 +298,7 @@ export default {
         initContextMenu(){
             var contextMenu = this.$refs.contextMenu;
 
-            contextMenu.$on('replay',()=>{
+            if(contextMenu)contextMenu.$on('replay',()=>{
                 this.showContextMenu = false;
                 if(this.contextMenuMsg){
                     this.replay(this.contextMenuMsg);
@@ -327,17 +333,6 @@ export default {
                 var  msgList = this.$parent.msgList;
                 this.loading = false;
                 if(rs.length){
-                    rs.map(msg=>{
-                        var json;
-                        if(msg.imType == 3 || msg.imType == 2){
-                            try{
-                                json = JSON.parse(msg.content);
-                                msg.content = json;
-                            }catch(e){
-                                console.log('msg content parse error',msg.content);
-                            }
-                        }
-                    });
                     this.page ++;
                     msgList.unshift(...rs);
                     this.$parent.msgList = msgList;

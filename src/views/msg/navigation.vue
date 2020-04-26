@@ -201,9 +201,6 @@ export default {
                 vm = this,
                 group;
 
-            if(type != 1){
-                msg.content = JSON.parse(msg.content);
-            }
             if (this.groups.length){
                 index = this.groupIdToIndex[groupId];
                 group = this.groups[index];
@@ -229,19 +226,7 @@ export default {
             if(group != this.group){
                 this.group = group;
                 getGroupMsg(group.groupId).then(res=>{
-                    var msgList = res.msgs;
-                    msgList.map(msg=>{
-                        var json;
-                        if([2,3,4].includes(msg.imType)){
-                            try{
-                                json = JSON.parse(msg.content);
-                                msg.content = json;
-                            }catch(e){
-                                console.log('msg content parse error',msg.content);
-                            }
-                        }
-                    })
-                    this.msgList = msgList;
+                    this.msgList = res.msgs;
                     this.$router.push('/msg/group')
                 });       
             } else {

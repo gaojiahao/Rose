@@ -1,6 +1,6 @@
 <template>
-    <div class="file-msg-container"  :class="[msg.isMySelf==1?'rightarrow':'leftarrow']"  >
-        <template v-for="file in msg.content" v-bind="key">
+    <div class="file-msg-container">
+        <template v-for="file in content" v-bind="key">
             <div v-if="file.imType == 4" class="singleFile">
                 <div class="file-content-info">
                     <p>
@@ -29,11 +29,18 @@ export default {
     },
     data(){
         return {
-            baseURL:window.baseURL||''
+            baseURL:window.baseURL||'',
+            content:[]
         }
     },
     created:function(){
         this.defaultFileImg = require('assets/file/all.png');
+        try{
+            var json = JSON.parse(this.msg.content);
+            this.content = json;
+        }catch(e){
+            console.log('msg content parse error',this.msg.content);
+        }
     },
      methods:{
         getFileImg(){

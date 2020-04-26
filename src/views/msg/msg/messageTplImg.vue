@@ -1,6 +1,6 @@
 <template> 
-    <div class="img-msg-content "  :class="[msg.isMySelf==1?'rightarrow':'leftarrow']"  >
-        <template v-for="file in msg.content" v-bind="key">
+    <div class="img-msg-content ">
+        <template v-for="file in content" v-bind="key">
             <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ file.id" v-if="file.imType==2" height="100" />
             <div v-html="file.content" v-else-if="file.imType==1"></div>
         </template>
@@ -17,9 +17,18 @@ export default {
             }
         }
     },
+    created(){
+        try{
+            var json = JSON.parse(this.msg.content);
+            this.content = json;
+        }catch(e){
+            console.log('msg content parse error',this.msg.content);
+        }
+    },
     data(){
         return {
-            baseURL:window.baseURL||''
+            baseURL:window.baseURL||'',
+            content:[]
         }
     }
 }
