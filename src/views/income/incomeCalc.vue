@@ -22,7 +22,7 @@
               <!-- <div class="dashboard_count"><span>￥</span>{{this.monthSaleGobal}}</div> -->
               <div class="dashboard_count">
                 <div class="left">￥</div>
-                <div class="right"><input class="input" :value="this.monthSaleGobal" /></div
+                <div class="right"><input class="input" :value="this.monthSaleGobal" @blur="onInput" /></div
               ></div>
             </div>
           </div>
@@ -235,7 +235,7 @@ export default {
             referenceId: this.guid(),
             baseinfoExt: {
               varchar2:this.prjectInfo.VARCHAR1,
-              varchar4: 5000,  //用户自己填收入目标
+              varchar4: this.monthSaleGobal,  //用户自己填收入目标
               id: this.prjectInfo.REFERENCE_ID,
               varchar3: this.prjectInfo.REFERENCE_ID
             },
@@ -285,7 +285,7 @@ export default {
             // },
             baseinfoExt: {
               varchar2:this.prjectInfo.VARCHAR1,
-              varchar4: 5000,  //用户自己填收入目标
+              varchar4: this.monthSaleGobal,
               id: this.prjectInfo.REFERENCE_ID,
               varchar3: this.prjectInfo.REFERENCE_ID
             },
@@ -333,6 +333,11 @@ export default {
       this.clickProject(index);
     },
     //新增月收入目标
+    onInput(e){
+      var value = e.target.value;
+      this.monthSaleGobal = value;
+      this.submit();
+    }
   },
   beforeCreate() {
     let query = querystring.parse(location.search.slice(1));
@@ -403,6 +408,7 @@ export default {
             console.log(JSON.parse(JSON.stringify(data.tableContent[0].json_data)));
             var transDetailUncalc = formdata.transDetailUncalc;
             this.baseinfo = formdata.baseinfo;
+            this.monthSaleGobal = formdata.baseinfoExt.varchar4;
             for(var i = 0; i< transDetailUncalc.length;i++){
               for(var j = 0 ; j< this.list.length;j++){
                 if(transDetailUncalc[i]['var1']==this.list[j]['timeText']){
