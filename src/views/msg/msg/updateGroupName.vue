@@ -16,7 +16,7 @@
             </span>
           </div>
           <div class="name-input">
-            <x-input ref="nameInput" v-model="group.groupName" show-clear></x-input>
+            <x-input ref="nameInput" v-model="groupName" show-clear></x-input>
           </div>
         </popup>
     </div> 
@@ -38,12 +38,13 @@ export default{
     },
     data() {
         return {
-           showUpdateName: false ,
-           isDisabled: false
+           showUpdateName: false,
+           isDisabled: false,
+           groupName: ""
         }
     },
     watch: {
-      "group.groupName": function(value) {
+      groupName: function(value) {
           !value ? this.isDisabled = true : this.isDisabled = false;
       },
       showUpdateName: function(value) {
@@ -59,11 +60,11 @@ export default{
           this.showUpdateName = false;
         },
         editGroupName() {
-          if(!this.group.groupName) return;
+          if(!this.groupName) return;
 
           let params = {
             groupId: this.group.groupId,
-            name: this.group.groupName
+            name: this.groupName
           }
           setGroupName(params).then(res => {
                 if(res.success){
@@ -72,6 +73,9 @@ export default{
                 }
             })
         }
+    },
+    mounted() {
+      this.groupName = this.group.groupName;
     }
 }  
 </script>  
