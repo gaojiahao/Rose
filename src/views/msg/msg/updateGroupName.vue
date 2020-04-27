@@ -49,6 +49,7 @@ export default{
       },
       showUpdateName: function(value) {
         if(value) {
+          this.groupName = this.group.groupName;
             setTimeout(() => {
               this.$refs["nameInput"] && this.$refs["nameInput"].focus();
             },100)
@@ -73,9 +74,6 @@ export default{
                 }
             })
         }
-    },
-    mounted() {
-      this.groupName = this.group.groupName;
     }
 }  
 </script>  
