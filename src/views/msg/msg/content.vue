@@ -32,7 +32,7 @@
                     <span class ="message-creator"
                         v-if="!msg.isMySelf">{{msg.creatorName}}
                     </span>
-                    <div class="message-content" @contextmenu="onMsgContextMenu(msg)" :class="[msg.isMySelf==1?'rightarrow':'leftarrow']" ref="contextMenu">
+                    <div class="message-content" @click="onMsgContextMenu(msg)" :class="[msg.isMySelf==1?'rightarrow':'leftarrow']" ref="contextMenu">
                         <div v-if="msg.replayMsg" style="border-left: 3px solid rgb(153, 153, 153); padding: 0px 8px; cursor: pointer;">
                              <MessageTplText :msg="msg.replayMsg" v-if="msg.replayMsg.imType == 1"></MessageTplText>
                              <MessageTplImg :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 2"></MessageTplImg>

@@ -9,7 +9,8 @@
                     <span class="navigation-add" @click="showNavList">+</span>
                 </div>
             </div>
-            <div class="navigation-add-list" v-if="showList">
+            <div class="navigation-add-list-mask" v-show="showList" @click="showList = false"></div>
+            <div class="navigation-add-list" v-if="showList">  
                 <p @click="showCreateGroupList">发起群聊</p>
             </div>
                 <RScroll 
@@ -237,7 +238,8 @@ export default {
             this.showList = !this.showList;
         },
         showCreateGroupList() {
-            this.$refs["memberSelector"].showMemberSelector = true;
+            var memberSelector = this.$refs["memberSelector"];
+            memberSelector.showMemberSelector = true;
         },
         addGroup(userList) {
             let userIds = [],
@@ -322,6 +324,15 @@ export default {
               color: #fff;
           }
       }
+      .navigation-add-list-mask{
+          position: absolute;
+          top:0;
+          left:0;
+          right: 0;
+          bottom:0;
+          z-index: 99;
+          background: transparent;
+      }
       .navigation-add-list{
         position: absolute;
         top: .42rem;
@@ -373,7 +384,7 @@ export default {
       }
   }
   .group-ava{
-    width: 50px;
+    height: 50px;
     margin-right: .10rem;
     border-radius: .02rem;
   }
