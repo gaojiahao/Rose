@@ -288,5 +288,14 @@ export default {
             }
         }
   }
+  .scroller-body /deep/ .weui-cell_access .weui-cell__ft:after{
+    height: 18px;
+    width: 9px;
+    top: 22%;
+    transform: rotate(0deg);
+  }
+  .scroller-body /deep/ .weui-cell_access .weui-cell__ft{
+      padding-right: 18px;
+  }
   
 </style>
