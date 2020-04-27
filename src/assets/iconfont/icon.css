@@ -30,6 +30,14 @@
   background: url('~assets/iconfont/add.png');
   background-size: cover;
 }
+.icon-message-add {
+  background: url('~assets/iconfont/add-message.png');
+  background-size: cover;
+}
+.icon-message-search {
+  background: url('~assets/iconfont/search-message.png');
+  background-size: cover;
+}
 .icon-add-task {
   background: url('~assets/iconfont/taskAdd.png');
   background-size: cover;

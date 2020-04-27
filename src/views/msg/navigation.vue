@@ -4,9 +4,13 @@
         <div class="page-hasTab">
             <div class="page-navigation">
                 <div>消息</div>
-                <div :style="{display:'flex',alignItems:'center'}">
-                    <span @click="onSearchClick" class="navigation-search"><icon type="search"></icon></span>
-                    <span class="navigation-add" @click="showNavList">+</span>
+                <div :style="{lineHeight:'.1rem'}">
+                    <span @click="onSearchClick" class="navigation-search">
+                        <span class="icon icon-message-search"></span>
+                    </span>
+                    <span class="navigation-add" @click="showNavList">
+                        <span class="icon icon-message-add"></span>
+                    </span>
                 </div>
             </div>
             <div class="navigation-add-list" v-if="showList">
@@ -305,21 +309,25 @@ export default {
           justify-content: space-between;
           align-items: center;
           .navigation-add{
-            font-size: .3rem;
-            line-height: .14rem;
-            text-align: center;
-            border: 2px solid #fff;
-            border-radius: 50%;
-            width: .2rem;
-            height: .2rem;
-            display: inline-block;
+            .icon-message-add{
+                  width: .25rem;
+                  height: .25rem;
+                  display: inline-block;
+              }
           }
           .navigation-search{
               margin-right: .1rem;
+              .icon-message-search{
+                  width: .25rem;
+                  height: .25rem;
+                  display: inline-block;
+              }
           }
           .navigation-search /deep/ .weui-icon-search{
               font-size: .2rem;
               color: #fff;
+              width: 26px;
+              height: 26px;
           }
       }
       .navigation-add-list{
