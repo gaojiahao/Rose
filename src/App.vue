@@ -63,9 +63,21 @@ export default {
       if(to.name!='DETAIL'&&from.name=='LIST'){
         from.meta.keepAlive = false;  
       }
+
+       // cordova插件会定义一个StatusBar对象，当它只能在deviceready后才能使用
+        if (cordova.platformId == 'android') { // 安卓需要特殊处理，参见 cordova 官方文档
+        StatusBar.overlaysWebView(true)
+      }
+        document.addEventListener("deviceready", this.onDeviceReady, false)
+
     }
   },
   methods:{
+    onDeviceReady () {
+        // 根据路由动态改变状态栏样式
+        // 我给状态栏字体色为白色的路由都设置了一个路由元meta,属性statusBgc为1
+        StatusBar.styleLightContent();
+    },
     /**
      * @description: 获取默认主题
      * @param {type} 
@@ -127,6 +139,7 @@ export default {
     },
   },
   created() {
+     document.addEventListener("deviceready", this.onDeviceReady, false)
     var Vue = this.$parent.constructor;
     this.getTheme();
     this.$event.$on('badgeNum', (val) => {
