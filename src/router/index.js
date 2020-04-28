@@ -11,6 +11,7 @@ import Router from 'vue-router'
 import HomeRouter from '@/home/router'
 import tokenService from 'service/tokenService'
 import MsgRouter from '@/msg/router'
+import MyPerformanceRouter from '@/owns/router'
 import {isPC,isQYWX,isDD} from '@/plugins/platform/index'
 
 import { getFieldSetting, getAllDict, getAllFieldSettingListLevel}  from "service/fieldModelService"
@@ -27,7 +28,8 @@ if (router == null) {
     base:'/Hermes',
     routes: [
       ...HomeRouter,
-      ...MsgRouter
+      ...MsgRouter,
+      ...MyPerformanceRouter
     ]
   })
 
