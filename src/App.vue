@@ -157,7 +157,8 @@ export default {
   @import './assets/app.less';
 
   @import './common/swiper-4.2.2.min.css';
-  @import './assets/weui.min.css';
+  //@import './assets/weui.min.css'; //和vux的版本不兼容
+  @import '~vux/src/styles/weui/widget/weui_tips/weui_actionsheet.less';
   @import './assets/iconfont/icon.css';
   @import './assets/iconfont/iconfont.css';
 

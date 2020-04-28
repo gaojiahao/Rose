@@ -26,7 +26,7 @@ export default [
     },
     children: [
       {
-        path: 'group',
+        path: 'group/:groupId',
         meta:{ 
           tile:'聊天页面',
           keepAlive: true

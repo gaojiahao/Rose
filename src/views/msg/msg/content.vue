@@ -7,7 +7,7 @@
             <div class="groupName body">
                 {{group.groupName}}<span v-if="group.groupType == 'G'">({{group.msgCount}})</span>
             </div>
-            <div class="toGroupAdmin" @click="$router.push('/msg/group/info')">
+            <div class="toGroupAdmin" @click="$router.push('/msg/group/'+ group.groupId +'/info')">
                 <i class="iconfont icon-users" ></i>
             </div>
         </div>
@@ -32,7 +32,7 @@
                     <span class ="message-creator"
                         v-if="!msg.isMySelf">{{msg.creatorName}}
                     </span>
-                    <div class="message-content" @click="onMsgContextMenu(msg)" :class="[msg.isMySelf==1?'rightarrow':'leftarrow']" ref="contextMenu">
+                    <div class="message-content" @click="onMsgContextMenu(msg,$event)" :class="[msg.isMySelf==1?'rightarrow':'leftarrow']" ref="contextMenu">
                         <div v-if="msg.replayMsg" style="border-left: 3px solid rgb(153, 153, 153); padding: 0px 8px; cursor: pointer;">
                              <MessageTplText :msg="msg.replayMsg" v-if="msg.replayMsg.imType == 1"></MessageTplText>
                              <MessageTplImg :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 2"></MessageTplImg>
@@ -51,15 +51,14 @@
         <div class="msgList-footer">
             <div class="replayMsg" v-if="replayMsg">
                 <span>{{replayMsg.creatorName}}:</span>
-                <div class="replayMsg-content"></div>
+                <div class="replayMsg-content">{{replayMsg|replayContent}}</div>
                 <span class="icon-close" @click="replayMsg = null">
                 </span>
             </div> 
             <div class="input-wrapper">
-                
-                <textarea class="msg-input"  v-model="msg" type="text"></textarea>
+                <textarea class="msg-input"  v-model="msg" type="text" ref="msgInput" @focus="showExtraInput=false"></textarea>
                 <i class="icon-emotion" @click="showEmotion = !showEmotion;showExtraInput=false;"></i>
-                <i class="icon-add-more" @click="toggleWrapper" v-if="!msg"></i>
+                <i class="icon-add-more" @click="toggleWrapper" v-show="!msg"></i>
                 <span class="btn-send" v-if="msg" @click="sendTextMsg">发送</span>
             </div>
             <div class="extra-input-wrapper" v-show="showExtraInput">
@@ -134,6 +133,40 @@ export default {
         ContextMenu,
         REmotion
     },
+    filters:{
+        replayContent(msg){
+            var content = msg.content,
+                str = '';
+            if (+msg.imType != 1){
+                try{
+                    content = JSON.parse(content);
+                }catch(e){
+                    return '';
+                }
+            }
+            switch (+msg.imType){
+                case 1:
+                    return  msg.content;
+                    break;
+                case 2://图片
+                    return content.name;
+                    break;
+                case 4://文件
+                    return content.content;
+                    break;
+                case 3://混合格式
+                    if(content.length == 1){
+                        return content[0].content;
+                    } else{
+                        content.forEach((file)=>{
+                           str += '[文件]';
+                        })
+                    }
+                    break;
+            }
+            return str;
+        }
+    },
     methods:{
         getDefaultPhoto(msg) {
             let url = require("assets/ava01.png");
@@ -182,7 +215,6 @@ export default {
                 name2Size = {},
                 params = {
                     groupId:groupId,
-                    content:[],
                     imType:2
                 },file;
             
@@ -203,22 +235,17 @@ export default {
             upload({
                 file:files
             }).then(rs=>{
-                var fileName;
                 if (rs.success){
                    e.target.value = null;
                    rs.data.forEach(file=>{
-                       fileName = file.attr1;
-                       params.content.push({
+                       var fileName = file.attr1;
+                       params.content=JSON.stringify({
                             id:file.id,
                             name:fileName,
-                            imType:2,
                             size:name2Size[fileName]
-                       })
-                   });
-                   params.content = JSON.stringify(params.content);
-                   sendMsg(params).then(rs=>{
-                       e.target.value = null;
-                   })
+                       });
+                       sendMsg(params);
+                   });                   
                 }
             })
         },
@@ -262,36 +289,38 @@ export default {
             upload({
                 file:this.fileInput.files
             }).then(rs=>{
-                var fileName,
-                    params = {
+                var params = {
                         groupId:this.group.groupId,
                         content:[],
-                        imType:4
+                        imType:5
                     };
 
                 if (rs.success){
-                   rs.data.forEach(file=>{
-                       fileName = file.attr1;
-                       params.content.push({
-                            id:file.id,
-                            content:fileName,
-                            imType:4,
-                            size:name2Size[fileName]
-                       })
-                   });
-                   if(text != '')params.content.push({
+                    rs.data.forEach((file,index)=>{
+                        var fileName = file.attr1;
+                        params.content.push({
+                                id:file.id,
+                                content:fileName,
+                                size:name2Size[fileName],
+                                imType:3
+                        });    
+                    });
+                    if(text != '')params.content.push({
                         content:text,
                         imType:1
-                   });
-                   params.content = JSON.stringify(params.content);
-                   sendMsg(params).then(rs=>{
-                       this.fileDlgContext = null;
-                       this.fileInput.value = null;
-                   })
+                    });
+                    params.content = JSON.stringify(params.content);
+                    sendMsg(params).then(rs=>{
+                        this.fileDlgContext = null;
+                        this.fileInput.value = null;
+                    })
                 }
             });
         },
-        onMsgContextMenu(msg){
+        onMsgContextMenu(msg,event){
+            var tag = event.target.tagName.toLowerCase();
+
+            if(tag == 'a') return;
             this.contextMenuMsg = msg;
             this.showContextMenu = true;
         },
@@ -311,7 +340,13 @@ export default {
             this.msg += '@'+msg.creatorName+' ';
         },
         toggleWrapper(){
+            var input = this.$refs.msgInput;
             this.showExtraInput = !this.showExtraInput;
+            if(this.showExtraInput){
+                input.blur();
+            }else{
+                input.focus();
+            }
             this.showEmotion = false;
         },
         /**
@@ -343,14 +378,7 @@ export default {
         }
     },
     created:function(){
-        var parent = this.$parent,
-            group = parent.group;
-      
-        if(this.group != null){
-            this.getApp().hasTab = false;
-        } else {
-            this.$router.replace('/msg');
-        }
+         this.getApp().hasTab = false;
     },
     mounted:function(){
         this.initContextMenu();

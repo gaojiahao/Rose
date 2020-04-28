@@ -70,12 +70,12 @@ import RScroll from "plugins/scroll/RScroll";
 export default {
     created:function(){       
         this.initDs();
+        this.initGroup();
         initWebContext().then(() => {
             this.currentUser = WebContext.WebContext.currentUser;
         })
     },
     mounted:function(){
-        this.initGroup();
         Bus.$on('toMsg', group => {
             this.toMsg(group)
         })
@@ -114,7 +114,7 @@ export default {
         Icon
     },
     methods:{
-         getDefaultPhoto(group) {
+        getDefaultPhoto(group) {
             let url = require("assets/ava01.png");
             if (group) {
                 group.groupIcon = url;
@@ -128,11 +128,18 @@ export default {
             this.toMsg(item);
         },
         initGroup:function(cb){
+            var groupId = this.$route.params.groupId;
             this.showLoading  = true;
             getMyGroups().then(data=>{
                 var groupIdToIndex = {};//建立一个映射关系，方便以后使用
                 data.forEach((group,index)=>{
                     groupIdToIndex[group.groupId] = index;
+                    if(this.group == null && group.groupId == groupId){
+                        this.toMsg(group);
+                        this.$nextTick(()=>{ //初始化右键菜单
+                            this.$refs.groupMsg.initContextMenu();
+                        });
+                    }
                 });
                 this.groupIdToIndex = groupIdToIndex;
                 this.groups = data;
@@ -167,6 +174,7 @@ export default {
         describeDs(ds){
             var token = tokenService.getToken();
             ds.event.subscribe('roletaskIm/'+ token, data => {
+                console.log('msg',data);
                 this.distributeMsg(data);
             });
         },
@@ -228,14 +236,17 @@ export default {
          * 跳转到groupMsg页面
          */
         toMsg:function(group){
+            var groupId = group.groupId,
+                path = '/msg/group/'+ groupId;
+
             if(group != this.group){
                 this.group = group;
-                getGroupMsg(group.groupId).then(res=>{
+                getGroupMsg(groupId).then(res=>{
                     this.msgList = res.msgs;
-                    this.$router.push('/msg/group')
+                    if (this.$route.path != path)this.$router.push(path);
                 });       
             } else {
-                this.$router.push('/msg/group')
+                this.$router.push(path)
             }
         },
         showNavList() {
