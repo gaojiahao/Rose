@@ -6,11 +6,9 @@
                 <strong class="weui-dialog__title">发送给：</strong>
             </div> 
             <div class="weui-dialog__bd">
+                <slot></slot>
                 <div>
-                    {{msg.to}}
-                </div>
-                <div>
-                        [文件]{{msg.content}}
+                    [文件]{{content}}
                 </div>
                 <div class="file-msg-input-wrapper">
                     <input type="text" v-model="text" class="weui-input" placeholder="留言"/>
@@ -25,7 +23,7 @@
 </template>
 <script>
 export default {
-    props:['msg'],
+    props:['content'],
     data(){
         return {
             text:''

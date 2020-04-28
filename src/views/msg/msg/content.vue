@@ -83,7 +83,14 @@
                 </div>
             </div>
             <r-emotion :show = "showEmotion" @on-select="emotionSelected" ref="emotion"></r-emotion>
-            <FileDialog v-if="fileDlgContext" @cancel="cancleFile" @todo="sendFileMsg" :msg="fileDlgContext"></FileDialog>
+            <FileDialog v-if="fileDlgContext" @cancel="cancleFile" @todo="sendFileMsg" :content="fileDlgContext">
+                 <div class="file-dialog-sendTo">
+                    <img :src="group.groupIcon" @error="getDefaultPhoto(group)">
+                    <div>
+                        <span v-html="group.groupName"></span>
+                    </div>
+                 </div>
+            </FileDialog>
             
         </div><!-- footer-->
         <!-- groupInfo 消息信息页面-->
@@ -270,12 +277,9 @@ export default {
             }
             this.showExtraInput = false;
             this.name2Size = name2Size;
-            this.fileDlgContext = {
-                to:'test',
-                content:files.length == 1?
-                    [files[0].name,'，',util.formatFileSize(files[0].size,1)].join('')
+            this.fileDlgContext = files.length == 1?
+                    [files[0].name,'(',util.formatFileSize(files[0].size,1),')'].join('')
                     :['已选',files.length,'个，共',util.formatFileSize(countSize,1)].join('')
-            }
         },
         cancleFile(){
             this.fileInput.value = null;
@@ -403,6 +407,9 @@ export default {
 }
 .msg-header .body{
     flex: 1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 .msg-header .toGroupAdmin i{
     font-size: 24px;
@@ -430,6 +437,7 @@ export default {
         }
         .icon-close{
             width:.25rem;
+            height:.25rem;
         }
     }
     .input-wrapper{
@@ -582,5 +590,24 @@ export default {
     .message-content{
         background-color: rgb(191, 221, 255);
     }
+}
+.file-dialog-sendTo{
+   display: flex;
+   img{
+       width:42px;
+       height:42px;
+   }
+   div{  
+       flex:1;  
+       overflow: hidden;
+       span{
+           text-overflow: ellipsis;
+            -o-text-overflow: ellipsis;
+            max-width:200px;
+            white-space: nowrap;
+            overflow: hidden;
+            display: inline-block;
+       } 
+   }
 }
 </style>
