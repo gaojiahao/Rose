@@ -5,10 +5,10 @@
       </div>
       <div class="my-info">
         <div class="info-left">
-          <p class="info-left-company">深圳市瑞福登信息技术服务有限公司</p>
+          <p class="info-left-company">{{ currentUser.entityName}}</p>
           <div class="info-left-name">
-            <p>王小英</p>
-            <span>前端工程师</span>
+            <p>{{ currentUser.name }}</p>
+            <span>{{ roles.join(',') }}</span>
           </div>
         </div>
         <div class="info-right">
@@ -53,6 +53,8 @@ import { getMyJobLogCountInfo,
          getTodayPerformance,
          getYearPerformance } 
 from "@/service/myPerformanceService";
+import WebContext from 'service/commonService'
+import { initWebContext } from 'service/commonService'
 const echarts = require('echarts');
 export default {
     name:"MyPerformance",
@@ -61,21 +63,24 @@ export default {
     },
     data(){
         return {
-           myPic: "" ,
            isCurrentBtn: "week",
            time: "本周",
            todayPerformance: 0,
            yearPerformance: 0,
            Xdata: [],
-           Ydata: []
+           Ydata: [],
+           currentUser: {},
+           roles: []
         }
     },
     methods:{
         // 获取默认图片
         getDefaultImg() {
-            if(!this.myPic){
-              return require('assets/contact_default02.png');
-            }
+          let url = require('assets/contact_default02.png');
+          if(this.currentUser.photo){
+            url = this.currentUser.photo
+          }
+          return url;
         },
         onTimeChange() {
           let currentId = event.target.id;
@@ -132,6 +137,12 @@ export default {
     created() {
       this.getDayPerformances()
       this.getYearPerformances()
+      initWebContext().then(() => {
+          this.currentUser = WebContext.WebContext.currentUser
+          this.currentUser.isSysRoleList.forEach(item => {
+            this.roles.push(item.name)
+          })
+      })
     }
 }
 </script>

@@ -69,6 +69,8 @@
 
 .icon-app:before { content: "\e6d3"; }
 
+.icon-me:before { content: "\e60d"; }
+
 .icon--:before { content: "\e608"; }
 
 .icon-L2:before { content: "\e60c"; }
