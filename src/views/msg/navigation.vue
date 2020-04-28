@@ -25,7 +25,7 @@
                 >
                 <LoadMore :show-loading="showLoading" v-show="showLoading"></LoadMore>
                 <div class = 'group-cells'>
-                    <div class="group-cell" v-for="group in groups" :key = "group.id" @click="toMsg(group)">
+                    <div class="group-cell" :class="{'isTop':group.focus}" v-for="group in groups" :key = "group.id" @click="toMsg(group)">
                         <img class="group-ava" :src="group.groupIcon" @error="getDefaultPhoto(group)">
                         <div class="group-body">
                             <div class="group-name">
@@ -353,6 +353,9 @@ export default {
   }
   .scroller-wrapper{
     height: 100%;
+  }
+  .isTop{
+       background: #ececec;
   }
   .group-cells{
       background: #fff;
