@@ -34,12 +34,15 @@
         </div> -->
         </RScroll>
         <router-view></router-view>
+        <!-- 用户详情 -->
+        <user-detail ref="userDetail" :userId="userId"></user-detail>
     </div>
 </template>
 <script>
 import {getAddressBook} from 'service/msgService'
 import RScroll from "plugins/scroll/RScroll";
 import WebContext from 'service/commonService'
+import UserDetail from '../msg/msg/userDetail';
 export default {
     data(){
         return {
@@ -51,10 +54,14 @@ export default {
             },
             addressName:'root',
             routes:[],
-            address:null
+            address:null,
+            userId: ""
         }
     },
-    components:{RScroll},
+    components:{
+        RScroll,
+        UserDetail
+    },
     methods:{
         getDefaultPhoto(item) {
             let url = require("assets/ava01.png");
@@ -72,6 +79,9 @@ export default {
                this.$router.push({name:'CONTACTS',params:{id:item.id},query:{name:item.name}},()=>{
                      this.routes.push({id:routerId,name:routerName});
                })
+           }else{
+               this.userId = item.id;
+               this.$refs["userDetail"].showUserDetail = true;
            }
         },
         goBack(){

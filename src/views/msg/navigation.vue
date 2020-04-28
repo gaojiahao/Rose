@@ -4,9 +4,13 @@
         <div class="page-hasTab">
             <div class="page-navigation">
                 <div>消息</div>
-                <div :style="{display:'flex',alignItems:'center'}">
-                    <span @click="onSearchClick" class="navigation-search"><icon type="search"></icon></span>
-                    <span class="navigation-add" @click="showNavList">+</span>
+                <div :style="{lineHeight:'.1rem'}">
+                    <span @click="onSearchClick" class="navigation-search">
+                        <span class="icon icon-message-search"></span>
+                    </span>
+                    <span class="navigation-add" @click="showNavList">
+                        <span class="icon icon-message-add"></span>
+                    </span>
                 </div>
             </div>
             <div class="navigation-add-list" v-if="showList">
@@ -74,8 +78,15 @@ export default {
         Bus.$on('toMsg', group => {
             this.toMsg(group)
         })
+        Bus.$on('updateGroups', () => {
+            this.initGroup();
+        });
     },
     activated:function(){
+        if(this.refresh){//如果需要刷新
+            this.refresh = false;
+            this.initGroup();
+        }
     },
     data(){
         return {
@@ -126,6 +137,10 @@ export default {
                 this.groups = data;
                 this.scroller && this.scroller.refresh();
                 this.showLoading = false
+            }).catch(e=>{
+                if(e.message == 'nologin'){//没有登录
+                    this.refresh = true;
+                }
             })
         },
         initDs:function(){
@@ -190,9 +205,6 @@ export default {
                 vm = this,
                 group;
 
-            if(type != 1){
-                msg.content = JSON.parse(msg.content);
-            }
             if (this.groups.length){
                 index = this.groupIdToIndex[groupId];
                 group = this.groups[index];
@@ -218,19 +230,7 @@ export default {
             if(group != this.group){
                 this.group = group;
                 getGroupMsg(group.groupId).then(res=>{
-                    var msgList = res.msgs;
-                    msgList.map(msg=>{
-                        var json;
-                        if([2,3,4].includes(msg.imType)){
-                            try{
-                                json = JSON.parse(msg.content);
-                                msg.content = json;
-                            }catch(e){
-                                console.log('msg content parse error',msg.content);
-                            }
-                        }
-                    })
-                    this.msgList = msgList;
+                    this.msgList = res.msgs;
                     this.$router.push('/msg/group')
                 });       
             } else {
@@ -309,21 +309,25 @@ export default {
           justify-content: space-between;
           align-items: center;
           .navigation-add{
-            font-size: .3rem;
-            line-height: .14rem;
-            text-align: center;
-            border: 2px solid #fff;
-            border-radius: 50%;
-            width: .2rem;
-            height: .2rem;
-            display: inline-block;
+            .icon-message-add{
+                  width: .25rem;
+                  height: .25rem;
+                  display: inline-block;
+              }
           }
           .navigation-search{
               margin-right: .1rem;
+              .icon-message-search{
+                  width: .25rem;
+                  height: .25rem;
+                  display: inline-block;
+              }
           }
           .navigation-search /deep/ .weui-icon-search{
               font-size: .2rem;
               color: #fff;
+              width: 26px;
+              height: 26px;
           }
       }
       .navigation-add-list{

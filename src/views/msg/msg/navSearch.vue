@@ -4,7 +4,8 @@
        v-model="showSearchList" 
        position="right" 
        width="100%" 
-       :show-mask="false">
+       :show-mask="false"
+       :popup-style="{zIndex:0}">
           <div class="list-header">
             <span @click="cancel">
               <span>取消</span>
@@ -40,7 +41,7 @@
             </div>
           </div>
         </popup>
-        <user-detail ref="userDetail" :userItem="userItem"></user-detail>
+        <user-detail ref="userDetail" :userId="userId"></user-detail>
     </div> 
 </template>  
 <script>
@@ -59,7 +60,7 @@ export default{
             showSearchList: false,
             searchValue: "",
             data: [],
-            userItem: {}
+            userId: ""
         }
     },
     watch: {
@@ -79,8 +80,8 @@ export default{
     methods: {
         getDefaultPhoto(item) {
             let url = require("assets/ava01.png");
-            if (item) {
-                item.photo = url;
+            if (item.photo) {
+                url = item.photo;
             }
             return url;
         },
@@ -117,7 +118,8 @@ export default{
           }
         },
         openUserDetail(item) {
-          this.userItem = item;
+          if(item.type==='群聊') return;
+          this.userId = item.userId;
           this.$refs["userDetail"].showUserDetail = true
         },
         toMsg(item) {

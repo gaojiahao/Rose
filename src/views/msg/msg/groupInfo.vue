@@ -64,7 +64,11 @@
             </group> -->
             <group>
                 <!-- <cell title="消息免打扰"><inline-x-switch slot="value"/></cell> -->
-                <cell title="置顶聊天"><inline-x-switch value="true" slot="value"/></cell>
+                <cell title="置顶聊天">
+                    <inline-x-switch 
+                        v-model="group.focus" 
+                        @on-change="onFocusChange" />
+                </cell>
                 <!-- <cell title="保存到通讯录"><inline-x-switch value="true" slot="value"/></cell> -->
             </group>
             <!-- <group>
@@ -101,7 +105,7 @@ import MemberSelector from './memberSelector';
 import MemberList from './memberList';
 import WebContext from 'service/commonService'
 import { initWebContext } from 'service/commonService'
-import { getMembers,addMember,createGroup } from '@/service/msgService'
+import { getMembers,addMember,createGroup,setFocus,deleteFocus } from '@/service/msgService'
 import Bus from '@/common/eventBus.js';
 import UpdateGroupName from './updateGroupName';
 export default {
@@ -129,6 +133,19 @@ export default {
         },
         showUpdateName() {
             this.$refs["updateGroupName"].showUpdateName = true;
+        },
+        onFocusChange(currentValue) {
+            let requestUrl = setFocus,
+                params = {
+                    groupId: this.group.groupId
+                };
+            !currentValue && (requestUrl = deleteFocus);
+            requestUrl(params).then(res => {
+                if(res.success){
+                    this.$vux.toast.show({text: res.message});
+                    Bus.$emit('updateGroups');
+                }
+            })
         },
         showMemberDetail() {
             if(this.group.groupType === "P"){
@@ -270,6 +287,15 @@ export default {
                 font-size: .14rem;
             }
         }
+  }
+  .scroller-body /deep/ .weui-cell_access .weui-cell__ft:after{
+    height: 18px;
+    width: 9px;
+    top: 22%;
+    transform: rotate(0deg);
+  }
+  .scroller-body /deep/ .weui-cell_access .weui-cell__ft{
+      padding-right: 18px;
   }
   
 </style>

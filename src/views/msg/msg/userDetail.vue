@@ -14,25 +14,25 @@
               </div>
               <div class="user-info">
                   <div class="user-info-left">
-                      <img :src="getDefaultPhoto()" />
+                      <img :src="getDefaultPhoto()" @error="imgErr" />
                   </div>
                   <div class="user-info-right">
-                      <p>{{userItem.nickname}}</p>
-                      <span>{{userItem.role}}</span>
+                      <p>{{userItem.nickname || '未知'}}</p>
+                      <span>{{userItem.role || '未知'}}</span>
                   </div>
               </div>
               <div class="user-detail">
                   <p>
                       <span class="label">手机：</span>
-                      <span>{{userItem.mobile}}</span>
+                      <span>{{userItem.mobile || '未知'}}</span>
                   </p>
                   <p>
                       <span class="label">邮箱：</span>
-                      <span>{{userItem.email}}</span>
+                      <span>{{userItem.email || '未知'}}</span>
                   </p>
                   <p>
                       <span class="label">部门：</span>
-                      <span>{{userItem.group}}</span>
+                      <span>{{userItem.group || '未知'}}</span>
                   </p>
               </div>
               <div class="user-btn" @click="sentMemberMessage">
@@ -44,7 +44,7 @@
 </template>  
 <script>
 import { Popup,XButton } from 'vux'
-import { getGroupByUserId } from '@/service/msgService'
+import { getGroupByUserId,getUserInfoById } from '@/service/msgService'
 import Bus from '@/common/eventBus.js';
 export default{  
     name: "UserDetail",
@@ -53,28 +53,35 @@ export default{
         XButton
     },
     props: {
-      userItem: {
-        type: Object,
+      userId: {
+        type: String,
         default:function(){
-            return {}
+            return ""
         }
       }
     },
     data() {
         return {
-            showUserDetail: false
+            showUserDetail: false,
+            userItem: {}
         }
     },
     watch: {
-      
+      showUserDetail(value) {
+        if(value) this.getUserDetails();
+      }
     },
     methods: {
         getDefaultPhoto() {
             let url = require("assets/ava01.png");
-            if (this.userItem) {
-                this.userItem.photo = url;
+            if (this.userItem.photo) {
+                url = this.userItem.photo
             }
             return url;
+        },
+        imgErr() {
+          let url = require("assets/ava01.png");
+          this.userItem.photo = url;
         },
         goBack() {
           this.showUserDetail = false
@@ -83,6 +90,13 @@ export default{
           if(this.userItem.userId){
             getGroupByUserId(this.userItem.userId).then(res => {
                 Bus.$emit('toMsg',res)
+            })
+          }
+        },
+        getUserDetails() {
+          if(this.userId) {
+            getUserInfoById(this.userId).then(res => {
+              this.userItem = res.tableContent[0];
             })
           }
         }

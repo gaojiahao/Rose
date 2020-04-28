@@ -11,7 +11,7 @@ const fly = new Fly();
 
 // reject处理
 let rejectError = (reject, message) => {
-  if(message)errHandle(message);
+  if(message && message != 'nologin')errHandle(message);
   return Promise.reject({ success: false, message });
 };
 
@@ -29,12 +29,13 @@ fly.interceptors.request.use((request) => {
     return tokenService.login().then((token) => {
       if(token){
         request.headers.Authorization = token;
-
-      // 请求token成功之后，即将进入第一个请求
-      if(window.sessionStorage.getItem('shareUrl')){
-        return window.sessionStorage.getItem('shareUrl');
-      }
+        // 请求token成功之后，即将进入第一个请求
+        if(window.sessionStorage.getItem('shareUrl')){
+          return window.sessionStorage.getItem('shareUrl');
+        }
         return request;
+      } else {
+        return Promise.reject({ success: false, message:'nologin'});
       }
     }).finally(() => {
       // 解锁队列，后序请求恢复正常
@@ -42,7 +43,7 @@ fly.interceptors.request.use((request) => {
     }).catch( err => {
       // 请求拦截 报错标识
       console.log('req-err:', err);
-      rejectError('reject', err.message)
+      return rejectError('reject', err.message)
     })
   }
 })

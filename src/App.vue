@@ -170,6 +170,7 @@ export default {
   @import './assets/app.less';
 
   @import './common/swiper-4.2.2.min.css';
+  @import './assets/weui.min.css';
   @import './assets/iconfont/icon.css';
   @import './assets/iconfont/iconfont.css';
 
