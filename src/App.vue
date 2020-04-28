@@ -41,7 +41,7 @@ export default {
         {title: '应用', path: '/home', icon: 'icon-1'},
         {title: '消息', path: '/notice', icon: 'icon-message'},
         // {title: '任务', path: '/task', icon: 'icon-message'},
-        {title: '我', path: '/myPerformance', icon: 'icon-me'}
+        {title: '我', path: '/performance', icon: 'icon-yonghu'}
       ],
       newsNumber:0,
       hasNav:hasNav,

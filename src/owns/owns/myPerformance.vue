@@ -36,11 +36,11 @@
         </x-button>
       </div>
       <div class="log-lours" id="logHours"></div>
-      <div class="today-performance">
+      <div class="today-performance" @click="onDayPerformanceClick">
         <span>今日绩效</span>
         <b>{{ todayPerformance }}</b>
       </div>
-      <div class="year-performance">
+      <div class="year-performance" @click="onYearPerformanceClick">
         <span>今年累计绩效</span>
         <b>{{ yearPerformance }}</b>
       </div>
@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { XButton,numberComma } from 'vux'
+import { XButton,numberComma,dateFormat } from 'vux'
 import { getMyJobLogCountInfo,
          getTodayPerformance,
          getYearPerformance } 
@@ -108,6 +108,15 @@ export default {
                   data: this.Ydata
               }]
           });
+        },
+        onDayPerformanceClick() {
+          let today = dateFormat(new Date(), 'YYYY-MM-DD');
+          this.$router.push({
+            path: "/performance/dayPerformance/" + today
+          })
+        },
+        onYearPerformanceClick() {
+
         },
         getMyLog() {
           this.Xdata = [];
@@ -173,6 +182,12 @@ export default {
           color: #2e7cca;
           font-size: .2rem;
         }
+    }
+    .today-performance:hover{
+      background-color: #eee;
+    }
+    .year-performance:hover{
+      background-color: #eee;
     }
     .my-header{
       text-align: center;
