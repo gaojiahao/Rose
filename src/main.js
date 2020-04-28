@@ -48,6 +48,8 @@ import platfrom from './plugins/platform/index'
 import commonService from "service/commonService";
 import * as dd from 'dingtalk-jsapi'
 
+import {formatToEmotion} from 'plugins/emoji/emotion'
+
 require('@/directive');
 require('@/filter');
 if(window.isApp){ //处理消息推送专用代码
@@ -66,6 +68,7 @@ Vue.directive('transfer-dom', TransferDom)
 
 Vue.prototype.Swiper = Swiper;
 Vue.prototype.Bscroll = Bscroll;
+Vue.prototype.formatToEmotion = formatToEmotion;
 FastClick.attach(document.body)
 
 const isDebug_mode = process.env.NODE_ENV !== 'production'

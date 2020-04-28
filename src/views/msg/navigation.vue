@@ -25,15 +25,15 @@
                 >
                 <LoadMore :show-loading="showLoading" v-show="showLoading"></LoadMore>
                 <div class = 'group-cells'>
-                    <div class="group-cell" v-for="group in groups" :key = "group.id" @click="toMsg(group)">
+                    <div class="group-cell" :class="{'isTop':group.focus}" v-for="group in groups" :key = "group.id" @click="toMsg(group)">
                         <img class="group-ava" :src="group.groupIcon" @error="getDefaultPhoto(group)">
                         <div class="group-body">
-                            <div>
+                            <div class="group-name">
                                 {{group.groupName}}
                             </div>
                             <div class="msg-lastMsg" v-if="group.lastMsg">
                                 <span>{{group.lastMsg.creatorName}}:</span>
-                                <span v-if="group.lastMsg.imType==1" v-html="group.lastMsg.content"></span>
+                                <span v-if="group.lastMsg.imType==1" v-html="formatToEmotion(group.lastMsg.content)"></span>
                                 <span v-else-if="group.lastMsg.imType==2">图片</span>
                                 <span v-else-if="group.lastMsg.imType==4">文件</span>
                             </div> 
@@ -363,6 +363,9 @@ export default {
   .scroller-wrapper{
     height: 100%;
   }
+  .isTop{
+       background: #ececec;
+  }
   .group-cells{
       background: #fff;
   }
@@ -393,6 +396,11 @@ export default {
   .group-body{
       line-height: 28px;
       width: calc(100% - 1.4rem);
+      margin-left: .15rem;
+      .group-name{
+          font-size: 14px;
+      }
+
       div{
         width: 2rem;
         overflow: hidden;
@@ -401,8 +409,8 @@ export default {
       }
   }
   .group-ava{
-    height: 50px;
-    margin-right: .10rem;
+    width: .45rem;
+    width: .45rem;
     border-radius: .02rem;
   }
   
@@ -422,5 +430,10 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+   span{
+        /deep/.static-emotion-gif{
+        height: .16rem;
+    }
+   }
   }
 </style>

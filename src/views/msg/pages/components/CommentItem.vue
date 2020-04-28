@@ -51,7 +51,7 @@
 </template>
 
 <script>
-  import emotion from 'plugins/emoji/emotion'
+  import {EMOTION} from 'plugins/emoji/emotion'
   import {dateFormat} from 'vux'
   import RPopover from 'homePage/components/comment-related/RPopover'
 
@@ -155,7 +155,7 @@
       // 替换表情图片地址
       handleComment(commentType = 'comment') {
         let {type = '', reply = {}, content = '', noticeSource = ''} = this.item;
-        let emotionList = [...emotion];
+        let emotionList = [...EMOTION];
         let comment = '';
         let reg = /\[(.+?)\]/g;
         if (commentType === 'reply') {

@@ -26,10 +26,10 @@
   background: url('~assets/iconfont/down_fill.png');
   background-size: cover;
 }
-.icon-add {
+/* .icon-add {
   background: url('~assets/iconfont/add.png');
   background-size: cover;
-}
+} */
 .icon-message-add {
   background: url('~assets/iconfont/add-message.png');
   background-size: cover;

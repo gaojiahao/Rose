@@ -32,9 +32,9 @@ export default {
 </script>
 <style lang="less">
 .img-msg-content{
-   overflow: hidden;
    img{
     height:100px;
+    max-width: 100%;
    }
 }
 </style>

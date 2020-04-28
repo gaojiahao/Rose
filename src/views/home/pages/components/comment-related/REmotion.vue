@@ -14,7 +14,7 @@
 </template>
 
 <script>
-  import emotions from 'plugins/emoji/emotion'
+  import {EMOTION} from 'plugins/emoji/emotion'
   import {WechatEmotion as Emotion} from 'vux'
 
   export default {
@@ -30,7 +30,7 @@
     },
     data() {
       return {
-        emotionList: [...emotions],
+        emotionList: [...EMOTION],
       }
     },
     methods: {
