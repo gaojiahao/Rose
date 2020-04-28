@@ -11,7 +11,7 @@
                         {{file.size}}KB
                     </p>
                 </div>
-                <img class="flie-img" width="38" :src="file.content|filedTypeFilter" @error= "getFileImg()">
+                <img class="file-img" :src="file.content|filedTypeFilter" @error= "getFileImg()">
             </div>
             <div v-html="file.content" v-else-if="file.imType==1"></div>
         </template>
@@ -60,6 +60,9 @@ export default {
         .file-content-info {
             flex:1;
             text-align: left;
+        }
+        .file-img{
+            height:38px;
         }
     }  
 }
