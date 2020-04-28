@@ -1,19 +1,16 @@
 <template>
     <div class="file-msg-container">
-        <template v-for="file in content" v-bind="key">
-            <div v-if="file.imType == 4" class="singleFile">
-                <div class="file-content-info">
-                    <p>
-                        <a  :href="'/H_roleplay-si/ds/downloadById?id='+file.id">{{file.content}}</a>
-                    </p>
-                    <p>
-                        {{file.size}}KB
-                    </p>
-                </div>
-                <img class="file-img" :src="file.content|filedTypeFilter" @error= "getFileImg()">
+       <div class="singleFile">
+            <div class="file-content-info">
+                <p>
+                    <a  :href="'/H_roleplay-si/ds/downloadById?id='+file.id">{{file.content}}</a>
+                </p>
+                <p>
+                    {{file.size}}KB
+                </p>
             </div>
-            <div v-html="file.content" v-else-if="file.imType==1"></div>
-        </template>
+            <img class="file-img" :src="file.content|filedTypeFilter" @error= "getFileImg()">
+        </div>
     </div>
 </template>
 
@@ -30,14 +27,14 @@ export default {
     data(){
         return {
             baseURL:window.baseURL||'',
-            content:[]
+            file:null
         }
     },
     created:function(){
         this.defaultFileImg = require('assets/file/all.png');
         try{
             var json = JSON.parse(this.msg.content);
-            this.content = json;
+            this.file = json;
         }catch(e){
             console.log('msg content parse error',this.msg.content);
         }

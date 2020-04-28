@@ -33,8 +33,9 @@
                             </div>
                             <div class="msg-lastMsg" v-if="group.lastMsg">
                                 <span>{{group.lastMsg.creatorName}}:</span>
-                                <span v-if="group.lastMsg.imType===1" v-html="group.lastMsg.content"></span>
-                                <span v-if="group.lastMsg.imType===2">文件</span>
+                                <span v-if="group.lastMsg.imType==1" v-html="group.lastMsg.content"></span>
+                                <span v-else-if="group.lastMsg.imType==2">图片</span>
+                                <span v-else-if="group.lastMsg.imType==4">文件</span>
                             </div> 
                         </div>
                         <span class="msgCount" v-if="group.msgCount">
@@ -193,13 +194,10 @@ export default {
             var type = msg.imType;
             switch(type){
                 case '1':
-                    this.addMsg(msg,1);
-                    break;
                 case '2':
-                    this.addMsg(msg,2);
-                    break;
-                 case '4':
-                    this.addMsg(msg,4);
+                case '3':
+                case '4':
+                    this.addMsg(msg);
                     break;
                 default:
                     break;
@@ -208,7 +206,7 @@ export default {
         /**
          * 处理文字信息
          */
-        addMsg(msg,type){
+        addMsg(msg){
             var groupId = msg.groupId,
                 index,
                 vm = this,

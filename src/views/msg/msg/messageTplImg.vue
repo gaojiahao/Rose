@@ -1,9 +1,6 @@
 <template> 
     <div class="img-msg-content ">
-        <template v-for="file in content" v-bind="key">
-            <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ file.id" v-if="file.imType==2" height="100" />
-            <div v-html="file.content" v-else-if="file.imType==1"></div>
-        </template>
+        <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ content.id" height="100" />
     </div>
 </template>
 
@@ -28,13 +25,16 @@ export default {
     data(){
         return {
             baseURL:window.baseURL||'',
-            content:[]
+            content:null
         }
     }
 }
 </script>
-<style>
-.img-msg-content img{
+<style lang="less">
+.img-msg-content{
+   overflow: hidden;
+   img{
     height:100px;
+   }
 }
 </style>

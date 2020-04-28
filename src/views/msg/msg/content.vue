@@ -148,10 +148,8 @@ export default {
                 case 1:
                     return  msg.content;
                     break;
-                case 2://图片
-                    return content.name;
-                    break;
                 case 4://文件
+                case 2://图片
                     return content.content;
                     break;
                 case 3://混合格式
@@ -241,7 +239,7 @@ export default {
                        var fileName = file.attr1;
                        params.content=JSON.stringify({
                             id:file.id,
-                            name:fileName,
+                            content:fileName,
                             size:name2Size[fileName]
                        });
                        sendMsg(params);
@@ -299,10 +297,12 @@ export default {
                     rs.data.forEach((file,index)=>{
                         var fileName = file.attr1;
                         params.content.push({
+                            content:{
                                 id:file.id,
                                 content:fileName,
-                                size:name2Size[fileName],
-                                imType:3
+                                size:name2Size[fileName]
+                            },
+                            imType:4
                         });    
                     });
                     if(text != '')params.content.push({
