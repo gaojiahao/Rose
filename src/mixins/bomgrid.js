@@ -52,27 +52,29 @@ export default {
         addRecords: async function (selection) {
             var value = this.getValue() || [],
                 record,
-                row, i = 0, l = selection.length;
+                row, i = 0, l = selection.length,
+                index = value.length ?  value.length- 1 : 0;
 
             for (i; i < l; i++) {
                 row = selection[i];
                 await this.initBomData(row.inventoryCode);
                 var bom = [];
-                for(var j=0; j<this.bomData[i].length;j++){
+                var m = this.bomData.length-1;
+                for(var j=0; j<this.bomData[m].length;j++){
                     var obj={};
                     obj = {
                         'transMatchedCode':row.orderCode,
-                        'qualityQty': this.bomData[i][j].qualityQty||0, //?要接口算处理
-                        'bomSpecificLoss': this.bomData[i][j].specificLoss||0,
-                        'tdProcessing': this.bomData[i][j].processing||0,
-                        'inventoryName': this.bomData[i][j].inventoryName,
-                        'demandQty': this.bomData[i][j].demandQty||0,
-                        'transObjCode': this.bomData[i][j].inventoryCode,
-                        'measureUnit': this.bomData[i][j].measureUnit,
-                        'bomType': this.bomData[i][j].bomType||0,
-                        'bomQty': this.bomData[i][j].qty||0,
-                        'productSource': this.bomData[i][j].productSource,
-                        'parentInventoryCode': this.bomData[i][j].parentInventoryCode,
+                        'qualityQty': this.bomData[m][j].qualityQty||0, //?要接口算处理
+                        'bomSpecificLoss': this.bomData[m][j].specificLoss||0,
+                        'tdProcessing': this.bomData[m][j].processing||0,
+                        'inventoryName': this.bomData[m][j].inventoryName,
+                        'demandQty': this.bomData[m][j].demandQty||0,
+                        'transObjCode': this.bomData[m][j].inventoryCode,
+                        'measureUnit': this.bomData[m][j].measureUnit,
+                        'bomType': this.bomData[m][j].bomType||0,
+                        'bomQty': this.bomData[m][j].qty||0,
+                        'productSource': this.bomData[m][j].productSource,
+                        'parentInventoryCode': this.bomData[m][j].parentInventoryCode,
                     }
                     bom.push(obj);
                 }
@@ -316,7 +318,6 @@ export default {
             return data;
         },
         getOutput(){
-            console.log('this.outPut',this.outPut);
             return this.outPut;
         },
         getComponentByCfg: function (cfg) {
@@ -1062,7 +1063,7 @@ export default {
                         await deal(data);
                     }
                 }
-                //await this.dealBom();
+                await this.dealBom();
             }
             async function deal(data){
                 await getInProcessingStorageSumSource(data).then(res=>{ 
