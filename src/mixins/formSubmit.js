@@ -305,6 +305,7 @@ export default {
                     fn;
                 if (cmp) {
                     try {
+                        console.log(cmp)
                         fn = eval('(' + item.fn + ')');
                     } catch (e) {
                         console.error(item.fieldcode + '事件函数bug', e);

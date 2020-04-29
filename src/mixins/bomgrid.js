@@ -91,21 +91,21 @@ export default {
             for(var m =0;m<bomlist.length;m++ ){
                 var obj2 = {};
                 obj2 = {
-                    'inventoryName_outPutMatCode': bomlist[i].inventoryName,
-                    'outPutMatCode': bomlist[i].inventoryCode,
+                    'inventoryName_outPutMatCode': bomlist[m].inventoryName,
+                    'outPutMatCode': bomlist[m].inventoryCode,
                     'demandQty': bomlist[i].demandQty,
-                    'measureUnit_outPutMatCode': bomlist[i].measureUnit,
-                    'thenTotalQtyStock': bomlist[i].thenTotalQtyStock,
-                    'transitBalance': bomlist[i].transitBalance,
-                    'workflowLockQty': bomlist[i].workflowLockQty,
-                    'thenQtyBalCopy1': bomlist[i].qtyBal,
-                    'tdQty': bomlist[i].tdQty,
-                    'tdProcessing': bomlist[i].processing,
-                    'productSource': bomlist[i].productSource,
-                    'processingStartDate': bomlist[i].processingStartDate,
-                    'containerCodeOut': bomlist[i].containerCodeOut,
-                    'warehouseName_containerCodeOut': bomlist[i].containerNameOut,
-                    'tdId': bomlist[i].tdId,
+                    'measureUnit_outPutMatCode': bomlist[m].measureUnit,
+                    'thenTotalQtyStock': bomlist[m].thenTotalQtyStock,
+                    'transitBalance': bomlist[m].transitBalance,
+                    'workflowLockQty': bomlist[m].workflowLockQty,
+                    'thenQtyBalCopy1': bomlist[m].qtyBal,
+                    'tdQty': bomlist[m].tdQty,
+                    'tdProcessing': bomlist[m].processing,
+                    'productSource': bomlist[m].productSource,
+                    'processingStartDate': bomlist[m].processingStartDate,
+                    'containerCodeOut': bomlist[m].containerCodeOut,
+                    'warehouseName_containerCodeOut': bomlist[m].containerNameOut,
+                    'tdId': bomlist[m].tdId,
                 }
                 this.outPut['dataSet'].push(obj2);
             }
@@ -177,6 +177,7 @@ export default {
         doDetailEdit(data) {
             var value = util.clone(data);
             this.$set(this.values, this.detailRowNumer, data);
+            this.$set(this.form.formData, 'outPut', this.outPut);
         },
         delClick(rowIndex) {
             var selection = this.selection,
@@ -315,6 +316,7 @@ export default {
             return data;
         },
         getOutput(){
+            console.log('this.outPut',this.outPut);
             return this.outPut;
         },
         getComponentByCfg: function (cfg) {
@@ -1060,7 +1062,7 @@ export default {
                         await deal(data);
                     }
                 }
-                await this.dealBom();
+                //await this.dealBom();
             }
             async function deal(data){
                 await getInProcessingStorageSumSource(data).then(res=>{ 
@@ -1074,8 +1076,8 @@ export default {
                 }).catch(e =>{e});
             }
             function judgeBomAdd(inventoryCode){
-                for(var i =0;i<me.boms.length;i++){
-                    if(inventoryCode==me.boms[i]['inventoryCode']){
+                for(var m =0;m<me.boms.length;m++){
+                    if(inventoryCode==me.boms[m]['inventoryCode']){
                         return true;
                     }
                 }
