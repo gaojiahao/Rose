@@ -25,3 +25,15 @@ export let getYearPerformance = () => {
       url:'/H_roleplay-si/ds/getYearPerformance'
   })
 }
+
+// 日、月、年的工时绩效查询
+export let getPerformance = (time,val) => {
+  let data = {
+    time: time,
+    val: val
+  };
+  return $flyio.ajax({
+      url:'/H_roleplay-si/ds/getPerformance',
+      data
+  })
+}

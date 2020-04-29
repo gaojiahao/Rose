@@ -116,7 +116,10 @@ export default {
           })
         },
         onYearPerformanceClick() {
-
+          let year = dateFormat(new Date(), 'YYYY');
+          this.$router.push({
+            path: "/performance/yearPerformance/" + year
+          })
         },
         getMyLog() {
           this.Xdata = [];
@@ -217,6 +220,11 @@ export default {
           }
           span{
             color: #999;
+            width: 2.5rem;
+            display: inline-block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
         }
       }
