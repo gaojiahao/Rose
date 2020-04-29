@@ -199,7 +199,7 @@ var component = {
   watch:{
     values:{
       handler(val){
-        if(this.form.formData.outPut&&this.form.mode!='new'){
+        if(this.form.formData.outPut&&this.form.model!='new'){
           this.boms = [];
           var data = this.form.formData.outPut;
           for(var i = 0 ; i < data.length; i++){
@@ -219,6 +219,11 @@ var component = {
           }
           //this.boms = this.form.formData.outPut;
         }
+      }
+    },
+    boms:{
+      handler(val){
+        console.log('bonsm',val)
       }
     }
   },
