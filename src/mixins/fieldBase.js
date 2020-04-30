@@ -11,6 +11,7 @@ export default {
             allowBlank:false,
             fieldLabel:'',
             submitValue:false,
+            blankText:'',
         }
     },
     created(){
@@ -35,6 +36,7 @@ export default {
                 form.wfParamFieldMap[cfg.wfParam] = fieldCode;
             }
             this.initVisible();
+            this.initBlankText();
             this.initWatch(cfg.watch);
             if(form.model == 'new')
                 this.initDefaultValue(cfg.defaultValue);
@@ -278,6 +280,18 @@ export default {
                 });
             }
             return result;
+        },
+        initBlankText(){
+            var me = this,
+                cfg = me.cfg.dataSource,
+                form = me.form;
+            if(cfg.type == 'formData'){
+                var item = cfg.data,
+                cmpId = item.contrl,
+                valueField = item.valueField;
+                
+                this.blankText = form.fieldMap[cmpId].blankText;
+            }        
         }
     }
 }
