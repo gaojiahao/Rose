@@ -1,5 +1,5 @@
 <template>
-    <div class="member-selector-container" v-show="showMemberSelector">
+    <div class="member-selector-container page" v-show="showMemberSelector">
         <div class="header">
           <div @click="cancelSelect">取消</div>
           <p>选择联系人</p>
@@ -180,12 +180,6 @@ export default {
 </script>
 <style lang="less" scoped>
   .member-selector-container{
-    position: absolute;
-    background:#ededed;
-    left:0;
-    top:0;
-    width:100%;
-    height:100%;
     display: flex;
     flex-direction: column;
     .pop-list-container{

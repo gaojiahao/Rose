@@ -1,11 +1,5 @@
 <template>
-    <div class="member-list" v-transfer-dom v-show="showMemberList">
-       <popup 
-       v-model="showMemberList" 
-       position="right" 
-       width="100%" 
-       :show-mask="false" 
-       :popup-style="{zIndex:0}">
+    <div class="member-list page" v-show="showMemberList">
           <div class="list-header">
             <span @click="goBack">
               <i class="iconfont icon-back1"></i>
@@ -40,18 +34,16 @@
               <div class="delete" @click.stop="deleteMember(item,index)">移除</div>
             </li>
           </ul>
-        </popup>
         <user-detail ref="userDetail" :userId="userId"></user-detail>
     </div> 
 </template>  
 <script>
-import { Popup,XInput } from 'vux'
+import {XInput } from 'vux'
 import { removeMember } from '@/service/msgService'
 import UserDetail from './userDetail'
 export default{  
     name: "MemberList",
     components: {
-        Popup,
         XInput,
         UserDetail
     },
@@ -176,7 +168,8 @@ export default{
 </script>  
 <style lang="less" scoped>
 .member-list{
-  padding: 10px;
+  display: flex;
+  flex-direction: column;
   .list-header{
     padding: .1rem;
     background-color: #39f;
@@ -186,11 +179,10 @@ export default{
   }
   .list-search{
     background-color: #fff;
-    margin-top: .1rem;
+    margin: .1rem;
   }
   .content{
-    overflow-x: hidden;
-    margin-top: .1rem;
+    overflow: hidden;
     .list{
       background: #fdfdfd;
       border-bottom: 1px solid #e1e1e1;

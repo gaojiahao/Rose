@@ -1,9 +1,5 @@
 <template>
-    <div class="group-name" v-transfer-dom>
-       <popup 
-          v-model="showUpdateName"
-          height="100%" 
-          :show-mask="false">
+    <div class="group-name page" v-show="showUpdateName">
           <div class="name-header">
             <span @click="goBack">
               <i class="iconfont icon-back1"></i>
@@ -18,11 +14,10 @@
           <div class="name-input">
             <x-input ref="nameInput" v-model="groupName" show-clear></x-input>
           </div>
-        </popup>
     </div> 
 </template>  
 <script>
-import { XInput,Popup } from 'vux'
+import { XInput} from 'vux'
 import { setGroupName } from '@/service/msgService'
 import Bus from '@/common/eventBus.js';
 export default{  
