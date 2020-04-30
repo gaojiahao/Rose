@@ -29,19 +29,23 @@
           <p>{{ total }}</p>
       </div>
       <div :class="{'day-list':true,'day-empty':dayData.length === 0}">
-          <div class="list-content" v-for="(log,index) of dayData" :key="index">
-              <div class="content-left">
-                  <img :src="defaultImg(log)" />
-              </div>
-              <div class="content-center">
-                  <div class="app-name">日志任务</div>
-                  <div class="log-desc">
-                      <span>{{ log.effectiveDate }}</span>
-                      <span style="margin-left:.05rem;">{{ log.performanceType }}</span>
-                  </div>
-                  <div class="log-title">{{ log.comment }}</div>
-              </div>
-              <div class="content-right">{{ log.total }}</div>
+          <div 
+            class="list-content" 
+            v-for="(log,index) of dayData" 
+            :key="index"
+            @click="gotoForm(log)">
+            <div class="content-left">
+                <img :src="defaultImg(log)" />
+            </div>
+            <div class="content-center">
+                <div class="app-name">{{ log.title }}</div>
+                <div class="log-desc">
+                    <span>{{ log.effectiveDate }}</span>
+                    <span style="margin-left:.05rem;">{{ log.performanceType }}</span>
+                </div>
+                <div class="log-title">{{ log.comment }}</div>
+            </div>
+            <div class="content-right">{{ log.total }}</div>
           </div>
           <div class="list-empty" v-if="dayData.length === 0">暂无绩效</div>
       </div>
@@ -68,6 +72,9 @@ export default {
             this.$router.push({
                 path: "/performance/myPerformance"
             })
+        },
+        gotoForm(log) {
+            window.location.href = `/Hermes/detail/2750a13d-295d-4776-9673-290c51bfc568/0?name=日志任务&folder=project&fileName=RWRZ&transCode=${log.transCode}`;
         },
         defaultImg(log) {
             let url = require('assets/contact_default02.png');
