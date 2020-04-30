@@ -150,7 +150,7 @@ export default {
                 cfg = expressionCfg[i];
                 dataIndex = cfg.col.fieldCode;
                 //if (editorFieldCode == dataIndex || dataIndex in changeFieldCodes) continue; //当前编辑字段，不重新计算。
-                if (editorFieldCode == dataIndex || editorFieldCode in changeFieldCodes) continue; //当前编辑字段，不重新计算。
+                if (editorFieldCode == dataIndex) continue; //当前编辑字段，不重新计算。
                 if (cfg.type == 'calc') {
                     cfg = CalcToCmd(cfg);    
                 }
