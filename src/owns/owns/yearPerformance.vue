@@ -9,27 +9,32 @@
       </div>
       <div class="year-num">
           <span>累计绩效</span>
-          <p>56321.23</p>
+          <p>{{ total }}</p>
       </div>
       <div class="year-table">
         <div class="table-header">
           <div class="brfore-year" @click="onBeforeYearClick">
               <span class="icon icon-performance-back"></span>
-              <span>{{ new Date(year).getFullYear()-1 }}</span>
+              <span>{{ new Date(year).getFullYear()-1 }}年</span>
           </div>
           <div class="year-select">
-              <datetime v-model="year" @on-change="onDateChange" format="YYYY"></datetime>
+              <datetime 
+                v-model="year" 
+                @on-change="onDateChange" 
+                format="YYYY"
+                :display-format="displayFromat">
+              </datetime>
           </div>
         </div>
         <div class="table-sum">
           <span>合计</span>
-          <b>45634</b>
+          <b>{{ total }}</b>
         </div>
         <div class="table-content">
           <div class="table-list" v-for="(item,index) of yearData" :key="index">
               <div class="list-left">
                   <div class="left-time">{{new Date(item.effectiveMonth).getMonth()+1}}月</div>
-                  <div class="left-amount">{{ item.amount }}</div>
+                  <div class="left-amount">{{ item.total }}</div>
               </div>
               <div class="list-right"  @click="gotoDetail(item)">
                 <span>明细</span>
@@ -52,14 +57,21 @@ export default {
     data(){
         return {
            year: "",
+           total: 0,
            yearData: []
         }
+    },
+    computed: {
+      
     },
     methods:{
         goBack() {
             this.$router.push({
                 path: "/performance/myPerformance"
             })
+        },
+        displayFromat(value) {
+          return `${value}年`;
         },
         onDateChange(value) {
             this.getYearPerformance(value);
@@ -70,12 +82,22 @@ export default {
             this.getYearPerformance(year);
         },
         gotoDetail(item) {
-          
+          this.$router.push({
+              path: "/performance/monthPerformance/" + item.effectiveMonth
+          })
         },
         getYearPerformance(value) {
             let year = value || this.year;
+            this.$loading.show();
             getPerformance('year',year).then(res => {
+                let total = 0;
+                res.tableContent.forEach(log => {
+                    total += log.total;
+                    log.total = numberComma(log.total.toFixed(2));
+                })
+                this.total = numberComma(total.toFixed(2));
                 this.yearData = res.tableContent;
+                this.$loading.hide();
             })
         }
     },
@@ -88,6 +110,7 @@ export default {
 
 <style lang="less" scoped>
   .year-performance{
+      height: 100%;
       .year-header{
           height: .5rem;
           line-height: .5rem;
@@ -120,6 +143,7 @@ export default {
       .year-table{
         margin: .1rem;
         border: 1px solid #999;
+        height: 70%;
         .table-header{
           display: flex;
           text-align: center;
@@ -147,7 +171,7 @@ export default {
         }
         .table-content{
           overflow-y: scroll;
-          height: 550px;
+          height: 82%;
           .table-list{
             display: flex;
             justify-content: space-between;

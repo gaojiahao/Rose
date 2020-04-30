@@ -13,7 +13,11 @@
               <span>前一天</span>
           </div>
           <div class="day-select">
-              <datetime v-model="day" @on-change="onDateChange"></datetime>
+              <datetime 
+                v-model="day" 
+                @on-change="onDateChange"
+                :display-format="displayFromat">
+              </datetime>
           </div>
           <div class="after-day" @click="onAfterDayClick">
               <span>后一天</span>
@@ -22,12 +26,12 @@
       </div>
       <div class="day-num">
           <span>当日绩效</span>
-          <p>56321.23</p>
+          <p>{{ total }}</p>
       </div>
       <div :class="{'day-list':true,'day-empty':dayData.length === 0}">
           <div class="list-content" v-for="(log,index) of dayData" :key="index">
               <div class="content-left">
-                  <img :src="defaultImg()" />
+                  <img :src="defaultImg(log)" />
               </div>
               <div class="content-center">
                   <div class="app-name">日志任务</div>
@@ -37,7 +41,7 @@
                   </div>
                   <div class="log-title">{{ log.comment }}</div>
               </div>
-              <div class="content-right">{{ log.amount }}</div>
+              <div class="content-right">{{ log.total }}</div>
           </div>
           <div class="list-empty" v-if="dayData.length === 0">暂无绩效</div>
       </div>
@@ -55,6 +59,7 @@ export default {
     data(){
         return {
            day: "",
+           total: 0,
            dayData: []
         }
     },
@@ -64,9 +69,16 @@ export default {
                 path: "/performance/myPerformance"
             })
         },
-        defaultImg() {
+        defaultImg(log) {
             let url = require('assets/contact_default02.png');
+            if(log.icon){
+                url = log.icon;
+            }
             return url;
+        },
+        displayFromat(value) {
+          let date = new Date(value);
+          return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
         },
         onDateChange(value) {
             this.getDayPerformance(value);
@@ -94,11 +106,16 @@ export default {
         },
         getDayPerformance(value) {
             let day = value || this.day;
+            this.$loading.show();
             getPerformance('day',day).then(res => {
+                let total = 0;
                 res.tableContent.forEach(log => {
-                    log.amount = numberComma(log.amount.toFixed(2));
+                    total += log.total;
+                    log.total = numberComma(log.total.toFixed(2));
                 })
+                this.total = numberComma(total.toFixed(2));
                 this.dayData = res.tableContent;
+                this.$loading.hide();
             })
         }
     },
