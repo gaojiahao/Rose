@@ -32,18 +32,20 @@
                     <span class ="message-creator"
                         v-if="!msg.isMySelf">{{msg.creatorName}}
                     </span>
-                    <div class="message-content" @click="onMsgContextMenu(msg,$event)" :class="[msg.isMySelf==1?'rightarrow':'leftarrow']" ref="contextMenu">
-                        <div v-if="msg.replayMsg" style="border-left: 3px solid rgb(153, 153, 153); padding: 0px 8px; cursor: pointer;">
-                             <MessageTplText :msg="msg.replayMsg" v-if="msg.replayMsg.imType == 1"></MessageTplText>
-                             <MessageTplImg :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 2"></MessageTplImg>
-                             <MessageTplMult :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 3"></MessageTplMult>
-                             <MessageTplFile :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 4"></MessageTplFile>
+                    <touch @menuContext="onMsgContextMenu(msg,$event)">
+                        <div class="message-content" :class="[msg.isMySelf==1?'rightarrow':'leftarrow']" ref="contextMenu">
+                            <div v-if="msg.replayMsg" style="border-left: 3px solid rgb(153, 153, 153); padding: 0px 8px; cursor: pointer;">
+                                <MessageTplText :msg="msg.replayMsg" v-if="msg.replayMsg.imType == 1"></MessageTplText>
+                                <MessageTplImg :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 2"></MessageTplImg>
+                                <MessageTplMult :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 3"></MessageTplMult>
+                                <MessageTplFile :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 4"></MessageTplFile>
+                            </div>
+                            <MessageTplText :msg="msg" v-if="msg.imType == 1"></MessageTplText>
+                            <MessageTplImg :msg="msg" v-else-if="msg.imType == 2"></MessageTplImg>
+                            <MessageTplMult :msg="msg" v-else-if="msg.imType == 3"></MessageTplMult>
+                            <MessageTplFile :msg="msg" v-else-if="msg.imType == 4"></MessageTplFile>
                         </div>
-                        <MessageTplText :msg="msg" v-if="msg.imType == 1"></MessageTplText>
-                        <MessageTplImg :msg="msg" v-else-if="msg.imType == 2"></MessageTplImg>
-                        <MessageTplMult :msg="msg" v-else-if="msg.imType == 3"></MessageTplMult>
-                        <MessageTplFile :msg="msg" v-else-if="msg.imType == 4"></MessageTplFile>
-                    </div>
+                    </touch>
                 </div>
             </div>
         </r-scroll>
@@ -63,7 +65,6 @@
             </div>
             <div class="extra-input-wrapper" v-show="showExtraInput">
                 <div>
-                
                     <i class="iconfont icon-3801wenjian uploader">
                         <input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" multiple="" @change="sendImgMsg">
                     </i>  
@@ -102,12 +103,13 @@
 import {LoadMore} from 'vux'
 import util from '@/common/util'
 import {upload} from 'service/commonService'
-import {sendMsg,getGroupMsg} from 'service/msgService'
+import {sendMsg,getGroupMsg,checkMessage} from 'service/msgService'
 import MessageTplText from '@/views/msg/msg/messageTplText'
 import MessageTplImg from '@/views/msg/msg/messageTplImg'
 import MessageTplMult from '@/views/msg/msg/messageTplMult'
 import MessageTplFile from '@/views/msg/msg/messageTplFile'
 import RScroll from "plugins/scroll/RScroll";
+import Touch from "plugins/touch";
 import FileDialog from  "./fileDialog"
 import ContextMenu from './contextMenu'
 import REmotion from 'homePage/components/comment-related/REmotion'
@@ -138,7 +140,8 @@ export default {
         LoadMore,
         FileDialog,
         ContextMenu,
-        REmotion
+        REmotion,
+        Touch
     },
     filters:{
         replayContent(msg){
@@ -341,7 +344,7 @@ export default {
         },
         replay(msg){
             this.replayMsg = msg;
-            this.msg += '@'+msg.creatorName+' ';
+            if(this.group.groupType != 'P')this.msg += '@'+msg.creatorName+' ';
         },
         toggleWrapper(){
             var input = this.$refs.msgInput;
@@ -379,7 +382,16 @@ export default {
                     this.hasNext = false;
                 }
             })
-        }
+        },
+        checkMessage:function(){
+            var groupId = this.group.groupId;
+            // to:签收消息
+            checkMessage(groupId).then(res=>{
+                if(res.success){
+                    this.$parent.checkLocalMessage(groupId);
+                }
+            });
+        },
     },
     created:function(){
          this.getApp().hasTab = false;
@@ -389,6 +401,9 @@ export default {
     },
     beforeRouteEnter:function(to,form,next){
         next(vm=>{
+            if(vm.group != null){
+                vm.checkMessage();//处理未读信息
+            }
         })
     },
     beforeRouteLeave:function(to,from,next){

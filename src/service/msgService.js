@@ -42,6 +42,7 @@ export let sendMsg = (data)=>{
         data
     })
 }
+export const checkMessage = (groupId) => $flyio.post({url:'/im/message/check?groupId='+groupId})
 export let getGroupMsg = (groupId,page=0) =>{
     var data = {},
         pageSize = 20;

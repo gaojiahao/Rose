@@ -32,6 +32,7 @@
                                 {{group.groupName}}
                             </div>
                             <div class="msg-lastMsg" v-if="group.lastMsg">
+                                <span style="color: #b90c0c;" v-if="group.lastMsg.content.includes(currentUser.name)">[有人@我]</span>
                                 <span>{{group.lastMsg.creatorName}}:</span>
                                 <span v-if="group.lastMsg.imType==1" v-html="formatToEmotion(group.lastMsg.content)"></span>
                                 <span v-else-if="group.lastMsg.imType==2">图片</span>
@@ -98,6 +99,7 @@ export default {
                 pullDownRefresh: false //下拉刷新
             },
             hasNext:false,
+           currentUser:{},
            groups:[],
            group:null,
            msgList:[],
@@ -161,7 +163,8 @@ export default {
                 var data = baseInfo.currentUser,
                     deepStreamUrl = baseInfo.deepStreamUrl,
                     userId = data && data.userId;
-                
+
+                vm.currentUser = data;
                 if(deepStreamUrl && userId){
                     app.getDs(deepStreamUrl,userId).then(ds=>{
                          if (describe == false){//防止断线重连时重复订阅
@@ -284,8 +287,15 @@ export default {
                 this.showList = false;
                 this.toMsg(res);
             })
+        },
+        checkLocalMessage(groupId){
+            var index = this.groupIdToIndex[groupId],
+                group = index && this.groups[index];
+            
+            if(group){
+                group.msgCount = 0;
+            }
         }
-        
     },
     filters:{
        timeChange:function(time){

@@ -37,6 +37,7 @@ import platform from './plugins/platform/index'
 import { getMsgList } from 'service/msgService'
 import { Badge,XHeader} from 'vux'
 var DS = require('deepstream.io-client-js');
+var cordova = window.cordova;
 export default {
   name: 'app',
   data() {
