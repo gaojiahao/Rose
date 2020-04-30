@@ -221,7 +221,11 @@ export default {
                 group = this.groups[index];
                 if (group != null){ //如果群消息页面打开了。
                     group.modTime = msg.crtTime;//修改时间
-                    group.lastMsg.content = msg.content;
+                    if(group.lastMsg){
+                        group.lastMsg.content = msg.content;
+                    } else {
+                        group.lastMsg = msg;
+                    }
                     if (this.group && this.group.groupId == groupId){//如果是当前消息页面的消息
                         let l = this.msgList.length;
                         this.$set(this.msgList,l,msg);

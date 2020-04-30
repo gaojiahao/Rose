@@ -23,12 +23,13 @@
             <div class="msg-container">
                 <LoadMore v-if="loading"></LoadMore>
                 <div v-for="(msg,index) in msgList" :key="index" class="singleMsg" :class="{ 'isMySelf': msg.isMySelf }">
+                    <touch @menuContext="onAvaContextMenu(msg.creatorName)">
                     <img 
                     :src="msg.photo" 
                     :style="{float: msg.isMySelf?'right':'left'}"  
                     class="message-ava" 
                     @error="getDefaultPhoto(msg)">
-
+                    </touch>
                     <span class ="message-creator"
                         v-if="!msg.isMySelf">{{msg.creatorName}}
                     </span>
@@ -330,6 +331,11 @@ export default {
             if(tag == 'a') return;
             this.contextMenuMsg = msg;
             this.showContextMenu = true;
+        },
+        onAvaContextMenu(creatorName){
+            if (this.group.groupType == 'G'){
+                this.msg += '@'+creatorName+' ';
+            }
         },
         initContextMenu(){
             var contextMenu = this.$refs.contextMenu;
