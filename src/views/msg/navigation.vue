@@ -177,6 +177,7 @@ export default {
         },
         describeDs(ds){
             var token = tokenService.getToken();
+            console.log('订阅消息');
             ds.event.subscribe('roletaskIm/'+ token, data => {
                 console.log('msg',data);
                 this.distributeMsg(data);

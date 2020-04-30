@@ -1,5 +1,5 @@
 <template>
-    <div class="member-list" v-transfer-dom>
+    <div class="member-list" v-transfer-dom v-show="showMemberList">
        <popup 
        v-model="showMemberList" 
        position="right" 
