@@ -134,12 +134,16 @@ export default {
         },
         getDayPerformances() {
           getTodayPerformance().then(res => {
-            this.todayPerformance = numberComma(res.tableContent[0].amount.toFixed(2));
+            if(res.tableContent[0] && res.tableContent[0].amount){
+              this.todayPerformance = numberComma(res.tableContent[0].amount.toFixed(2));
+            }
           })
         },
         getYearPerformances() {
           getYearPerformance().then(res => {
-            this.yearPerformance = numberComma(res.tableContent[0].amount.toFixed(2));
+            if(res.tableContent[0] && res.tableContent[0].amount){
+              this.yearPerformance = numberComma(res.tableContent[0].amount.toFixed(2));
+            }
           })
         }
     },
