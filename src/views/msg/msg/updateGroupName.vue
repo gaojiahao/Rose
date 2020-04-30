@@ -23,8 +23,7 @@ import Bus from '@/common/eventBus.js';
 export default{  
     name: "UpdateGroupName",
     components: {
-        XInput,
-        Popup
+        XInput
     },
     props: {
       group: {
