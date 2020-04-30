@@ -170,7 +170,8 @@ export default {
                         }
                     })
                     this.bomData = bomNewValue;
-                    this.initBomDataStorageSum(this.bomData);
+                    var flag = true;
+                    this.initBomDataStorageSum(this.bomData,flag);
                     this.setValue(newValues);
                     this.isEdit = false;
                 }
@@ -1051,8 +1052,12 @@ export default {
                 this.bomData.push(res.tableContent);
             }).catch(e =>{e});
         },
-        async initBomDataStorageSum(bomData){
+        async initBomDataStorageSum(bomData,flag){
             var me = this;
+            if(!bomData.length){
+                this.boms = [];
+                return ;
+            }
             for(var i = 0; i < bomData.length; i++){
                 for(var j = 0 ; j < bomData[i].length;j++){
                     var data = {
@@ -1063,7 +1068,12 @@ export default {
                         await deal(data);
                     }
                 }
-                await this.dealBom();
+                //await this.dealBom();
+                if(flag){
+                    await this.delBom();    
+                } else {
+                    await this.dealBom();
+                }
             }
             async function deal(data){
                 await getInProcessingStorageSumSource(data).then(res=>{ 
@@ -1099,11 +1109,12 @@ export default {
         //     }
         // },
         dealBom(){
-            for(var b = 0; b<this.boms.length; b++){
+            let arr = this.boms;
+            for(var b = 0; b<arr.length; b++){
                 var flag =false;
                 for(var i = 0; i < this.bomData.length; i++){
                     for(var j = 0 ; j < this.bomData[i].length;j++){
-                        if(this.boms[b]['inventoryCode']==this.bomData[i][j]['inventoryCode']){
+                        if(arr[b]['inventoryCode']==this.bomData[i][j]['inventoryCode']){
                             flag = true;
                         }
                     }
@@ -1111,7 +1122,48 @@ export default {
                 if(!flag){
                     this.boms.splice(b,1);
                 }
-            }    
+            }  
+        },
+        delBom(){
+            let arr = this.boms;
+            for(var b = 0; b<arr.length; b++){
+                var flag =false;
+                for(var i = 0; i < this.bomData.length; i++){
+                    for(var j = 0 ; j < this.bomData[i].length;j++){
+                        if(arr[b]['inventoryCode']==this.bomData[i][j]['inventoryCode']){
+                            flag = true;
+                        }
+                    }
+                }
+                if(!flag){
+                    this.boms.splice((b),1);
+                    b--;
+                }
+            }  
+            var bomlist = this.boms;
+            this.outPut['dataSet'] = [];
+            for(var m =0;m<bomlist.length;m++ ){
+                var obj2 = {};
+                obj2 = {
+                    'inventoryName_outPutMatCode': bomlist[m].inventoryName,
+                    'outPutMatCode': bomlist[m].inventoryCode,
+                    'demandQty': bomlist[i].demandQty,
+                    'measureUnit_outPutMatCode': bomlist[m].measureUnit,
+                    'thenTotalQtyStock': bomlist[m].thenTotalQtyStock,
+                    'transitBalance': bomlist[m].transitBalance,
+                    'workflowLockQty': bomlist[m].workflowLockQty,
+                    'thenQtyBalCopy1': bomlist[m].qtyBal,
+                    'tdQty': bomlist[m].tdQty,
+                    'tdProcessing': bomlist[m].processing,
+                    'productSource': bomlist[m].productSource,
+                    'processingStartDate': bomlist[m].processingStartDate,
+                    'containerCodeOut': bomlist[m].containerCodeOut,
+                    'warehouseName_containerCodeOut': bomlist[m].containerNameOut,
+                    'tdId': bomlist[m].tdId,
+                }
+                this.outPut['dataSet'].push(obj2);
+            }
+            this.$set(this.form.formData, 'outPut', this.outPut);      
         },
         async load(){
             if(!(window.sessionStorage.getItem('r2FieldSetting')||this.$r2FieldSetting)){
