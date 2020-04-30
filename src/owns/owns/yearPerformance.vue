@@ -15,7 +15,7 @@
         <div class="table-header">
           <div class="brfore-year" @click="onBeforeYearClick">
               <span class="icon icon-performance-back"></span>
-              <span>{{ new Date(year).getFullYear()-1 }}年</span>
+              <span>{{ beforeYear }}年</span>
           </div>
           <div class="year-select">
               <datetime 
@@ -62,7 +62,9 @@ export default {
         }
     },
     computed: {
-      
+      beforeYear: function() {
+        return new Date(String(this.year)).getFullYear() - 1;
+      }
     },
     methods:{
         goBack() {
