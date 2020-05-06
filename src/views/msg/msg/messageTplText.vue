@@ -1,6 +1,6 @@
 <template>
     <div class="text-msg-content" 
-        v-html="msg.content">
+        v-html="formatToEmotion(msg.content)">
     </div>
 </template>
 
