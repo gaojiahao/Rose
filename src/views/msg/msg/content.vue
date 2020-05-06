@@ -66,7 +66,7 @@
             </div>
             <div class="extra-input-wrapper" v-show="showExtraInput">
                 <div>
-                    <i class="iconfont icon-3801wenjian uploader">
+                    <i class="iconfont icon-i-img uploader">
                         <input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" multiple="" @change="sendImgMsg">
                     </i>  
                     <div class="extra-input-item-text">
