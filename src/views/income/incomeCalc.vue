@@ -469,7 +469,7 @@ export default {
         width: 100%;
         height: 2rem;
         position: absolute;
-        background: #111 url(/static/img/bg01.jpeg) top/cover no-repeat;
+        background: #111 url('../../assets/bg01.jpeg') top / cover no-repeat;
     }
     .dashboard-container-part {
         width: 100%;
