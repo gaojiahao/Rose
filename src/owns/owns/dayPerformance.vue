@@ -135,6 +135,7 @@ export default {
 
 <style lang="less" scoped>
   .day-performance{
+      height: 100%;
       .day-header{
           height: .5rem;
           line-height: .5rem;
@@ -197,33 +198,37 @@ export default {
             font-size: .2rem;
         }
       }
-      .list-content{
-          padding: .05rem;
-          display: flex;
-          align-items: center;
-          .content-left{
-              img{
-                  width: .7rem;
-                  height: .7rem;
-              }
-          }
-          .content-center{
-                margin-left: .05rem;
-                width: 62%;
-                .log-title{
-                    width: 2.5rem;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
+      .day-list{
+          height: 68%;
+          overflow-y: auto;
+          .list-content{
+            padding: .05rem;
+            display: flex;
+            align-items: center;
+            .content-left{
+                img{
+                    width: .7rem;
+                    height: .7rem;
                 }
-                .log-desc{
-                    width: 2.3rem;
-                }
-          }
-          .content-right{
-              font-weight: bold;
-              word-break: break-all;
-          }
+            }
+            .content-center{
+                    margin-left: .05rem;
+                    width: 62%;
+                    .log-title{
+                        width: 2.5rem;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
+                    .log-desc{
+                        width: 2.3rem;
+                    }
+            }
+            .content-right{
+                font-weight: bold;
+                word-break: break-all;
+            }
+        }
       }
   }
 </style>
