@@ -59,7 +59,7 @@
 </template>
 <script>
 import { LoadMore,XInput,Icon } from 'vux'
-import { getGroupMsg,getMyGroups,createGroup,getGroupByUserId } from 'service/msgService'
+import { getGroupMsg,getMyGroups,createGroup,getGroupByUserId,getMembers} from 'service/msgService'
 import commonService from 'service/commonService'
 import tokenService from 'service/tokenService'
 import util from '@/common/util';
@@ -69,13 +69,15 @@ import { initWebContext } from 'service/commonService'
 import MemberSelector from './msg/memberSelector';
 import NavSearch from './msg/navSearch';
 import RScroll from "plugins/scroll/RScroll";
+var defaultPhoto = require("assets/ava01.png");
 export default {
     created:function(){       
         this.initDs();
         this.initGroup();
         initWebContext().then(() => {
             this.currentUser = WebContext.WebContext.currentUser;
-        })
+        });
+        this.uIdToPhoto = {};
     },
     mounted:function(){
         Bus.$on('toMsg', group => {
@@ -118,7 +120,7 @@ export default {
     },
     methods:{
         getDefaultPhoto(group) {
-            let url = require("assets/ava01.png");
+            let url = defaultPhoto;
             if (group) {
                 group.groupIcon = url;
             }
@@ -208,7 +210,7 @@ export default {
             }
         },
         /**
-         * 处理文字信息
+         * 处理消息信息
          */
         addMsg(msg){
             var groupId = msg.groupId,
@@ -221,6 +223,9 @@ export default {
                 group = this.groups[index];
                 if (group != null){ //如果群消息页面打开了。
                     group.modTime = msg.crtTime;//修改时间
+                    if (msg.photo == null){
+                        this.setMsgPhoto(msg);
+                    }
                     if(group.lastMsg){
                         group.lastMsg.content = msg.content;
                     } else {
@@ -300,7 +305,22 @@ export default {
             if(group){
                 group.msgCount = 0;
             }
-        }
+        },
+        setMsgPhoto:function(msg){
+            var uIdToPhoto = this.uIdToPhoto,
+                photo = uIdToPhoto[msg.creator];
+
+            if ( photo!= null){
+                msg.photo = photo;
+            } else {
+                getMembers(msg.groupId).then(members => {
+                   members.forEach(member=>{
+                       uIdToPhoto[member.userId] = member.photo || defaultPhoto;
+                   })
+                   this.$set(msg,'photo', uIdToPhoto[msg.creator]);
+                })
+            }
+        },
     },
     filters:{
        timeChange:function(time){
