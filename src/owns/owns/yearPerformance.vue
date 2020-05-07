@@ -118,7 +118,6 @@ export default {
           line-height: .5rem;
           display: flex;
           text-align: center;
-          border-bottom: 1px solid #eee;
           .back{
               display: flex;
               align-items: center;
