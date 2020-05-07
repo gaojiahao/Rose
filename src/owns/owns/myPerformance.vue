@@ -169,12 +169,17 @@ export default {
     width: 100%;
     position: relative;
     .log-lours {
-        height: 40%;
+        height: 30%;
         width: 100%;
     }
     .log-btn{
+      button{
+        margin: .06rem;
+      }
       text-align: right;
-      margin-right: .1rem;
+      position: absolute;
+      z-index: 1024;
+      right: 0;
       .btn-color{
         background-color: #2e7cca;
         color: #fff;
@@ -187,7 +192,6 @@ export default {
         border-bottom: 1px solid #eee;
         b{
           color: #2e7cca;
-          font-size: .2rem;
         }
     }
     .today-performance:hover{
@@ -210,19 +214,17 @@ export default {
       .info-right{
         img{
           width: .55rem;
-          height: .55rem;
-          border: 1px solid #eee;
-          border-radius: 50%;
+          border-radius: .03rem;
         }
       }
       .info-left{
         &-company{
-          font-size: .16rem;
+            font-size: .14rem;
         }
         &-name{
           margin-top: .1rem;
           p{
-            font-size: .17rem;
+            font-size: .18rem;
           }
           span{
             color: #999;
@@ -231,6 +233,7 @@ export default {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            font-size: .12rem;
           }
         }
       }
