@@ -80,7 +80,7 @@ export default {
         },
         onBeforeYearClick() {
             let year = new Date(this.year).getFullYear() - 1;
-            this.year = year;
+            this.year = String(year);
             this.getYearPerformance(year);
         },
         gotoDetail(item) {
@@ -144,14 +144,12 @@ export default {
       }
       .year-table{
         margin: .1rem;
-        border: 1px solid #999;
         height: 70%;
         .table-header{
           display: flex;
           text-align: center;
           padding: .1rem;
           background-color: #eee;
-          border-bottom: 1px solid #999;
           .year-select{
             flex: 1;
           }

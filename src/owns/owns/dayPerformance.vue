@@ -207,22 +207,23 @@ export default {
             align-items: center;
             .content-left{
                 img{
-                    width: .7rem;
-                    height: .7rem;
+                    width: .55rem;
+                    height: .55rem;
+                    vertical-align: super;
                 }
             }
             .content-center{
-                    margin-left: .05rem;
-                    width: 62%;
-                    .log-title{
-                        width: 2.5rem;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
-                    }
-                    .log-desc{
-                        width: 2.3rem;
-                    }
+                margin-left: .05rem;
+                width: 62%;
+                .log-title{
+                    width: 2.5rem;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+                .log-desc{
+                    width: 2.3rem;
+                }
             }
             .content-right{
                 font-weight: bold;

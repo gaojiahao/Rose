@@ -209,18 +209,20 @@ export default {
       border-bottom: 1px solid #eee;
       .info-right{
         img{
-          width: 1rem;
-          height: 1rem;
+          width: .55rem;
+          height: .55rem;
+          border: 1px solid #eee;
+          border-radius: 50%;
         }
       }
       .info-left{
         &-company{
-          font-size: .17rem;
+          font-size: .16rem;
         }
         &-name{
           margin-top: .1rem;
           p{
-            font-size: .2rem;
+            font-size: .17rem;
           }
           span{
             color: #999;

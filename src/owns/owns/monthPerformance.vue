@@ -171,14 +171,12 @@ export default {
       }
       .month-table{
         margin: .1rem;
-        border: 1px solid #999;
         height: 70%;
         .table-header{
           display: flex;
           text-align: center;
           padding: .1rem;
           background-color: #eee;
-          border-bottom: 1px solid #999;
           .month-select{
             flex: 1;
           }
