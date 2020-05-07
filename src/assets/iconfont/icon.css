@@ -2,10 +2,12 @@
   background: url('~assets/iconfont/clear.png');
   background-size: cover;
 }
-.icon-search {
+
+/* .icon-search {
   background: url('~assets/iconfont/nav_search.png');
   background-size: cover;
-}
+} */
+
 .icon-right {
   background: url('~assets/iconfont/right.png');
   background-size: cover;
@@ -126,20 +128,20 @@
   background-size: cover;
 }
 
-.icon-task{
+/* .icon-task{
   background: url('~assets/iconfont/task.png');
   background-size: cover;
-}
+} */
 
-.icon-task2{
+/* .icon-task2{
   background: url('~assets/iconfont/task2.png');
   background-size: cover;
-}
+} */
 
-.icon-task3{
+/* .icon-task3{
   background: url('~assets/iconfont/task3.png');
   background-size: cover;
-}
+} */
 
 .icon-project{
   background: url('~assets/iconfont/project.png');
