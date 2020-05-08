@@ -10,26 +10,6 @@
             >
         <div class="flow-task">
             <div class="flow-task-item" v-for="(task,index) in tasks" :key="index" @click="handlerViewTask(task)" >
-<<<<<<< HEAD:src/msg/pages/projectTask.vue
-                <div class="top">
-                    <div class='img'>
-                        <img :src="task.photo || require('assets/ava01.png')" class="avatar">
-                    </div>
-                    <div class="">
-                        <div class="flow-task-item-header-wrapper">
-                            <div class='title'>
-                                <span>{{task.projectName_projectApprovalId}}</span>
-                            </div>
-                            <div class='code'>
-                                <span>{{task.transCode}}</span>
-                            </div>
-                        </div>
-                        <div class="flow-task-item-center">
-                            <div class="flow-task-item-center-wrapper">
-                                <span class="task">{{task.taskName_projectPlanTask}}</span>
-                                <span class="task2">{{task.projectType_projectApprovalId}}</span>
-                                <span class="task3">{{task.biProcessStatus}}</span>
-=======
                 <div class="flow-task-item-header">
                     <div class="flow-task-item-header-wrapper">
                             <div>
@@ -37,22 +17,10 @@
                             </div>
                             <div>
                             <span>{{task.TRANS_CODE}}</span>
->>>>>>> parent of 3638f8ff... fixbug（消息改成任务）:src/task/projectTask.vue
                             </div>
                         </div>
                     </div>
                 </div>
-<<<<<<< HEAD:src/msg/pages/projectTask.vue
-                <div class="" >
-                    <div class="flow-task-item-foot-wrapper">
-                        <div>
-                            <i class="icon icon-handler"></i>
-                            <span>创建人：{{task.creatorName}}</span>
-                        </div>
-                        <div>
-                            <i class="icon icon-mod-time"></i>
-                        <span>创建时间：{{dateFormat(task.crtTime)}}</span>
-=======
                 <div class="flow-task-item-center">
                     <div class="flow-task-item-center-wrapper">
                         <span>{{task.nodeName}}</span>
@@ -60,20 +28,17 @@
                     </div>
 
                 <div class="flow-task-item-foot vux-1px-t" >
-                        <div class="flow-task-item-foot-wrapper">
-                            <div>
-                                <i class="icon icon-handler"></i>
-                                <span>创建人：{{task.creator_name}}</span>
-                            </div>
-                            <div>
-                                <i class="icon icon-mod-time"></i>
+                    <div class="flow-task-item-foot-wrapper">
+                        <div>
+                            <i class="icon icon-handler"></i>
+                            <span>创建人：{{task.creator_name}}</span>
+                        </div>
+                        <div>
+                            <i class="icon icon-mod-time"></i>
                             <span>创建时间：{{task.crtTime}}</span>
-                            </div>
->>>>>>> parent of 3638f8ff... fixbug（消息改成任务）:src/task/projectTask.vue
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
     </r-scroll>
 </template>

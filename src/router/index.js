@@ -11,6 +11,7 @@ import Router from 'vue-router'
 import HomeRouter from '@/home/router'
 import tokenService from 'service/tokenService'
 import MsgRouter from '@/msg/router'
+import TaskRouter from '@/taskflow/router'
 import MyPerformanceRouter from '@/owns/router'
 import {isPC,isQYWX,isDD} from '@/plugins/platform/index'
 
@@ -29,7 +30,8 @@ if (router == null) {
     routes: [
       ...HomeRouter,
       ...MsgRouter,
-      ...MyPerformanceRouter
+      ...MyPerformanceRouter,
+      ...TaskRouter
     ]
   })
 
