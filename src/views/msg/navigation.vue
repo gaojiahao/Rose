@@ -6,10 +6,10 @@
                 <div>消息</div>
                 <div :style="{lineHeight:'.1rem'}">
                     <span @click="onSearchClick" class="navigation-search">
-                        <span class="icon icon-message-search"></span>
+                        <span class="iconfont icon-serch"></span>
                     </span>
                     <span class="navigation-add" @click="showNavList">
-                        <span class="icon icon-message-add"></span>
+                        <span class="iconfont icon-add"></span>
                     </span>
                 </div>
             </div>
@@ -198,6 +198,20 @@ export default {
          */
         distributeMsg(msg){
             var type = msg.imType;
+            var groupIcon = 'https://lab.roletask.com/resource/common-icon/male.png';
+            if(cordova){
+                this.groups.map(g=>{
+                    if(g.groupId === msg.groupId){
+                       groupIcon = g.groupIcon; 
+                    }
+                });
+                cordova.plugins.notification.local.schedule({
+                    title: msg.creatorName,
+                    text: msg.content,
+                    foreground: true,
+                    icon:groupIcon
+                });
+            }
             switch(type){
                 case '1':
                 case '2':

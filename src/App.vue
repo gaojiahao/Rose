@@ -47,8 +47,8 @@ export default {
         {title: '消息', path: '/msg', icon:'icon-message1'},
         {title: '任务', path: '/notice/flowTodo',icon:'icon-task1'},
         {title: '应用', path: '/home',icon:'icon-apps'},
-         {title: '通讯录',path: '/contacts/0',icon:'icon-Organization'},
-        {title: '我',path:'/user',icon:'icon-my'}
+         {title: '通讯录',path: '/contacts/0',icon:'icon-org'},
+        {title: '我',path:'/user',icon:'icon-me2'}
       ],
       newsNumber:0,
       hasNav:hasNav,
