@@ -48,7 +48,7 @@
 import { getMsgList} from "service/msgService";
 import RScroll from "plugins/scroll/RScroll";
 export default {
-    name:"flowTask",
+    name:"myToDoTask",
     components:{
         RScroll
     },
@@ -97,7 +97,6 @@ export default {
         
     },
     mounted(){
-        debugger
         this.getTasks();
     }
 }

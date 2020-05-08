@@ -51,7 +51,6 @@
             <div class="flow-task-item" v-for="(task,index) in tasks" :key="index" @click="handlerViewTask(task)" >
                 <div class="flow-task-item-header">
                     <div class="flow-task-item-header-wrapper">
-<<<<<<< HEAD:src/msg/pages/dailyTask.vue
                         <div class='img'>
                             <img :src="task.photo || require('assets/ava01.png')" class="avatar">
                         </div>
@@ -61,25 +60,13 @@
                         <div>
                             <span>{{task.transCode}}</span>
                         </div>
-=======
-                            <div>
-                            <span>{{task.title}}</span>
-                            </div>
-                            <div>
-                            <span>{{task.TRANS_CODE}}</span>
-                            </div>
->>>>>>> parent of 3638f8ff... fixbug（消息改成任务）:src/task/dailyTask.vue
                     </div>
                 </div>
                 <div class="flow-task-item-center">
                     <div class="flow-task-item-center-wrapper">
-<<<<<<< HEAD:src/msg/pages/dailyTask.vue
                         <span class="task">{{task.logType}}</span>
                         <span class="task2">{{task.projectName_projectApprovalId}}</span>
                         <span class="task3">{{task.biProcessStatus}}</span>
-=======
-                        <span>{{task.nodeName}}</span>
->>>>>>> parent of 3638f8ff... fixbug（消息改成任务）:src/task/dailyTask.vue
                     </div>
                     </div>
 

@@ -33,7 +33,7 @@ export default {
       activeIndex: 0,             // 被选中下标
       view_id : '',               // 视图 ID
       serachVal: '',              // 搜索内容
-      activeTab: '',              // 被选中的对应标题
+      activeTab: 'myToDoTask',              // 被选中的对应标题
       applyCode: '' ,
       calc_rel_code: '',
       flowData:[],                // 流水数据
@@ -43,6 +43,7 @@ export default {
       flowField: [],              // 流水显示字段
       flowTitle: {},              // 流水标题
       requestData : {},           // 请求流水数据的参数
+      taskList:[]
     }
   },
   directives: { TransferDom },
@@ -154,6 +155,11 @@ export default {
     },
     //获取列表数据
     getListData(noReset = false) {
+      var taskList = [
+        {transCode:'Wx2019000102',transName:'维修单',nodeName:'工程师提交验收',json:'{"address":"上梅林17x","text":"需求描述"}'},
+        {transCode:'Wx2019000103',transName:'维修单',nodeName:'工程师提交验收',json:'{"address":"上梅林x88x","text":"描述什么"}'}
+      ]
+      return ;
        return getViewList({
         user_code: 1,
         page: this.page,
@@ -283,7 +289,7 @@ export default {
   created() {
     this.applyCode = this.$route.params.code;
     (async () => {
-      await this.getClassfiy();
+      //await this.getClassfiy();
     //   await this.getView();
     //   await this.getListData();
     })()

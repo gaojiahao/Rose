@@ -1,13 +1,13 @@
 <template>
     <div class="task-container" >
         <div class="header">
-            <div class="search">
+            <!-- <div class="search">
                 <form class='search_part' action="#" method="post">
                     <i class="icon icon-more2"></i>
                     <input type="search" autocomplete="off" placeholder="任务名称" class="srh_inp">
                     <i class="icon-taskSearch clear_icon"></i>
                 </form>
-            </div>
+            </div> -->
             <div class="swiper-tab">
                 <div class="tab-item" :class="{active: index === activeIndex}" v-for="(item, index) in tabItem"
                     @click="tabClick(item, index)" ref="tabs" :key="index">
@@ -18,23 +18,18 @@
         <div class="swiper-container list-container">
             <div class="swiper-wrapper">
                 <div class="swiper-slide" v-for="(slide, key) in listMap" :key="key">
-                    <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="slide.hasNext"
+                    <!-- <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="slide.hasNext"
                             :no-data="!slide.hasNext && !slide.listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
-                            ref="bScroll">
-                        <template>
-                            
+                            ref="bScroll"> -->
+                         <!-- 我的待办 -->
+                        <template v-if="activeTab == slide.name">
+                            <myToDoTask></myToDoTask>
                         </template>
-                        <template>
-                            
+                        <!-- 我的已办 -->
+                        <template v-else-if="activeTab == slide.name">
+                            <myCompleted></myCompleted>
                         </template>
-
-                        <template>
-                            
-                        </template>
-                        <template>
-                            
-                        </template>
-                    </r-scroll>
+                    <!-- </r-scroll> -->
                 </div>
             </div>
         </div>
@@ -44,37 +39,37 @@
 <script>
 import { Tab, TabItem } from 'vux'
 import RScroll from "plugins/scroll/RScroll";
-import taskCommon from 'mixins/taskCommon'
+import taskCommon from 'mixins/taskCommon';
+import myToDoTask from '@/taskflow/pages/myToDoTask'
+import myCompleted from '@/taskflow/pages/myCompleted'
 export default {
     components: {
     Tab,
     TabItem,
-    RScroll
+    RScroll,
+    myToDoTask,
+    myCompleted
     },
     mixins: [taskCommon],
     data(){
         return {
             tabItem:[
-                {name:'工作流任务',key:'flowTask'},
-                {name:'项目任务',key:'projectTask'},
-                {name:'日志任务',key:'dailyTask'}
+                // {name:'工作流任务',key:'flowTask'},
+                // {name:'项目任务',key:'projectTask'},
+                // {name:'日志任务',key:'dailyTask'}
+                {name:'我的待办',key:'myToDoTask'},
+                {name:'我的已办',key:'myCompleted'},
             ],
-            listMap:{},
+            listMap:{
+                '0':{ name:'myToDoTask', folder:'finance' },
+                '1':{ name:'myCompleted', folder:'finance' },
+            },
         }
     },
     methods:{
         tabClick(val, index) {
-            if (index === this.activeIndex) {
-                this.currentScroll.scrollTo(0, 0);
-                return;
-            }
             this.activeIndex = index;
-            this.activeTab = val.view_name;
-            this.calc_rel_code = val.calc_rel_code;
-            this.view_id = val.view_id;
-            this.currentScroll.scrollTo(0, 0);
-            this.resetCondition();
-            this.getList();
+            this.activeTab = val.name;
             this.listSwiper.slideTo(index);
         },
         // 初始化swiper
@@ -82,21 +77,14 @@ export default {
             this.$nextTick(() => {
             this.listSwiper = new this.Swiper('.list-container', {
                 touchAngle: 30,
+                noSwiping : true,
                 on: {
                 slideChangeTransitionStart: () => {
                     let index = this.listSwiper.activeIndex;
-                    let tab = this.listView[index];
+                    let tab = this.listMap[index];
                     this.activeIndex = index;
-                    this.activeTab = tab.view_name;
-                    this.calc_rel_code = tab.calc_rel_code;
-                    this.view_id = tab.view_id;
+                    this.activeTab = tab.name;
                     this.scrollToShow(index);
-                    // 已有数据则不重新请求
-                    if (this.currentItem.listData.length) {
-                    return
-                    }
-                    this.resetCondition();
-                    this.getListData();
                 },
                 },
             });
@@ -104,6 +92,7 @@ export default {
         },
     },
     created(){
+        this.initSwiper();
     },
     activated(){
     },
@@ -199,7 +188,8 @@ input::-ms-input-placeholder {
             color: #bfbfbf;
             background:linear-gradient(to top, rgb(76,180,136), 50%, rgb(71,215,146));
             .tab-item{
-                width: 33.333%;
+                //width: 33.333%;
+                width: 50%;
                 line-height: .27rem;
                 font-size: .14rem;
                 text-align: center;

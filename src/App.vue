@@ -40,7 +40,7 @@ export default {
       tablist: [
         {title: '应用', path: '/home', icon: 'icon-1'},
         {title: '消息', path: '/notice', icon: 'icon-message'},
-        {title: '任务', path: '/taskflow1', icon: 'icon-message'},
+        {title: '任务', path: '/taskflow', icon: 'icon-message'},
         {title: '我', path: '/performance', icon: 'icon-yonghu'}
       ],
       newsNumber:0,

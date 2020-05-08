@@ -48,9 +48,17 @@
 import { getMsgList} from "service/msgService";
 import RScroll from "plugins/scroll/RScroll";
 export default {
-    name:"flowTask",
+    name:"myCompleted",
     components:{
         RScroll
+    },
+    props:{
+        tasks: {
+            type: Array,
+            default() {
+                return []
+            }
+        }
     },
     data(){
         return {
@@ -97,7 +105,6 @@ export default {
         
     },
     mounted(){
-        debugger
         this.getTasks();
     }
 }

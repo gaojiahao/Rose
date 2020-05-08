@@ -10,13 +10,15 @@ import taskflow from '@/taskflow/pages/taskflow'
 import flowTask from '@/taskflow/pages/flowTask'
 import projectTask from '@/taskflow/pages/projectTask'
 import dailyTask from '@/taskflow/pages/dailyTask'
+import myToDoTask from '@/taskflow/pages/myToDoTask'
+import myCompleted from '@/taskflow/pages/myCompleted'
 export default [
   { 
-    path: '/taskflow1', 
-    name: 'taskflow1', 
+    path: '/taskflow', 
+    name: 'taskflow', 
     component: taskflow,
     meta: { title: '任务列表', keepAlive: true},
-    redirect: { name: 'flowTask' },
+    redirect: { name: 'myToDoTask' },
     children:[{
       path:'flowTask',
       name:'flowTask',
@@ -32,7 +34,18 @@ export default [
       name:'dailyTask',
       component:dailyTask,
       meta: { title: '日志任务', keepAlive: true},
-    }]
+    },{
+      path:'myToDoTask',
+      name:'myToDoTask',
+      component:myToDoTask,
+      meta: { title: '我的待办', keepAlive: true},
+    },{
+      path:'myCompleted',
+      name:'myCompleted',
+      component:myCompleted,
+      meta: { title: '我的已办', keepAlive: true},
+    }
+    ]
   },
 ]
 
