@@ -44,7 +44,7 @@
                     <div class="vux-cell-primary">
                         查找群聊天记录
                     </div>
-                    <div class="weui-cell__ft">
+                    <div class="weui-cell__ft" @click="showHistoryAll = true">
                         更多
                     </div>
                 </div> 
@@ -97,12 +97,15 @@
             ref="updateGroupName"
             :group="group">
          </update-group-name>
+         <history-all v-if="showHistoryAll">
+         </history-all>
     </div>
 </template>
 <script>
 import { Group, Cell,InlineXSwitch} from 'vux'
 import MemberSelector from './memberSelector';
 import MemberList from './memberList';
+import HistoryAll from './historyAll';
 import WebContext from 'service/commonService'
 import { initWebContext } from 'service/commonService'
 import { getMembers,addMember,createGroup,setFocus,deleteFocus } from '@/service/msgService'
@@ -116,12 +119,14 @@ export default {
         InlineXSwitch,
         MemberSelector,
         MemberList,
+        HistoryAll,
         UpdateGroupName
     },
     data(){
         return {
             allMembers: [],
-            currentUser: {}
+            currentUser: {},
+            showHistoryAll:false
         }
     },
     methods:{

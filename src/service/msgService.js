@@ -55,6 +55,18 @@ export let getGroupMsg = (groupId,page=0) =>{
         data
     })
 }
+export let searchGroupMsg = (data)=>{
+    return $flyio.ajax({
+        url:'/im/message/getGroupMessage',
+        data
+    })
+}
+export let getMessagesByImType = (params) => {
+    return $flyio.ajax({
+        url:'/H_roleplay-si/im/message/getMessageByImType',
+        data:params
+    });
+}
 export let getAddressBook = (id)=>{
     var data = id != '0'? {groupId:id}:undefined;
 
