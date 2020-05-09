@@ -116,7 +116,7 @@ input::-ms-input-placeholder {
     height: 100%;
     background:#f8fcff;
     .wrapper {
-        height: calc(100% - 10.99rem);
+        height: 100%;
         // height: 7.2rem;
     }
     .header {
@@ -202,7 +202,7 @@ input::-ms-input-placeholder {
         }
     }
     .list-container {
-        height: calc(100% - .96rem);
+        height: calc(100% - 10.99rem);
         .list_wrapper {
         height: 100%;
         background-color: #fff;

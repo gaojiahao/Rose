@@ -13,31 +13,39 @@
             <div class="flow-task-item" v-for="(task,index) in tasks" :key="index" @click="handlerViewTask(task)" >
                 <div class="flow-task-item-header">
                     <div class="flow-task-item-header-wrapper">
-                            <div>
+                        <div class="flow-task-item-header-wrapper-img">
+                            <img  :src="getImgPic(task.img)" >
+                        </div>
+                        <div class="flow-task-item-header-wrapper-title"> 
                             <span>{{task.title}}</span>
-                            </div>
-                            <div>
+                        </div>
+                            <!-- <div>
                             <span>{{task.TRANS_CODE}}</span>
-                            </div>
+                            </div> -->
                     </div>
                 </div>
                 <div class="flow-task-item-center">
                     <div class="flow-task-item-center-wrapper">
-                        <span>{{task.nodeName}}</span>
+                        <span>{{task.TRANS_CODE}}</span>
+                        <span style="float:right;font-weight:600">{{task.nodeName}}</span>
                     </div>
-                    </div>
-
-                <div class="flow-task-item-foot vux-1px-t" >
-                        <div class="flow-task-item-foot-wrapper">
-                            <div>
-                                <i class="icon icon-handler"></i>
-                                <span>创建人：{{task.creator_name}}</span>
-                            </div>
-                            <div>
-                                <i class="icon icon-mod-time"></i>
-                            <span>创建时间：{{task.crtTime}}</span>
-                            </div>
+                    <div class="">
+                        <div>
+                            <span>创建人：{{task.creator_name}}</span>
                         </div>
+                        <div>
+                            <span>创建时间：{{task.crtTime}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flow-task-item-foot vux-1px-t" >
+                    <div class="flow-task-item-foot-btn">
+                        <div style="position: absolute;right: 0;">
+                            <span class="btn_item agreement" >同意</span>
+                            <span class="btn_item disagree" >不同意</span>
+                            <span class="btn_item transfer" >转办</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -94,6 +102,16 @@ export default {
             this.params.page=1;
             this.getTasks();
         },
+        //选择默认图片
+        getImgPic(d) {
+        let url;
+        if(d){
+            url =  d;
+        }else{
+            url = require('assets/default/service-sales-contract.png');
+        }
+        return url;
+        },
         
     },
     mounted(){
@@ -106,15 +124,28 @@ export default {
 .flow-task{
     padding: .15rem;
     font-size: .14rem;
-
     &-item{
         box-shadow: 0 2px 10px 0 rgba(232, 232, 232, 0.7);
         margin-bottom: .15rem;
+        background: white;
         &-header{
             padding: .05rem .1rem;
             &-wrapper{
-                display: flex;
-                justify-content: space-between;
+                // display: flex;
+                // justify-content: space-between;
+                width: 100%;
+                height: .3rem;
+                border-bottom: 1px solid #9E9E9E;
+                &-img{
+                    width: .3rem;
+                    float: left;
+                    img{                    
+                        width: .25rem;
+                    }
+                }
+                &-title{
+                    font-weight: 600;
+                }
             }
         }
 
@@ -123,6 +154,7 @@ export default {
         }
 
         &-foot{
+            height: .3rem;
             padding: .05rem .1rem;
             &-wrapper{
                 display: -webkit-box;
@@ -156,7 +188,42 @@ export default {
                     margin-right: .05rem;
                 }
             }
-
+            &-btn{
+                width: 100%;
+                position: relative;
+                .btn_item{
+                    display: inline-block;
+                    padding: .05rem .10rem;
+                    border: 1px solid #9c9c9c;
+                    background-color: #fff;
+                    text-align: center;
+                    white-space: nowrap;
+                    border-radius: .04rem;
+                    margin-right: .1rem;
+                    //margin-bottom: .1rem;    
+                    font-size: .12rem;
+                }
+                .submit,.resubmit,.submitNew,.draft,.newFile,.copyNew,.update,.storage,.revoke,.edit {
+                    border-color: rgb(0, 150, 136);
+                    background-color: rgb(0, 150, 136);
+                    color: #fff;
+                }
+                .revokeDraft {
+                    border-color: rgb(255, 193, 7);
+                    background-color: rgb(255, 193, 7);
+                    color: #fff;
+                }
+                .reduction,.agreement {
+                    border-color: green;
+                    background-color: green;
+                    color: #fff;
+                }
+                .disagree,.stop {
+                    border-color: red;
+                    background-color: red;
+                    color: #fff;
+                }
+            }
         }
         
     }
