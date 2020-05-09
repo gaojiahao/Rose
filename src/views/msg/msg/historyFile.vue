@@ -1,5 +1,5 @@
 <template>
-    <div class="page msg-history-all">
+    <div class="page msg-history-file">
         <div class="page-navigation flex">
             <div class="goback" @click="$parent.showHistoryFile=false">
                 <i class="iconfont icon-back1"></i>
@@ -16,7 +16,7 @@
             <div v-if="msgList.length">
                 <div v-for="(msg,index) in msgList" :key="index" class="history-file-item">
                     {{msg.creatorName}}
-                    <div class="history-file-item-info">
+                    <div class="history-file-item-info" @click="down(msg.content.id)">
                         <img class="file-img" :src="msg.content|filedTypeFilter" @error= "getFileImg()">
                         <div class="history-file-item-info-content">
                             <p>{{msg.content.content}}</p>
@@ -94,6 +94,9 @@ export default {
                     this.msgList.unshift(...res);
                 }
             });
+        },
+        down(id){
+            window.location.href='/H_roleplay-si/ds/downloadById?id='+id;
         }
     }
 }

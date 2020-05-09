@@ -1,5 +1,5 @@
 <template>
-    <div class="page msg-history-all">
+    <div class="page msg-history-img">
         <div class="page-navigation flex">
             <div class="goback" @click="$parent.showHistoryImg=false">
                 <i class="iconfont icon-back1"></i>
@@ -10,9 +10,12 @@
          </div>
          <div class="page-body-hasNav" ref="scrollerWrapper">
             <div v-if="msgList.length">
-                <div v-for="(msg,index) in msgList" :key="index" class="history-img-item">
+                <div v-for="(msg,index) in msgList" :key="index" class="history-img-item" @click="showImg(msg.content.id)">
                     <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ msg.content.id">
                 </div>
+            </div>
+            <div class="imgPerview" v-show="perviewImg" @click="perviewImg = null">
+                <img :src="perviewImg"/>
             </div>
          </div>
     </div>
@@ -28,6 +31,7 @@ export default {
                 page:1,
                 limit:30
             },
+            perviewImg:null,
             showLoading:false,
             hasNext:false
         }
@@ -42,6 +46,9 @@ export default {
                 msg.photo = url;
             }
             return url;
+        },
+        showImg(id){
+            this.perviewImg = this.baseURL+'/H_roleplay-si/ds/downloadById?id='+ id;
         },
         getMsg(){
             var key = this.searchKey;
@@ -70,6 +77,24 @@ export default {
 }
 </script>
 <style lang='less'>
+.msg-history-img{
+    display: flex;
+    flex-direction: column;
+    .page-body-hasNav{
+        position: relative;
+        .imgPerview{
+            position:absolute;
+            top:0;
+            height: 100%;
+            background: #dedede;
+            img{
+                width: 100%;
+                margin-top:20px;
+            }
+        }
+    }
+    
+}
 .history-img-item{
   width:25%;
   img{
