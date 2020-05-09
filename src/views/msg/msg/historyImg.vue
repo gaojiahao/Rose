@@ -70,21 +70,6 @@ export default {
 }
 </script>
 <style lang='less'>
-.msg-history-all{
-   h2{
-      text-align: center;
-      font-size:16px;
-      line-height: 32px;
-      color:#dedede;
-   }
-}
-.history-link span{
-   padding:0.2rem;
-}
-.history-input-wrapper{
-  flex:1;
-  border-bottom:1px solid #dedede;
-}
 .history-img-item{
   width:25%;
   img{
