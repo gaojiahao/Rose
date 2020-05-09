@@ -1,39 +1,36 @@
 <template>
     <div class="page msg-history-all">
         <div class="page-navigation flex">
-            <div class="goback" @click="$parent.showHistoryAll=false">
+            <div class="goback" @click="$parent.showHistoryFile=false">
                 <i class="iconfont icon-back1"></i>
             </div>
+            <div style="margin-right:10px">文件</div>
             <div class="body history-input-wrapper">
                 <input class="weui-input history-input" placeholder="搜索" @keydown="inputChange" v-model="searchKey"/>
             </div>
          </div>
          <div class="page-body-hasNav" ref="scrollerWrapper">
-             <div v-if="searchKey == ''">
-                 <h2>快速查找聊天内容</h2>
-                 <div class="history-link flex">
-                     <span @click="$parent.showHistoryImg=true">图片</span>
-                     <span @click="$parent.showHistoryFile=true">文件</span>
-                 </div>
-             </div>
-             <div v-if="searchKey != '' && msgList.length==0 && showLoading == false">
+             <div v-if="msgList.length==0 && showLoading == false">
                  无搜索结果
              </div>
             <div v-if="msgList.length">
-                <div v-for="(msg,index) in msgList" :key="index" class="history-item">
-                    <img :src="msg.photo"  @error="getDefaultPhoto(msg)">
-                    <div class="history-item-info">
-                        <p>{{msg.creatorName}}</p>
-                        <div v-html="msg.content"></div>
+                <div v-for="(msg,index) in msgList" :key="index" class="history-file-item">
+                    {{msg.creatorName}}
+                    <div class="history-file-item-info">
+                        <img class="file-img" :src="msg.content|filedTypeFilter" @error= "getFileImg()">
+                        <div class="history-file-item-info-content">
+                            <p>{{msg.content.content}}</p>
+                            <p>{{msg.content.size}}</p>
+                        </div>
                     </div>
-                    <div>{{msg.crtTime}}</div>
+                    <div class="crtTime">{{msg.crtTime}}</div>
                 </div>
             </div>
          </div>
     </div>
 </template>
 <script>
-import {searchGroupMsg} from 'service/msgService'
+import {getMessagesByImType} from 'service/msgService'
 export default {
     data(){
         return {
@@ -48,23 +45,20 @@ export default {
         }
     },
     created(){
+        this.getMsg();
     },
     methods:{
         inputChange(){
             var key = this.searchKey,
                 timer = this.searchTimer;
             
-            if (key != ''){
-               this.showLoading = true;
-               if (timer)clearTimeout(timer);
-               this.searchTimer = setTimeout(()=>{
-                   this.pageParam.page = 1;
-                   this.getMsg();
-               },500)
-            } else {
-               if (timer)clearTimeout(timer);
-               this.showLoading = false;
-            }
+            this.showLoading = true;
+            if (timer)clearTimeout(timer);
+            this.searchTimer = setTimeout(()=>{
+                this.pageParam.page = 1;
+                this.getMsg();
+            },500);
+          
         },
         getDefaultPhoto(msg) {
             let url = require("assets/ava01.png");
@@ -73,19 +67,27 @@ export default {
             }
             return url;
         },
+         getFileImg(){
+            let img = event.srcElement;
+            img.src = this.defaultFileImg;
+            img.onerror = null; //防止闪图
+        },
         getMsg(){
             var key = this.searchKey;
             
-            if (key == '')return;
-            searchGroupMsg({
+            getMessagesByImType({
                 ...this.pageParam,
                 content:key,
+                imType:4,
                 groupId:this.$route.params.groupId
             }).then(res=>{
                 this.showLoading = false;
                 if(res.length>=this.pageParam.limit){
                     this.hasNext = true;
                 }
+                res.forEach(msg => {
+                    msg.content = JSON.parse(msg.content);
+                });
                 if(this.pageParam.page == 1){
                     this.msgList= res;
                 }else{
@@ -97,46 +99,22 @@ export default {
 }
 </script>
 <style lang='less'>
-.msg-history-all{
-   h2{
-      text-align: center;
-      font-size:16px;
-      line-height: 32px;
-      color:#dedede;
-   }
+.history-file-item{
+    position: relative;
+    .crtTime{
+        position:absolute;
+        right:0;
+        top:0;
+    }
 }
-.history-link span{
-   padding:0.2rem;
-}
-.history-input-wrapper{
-  flex:1;
-  border-bottom:1px solid #dedede;
-}
-.history-input{
-  width: 100%;
-}
-.history-item{
+.history-file-item-info{
   display: flex;
   position: relative;
-  &::before{
-    content: " ";
-    position: absolute;
-    top: 0;
-    right: 0;
-    left:0;
-    height: 1px;
-    border-top: 1px solid rgba(0,0,0,0.1);
-    color: rgba(0,0,0,0.1);
-    -webkit-transform-origin: 0 0;
-    transform-origin: 0 0;
-    -webkit-transform: scaleY(0.5);
-    transform: scaleY(0.5);
-  }
   img{
     height: 40px;
     border-radius: .01rem;
   }
-  &-info{
+  &-content{
       flex: 1;
       margin-left: .15rem;
   }

@@ -199,7 +199,7 @@ export default {
         distributeMsg(msg){
             var type = msg.imType;
             var groupIcon = 'https://lab.roletask.com/resource/common-icon/male.png';
-            if(cordova){
+            if(window.cordova){
                 this.groups.map(g=>{
                     if(g.groupId === msg.groupId){
                        groupIcon = g.groupIcon; 

@@ -49,11 +49,11 @@
                     </div>
                 </div> 
                 <div class="weui-cell">
-                    <div class="msg-type-item">
+                    <div class="msg-type-item" @click="showHistoryFile = true">
                         <i class="iconfont icon-wenjian"/>
                         <div>文件</div>
                     </div>
-                    <div class="msg-type-item">
+                    <div class="msg-type-item" @click="showHistoryImg = true">
                         <i class="iconfont icon-i-img"/>
                         <div>图片</div>
                     </div>
@@ -99,6 +99,8 @@
          </update-group-name>
          <history-all v-if="showHistoryAll">
          </history-all>
+         <history-file v-if="showHistoryFile" />
+         <history-img v-if="showHistoryImg" />
     </div>
 </template>
 <script>
@@ -106,6 +108,8 @@ import { Group, Cell,InlineXSwitch} from 'vux'
 import MemberSelector from './memberSelector';
 import MemberList from './memberList';
 import HistoryAll from './historyAll';
+import HistoryImg from './historyImg';
+import HistoryFile from './historyFile';
 import WebContext from 'service/commonService'
 import { initWebContext } from 'service/commonService'
 import { getMembers,addMember,createGroup,setFocus,deleteFocus } from '@/service/msgService'
@@ -120,13 +124,17 @@ export default {
         MemberSelector,
         MemberList,
         HistoryAll,
+        HistoryImg,
+        HistoryFile,
         UpdateGroupName
     },
     data(){
         return {
             allMembers: [],
             currentUser: {},
-            showHistoryAll:false
+            showHistoryAll:false,
+            showHistoryFile:false,
+            showHistoryImg:false
         }
     },
     methods:{
