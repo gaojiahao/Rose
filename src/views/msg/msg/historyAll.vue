@@ -5,7 +5,7 @@
                 <i class="iconfont icon-back1"></i>
             </div>
             <div class="body history-input-wrapper">
-                <input class="weui-input history-input" placeholder="搜索" @keydown="inputChange" v-model="searchKey"/>
+                <input class="weui-input history-input" placeholder="搜索" @keyup="inputChange" v-model="searchKey"/>
             </div>
          </div>
          <div class="page-body-hasNav" ref="scrollerWrapper">
@@ -16,7 +16,7 @@
                      <span @click="$parent.showHistoryFile=true">文件</span>
                  </div>
              </div>
-             <div v-if="searchKey != '' && msgList.length==0 && showLoading == false">
+             <div v-if="msgList.length==0 && showLoading == false && loaded == true">
                  无搜索结果
              </div>
             <div v-if="msgList.length">
@@ -28,6 +28,10 @@
                     </div>
                     <div>{{msg.crtTime}}</div>
                 </div>
+            </div>
+            <div class="weui-loadmore" v-show="showLoading">
+                <i class="weui-loading"></i>
+                <span class="weui-loadmore__tips">正在加载</span>
             </div>
          </div>
     </div>
@@ -44,6 +48,7 @@ export default {
                 limit:30
             },
             showLoading:false,
+            loaded:false,
             hasNext:false
         }
     },
@@ -54,6 +59,7 @@ export default {
             var key = this.searchKey,
                 timer = this.searchTimer;
             
+            this.msgList=[];
             if (key != ''){
                this.showLoading = true;
                if (timer)clearTimeout(timer);
@@ -64,6 +70,7 @@ export default {
             } else {
                if (timer)clearTimeout(timer);
                this.showLoading = false;
+               this.loaded = false;
             }
         },
         getDefaultPhoto(msg) {
@@ -76,20 +83,26 @@ export default {
         getMsg(){
             var key = this.searchKey;
             
-            if (key == '')return;
+            if (key == ''){
+                this.showLoading = false;
+                this.loaded = false;
+                this.msgList = [];
+                return;
+            }
             searchGroupMsg({
                 ...this.pageParam,
                 content:key,
                 groupId:this.$route.params.groupId
             }).then(res=>{
                 this.showLoading = false;
-                if(res.length>=this.pageParam.limit){
+                this.loaded = true;
+                if(res.msgs.length>=this.pageParam.limit){
                     this.hasNext = true;
                 }
                 if(this.pageParam.page == 1){
-                    this.msgList= res;
+                    this.msgList= res.msgs;
                 }else{
-                    this.msgList.unshift(...res);
+                    this.msgList.unshift(...res.msgs);
                 }
             });
         }

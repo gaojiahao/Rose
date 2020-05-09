@@ -12,7 +12,6 @@ import Router from 'vue-router'
 import SetHost from '@/views/setHost'
 import Login from '@/views/login'
 import MsgRouter from '@/views/msg/router'
-import ContactsRouter from '@/views/contacts/router' //暂时没有引入。
 import Contacts from '@/views/contacts/contacts'
 import HomeRouter from '@/views/home/router'
 import User from '@/views/user'
