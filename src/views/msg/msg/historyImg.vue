@@ -9,7 +9,7 @@
             </div>
          </div>
          <div class="page-body-hasNav" ref="scrollerWrapper">
-            <div v-if="msgList.length">
+            <div v-if="msgList.length" class="img-container">
                 <div v-for="(msg,index) in msgList" :key="index" class="history-img-item" @click="showImg(msg.content.id)">
                     <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ msg.content.id">
                 </div>
@@ -93,12 +93,16 @@ export default {
             }
         }
     }
-    
+    .img-container{
+        display: flex;
+    }
 }
 .history-img-item{
   width:25%;
+  overflow: hidden;
   img{
-    height: 40px;
+    width:100%;
+    height:65px;
     border-radius: .01rem;
   }
 }
