@@ -114,7 +114,7 @@ input::-ms-input-placeholder {
 .task-container{
     overflow: hidden;
     height: 100%;
-    background:#f8fcff;
+    background:#f7f7f7;
     .wrapper {
         height: 100%;
         // height: 7.2rem;
@@ -202,7 +202,7 @@ input::-ms-input-placeholder {
         }
     }
     .list-container {
-        height: calc(100% - 10.99rem);
+        height: calc(100% - 12.1rem);
         .list_wrapper {
         height: 100%;
         background-color: #fff;

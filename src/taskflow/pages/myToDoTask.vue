@@ -27,7 +27,7 @@
                 <div class="flow-task-item-center">
                     <div class="flow-task-item-center-wrapper">
                         <span>{{task.TRANS_CODE}}</span>
-                        <span style="float:right;font-weight:600">{{task.nodeName}}</span>
+                        <span style="float:right;font-weight:600;color: black;">{{task.nodeName}}</span>
                     </div>
                     <div class="">
                         <div>
@@ -40,7 +40,7 @@
                 </div>
                 <div class="flow-task-item-foot vux-1px-t" >
                     <div class="flow-task-item-foot-btn">
-                        <div style="position: absolute;right: 0;">
+                        <div style="position: absolute;right: .1rem;top: .05rem;">
                             <span class="btn_item agreement" >同意</span>
                             <span class="btn_item disagree" >不同意</span>
                             <span class="btn_item transfer" >转办</span>
@@ -55,10 +55,12 @@
 <script>
 import { getMsgList} from "service/msgService";
 import RScroll from "plugins/scroll/RScroll";
+import { XButton } from 'vux'
 export default {
     name:"myToDoTask",
     components:{
-        RScroll
+        RScroll,
+        XButton 
     },
     data(){
         return {
@@ -136,6 +138,7 @@ export default {
                 width: 100%;
                 height: .3rem;
                 border-bottom: 1px solid #9E9E9E;
+                color:#9E9E9E;
                 &-img{
                     width: .3rem;
                     float: left;
@@ -145,17 +148,20 @@ export default {
                 }
                 &-title{
                     font-weight: 600;
+                    color: black;
                 }
             }
         }
 
         &-center{
             padding: .05rem .1rem;
+            color:#9E9E9E;
         }
 
         &-foot{
             height: .3rem;
             padding: .05rem .1rem;
+            width: 100%;
             &-wrapper{
                 display: -webkit-box;
                 display: -ms-flexbox;
@@ -192,14 +198,14 @@ export default {
                 width: 100%;
                 position: relative;
                 .btn_item{
-                    display: inline-block;
-                    padding: .05rem .10rem;
+                    //display: inline-block;
+                    padding: .01rem .05rem;
                     border: 1px solid #9c9c9c;
                     background-color: #fff;
                     text-align: center;
                     white-space: nowrap;
                     border-radius: .04rem;
-                    margin-right: .1rem;
+                    margin-right: .05rem;
                     //margin-bottom: .1rem;    
                     font-size: .12rem;
                 }
