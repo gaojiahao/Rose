@@ -20,9 +20,9 @@
             @on-pulling-down="onPullingDown"
             ref="scroller"
         >
-            <div class="msg-container">
+            <div class="msg-container" ref="msg-container">
                 <LoadMore v-if="loading"></LoadMore>
-                <div v-for="(msg,index) in msgList" :key="index" class="singleMsg" :class="{ 'isMySelf': msg.isMySelf }">
+                <div v-for="(msg,index) in msgList" :key="index" class="singleMsg" :class="{ 'isMySelf': msg.isMySelf,'focus-msg': msg.id == focusMsgId }" :id="'msg-'+msg.id">
                     <touch @menuContext="onAvaContextMenu(msg.creatorName)">
                     <img 
                     :src="msg.photo" 
@@ -35,7 +35,7 @@
                     </span>
                     <touch @menuContext="onMsgContextMenu(msg,$event)">
                         <div class="message-content" :class="[msg.isMySelf==1?'rightarrow':'leftarrow']" ref="contextMenu">
-                            <div v-if="msg.replayMsg" style="border-left: 3px solid rgb(153, 153, 153); padding: 0px 8px; cursor: pointer;">
+                            <div v-if="msg.replayMsg" style="border-left: 3px solid rgb(153, 153, 153); padding: 0px 8px; cursor: pointer;" @click="goTop(msg.replayMsg.id)">
                                 <MessageTplText :msg="msg.replayMsg" v-if="msg.replayMsg.imType == 1"></MessageTplText>
                                 <MessageTplImg :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 2"></MessageTplImg>
                                 <MessageTplMult :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 3"></MessageTplMult>
@@ -104,7 +104,7 @@
 import {LoadMore} from 'vux'
 import util from '@/common/util'
 import {upload} from 'service/commonService'
-import {sendMsg,getGroupMsg,checkMessage} from 'service/msgService'
+import {sendMsg,getGroupMsg,checkMessage,getGroupMsgById} from 'service/msgService'
 import MessageTplText from '@/views/msg/msg/messageTplText'
 import MessageTplImg from '@/views/msg/msg/messageTplImg'
 import MessageTplMult from '@/views/msg/msg/messageTplMult'
@@ -129,7 +129,8 @@ export default {
             hasNext:true,
             showExtraInput:false,//图片和文件输入框
             showContextMenu:false,//右键菜单
-            fileDlgContext:null,//文件消息框
+            fileDlgContext:null,//文件消息框,
+            focusMsgId:null//得到焦点的消息id
         }
     },
     components:{
@@ -187,6 +188,33 @@ export default {
         goBack(){
             this.$router.replace('/msg');
         },
+        goTop(msgId){
+            var container = this.$refs['msg-container'],
+                target = container.querySelector('#msg-'+msgId);
+
+            if(target){
+               this.scrollToTarget(target,msgId);
+            }else{
+                getGroupMsgById(this.$route.params.groupId,msgId).then(res=>{
+                    var  msgList = this.$parent.msgList;
+
+                    msgList.unshift(...res.msgs);
+
+                    this.$nextTick(() => {
+                        target = container.querySelector('#msg-'+msgId);
+                        this.scrollToTarget(target,msgId);
+                    });
+                });
+            }
+        },
+        scrollToTarget(target,msgId){
+            var msgBody = target.querySelector('.message-content');
+            this.focusMsgId = msgId;
+            setTimeout(() => {
+                this.focusMsgId = null;
+            }, 2000);
+            this.scroller.scrollToElement(target);
+        },
         scrollToTop:function(){
             var scroll = this.scroller;
             if(scroll){
@@ -209,6 +237,8 @@ export default {
             if (this.msg != ''){
                 if(this.replayMsg){
                    params.replayId = this.replayMsg.id;
+                   params.repalyMsg = util.clone(this.replayMsg);//replayMsg内容只在ds 推送时有用，后端保存时不会用这个。
+                   delete params.replayMsg.replayMsg;//不想发送那么多消息;
                 }
                 sendMsg(params).then(rs=>{
                    this.msg = '';
@@ -352,6 +382,9 @@ export default {
             this.replayMsg = msg;
             if(this.group.groupType != 'P')this.msg += '@'+msg.creatorName+' ';
         },
+        /**
+         * 显示或隐藏图片和文件发送面板
+         */
         toggleWrapper(){
             var input = this.$refs.msgInput;
             this.showExtraInput = !this.showExtraInput;
@@ -374,15 +407,18 @@ export default {
                 }
             })
         },
+        /**
+         * 下拉翻页
+         */
         onPullingDown(){
             if(this.hasNext == false || this.loading == true)return;
             this.loading = true;
             getGroupMsg(this.group.groupId,this.page + 1).then(rs=>{
                 var  msgList = this.$parent.msgList;
                 this.loading = false;
-                if(rs.length){
+                if(rs.msgs.length < rs.pageSize){
                     this.page ++;
-                    msgList.unshift(...rs);
+                    msgList.unshift(...rs.msgs);
                     this.$parent.msgList = msgList;
                 } else {
                     this.hasNext = false;
@@ -611,6 +647,15 @@ export default {
     .message-content{
         background-color: rgb(191, 221, 255);
     }
+}
+.focus-msg .message-content{
+    &.rightarrow:after{
+        border-left-color:#f9b24757;
+    }
+    &.leftarrow:after{
+        border-right-color:#f9b24757;
+    }
+    background: #f9b24757;
 }
 .file-dialog-sendTo{
    display: flex;

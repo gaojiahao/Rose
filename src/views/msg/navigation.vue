@@ -459,7 +459,7 @@ export default {
   }
   .group-ava{
     width: .45rem;
-    width: .45rem;
+    height: .45rem;
     border-radius: .02rem;
   }
   

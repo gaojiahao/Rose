@@ -197,3 +197,15 @@ export let getUserInfoById = (userId) => {
         data
     })
 }
+// 通过消息ID获取消息所在分页信息
+export const getGroupMsgById = (groupId,msgId)=>{
+    return $flyio.ajax({
+        url:'/im/message/getGroupMsgById',
+        data:{
+            groupId:groupId,
+            msgId:msgId,
+            limit:20
+        }
+  });
+}
+  
