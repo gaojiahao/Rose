@@ -120,8 +120,7 @@ input::-ms-input-placeholder {
         // height: 7.2rem;
     }
     .header {
-        // background:linear-gradient(to top, rgb(76,149,136), 50%, rgb(71,215,146));
-        background:rgb(71,215,146);
+        background: white;
         .search {
             width: 100%;
             padding: .08rem 0;
@@ -185,8 +184,6 @@ input::-ms-input-placeholder {
             height: .30rem;
             overflow: hidden;
             padding-top: .1rem;
-            color: #bfbfbf;
-            background:linear-gradient(to top, rgb(76,180,136), 50%, rgb(71,215,146));
             .tab-item{
                 //width: 33.333%;
                 width: 50%;
@@ -196,8 +193,8 @@ input::-ms-input-placeholder {
                 float: left;
             }
             .active {
-                color: #fff;
-                border-bottom: 3px solid white; 
+                color: #3296fa;
+                border-bottom: 3px solid #3296fa;
             }
         }
     }

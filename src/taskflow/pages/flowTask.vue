@@ -113,6 +113,7 @@ export default {
         margin-bottom: .15rem;
         &-header{
             padding: .05rem .1rem;
+            position: relative;
             &-wrapper{
                 display: flex;
                 justify-content: space-between;

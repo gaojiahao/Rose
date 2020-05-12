@@ -10,11 +10,11 @@
             >
         <div class="flow-task">
             
-            <div class="flow-task-item" v-for="(task,index) in tasks" :key="index" @click="handlerViewTask(task)" >
-                <div class="flow-task-item-header">
+            <div class="flow-task-item" v-for="(task,index) in tasks" :key="index" >
+                <div class="flow-task-item-header vux-1px-b">
                     <div class="flow-task-item-header-wrapper">
                         <div class="flow-task-item-header-wrapper-img">
-                            <img  :src="getImgPic(task.img)" >
+                            <img  :src="getImgPic(task.icon)" >
                         </div>
                         <div class="flow-task-item-header-wrapper-title"> 
                             <span>{{task.title}}</span>
@@ -24,10 +24,10 @@
                             </div> -->
                     </div>
                 </div>
-                <div class="flow-task-item-center">
+                <div class="flow-task-item-center vux-1px-b"  @click="handlerViewTask(task)">
                     <div class="flow-task-item-center-wrapper">
                         <span>{{task.TRANS_CODE}}</span>
-                        <span style="float:right;font-weight:600;color: black;">{{task.nodeName}}</span>
+                        <span style="float:right;color: black;">{{task.nodeName}}</span>
                     </div>
                     <div class="">
                         <div>
@@ -38,7 +38,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="flow-task-item-foot vux-1px-t" >
+                <div class="flow-task-item-foot" >
                     <div class="flow-task-item-foot-btn">
                         <div style="position: absolute;right: .1rem;top: .05rem;">
                             <span class="btn_item agreement" >同意</span>
@@ -137,22 +137,21 @@ export default {
                 // justify-content: space-between;
                 width: 100%;
                 height: .3rem;
-                border-bottom: 1px solid #9E9E9E;
+                // border-bottom: 1px solid #9E9E9E;
                 color:#9E9E9E;
                 &-img{
                     width: .3rem;
                     float: left;
                     img{                    
                         width: .25rem;
+                        border-radius: .03rem;
                     }
                 }
                 &-title{
-                    font-weight: 600;
                     color: black;
                 }
             }
         }
-
         &-center{
             padding: .05rem .1rem;
             color:#9E9E9E;
@@ -198,15 +197,13 @@ export default {
                 width: 100%;
                 position: relative;
                 .btn_item{
-                    //display: inline-block;
-                    padding: .01rem .05rem;
+                    padding: .01rem .08rem;
                     border: 1px solid #9c9c9c;
                     background-color: #fff;
                     text-align: center;
                     white-space: nowrap;
-                    border-radius: .04rem;
+                    border-radius: .10rem;
                     margin-right: .05rem;
-                    //margin-bottom: .1rem;    
                     font-size: .12rem;
                 }
                 .submit,.resubmit,.submitNew,.draft,.newFile,.copyNew,.update,.storage,.revoke,.edit {
