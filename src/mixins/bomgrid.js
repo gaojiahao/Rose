@@ -52,27 +52,29 @@ export default {
         addRecords: async function (selection) {
             var value = this.getValue() || [],
                 record,
-                row, i = 0, l = selection.length;
+                row, i = 0, l = selection.length,
+                index = value.length ?  value.length- 1 : 0;
 
             for (i; i < l; i++) {
                 row = selection[i];
                 await this.initBomData(row.inventoryCode);
                 var bom = [];
-                for(var j=0; j<this.bomData[i].length;j++){
+                var m = this.bomData.length-1;
+                for(var j=0; j<this.bomData[m].length;j++){
                     var obj={};
                     obj = {
                         'transMatchedCode':row.orderCode,
-                        'qualityQty': this.bomData[i][j].qualityQty||0, //?要接口算处理
-                        'bomSpecificLoss': this.bomData[i][j].specificLoss||0,
-                        'tdProcessing': this.bomData[i][j].processing||0,
-                        'inventoryName': this.bomData[i][j].inventoryName,
-                        'demandQty': this.bomData[i][j].demandQty||0,
-                        'transObjCode': this.bomData[i][j].inventoryCode,
-                        'measureUnit': this.bomData[i][j].measureUnit,
-                        'bomType': this.bomData[i][j].bomType||0,
-                        'bomQty': this.bomData[i][j].qty||0,
-                        'productSource': this.bomData[i][j].productSource,
-                        'parentInventoryCode': this.bomData[i][j].parentInventoryCode,
+                        'qualityQty': this.bomData[m][j].qualityQty||0, //?要接口算处理
+                        'bomSpecificLoss': this.bomData[m][j].specificLoss||0,
+                        'tdProcessing': this.bomData[m][j].processing||0,
+                        'inventoryName': this.bomData[m][j].inventoryName,
+                        'demandQty': this.bomData[m][j].demandQty||0,
+                        'transObjCode': this.bomData[m][j].inventoryCode,
+                        'measureUnit': this.bomData[m][j].measureUnit,
+                        'bomType': this.bomData[m][j].bomType||0,
+                        'bomQty': this.bomData[m][j].qty||0,
+                        'productSource': this.bomData[m][j].productSource,
+                        'parentInventoryCode': this.bomData[m][j].parentInventoryCode,
                     }
                     bom.push(obj);
                 }
@@ -91,21 +93,21 @@ export default {
             for(var m =0;m<bomlist.length;m++ ){
                 var obj2 = {};
                 obj2 = {
-                    'inventoryName_outPutMatCode': bomlist[i].inventoryName,
-                    'outPutMatCode': bomlist[i].inventoryCode,
+                    'inventoryName_outPutMatCode': bomlist[m].inventoryName,
+                    'outPutMatCode': bomlist[m].inventoryCode,
                     'demandQty': bomlist[i].demandQty,
-                    'measureUnit_outPutMatCode': bomlist[i].measureUnit,
-                    'thenTotalQtyStock': bomlist[i].thenTotalQtyStock,
-                    'transitBalance': bomlist[i].transitBalance,
-                    'workflowLockQty': bomlist[i].workflowLockQty,
-                    'thenQtyBalCopy1': bomlist[i].qtyBal,
-                    'tdQty': bomlist[i].tdQty,
-                    'tdProcessing': bomlist[i].processing,
-                    'productSource': bomlist[i].productSource,
-                    'processingStartDate': bomlist[i].processingStartDate,
-                    'containerCodeOut': bomlist[i].containerCodeOut,
-                    'warehouseName_containerCodeOut': bomlist[i].containerNameOut,
-                    'tdId': bomlist[i].tdId,
+                    'measureUnit_outPutMatCode': bomlist[m].measureUnit,
+                    'thenTotalQtyStock': bomlist[m].thenTotalQtyStock,
+                    'transitBalance': bomlist[m].transitBalance,
+                    'workflowLockQty': bomlist[m].workflowLockQty,
+                    'thenQtyBalCopy1': bomlist[m].qtyBal,
+                    'tdQty': bomlist[m].tdQty,
+                    'tdProcessing': bomlist[m].processing,
+                    'productSource': bomlist[m].productSource,
+                    'processingStartDate': bomlist[m].processingStartDate,
+                    'containerCodeOut': bomlist[m].containerCodeOut,
+                    'warehouseName_containerCodeOut': bomlist[m].containerNameOut,
+                    'tdId': bomlist[m].tdId,
                 }
                 this.outPut['dataSet'].push(obj2);
             }
@@ -168,7 +170,8 @@ export default {
                         }
                     })
                     this.bomData = bomNewValue;
-                    this.initBomDataStorageSum(this.bomData);
+                    var flag = true;
+                    this.initBomDataStorageSum(this.bomData,flag);
                     this.setValue(newValues);
                     this.isEdit = false;
                 }
@@ -177,6 +180,7 @@ export default {
         doDetailEdit(data) {
             var value = util.clone(data);
             this.$set(this.values, this.detailRowNumer, data);
+            this.$set(this.form.formData, 'outPut', this.outPut);
         },
         delClick(rowIndex) {
             var selection = this.selection,
@@ -1048,8 +1052,12 @@ export default {
                 this.bomData.push(res.tableContent);
             }).catch(e =>{e});
         },
-        async initBomDataStorageSum(bomData){
+        async initBomDataStorageSum(bomData,flag){
             var me = this;
+            if(!bomData.length){
+                this.boms = [];
+                return ;
+            }
             for(var i = 0; i < bomData.length; i++){
                 for(var j = 0 ; j < bomData[i].length;j++){
                     var data = {
@@ -1060,7 +1068,12 @@ export default {
                         await deal(data);
                     }
                 }
-                await this.dealBom();
+                //await this.dealBom();
+                if(flag){
+                    await this.delBom();    
+                } else {
+                    await this.dealBom();
+                }
             }
             async function deal(data){
                 await getInProcessingStorageSumSource(data).then(res=>{ 
@@ -1074,8 +1087,8 @@ export default {
                 }).catch(e =>{e});
             }
             function judgeBomAdd(inventoryCode){
-                for(var i =0;i<me.boms.length;i++){
-                    if(inventoryCode==me.boms[i]['inventoryCode']){
+                for(var m =0;m<me.boms.length;m++){
+                    if(inventoryCode==me.boms[m]['inventoryCode']){
                         return true;
                     }
                 }
@@ -1096,11 +1109,12 @@ export default {
         //     }
         // },
         dealBom(){
-            for(var b = 0; b<this.boms.length; b++){
+            let arr = this.boms;
+            for(var b = 0; b<arr.length; b++){
                 var flag =false;
                 for(var i = 0; i < this.bomData.length; i++){
                     for(var j = 0 ; j < this.bomData[i].length;j++){
-                        if(this.boms[b]['inventoryCode']==this.bomData[i][j]['inventoryCode']){
+                        if(arr[b]['inventoryCode']==this.bomData[i][j]['inventoryCode']){
                             flag = true;
                         }
                     }
@@ -1108,7 +1122,48 @@ export default {
                 if(!flag){
                     this.boms.splice(b,1);
                 }
-            }    
+            }  
+        },
+        delBom(){
+            let arr = this.boms;
+            for(var b = 0; b<arr.length; b++){
+                var flag =false;
+                for(var i = 0; i < this.bomData.length; i++){
+                    for(var j = 0 ; j < this.bomData[i].length;j++){
+                        if(arr[b]['inventoryCode']==this.bomData[i][j]['inventoryCode']){
+                            flag = true;
+                        }
+                    }
+                }
+                if(!flag){
+                    this.boms.splice((b),1);
+                    b--;
+                }
+            }  
+            var bomlist = this.boms;
+            this.outPut['dataSet'] = [];
+            for(var m =0;m<bomlist.length;m++ ){
+                var obj2 = {};
+                obj2 = {
+                    'inventoryName_outPutMatCode': bomlist[m].inventoryName,
+                    'outPutMatCode': bomlist[m].inventoryCode,
+                    'demandQty': bomlist[i].demandQty,
+                    'measureUnit_outPutMatCode': bomlist[m].measureUnit,
+                    'thenTotalQtyStock': bomlist[m].thenTotalQtyStock,
+                    'transitBalance': bomlist[m].transitBalance,
+                    'workflowLockQty': bomlist[m].workflowLockQty,
+                    'thenQtyBalCopy1': bomlist[m].qtyBal,
+                    'tdQty': bomlist[m].tdQty,
+                    'tdProcessing': bomlist[m].processing,
+                    'productSource': bomlist[m].productSource,
+                    'processingStartDate': bomlist[m].processingStartDate,
+                    'containerCodeOut': bomlist[m].containerCodeOut,
+                    'warehouseName_containerCodeOut': bomlist[m].containerNameOut,
+                    'tdId': bomlist[m].tdId,
+                }
+                this.outPut['dataSet'].push(obj2);
+            }
+            this.$set(this.form.formData, 'outPut', this.outPut);      
         },
         async load(){
             if(!(window.sessionStorage.getItem('r2FieldSetting')||this.$r2FieldSetting)){

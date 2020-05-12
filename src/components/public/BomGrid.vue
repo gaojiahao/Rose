@@ -199,9 +199,31 @@ var component = {
   watch:{
     values:{
       handler(val){
-        if(this.form.formData.outPut){
-          this.boms = this.form.formData.outPut;
+        if(this.form.formData.outPut&&this.form.model!='new'){
+          this.boms = [];
+          var data = this.form.formData.outPut;
+          for(var i = 0 ; i < data.length; i++){
+            var arr = {
+              ...data[i],
+              inventoryCode:  data[i].outPutMatCode,
+              inventoryName:  data[i].inventoryName_outPutMatCode,
+              measureUnit: data[i].measureUnit_outPutMatCode,
+              processing: data[i].tdProcessing,
+              productSource:  data[i].productSource,
+              demandQty:  data[i].demandQty,
+              thenTotalQtyStock:  data[i].thenTotalQtyStock,
+              transitBalance: data[i].transitBalance,
+              tdQty:  data[i].tdQty,
+            }
+            this.boms.push(arr)
+          }
+          //this.boms = this.form.formData.outPut;
         }
+      }
+    },
+    boms:{
+      handler(val){
+        console.log('bonsm',val)
       }
     }
   },
@@ -221,6 +243,7 @@ var component = {
     checkAmt() {},
     setValue: function(value) {
       this.$set(this.form.formData, this.name, value);
+      this.$set(this.form.formData, 'outPut', this.outPut);
       this.$event.$emit(`item-event-${this.name}`,value);
     },
     getValue: function() {

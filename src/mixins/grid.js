@@ -149,7 +149,8 @@ export default {
             if (expressionCfg) for (i = 0, l = expressionCfg.length; i < l; i++) {
                 cfg = expressionCfg[i];
                 dataIndex = cfg.col.fieldCode;
-                if (editorFieldCode == dataIndex || dataIndex in changeFieldCodes) continue; //当前编辑字段，不重新计算。
+                //if (editorFieldCode == dataIndex || dataIndex in changeFieldCodes) continue; //当前编辑字段，不重新计算。
+                if (editorFieldCode == dataIndex) continue; //当前编辑字段，不重新计算。
                 if (cfg.type == 'calc') {
                     cfg = CalcToCmd(cfg);    
                 }
