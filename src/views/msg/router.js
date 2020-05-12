@@ -16,6 +16,7 @@ import MSGLIST from './pages/appMsgList'
 import Msg from './navigation'
 import GroupMsg from './msg/content'
 import GroupInfo from './msg/groupInfo'
+import imgInfo from './msg/imgInfo'
 
 export default [
   { 
@@ -40,12 +41,13 @@ export default [
           },
           component:GroupInfo
         }]
-      },
-      {
-        path: 'list',
-        component: GroupMsg
       }
     ]
+  },
+  {
+    path:'/imgInfo/:id',
+    name:'imgInfo',
+    component:imgInfo
   },
   { 
     path: '/notice', 

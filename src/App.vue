@@ -68,7 +68,7 @@ export default {
       if(cordova){
         // cordova插件会定义一个StatusBar对象，当它只能在deviceready后才能使用
         if (cordova.platformId == 'android') { // 安卓需要特殊处理，参见 cordova 官方文档
-          StatusBar.overlaysWebView(true)
+         // StatusBar.overlaysWebView(true)
         }
       }
       document.addEventListener("deviceready", this.onDeviceReady, false)

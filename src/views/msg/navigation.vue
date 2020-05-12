@@ -268,7 +268,7 @@ export default {
                 this.group = group;
                 getGroupMsg(groupId).then(res=>{
                     this.msgList = res.msgs;
-                    if (this.$route.path != path)this.$router.push(path);
+                    if (this.$route.params.groupId != groupId)this.$router.push(path);
                 });       
             } else {
                 this.$router.push(path)
