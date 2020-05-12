@@ -17,7 +17,7 @@
                             <img  :src="getImgPic(task.icon)" >
                         </div>
                         <div class="flow-task-item-header-wrapper-title"> 
-                            <span>{{task.title}}</span>
+                            <span>{{task.listName}}</span>
                         </div>
                             <!-- <div>
                             <span>{{task.TRANS_CODE}}</span>
@@ -26,12 +26,17 @@
                 </div>
                 <div class="flow-task-item-center vux-1px-b"  @click="handlerViewTask(task)">
                     <div class="flow-task-item-center-wrapper">
-                        <span>{{task.TRANS_CODE}}</span>
+                        <span>{{task.transCode}}</span>
                         <span style="float:right;color: black;">{{task.nodeName}}</span>
+                    </div>
+                    <div>
+                        <div v-for="(item,key) in task.primaryInfo" :key="key">
+                            <span>{{item.fieldName}}：{{item.value}}</span>
+                        </div>     
                     </div>
                     <div class="">
                         <div>
-                            <span>创建人：{{task.creator_name}}</span>
+                            <span>创建人：{{task.creatorName}}</span>
                         </div>
                         <div>
                             <span>创建时间：{{task.crtTime}}</span>
