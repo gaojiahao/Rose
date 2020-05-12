@@ -1,0 +1,58 @@
+@weui-BG-0: #ededed;
+@weui-FG-3:rgba(0,0,0,0.1);
+.flex{
+    display: flex;
+}
+.page-wrapper{
+    height: 100%;
+}
+.page{
+    position:absolute;
+    width:100%;
+    height:100%;
+    background:@weui-BG-0;
+    top:0;
+    left:0;
+ }
+.page-hasTab{
+    height:calc(~"100% - 0.49rem");
+    background:@weui-BG-0;
+    display: flex;
+    flex-direction: column;
+    overflow:hidden;
+}
+.page-navigation{
+    background:rgb(26, 146, 236);
+    color: #fff;
+    height:0.5rem;
+    padding:0 0.2rem;
+    position: relative;
+    line-height: 0.5rem;
+    .goback{
+        width:0.5rem;
+        i{
+            font-size: 24px;
+        }
+    }
+}
+.page-body-hasNav{
+    overflow: hidden;
+    flex:1;
+}
+.badge-count{
+    font-family: "Monospaced Number";
+    vertical-align: middle;
+    height: 18px;
+    position: absolute;
+    border-radius: 10px;
+    min-width: 20px;
+    background: #ed4014;
+    border: 1px solid transparent;
+    color: #fff;
+    line-height: 18px;
+    text-align: center;
+    font-size: 12px;
+    white-space: nowrap;
+    transform-origin: -10% center;
+    box-shadow: 0 0 0 1px #ed4014;
+}

@@ -15,7 +15,7 @@
   @each $themename , $theme in $themes {
     [data-theme = '#{$themename}'] & {
       $bg:map-get($map: $theme, $key: background-banner-theme );
-      background: url('../../assets#{$bg}') top / cover no-repeat;
+      background: url('./../assets#{$bg}') top / cover no-repeat;
     }
   }
 }

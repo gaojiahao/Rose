@@ -3,21 +3,25 @@
     <keep-alive>
       <!-- 页面 -->
       <router-view v-if="$route.meta.keepAlive">
-         <x-header
-      v-if="hasNav"
-      :title="$route.meta.title || ''"  slot = 'nav'>
-     </x-header>
+        <x-header
+          v-if="hasNav"
+          :title="$route.meta.title || ''"  
+          slot = 'nav'
+        >
+        </x-header>
       </router-view>
     </keep-alive>
     <router-view v-if="!$route.meta.keepAlive">
-       <x-header
-      v-if="hasNav"
-      :title="$route.meta.title || ''"  slot = 'nav'>
-     </x-header>
+      <x-header
+        v-if="hasNav"
+        :title="$route.meta.title || ''"  
+        slot = 'nav'
+      >
+      </x-header>
     </router-view>
 
     <!-- 底部导航栏 -->
-    <nav class="tabs vux-1px-t" v-if="this.$route.path != '/login'">
+    <nav class="tabs vux-1px-t" v-if="hasTab">
       <router-link class="tab" v-for="(tab, index) in tablist" :to="tab.path" :key='index'>
         <span class="tabicon iconfont" :class="tab.icon"></span>
         <span class="title">{{tab.title}}</span>
@@ -32,19 +36,23 @@
 import platform from './plugins/platform/index'
 import { getMsgList } from 'service/msgService'
 import { Badge,XHeader} from 'vux'
+var DS = require('deepstream.io-client-js');
+var cordova = window.cordova;
 export default {
   name: 'app',
   data() {
     var hasNav = platform.isIPhone && window.isApp
     return{
       tablist: [
-        {title: '应用', path: '/home', icon: 'icon-1'},
-        {title: '消息', path: '/notice', icon: 'icon-message'},
-        {title: '任务', path: '/taskflow', icon: 'icon-message'},
-        {title: '我', path: '/performance', icon: 'icon-yonghu'}
+        {title: '消息', path: '/msg', icon:'icon-message1'},
+        {title: '任务', path: '/taskflow',icon:'icon-task1'},
+        {title: '应用', path: '/home',icon:'icon-apps'},
+         {title: '通讯录',path: '/contacts/0',icon:'icon-org'},
+        {title: '我',path:'/user',icon:'icon-me2'}
       ],
       newsNumber:0,
       hasNav:hasNav,
+      hasTab:true,
       theme:'',
     }
   },
@@ -56,9 +64,23 @@ export default {
       if(to.name!='DETAIL'&&from.name=='LIST'){
         from.meta.keepAlive = false;  
       }
+
+      if(cordova){
+        // cordova插件会定义一个StatusBar对象，当它只能在deviceready后才能使用
+        if (cordova.platformId == 'android') { // 安卓需要特殊处理，参见 cordova 官方文档
+          StatusBar.overlaysWebView(true)
+        }
+      }
+      document.addEventListener("deviceready", this.onDeviceReady, false)
+
     }
   },
   methods:{
+    onDeviceReady () {
+        // 根据路由动态改变状态栏样式
+        // 我给状态栏字体色为白色的路由都设置了一个路由元meta,属性statusBgc为1
+        StatusBar.styleLightContent();
+    },
     /**
      * @description: 获取默认主题
      * @param {type} 
@@ -81,15 +103,55 @@ export default {
         this.theme = theme;
         window.document.documentElement.setAttribute('data-theme', theme);  
       }
-    }
+    },
+    getDs(dsUrl,uId){
+      var protocol = (window.baseURL||'').indexOf('https') == 0 ? 'wss':'ws',
+          vm = this,
+          status,
+          dsClient;
+      
+      if (window.baseURL) dsUrl = "172.roletask.com:6021/deepstream";//app测试代码
+      return new Promise((resolve,reject)=>{
+          if(vm.dsClient != null){
+              resolve(vm.dsClient);
+              return;
+          }
+          dsClient = new DS(protocol + '://' + dsUrl);
+          dsClient.on( 'error', (error,type ) => {
+              // do something with error
+              if(type == "MESSAGE_DENIED")alert("服务器拒绝了一条消息")
+              else if(type == 'connectionError')console.log('服务器连接障碍！')
+          } );
+          dsClient.on('connectionStateChanged', connectionState => {
+              console.log('connectionState:',connectionState)
+          });
+          dsClient.login({
+              username:uId
+          },(success,data) => { //这里的函数reload时还会执行。
+              if(success){
+                  console.log("login in");
+                  window.dsClient = vm.dsClient = dsClient;
+                  resolve(dsClient);
+              }else{
+                  if(data)console.log('login error',data.msg);
+                  dsClient.close();
+              }
+          });
+      });
+     
+    },
   },
   created() {
+     document.addEventListener("deviceready", this.onDeviceReady, false)
+    var Vue = this.$parent.constructor;
     this.getTheme();
     this.$event.$on('badgeNum', (val) => {
       this.newsNumber = val;
-    })
+    });
+    Vue.prototype.getApp= ()=> this;
   },
   updated() {
+    var app = this;
     // 安卓的输入框会挡住input输入的解决办法
     if (platform.isAndroid) {
       window.addEventListener("resize", function() {
@@ -98,6 +160,7 @@ export default {
             document.activeElement.scrollIntoViewIfNeeded();
           }, 0);
         }
+        app.$emit('resize');
       })
     }
   }
@@ -107,7 +170,11 @@ export default {
 <style lang="less">
   @import '~vux/src/styles/reset.less';
   @import '~vux/src/styles/1px.less';
+  @import './assets/app.less';
+
   @import './common/swiper-4.2.2.min.css';
+  //@import './assets/weui.min.css'; //和vux的版本不兼容
+  @import '~vux/src/styles/weui/widget/weui_tips/weui_actionsheet.less';
   @import './assets/iconfont/icon.css';
   @import './assets/iconfont/iconfont.css';
 

@@ -226,5 +226,30 @@ export default{
             reg = /\d{1,3}(?=(\d{3})+$)/g; 
         strArr[0] = strArr[0].replace(reg, '$&,');
         return strArr.join('.');
+    },
+    formatDateTime:function (timeValue) {
+        var date = new Date(timeValue);
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        m = m < 10 ? ('0' + m) : m;
+        var d = date.getDate();
+        d = d < 10 ? ('0' + d) : d;
+        var h = date.getHours();
+        h = h < 10 ? ('0' + h) : h;
+        var minute = date.getMinutes();
+        var second = date.getSeconds();
+        minute = minute < 10 ? ('0' + minute) : minute;
+        second = second < 10 ? ('0' + second) : second;
+        return y + '/' + m + '/' + d;
+    },
+    formatFileSize:function(b,length){
+       var size = b/1024,
+           ext = 'K';
+        
+        if(size > 1024){
+            ext = 'M';
+            size = size/1024;
+        }
+        return size.toFixed(length||2)+ext;
     }
 }
