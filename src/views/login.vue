@@ -21,7 +21,7 @@
         <x-button class="login-btn" @click.native="login">
                 登录
         </x-button>
-        <x-button v-if="isApp" class="host-btn" @click.native="goSetHost">切换服务器</x-button>
+        <!-- <x-button v-if="isApp" class="host-btn" @click.native="goSetHost">切换服务器</x-button> -->
     </div>
     
 </template>

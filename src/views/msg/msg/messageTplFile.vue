@@ -3,7 +3,7 @@
        <div class="singleFile">
             <div class="file-content-info">
                 <p>
-                    <a  :href="'/H_roleplay-si/ds/downloadById?id='+file.id">{{file.content}}</a>
+                    <a  :href="baseURL + '/H_roleplay-si/ds/downloadById?id='+file.id">{{file.content}}</a>
                 </p>
                 <p>
                     {{file.size}}KB

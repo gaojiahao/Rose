@@ -96,7 +96,8 @@ export default {
             });
         },
         down(id){
-            window.location.href='/H_roleplay-si/ds/downloadById?id='+id;
+            var baseUrl = window.baseURL||''
+            window.location.href= baseUrl+'/H_roleplay-si/ds/downloadById?id='+id;
         },
         fileClick(content){
             var fileName = content.content,
