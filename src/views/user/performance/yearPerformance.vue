@@ -1,17 +1,21 @@
 <template>
     <div class="year-performance">
-      <div class="year-header">
-          <div class="back" @click="goBack">
-              <span class="icon icon-performance-back"></span>
-              <span>我</span>
-          </div>
-          <div class="title">年度累计绩效明细</div>
-      </div>
+     
+      <div class="msg-header page-navigation">
+        <div class="goback" @click="goBack()">
+            <i class="iconfont icon-back1" ></i>
+        </div>
+        <div class="groupName body">
+            年度累计绩效明细
+        </div>
+    </div>
       <div class="year-num">
           <span>累计绩效</span>
           <p>{{ total }}</p>
       </div>
+      
       <div class="year-table">
+       
         <div class="table-header">
           <div class="brfore-year" @click="onBeforeYearClick">
               <span class="icon icon-performance-back"></span>
@@ -30,7 +34,12 @@
           <span>合计</span>
           <b>{{ total }}</b>
         </div>
-        <div class="table-content">
+         <RScroll 
+          class="page-body-hasNav table-content" 
+          :options="scrollOptions"
+          :has-next="hasNext"
+          :no-data="false"
+      >
           <div class="table-list" v-for="(item,index) of yearData" :key="index">
               <div class="list-left">
                   <div class="left-time">{{new Date(item.effectiveMonth).getMonth()+1}}月</div>
@@ -41,24 +50,34 @@
                 <span class="icon icon-goto"></span>
               </div>
           </div>
-        </div>
+        </RScroll>
       </div>
+      
     </div>
 </template>
 
 <script>
+
 import { Datetime,numberComma } from 'vux'
 import { getPerformance } from "@/service/myPerformanceService";
+import RScroll from "plugins/scroll/RScroll";
 export default {
     name:"YearPerformance",
     components:{
-       Datetime
+       Datetime,
+       RScroll
     },
     data(){
         return {
-           year: "",
-           total: 0,
-           yearData: []
+          scrollOptions:{
+            click: true,
+            pullUpLoad: false,//上拉刷新
+            pullDownRefresh: false //下拉刷新
+            },
+          hasNext:false,
+          year: "",
+          total: 0,
+          yearData: []
         }
     },
     computed: {
@@ -85,7 +104,7 @@ export default {
         },
         gotoDetail(item) {
           this.$router.push({
-              path: "/performance/monthPerformance/" + item.effectiveMonth
+              path: "/user/monthPerformance/" + item.effectiveMonth
           })
         },
         getYearPerformance(value) {
@@ -113,6 +132,7 @@ export default {
 <style lang="less" scoped>
   .year-performance{
       height: 100%;
+      overflow: hidden;
       .year-header{
           height: .5rem;
           line-height: .5rem;
@@ -132,9 +152,9 @@ export default {
           }
       }
       .year-num{
-            background-color: #2e7cca;
+            background-color: #1a92ec;
             color: #fff;
-            padding: .2rem;
+            height: 1rem;
             text-align: center;
             p{
                 font-size: .25rem;
@@ -142,12 +162,14 @@ export default {
             }
       }
       .year-table{
-        margin: .1rem;
-        height: 70%;
+        height: calc(100% - 2rem);
         .table-header{
+          display: -webkit-box;
+          display: -ms-flexbox;
           display: flex;
           text-align: center;
-          padding: .1rem;
+          height: .5rem;
+          line-height: .5rem;
           background-color: #eee;
           .year-select{
             flex: 1;
@@ -163,33 +185,53 @@ export default {
           }
         }
         .table-sum{
+          display: -webkit-box;
+          display: -ms-flexbox;
           display: flex;
+          -webkit-box-pack: justify;
+          -ms-flex-pack: justify;
           justify-content: space-between;
-          padding: .1rem;
-          border-bottom: 1px solid #999;
-        }
+          padding: 0 .1rem;
+          height: .5rem;
+          line-height: .5rem;
+          border-bottom: 0.5px solid #999;
+              }
         .table-content{
-          overflow-y: scroll;
-          height: 82%;
+        //  height: calc(100% - 1rem);
+        height: 5rem;
           .table-list{
             display: flex;
             justify-content: space-between;
             padding: .1rem;
             .list-right{
+              display: -webkit-box;
+              display: -ms-flexbox;
               display: flex;
+              -webkit-box-align: center;
+              -ms-flex-align: center;
               align-items: center;
               color: #999;
+              flex: 1;
+              justify-content: flex-end;
+              font-size: 14px;
               .icon-goto{
-                  width: .15rem;
-                  height: .15rem;
+                  width: .14rem;
+                  height: .14rem;
                   display: inline-block;
               }
             }
             .list-left{
+              display: -webkit-box;
+              display: -ms-flexbox;
               display: flex;
+              flex: 1;
+              .left-time{
+                flex: 1;
+              }
               .left-amount{
-                margin-left: .5rem;
-                font-weight: bold;
+                flex: 1;
+                font-size: 16px;
+                text-align: right;
               }
             }
           }

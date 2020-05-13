@@ -1,13 +1,12 @@
 <template>
     <div class="task-container" >
+        
         <div class="header">
-            <!-- <div class="search">
-                <form class='search_part' action="#" method="post">
-                    <i class="icon icon-more2"></i>
-                    <input type="search" autocomplete="off" placeholder="任务名称" class="srh_inp">
-                    <i class="icon-taskSearch clear_icon"></i>
-                </form>
-            </div> -->
+              <div class="page-navigation">
+                <div class="groupName body">
+                    工作流任务
+                </div>
+            </div>
             <div class="swiper-tab">
                 <div class="tab-item" :class="{active: index === activeIndex}" v-for="(item, index) in tabItem"
                     @click="tabClick(item, index)" ref="tabs" :key="index">
@@ -199,7 +198,7 @@ input::-ms-input-placeholder {
         }
     }
     .list-container {
-        height: calc(100% - 12.1rem);
+        height: calc(100% - 17.1rem);
         .list_wrapper {
         height: 100%;
         background-color: #fff;

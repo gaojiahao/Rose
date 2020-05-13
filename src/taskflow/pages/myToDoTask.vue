@@ -202,14 +202,14 @@ export default {
                 width: 100%;
                 position: relative;
                 .btn_item{
-                    padding: .01rem .08rem;
-                    border: 1px solid #9c9c9c;
-                    background-color: #fff;
-                    text-align: center;
-                    white-space: nowrap;
-                    border-radius: .10rem;
-                    margin-right: .05rem;
-                    font-size: .12rem;
+                        padding: .02rem .15rem;
+                        border: 1px solid #9c9c9c;
+                        background-color: #fff;
+                        text-align: center;
+                        white-space: nowrap;
+                        border-radius: .2rem;
+                        margin-right: .05rem;
+                        font-size: .14rem;
                 }
                 .submit,.resubmit,.submitNew,.draft,.newFile,.copyNew,.update,.storage,.revoke,.edit {
                     border-color: rgb(0, 150, 136);

@@ -1,11 +1,12 @@
 <template>
     <div class="month-performance">
-      <div class="month-header">
-          <div class="back" @click="goBack">
-              <span class="icon icon-performance-back"></span>
-              <span>我</span>
-          </div>
-          <div class="title">月累计绩效明细</div>
+       <div class="msg-header page-navigation">
+        <div class="goback" @click="goBack()">
+            <i class="iconfont icon-back1" ></i>
+        </div>
+        <div class="groupName body">
+            月累计绩效明细
+        </div>
       </div>
       <div class="month-num">
           <span>累计绩效</span>
@@ -34,7 +35,12 @@
           <span>合计</span>
           <b>{{ total }}</b>
         </div>
-        <div class="table-content">
+          <RScroll 
+          class="page-body-hasNav table-content" 
+          :options="scrollOptions"
+          :has-next="hasNext"
+          :no-data="false"
+          >
           <div class="table-list" v-for="(item,index) of monthData" :key="index">
               <div class="list-left">
                   <div class="left-time">{{new Date(item.effectiveDate).getDate()}}日</div>
@@ -45,21 +51,29 @@
                 <span class="icon icon-goto"></span>
               </div>
           </div>
+          </RScroll>
         </div>
       </div>
-    </div>
 </template>
 
 <script>
 import { Datetime,numberComma,dateFormat } from 'vux'
 import { getPerformance } from "@/service/myPerformanceService";
+import RScroll from "plugins/scroll/RScroll";
 export default {
     name:"MonthPerformance",
     components:{
-       Datetime
+       Datetime,
+       RScroll
     },
     data(){
         return {
+           scrollOptions:{
+            click: true,
+            pullUpLoad: false,//上拉刷新
+            pullDownRefresh: false //下拉刷新
+            },
+          hasNext:false,
            month: "",
            total: 0,
            monthData: []
@@ -112,7 +126,7 @@ export default {
         gotoDetail(item) {
           let day = dateFormat(new Date(item.effectiveDate), 'YYYY-MM-DD');
           this.$router.push({
-              path: "/performance/dayPerformance/" + day
+              path: "/user/dayPerformance/" + day
           })
         },
         getMonthPerformance(value) {
@@ -140,6 +154,7 @@ export default {
 <style lang="less" scoped>
   .month-performance{
       height: 100%;
+      overflow: hidden;
       .month-header{
           height: .5rem;
           line-height: .5rem;
@@ -160,9 +175,9 @@ export default {
           }
       }
       .month-num{
-            background-color: #2e7cca;
+            background-color: #1a92ec;
             color: #fff;
-            padding: .2rem;
+            height: 1rem;
             text-align: center;
             p{
                 font-size: .25rem;
@@ -170,13 +185,16 @@ export default {
             }
       }
       .month-table{
-        margin: .1rem;
-        height: 70%;
+        height: calc(100% - 2rem);
         .table-header{
+          display: -webkit-box;
+          display: -ms-flexbox;
           display: flex;
           text-align: center;
-          padding: .1rem;
+          padding: 0 .1rem;
           background-color: #eee;
+          height: .5rem;
+          line-height: .5rem;
           .month-select{
             flex: 1;
           }
@@ -200,33 +218,52 @@ export default {
           }
         }
         .table-sum{
+          display: -webkit-box;
+          display: -ms-flexbox;
           display: flex;
+          -webkit-box-pack: justify;
+          -ms-flex-pack: justify;
           justify-content: space-between;
-          padding: .1rem;
-          border-bottom: 1px solid #999;
+          padding: 0 .1rem;
+          border-bottom: 0.5px solid #999;
+          height: .5rem;
+          line-height: .5rem;
         }
         .table-content{
-          overflow-y: scroll;
-          height: 82%;
-          .table-list{
+          height: calc(100% -1rem);
+           .table-list{
             display: flex;
             justify-content: space-between;
             padding: .1rem;
             .list-right{
+              display: -webkit-box;
+              display: -ms-flexbox;
               display: flex;
+              -webkit-box-align: center;
+              -ms-flex-align: center;
               align-items: center;
               color: #999;
+              flex: 1;
+              justify-content: flex-end;
+              font-size: 14px;
               .icon-goto{
-                  width: .15rem;
-                  height: .15rem;
+                  width: .14rem;
+                  height: .14rem;
                   display: inline-block;
               }
             }
             .list-left{
+              display: -webkit-box;
+              display: -ms-flexbox;
               display: flex;
+              flex: 1;
+              .left-time{
+                flex: 1;
+              }
               .left-amount{
-                margin-left: .5rem;
-                font-weight: bold;
+                flex: 1;
+                font-size: 16px;
+                text-align: right;
               }
             }
           }

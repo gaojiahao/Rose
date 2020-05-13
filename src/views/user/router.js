@@ -1,14 +1,14 @@
 
-import MyPerformance from './owns/myPerformance.vue'
-import DayPerformance from './owns/dayPerformance.vue'
-import MonthPerformance from './owns/monthPerformance.vue'
-import YearPerformance from './owns/yearPerformance.vue'
-import PerformanceLayout from './owns/performanceLayout.vue'
+import MyPerformance from './performance/myPerformance.vue'
+import DayPerformance from './performance/dayPerformance.vue'
+import MonthPerformance from './performance/monthPerformance.vue'
+import YearPerformance from './performance/yearPerformance.vue'
+import PerformanceLayout from './performance/performanceLayout.vue'
 
 export default [
   {
-    path: '/performance',
-    name: 'PerformanceLayout', 
+    path: '/user',
+    name: '/user', 
     redirect: { name: 'MyPerformance' },
     component: PerformanceLayout,
     children: [

@@ -1,13 +1,19 @@
 <template>
     <div class="day-performance">
-      <div class="day-header">
-          <div class="back" @click="goBack">
-              <span class="icon icon-performance-back"></span>
-              <span>我</span>
-          </div>
-          <div class="title">今日绩效明细</div>
+     <div class="page-navigation">
+        <div class="goback" @click="goBack()">
+            <i class="iconfont icon-back1" ></i>
+        </div>
+        <div class="groupName body">
+            今日绩效明细
+        </div>
+    </div>
+    
+      <div class="day-num">
+          <span>当日绩效</span>
+          <p>{{ total }}</p>
       </div>
-      <div class="day-time">
+        <div class="day-time">
           <div class="brfore-day" @click="onBeforeDayClick">
               <span class="icon icon-performance-back"></span>
               <span>前一天</span>
@@ -24,53 +30,85 @@
               <span class="icon icon-goto"></span>
           </div>
       </div>
-      <div class="day-num">
-          <span>当日绩效</span>
-          <p>{{ total }}</p>
-      </div>
-      <div :class="{'day-list':true,'day-empty':dayData.length === 0}">
+       <RScroll 
+          :class="{'day-list':true,'day-empty':dayData.length === 0}"
+          class="page-body-hasNav" 
+          :options="scrollOptions"
+          :has-next="hasNext"
+          :no-data="false"
+      >
           <div 
             class="list-content" 
             v-for="(log,index) of dayData" 
             :key="index"
             @click="gotoForm(log)">
-            <div class="content-left">
-                <img :src="defaultImg(log)" />
-            </div>
-            <div class="content-center">
-                <div class="app-name">{{ log.title }}</div>
-                <div class="log-desc">
-                    <span>{{ log.effectiveDate }}</span>
-                    <span style="margin-left:.05rem;">{{ log.performanceType }}</span>
+                <img  :src="defaultImg(log)"  />
+                <div class="list-content-container">
+                    <div class="list-content-container-title">{{ log.title }}</div>
+                    <div class="list-content-container-detail">
+                        <div>{{ log.effectiveDate|time}}</div>
+                         <div>{{ log.performanceType }}</div>
+                         <div>{{log.total}}</div>
+                    </div>
                 </div>
-                <div class="log-title">{{ log.comment }}</div>
-            </div>
-            <div class="content-right">{{ log.total }}</div>
+          </div>
+          <div 
+            class="list-content" 
+            v-for="(log,index) of dayData" 
+            :key="index"
+            @click="gotoForm(log)">
+                <img  :src="defaultImg(log)"  />
+                <div class="list-content-container">
+                    <div class="list-content-container-title">{{ log.title }}</div>
+                    <div class="list-content-container-detail">
+                        <div>{{ log.effectiveDate|time}}</div>
+                         <div>{{ log.performanceType }}</div>
+                         <div>{{log.total}}</div>
+                    </div>
+                </div>
           </div>
           <div class="list-empty" v-if="dayData.length === 0">暂无绩效</div>
-      </div>
+      </RScroll>
     </div>
 </template>
 
 <script>
 import { Datetime,numberComma } from 'vux'
 import { getPerformance } from "@/service/myPerformanceService";
+import RScroll from "plugins/scroll/RScroll";
 export default {
     name:"DayPerformance",
     components:{
-       Datetime
+       Datetime,
+       RScroll
     },
     data(){
         return {
+             scrollOptions:{
+                click: true,
+                pullUpLoad: false,//上拉刷新
+                pullDownRefresh: false //下拉刷新
+            },
+            hasNext:false,
            day: "",
            total: 0,
            dayData: []
         }
     },
+    filters:{
+        time(date){
+            date = new Date(date);
+            var hour = date.getHours();//获取系统时间
+            var minute = date.getMinutes(); //分
+            var second = date.getSeconds();//秒
+
+            return `${hour}:${minute}:${second}`
+        }
+    },
     methods:{
         goBack() {
             this.$router.push({
-                path: "/performance/myPerformance"
+                path: "/user/myPerformance"
             })
         },
         gotoForm(log) {
@@ -160,6 +198,7 @@ export default {
           line-height: .5rem;
           display: flex;
           justify-content: space-between;
+          border-bottom: 0.5px solid #ddd;
           .brfore-day{
               display: flex;
               align-items: center;
@@ -180,7 +219,7 @@ export default {
           }
       }
       .day-num{
-            background-color: #2e7cca;
+            background-color: #1a92ec;
             color: #fff;
             padding: .2rem;
             text-align: center;
@@ -199,36 +238,32 @@ export default {
         }
       }
       .day-list{
-          height: 68%;
-          overflow-y: auto;
+          padding: .08rem;
+          height: calc(100% - 2rem);
           .list-content{
             padding: .05rem;
             display: flex;
             align-items: center;
-            .content-left{
-                img{
-                    width: .55rem;
-                    height: .55rem;
-                    vertical-align: super;
+            img{
+                height: 30px;
+                border-radius: .03rem;
+            }
+            &-container{
+                width: 100%;
+                padding: 0 .08rem;
+                &-title{
+                    font-size: 14px;
+                }
+
+                &-detail{
+                    font-size: 12px;
+                    display: flex;
+                    width: 100%;
+                    justify-content: space-between;
+                    color: #999999;
                 }
             }
-            .content-center{
-                margin-left: .05rem;
-                width: 62%;
-                .log-title{
-                    width: 2.5rem;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                }
-                .log-desc{
-                    width: 2.3rem;
-                }
-            }
-            .content-right{
-                font-weight: bold;
-                word-break: break-all;
-            }
+            
         }
       }
   }

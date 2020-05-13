@@ -14,14 +14,12 @@ import Login from '@/views/login'
 import MsgRouter from '@/views/msg/router'
 import Contacts from '@/views/contacts/contacts'
 import HomeRouter from '@/views/home/router'
-import User from '@/views/user'
 
 
 import tokenService from 'service/tokenService'
-// import MsgRouter from '@/msg/router'
 import TaskRouter from '@/taskflow/router'
-import MyPerformanceRouter from '@/owns/router'
 import {isPC,isQYWX,isDD} from '@/plugins/platform/index'
+import userRouter from '@/views/user/router'
 
 import { getFieldSetting, getAllDict, getAllFieldSettingListLevel}  from "service/fieldModelService"
 
@@ -49,16 +47,8 @@ if (router == null) {
       },
       ...HomeRouter,
       ...MsgRouter,
-      ...MyPerformanceRouter,
       ...TaskRouter,
-      {
-        path:'/user',
-        name:'user',
-        component:User,
-        meta:{
-           title:'我'
-        }
-      },
+      ...userRouter,
       {
         path:'/setHost',
         name:'setHost',
