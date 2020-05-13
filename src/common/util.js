@@ -251,5 +251,21 @@ export default{
             size = size/1024;
         }
         return size.toFixed(length||2)+ext;
+    },
+    getMineType(name){
+        var ext = name.split('.').pop(),
+            mineType = '';
+
+        switch(ext){
+            case 'doc':
+                mineType = 'application/msword';
+                break;
+            case 'pdf':
+            case 'rtf':
+                mineType = 'application/'+ ext;
+                break;
+        }
+       
+        return mineType;
     }
 }

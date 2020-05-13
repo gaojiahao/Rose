@@ -30,6 +30,7 @@
     </div>
 </template>
 <script>
+import util from '@/common/util';
 import {getMessagesByImType} from 'service/msgService';
 export default {
     data(){
@@ -99,12 +100,59 @@ export default {
             var baseUrl = window.baseURL||''
             window.location.href= baseUrl+'/H_roleplay-si/ds/downloadById?id='+id;
         },
+        appDown(content){
+            var vm = this,
+                baseUrl = window.baseURL||'',
+                source = baseUrl+'/H_roleplay-si/ds/downloadById?id='+id,
+                fileTransfer,
+                target;
+
+            if(window.cordova){
+                target = cordova.file.cacheDirectory + '/' + content.content; //用到了cordova-plugin-file插件
+                fileTransfer = new FileTransfer(); //用到了cordova-plugin-file-transfer插件
+
+                fileTransfer.download(
+                    source,
+                    target,
+                    function(entry) {
+                        console.log(entry);
+                        //vm.openFile(content,target);
+                    },
+                    function(error) {
+                        console.log("download error source " + error.source);
+                        console.log("download error target " + error.target);
+                        console.log("download error code" + error.code);
+                    },
+                    false,
+                    {//http头
+                    }
+                );
+            }
+        },
+        openFile(content,filePath){
+            var fileMIMEType = util.getMineType(content.content);
+
+            cordova.plugins.fileOpener2.open(
+                filePath,
+                fileMIMEType,
+                {
+                    error : function(){ 
+                        console.log('open error');
+                    },
+                    success : function(){ 
+                        console.log('open sucess');
+                    }
+                }
+            );
+        },
         fileClick(content){
             var fileName = content.content,
                 isImg = /.jpg|.png/.test(fileName.toLowerCase());
             
             if(isImg){
                 this.$router.push({name:'imgInfo',params:{id:content.id},query:{name:fileName}});
+            } else if( window.isApp){
+                this.appDown(content);
             } else {
                 this.down(content.id);
             }
