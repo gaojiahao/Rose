@@ -1,50 +1,66 @@
 <template>
-    <div class="my-performance">
-      <div class="my-header">
-        <span>我</span>
+
+<div class="page-hasTab me">
+    <div class="page-navigation">
+        <div class="nav-hd">
+            我
+        </div>
+    </div>
+      <RScroll 
+          class="page-body-hasNav" 
+          :options="scrollOptions"
+          :has-next="hasNext"
+          :no-data="false"
+      >
+      <div class="my-performance">
+      <div class="my-info" >
+        <div class="my-info-entity" >
+          <div>{{ currentUser.entityName}}</div>
+          <img  :src="getDefaultImg()" />
+        </div>
+
+        <div class="my-info-job">
+           <p class="my-info-job-nickname">{{ currentUser.name }}</p>
+            <p class="my-info-job-jobs">{{ roles.join(',') }}</p>
+        </div>
       </div>
-      <div class="my-info">
-        <div class="info-left">
-          <p class="info-left-company">{{ currentUser.entityName}}</p>
-          <div class="info-left-name">
-            <p>{{ currentUser.name }}</p>
-            <span>{{ roles.join(',') }}</span>
+
+      <group>
+        <div class="time-study vux-1px-b" >
+          <div>工时统计</div>
+        <div class="time-study-btns" @click="onTimeChange">
+            <div id="week"
+            :class="{'btn-color':isCurrentBtn==='week'}">
+            本周
+          </div>
+          <div 
+             
+            id="month"
+            :class="{'btn-color':isCurrentBtn==='month'}">
+            本月
+          </div>
+          <div 
+             
+            id="year"
+            :class="{'btn-color':isCurrentBtn==='year'}">
+            本季度
           </div>
         </div>
-        <div class="info-right">
-          <img :src="getDefaultImg()" />
         </div>
+       <div class="log-lours" id="logHours"></div>
+      </group>
       </div>
-      <div class="log-btn" @click="onTimeChange">
-        <x-button 
-          mini 
-          id="week"
-          :class="{'btn-color':isCurrentBtn==='week'}">
-          本周
-        </x-button>
-        <x-button 
-          mini 
-          id="month"
-          :class="{'btn-color':isCurrentBtn==='month'}">
-          本月
-        </x-button>
-        <x-button 
-          mini 
-          id="year"
-          :class="{'btn-color':isCurrentBtn==='year'}">
-          本季度
-        </x-button>
-      </div>
-      <div class="log-lours" id="logHours"></div>
-      <div class="today-performance" @click="onDayPerformanceClick">
-        <span>今日绩效</span>
-        <b>{{ todayPerformance }}</b>
-      </div>
-      <div class="year-performance" @click="onYearPerformanceClick">
-        <span>今年累计绩效</span>
-        <b>{{ yearPerformance }}</b>
-      </div>
-    </div>
+        <group>
+              <cell title="今日绩效"  :value="todayPerformance" :is-loading="todayPerformance==undefined" is-link @click.native="onDayPerformanceClick"  />
+              <cell title="今年累计绩效"  :value="yearPerformance" :is-loading="yearPerformance==undefined"  is-link @click.native="onYearPerformanceClick" />
+          </group>
+          <group>
+              <cell title="主题设置" is-link link="/themesetting" />
+              <cell title="退出"  @click.native="loginOut" />
+          </group>
+      </RScroll>
+  </div>
+    
 </template>
 
 <script>
@@ -55,18 +71,30 @@ import { getMyJobLogCountInfo,
 from "@/service/myPerformanceService";
 import WebContext from 'service/commonService'
 import { initWebContext } from 'service/commonService'
+import { Group, Cell } from 'vux'
+import tokenService from "service/tokenService";
+import RScroll from "plugins/scroll/RScroll";
 const echarts = require('echarts');
 export default {
     name:"MyPerformance",
     components:{
-       XButton
+       XButton,
+          Cell,
+        Group,
+        RScroll
     },
     data(){
         return {
+            scrollOptions:{
+                click: true,
+                pullUpLoad: false,//上拉刷新
+                pullDownRefresh: false //下拉刷新
+            },
+            hasNext:false,
            isCurrentBtn: "week",
            time: "本周",
-           todayPerformance: 0,
-           yearPerformance: 0,
+           todayPerformance: undefined,
+           yearPerformance: undefined,
            Xdata: [],
            Ydata: [],
            currentUser: {},
@@ -112,13 +140,13 @@ export default {
         onDayPerformanceClick() {
           let today = dateFormat(new Date(), 'YYYY-MM-DD');
           this.$router.push({
-            path: "/performance/dayPerformance/" + today
+            path: "/user/dayPerformance/" + today
           })
         },
         onYearPerformanceClick() {
           let year = dateFormat(new Date(), 'YYYY');
           this.$router.push({
-            path: "/performance/yearPerformance/" + year
+            path: "/user/yearPerformance/" + year
           })
         },
         getMyLog() {
@@ -136,6 +164,8 @@ export default {
           getTodayPerformance().then(res => {
             if(res.tableContent[0] && res.tableContent[0].amount){
               this.todayPerformance = numberComma(res.tableContent[0].amount.toFixed(2));
+            }else{
+              this.todayPerformance = 0;
             }
           })
         },
@@ -143,8 +173,14 @@ export default {
           getYearPerformance().then(res => {
             if(res.tableContent[0] && res.tableContent[0].amount){
               this.yearPerformance = numberComma(res.tableContent[0].amount.toFixed(2));
+            }else{
+              this.yearPerformance= 0;
             }
           })
+        },
+         loginOut(){
+            tokenService.clean();
+            this.$router.replace('/login');
         }
     },
     mounted(){
@@ -165,24 +201,40 @@ export default {
 
 <style lang="less" scoped>
   .my-performance {
-    height: 100%;
-    width: 100%;
-    position: relative;
+    // height: 100%;
+    // width: 100%;
+    // position: relative;
     .log-lours {
-        height: 30%;
+      
+        height: 3rem;
+        background-color: white;
         width: 100%;
     }
-    .log-btn{
-      button{
-        margin: .06rem;
+    .time-study{
+     
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      padding: .10rem .0;
+      width: 100%;
+      -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+      justify-content: space-between;
+      div{
+        padding: 0 .15rem;
       }
-      text-align: right;
-      position: absolute;
-      z-index: 1024;
-      right: 0;
       .btn-color{
-        background-color: #2e7cca;
+        background-color: #3296FA;
         color: #fff;
+      }
+      &-btns{
+        font-size: 14px;
+        display: flex;
+        div{
+          margin: 0 .05rem;
+          padding: .02rem .12rem;
+          border-radius: .2rem;
+        }
       }
     }
     .today-performance, .year-performance{
@@ -207,34 +259,39 @@ export default {
       line-height: .5rem;
     }
     .my-info{
+      background-color: white;
+      margin: .1rem .1rem 0rem .1rem;
       padding: .1rem;
-      display: flex;
-      justify-content: space-between;
-      border-bottom: 1px solid #eee;
-      .info-right{
+      border-radius: .02rem;
+      border:0.5px solid #ddd;
+      &-entity{
+        display: flex;
+        justify-content: space-between;
+        color: #999999;
         img{
-          width: .55rem;
-          border-radius: .03rem;
+          height: .65rem;
+          border-radius: .05rem;
         }
       }
-      .info-left{
-        &-company{
-            font-size: .14rem;
+      &-job{
+        b{
+          display: inline-block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          width: 100%;
         }
-        &-name{
-          margin-top: .1rem;
-          p{
-            font-size: .18rem;
-          }
-          span{
-            color: #999;
-            width: 2.5rem;
-            display: inline-block;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            font-size: .12rem;
-          }
+        &-nickname{
+          font-size: 20px;
+        }
+        &-jobs{
+          width: 100%;
+          overflow: hidden;
+          -o-text-overflow: ellipsis;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-size: 14px;
+          color: #999999;
         }
       }
     }

@@ -13,10 +13,10 @@
              <div v-if="msgList.length==0 && showLoading == false">
                  无搜索结果
              </div>
-            <div v-if="msgList.length">
-                <div v-for="(msg,index) in msgList" :key="index" class="history-file-item">
+            <div v-if="msgList.length" class="file-container">
+                <div v-for="(msg,index) in msgList" :key="index" class="history-file-item" @click="fileClick(msg.content)">
                     {{msg.creatorName}}
-                    <div class="history-file-item-info" @click="down(msg.content.id)">
+                    <div class="history-file-item-info">
                         <img class="file-img" :src="msg.content|filedTypeFilter" @error= "getFileImg()">
                         <div class="history-file-item-info-content">
                             <p>{{msg.content.content}}</p>
@@ -30,7 +30,7 @@
     </div>
 </template>
 <script>
-import {getMessagesByImType} from 'service/msgService'
+import {getMessagesByImType} from 'service/msgService';
 export default {
     data(){
         return {
@@ -97,18 +97,34 @@ export default {
         },
         down(id){
             window.location.href='/H_roleplay-si/ds/downloadById?id='+id;
+        },
+        fileClick(content){
+            var fileName = content.content,
+                isImg = /.jpg|.png/.test(fileName.toLowerCase());
+            
+            if(isImg){
+                this.$router.push({name:'imgInfo',params:{id:content.id},query:{name:fileName}});
+            } else {
+                this.down(content.id);
+            }
         }
     }
 }
 </script>
 <style lang='less'>
+.file-container{
+    padding: 0 0.1rem;
+    background: #fff;
+}
 .history-file-item{
     position: relative;
+    padding:0.1rem 0;
     .crtTime{
         position:absolute;
         right:0;
-        top:0;
+        top:0.1rem;
     }
+    border-bottom:1px solid #dedede;
 }
 .history-file-item-info{
   display: flex;
