@@ -18,14 +18,14 @@
               <span class="icon icon-performance-back"></span>
               <span>{{ beforeMonth }}月</span>
           </div>
-          <div class="month-select">
-              <datetime 
-                v-model="month" 
-                @on-change="onDateChange" 
-                format="YYYY-MM"
-                :display-format="displayFromat">
-              </datetime>
-          </div>
+          <group class="month-select">
+            <datetime 
+              v-model="month" 
+              @on-change="onDateChange" 
+              format="YYYY-MM"
+              :display-format="displayFromat">
+            </datetime>
+          </group>
           <div class="after-month" @click="onAfterMonthClick">
             <span>{{ afterMonth }}月</span>
             <span class="icon icon-goto"></span>
@@ -57,14 +57,15 @@
 </template>
 
 <script>
-import { Datetime,numberComma,dateFormat } from 'vux'
+import { Datetime,numberComma,Group,dateFormat } from 'vux'
 import { getPerformance } from "@/service/myPerformanceService";
 import RScroll from "plugins/scroll/RScroll";
 export default {
     name:"MonthPerformance",
     components:{
        Datetime,
-       RScroll
+       RScroll,
+       Group
     },
     data(){
         return {
@@ -89,12 +90,12 @@ export default {
         let date = new Date(this.month);
         date.setMonth(date.getMonth() + 1);
         return date.getMonth() + 1;
-      },
+      }
     },
     methods:{
         goBack() {
             this.$router.push({
-                path: "/performance/myPerformance"
+                path: "/user/myPerformance"
             })
         },
         displayFromat(value) {
@@ -190,14 +191,11 @@ export default {
           display: -webkit-box;
           display: -ms-flexbox;
           display: flex;
-          text-align: center;
           padding: 0 .1rem;
           background-color: #eee;
           height: .5rem;
           line-height: .5rem;
-          .month-select{
-            flex: 1;
-          }
+          justify-content: space-between;
           .brfore-month{
             display: flex;
             align-items: center;
@@ -215,6 +213,16 @@ export default {
                 height: .15rem;
                 display: inline-block;
             }
+          }
+          .month-select /deep/ .weui-cells{
+            background-color: transparent;
+            margin-top: .77em !important;
+          }
+          .month-select /deep/ .weui-cells:after{
+            border: none;
+          }
+          .month-select /deep/ .weui-cells:before{
+            border: none;
           }
         }
         .table-sum{

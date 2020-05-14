@@ -15,19 +15,26 @@
       </div>
       
       <div class="year-table">
-       
         <div class="table-header">
           <div class="brfore-year" @click="onBeforeYearClick">
               <span class="icon icon-performance-back"></span>
               <span>{{ beforeYear }}年</span>
           </div>
-          <div class="year-select">
-              <datetime 
-                v-model="year" 
-                @on-change="onDateChange" 
-                format="YYYY"
-                :display-format="displayFromat">
-              </datetime>
+          <group class="year-select">
+            <datetime 
+              v-model="year" 
+              @on-change="onDateChange" 
+              format="YYYY"
+              :max-year="new Date().getFullYear()"
+              :display-format="displayFromat">
+            </datetime>
+          </group>
+          <div 
+            class="after-year" 
+            :style="{color:disabledAfterYear?'#999':'#333'}" 
+            @click="onAfterYearClick">
+            <span>{{ afterYear }}年</span>
+            <span class="icon icon-goto"></span>
           </div>
         </div>
         <div class="table-sum">
@@ -58,14 +65,15 @@
 
 <script>
 
-import { Datetime,numberComma } from 'vux'
+import { Datetime,Group,numberComma } from 'vux'
 import { getPerformance } from "@/service/myPerformanceService";
 import RScroll from "plugins/scroll/RScroll";
 export default {
     name:"YearPerformance",
     components:{
        Datetime,
-       RScroll
+       RScroll,
+       Group
     },
     data(){
         return {
@@ -75,6 +83,7 @@ export default {
             pullDownRefresh: false //下拉刷新
             },
           hasNext:false,
+          disabledAfterYear: true,
           year: "",
           total: 0,
           yearData: []
@@ -83,12 +92,20 @@ export default {
     computed: {
       beforeYear: function() {
         return new Date(String(this.year)).getFullYear() - 1;
+      },
+      afterYear: function() {
+        if(new Date(this.year).getFullYear() + 1 > new Date().getFullYear()){
+          this.disabledAfterYear = true;
+        }else{
+          this.disabledAfterYear = false;
+        }
+        return new Date(String(this.year)).getFullYear() + 1;
       }
     },
     methods:{
         goBack() {
             this.$router.push({
-                path: "/performance/myPerformance"
+                path: "/user/myPerformance"
             })
         },
         displayFromat(value) {
@@ -99,6 +116,12 @@ export default {
         },
         onBeforeYearClick() {
             let year = new Date(this.year).getFullYear() - 1;
+            this.year = String(year);
+            this.getYearPerformance(year);
+        },
+        onAfterYearClick() {
+          if(this.disabledAfterYear) return;
+            let year = new Date(this.year).getFullYear() + 1;
             this.year = String(year);
             this.getYearPerformance(year);
         },
@@ -164,16 +187,11 @@ export default {
       .year-table{
         height: calc(100% - 2rem);
         .table-header{
-          display: -webkit-box;
-          display: -ms-flexbox;
           display: flex;
-          text-align: center;
           height: .5rem;
           line-height: .5rem;
           background-color: #eee;
-          .year-select{
-            flex: 1;
-          }
+          justify-content: space-between;
           .brfore-year{
             display: flex;
             align-items: center;
@@ -182,6 +200,25 @@ export default {
                 height: .18rem;
                 display: inline-block;
             }
+          }
+          .after-year{
+            display: flex;
+            align-items: center;
+            .icon-goto{
+                width: .15rem;
+                height: .15rem;
+                display: inline-block;
+            }
+          }
+          .year-select /deep/ .weui-cells{
+            background-color: transparent;
+            margin-top: .77em !important;
+          }
+          .year-select /deep/ .weui-cells:after{
+            border: none;
+          }
+          .year-select /deep/ .weui-cells:before{
+            border: none;
           }
         }
         .table-sum{

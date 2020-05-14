@@ -18,13 +18,13 @@
               <span class="icon icon-performance-back"></span>
               <span>前一天</span>
           </div>
-          <div class="day-select">
+          <group class="day-select">
               <datetime 
                 v-model="day" 
                 @on-change="onDateChange"
                 :display-format="displayFromat">
               </datetime>
-          </div>
+          </group>
           <div class="after-day" @click="onAfterDayClick">
               <span>后一天</span>
               <span class="icon icon-goto"></span>
@@ -73,14 +73,15 @@
 </template>
 
 <script>
-import { Datetime,numberComma } from 'vux'
+import { Datetime,Group,numberComma } from 'vux'
 import { getPerformance } from "@/service/myPerformanceService";
 import RScroll from "plugins/scroll/RScroll";
 export default {
     name:"DayPerformance",
     components:{
        Datetime,
-       RScroll
+       RScroll,
+       Group
     },
     data(){
         return {
@@ -216,6 +217,16 @@ export default {
                   height: .15rem;
                   display: inline-block;
               }
+          }
+          .day-select /deep/ .weui-cells{
+            background-color: transparent;
+            margin-top: .77em !important;
+          }
+          .day-select /deep/ .weui-cells:after{
+            border: none;
+          }
+          .day-select /deep/ .weui-cells:before{
+            border: none;
           }
       }
       .day-num{
