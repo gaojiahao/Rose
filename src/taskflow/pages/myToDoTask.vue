@@ -8,8 +8,7 @@
             @on-pulling-up="onPullingUp"
             ref="bScroll"
             >
-        <div class="flow-task">
-            
+        <div class="flow-task"> 
             <div class="flow-task-item" v-for="(task,index) in tasks" :key="index" >
                 <div class="flow-task-item-header vux-1px-b">
                     <div class="flow-task-item-header-wrapper">
@@ -44,7 +43,7 @@
                     </div>
                 </div>
                 <div class="flow-task-item-foot" >
-                    <div class="flow-task-item-foot-btn" v-if="task.actions.length">
+                    <div class="flow-task-item-foot-btn" v-if="task.actions">
                         <div style="position: absolute;right: .1rem;top: .05rem;">
                             <template v-for="(aItem,akey) in task.actions">
                                 <span class="btn_item agreement" :key="akey" v-if="aItem=='agreement'" @click="agreement(task)">同意</span>
@@ -52,11 +51,29 @@
                                 <span class="btn_item resubmit"  :key="akey" v-else-if="aItem=='resubmit'" @click="handlerViewTask(task)">重新提交</span>
                                 <span class="btn_item stop"  :key="akey" v-else-if="aItem=='stop'" @click="stop(task)">终止</span>
                             </template>
-                            <span class="btn_item transfer">转办</span>
+                            <span class="btn_item transfer" @click="transfer(task)">转办</span>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+        <pop-user-list :show="showUserList" :default-value="selectedUser" @sel-item="selUser"
+                   v-model="showUserList"></pop-user-list>
+        <!-- 转办 -->
+        <div v-transfer-dom>
+            <confirm class="action-confirm" title="转办" @on-confirm="onConfirm"
+                    :close-on-confirm="false" v-model="showConfirm">
+                <div class="confirm-item">
+                <span class="title required">转办给: </span>
+                <span>{{selectedUser.nickname}}</span>
+                </div>
+            
+                <div class="confirm-item">
+                <span class="title required">备注: </span>
+                <input type="text" class="value" v-model="transferInfo.comment">
+                </div>
+                <div class="warn" v-show="showCommentWarn">请输入备注</div>
+            </confirm>
         </div>
     </r-scroll>
 </template>
@@ -64,13 +81,16 @@
 <script>
 import { getMsgList} from "service/msgService";
 import RScroll from "plugins/scroll/RScroll";
-import { XButton } from 'vux'
-import { commitTask} from 'service/commonService'
+import { XButton,Confirm } from 'vux'
+import { commitTask, transferTask} from 'service/commonService'
+import PopUserList from 'components/Popup/PopUserList'
 export default {
     name:"myToDoTask",
     components:{
         RScroll,
-        XButton 
+        XButton,
+        Confirm,
+        PopUserList
     },
     data(){
         return {
@@ -85,7 +105,14 @@ export default {
                 page: 1,
                 start: 0,
                 limit: 10
-            }
+            },
+            selectedUser: {}, // 选中的转办用户
+            showConfirm: false,
+            transferInfo: {
+                comment: '', // 备注
+            },
+            showCommentWarn: false,
+            showUserList: false, // 是否展示用户列表
         }
     },
     methods:{
@@ -151,7 +178,7 @@ export default {
                 onConfirm: (value) => {
                 this.commitTask({
                     result: 0,
-                    successMsg: '拒绝成功',
+                    successMsg: '不同意成功',
                     value: value,
                     transCode: task.transCode,
                     taskId: task.taskId,
@@ -216,7 +243,59 @@ export default {
             }).catch(e => {
                 this.$HandleLoad.hide();
             });
-        }, 
+        },
+        // 转办
+        transfer(task) {
+            this.selectedUser = {};
+            this.showUserList = true;
+            this.taskId = task.taskId;
+        },
+        // 选中转办账号
+        selUser(val) {
+            this.selectedUser = {...val};
+            this.showConfirm = true;
+        },
+        // 点击confirm确定
+        onConfirm(task,callback='') {
+            let warn = '';
+            let submitData = {
+                userId: this.selectedUser.userId,
+                taskId: this.taskId,
+                ...this.transferInfo,
+            };
+            this.showCommentWarn = !this.transferInfo.comment;
+            if (this.showCommentWarn) {
+                return
+            }
+
+            this.showConfirm = false;
+            this.$HandleLoad.show();
+            transferTask(submitData).then(data => {
+                this.$HandleLoad.hide();
+                let {success = false, message = '提交失败'} = data;
+                if (success) {
+                message = '转办成功';
+                this.$emit('on-submit-success', JSON.stringify({
+                    type: 'transfer'
+                }));
+                //location.reload();
+                }
+                this.$vux.alert.show({
+                content: message,
+                onHide: () => {
+                    if (success) {
+                        if (callback) {
+                            callback();
+                        } else {
+                            this.$router.go(0);
+                        }
+                    }
+                }
+                });
+            }).catch(e => {
+                this.$HandleLoad.hide();
+            });
+        },
     },
     mounted(){
         this.getTasks();
@@ -339,4 +418,37 @@ export default {
     width: .16rem;
     height: .16rem;
 }
+.action-confirm {
+    .confirm-item {
+      display: flex;
+      align-items: center;
+      padding: .05rem 0;
+      line-height: .2rem;
+      text-align: left;
+    }
+    .warn {
+      color: #ea5455;
+      text-align: right;
+      font-size: .12rem;
+      font-weight: bold;
+    }
+    .title {
+      display: inline-block;
+      width: .6rem;
+      &.required {
+        color: $required;
+        font-weight: bold;
+      }
+    }
+    .value {
+      padding: .04rem .05rem;
+      width: calc(100% - .6rem);
+      border: 1px solid #dedede;
+      border-radius: .05rem;
+      outline: none;
+      font-size: 16px;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+  }
 </style>

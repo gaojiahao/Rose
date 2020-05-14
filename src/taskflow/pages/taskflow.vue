@@ -83,7 +83,7 @@ export default {
                     let tab = this.listMap[index];
                     this.activeIndex = index;
                     this.activeTab = tab.name;
-                    this.scrollToShow(index);
+                    //this.scrollToShow(index);
                 },
                 },
             });
@@ -198,7 +198,7 @@ input::-ms-input-placeholder {
         }
     }
     .list-container {
-        height: calc(100% - 17.1rem);
+        height: calc(100% - 19rem);
         .list_wrapper {
         height: 100%;
         background-color: #fff;

@@ -196,7 +196,8 @@
     },
     created() {
       // 请求物料
-      this.getUserList();
+      // this.getUserList();
+      // console.log(2)
     }
   }
 </script>
