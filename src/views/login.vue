@@ -8,7 +8,10 @@
  -->
 <template>
     <div class="login-container">
-        <div class="login-banner"><img src='./../assets/default/login/logo.png' /></div>
+        <div class="login-banner">
+            <img src='./../assets/default/login/logo.png' />
+            <div class="login-banner-roletask">路塔流程</div>
+        </div>
         <div class="login-form">
             <div class="login-text">登录</div>
             <group class="loginGroup">
@@ -76,7 +79,6 @@ export default {
 </script>
 <style lang="scss" scoped>
     .login-container {
-        background-color: #FDFBF6;
         height: 100%;
     }
     .login-form {
@@ -85,15 +87,15 @@ export default {
             left:6%;
             right:6%;
         }
-        height: 2.5rem;
+        height: 4rem;
         background: #fff;
         box-shadow: 0px 6px 12px 0px #FAF5E7;
         border-radius: 5px;
         .login-text {
-            font-size: 1.8em;
-            margin-left: 0.4rem;           
-            font-weight: 800;
-            padding-top: 5%;
+            font-size: 1.15em;
+            padding-top: 0.3rem;
+            width: 80%;
+            margin: 0 auto;
         }
         .loginInput:before {
             font-size: 1em;
@@ -140,11 +142,16 @@ export default {
         width: 100%;
         height: 1.6rem;
         text-align: center;
-        @include login_banner();
+        // @include login_banner();
         img{
-            height: 0.8rem;
+            height: 1rem;
             margin-top: 0.5rem;
-            width: 0.8rem;
+            width: 1rem;
+        }
+        div{
+            font-size: 18px;
+            color: #3296fa;
+            letter-spacing: 8px;
         }
     }
 </style>
