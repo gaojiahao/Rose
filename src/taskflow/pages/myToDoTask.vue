@@ -38,7 +38,7 @@
                             <span>创建人：{{task.creatorName}}</span>
                         </div>
                         <div>
-                            <span>创建时间：{{task.crtTime}}</span>
+                            <span>创建时间：{{dateFormat(task.crtTime)}}</span>
                         </div>
                     </div>
                 </div>
@@ -81,7 +81,7 @@
 <script>
 import { getMsgList} from "service/msgService";
 import RScroll from "plugins/scroll/RScroll";
-import { XButton,Confirm } from 'vux'
+import { XButton,Confirm, dateFormat } from 'vux'
 import { commitTask, transferTask} from 'service/commonService'
 import PopUserList from 'components/Popup/PopUserList'
 export default {
@@ -90,7 +90,10 @@ export default {
         RScroll,
         XButton,
         Confirm,
-        PopUserList
+        PopUserList,
+    },
+    filters: {
+        dateFormat
     },
     data(){
         return {
@@ -295,6 +298,9 @@ export default {
             }).catch(e => {
                 this.$HandleLoad.hide();
             });
+        },
+        dateFormat(val){
+            return dateFormat(val, 'YYYY-MM-DD HH:mm:ss');
         },
     },
     mounted(){
