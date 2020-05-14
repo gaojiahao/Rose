@@ -251,5 +251,27 @@ export default{
             size = size/1024;
         }
         return size.toFixed(length||2)+ext;
+    },
+    getMineType(name){
+        var ext = name.split('.').pop(),
+            mineType = '';
+
+        switch(ext){
+            case 'doc':
+                mineType = 'application/msword';
+                break;
+            case 'pdf':
+            case 'rtf':
+                mineType = 'application/'+ ext;
+                break;
+            case 'xls':
+                mineType = 'application/vnd.ms-excel';
+                break;
+            case 'xlsx':
+                mineType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                break;
+        }
+       
+        return mineType;
     }
 }

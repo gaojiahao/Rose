@@ -1,5 +1,5 @@
 <template> 
-    <div class="img-msg-content ">
+    <div class="img-msg-content " @click="imgClick">
         <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ content.id" height="100" />
     </div>
 </template>
@@ -26,6 +26,16 @@ export default {
         return {
             baseURL:window.baseURL||'',
             content:null
+        }
+    },
+    methods:{
+        imgClick(){
+            var content = this.content;
+            this.$router.push({
+                name:'imgInfo',
+                params:{id:content.id},
+                query:{name:content.conent}
+            })
         }
     }
 }
