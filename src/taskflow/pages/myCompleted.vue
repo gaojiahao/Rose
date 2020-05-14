@@ -39,7 +39,7 @@
                             <span>创建人：{{task.creatorName}}</span>
                         </div>
                         <div>
-                            <span>创建时间：{{task.crtTime}}</span>
+                            <span>创建时间：{{dateFormat(task.crtTime)}}</span>
                         </div>
                     </div>
                 </div>
@@ -60,12 +60,15 @@
 <script>
 import { getMsgList} from "service/msgService";
 import RScroll from "plugins/scroll/RScroll";
-import { XButton } from 'vux'
+import { XButton,dateFormat } from 'vux'
 export default {
     name:"myCompleted",
     components:{
         RScroll,
         XButton 
+    },
+    filters: {
+        dateFormat
     },
     data(){
         return {
@@ -113,12 +116,15 @@ export default {
         //选择默认图片
         getImgPic(d) {
         let url;
-        if(d){
-            url =  d;
-        }else{
-            url = require('assets/default/service-sales-contract.png');
-        }
-        return url;
+            if(d){
+                url =  d;
+            }else{
+                url = require('assets/default/service-sales-contract.png');
+            }
+            return url;
+        },
+        dateFormat(val){
+            return dateFormat(val, 'YYYY-MM-DD HH:mm:ss');
         },
         
     },
