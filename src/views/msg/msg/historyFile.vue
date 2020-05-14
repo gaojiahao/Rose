@@ -103,20 +103,21 @@ export default {
         appDown(content){
             var vm = this,
                 baseUrl = window.baseURL||'',
-                source = baseUrl+'/H_roleplay-si/ds/downloadById?id='+id,
+                source = baseUrl+'/H_roleplay-si/ds/downloadById?id='+content.id,
                 fileTransfer,
                 target;
 
             if(window.cordova){
-                target = cordova.file.cacheDirectory + '/' + content.content; //用到了cordova-plugin-file插件
+                //externalDataDirectory;
+                target = cordova.file.externalDataDirectory  + content.content; //用到了cordova-plugin-file插件
                 fileTransfer = new FileTransfer(); //用到了cordova-plugin-file-transfer插件
-
+ 
                 fileTransfer.download(
                     source,
                     target,
                     function(entry) {
                         console.log(entry);
-                        //vm.openFile(content,target);
+                        vm.openFile(entry.name,entry.toURL());
                     },
                     function(error) {
                         console.log("download error source " + error.source);
@@ -129,15 +130,17 @@ export default {
                 );
             }
         },
-        openFile(content,filePath){
-            var fileMIMEType = util.getMineType(content.content);
+        openFile(fileName,filePath){
+            var fileMIMEType = util.getMineType(fileName);
 
+            console.log(filePath);
             cordova.plugins.fileOpener2.open(
                 filePath,
                 fileMIMEType,
                 {
-                    error : function(){ 
+                    error : function(e){ 
                         console.log('open error');
+                        console.log(e);
                     },
                     success : function(){ 
                         console.log('open sucess');

@@ -264,6 +264,12 @@ export default{
             case 'rtf':
                 mineType = 'application/'+ ext;
                 break;
+            case 'xls':
+                mineType = 'application/vnd.ms-excel';
+                break;
+            case 'xlsx':
+                mineType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                break;
         }
        
         return mineType;
