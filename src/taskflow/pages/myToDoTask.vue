@@ -44,11 +44,15 @@
                     </div>
                 </div>
                 <div class="flow-task-item-foot" >
-                    <div class="flow-task-item-foot-btn">
+                    <div class="flow-task-item-foot-btn" v-if="task.actions.length">
                         <div style="position: absolute;right: .1rem;top: .05rem;">
-                            <span class="btn_item agreement" >同意</span>
-                            <span class="btn_item disagree" >不同意</span>
-                            <span class="btn_item transfer" >转办</span>
+                            <template v-for="(aItem,akey) in task.actions">
+                                <span class="btn_item agreement" :key="akey" v-if="aItem=='agreement'" @click="agreement(task)">同意</span>
+                                <span class="btn_item disagree"  :key="akey" v-else-if="aItem=='disagree'" @click="disagree(task)">不同意</span>
+                                <span class="btn_item resubmit"  :key="akey" v-else-if="aItem=='resubmit'" @click="handlerViewTask(task)">重新提交</span>
+                                <span class="btn_item stop"  :key="akey" v-else-if="aItem=='stop'" @click="stop(task)">终止</span>
+                            </template>
+                            <span class="btn_item transfer">转办</span>
                         </div>
                     </div>
                 </div>
@@ -61,6 +65,7 @@
 import { getMsgList} from "service/msgService";
 import RScroll from "plugins/scroll/RScroll";
 import { XButton } from 'vux'
+import { commitTask} from 'service/commonService'
 export default {
     name:"myToDoTask",
     components:{
@@ -85,11 +90,16 @@ export default {
     },
     methods:{
         getTasks:function(){
-
             getMsgList(this.params).then(({ dataCount = 0, tableContent = [] }) => {
                 this.$emit("loadData", dataCount);
                 this.hasNext = dataCount > (this.params.page - 1) * this.params.limit + tableContent.length;
                 this.tasks = this.params.page===1?tableContent:[...this.tasks,...tableContent];
+                for(var i=0;i<this.tasks.length;i++){
+                    if(this.tasks[i].actions){
+                        var arr= this.tasks[i].actions.split(',');
+                        this.tasks[i].actions = arr;
+                    }
+                }
                 this.$nextTick(() => {
                     this.$refs.bScroll.finishPullUp();
                     this.$refs.bScroll.finishPullDown();
@@ -98,7 +108,7 @@ export default {
             })
         },
         handlerViewTask(task){
-            window.location.href = `/Hermes/detail/${task.listId}/0?name=${task.title}&transCode=${task.TRANS_CODE}`;
+            window.location.href = `/Hermes/detail/${task.listId}/0?name=${task.listName}&transCode=${task.transCode}`;
         },
         // 上拉加载
         onPullingUp() {
@@ -111,15 +121,102 @@ export default {
         },
         //选择默认图片
         getImgPic(d) {
-        let url;
-        if(d){
-            url =  d;
-        }else{
-            url = require('assets/default/service-sales-contract.png');
-        }
-        return url;
+            let url;
+            if(d){
+                url =  d;
+            }else{
+                url = require('assets/default/service-sales-contract.png');
+            }
+            return url;
         },
-        
+        // 同意
+        agreement(task) {
+            this.$vux.confirm.prompt('', {
+                title: '审批意见',
+                onConfirm: (value) => {
+                    this.commitTask({
+                    result: 1,
+                    successMsg: '同意成功',
+                    value,
+                    transCode: task.transCode,
+                    taskId: task.taskId
+                    });
+                }
+            });
+        },
+        // 拒绝
+        disagree(task) {
+            this.$vux.confirm.prompt('', {
+                title: '审批意见',
+                onConfirm: (value) => {
+                this.commitTask({
+                    result: 0,
+                    successMsg: '拒绝成功',
+                    value: value,
+                    transCode: task.transCode,
+                    taskId: task.taskId,
+                    callback: () => {
+
+                    }
+                });
+                }
+            });
+        },
+        //终止
+        stop(task) {
+            this.$vux.confirm.prompt('', {
+                title: '审批意见',
+                onConfirm: (value) => {
+                    this.commitTask({
+                        result: -1,
+                        successMsg: '终止成功',
+                        value: value,
+                        transCode: task.transCode,
+                        taskId: task.taskId,
+                        callback: () => {
+                        
+                        }
+                    });
+                }
+            });  
+        },
+        // 审批
+        commitTask({result, value, successMsg, callback,taskId,transCode}) {
+            this.$HandleLoad.show();
+                let submitData = {
+                    taskId: taskId,
+                    taskData: JSON.stringify({
+                    result,
+                    transCode: transCode,
+                    comment: value
+                })
+            };
+            return commitTask(submitData).then(data => {
+                this.$HandleLoad.hide();
+                let {success = false, message = '提交失败'} = data;
+                let actionMap = {0: 'reject', 1: 'agree', 2: 'revoke'};
+                if (success) {
+                    message = successMsg;
+                    this.$emit('on-submit-success', JSON.stringify({
+                        type: actionMap[result]
+                    }));
+                }
+                this.$vux.alert.show({
+                    content: message,
+                    onHide: () => {
+                        if (success) {
+                            if (callback) {
+                                callback();
+                            } else {
+                                this.$router.go(0);
+                            }
+                        }
+                    }
+                });
+            }).catch(e => {
+                this.$HandleLoad.hide();
+            });
+        }, 
     },
     mounted(){
         this.getTasks();

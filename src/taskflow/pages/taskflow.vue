@@ -22,11 +22,11 @@
                             :no-data="!slide.hasNext && !slide.listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                             ref="bScroll"> -->
                          <!-- 我的待办 -->
-                        <template v-if="activeTab == slide.name">
+                        <template v-if="slide.name=='myToDoTask'">
                             <myToDoTask></myToDoTask>
                         </template>
                         <!-- 我的已办 -->
-                        <template v-else-if="activeTab == slide.name">
+                        <template v-else-if="slide.name=='myCompleted'">
                             <myCompleted></myCompleted>
                         </template>
                     <!-- </r-scroll> -->
