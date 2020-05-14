@@ -41,17 +41,43 @@
                         <div>
                             <span>创建时间：{{dateFormat(task.crtTime)}}</span>
                         </div>
+                        <!-- <div>
+                            <span>审批操作：
+                                <template v-if="task.status==0">
+                                不同意
+                                </template>
+                                <template v-else-if="task.status==1">
+                                同意
+                                </template>
+                                <template v-else-if="task.status==-1">
+                                终止
+                                </template>
+                            </span>
+                        </div>
+                        <div>
+                            <span>审批意见：{{task.comment}}</span>
+                        </div> -->
                     </div>
                 </div>
-                <!-- <div class="flow-task-item-foot" >
-                    <div class="flow-task-item-foot-btn">
-                        <div style="position: absolute;right: .1rem;top: .05rem;">
-                            <span class="btn_item agreement" >同意</span>
-                            <span class="btn_item disagree" >不同意</span>
-                            <span class="btn_item transfer" >转办</span>
-                        </div>
+                <div class="flow-task-item-foot" >
+                    <div class="flow-task-item-foot-flow">
+                        审批操作：
+                        <span class="flow-task-item-foot-flow-span">
+                            <template v-if="task.status==0">
+                                <span class="disagree">不同意</span>
+                            </template>
+                            <template v-else-if="task.status==1">
+                                <span class="agreement">同意</span>
+                            </template>
+                            <template v-else-if="task.status==-1">
+                                <span class="stop">终止</span>
+                            </template>
+                        </span>
                     </div>
-                </div> -->
+                    <div>
+                        <span>审批意见：{{task.comment}}</span>
+                    </div>    
+                </div>
             </div>
         </div>
     </r-scroll>
@@ -170,9 +196,34 @@ export default {
         }
 
         &-foot{
-            height: .3rem;
+            //height: .3rem;
             padding: .05rem .1rem;
             width: 100%;
+            &-flow{
+                &-span{
+                   font-weight:600;
+                    .submit,.resubmit,.submitNew,.draft,.newFile,.copyNew,.update,.storage,.revoke,.edit {
+                        //border-color: rgb(0, 150, 136);
+                        //background-color: rgb(0, 150, 136);
+                        color: rgb(0, 150, 136);
+                    }
+                    .revokeDraft {
+                        border-color: rgb(255, 193, 7);
+                        //background-color: rgb(255, 193, 7);
+                        color: rgb(255, 193, 7);
+                    }
+                    .reduction,.agreement {
+                        //border-color: green;
+                        //background-color: green;
+                        color: green;
+                    }
+                    .disagree,.stop {
+                        //border-color: red;
+                        //background-color: red;
+                        color: red;
+                    }
+                }
+            }
             &-wrapper{
                 display: -webkit-box;
                 display: -ms-flexbox;
