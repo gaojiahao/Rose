@@ -113,6 +113,7 @@ export default {
       if (window.baseURL) dsUrl = "172.roletask.com:6021/deepstream";//app测试代码
       return new Promise((resolve,reject)=>{
           if(vm.dsClient != null){
+              console.log('ds is not null');
               resolve(vm.dsClient);
               return;
           }

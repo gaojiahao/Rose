@@ -92,6 +92,9 @@ export default {
             this.refresh = false;
             this.initGroup();
         }
+        if (this.describeMsg == false){
+            this.initDs();
+        }
     },
     data(){
         return {
@@ -158,7 +161,6 @@ export default {
         },
         initDs:function(){
             var vm = this,
-                describe = false,
                 app = this.getApp();
 
             return commonService.getBasicInfo().then(baseInfo => {
@@ -169,9 +171,9 @@ export default {
                 vm.currentUser = data;
                 if(deepStreamUrl && userId){
                     app.getDs(deepStreamUrl,userId).then(ds=>{
-                         if (describe == false){//防止断线重连时重复订阅
-                             describe = true;
+                         if (this.describeMsg == false){//防止断线重连时重复订阅
                              vm.describeDs(ds);
+                             this.describeMsg = true;
                          }
                     });
                 }
