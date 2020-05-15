@@ -100,7 +100,7 @@ let tokenService = {
     }    
   },
   // PC端登录，默认返回token
-  pcLogin(userCode, password, key = 'token') {
+  pcLogin(userInfo, key = 'token') {
     //console.log('进入pc了')
     return new Promise((resolve, reject) => {
       let params = {
@@ -111,8 +111,8 @@ let tokenService = {
           'Content-Type': 'application/json',
         },
         data: {
-          password: password,
-          userCode: userCode
+          password: userInfo.password,
+          userCode: userInfo.userCode
         }
       };
       fly.request(params, params.data).then(res => {
