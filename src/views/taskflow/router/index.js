@@ -6,12 +6,12 @@
  * @LastEditors  : Gabriel.gaojiahao
  * @LastEditTime : 2020-01-07 13:55:33
  */
-import taskflow from '@/taskflow/pages/taskflow'
-import flowTask from '@/taskflow/pages/flowTask'
-import projectTask from '@/taskflow/pages/projectTask'
-import dailyTask from '@/taskflow/pages/dailyTask'
-import myToDoTask from '@/taskflow/pages/myToDoTask'
-import myCompleted from '@/taskflow/pages/myCompleted'
+import taskflow from '../pages/taskflow'
+import flowTask from '../pages/flowTask'
+import projectTask from '../pages/projectTask'
+import dailyTask from '../pages/dailyTask'
+import myToDoTask from '../pages/myToDoTask'
+import myCompleted from '../pages/myCompleted'
 export default [
   { 
     path: '/taskflow', 

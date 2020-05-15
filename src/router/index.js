@@ -17,7 +17,7 @@ import HomeRouter from '@/views/home/router'
 
 
 import tokenService from 'service/tokenService'
-import TaskRouter from '@/taskflow/router'
+import TaskRouter from '@/views/taskflow/router'
 import {isPC,isQYWX,isDD} from '@/plugins/platform/index'
 import userRouter from '@/views/user/router'
 
