@@ -101,7 +101,6 @@ let tokenService = {
   },
   // PC端登录，默认返回token
   pcLogin(userInfo, key = 'token') {
-    //console.log('进入pc了')
     return new Promise((resolve, reject) => {
       let params = {
         method: 'post',
@@ -110,10 +109,7 @@ let tokenService = {
         headers: {
           'Content-Type': 'application/json',
         },
-        data: {
-          password: userInfo.password,
-          userCode: userInfo.userCode
-        }
+        data: userInfo
       };
       fly.request(params, params.data).then(res => {
         let data = res.data;
@@ -127,6 +123,34 @@ let tokenService = {
           avatar: data.avatar || ''
         });
         resolve(data[key])
+      }).catch(function (error) {
+        let res = error.response;
+        let data = (res && res.data) || {};
+        let message = data.message || '请求异常';
+        reject({
+          success: false,
+          message: message
+        })
+      });
+    }
+    )
+  },
+  //发送验证码
+  sendTestCode(mobile){
+    return new Promise((resolve, reject) => {
+      let params = {
+        method: 'post',
+        baseURL: window.baseURL || '',
+        url: '/H_roleplay-si/sendVerification',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: {
+          userCode: mobile
+        }
+      };
+      fly.request(params, params.data).then(res => {
+        resolve(res.data);
       }).catch(function (error) {
         let res = error.response;
         let data = (res && res.data) || {};

@@ -114,10 +114,23 @@ export default {
     },
     methods: {
         login() {
-            let params = {
-                userCode: this.userCode,
-                password: this.passWord
-            };
+            let params = {};
+            if(this.isMobileLogin){
+                if(!this.mobile || !this.testCode){
+                    this.$vux.toast.show({text: '请输入有效的手机号或验证码！'});
+                    return;
+                }
+                params.userCode = this.mobile;
+                params.password = this.testCode;
+                params.loginMode = 1;
+            }else{
+                if(!this.userCode || !this.passWord){
+                    this.$vux.toast.show({text: '请输入用户名或密码！'});
+                    return;
+                }
+                params.userCode = this.userCode;
+                params.password = this.passWord;
+            }
             tokenService.pcLogin(params).then(data=>{
                 this.$router.replace('/home');
                 localStorage.setItem('userCode',this.userCode);
@@ -144,16 +157,26 @@ export default {
             if(this.isDisabled) return;
             const constTime = 60;
             if (!this.timer) {
-                this.showTestCode = false;
-                this.timer = setInterval(() => {
-                    if (this.count > 0 && this.count <= constTime) {
-                        this.count--;
-                    } else {
-                        this.showTestCode = true;
-                        clearInterval(this.timer);
-                        this.timer = null;
+                //发送验证码
+                tokenService.sendTestCode(this.mobile).then(data => {
+                    if(data.success){
+                        this.$vux.toast.show({text: data.message});
+                        this.showTestCode = false;
+                        this.timer = setInterval(() => {
+                            if (this.count > 0 && this.count <= constTime) {
+                                this.count--;
+                            } else {
+                                this.showTestCode = true;
+                                clearInterval(this.timer);
+                                this.timer = null;
+                            }
+                        }, 1000)
                     }
-                }, 1000)
+                }).catch(err => {
+                    this.$vux.alert.show({
+                        content: err.message
+                    });
+                });
             }
         }
     },
