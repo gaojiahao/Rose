@@ -1,18 +1,19 @@
 <template>
     <div class="day-performance">
-     <div class="page-navigation">
-        <div class="goback" @click="goBack()">
-            <i class="iconfont icon-back1" ></i>
+        <div style="background-color:#1a92ec">
+            <div class="page-navigation">
+                <div class="goback" @click="goBack()">
+                    <i class="iconfont icon-back1" ></i>
+                </div>
+                <div class="groupName body">
+                    今日绩效明细
+                </div>
+            </div>
+            <div class="day-num">
+                <span>当日绩效</span>
+                <p>{{ total }}</p>
+            </div>
         </div>
-        <div class="groupName body">
-            今日绩效明细
-        </div>
-    </div>
-    
-      <div class="day-num">
-          <span>当日绩效</span>
-          <p>{{ total }}</p>
-      </div>
         <div class="day-time">
           <div class="brfore-day" @click="onBeforeDayClick">
               <span class="icon icon-performance-back"></span>
@@ -23,6 +24,10 @@
                 v-model="day" 
                 @on-change="onDateChange"
                 :display-format="displayFromat">
+                <span>
+                    <span style="color:#999;">{{ displayDay }}</span>
+                    <span class="iconfont icon-riqi"></span>
+                </span>
               </datetime>
           </group>
           <div class="after-day" @click="onAfterDayClick">
@@ -96,6 +101,12 @@ export default {
            dayData: []
         }
     },
+    computed: {
+      displayDay: function() {
+        let date = new Date(this.day);
+        return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+      }
+    },
     filters:{
         time(date){
             date = new Date(date);
@@ -132,12 +143,10 @@ export default {
         onBeforeDayClick() {
             let day = this.createDate(-1);
             this.day = day;
-            this.getDayPerformance(day);
         },
         onAfterDayClick() {
             let day = this.createDate(1);
             this.day = day;
-            this.getDayPerformance(day);
         },
         createDate(num) {
             let date = new Date(this.day);
@@ -218,15 +227,26 @@ export default {
                   display: inline-block;
               }
           }
+          .day-select{
+            .icon-riqi{
+                margin-right: .02rem;
+            }
+          }
           .day-select /deep/ .weui-cells{
             background-color: transparent;
             margin-top: .77em !important;
+          }
+          .day-select /deep/ .weui-cell{
+            padding: 0px;
           }
           .day-select /deep/ .weui-cells:after{
             border: none;
           }
           .day-select /deep/ .weui-cells:before{
             border: none;
+          }
+          .day-select /deep/ .weui-cell_access .weui-cell__ft:after{
+            display: none;
           }
       }
       .day-num{
