@@ -39,8 +39,8 @@
 import { Tab, TabItem } from 'vux'
 import RScroll from "plugins/scroll/RScroll";
 import taskCommon from 'mixins/taskCommon';
-import myToDoTask from '@/taskflow/pages/myToDoTask'
-import myCompleted from '@/taskflow/pages/myCompleted'
+import myToDoTask from '@/views/taskflow/pages/myToDoTask'
+import myCompleted from '@/views/taskflow/pages/myCompleted'
 export default {
     components: {
     Tab,

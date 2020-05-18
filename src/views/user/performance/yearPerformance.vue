@@ -1,19 +1,19 @@
 <template>
     <div class="year-performance">
-     
-      <div class="msg-header page-navigation">
-        <div class="goback" @click="goBack()">
-            <i class="iconfont icon-back1" ></i>
+      <div style="background-color:#1a92ec">
+        <div class="msg-header page-navigation">
+          <div class="goback" @click="goBack()">
+              <i class="iconfont icon-back1" ></i>
+          </div>
+          <div class="groupName body">
+              年度累计绩效明细
+          </div>
         </div>
-        <div class="groupName body">
-            年度累计绩效明细
+        <div class="year-num">
+            <span>累计绩效</span>
+            <p>{{ total }}</p>
         </div>
-    </div>
-      <div class="year-num">
-          <span>累计绩效</span>
-          <p>{{ total }}</p>
       </div>
-      
       <div class="year-table">
         <div class="table-header">
           <div class="brfore-year" @click="onBeforeYearClick">
@@ -27,11 +27,15 @@
               format="YYYY"
               :max-year="new Date().getFullYear()"
               :display-format="displayFromat">
+              <span>
+                <span style="color:#999;">{{ year }}年</span>
+                <span class="iconfont icon-riqi"></span>
+              </span>
             </datetime>
           </group>
           <div 
-            class="after-year" 
-            :style="{color:disabledAfterYear?'#999':'#333'}" 
+            class="after-year"
+            :style="{visibility:disabledAfterYear?'hidden':'visible'}"
             @click="onAfterYearClick">
             <span>{{ afterYear }}年</span>
             <span class="icon icon-goto"></span>
@@ -117,13 +121,11 @@ export default {
         onBeforeYearClick() {
             let year = new Date(this.year).getFullYear() - 1;
             this.year = String(year);
-            this.getYearPerformance(year);
         },
         onAfterYearClick() {
           if(this.disabledAfterYear) return;
             let year = new Date(this.year).getFullYear() + 1;
             this.year = String(year);
-            this.getYearPerformance(year);
         },
         gotoDetail(item) {
           this.$router.push({
@@ -210,15 +212,27 @@ export default {
                 display: inline-block;
             }
           }
+          .year-select{
+            .icon-riqi{
+                margin-right: .02rem;
+            }
+          }
           .year-select /deep/ .weui-cells{
             background-color: transparent;
             margin-top: .77em !important;
+            padding: 0px;
+          }
+          .year-select /deep/ .weui-cell{
+            padding: 0px;
           }
           .year-select /deep/ .weui-cells:after{
             border: none;
           }
           .year-select /deep/ .weui-cells:before{
             border: none;
+          }
+          .year-select /deep/ .weui-cell_access .weui-cell__ft:after{
+            display: none;
           }
         }
         .table-sum{

@@ -1,16 +1,18 @@
 <template>
     <div class="month-performance">
-       <div class="msg-header page-navigation">
-        <div class="goback" @click="goBack()">
-            <i class="iconfont icon-back1" ></i>
+      <div style="background-color:#1a92ec">
+        <div class="msg-header page-navigation">
+          <div class="goback" @click="goBack()">
+              <i class="iconfont icon-back1" ></i>
+          </div>
+          <div class="groupName body">
+              月累计绩效明细
+          </div>
         </div>
-        <div class="groupName body">
-            月累计绩效明细
+        <div class="month-num">
+            <span>累计绩效</span>
+            <p>{{ total }}</p>
         </div>
-      </div>
-      <div class="month-num">
-          <span>累计绩效</span>
-          <p>{{ total }}</p>
       </div>
       <div class="month-table">
         <div class="table-header">
@@ -24,6 +26,10 @@
               @on-change="onDateChange" 
               format="YYYY-MM"
               :display-format="displayFromat">
+              <span>
+                  <span style="color:#999;">{{ displayMonth }}</span>
+                  <span class="iconfont icon-riqi"></span>
+              </span>
             </datetime>
           </group>
           <div class="after-month" @click="onAfterMonthClick">
@@ -90,6 +96,10 @@ export default {
         let date = new Date(this.month);
         date.setMonth(date.getMonth() + 1);
         return date.getMonth() + 1;
+      },
+      displayMonth: function() {
+        let date = new Date(this.month);
+        return `${date.getFullYear()}年${date.getMonth() + 1}月`;
       }
     },
     methods:{
@@ -108,12 +118,10 @@ export default {
         onBeforeMonthClick() {
             let month = this.createDate(-1);
             this.month = month;
-            this.getMonthPerformance(month);
         },
         onAfterMonthClick() {
             let month = this.createDate(1);
             this.month = month;
-            this.getMonthPerformance(month);
         },
         createDate(num) {
             let date = new Date(this.month);
@@ -214,15 +222,26 @@ export default {
                 display: inline-block;
             }
           }
+          .month-select{
+            .icon-riqi{
+                margin-right: .02rem;
+            }
+          }
           .month-select /deep/ .weui-cells{
             background-color: transparent;
             margin-top: .77em !important;
+          }
+          .month-select /deep/ .weui-cell{
+            padding: 0px;
           }
           .month-select /deep/ .weui-cells:after{
             border: none;
           }
           .month-select /deep/ .weui-cells:before{
             border: none;
+          }
+          .month-select /deep/ .weui-cell_access .weui-cell__ft:after{
+            display: none;
           }
         }
         .table-sum{
