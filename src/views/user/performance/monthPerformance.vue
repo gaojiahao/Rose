@@ -238,7 +238,7 @@ export default {
           line-height: .5rem;
         }
         .table-content{
-          height: calc(100% -1rem);
+          height: calc(100% - 4rem);
            .table-list{
             display: flex;
             justify-content: space-between;
