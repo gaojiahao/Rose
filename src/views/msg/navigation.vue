@@ -189,6 +189,8 @@ export default {
          * 分发消息
          * 1	text
            2	image
+           3    multi
+           4    file
             100 group create
             101 add member
             102 del member
@@ -198,20 +200,7 @@ export default {
          */
         distributeMsg(msg){
             var type = msg.imType;
-            var groupIcon = 'https://lab.roletask.com/resource/common-icon/male.png';
-            if(window.cordova){
-                this.groups.map(g=>{
-                    if(g.groupId === msg.groupId){
-                       groupIcon = g.groupIcon; 
-                    }
-                });
-                cordova.plugins.notification.local.schedule({
-                    title: msg.creatorName,
-                    text: msg.content,
-                    foreground: true,
-                    icon:groupIcon
-                });
-            }
+            
             switch(type){
                 case '1':
                 case '2':
@@ -235,7 +224,7 @@ export default {
             if (this.groups.length){
                 index = this.groupIdToIndex[groupId];
                 group = this.groups[index];
-                if (group != null){ //如果群消息页面打开了。
+                if (group != null){ //如果存在群消息列表里。
                     group.modTime = msg.crtTime;//修改时间
                     if (msg.photo == null){
                         this.setMsgPhoto(msg);
@@ -244,6 +233,9 @@ export default {
                         group.lastMsg.content = msg.content;
                     } else {
                         group.lastMsg = msg;
+                    }
+                    if(window.isApp){ //添加app的消息提醒
+                        this.addNotification(group,msg);
                     }
                     if (this.group && this.group.groupId == groupId){//如果是当前消息页面的消息
                         let l = this.msgList.length;
@@ -257,6 +249,40 @@ export default {
                 }
             }
         },
+        addNotification(g,msg){
+            var groupIcon = 'https://lab.roletask.com/resource/common-icon/male.png',
+                content = msg.imType == '1' ? msg.content : JSON.parse(msg.content),
+                text = '';
+      
+            switch(msg.imType){
+                case '1':
+                    text = content;
+                    break;
+                case '2':
+                    text = '[图片]';
+                    break;
+                case '3':
+                    content.forEach(m=>{
+                        if (m.imType == '1'){
+                            text += m.content;
+                        } else if(m.imType == '2'){
+                            text += '[图片]';
+                        }  else if(m.imType == '4'){
+                            text += '[文件]' + m.content;
+                        }
+                    });
+                    break;
+                case '4':
+                    text = '[文件]' + content.content;
+            }
+            window.notification.schedule({
+                title: msg.creatorName,
+                text:text,
+                foreground: true,
+                icon:g.groupIcon || groupIcon
+            });
+        },
+        
         /**
          * 跳转到groupMsg页面
          */
@@ -279,6 +305,7 @@ export default {
         },
         showCreateGroupList() {
             var memberSelector = this.$refs["memberSelector"];
+            this.showList = false;
             memberSelector.showMemberSelector = true;
         },
         addGroup(userList) {

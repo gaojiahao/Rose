@@ -174,7 +174,7 @@ export default {
       
        app.getDs(deepStreamUrl,userId).then(ds=>{
           if(!subscribe){
-              this.subscribePush(uId);
+              this.subscribePush(userId);
               subscribe = true;
           }
        })

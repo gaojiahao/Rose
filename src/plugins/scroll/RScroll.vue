@@ -205,10 +205,10 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  .scroll-container {
-    overflow: hidden;
+  .scroll-container { 
+     overflow: hidden;
     .scroll-wrapper {
-      overflow: hidden;
+       touch-action: none;
       &.hasRefresh {
         min-height: calc(100% + 1px);
       }

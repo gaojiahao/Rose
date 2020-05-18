@@ -30,6 +30,7 @@
     </div>
 </template>
 <script>
+import util from '@/common/util';
 import {getMessagesByImType} from 'service/msgService';
 export default {
     data(){
@@ -96,7 +97,56 @@ export default {
             });
         },
         down(id){
-            window.location.href='/H_roleplay-si/ds/downloadById?id='+id;
+            var baseUrl = window.baseURL||''
+            window.location.href= baseUrl+'/H_roleplay-si/ds/downloadById?id='+id;
+        },
+        appDown(content){
+            var vm = this,
+                baseUrl = window.baseURL||'',
+                source = baseUrl+'/H_roleplay-si/ds/downloadById?id='+content.id,
+                fileTransfer,
+                target;
+
+            if(window.cordova){
+                //externalDataDirectory;
+                target = cordova.file.externalDataDirectory  + content.content; //用到了cordova-plugin-file插件
+                fileTransfer = new FileTransfer(); //用到了cordova-plugin-file-transfer插件
+ 
+                fileTransfer.download(
+                    source,
+                    target,
+                    function(entry) {
+                        console.log(entry);
+                        vm.openFile(entry.name,entry.toURL());
+                    },
+                    function(error) {
+                        console.log("download error source " + error.source);
+                        console.log("download error target " + error.target);
+                        console.log("download error code" + error.code);
+                    },
+                    false,
+                    {//http头
+                    }
+                );
+            }
+        },
+        openFile(fileName,filePath){
+            var fileMIMEType = util.getMineType(fileName);
+
+            console.log(filePath);
+            cordova.plugins.fileOpener2.open(
+                filePath,
+                fileMIMEType,
+                {
+                    error : function(e){ 
+                        console.log('open error');
+                        console.log(e);
+                    },
+                    success : function(){ 
+                        console.log('open sucess');
+                    }
+                }
+            );
         },
         fileClick(content){
             var fileName = content.content,
@@ -104,6 +154,8 @@ export default {
             
             if(isImg){
                 this.$router.push({name:'imgInfo',params:{id:content.id},query:{name:fileName}});
+            } else if( window.isApp){
+                this.appDown(content);
             } else {
                 this.down(content.id);
             }

@@ -23,8 +23,9 @@ export default {
     },
     created(){
         var  baseURL = window.baseURL||'';
+        this.getApp().hasTab = false;
         this.name = this.$route.query.name;
-        this.src = baseURL+'/H_roleplay-si/ds/downloadById?id='+ this.$route.params.id;
+        this.src = baseURL + '/H_roleplay-si/ds/downloadById?id='+ this.$route.params.id;
     }
 }
 </script>

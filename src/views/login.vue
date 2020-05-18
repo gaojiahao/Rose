@@ -8,20 +8,77 @@
  -->
 <template>
     <div class="login-container">
-        <div class="login-banner"><img src='./../assets/default/login/logo.png' /></div>
-        <div class="login-form">
-            <div class="login-text">登录</div>
-            <group class="loginGroup">
-                <x-input :class="[isLoginInpFoc?'loginInpFoc':'loginInput']"  @on-focus="isLoginInpFoc=true" 
-                 @on-blur="isLoginInpFoc=false" text-align="left" placeholder="用户名" v-model="userCode"></x-input>
-                <x-input :class="[isLoginInpFocS?'loginInpFoc':'loginInput']"  @on-focus="isLoginInpFocS=true"  
-                @on-blur="isLoginInpFocS=false" text-align="left" placeholder="密码" v-model="passWord" type="password"></x-input>
-            </group>
+        <div class="login-banner">
+            <img src='./../assets/default/login/logo.png' />
+            <div class="login-banner-roletask">路塔流程</div>
         </div>
-        <x-button class="login-btn" @click.native="login">
-                登录
-        </x-button>
-        <x-button v-if="isApp" class="host-btn" @click.native="goSetHost">切换服务器</x-button>
+        <div class="login-content">
+            <div class="login-form" v-if="!isMobileLogin">
+                <div class="login-text">登录</div>
+                <group class="loginGroup">
+                    <x-input 
+                        :class="[isLoginInpFoc?'loginInpFoc':'loginInput']"  
+                        @on-focus="isLoginInpFoc=true" 
+                        @on-blur="isLoginInpFoc=false" 
+                        text-align="left" 
+                        placeholder="用户名" 
+                        v-model="userCode">
+                    </x-input>
+                    <x-input 
+                        :class="[isLoginInpFocS?'loginInpFoc':'loginInput']"  
+                        @on-focus="isLoginInpFocS=true"  
+                        @on-blur="isLoginInpFocS=false" 
+                        text-align="left" 
+                        placeholder="密码" 
+                        v-model="passWord" 
+                        type="password">
+                    </x-input>
+                </group>
+                <div class="other-login">
+                    <span class="mobile-login" @click="onMobileLoginClick">验证码登录</span>
+                </div>
+            </div>
+            <div class="mobile-form" v-else>
+                <div class="login-text">验证码登录</div>
+                <group class="loginGroup">
+                    <x-input
+                        ref="mobile" 
+                        placeholder="请输入手机号" 
+                        keyboard="number" 
+                        v-model="mobile"
+                        is-type="china-mobile" 
+                        :class="[isLoginInpFoc?'loginInpFoc':'loginInput']"  
+                        @on-focus="isLoginInpFoc=true" 
+                        @on-blur="isLoginInpFoc=false"
+                        @keyup.native="onMobileChange">
+                    </x-input>
+                    <x-input 
+                        class="weui-vcode" 
+                        placeholder="请输入验证码"
+                        v-model="testCode"
+                        :class="[isLoginInpFocS?'loginInpFoc':'loginInput']"  
+                        @on-focus="isLoginInpFocS=true" 
+                        @on-blur="isLoginInpFocS=false">
+                        <span
+                            slot="right"
+                            v-if="showTestCode"
+                            :style="{color:isDisabled?'#ddd':'#39f'}" 
+                            @click="sendTestCodeClick">
+                            发送验证码
+                        </span>
+                        <span slot="right" v-else>{{ count }} s</span>
+                    </x-input>
+                </group>
+                <div class="other-login">
+                    <span class="mobile-login" @click="onMobileLoginClick">账号密码登录</span>
+                </div>
+            </div>
+            <x-button class="login-btn" @click.native="login">
+                    登录
+            </x-button>
+        </div>
+        
+        <!-- <x-button v-if="isApp" class="host-btn" @click.native="goSetHost">切换服务器</x-button> -->
     </div>
     
 </template>
@@ -43,15 +100,38 @@ export default {
             userCode: userCode,
             isApp:isApp,
             passWord: '',
+            mobile: '',
+            testCode: '',
             show: false,
             isLoginInpFoc: false,
             isLoginInpFocS: false,
-            theme:''
+            isMobileLogin: false,
+            showTestCode: true,
+            isDisabled: true,
+            theme:'',
+            count: 60
         }
     },
     methods: {
         login() {
-            tokenService.pcLogin(this.userCode,this.passWord).then(data=>{
+            let params = {};
+            if(this.isMobileLogin){
+                if(!this.mobile || !this.testCode){
+                    this.$vux.toast.show({text: '请输入有效的手机号或验证码！'});
+                    return;
+                }
+                params.userCode = this.mobile;
+                params.password = this.testCode;
+                params.loginMode = 1;
+            }else{
+                if(!this.userCode || !this.passWord){
+                    this.$vux.toast.show({text: '请输入用户名或密码！'});
+                    return;
+                }
+                params.userCode = this.userCode;
+                params.password = this.passWord;
+            }
+            tokenService.pcLogin(params).then(data=>{
                 this.$router.replace('/home');
                 localStorage.setItem('userCode',this.userCode);
             }).catch(err=>{
@@ -62,6 +142,42 @@ export default {
         },
         goSetHost:function () {
             this.$router.push('/setHost');
+        },
+        onMobileLoginClick() {
+            this.isMobileLogin = !this.isMobileLogin;
+        },
+        onMobileChange(value) {
+            if(this.$refs['mobile'].valid) {
+                this.isDisabled = false;
+            }else{
+                this.isDisabled = true;
+            }
+        },
+        sendTestCodeClick() {
+            if(this.isDisabled) return;
+            const constTime = 60;
+            if (!this.timer) {
+                //发送验证码
+                tokenService.sendTestCode(this.mobile).then(data => {
+                    if(data.success){
+                        this.$vux.toast.show({text: data.message});
+                        this.showTestCode = false;
+                        this.timer = setInterval(() => {
+                            if (this.count > 0 && this.count <= constTime) {
+                                this.count--;
+                            } else {
+                                this.showTestCode = true;
+                                clearInterval(this.timer);
+                                this.timer = null;
+                            }
+                        }, 1000)
+                    }
+                }).catch(err => {
+                    this.$vux.alert.show({
+                        content: err.message
+                    });
+                });
+            }
         }
     },
     created() {
@@ -76,24 +192,29 @@ export default {
 </script>
 <style lang="scss" scoped>
     .login-container {
-        background-color: #FDFBF6;
         height: 100%;
     }
-    .login-form {
-        margin: {
-            top:10%;
-            left:6%;
-            right:6%;
-        }
-        height: 2.5rem;
-        background: #fff;
-        box-shadow: 0px 6px 12px 0px #FAF5E7;
+    .login-content{
+        margin: .4rem .2rem .2rem .2rem;
+        border: 1px solid #ddd;
+        padding: .2rem;
         border-radius: 5px;
+        box-shadow: 0px 0px 6px 1px #ddd;
+    }
+    .login-form,.mobile-form {
+        background: #fff;
+        .other-login{
+            text-align: right;
+            .mobile-login{
+                color: #999;
+                padding-right: .3rem;
+                padding-top: .1rem;
+                display: inline-block;
+            }
+        }
         .login-text {
-            font-size: 1.8em;
-            margin-left: 0.4rem;           
-            font-weight: 800;
-            padding-top: 5%;
+            font-size: 1.15em;
+            text-align: center;
         }
         .loginInput:before {
             font-size: 1em;
@@ -138,13 +259,17 @@ export default {
     }
     .login-banner {
         width: 100%;
-        height: 1.6rem;
         text-align: center;
-        @include login_banner();
+        // @include login_banner();
         img{
-            height: 0.8rem;
+            height: 1rem;
             margin-top: 0.5rem;
-            width: 0.8rem;
+            width: 1rem;
+        }
+        div{
+            font-size: 18px;
+            color: #3296fa;
+            letter-spacing: 8px;
         }
     }
 </style>
