@@ -12,11 +12,11 @@
     </div>
     <div class="header">
       <div class="title-form">{{`单位：${localCurrency}`}}</div>
-      <div class="swiper-container swiper-container-header">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">{{headInfo.firstName}}</div>
-          <div class="swiper-slide">{{headInfo.LastName}}</div>
-          <div v-if="headInfo.currentYearName" class="swiper-slide">{{headInfo.currentYearName}}</div>
+      <div class="swiper-container-header">
+        <div class="box">
+          <div class="div">{{headInfo.firstName}}</div>
+          <div class="div">{{headInfo.LastName}}</div>
+          <div v-if="headInfo.currentYearName" class="div">{{headInfo.currentYearName}}</div>
         </div>
       </div>
     </div>
@@ -32,9 +32,9 @@
           </div>
         </div>
       </div>
-      <div class="swiper-container part-right">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">
+      <div class="part-right">
+        <div class="box">
+          <div class="div">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
                   :class="{'final-total': item.total || item.bigSubject}"
@@ -43,7 +43,7 @@
               </div>
             </div>
           </div>
-          <div class="swiper-slide">
+          <div class="div">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
                   :class="{'final-total': item.total || item.bigSubject}"
@@ -52,7 +52,7 @@
               </div>
             </div>
           </div>
-          <div v-if="headInfo.currentYearName" class="swiper-slide">
+          <div v-if="headInfo.currentYearName" class="div">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
                   :class="{'final-total': item.total || item.bigSubject}"
@@ -207,7 +207,7 @@
         this.endDate = dateFormat(new Date(), 'YYYY-MM-DD');
       }
       // 初始化数据
-      this.initSwiper();
+      //this.initSwiper();
       this.getData();
       this.getLocalCurrencyData();
     }
@@ -264,6 +264,17 @@
       height: 100%;
       text-align: right;
       font-size: .14rem;
+      .box{
+        width: 100%;
+        .div:nth-child(1){
+          width: 33.333333%;
+          float: left;
+        }
+        .div{
+          width: 33.333333%;
+          float: left;
+        }
+      }
     }
 
     .scroll-container {
@@ -332,6 +343,21 @@
     }
     .part-right {
       text-align: right;
+      .box{
+        width: 100%;
+        .div:nth-child(1){
+          float: left;
+          width: 33.333333%;
+        }
+        .div:nth-child(2){
+          width: 33.333333%;
+          float: left;
+        }
+        .div:nth-child(3){
+          width: 33.333333%;
+          float: right;
+        }
+      }
       .bg-color{
         background-color: #eee;
       }
