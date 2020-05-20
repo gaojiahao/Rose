@@ -13,7 +13,12 @@
              <div v-if="memberList.length==0 && showLoading == false">
                  无搜索结果
              </div>
-            <div v-if="memberList.length" class="member-container">
+                <r-scroll
+                 :options="scrollOptions"
+                 :has-next="false"
+                 :no-data="false"
+                 v-if="memberList.length" class="member-container"
+                >
                 <div v-for="(member,index) in memberList" :key="index" class="member-item" @click="memberClick(member)">
                     <div class="list-photo">
                         <img :src="getDefaultPhoto(member)" />
@@ -23,12 +28,13 @@
                         <span>{{member.role}}</span>
                     </div>
                 </div>
-            </div>
+                </r-scroll>
          </div>
     </div>
 </template>
 <script>
 import util from '@/common/util';
+import RScroll from "plugins/scroll/RScroll";
 import {getMembers} from 'service/msgService';
 export default {
     data(){
@@ -39,9 +45,15 @@ export default {
                 page:1,
                 limit:30
             },
+            scrollOptions:{
+                
+            },
             showLoading:false,
             hasNext:false
         }
+    },
+    components:{
+        RScroll
     },
     created(){
         this.getMembers();
@@ -79,6 +91,9 @@ export default {
 .at-member-list{
     display: flex;
     flex-direction: column;
+}
+.member-container{
+    height:100%;
 }
 .member-item{
     padding:10px;
