@@ -242,6 +242,7 @@ export default {
                     }
                     if(group.lastMsg){
                         group.lastMsg.content = msg.content;
+                        group.lastMsg.creatorName = msg.creatorName;
                     } else {
                         group.lastMsg = msg;
                     }
