@@ -327,9 +327,12 @@ export default {
         },
         //检查有没有@符号
         checkAt(e){
+            var msg = this.msg,
+                lastkey = msg&&msg[msg.length-1];
+
             if (this.group.groupType != 'G') return;
 
-            if (e.key == '@'){
+            if (e.key == '@' || (e.key != 'Backspace' && lastkey == '@')){//手机端是拿不到e.key的。
                 this.showAtMemberList = true;
             } else if(e.key == 'Backspace'){//处理@退格
 
