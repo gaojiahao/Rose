@@ -217,6 +217,13 @@ export default {
             padding-top: 0.3rem;
             width: 80%;
             margin: 0 auto;
+            border-bottom: 1px solid #eee;
+        }
+        /deep/ .weui-cell:before{
+            border: none;
+        }
+        /deep/ .weui-cells:after{
+            border: none;
         }
         .loginInpFoc:before {
             font-size: 1em;
