@@ -194,7 +194,7 @@ export default {
             }
       }
       .month-table{
-        height: calc(100% - 2rem);
+        height: calc(~"100% - 2rem");
         .table-header{
           display: -webkit-box;
           display: -ms-flexbox;
@@ -257,7 +257,7 @@ export default {
           line-height: .5rem;
         }
         .table-content{
-          height: calc(100% -1rem);
+          height: calc(~"100% - 1rem");
            .table-list{
             display: flex;
             justify-content: space-between;
