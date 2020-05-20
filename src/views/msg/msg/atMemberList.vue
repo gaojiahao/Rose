@@ -60,6 +60,7 @@ export default {
         RScroll
     },
     created(){
+        this.currentUser = this.$parent.$parent.currentUser;
         this.getMembers();
     },
     methods:{
@@ -76,13 +77,20 @@ export default {
         },
         inputChange(){},
         getMembers(){
-            var groupId = this.$parent.group.groupId;
+            var groupId = this.$parent.group.groupId,
+                index,
+                name = this.currentUser && this.currentUser.name;
+
             this.showLoading = true;
-            this.hasNext =true;
             if(groupId != null){
                 getMembers(groupId).then(res => {
                     this.showLoading = false;
-                    this.hasNext = false;
+                    if(name){
+                        res.forEach((member,i) => {
+                            if(member.nickname == name)index = i;
+                        });
+                        if (index != null)res.splice(index,1);
+                    }
                     this.memberList = res;
                 })
             }
@@ -100,6 +108,7 @@ export default {
 }
 .member-container{
     height:100%;
+    background: #fff;
 }
 .member-item{
     padding:10px;

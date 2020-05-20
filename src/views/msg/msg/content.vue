@@ -35,7 +35,7 @@
                         v-if="!msg.isMySelf">{{msg.creatorName}}
                     </span>
                     <touch @menuContext="onMsgContextMenu(msg,$event)">
-                        <div class="message-content" :class="[msg.isMySelf==1?'rightarrow':'leftarrow']" ref="contextMenu">
+                        <div class="message-content" :class="[msg.isMySelf==1?'rightarrow':'leftarrow']" >
                             <div v-if="msg.replayMsg" style="border-left: 3px solid rgb(153, 153, 153); padding: 0px 8px; cursor: pointer;" @click="goTop(msg.replayMsg.id)">
                                 <MessageTplText :msg="msg.replayMsg" v-if="msg.replayMsg.imType == 1"></MessageTplText>
                                 <MessageTplImg :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 2"></MessageTplImg>
