@@ -148,7 +148,9 @@ export default {
     filters:{
         replayContent(msg){
             var content = msg.content,
+                regex = /(<([^>]+)>)/ig,
                 str = '';
+                
             if (+msg.imType != 1){
                 try{
                     content = JSON.parse(content);
@@ -158,11 +160,11 @@ export default {
             }
             switch (+msg.imType){
                 case 1:
-                    return  msg.content;
+                    str = msg.content;
                     break;
                 case 4://文件
                 case 2://图片
-                    return content.content;
+                    str = content.content;
                     break;
                 case 3://混合格式
                     if(content.length == 1){
@@ -174,7 +176,7 @@ export default {
                     }
                     break;
             }
-            return str;
+            return str.replace(regex, "");
         }
     },
     methods:{
