@@ -43,6 +43,7 @@
           <div>
             <r-number :num="1" :max="24" :min="0.1" v-model="taskLog.logDeclarationHours"></r-number>
           </div>
+          <div>单位/时</div>
       </div>
       <div class="task_log_comment">
         <x-textarea 

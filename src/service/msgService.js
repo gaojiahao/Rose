@@ -4,7 +4,7 @@ import $flyio from 'plugins/ajax';
 // 消息代办列表
 export let getMsgList = (data = {}) => {
     return $flyio.ajax({
-        url:'/H_roleplay-si/ds/getTasksListData',
+        url:'/H_roleplay-si/mobile/getTasksListData',
         data
     })
 }

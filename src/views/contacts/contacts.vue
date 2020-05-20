@@ -2,8 +2,8 @@
 <template>
     <div class="address-book-wrapper page-hasTab">
         <div class="page-navigation flex">
-             <div class="goback">
-                <i class="iconfont" @click="goBack()" v-if="routes.length">&#xe70e;</i>
+             <div class="goback" v-if="routes.length">
+                <i class="iconfont icon-back1" @click="goBack()" ></i>
             </div>
              {{addressName}}
         </div>

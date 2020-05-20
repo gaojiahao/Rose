@@ -6,6 +6,7 @@
 
 <script>
 
+
 export default {
     props:{
         msg:{
@@ -17,3 +18,11 @@ export default {
     }
 }
 </script>
+
+<style lang="less" scoped>
+.text-msg-content{
+    /deep/ .face{
+        height: 20px;
+    }
+}
+</style>

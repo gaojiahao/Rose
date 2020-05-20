@@ -14,11 +14,12 @@ import Login from '@/views/login'
 import MsgRouter from '@/views/msg/router'
 import Contacts from '@/views/contacts/contacts'
 import HomeRouter from '@/views/home/router'
-import User from '@/views/user'
 
 
 import tokenService from 'service/tokenService'
+import TaskRouter from '@/views/taskflow/router'
 import {isPC,isQYWX,isDD} from '@/plugins/platform/index'
+import userRouter from '@/views/user/router'
 
 import { getFieldSetting, getAllDict, getAllFieldSettingListLevel}  from "service/fieldModelService"
 
@@ -35,7 +36,6 @@ if (router == null) {
     routes: [
       { path: '/', redirect:'/msg' },
       { path:'*', redirect:'/msg' },
-      ...MsgRouter,
       { 
         path: '/contacts/:id', 
         name: 'CONTACTS', 
@@ -46,14 +46,9 @@ if (router == null) {
         } 
       },
       ...HomeRouter,
-      {
-        path:'/user',
-        name:'user',
-        component:User,
-        meta:{
-           title:'我'
-        }
-      },
+      ...MsgRouter,
+      ...TaskRouter,
+      ...userRouter,
       {
         path:'/setHost',
         name:'setHost',

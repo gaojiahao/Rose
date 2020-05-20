@@ -76,7 +76,7 @@ import { constants } from "crypto";
 import { debug } from "util";
 
 export default {
-  name: "GridPicker",
+  name: "BomGridPicker",
   props: {
     // 默认值
     defaultValue: {
@@ -189,8 +189,8 @@ export default {
     },
     initStore: function() {
       var me = this,
-        ds = this.$parent.dataSource,
-        cols = ds.cols,
+        ds = this.$parent.dataSource.data,
+        cols = this.$parent.cfg.proertyContext.dataSourceCols,
         hFieldKeys = ds.hFields || [],
         col,
         fields = [],

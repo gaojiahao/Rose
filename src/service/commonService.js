@@ -551,7 +551,26 @@ export let switchToEffectiveByTransCodes = (data = {}) => {
     data
   })
 }
-
+//bom组成
+export let getBomByPInvCode = (parentInvCode) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getBomByPInvCode',
+    data: {
+      _dc: Date.now(),
+      parentInvCode,
+    }
+  })
+}
+//bom库存
+export let getInProcessingStorageSumSource = (data) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getInProcessingStorageSumSource',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+}
 export default {
   convertDataType,
   getList,
@@ -572,5 +591,7 @@ export default {
   getUserList,
   transferTask,
   getFormConfig,
-  undoDataByTransCodes
+  undoDataByTransCodes,
+  getBomByPInvCode,
+  getInProcessingStorageSumSource
 }

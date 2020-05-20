@@ -317,6 +317,7 @@ export default {
         },
         showCreateGroupList() {
             var memberSelector = this.$refs["memberSelector"];
+            this.showList = false;
             memberSelector.showMemberSelector = true;
         },
         addGroup(userList) {

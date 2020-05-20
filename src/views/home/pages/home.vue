@@ -123,7 +123,7 @@ export default {
         avatar,
         position
       };
-      await this.getNews();
+      //await this.getNews();
       this.$loading.hide();
     },
     //获取代办数量

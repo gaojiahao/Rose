@@ -11,6 +11,7 @@ export default {
             allowBlank:false,
             fieldLabel:'',
             submitValue:false,
+            blankText:'',
         }
     },
     created(){
@@ -35,6 +36,7 @@ export default {
                 form.wfParamFieldMap[cfg.wfParam] = fieldCode;
             }
             this.initVisible();
+            this.initBlankText();
             this.initWatch(cfg.watch);
             if(form.model == 'new')
                 this.initDefaultValue(cfg.defaultValue);
@@ -190,8 +192,9 @@ export default {
             var me = this,
                 value = me.getValue(),
                 errors = [];
-           
-            if(!me.allowBlank && value == null && me.submitValue){
+            //判断下控件类型数字类型的0可以不用校验
+            var type = me.cfg.xtype;
+            if(('r2Permilfield,r2Numberfield').indexOf(type)==-1&&!me.allowBlank && (value == null||value=='') && me.submitValue){
                 errors.push(me.blankText);
                 this.$vux.alert.show({
                     content: me.blankText
@@ -278,6 +281,18 @@ export default {
                 });
             }
             return result;
+        },
+        initBlankText(){
+            var me = this,
+                cfg = me.cfg.dataSource,
+                form = me.form;
+            if(cfg.type == 'formData'){
+                var item = cfg.data,
+                cmpId = item.contrl,
+                valueField = item.valueField;
+                
+                this.blankText = form.fieldMap[cmpId].blankText;
+            }        
         }
     }
 }

@@ -145,13 +145,11 @@ export default {
         getAllusers() {
           let filter = [{operator:'like',property: 'nickname',value: this.searchValue}]
 
-          this.$loading.show();
           getEmployee(JSON.stringify(filter),this.currentPage,this.pageSize).then(res => {
             this.total = res.dataCount;
             this.hasNext = res.dataCount > (this.currentPage - 1) * this.pageSize + res.tableContent.length;
             this.data = this.currentPage === 1 ? res.tableContent : [...this.data,...res.tableContent]
             this.setSelectedMembersStatus(this.data,this.selectedMembers)
-            this.$loading.hide();
             this.$nextTick(() => {
               this.$refs.bScroll.finishPullDown().then(() => {
                 this.$refs.bScroll.finishPullUp();
@@ -182,6 +180,7 @@ export default {
   .member-selector-container{
     display: flex;
     flex-direction: column;
+    z-index: 1;
     .pop-list-container{
       flex:1;
       box-sizing: border-box;

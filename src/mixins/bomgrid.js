@@ -4,7 +4,9 @@ import { accMul, accDiv } from "plugins/calc/decimalsAdd";
 import { getFieldSetting, getAllDict, getAllFieldSettingListLevel}  from "service/fieldModelService"
 import {
     getValuesByExp,
-    convertDataType
+    convertDataType,
+    getBomByPInvCode,
+    getInProcessingStorageSumSource
 } from "service/commonService";
 
 export default {
@@ -18,6 +20,9 @@ export default {
             store:{
                 data:[]
             },
+            bomData:[],
+            boms:[],
+            outPut:[],
         };
     },
     watch:{
@@ -44,18 +49,69 @@ export default {
                 me.onShowDetail(rows[index],index);
             }
         },
-        addRecords: function (selection) {
+        addRecords: async function (selection) {
             var value = this.getValue() || [],
                 record,
-                row, i = 0, l = selection.length;
+                row, i = 0, l = selection.length,
+                index = value.length ?  value.length- 1 : 0;
 
             for (i; i < l; i++) {
                 row = selection[i];
+                await this.initBomData(row.inventoryCode);
+                var bom = [];
+                var m = this.bomData.length-1;
+                for(var j=0; j<this.bomData[m].length;j++){
+                    var obj={};
+                    obj = {
+                        'transMatchedCode':row.orderCode,
+                        'qualityQty': this.bomData[m][j].qualityQty||0, //?要接口算处理
+                        'bomSpecificLoss': this.bomData[m][j].specificLoss||0,
+                        'tdProcessing': this.bomData[m][j].processing||0,
+                        'inventoryName': this.bomData[m][j].inventoryName,
+                        'demandQty': this.bomData[m][j].demandQty||0,
+                        'transObjCode': this.bomData[m][j].inventoryCode,
+                        'measureUnit': this.bomData[m][j].measureUnit,
+                        'bomType': this.bomData[m][j].bomType||0,
+                        'bomQty': this.bomData[m][j].qty||0,
+                        'productSource': this.bomData[m][j].productSource,
+                        'parentInventoryCode': this.bomData[m][j].parentInventoryCode,
+                    }
+                    bom.push(obj);
+                }
+                row = {
+                    ...row,
+                    bom:[...bom]
+                }
                 record = this.createRecord(row);
                 this.store['data'].push(record);
                 value.push(record.data);
             }
+            await this.initBomDataStorageSum(this.bomData);
             this.setValue(value);
+            var bomlist = this.boms;
+            this.outPut['dataSet'] = [];
+            for(var m =0;m<bomlist.length;m++ ){
+                var obj2 = {};
+                obj2 = {
+                    'inventoryName_outPutMatCode': bomlist[m].inventoryName,
+                    'outPutMatCode': bomlist[m].inventoryCode,
+                    'demandQty': bomlist[i].demandQty,
+                    'measureUnit_outPutMatCode': bomlist[m].measureUnit,
+                    'thenTotalQtyStock': bomlist[m].thenTotalQtyStock,
+                    'transitBalance': bomlist[m].transitBalance,
+                    'workflowLockQty': bomlist[m].workflowLockQty,
+                    'thenQtyBalCopy1': bomlist[m].qtyBal,
+                    'tdQty': bomlist[m].tdQty,
+                    'tdProcessing': bomlist[m].processing,
+                    'productSource': bomlist[m].productSource,
+                    'processingStartDate': bomlist[m].processingStartDate,
+                    'containerCodeOut': bomlist[m].containerCodeOut,
+                    'warehouseName_containerCodeOut': bomlist[m].containerNameOut,
+                    'tdId': bomlist[m].tdId,
+                }
+                this.outPut['dataSet'].push(obj2);
+            }
+            this.$set(this.form.formData, 'outPut', this.outPut);
         },
         createRecord: function (row,editorFieldCode) {
             var me = this,
@@ -65,13 +121,15 @@ export default {
                 dataSourceBind = this.dataSourceBind;
 
             this.setDefaultValue(record);
+            var dataIndexMap = me.cfg.dataIndexMap;
+            dataIndexMap['bom'] = 'bom';
             if (dataSourceBind) {
                 editorFieldCode = dataSourceBind.k;
                 data[editorFieldCode] = row ? row[dataSourceBind.v] : '';
                 this.setValueBindValue(record, editorFieldCode, row);
-            } else if (me.cfg.dataIndexMap && !editorFieldCode) {
+            } else if (dataIndexMap && !editorFieldCode) {
                 //适配AccountGrid
-                me.handlerValueBindByIndexMap(record, row, me.cfg.dataIndexMap);
+                me.handlerValueBindByIndexMap(record, row, dataIndexMap);
             }
             //form字段改变事件处理record
             if(editorFieldCode){
@@ -98,13 +156,22 @@ export default {
                 onConfirm: () => {
                     var selection = this.selection,
                         rowIndex,
-                        newValues = [];
+                        newValues = [],
+                        bomNewValue = [];
 
                     this.values.forEach((row, rowIndex) => {
                         if (selection.indexOf(rowIndex) == -1) {
                             newValues.push(row);
                         }
                     })
+                    this.bomData.forEach((row, rowIndex) => {
+                        if (selection.indexOf(rowIndex) == -1) {
+                            bomNewValue.push(row);
+                        }
+                    })
+                    this.bomData = bomNewValue;
+                    var flag = true;
+                    this.initBomDataStorageSum(this.bomData,flag);
                     this.setValue(newValues);
                     this.isEdit = false;
                 }
@@ -113,6 +180,7 @@ export default {
         doDetailEdit(data) {
             var value = util.clone(data);
             this.$set(this.values, this.detailRowNumer, data);
+            this.$set(this.form.formData, 'outPut', this.outPut);
         },
         delClick(rowIndex) {
             var selection = this.selection,
@@ -149,8 +217,7 @@ export default {
             if (expressionCfg) for (i = 0, l = expressionCfg.length; i < l; i++) {
                 cfg = expressionCfg[i];
                 dataIndex = cfg.col.fieldCode;
-                //if (editorFieldCode == dataIndex || dataIndex in changeFieldCodes) continue; //当前编辑字段，不重新计算。
-                if (editorFieldCode == dataIndex) continue; //当前编辑字段，不重新计算。
+                if (editorFieldCode == dataIndex || dataIndex in changeFieldCodes) continue; //当前编辑字段，不重新计算。
                 if (cfg.type == 'calc') {
                     cfg = CalcToCmd(cfg);    
                 }
@@ -235,13 +302,14 @@ export default {
                 value,
                 newRow;
 
+            submitFieldCodes.push('bom');
             values.map(function (row) {
                 newRow = {};
                 util.each(submitFieldCodes, function (key) {
                     value = row[key];
                     if (typeof value == 'undefined') {
                         newRow[key] = null;
-                    } else if (typeof value != 'object') {
+                    } else {
                         newRow[key] = row[key];
                     }
                 });
@@ -249,6 +317,9 @@ export default {
             })
 
             return data;
+        },
+        getOutput(){
+            return this.outPut;
         },
         getComponentByCfg: function (cfg) {
             if (cfg.contrl) {
@@ -473,7 +544,7 @@ export default {
                 editorTypes = ['r2Combo', 'r2Selector', 'r2SelectorPlus'],
                 columns = cfg.columns;
 
-            if (cfg.readOnly) return;
+            if (!cfg.allowEdit) return;
             columns.forEach(function (column) {
                 var paramKey,
                     paramCfgMap,
@@ -530,7 +601,7 @@ export default {
                 columns = cfg.columns;
 
             //xing 提交时也可以只读
-            if ((cfg.readOnly || cfg.allowEdit == false) && cfg.xtype != 'r2AutoLoadGrid') return;
+            if ((!cfg.allowEdit || cfg.allowEdit == false) && cfg.xtype != 'r2AutoLoadGrid') return;
             columns.forEach(function (column) {
                 var ds = column.valueBind || column.defaultValue || column.dataSource, //除了valueBind，其他的都是在做向前兼容,
                     expression = util.trim(column.expression),
@@ -673,7 +744,7 @@ export default {
             });
         },
         toggleEditStatus() {
-            if(this.cfg.readOnly == false){
+            if(this.cfg.allowEdit){
                 this.isEdit = !this.isEdit;
                 this.selection = [];
             }
@@ -974,6 +1045,125 @@ export default {
               });
               this.Dicts = JSON.stringify(_cachedDicts);
             }).catch(e =>{e});
+        },
+        //bom接口
+        async initBomData(row){
+            await getBomByPInvCode(row).then(res=>{
+                this.bomData.push(res.tableContent);
+            }).catch(e =>{e});
+        },
+        async initBomDataStorageSum(bomData,flag){
+            var me = this;
+            if(!bomData.length){
+                this.boms = [];
+                return ;
+            }
+            for(var i = 0; i < bomData.length; i++){
+                for(var j = 0 ; j < bomData[i].length;j++){
+                    var data = {
+                        inventoryCode:bomData[i][j]['inventoryCode'],
+                        whCode: this.form.formData['containerCodeOut'],
+                    }
+                    if(!judgeBomAdd(bomData[i][j]['inventoryCode'])){
+                        await deal(data);
+                    }
+                }
+                //await this.dealBom();
+                if(flag){
+                    await this.delBom();    
+                } else {
+                    await this.dealBom();
+                }
+            }
+            async function deal(data){
+                await getInProcessingStorageSumSource(data).then(res=>{ 
+                    var json = res.tableContent;
+                    if(json.length){
+                        for(var k=0;k<json.length;k++){
+                            json[k]['productSource'] = bomData[i][j]['productSource'];
+                            me.boms.push(json[k]);
+                        }
+                    }
+                }).catch(e =>{e});
+            }
+            function judgeBomAdd(inventoryCode){
+                for(var m =0;m<me.boms.length;m++){
+                    if(inventoryCode==me.boms[m]['inventoryCode']){
+                        return true;
+                    }
+                }
+            }
+        },
+        judgeBomData(inventoryCode){
+            for(var i =0;i<this.bomData.length;i++){
+                if(inventoryCode==this.bomData[i]['inventoryCode']){
+                    return true;
+                }
+            }
+        },
+        // judgeBomAdd(inventoryCode){
+        //     for(var i =0;i<this.boms.length;i++){
+        //         if(inventoryCode==this.boms[i]['inventoryCode']){
+        //             return true;
+        //         }
+        //     }
+        // },
+        dealBom(){
+            let arr = this.boms;
+            for(var b = 0; b<arr.length; b++){
+                var flag =false;
+                for(var i = 0; i < this.bomData.length; i++){
+                    for(var j = 0 ; j < this.bomData[i].length;j++){
+                        if(arr[b]['inventoryCode']==this.bomData[i][j]['inventoryCode']){
+                            flag = true;
+                        }
+                    }
+                }
+                if(!flag){
+                    this.boms.splice(b,1);
+                }
+            }  
+        },
+        delBom(){
+            let arr = this.boms;
+            for(var b = 0; b<arr.length; b++){
+                var flag =false;
+                for(var i = 0; i < this.bomData.length; i++){
+                    for(var j = 0 ; j < this.bomData[i].length;j++){
+                        if(arr[b]['inventoryCode']==this.bomData[i][j]['inventoryCode']){
+                            flag = true;
+                        }
+                    }
+                }
+                if(!flag){
+                    this.boms.splice((b),1);
+                    b--;
+                }
+            }  
+            var bomlist = this.boms;
+            this.outPut['dataSet'] = [];
+            for(var m =0;m<bomlist.length;m++ ){
+                var obj2 = {};
+                obj2 = {
+                    'inventoryName_outPutMatCode': bomlist[m].inventoryName,
+                    'outPutMatCode': bomlist[m].inventoryCode,
+                    'demandQty': bomlist[i].demandQty,
+                    'measureUnit_outPutMatCode': bomlist[m].measureUnit,
+                    'thenTotalQtyStock': bomlist[m].thenTotalQtyStock,
+                    'transitBalance': bomlist[m].transitBalance,
+                    'workflowLockQty': bomlist[m].workflowLockQty,
+                    'thenQtyBalCopy1': bomlist[m].qtyBal,
+                    'tdQty': bomlist[m].tdQty,
+                    'tdProcessing': bomlist[m].processing,
+                    'productSource': bomlist[m].productSource,
+                    'processingStartDate': bomlist[m].processingStartDate,
+                    'containerCodeOut': bomlist[m].containerCodeOut,
+                    'warehouseName_containerCodeOut': bomlist[m].containerNameOut,
+                    'tdId': bomlist[m].tdId,
+                }
+                this.outPut['dataSet'].push(obj2);
+            }
+            this.$set(this.form.formData, 'outPut', this.outPut);      
         },
         async load(){
             if(!(window.sessionStorage.getItem('r2FieldSetting')||this.$r2FieldSetting)){
