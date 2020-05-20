@@ -237,7 +237,7 @@ export default {
             if (this.msg != ''){
                 if(this.replayMsg){
                    params.replayId = this.replayMsg.id;
-                   params.repalyMsg = util.clone(this.replayMsg);//replayMsg内容只在ds 推送时有用，后端保存时不会用这个。
+                   params.replayMsg = util.clone(this.replayMsg);//replayMsg内容只在ds 推送时有用，后端保存时不会用这个。
                    delete params.replayMsg.replayMsg;//不想发送那么多消息;
                 }
                 sendMsg(params).then(rs=>{
