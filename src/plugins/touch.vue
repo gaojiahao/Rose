@@ -21,7 +21,7 @@ export default {
              var posObj = event.changedTouches[0],
                  startPos = this.pos;
             
-             if((posObj.pageX != startPos.x || posObj.pageY != startPos.y) && timeOutEvent != 0){
+             if((Math.abs(posObj.pageX - startPos.x) > 5 || Math.abs(posObj.pageY - startPos.y) > 5) && timeOutEvent != 0){
                  clearTimeout(timeOutEvent);//清除定时器
                  timeOutEvent = 0;
              }

@@ -93,7 +93,7 @@ export default {
             this.refresh = false;
             this.initGroup();
         }
-        if (this.describeMsg != true){
+        if (this.describeMsg == false){
             this.initDs();
         }
     },
@@ -178,11 +178,13 @@ export default {
                          }
                     });
                 }
+            }).catch((e)=>{
+                console.log(e);
             })
         },
         listenOffline(){
             var app = this.getApp();
-            app.on('offline',()=>{
+            app.$on('offline',()=>{
                 this.describeMsg = false;
             })     
         },
