@@ -78,6 +78,7 @@ export default {
             this.currentUser = WebContext.WebContext.currentUser;
         });
         this.uIdToPhoto = {};
+        this.listenOffline();
     },
     mounted:function(){
         Bus.$on('toMsg', group => {
@@ -92,15 +93,18 @@ export default {
             this.refresh = false;
             this.initGroup();
         }
+        if (this.describeMsg == false){
+            this.initDs();
+        }
     },
     data(){
         return {
-             scrollOptions:{
-                click: true,
-                pullUpLoad: false,//上拉刷新
-                pullDownRefresh: false //下拉刷新
+            scrollOptions:{
+                    click: true,
+                    pullUpLoad: false,//上拉刷新
+                    pullDownRefresh: false //下拉刷新
             },
-            hasNext:false,
+           hasNext:false,
            currentUser:{},
            groups:[],
            group:null,
@@ -158,7 +162,6 @@ export default {
         },
         initDs:function(){
             var vm = this,
-                describe = false,
                 app = this.getApp();
 
             return commonService.getBasicInfo().then(baseInfo => {
@@ -169,13 +172,21 @@ export default {
                 vm.currentUser = data;
                 if(deepStreamUrl && userId){
                     app.getDs(deepStreamUrl,userId).then(ds=>{
-                         if (describe == false){//防止断线重连时重复订阅
-                             describe = true;
+                         if (this.describeMsg != true){//防止断线重连时重复订阅
                              vm.describeDs(ds);
+                             this.describeMsg = true;
                          }
                     });
                 }
+            }).catch((e)=>{
+                console.log(e);
             })
+        },
+        listenOffline(){
+            var app = this.getApp();
+            app.$on('offline',()=>{
+                this.describeMsg = false;
+            })     
         },
         describeDs(ds){
             var token = tokenService.getToken();
@@ -231,6 +242,7 @@ export default {
                     }
                     if(group.lastMsg){
                         group.lastMsg.content = msg.content;
+                        group.lastMsg.creatorName = msg.creatorName;
                     } else {
                         group.lastMsg = msg;
                     }

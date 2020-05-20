@@ -211,11 +211,7 @@ export default {
         .login-text {
             font-size: 1.15em;
             text-align: center;
-        }
-        .loginInput:before {
-            font-size: 1em;
-            border: none;
-        }   
+        } 
         .loginInput {
             font-size: 1em;
             padding-top: 0.3rem;
@@ -234,9 +230,6 @@ export default {
     .loginGroup {
          /deep/ .weui-cells:before {
             border: none !important;
-        }
-         /deep/ .weui-cells:after {
-            border: none;
         }
         /deep/ .weui-cells {
             margin-top: 0;

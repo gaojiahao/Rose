@@ -28,11 +28,14 @@
         <badge v-if='tab.title === "任务" && newsNumber != 0'></badge>
       </router-link>
     </nav>
+    <div v-if="offline" class="offline-bar">
+       网络不给力，请检查网络设置！
+    </div>
   </div>
 </template>
 
 <script>
-
+import util from '@/common/util';
 import platform from './plugins/platform/index'
 import { getMsgList } from 'service/msgService'
 import { Badge,XHeader} from 'vux'
@@ -54,6 +57,7 @@ export default {
       hasNav:hasNav,
       hasTab:true,
       theme:'',
+      offline:false
     }
   },
   components:{
@@ -71,8 +75,6 @@ export default {
          // StatusBar.overlaysWebView(true)
         }
       }
-      document.addEventListener("deviceready", this.onDeviceReady, false)
-
     }
   },
   methods:{
@@ -112,6 +114,7 @@ export default {
       if (window.baseURL) dsUrl = "172.roletask.com:6021/deepstream";//app测试代码
       return new Promise((resolve,reject)=>{
           if(vm.dsClient != null){
+              console.log('ds is not null');
               resolve(vm.dsClient);
               return;
           }
@@ -138,16 +141,28 @@ export default {
           });
       });
      
-    },
+    }, 
+     initOnlineStatus(){
+        var vm = this;
+         util.addHandler(window,'online',()=>{
+             vm.offline = false;
+             vm.$emit('online');
+         });
+         util.addHandler(window,'offline',()=>{
+             vm.offline = true;
+             vm.$emit('offline');
+         });
+     }
   },
   created() {
-     document.addEventListener("deviceready", this.onDeviceReady, false)
     var Vue = this.$parent.constructor;
     this.getTheme();
     this.$event.$on('badgeNum', (val) => {
       this.newsNumber = val;
     });
     Vue.prototype.getApp= ()=> this;
+    document.addEventListener("deviceready", this.onDeviceReady, false);
+    this.initOnlineStatus();
   },
   updated() {
     var app = this;
@@ -271,5 +286,13 @@ export default {
         @include font_color();
       }
     }
+  }
+  .offline-bar{
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    padding:0.1rem;
+    background:goldenrod;
   }
 </style>
