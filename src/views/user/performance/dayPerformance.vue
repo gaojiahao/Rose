@@ -270,7 +270,7 @@ export default {
       }
       .day-list{
           padding: .08rem;
-          height: calc(100% - 2rem);
+          height: calc(~"100% - 2.7rem");
           .list-content{
             padding: .05rem;
             display: flex;
