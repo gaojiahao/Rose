@@ -59,7 +59,7 @@
                 </span>
             </div> 
             <div class="input-wrapper">
-                <textarea class="msg-input"  v-model="msg" type="text" ref="msgInput" @focus="showExtraInput=false"></textarea>
+                <textarea class="msg-input"  v-model="msg" type="text" ref="msgInput" @focus="showExtraInput=false" @keyup="checkAt"></textarea>
                 <i class="icon-emotion" @click="showEmotion = !showEmotion;showExtraInput=false;"></i>
                 <i class="icon-add-more" @click="toggleWrapper" v-show="!msg"></i>
                 <span class="btn-send" v-if="msg" @click="sendTextMsg">发送</span>
@@ -98,6 +98,7 @@
         <!-- groupInfo 消息信息页面-->
         <router-view :group="group" ref="groupInfo"></router-view>
         <!-- groupInfo end -->
+        <at-member-list v-if="showAtMemberList" @select="selectAtMember"/>
     </div> <!--page end-->
 </template>
 <script>
@@ -113,6 +114,7 @@ import RScroll from "plugins/scroll/RScroll";
 import Touch from "plugins/touch";
 import FileDialog from  "./fileDialog"
 import ContextMenu from './contextMenu'
+import AtMemberList from './atMemberList'
 import REmotion from 'homePage/components/comment-related/REmotion'
 export default {
     props:['group','msgList'],
@@ -129,6 +131,7 @@ export default {
             hasNext:true,
             showExtraInput:false,//图片和文件输入框
             showContextMenu:false,//右键菜单
+            showAtMemberList:false,//@群成员
             fileDlgContext:null,//文件消息框,
             focusMsgId:null//得到焦点的消息id
         }
@@ -143,14 +146,15 @@ export default {
         FileDialog,
         ContextMenu,
         REmotion,
-        Touch
+        Touch,
+        AtMemberList
     },
     filters:{
         replayContent(msg){
             var content = msg.content,
                 regex = /(<([^>]+)>)/ig,
                 str = '';
-                
+
             if (+msg.imType != 1){
                 try{
                     content = JSON.parse(content);
@@ -320,6 +324,20 @@ export default {
         cancleFile(){
             this.fileInput.value = null;
             this.fileDlgContext= null;
+        },
+        //检查有没有@符号
+        checkAt(e){
+            if (this.group.groupType != 'G') return;
+
+            if (e.key == '@'){
+                this.showAtMemberList = true;
+            } else if(e.key == 'Backspace'){//处理@退格
+
+            }
+        },
+        selectAtMember(nickName){
+             this.msg += nickName+' ';
+             this.showAtMemberList = false;
         },
         sendFileMsg(text){
             var name2Size = this.name2Size;
