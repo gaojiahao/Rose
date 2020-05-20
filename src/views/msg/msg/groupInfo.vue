@@ -11,70 +11,70 @@
          </div>                             
          <div class="page-body-hasNav" ref="scrollerWrapper">
              <div class="scroller-body">
-             <!-- <div class="weui-cells"></div> -->
-             <group v-if="group.groupType=='G'">
-                     <cell 
-                        title="群聊名称" 
-                        is-link
-                        :value="group.groupName"
-                        @click.native="showUpdateName" />
-                <!-- <cell title="群二维码" is-link ><span slot="value"></span></cell> -->
-                <!-- <cell title="群公号" is-link /> -->
-            </group>
-            <group>
-                <div @click="showMemberDetail">
-                    <cell title="群成员" is-link :value="allMembers.length" />
-                    <div class="members">
-                        <div class="members-item" v-for="(member,index) of allMembers" :key="index">
-                            <img 
-                                v-if="index<6"
-                                :src="member.photo || getDefaultPhoto()" 
-                                @error="getDefaultPhoto(member)"/>
-                            <i v-if="index===6" class="iconfont icon-more1"></i>
+                <!-- <div class="weui-cells"></div> -->
+                <group v-if="group.groupType=='G'" class="group-name">
+                        <cell 
+                            title="群聊名称" 
+                            is-link
+                            :value="group.groupName"
+                            @click.native="showUpdateName" />
+                    <!-- <cell title="群二维码" is-link ><span slot="value"></span></cell> -->
+                    <!-- <cell title="群公号" is-link /> -->
+                </group>
+                <group>
+                    <div @click="showMemberDetail">
+                        <cell title="群成员" is-link :value="allMembers.length" />
+                        <div class="members">
+                            <div class="members-item" v-for="(member,index) of allMembers" :key="index">
+                                <img 
+                                    v-if="index<6"
+                                    :src="member.photo || getDefaultPhoto()" 
+                                    @error="getDefaultPhoto(member)"/>
+                                <i v-if="index===6" class="iconfont icon-more1"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="add-btn" @click="showMemberSelector">
+                        <span class="add-icon">+</span>
+                        <span class="add-text">添加成员</span>
+                    </div>
+                </group>
+                <div class="weui-cells">
+                    <div class="weui-cell weui-cell_access">
+                        <div class="vux-cell-primary">
+                            查找群聊天记录
+                        </div>
+                        <div class="weui-cell__ft" @click="showHistoryAll = true">
+                            更多
+                        </div>
+                    </div> 
+                    <div class="weui-cell">
+                        <div class="msg-type-item" @click="showHistoryFile = true">
+                            <i class="iconfont icon-wenjian"/>
+                            <div>文件</div>
+                        </div>
+                        <div class="msg-type-item" @click="showHistoryImg = true">
+                            <i class="iconfont icon-i-img"/>
+                            <div>图片</div>
                         </div>
                     </div>
                 </div>
-                <div class="add-btn" @click="showMemberSelector">
-                    <span class="add-icon">+</span>
-                    <span class="add-text">添加成员</span>
-                </div>
-            </group>
-            <div class="weui-cells">
-                <div class="weui-cell weui-cell_access">
-                    <div class="vux-cell-primary">
-                        查找群聊天记录
-                    </div>
-                    <div class="weui-cell__ft" @click="showHistoryAll = true">
-                        更多
-                    </div>
-                </div> 
-                <div class="weui-cell">
-                    <div class="msg-type-item" @click="showHistoryFile = true">
-                        <i class="iconfont icon-wenjian"/>
-                        <div>文件</div>
-                    </div>
-                    <div class="msg-type-item" @click="showHistoryImg = true">
-                        <i class="iconfont icon-i-img"/>
-                        <div>图片</div>
-                    </div>
-                </div>
-            </div>
-            <!-- <group>
-                <cell title="群聊天机器人" is-link value="未添加"/>    
-            </group> -->
-            <group>
-                <!-- <cell title="消息免打扰"><inline-x-switch slot="value"/></cell> -->
-                <cell title="置顶聊天">
-                    <inline-x-switch 
-                        v-model="group.focus" 
-                        @on-change="onFocusChange" />
-                </cell>
-                <!-- <cell title="保存到通讯录"><inline-x-switch value="true" slot="value"/></cell> -->
-            </group>
-            <!-- <group>
-                <cell title="邀请群成员语音通话" is-link/>    
-                <cell title="给群成员发邮件" is-link/>    
-            </group> -->
+                <!-- <group>
+                    <cell title="群聊天机器人" is-link value="未添加"/>    
+                </group> -->
+                <group>
+                    <!-- <cell title="消息免打扰"><inline-x-switch slot="value"/></cell> -->
+                    <cell title="置顶聊天">
+                        <inline-x-switch 
+                            v-model="group.focus" 
+                            @on-change="onFocusChange" />
+                    </cell>
+                    <!-- <cell title="保存到通讯录"><inline-x-switch value="true" slot="value"/></cell> -->
+                </group>
+                <!-- <group>
+                    <cell title="邀请群成员语音通话" is-link/>    
+                    <cell title="给群成员发邮件" is-link/>    
+                </group> -->
              </div><!-- scroller-body-->
          </div>
          <!-- 成员选择器 -->
@@ -273,6 +273,14 @@ export default {
                     border-radius: .04rem;
                     margin: .04rem;
                   }
+          }
+      }
+      .group-name{
+          /deep/ .weui-cell_access .weui-cell__ft{
+                width: 70%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
           }
       }
        .add-btn{

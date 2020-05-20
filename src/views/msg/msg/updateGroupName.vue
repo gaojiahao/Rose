@@ -64,6 +64,7 @@ export default{
           setGroupName(params).then(res => {
                 if(res.success){
                     this.$vux.toast.show({text: res.message});
+                    this.group.groupName = this.groupName;
                     this.showUpdateName = false;
                 }
             })
