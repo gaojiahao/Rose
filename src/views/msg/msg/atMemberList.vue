@@ -17,6 +17,7 @@
                  :options="scrollOptions"
                  :has-next="false"
                  :no-data="false"
+                 :hideToast="true"
                  v-if="memberList.length" class="member-container"
                 >
                 <div v-for="(member,index) in memberList" :key="index" class="member-item" @click="memberClick(member)">
@@ -29,6 +30,10 @@
                     </div>
                 </div>
                 </r-scroll>
+            <div class="weui-loadmore" v-show="showLoading">
+                <i class="weui-loading"></i>
+                <span class="weui-loadmore__tips">正在加载</span>
+            </div>
          </div>
     </div>
 </template>
@@ -48,8 +53,7 @@ export default {
             scrollOptions:{
                 
             },
-            showLoading:false,
-            hasNext:false
+            showLoading:false
         }
     },
     components:{
@@ -74,9 +78,11 @@ export default {
         getMembers(){
             var groupId = this.$parent.group.groupId;
             this.showLoading = true;
+            this.hasNext =true;
             if(groupId != null){
                 getMembers(groupId).then(res => {
                     this.showLoading = false;
+                    this.hasNext = false;
                     this.memberList = res;
                 })
             }

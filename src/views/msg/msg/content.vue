@@ -17,6 +17,7 @@
             :options="scrollOptions"
             :has-next="false"
             :no-data="false"
+            :hideToast="true"
             @on-pulling-down="onPullingDown"
             ref="scroller"
         >

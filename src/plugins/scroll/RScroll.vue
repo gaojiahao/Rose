@@ -45,6 +45,9 @@
           return {}
         }
       },
+      hideToast:{
+        default:false
+      }
     },
     data() {
       return {
@@ -74,7 +77,7 @@
           else if (Math.abs(val) < 1000) 
             this.toTopShow = false;
           if(val === this.bScroll.maxScrollY) {
-            this.$vux.toast.text('已到底部！', 'bottom')
+            if (this.hideToast != true)this.$vux.toast.text('已到底部！', 'bottom')
           }
         } 
       }  
