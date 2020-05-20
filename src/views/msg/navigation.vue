@@ -506,10 +506,14 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    
    span{
         /deep/.static-emotion-gif{
         height: .16rem;
-    }
+        }
+         /deep/.face{
+        height: .16rem;
+        }
    }
   }
 </style>

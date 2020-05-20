@@ -138,7 +138,17 @@ export default {
             })
         },
         handlerViewTask(task){
-            window.location.href = `/Hermes/detail/${task.listId}/0?name=${task.listName}&transCode=${task.transCode}`;
+            debugger
+            // window.location.href = `/Hermes/detail/${task.listId}/0?name=${task.listName}&transCode=${task.transCode}`;
+            // this.$router.push({ path: `/Hermes/detail/${task.listId}/0'transCode=${task.transCode}`});
+            let path = `/detail/${task.listId}/0`;
+            this.$router.push({
+            path,
+            query: { 
+              transCode:task.transCode
+            }
+          })
+            
         },
         // 上拉加载
         onPullingUp() {
