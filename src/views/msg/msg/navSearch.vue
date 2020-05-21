@@ -14,32 +14,39 @@
           <div class="list-search">
             <x-input ref="searchInput" placeholder="搜索" v-model="searchValue"></x-input>
           </div>
-          <div class="search-content">
-            <div 
-            class="list-top" 
-            v-for="(item,index) of data" 
-            :key="index">
-              <p style="padding-left:.1rem;color:#999;margin-bottom:.1rem">{{item.title}}</p>
-              <ul class="list-top-content">
-                <li 
-                  v-for="(child,ci) of item.children"
-                  :key="ci"
-                  @click="toMsg(child)"
-                  class="list">
-                  <div class="list-left">
-                    <div class="list-photo" @click.stop="openUserDetail(child)">
-                      <img :src="getDefaultPhoto(child)" />
+          <RScroll 
+              class="page-body-hasNav search-container" 
+              :options="scrollOptions"
+              :has-next="hasNext"
+              :no-data="false"
+          >
+            <div class="search-content">
+              <div 
+              class="list-top" 
+              v-for="(item,index) of data" 
+              :key="index">
+                <p style="padding-left:.1rem;color:#999;margin-bottom:.1rem">{{item.title}}</p>
+                <ul class="list-top-content">
+                  <li 
+                    v-for="(child,ci) of item.children"
+                    :key="ci"
+                    @click="toMsg(child)"
+                    class="list">
+                    <div class="list-left">
+                      <div class="list-photo" @click.stop="openUserDetail(child)">
+                        <img :src="getDefaultPhoto(child)" />
+                      </div>
+                      <div class="list-desc">
+                          <p>{{child.nickname || child.groupName}}</p>
+                          <span v-if="child.type==='群聊'">包括：{{child.users}}</span>
+                          <span v-else>{{child.role}}</span>
+                      </div>
                     </div>
-                    <div class="list-desc">
-                        <p>{{child.nickname || child.groupName}}</p>
-                        <span v-if="child.type==='群聊'">包括：{{child.users}}</span>
-                        <span v-else>{{child.role}}</span>
-                    </div>
-                  </div>
-                </li>
-              </ul>
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>
+          </RScroll>
         </popup>
         <user-detail ref="userDetail" :userId="userId"></user-detail>
     </div> 
@@ -48,19 +55,27 @@
 import { Popup,XInput } from 'vux'
 import { getGroupByUserId,getGroupsByName } from '@/service/msgService'
 import UserDetail from './userDetail'
+import RScroll from "plugins/scroll/RScroll";
 export default{  
     name: "NavSearch",
     components: {
         Popup,
         XInput,
-        UserDetail
+        UserDetail,
+        RScroll
     },
     data() {
         return {
             showSearchList: false,
             searchValue: "",
             data: [],
-            userId: ""
+            userId: "",
+            hasNext:false,
+            scrollOptions:{
+                click: false,
+                pullUpLoad: false,//上拉刷新
+                pullDownRefresh: false //下拉刷新
+            },
         }
     },
     watch: {
@@ -139,12 +154,17 @@ export default{
 <style lang="less" scoped>
 .search-list{
   padding: 10px;
+  height: 100%;
   .list-header{
     padding: .1rem;
     background-color: #39f;
     color: #fff;
     display: flex;
     justify-content: space-between;
+  }
+  .search-container{
+    height: calc(~"100% - 1rem");
+    margin-top: .1rem;
   }
   .list-search{
     background-color: #fff;
