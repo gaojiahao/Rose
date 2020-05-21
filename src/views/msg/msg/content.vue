@@ -440,7 +440,7 @@ export default {
             getGroupMsg(this.group.groupId,this.page + 1).then(rs=>{
                 var  msgList = this.$parent.msgList;
                 this.loading = false;
-                if(rs.msgs.length < rs.pageSize){
+                if(rs.msgs.length == rs.pageSize){
                     this.page ++;
                     msgList.unshift(...rs.msgs);
                     this.$parent.msgList = msgList;

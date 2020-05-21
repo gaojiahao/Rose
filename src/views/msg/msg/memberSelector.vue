@@ -28,7 +28,7 @@
                 <check-icon :value="list.check"></check-icon>
               </div>
               <div class="list-photo">
-                <img :src="getDefaultPhoto()"/>
+                <img :src="list.photo" @error="getDefaultPhoto(list)"/>
               </div>
               <div class="list-desc">
                 <p>{{list.nickname}}</p>
@@ -115,9 +115,12 @@ export default {
           this.currentPage++;
           this.getAllusers();
         },
-        getDefaultPhoto() {
-            let url = require("assets/ava01.png")
-            return url
+       getDefaultPhoto(item) {
+            let url = require("assets/ava01.png");
+            if (item) {
+                item.photo = url;
+            }
+            return url;
         },
         cancelSelect() {
           this.showMemberSelector = false
@@ -249,6 +252,7 @@ export default {
         width: 100%;
         display: flex;
         justify-content: space-between;
+        border-top: .05px solid #ddd;
         &-right{
             margin-right: 20px;
         }

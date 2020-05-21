@@ -23,10 +23,10 @@
                     </div>
                     <div class="body">
                         <div class="address-name-g" v-if="item.type == 'P'">
-                            {{item.name}}
+                            {{item.name}}-{{item.type}}
                         </div>
                         <div class="address-name-p" v-if="item.type == 'G'">
-                            {{item.name}}
+                            {{item.name}}-{{item.type}}
                         </div>
                     </div>
                 </div>
@@ -80,8 +80,10 @@ export default {
                      this.routes.push({id:routerId,name:routerName});
                })
            }else{
-               this.userId = item.id;
-               this.$refs["userDetail"].showUserDetail = true;
+               if(item.type==='P'){
+                    this.userId = item.id;
+                    this.$refs["userDetail"].showUserDetail = true;
+               }
            }
         },
         goBack(){
@@ -140,7 +142,7 @@ export default {
    .address-item::after{
        content: " ";
         position: absolute;
-        left: 80px;
+        left: 65px;
         top: 0;
         right: 0;
         height: 1px;
@@ -155,11 +157,10 @@ export default {
    }
 
    .address-item .header{
-        margin-right: 0.2rem;
         width: .50rem;
         text-align: center;
         background-color: #07648f29;
-        border-radius: .01rem;
+        border-radius: .02rem;
        .address-icon{
         font-size: .32rem;
             @include font_color();
@@ -172,6 +173,7 @@ export default {
    }
    .address-item .body{
        flex: 1;
+       padding-left: .1rem;
    }
    .goback i{
        font-size: 30px;
