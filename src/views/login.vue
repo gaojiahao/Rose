@@ -10,18 +10,18 @@
     <div class="login-container">
         <div class="login-banner">
             <img src='./../assets/default/login/logo.png' />
-            <div class="login-banner-roletask">路塔流程</div>
+            <div class="login-banner-roletask">Roletask</div>
+            <div class="login-banner-solgan">路塔柔性流程</div>
         </div>
         <div class="login-content">
             <div class="login-form" v-if="!isMobileLogin">
-                <div class="login-text">登录</div>
                 <group class="loginGroup">
                     <x-input 
                         :class="[isLoginInpFoc?'loginInpFoc':'loginInput']"  
                         @on-focus="isLoginInpFoc=true" 
                         @on-blur="isLoginInpFoc=false" 
                         text-align="left" 
-                        placeholder="用户名" 
+                        placeholder="请输入手机号" 
                         v-model="userCode">
                     </x-input>
                     <x-input 
@@ -29,7 +29,7 @@
                         @on-focus="isLoginInpFocS=true"  
                         @on-blur="isLoginInpFocS=false" 
                         text-align="left" 
-                        placeholder="密码" 
+                        placeholder="请输入密码" 
                         v-model="passWord" 
                         type="password">
                     </x-input>
@@ -39,7 +39,6 @@
                 </div>
             </div>
             <div class="mobile-form" v-else>
-                <div class="login-text">验证码登录</div>
                 <group class="loginGroup">
                     <x-input
                         ref="mobile" 
@@ -131,8 +130,11 @@ export default {
                 params.userCode = this.userCode;
                 params.password = this.passWord;
             }
+
+            this.$loading.show();
             tokenService.pcLogin(params).then(data=>{
                 this.$router.replace('/home');
+                this.$loading.hide();
                 localStorage.setItem('userCode',this.userCode);
             }).catch(err=>{
                  this.$vux.alert.show({
@@ -193,13 +195,11 @@ export default {
 <style lang="scss" scoped>
     .login-container {
         height: 100%;
+        background-color: white;
     }
     .login-content{
-        margin: .4rem .2rem .2rem .2rem;
-        border: 1px solid #ddd;
-        padding: .2rem;
-        border-radius: 5px;
-        box-shadow: 0px 0px 6px 1px #ddd;
+        
+        
     }
     .login-form,.mobile-form {
         background: #fff;
@@ -251,7 +251,6 @@ export default {
         @include bg_color();
         color: #fff;
         width: 90%;
-        height: 0.5rem;
     }   
     .host-btn{
         height:0.5rem;
@@ -260,16 +259,23 @@ export default {
     .login-banner {
         width: 100%;
         text-align: center;
+        margin-bottom: .5rem;
         // @include login_banner();
+
         img{
             height: 1rem;
             margin-top: 0.5rem;
             width: 1rem;
         }
-        div{
+        &-roletask{
             font-size: 18px;
             color: #3296fa;
-            letter-spacing: 8px;
+            font-family: fantasy;
+            letter-spacing: 2px;
+        }
+
+        &-solgan{
+            letter-spacing: 10px;
         }
     }
 </style>

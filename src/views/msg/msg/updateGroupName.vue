@@ -82,7 +82,6 @@ export default{
       padding: .1rem;
       background-color: #39f;
       color: #fff;
-      font-weight: bold;
       display: flex;
       justify-content: space-between;
     }

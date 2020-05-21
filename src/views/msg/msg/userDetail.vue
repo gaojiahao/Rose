@@ -13,21 +13,21 @@
                   </div>
                   <div class="user-info-right">
                       <p>{{userItem.nickname || '未知'}}</p>
-                      <span>{{userItem.role || '未知'}}</span>
+                      <span>{{userItem.roleName || '未知'}}</span>
                   </div>
               </div>
               <div class="user-detail">
                   <p>
-                      <span class="label">手机：</span>
+                      <span class="label">手机</span>
                       <span>{{userItem.mobile || '未知'}}</span>
                   </p>
                   <p>
-                      <span class="label">邮箱：</span>
+                      <span class="label">邮箱</span>
                       <span>{{userItem.email || '未知'}}</span>
                   </p>
                   <p>
-                      <span class="label">部门：</span>
-                      <span>{{userItem.group || '未知'}}</span>
+                      <span class="label">部门</span>
+                      <span>{{userItem.groupName || '未知'}}</span>
                   </p>
               </div>
               <div class="user-btn" @click="sentMemberMessage">
@@ -106,7 +106,6 @@ export default{
         img{
           width: .7rem;
           height: .7rem;
-          border: 1px solid #ddd;
         }
       }
       &-right{

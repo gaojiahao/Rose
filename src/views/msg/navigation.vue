@@ -32,9 +32,9 @@
                                 {{group.groupName}}
                             </div>
                             <div class="msg-lastMsg" v-if="group.lastMsg">
-                                <span style="color: #b90c0c;" v-if="group.lastMsg.content.includes(currentUser.name)">[有人@我]</span>
+                                <span style="color: #b90c0c;" v-if="group.lastMsg.content.includes(`@${currentUser.name}`)">[有人@我]</span>
                                 <span>{{group.lastMsg.creatorName}}:</span>
-                                <span v-if="group.lastMsg.imType==1" v-html="formatToEmotion(group.lastMsg.content)"></span>
+                                <span v-if="[1,104].includes(group.lastMsg.imType)" v-html="formatToEmotion(group.lastMsg.content)"></span>
                                 <span v-else-if="group.lastMsg.imType==2">图片</span>
                                 <span v-else-if="group.lastMsg.imType==4">文件</span>
                             </div> 
@@ -210,7 +210,7 @@ export default {
             105 group owner
          */
         distributeMsg(msg){
-            var type = msg.imType;
+            var type = String(msg.imType);
             
             switch(type){
                 case '1':
@@ -218,6 +218,12 @@ export default {
                 case '3':
                 case '4':
                     this.addMsg(msg);
+                    break;
+                case '100':
+                    // this.groups.unshift(msg);
+                    this.groups.push(msg);
+                    this.groupIdToIndex[msg.groupId] = this.groups.length+1;
+                    this.addMsg(msg.lastMsg);
                     break;
                 default:
                     break;
@@ -347,8 +353,8 @@ export default {
             requestUrl(params).then(res => {
                 res.message && this.$vux.toast.show({text: res.message});
                 this.$refs["memberSelector"].showMemberSelector = false;
-                this.showList = false;
                 this.toMsg(res);
+                this.showList = false;
             })
         },
         checkLocalMessage(groupId){
@@ -498,7 +504,6 @@ export default {
   }
   .group-ava{
     width: .45rem;
-    height: .45rem;
     border-radius: .02rem;
   }
   
@@ -518,10 +523,14 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    
    span{
         /deep/.static-emotion-gif{
         height: .16rem;
-    }
+        }
+         /deep/.face{
+        height: .16rem;
+        }
    }
   }
 </style>
