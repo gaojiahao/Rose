@@ -47,13 +47,11 @@
 <script>
 import { Popup,XInput } from 'vux'
 import { getGroupByUserId,getGroupsByName } from '@/service/msgService'
-import UserDetail from './userDetail'
 export default{  
     name: "NavSearch",
     components: {
         Popup,
-        XInput,
-        UserDetail
+        XInput
     },
     data() {
         return {
@@ -119,8 +117,7 @@ export default{
         },
         openUserDetail(item) {
           if(item.type==='群聊') return;
-          this.userId = item.userId;
-          this.$refs["userDetail"].showUserDetail = true
+          this.$router.push({name:'userInfo',query:{uId:item.userId}})
         },
         toMsg(item) {
           if(item.groupId){

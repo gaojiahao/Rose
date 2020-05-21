@@ -17,6 +17,7 @@ import Msg from './navigation'
 import GroupMsg from './msg/content'
 import GroupInfo from './msg/groupInfo'
 import imgInfo from './msg/imgInfo'
+import UserDetail from './msg/userDetail'
 
 export default [
   { 
@@ -48,6 +49,11 @@ export default [
     path:'/imgInfo/:id',
     name:'imgInfo',
     component:imgInfo
+  },
+  {
+    path:'/userInfo/:uId',
+    name:'userInfo',
+    component:UserDetail
   },
   { 
     path: '/notice', 

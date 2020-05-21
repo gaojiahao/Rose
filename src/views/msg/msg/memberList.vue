@@ -34,18 +34,15 @@
               <div class="delete" @click.stop="deleteMember(item,index)">移除</div>
             </li>
           </ul>
-        <user-detail ref="userDetail" :userId="userId"></user-detail>
     </div> 
 </template>  
 <script>
 import {XInput } from 'vux'
 import { removeMember } from '@/service/msgService'
-import UserDetail from './userDetail'
 export default{  
     name: "MemberList",
     components: {
-        XInput,
-        UserDetail
+        XInput
     },
     props: {
       selectedMembers: {
@@ -62,8 +59,8 @@ export default{
         return {
             clientNum: {}, // 记录开始滑动（x1）,结束滑动（x2）的鼠标指针的位置
             candelete: {}, // 滑动的item
+            showMemberList:false,
             userId: "",
-            showMemberList: false,
             searchValue: "",
             memberData: []
         }
@@ -130,8 +127,7 @@ export default{
           }
         },
         openUserDetail(item) {
-          this.userId = item.userId;
-          this.$refs["userDetail"].showUserDetail = true
+          this.$router.push({name:'userInfo',query:{uId:item.userId}})
         },
         touchStart(item) {
             if(this.currentUser.userId!=this.groupOwner) return

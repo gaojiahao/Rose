@@ -1,17 +1,12 @@
 <template>
-    <div class="user-detail" v-transfer-dom>
-       <popup 
-          v-model="showUserDetail" 
-          position="right" 
-          :show-mask="false"
-          width="100%">
-          <div>
-              <div class="user-header">
-                <span @click="goBack">
-                  <i class="iconfont icon-back1"></i>
-                  <span>返回</span>
-                </span>
-              </div>
+    <div class="user-detail page">
+          <div class="user-header">
+            <span @click="goBack">
+              <i class="iconfont icon-back1"></i>
+              <span>返回</span>
+            </span>
+          </div>
+          <div class="page-body-hasNav">
               <div class="user-info">
                   <div class="user-info-left">
                       <img :src="getDefaultPhoto()" @error="imgErr" />
@@ -39,37 +34,24 @@
                   <x-button :gradients="['#39f', '#39f']">发消息</x-button>
               </div>
           </div>
-        </popup>
     </div> 
 </template>  
 <script>
-import { Popup,XButton } from 'vux'
+import {XButton } from 'vux'
 import { getGroupByUserId,getUserInfoById } from '@/service/msgService'
 import Bus from '@/common/eventBus.js';
 export default{  
     name: "UserDetail",
     components: {
-        Popup,
         XButton
-    },
-    props: {
-      userId: {
-        type: String || Number,
-        default:function(){
-            return ""
-        }
-      }
     },
     data() {
         return {
-            showUserDetail: false,
             userItem: {}
         }
     },
-    watch: {
-      showUserDetail(value) {
-        if(value) this.getUserDetails();
-      }
+    created(){
+      this.getUserDetails();
     },
     methods: {
         getDefaultPhoto() {
@@ -84,7 +66,7 @@ export default{
           this.userItem.photo = url;
         },
         goBack() {
-          this.showUserDetail = false
+          this.$router.go(-1);
         },
         sentMemberMessage() {
           if(this.userItem.userId){
@@ -94,12 +76,22 @@ export default{
           }
         },
         getUserDetails() {
-          if(this.userId) {
-            getUserInfoById(this.userId).then(res => {
+          var uId = this.$route.query.uId;
+          if(uId) {
+            getUserInfoById(uId).then(res => {
               this.userItem = res.tableContent[0];
             })
           }
         }
+    },
+    beforeRouteEnter:function(to,form,next){
+        next((vm)=>{
+           vm.getApp().hasTab = false;
+        })
+    },
+    beforeRouteLeave:function(to,from,next){
+        this.getApp().hasTab = true;
+        next();
     }
 }  
 </script>  

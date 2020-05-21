@@ -24,7 +24,7 @@
             <div class="msg-container" ref="msg-container">
                 <LoadMore v-if="loading"></LoadMore>
                 <div v-for="(msg,index) in msgList" :key="index" class="singleMsg" :class="{ 'isMySelf': msg.isMySelf,'focus-msg': msg.id == focusMsgId }" :id="'msg-'+msg.id">
-                    <touch @menuContext="onAvaContextMenu(msg.creatorName)">
+                    <touch @menuContext="onAvaContextMenu(msg.creatorName)" @click="showCreator(msg.creator)">
                     <img 
                     :src="msg.photo" 
                     :style="{float: msg.isMySelf?'right':'left'}"  
@@ -295,6 +295,9 @@ export default {
                 }
             })
         },
+        showCreator(uId){
+           this.$router.push({name:'userInfo',query:{uId:uId}});
+        },
         showFileConfirm(e){
             var files = e.target.files,
                 size,
@@ -469,8 +472,10 @@ export default {
         next(vm=>{
             if(vm.group != null){
                 vm.checkMessage();//处理未读信息
+                vm.getApp().hasTab = false;
             }
-        })
+        });
+        
     },
     beforeRouteLeave:function(to,from,next){
         this.getApp().hasTab = true;
