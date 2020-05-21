@@ -138,7 +138,6 @@ export default {
             })
         },
         handlerViewTask(task){
-            debugger
             // window.location.href = `/Hermes/detail/${task.listId}/0?name=${task.listName}&transCode=${task.transCode}`;
             // this.$router.push({ path: `/Hermes/detail/${task.listId}/0'transCode=${task.transCode}`});
             let path = `/detail/${task.listId}/0`;

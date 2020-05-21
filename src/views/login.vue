@@ -130,8 +130,11 @@ export default {
                 params.userCode = this.userCode;
                 params.password = this.passWord;
             }
+
+            this.$loading.show();
             tokenService.pcLogin(params).then(data=>{
                 this.$router.replace('/home');
+                this.$loading.hide();
                 localStorage.setItem('userCode',this.userCode);
             }).catch(err=>{
                  this.$vux.alert.show({
@@ -192,6 +195,7 @@ export default {
 <style lang="scss" scoped>
     .login-container {
         height: 100%;
+        background-color: white;
     }
     .login-content{
         
