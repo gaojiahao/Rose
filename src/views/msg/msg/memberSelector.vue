@@ -183,7 +183,7 @@ export default {
   .member-selector-container{
     display: flex;
     flex-direction: column;
-    z-index: 1;
+    z-index: 1000;
     .pop-list-container{
       flex:1;
       box-sizing: border-box;

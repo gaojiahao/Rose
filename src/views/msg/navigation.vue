@@ -359,7 +359,7 @@ export default {
         },
         checkLocalMessage(groupId){
             var index = this.groupIdToIndex[groupId],
-                group = index && this.groups[index];
+                group = index != null && this.groups[index];
             
             if(group){
                 group.msgCount = 0;
