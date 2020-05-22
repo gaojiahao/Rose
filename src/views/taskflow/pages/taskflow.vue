@@ -198,7 +198,7 @@ input::-ms-input-placeholder {
         }
     }
     .list-container {
-        height: calc(100% - 19rem);
+        height: calc(100% - 18rem);
         .list_wrapper {
         height: 100%;
         background-color: #fff;
