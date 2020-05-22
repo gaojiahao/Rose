@@ -1,6 +1,6 @@
 <template>
     <div class="year-performance">
-      <div style="background-color:#1a92ec">
+      
         <div class="msg-header page-navigation">
           <div class="goback" @click="goBack()">
               <i class="iconfont icon-back1" ></i>
@@ -13,7 +13,6 @@
             <span>累计绩效</span>
             <p>{{ total }}</p>
         </div>
-      </div>
       <div class="year-table">
         <div class="table-header">
           <div class="brfore-year" @click="onBeforeYearClick">
@@ -154,11 +153,12 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
   .year-performance{
       height: 100%;
       overflow: hidden;
-      .year-header{
+  }
+    .year-header{
           height: .5rem;
           line-height: .5rem;
           display: flex;
@@ -248,8 +248,7 @@ export default {
           border-bottom: 0.5px solid #999;
               }
         .table-content{
-        //  height: calc(100% - 1rem);
-        height: 5rem;
+         height: calc(100% - 1rem);
           .table-list{
             display: flex;
             justify-content: space-between;
@@ -288,5 +287,4 @@ export default {
           }
         }
       }
-  }
 </style>

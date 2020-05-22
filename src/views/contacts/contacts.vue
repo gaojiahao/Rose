@@ -23,10 +23,10 @@
                     </div>
                     <div class="body">
                         <div class="address-name-g" v-if="item.type == 'P'">
-                            {{item.name}}-{{item.type}}
+                            {{item.name}}
                         </div>
                         <div class="address-name-p" v-if="item.type == 'G'">
-                            {{item.name}}-{{item.type}}
+                            {{item.name}}
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,5 @@
 <template>
     <div class="month-performance">
-      <div style="background-color:#1a92ec">
         <div class="msg-header page-navigation">
           <div class="goback" @click="goBack()">
               <i class="iconfont icon-back1" ></i>
@@ -13,7 +12,6 @@
             <span>累计绩效</span>
             <p>{{ total }}</p>
         </div>
-      </div>
       <div class="month-table">
         <div class="table-header">
           <div class="brfore-month" @click="onBeforeMonthClick">
@@ -160,11 +158,12 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
   .month-performance{
       height: 100%;
       overflow: hidden;
-      .month-header{
+  }
+    .month-header{
           height: .5rem;
           line-height: .5rem;
           display: flex;
@@ -257,7 +256,7 @@ export default {
           line-height: .5rem;
         }
         .table-content{
-          height: calc(100% - 4rem);
+          height: calc(100% - 1rem);
            .table-list{
             display: flex;
             justify-content: space-between;
@@ -296,5 +295,4 @@ export default {
           }
         }
       }
-  }
 </style>

@@ -43,9 +43,9 @@
                     </div>
                 </div>
                 <div class="flow-task-item-foot" >
-                    <div class="flow-task-item-foot-btn" v-if="task.actions">
+                    <div class="flow-task-item-foot-btn" v-if="task.actionArr">
                         <div style="position: absolute;right: .1rem;top: .05rem;">
-                            <template v-for="(aItem,akey) in task.actions">
+                            <template v-for="(aItem,akey) in task.actionArr">
                                 <span class="btn_item agreement" :key="akey" v-if="aItem=='agreement'" @click="agreement(task)">同意</span>
                                 <span class="btn_item disagree"  :key="akey" v-else-if="aItem=='disagree'" @click="disagree(task)">不同意</span>
                                 <span class="btn_item resubmit"  :key="akey" v-else-if="aItem=='resubmit'" @click="handlerViewTask(task)">重新提交</span>
@@ -124,12 +124,19 @@ export default {
                 this.$emit("loadData", dataCount);
                 this.hasNext = dataCount > (this.params.page - 1) * this.params.limit + tableContent.length;
                 this.tasks = this.params.page===1?tableContent:[...this.tasks,...tableContent];
-                for(var i=0;i<this.tasks.length;i++){
-                    if(this.tasks[i].actions){
-                        var arr= this.tasks[i].actions.split(',');
-                        this.tasks[i].actions = arr;
+                // for(var i=0;i<this.tasks.length;i++){
+                //     if(this.tasks[i].actions){
+                //         var arr= this.tasks[i].actions.split(',');
+                //         this.tasks[i].actions = arr;
+                //     }
+                // }
+                this.tasks.map(t=>{
+                    if(t.actions){
+                        t.actionArr = t.actions.split(',');
+                    }else{
+                        t.actionArr = [];
                     }
-                }
+                });
                 this.$nextTick(() => {
                     this.$refs.bScroll.finishPullUp();
                     this.$refs.bScroll.finishPullDown();
@@ -320,7 +327,7 @@ export default {
 
 <style lang="less" scoped>
 .flow-task{
-    padding: .15rem;
+    padding: .10rem;
     font-size: .14rem;
     &-item{
         box-shadow: 0 2px 10px 0 rgba(232, 232, 232, 0.7);
