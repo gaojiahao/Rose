@@ -139,7 +139,7 @@ export default {
     },
     methods:{
         goBack(){
-            this.$router.replace('/msg/group');
+            this.$router.go(-1);
         },
         showMemberSelector() {
             this.$refs["memberSelector"].showMemberSelector = true;

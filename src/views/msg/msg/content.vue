@@ -296,7 +296,7 @@ export default {
             })
         },
         showCreator(uId){
-           this.$router.push({name:'userInfo',query:{uId:uId}});
+           this.$router.push({name:'userInfo',params:{uId:uId}});
         },
         showFileConfirm(e){
             var files = e.target.files,

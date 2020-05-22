@@ -76,7 +76,7 @@ export default {
                      this.routes.push({id:routerId,name:routerName});
                })
            }else if(item.type==='P'){
-               this.$router.push({name:'userInfo',query:{uId:item.id}})
+               this.$router.push({name:'userInfo',params:{uId:item.id}})
            }
         },
         goBack(){

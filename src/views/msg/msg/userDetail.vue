@@ -76,7 +76,7 @@ export default{
           }
         },
         getUserDetails() {
-          var uId = this.$route.query.uId;
+          var uId = this.$route.params.uId;
           if(uId) {
             getUserInfoById(uId).then(res => {
               this.userItem = res.tableContent[0];
