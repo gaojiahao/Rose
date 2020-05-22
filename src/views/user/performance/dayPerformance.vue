@@ -1,6 +1,6 @@
 <template>
     <div class="day-performance">
-        <div style="background-color:#1a92ec">
+        
             <div class="page-navigation">
                 <div class="goback" @click="goBack()">
                     <i class="iconfont icon-back1" ></i>
@@ -9,11 +9,11 @@
                     今日绩效明细
                 </div>
             </div>
+
             <div class="day-num">
                 <span>当日绩效</span>
                 <p>{{ total }}</p>
             </div>
-        </div>
         <div class="day-time">
           <div class="brfore-day" @click="onBeforeDayClick">
               <span class="icon icon-performance-back"></span>
@@ -42,21 +42,6 @@
           :has-next="hasNext"
           :no-data="false"
       >
-          <div 
-            class="list-content" 
-            v-for="(log,index) of dayData" 
-            :key="index"
-            @click="gotoForm(log)">
-                <img  :src="defaultImg(log)"  />
-                <div class="list-content-container">
-                    <div class="list-content-container-title">{{ log.title }}</div>
-                    <div class="list-content-container-detail">
-                        <div>{{ log.effectiveDate|time}}</div>
-                         <div>{{ log.performanceType }}</div>
-                         <div>{{log.total}}</div>
-                    </div>
-                </div>
-          </div>
           <div 
             class="list-content" 
             v-for="(log,index) of dayData" 
@@ -181,121 +166,123 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
   .day-performance{
-      height: 100%;
-      .day-header{
-          height: .5rem;
-          line-height: .5rem;
-          display: flex;
-          text-align: center;
-          border-bottom: 1px solid #eee;
-          .back{
-              display: flex;
-              align-items: center;
-              .icon-performance-back{
-                  width: .18rem;
-                  height: .18rem;
-                  display: inline-block;
-              }
-          }
-          .title{
-              flex: 1;
-          }
-      }
-      .day-time{
-          height: .5rem;
-          line-height: .5rem;
-          display: flex;
-          justify-content: space-between;
-          border-bottom: 0.5px solid #ddd;
-          .brfore-day{
-              display: flex;
-              align-items: center;
-              .icon-performance-back{
-                  width: .18rem;
-                  height: .18rem;
-                  display: inline-block;
-              }
-          }
-          .after-day{
-              display: flex;
-              align-items: center;
-              .icon-goto{
-                  width: .15rem;
-                  height: .15rem;
-                  display: inline-block;
-              }
-          }
-          .day-select{
-            .icon-riqi{
-                margin-right: .02rem;
-            }
-          }
-          .day-select /deep/ .weui-cells{
-            background-color: transparent;
-            margin-top: .77em !important;
-          }
-          .day-select /deep/ .weui-cell{
-            padding: 0px;
-          }
-          .day-select /deep/ .weui-cells:after{
-            border: none;
-          }
-          .day-select /deep/ .weui-cells:before{
-            border: none;
-          }
-          .day-select /deep/ .weui-cell_access .weui-cell__ft:after{
-            display: none;
-          }
-      }
-      .day-num{
-            background-color: #1a92ec;
-            color: #fff;
-            padding: .2rem;
-            text-align: center;
-            p{
-                font-size: .25rem;
-                font-weight: bold;
-            }
-      }
-      .day-empty{
+        height: 100%;
+        overflow: hidden;
+  }
+   .day-header{
+        height: .5rem;
+        line-height: .5rem;
+        display: flex;
         text-align: center;
-        .list-empty{
-            margin-top: 1rem;
-            color: #999;
-            font-weight: bold;
-            font-size: .2rem;
-        }
-      }
-      .day-list{
-          padding: .08rem;
-          height: calc(100% - 2rem);
-          .list-content{
-            padding: .05rem;
+        border-bottom: 1px solid #eee;
+        .back{
             display: flex;
             align-items: center;
-            img{
-                height: 30px;
-                border-radius: .03rem;
+            .icon-performance-back{
+                width: .18rem;
+                height: .18rem;
+                display: inline-block;
             }
-            &-container{
-                width: 100%;
-                padding: 0 .08rem;
-                &-title{
-                    font-size: 14px;
-                }
-
-                &-detail{
-                    font-size: 12px;
-                    display: flex;
-                    width: 100%;
-                    justify-content: space-between;
-                    color: #999999;
-                }
-            }
-            
         }
-      }
-  }
+        .title{
+            flex: 1;
+        }
+    }
+    .day-time{
+        height: 0.5rem;
+        line-height: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        background-color: #eee;
+        .brfore-day{
+            display: flex;
+            align-items: center;
+            .icon-performance-back{
+                width: .18rem;
+                height: .18rem;
+                display: inline-block;
+            }
+        }
+        .after-day{
+            display: flex;
+            align-items: center;
+            .icon-goto{
+                width: .15rem;
+                height: .15rem;
+                display: inline-block;
+            }
+        }
+        .day-select{
+        .icon-riqi{
+            margin-right: .02rem;
+        }
+        }
+        .day-select /deep/ .weui-cells{
+        background-color: transparent;
+        margin-top: .77em !important;
+        }
+        .day-select /deep/ .weui-cell{
+        padding: 0px;
+        }
+        .day-select /deep/ .weui-cells:after{
+        border: none;
+        }
+        .day-select /deep/ .weui-cells:before{
+        border: none;
+        }
+        .day-select /deep/ .weui-cell_access .weui-cell__ft:after{
+        display: none;
+        }
+    }
+    .day-num{
+        background-color: #1a92ec;
+        color: #fff;
+        text-align: center;
+        height: 0.9rem;
+        p{
+            font-size: .25rem;
+            font-weight: bold;
+        }
+    }
+    .day-empty{
+    text-align: center;
+    .list-empty{
+        margin-top: 1rem;
+        color: #999;
+        font-weight: bold;
+        font-size: .2rem;
+    }
+    }
+    .day-list{
+        padding: .08rem;
+        height: calc(100% - 2.49rem);
+        overflow: hidden;
+        .list-content{
+        padding: .05rem;
+        display: flex;
+        align-items: center;
+        img{
+            height: 30px;
+            border-radius: .03rem;
+        }
+        &-container{
+            width: 100%;
+            padding: 0 .08rem;
+            &-title{
+                font-size: 14px;
+            }
+
+            &-detail{
+                font-size: 12px;
+                display: flex;
+                width: 100%;
+                justify-content: space-between;
+                color: #999999;
+            }
+        }
+        
+    }
+    }
 </style>
