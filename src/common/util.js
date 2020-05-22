@@ -274,6 +274,53 @@ export default{
        
         return mineType;
     },
+    down(content){
+        var baseUrl = window.baseURL||'',
+            source = baseUrl+'/H_roleplay-si/ds/downloadById?id='+content.id,
+            fileTransfer,
+            util = this,
+            target;
+
+        if(window.cordova){
+            //externalDataDirectory;
+            target = cordova.file.externalDataDirectory  + content.content; //用到了cordova-plugin-file插件
+            fileTransfer = new FileTransfer(); //用到了cordova-plugin-file-transfer插件
+
+            fileTransfer.download(
+                source,
+                target,
+                function(entry) {
+                    var fileName = entry.name,
+                        filePath = entry.toURL(),
+                        fileMIMEType = util.getMineType(fileName);
+
+                    cordova.plugins.fileOpener2.open(
+                        filePath,
+                        fileMIMEType,
+                        {
+                            error : function(e){ 
+                                console.log('open error');
+                                console.log(e);
+                            },
+                            success : function(){ 
+                                console.log('open sucess');
+                            }
+                        }
+                    );
+                },
+                function(error) {
+                    console.log("download error source " + error.source);
+                    console.log("download error target " + error.target);
+                    console.log("download error code" + error.code);
+                },
+                false,
+                {//http头
+                }
+            );
+        } else {
+            window.location.href = source;
+        }
+    },
     addHandler:function (element,type,handler)
     {
         if(element.addEventListener) 

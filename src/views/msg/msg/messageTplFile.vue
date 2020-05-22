@@ -2,8 +2,8 @@
     <div class="file-msg-container">
        <div class="singleFile">
             <div class="file-content-info">
-                <p>
-                    <a  :href="baseURL + '/H_roleplay-si/ds/downloadById?id='+file.id">{{file.content}}</a>
+                <p @click="openFile(file)">
+                    {{file.content}}
                 </p>
                 <p>
                     {{file.size}}KB
@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import util from '@/common/util';
 export default {
     props:{
         msg:{
@@ -44,6 +45,16 @@ export default {
             let img = event.srcElement;
             img.src = this.defaultFileImg;
             img.onerror = null; //防止闪图
+        },
+        openFile(file){
+            var fileName = file.content,
+                isImg = /.jpg|.png/.test(fileName.toLowerCase());
+            
+            if(isImg){
+                this.$router.push({name:'imgInfo',params:{id:file.id},query:{name:fileName}});
+            } else {
+                util.down(file);
+            }
         }
      }
 }
