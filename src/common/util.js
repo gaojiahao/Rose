@@ -298,7 +298,7 @@ export default{
                 'm4v':'video/x-m4v',
                 'wmv':'video/x-ms-wmv',
                 'avi':'video/x-msvideo'
-            }
+            },
             mineType = '';
 
         switch(ext){
