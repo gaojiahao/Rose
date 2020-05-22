@@ -254,21 +254,61 @@ export default{
     },
     getMineType(name){
         var ext = name.split('.').pop(),
+            typeMap = {
+                'ppt':'application/vnd.ms-powerpoint',
+                'rar':'application/x-rar-compressed',
+                'swf':'application/x-shockwave-flash',
+                'doc':'application/msword',
+                'xls':'application/vnd.ms-excel',
+                'xlsx':'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'mid':'audio/midi',
+                'midi':'audio/midi',
+                'kar':'audio/midi',
+                'mp3':'audio/mpeg',	
+                'ogg':'audio/ogg',
+                'm4a':'audio/x-m4a',
+	            'ra' :'audio/x-realaudio',
+                'gif':'image/gif',
+                'jpeg':'image/jpeg',
+                'jpg':'image/jpeg',
+                'png':'image/png',
+                'tif':'image/tiff', 
+                'tiff':'image/tiff',
+                'wbmp':'image/vnd.wap.wbmp',
+                'ico':'image/x-icon',
+                'jng':'image/x-jng',
+                'bmp':'image/x-ms-bmp',
+                'svgz':'image/svg+xml',
+                'svg':'image/svg+xml',
+                'webp':'image/webp',
+                'css':'text/css',
+                'html':'text/html',
+                'htm':'text/html',
+                'shtml':'text/html',
+                'txt':'text/plain',
+                'xml':'text/xml',
+                '3gpp':'video/3gpp',
+                '3gp':'video/3gpp',
+                'mp4':'video/mp4',
+                'mpeg':' video/mpeg',
+                'mpg':'video/mpge',
+                'mov':'video/quicktime',
+                'webm':'video/webm',
+                'flv':'video/x-flv',
+                'm4v':'video/x-m4v',
+                'wmv':'video/x-ms-wmv',
+                'avi':'video/x-msvideo'
+            }
             mineType = '';
 
         switch(ext){
-            case 'doc':
-                mineType = 'application/msword';
-                break;
             case 'pdf':
+            case 'zip':
             case 'rtf':
                 mineType = 'application/'+ ext;
                 break;
-            case 'xls':
-                mineType = 'application/vnd.ms-excel';
-                break;
-            case 'xlsx':
-                mineType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+            default :
+                mineType = typeMap[ext] || '';
                 break;
         }
        

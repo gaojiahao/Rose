@@ -336,7 +336,7 @@ export default {
                 });       
             } else {
                 this.$router.push(path);
-                this.$refs.groupMsg.scrollToButtom(0); this.$nextTick(()=>{
+                this.$nextTick(()=>{
                     this.$refs.groupMsg.scrollToButtom(0);
                 })
             }
