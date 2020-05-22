@@ -137,7 +137,8 @@ export default {
                 this.$loading.hide();
                 localStorage.setItem('userCode',this.userCode);
             }).catch(err=>{
-                 this.$vux.alert.show({
+                this.$loading.hide();
+                this.$vux.alert.show({
                     content: err.message
                 });
             });

@@ -5,7 +5,7 @@
                 <i class="iconfont icon-back1" ></i>
             </div>
             <div class="groupName body">
-                {{group.groupName}}<span v-if="group.groupType == 'G'">({{group.msgCount}})</span>
+                {{group.groupName}}
             </div>
             <div class="toGroupAdmin" @click="$router.push('/msg/group/'+ group.groupId +'/info')">
                 <i class="iconfont icon-users" ></i>

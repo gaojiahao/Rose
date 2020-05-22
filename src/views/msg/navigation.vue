@@ -220,14 +220,29 @@ export default {
                     this.addMsg(msg);
                     break;
                 case '100':
-                    // this.groups.unshift(msg);
-                    this.groups.push(msg);
-                    this.groupIdToIndex[msg.groupId] = this.groups.length+1;
-                    this.addMsg(msg.lastMsg);
+                   this.addNewGroup(msg);
                     break;
                 default:
                     break;
             }
+        },
+        addNewGroup(msg){
+             var gii = {};
+            for(var i=0;i<this.groups.length;i++){
+                if(!this.groups[i].focus){
+                    this.groups.splice(i,0,msg);
+                    break;
+                }
+            }
+            this.groups.map((g,idx)=>{
+                gii[g.groupId] = idx;
+            });
+            this.groupIdToIndex = gii;
+            this.addMsg({
+                ...msg.lastMsg,
+                isMySelf:msg.isMySelf,
+                creator:msg.creator
+            });
         },
         /**
          * 处理消息信息
@@ -252,7 +267,7 @@ export default {
                     } else {
                         group.lastMsg = msg;
                     }
-                    if(window.isApp){ //添加app的消息提醒
+                    if(window.isApp && !msg.isMySelf){ //添加app的消息提醒
                         this.addNotification(group,msg);
                     }
                     if (this.group && this.group.groupId == groupId){//如果是当前消息页面的消息
@@ -307,7 +322,6 @@ export default {
         toMsg:function(group){
             var groupId = group.groupId,
                 path = '/msg/group/'+ groupId;
-
             if(group != this.group){
                 this.group = group;
                 getGroupMsg(groupId).then(res=>{
@@ -503,7 +517,8 @@ export default {
       }
   }
   .group-ava{
-    width: .45rem;
+    width: .5rem;
+    height: .5rem;
     border-radius: .02rem;
   }
   

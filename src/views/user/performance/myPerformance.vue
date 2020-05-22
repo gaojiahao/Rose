@@ -55,8 +55,8 @@
               <cell title="今年累计绩效"  :value="yearPerformance" :is-loading="yearPerformance==undefined"  is-link @click.native="onYearPerformanceClick" />
           </group>
           <group>
-              <cell title="主题设置" is-link link="/themesetting" />
-              <cell title="退出"  @click.native="loginOut" />
+              <!-- <cell title="主题设置" is-link link="/themesetting" /> -->
+              <cell title="退出登录"  @click.native="loginOut" />
           </group>
       </RScroll>
   </div>
