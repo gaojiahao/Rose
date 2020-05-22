@@ -48,7 +48,6 @@
             </div>
           </RScroll>
         </popup>
-        <user-detail ref="userDetail" :userId="userId"></user-detail>
     </div> 
 </template>  
 <script>
