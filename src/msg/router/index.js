@@ -11,7 +11,6 @@ import flowTodo from '@/msg/pages/flowTodo'
 import comment from '@/msg/pages/comment'
 import praise from '@/msg/pages/praise'
 import MSGLIST from '@/msg/pages/appMsgList'
-import TASK from '@/task/task'
 export default [
   { 
     path: '/notice', 

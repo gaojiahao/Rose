@@ -154,21 +154,26 @@ export let getBaseInfoDataBase = () => {
 //获取baseinfo信息,界面全局信息
 export let getBasicInfo = (data ={})=> {
   return new Promise((resolve,reject)=>{
+    var cache;
+
      if(baseInfo == null){
-        $flyio.ajax({
-          url: `/H_roleplay-si/app/getBasicInfo`,
-          data: {
-            _dc: Date.now(),
-          }
-        }).then(data=>{
-          baseInfo = data;
-          if(!localStorage.getItem('userInfo')){
-            localStorage.setItem('userInfo',JSON.stringify(baseInfo.currentUser));
-          }
-          resolve(data);
-        }).catch(()=>{
-          reject();
-        })
+        if((cache = sessionStorage.getItem('basicInfo')) != null){
+           baseInfo = JSON.parse(cache);
+           resolve(baseInfo);
+        } else {
+          $flyio.ajax({
+            url: `/H_roleplay-si/app/getBasicInfo`,
+            data: {
+              _dc: Date.now(),
+            }
+          }).then(data=>{
+            baseInfo = data;
+            sessionStorage.setItem('basicInfo',JSON.stringify(baseInfo));
+            resolve(data);
+          }).catch(()=>{
+            reject();
+          })
+        }
      } else {
        resolve(baseInfo);
      }

@@ -8,10 +8,18 @@
  */
 import Vue from 'vue'
 import Router from 'vue-router'
-import HomeRouter from '@/home/router'
+
+import SetHost from '@/views/setHost'
+import Login from '@/views/login'
+import MsgRouter from '@/views/msg/router'
+import Contacts from '@/views/contacts/contacts'
+import HomeRouter from '@/views/home/router'
+
+
 import tokenService from 'service/tokenService'
-import MsgRouter from '@/msg/router'
+import TaskRouter from '@/views/taskflow/router'
 import {isPC,isQYWX,isDD} from '@/plugins/platform/index'
+import userRouter from '@/views/user/router'
 
 import { getFieldSetting, getAllDict, getAllFieldSettingListLevel}  from "service/fieldModelService"
 
@@ -26,8 +34,38 @@ if (router == null) {
     mode:!!window.isApp?'hash':'history',
     base:'/Hermes',
     routes: [
+      { path: '/', redirect:'/msg' },
+      { path:'*', redirect:'/msg' },
+      { 
+        path: '/contacts/:id', 
+        name: 'CONTACTS', 
+        component: Contacts,
+        meta:{ 
+          title:'通讯录' , 
+          keepAlive: true
+        } 
+      },
       ...HomeRouter,
-      ...MsgRouter
+      ...MsgRouter,
+      ...TaskRouter,
+      ...userRouter,
+      {
+        path:'/setHost',
+        name:'setHost',
+        component:SetHost,
+        meta:{
+           title:'服务器设置'
+        }
+      },
+      {
+        path: '/login',
+        name: 'Login',
+        component: Login,
+        // redirect: '/Login',
+        meta: {
+          title: '登录'
+        }
+      }
     ]
   })
 
@@ -135,17 +173,18 @@ async function initDicts() {
   }).catch(e =>{e});
 }
 
-async function load(to){
+async function load(to){ //在路由拦截中添加缓存
+  var fieldSettingCache = storage.getItem('r2FieldSetting');
   let {query,fullPath} = to;
 
   if(query.tag&&query.tag=='share'){
     storage.setItem('shareUrl',window.location.href);
-    if(!storage.getItem('r2FieldSetting')){
+    if(!fieldSettingCache){
       await initFieldSetting();
     } 
   }
 
-  if(tokenService.getToken() != '' && to.name !== 'Login'){
+  if (tokenService.getToken() != '' && to.name !== 'Login'){
     if(!storage.getItem('r2_cachedListLevelFieldSetting')){
       await initListLevelFieldSetting();   
     }
@@ -153,7 +192,15 @@ async function load(to){
       await initDicts();   
     }
     if(!Vue.prototype.$r2FieldSetting){
-      await initFieldSetting();
+      if(fieldSettingCache != null){
+        try{
+          Vue.prototype.$r2FieldSetting = JSON.parse(fieldSettingCache);
+        } catch(e){
+           console.log('fieldSetting cache parse error');
+        }      
+      } else {
+        await initFieldSetting();//添加缓存
+      }
     }
   } else if(isQYWX&&!Vue.prototype.$r2FieldSetting) {
     await initListLevelFieldSetting();  

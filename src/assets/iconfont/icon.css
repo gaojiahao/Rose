@@ -2,10 +2,12 @@
   background: url('~assets/iconfont/clear.png');
   background-size: cover;
 }
-.icon-search {
+
+/* .icon-search {
   background: url('~assets/iconfont/nav_search.png');
   background-size: cover;
-}
+} */
+
 .icon-right {
   background: url('~assets/iconfont/right.png');
   background-size: cover;
@@ -26,8 +28,16 @@
   background: url('~assets/iconfont/down_fill.png');
   background-size: cover;
 }
-.icon-add {
+/* .icon-add {
   background: url('~assets/iconfont/add.png');
+  background-size: cover;
+} */
+.icon-message-add {
+  background: url('~assets/iconfont/add-message.png');
+  background-size: cover;
+}
+.icon-message-search {
+  background: url('~assets/iconfont/search-message.png');
   background-size: cover;
 }
 .icon-add-task {
@@ -49,6 +59,16 @@
 
 .icon-code {
   background: url('~assets/iconfont/code.png');
+  background-size: cover;
+}
+
+.icon-performance-back {
+  background: url('~assets/iconfont/back-performance.png');
+  background-size: cover;
+}
+
+.icon-goto {
+  background: url('~assets/iconfont/goto.png');
   background-size: cover;
 }
 
@@ -118,20 +138,20 @@
   background-size: cover;
 }
 
-.icon-task{
+/* .icon-task{
   background: url('~assets/iconfont/task.png');
   background-size: cover;
-}
+} */
 
-.icon-task2{
+/* .icon-task2{
   background: url('~assets/iconfont/task2.png');
   background-size: cover;
-}
+} */
 
-.icon-task3{
+/* .icon-task3{
   background: url('~assets/iconfont/task3.png');
   background-size: cover;
-}
+} */
 
 .icon-project{
   background: url('~assets/iconfont/project.png');

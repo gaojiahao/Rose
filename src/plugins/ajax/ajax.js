@@ -11,7 +11,7 @@ const fly = new Fly();
 
 // reject处理
 let rejectError = (reject, message) => {
-  if(message)errHandle(message);
+  if(message && message != 'nologin')errHandle(message);
   return Promise.reject({ success: false, message });
 };
 
@@ -29,12 +29,13 @@ fly.interceptors.request.use((request) => {
     return tokenService.login().then((token) => {
       if(token){
         request.headers.Authorization = token;
-
-      // 请求token成功之后，即将进入第一个请求
-      if(window.sessionStorage.getItem('shareUrl')){
-        return window.sessionStorage.getItem('shareUrl');
-      }
+        // 请求token成功之后，即将进入第一个请求
+        if(window.sessionStorage.getItem('shareUrl')){
+          return window.sessionStorage.getItem('shareUrl');
+        }
         return request;
+      } else {
+        return Promise.reject({ success: false, message:'nologin'});
       }
     }).finally(() => {
       // 解锁队列，后序请求恢复正常
@@ -42,7 +43,7 @@ fly.interceptors.request.use((request) => {
     }).catch( err => {
       // 请求拦截 报错标识
       console.log('req-err:', err);
-      rejectError('reject', err.message)
+      return rejectError('reject', err.message)
     })
   }
 })
@@ -150,7 +151,7 @@ let Rxports = {
   // POST请求
   post(opts = {}) {
     return new Promise((resolve, reject) => {
-      fly.post(opts.url, opts.data).then(res => resolve(res.data)).catch( err => {
+      fly.post(ensureUrl(opts.url), opts.data,{baseURL:window.baseURL||''}).then(res => resolve(res.data)).catch( err => {
         reject(err);
         console.log('err:', err);
       })
@@ -208,16 +209,24 @@ let Rxports = {
   // 上传图片，单个文件
   upload(data) {
     // 创建form对象
-    let param = new FormData(); 
+    let param = new FormData(),
+        file; 
+    
     // 通过append向form对象添加数据
-    param.append('file', data.file);  
+    if (data.file instanceof FileList){
+       for(var i=0,l=data.file.length;i<l;i++){
+          param.append('file',data.file[i]);
+       }
+    } else {
+       param.append('file', data.file);
+    }
     // 添加form表单中其他数据
     if (data.biReferenceId) {
       param.append('biReferenceId', data.biReferenceId); 
     }
     let token = tokenService.getToken(true);
     return this.post({
-      url: '/H_roleplay-si/ds/upload',
+      url:'/H_roleplay-si/ds/upload',
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': token.token

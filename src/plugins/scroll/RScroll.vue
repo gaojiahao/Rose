@@ -45,6 +45,9 @@
           return {}
         }
       },
+      hideToast:{
+        default:false
+      }
     },
     data() {
       return {
@@ -74,7 +77,7 @@
           else if (Math.abs(val) < 1000) 
             this.toTopShow = false;
           if(val === this.bScroll.maxScrollY) {
-            this.$vux.toast.text('已到底部！', 'bottom')
+            if (this.hideToast != true)this.$vux.toast.text('已到底部！', 'bottom')
           }
         } 
       }  
@@ -136,6 +139,7 @@
                 },2000)
             } 
           });
+          this.$parent.scroller = this.bScroll;
         })
       },
       // 刷新
@@ -204,10 +208,10 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  .scroll-container {
-    overflow: hidden;
+  .scroll-container { 
+     overflow: hidden;
     .scroll-wrapper {
-      overflow: hidden;
+       touch-action: none;
       &.hasRefresh {
         min-height: calc(100% + 1px);
       }

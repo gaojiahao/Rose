@@ -4,6 +4,7 @@ import router from './router'
 import FastClick from 'fastclick'
 import adapation from './common/adapation'
 import Swiper from './common/swiper-4.2.2.min.js'
+import Bscroll from "better-scroll";
 import VueTouch from 'vue-touch'
 import RText from './components/public/RText'
 import RDateField from './components/public/DateField'
@@ -48,21 +49,27 @@ import platfrom from './plugins/platform/index'
 import commonService from "service/commonService";
 import * as dd from 'dingtalk-jsapi'
 
-require('@/directive')
-if(window.isApp){
+import {formatToEmotion} from 'plugins/emoji/emotion'
+
+require('@/directive');
+require('@/filter');
+if(window.isApp){ //处理消息推送专用代码
   require('service/pushService');
 }
-
+/**plugin */
 Vue.use(Loading)
 Vue.use(HandleLoad)
 Vue.use(ToastPlugin)
 Vue.use(AlertPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(DatetimePlugin)
+
 Vue.use(VueTouch,{name:'v-touch'})
 Vue.directive('transfer-dom', TransferDom)
 
 Vue.prototype.Swiper = Swiper;
+Vue.prototype.Bscroll = Bscroll;
+Vue.prototype.formatToEmotion = formatToEmotion;
 FastClick.attach(document.body)
 
 const isDebug_mode = process.env.NODE_ENV !== 'production'
