@@ -322,14 +322,23 @@ export default {
         toMsg:function(group){
             var groupId = group.groupId,
                 path = '/msg/group/'+ groupId;
+
             if(group != this.group){
                 this.group = group;
                 getGroupMsg(groupId).then(res=>{
                     this.msgList = res.msgs;
-                    if (this.$route.params.groupId != groupId)this.$router.push(path);
+                    if (this.$route.params.groupId != groupId){
+                        this.$router.push(path);
+                    }
+                    this.$nextTick(()=>{
+                        this.$refs.groupMsg.scrollToButtom(0);
+                    })
                 });       
             } else {
-                this.$router.push(path)
+                this.$router.push(path);
+                this.$refs.groupMsg.scrollToButtom(0); this.$nextTick(()=>{
+                    this.$refs.groupMsg.scrollToButtom(0);
+                })
             }
         },
         showNavList() {
