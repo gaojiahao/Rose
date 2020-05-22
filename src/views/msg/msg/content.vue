@@ -8,7 +8,7 @@
                 {{group.groupName}}
             </div>
             <div class="toGroupAdmin" @click="$router.push('/msg/group/'+ group.groupId +'/info')">
-                <i class="iconfont icon-users" ></i>
+                <i class="iconfont" :class="[group.groupType == 'G' ? 'icon-users':'icon-me']"></i>
             </div>
         </div>
         <r-scroll
