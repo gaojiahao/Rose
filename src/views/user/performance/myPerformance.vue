@@ -54,10 +54,10 @@
               <cell title="今日绩效"  :value="todayPerformance" :is-loading="todayPerformance==undefined" is-link @click.native="onDayPerformanceClick"  />
               <cell title="今年累计绩效"  :value="yearPerformance" :is-loading="yearPerformance==undefined"  is-link @click.native="onYearPerformanceClick" />
           </group>
-          <group>
-              <!-- <cell title="主题设置" is-link link="/themesetting" /> -->
+          <!-- <group>
+              <cell title="主题设置" is-link link="/themesetting" />
               <cell title="退出登录"  @click.native="loginOut" />
-          </group>
+          </group> -->
       </RScroll>
   </div>
     
