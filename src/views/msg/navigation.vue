@@ -274,7 +274,9 @@ export default {
                         let l = this.msgList.length;
                         this.$set(this.msgList,l,msg);
                         if(this.$refs.groupMsg != null){ //如果页面是打开的。
-                            this.$refs.groupMsg.scrollToButtom();
+                            setTimeout(function(){
+                                vm.$refs.groupMsg.scrollToButtom();
+                            });
                         }
                     }
                 } else {//要添加新群了。
