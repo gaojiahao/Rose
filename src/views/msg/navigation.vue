@@ -224,12 +224,28 @@ export default {
                 case '3':
                 case '4':
                     this.addMsg(msg);
+                    this.setAppNoticeBadge();
                     break;
                 case '100':
                    this.addNewGroup(msg);
                     break;
+                case '103':
+                    this.setAppNoticeBadge();
                 default:
                     break;
+            }
+        },
+        setAppNoticeBadge(){
+
+            if(!window.isApp) return;
+            var c = 0;
+            this.groups.map(g=>{
+                c = c+g.msgCount;
+            });
+            if(c){
+                cordova.plugins.notification.badge.set(c);
+            }else{
+                cordova.plugins.notification.badge.clear();
             }
         },
         addNewGroup(msg){
@@ -279,6 +295,11 @@ export default {
                     } else {
                         group.lastMsg = msg;
                     }
+
+                    if(!msg.isMySelf){
+                        group.msgCount++;
+                    }
+
                     if(window.isApp && !msg.isMySelf){ //添加app的消息提醒
                         this.addNotification(group,msg);
                     }
@@ -328,6 +349,7 @@ export default {
                 foreground: true,
                 icon:g.groupIcon || groupIcon
             });
+            navigator.vibrate(300);
         },
         
         /**

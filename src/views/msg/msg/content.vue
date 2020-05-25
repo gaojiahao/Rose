@@ -34,7 +34,19 @@
                     <span class ="message-creator"
                         v-if="!msg.isMySelf">{{msg.creatorName}}
                     </span>
+                    
                     <touch @menuContext="onMsgContextMenu(msg,$event)">
+                        <span class="read-message" v-if="msg.isMySelf==1">
+                            <span v-if="msg.allRead" class="message-allread">✓</span>
+                            <span v-else-if="msg.checked === 0" class="message-noread"></span>
+                            <span
+                                v-else
+                                class="message-read" 
+                                @click="openMessageDetail(msg)"
+                                :style="{color:'#8bc8da',cursor:'pointer',borderColor: '#8bc8da'}">
+                                {{ msg.checked }}
+                            </span>
+                        </span>
                         <div class="message-content" :class="[msg.isMySelf==1?'rightarrow':'leftarrow']" >
                             <div v-if="msg.replayMsg" style="border-left: 3px solid rgb(153, 153, 153); padding: 0px 8px; cursor: pointer;" @click="goTop(msg.replayMsg.id)">
                                 <MessageTplText :msg="msg.replayMsg" v-if="msg.replayMsg.imType == 1"></MessageTplText>
@@ -62,8 +74,8 @@
             <div class="input-wrapper">
                 <textarea class="msg-input"  v-model="msg" type="text" ref="msgInput" @focus="showExtraInput=false;showEmotion = false" @keyup="checkAt"></textarea>
                 <i class="icon-emotion" @click="showEmotion = !showEmotion;showExtraInput=false;"></i>
-                <i class="icon-add-more" @click="toggleWrapper" v-show="!msg"></i>
-                <span class="btn-send" v-if="msg" @click="sendTextMsg">发送</span>
+                <i class="icon-add-more" @click="toggleWrapper" v-show="!msg.trim()"></i>
+                <span class="btn-send" v-if="msg.trim()" @click="sendTextMsg">发送</span>
             </div>
             <div class="extra-input-wrapper" v-show="showExtraInput">
                 <div>
@@ -100,6 +112,8 @@
         <router-view :group="group" ref="groupInfo"></router-view>
         <!-- groupInfo end -->
         <at-member-list v-if="showAtMemberList" @select="selectAtMember"/>
+        <!-- 消息已读未读详情 -->
+        <message-read-detail ref="detailMessage" :detailMessage="detailMessage"></message-read-detail>
     </div> <!--page end-->
 </template>
 <script>
@@ -111,6 +125,7 @@ import MessageTplText from '@/views/msg/msg/messageTplText'
 import MessageTplImg from '@/views/msg/msg/messageTplImg'
 import MessageTplMult from '@/views/msg/msg/messageTplMult'
 import MessageTplFile from '@/views/msg/msg/messageTplFile'
+import MessageReadDetail from './messageReadDetail'
 import RScroll from "plugins/scroll/RScroll";
 import Touch from "plugins/touch";
 import FileDialog from  "./fileDialog"
@@ -122,6 +137,7 @@ export default {
     data(){
         return {
             msg:'',
+            detailMessage: {},
             scrollOptions:{
                 
             },
@@ -148,7 +164,8 @@ export default {
         ContextMenu,
         REmotion,
         Touch,
-        AtMemberList
+        AtMemberList,
+        MessageReadDetail
     },
     filters:{
         replayContent(msg){
@@ -191,6 +208,10 @@ export default {
                 msg.photo = url;
             }
             return url;
+        },
+        openMessageDetail(msg) {
+            this.detailMessage = msg;
+            this.$refs["detailMessage"].showReadDetailModal = true;
         },
         goBack(){
             this.$router.replace('/msg');
@@ -241,7 +262,7 @@ export default {
                  };
 
             
-            if (this.msg != ''){
+            if (this.msg.trim() != ''){
                 if(this.replayMsg){
                    params.replayId = this.replayMsg.id;
                    params.replayMsg = util.clone(this.replayMsg);//replayMsg内容只在ds 推送时有用，后端保存时不会用这个。
@@ -492,6 +513,31 @@ export default {
 .msg-header{
     display: flex;
 }
+.read-message{
+    .message-noread{
+      border:2px solid #d2cfcf;
+      width: .13rem;
+      height: .13rem;
+      display: inline-block;
+      border-radius: 50%;
+    }
+    .message-read, 
+    .message-allread
+    {
+      border:1px solid #d2cfcf;
+      width: .13rem;
+      height: .13rem;
+      display: inline-block;
+      border-radius: 50%;
+      font-size: 10px;
+      color: #d2cfcf;
+      text-align: center;
+      line-height: .13rem;
+    }
+    .add-select{
+      background-color: #39f !important;
+    }
+  }
 .msg-header .body{
     flex: 1;
     text-overflow: ellipsis;

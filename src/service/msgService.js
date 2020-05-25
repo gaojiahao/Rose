@@ -92,6 +92,20 @@ export let getEmployee = (filter,page,limit)=>{
 }
 
 /**
+ * 查看消息的阅读情况
+ */
+export let getMsgCheckStatus = (msgId, checkType)=>{
+    let data = {
+        msgId: msgId,
+        checkType: checkType
+    }
+    return $flyio.ajax({
+        url:'/im/message/getMsgCheckStatus',
+        data
+    })
+}
+
+/**
  * 获取所有员工
  */
 export let getMembers = (groupId)=>{

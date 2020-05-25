@@ -19,19 +19,23 @@
                     <x-input 
                         :class="[isLoginInpFoc?'loginInpFoc':'loginInput']"  
                         @on-focus="isLoginInpFoc=true" 
-                        @on-blur="isLoginInpFoc=false" 
+                        @on-blur="onUserCodeBlur" 
                         text-align="left" 
-                        placeholder="请输入手机号" 
+                        :showClear="false"
+                        placeholder="请输入手机号"     
                         v-model="userCode">
+                        <i slot="right" class="weui-icon weui-icon-clear" v-show="isLoginInpFoc && userCode!=''" @click="userCode=''"></i>
                     </x-input>
                     <x-input 
                         :class="[isLoginInpFocS?'loginInpFoc':'loginInput']"  
                         @on-focus="isLoginInpFocS=true"  
-                        @on-blur="isLoginInpFocS=false" 
+                        @on-blur="onPassWordBlur" 
                         text-align="left" 
+                        :showClear="false"
                         placeholder="请输入密码" 
                         v-model="passWord" 
                         type="password">
+                        <i slot="right" class="weui-icon weui-icon-clear" v-show="isLoginInpFocS && passWord!=''" @click="passWord=''"></i>
                     </x-input>
                 </group>
                 <div class="other-login">
@@ -46,26 +50,31 @@
                         keyboard="number" 
                         v-model="mobile"
                         is-type="china-mobile" 
+                        :showClear="false"
                         :class="[isLoginInpFoc?'loginInpFoc':'loginInput']"  
                         @on-focus="isLoginInpFoc=true" 
-                        @on-blur="isLoginInpFoc=false"
+                        @on-blur="onUserCodeBlur"
                         @keyup.native="onMobileChange">
+                    <i slot="right" class="weui-icon weui-icon-clear" v-show="isLoginInpFoc && mobile!=''" @click="mobile=''"></i>
                     </x-input>
                     <x-input 
                         class="weui-vcode" 
                         placeholder="请输入验证码"
                         v-model="testCode"
-                        :class="[isLoginInpFocS?'loginInpFoc':'loginInput']"  
+                        :class="[isLoginInpFocS?'loginInpFoc':'loginInput']"
+                        :showClear="false"  
                         @on-focus="isLoginInpFocS=true" 
-                        @on-blur="isLoginInpFocS=false">
-                        <span
-                            slot="right"
-                            v-if="showTestCode"
-                            :style="{color:isDisabled?'#ddd':'#39f'}" 
-                            @click="sendTestCodeClick">
-                            发送验证码
-                        </span>
-                        <span slot="right" v-else>{{ count }} s</span>
+                        @on-blur="onPassWordBlur">
+                        <div slot="right">
+                            <i class="weui-icon weui-icon-clear" v-show="isLoginInpFocS && testCode!=''" @click="testCode=''"></i>&nbsp;&nbsp;
+                            <span
+                                v-if="showTestCode"
+                                :style="{color:isDisabled?'#ddd':'#39f'}" 
+                                @click="sendTestCodeClick">
+                                发送验证码
+                            </span>
+                            <span v-else>{{ count }}</span>
+                        </div>
                     </x-input>
                 </group>
                 <div class="other-login">
@@ -155,6 +164,21 @@ export default {
             }else{
                 this.isDisabled = true;
             }
+        },
+        onUserCodeBlur:function(){
+            var vm = this;
+            setTimeout(function(){
+               vm.isLoginInpFoc=false
+            });
+        },
+        onPassWordBlur:function(){
+            var vm = this;
+            setTimeout(function(){
+               vm.isLoginInpFocS=false
+            });
+        },
+        clearTestCode:function(){
+            this.testCode = '';
         },
         sendTestCodeClick() {
             if(this.isDisabled) return;
