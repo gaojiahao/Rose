@@ -23,10 +23,10 @@
                     </div>
                     <div class="body">
                         <div class="address-name-g" v-if="item.type == 'P'">
-                            {{item.name}}-{{item.type}}
+                            {{item.name}}
                         </div>
                         <div class="address-name-p" v-if="item.type == 'G'">
-                            {{item.name}}-{{item.type}}
+                            {{item.name}}
                         </div>
                     </div>
                 </div>
@@ -76,7 +76,7 @@ export default {
                      this.routes.push({id:routerId,name:routerName});
                })
            }else if(item.type==='P'){
-               this.$router.push({name:'userInfo',query:{uId:item.id}})
+               this.$router.push({name:'userInfo',params:{uId:item.id}})
            }
         },
         goBack(){

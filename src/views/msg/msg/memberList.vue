@@ -127,7 +127,7 @@ export default{
           }
         },
         openUserDetail(item) {
-          this.$router.push({name:'userInfo',query:{uId:item.userId}})
+          this.$router.push({name:'userInfo',params:{uId:item.userId}})
         },
         touchStart(item) {
             if(this.currentUser.userId!=this.groupOwner) return

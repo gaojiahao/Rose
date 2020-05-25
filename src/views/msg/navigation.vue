@@ -273,9 +273,11 @@ export default {
                     if (this.group && this.group.groupId == groupId){//如果是当前消息页面的消息
                         let l = this.msgList.length;
                         this.$set(this.msgList,l,msg);
-                        setTimeout(()=>{
-                            this.$refs.groupMsg.scrollToButtom();
-                        })
+                        if(this.$refs.groupMsg != null){ //如果页面是打开的。
+                            setTimeout(function(){
+                                vm.$refs.groupMsg.scrollToButtom();
+                            });
+                        }
                     }
                 } else {//要添加新群了。
                     
@@ -322,14 +324,23 @@ export default {
         toMsg:function(group){
             var groupId = group.groupId,
                 path = '/msg/group/'+ groupId;
+
             if(group != this.group){
                 this.group = group;
                 getGroupMsg(groupId).then(res=>{
                     this.msgList = res.msgs;
-                    if (this.$route.params.groupId != groupId)this.$router.push(path);
+                    if (this.$route.params.groupId != groupId){
+                        this.$router.push(path);
+                    }
+                    this.$nextTick(()=>{
+                        this.$refs.groupMsg.scrollToButtom(0);
+                    })
                 });       
             } else {
-                this.$router.push(path)
+                this.$router.push(path);
+                this.$nextTick(()=>{
+                    this.$refs.groupMsg.scrollToButtom(0);
+                })
             }
         },
         showNavList() {

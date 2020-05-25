@@ -131,7 +131,7 @@ export default{
         },
         openUserDetail(item) {
           if(item.type==='群聊') return;
-          this.$router.push({name:'userInfo',query:{uId:item.userId}})
+          this.$router.push({name:'userInfo',params:{uId:item.userId}})
         },
         toMsg(item) {
           if(item.groupId){

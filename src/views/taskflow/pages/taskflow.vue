@@ -1,37 +1,36 @@
 <template>
     <div class="task-container" >
-        
-        <div class="header">
-              <div class="page-navigation">
+          <div class="page-navigation">
                 <div class="groupName body">
                     工作流任务
                 </div>
             </div>
+        <div class="header">
             <div class="swiper-tab">
-                <div class="tab-item" :class="{active: index === activeIndex}" v-for="(item, index) in tabItem"
-                    @click="tabClick(item, index)" ref="tabs" :key="index">
-                    {{item.name}}
+                <div class="tab-item" 
+                    :class="{active: $route.name === item.key}" 
+                    v-for="(item, index) in tabItem"
+                     ref="tabs" :key="index">
+                    <!-- {{item.name}} -->
+                    <router-link :to="{name: item.key}"> {{item.name}}</router-link>
                 </div>
             </div>
         </div>
-        <div class="swiper-container list-container">
+
+         <router-view></router-view>
+        
+        <!-- <div class="swiper-container list-container">
             <div class="swiper-wrapper">
                 <div class="swiper-slide" v-for="(slide, key) in listMap" :key="key">
-                    <!-- <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="slide.hasNext"
-                            :no-data="!slide.hasNext && !slide.listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
-                            ref="bScroll"> -->
-                         <!-- 我的待办 -->
                         <template v-if="slide.name=='myToDoTask'">
                             <myToDoTask></myToDoTask>
                         </template>
-                        <!-- 我的已办 -->
                         <template v-else-if="slide.name=='myCompleted'">
                             <myCompleted></myCompleted>
                         </template>
-                    <!-- </r-scroll> -->
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -91,7 +90,7 @@ export default {
         },
     },
     created(){
-        this.initSwiper();
+        // this.initSwiper();
     },
     activated(){
     },
@@ -100,7 +99,7 @@ export default {
 }
 
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 input::-webkit-input-placeholder {
     color: #fff;
 }
@@ -120,6 +119,7 @@ input::-ms-input-placeholder {
     }
     .header {
         background: white;
+        height: .4rem;
         .search {
             width: 100%;
             padding: .08rem 0;
@@ -180,20 +180,24 @@ input::-ms-input-placeholder {
         }
         .swiper-tab {
             width: 100%;
-            height: .30rem;
+            height: .40rem;
             overflow: hidden;
-            padding-top: .1rem;
             .tab-item{
-                //width: 33.333%;
                 width: 50%;
-                line-height: .27rem;
+                line-height: .36rem;
                 font-size: .14rem;
                 text-align: center;
                 float: left;
+                a{
+                    color:#9E9E9E;
+                }
             }
             .active {
-                color: #3296fa;
+                
                 border-bottom: 3px solid #3296fa;
+                a{
+                    color: #3296fa;
+                }
             }
         }
     }
