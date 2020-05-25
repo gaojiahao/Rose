@@ -60,7 +60,7 @@
                 </span>
             </div> 
             <div class="input-wrapper">
-                <textarea class="msg-input"  v-model="msg" type="text" ref="msgInput" @focus="showExtraInput=false" @keyup="checkAt"></textarea>
+                <textarea class="msg-input"  v-model="msg" type="text" ref="msgInput" @focus="showExtraInput=false;showEmotion = false" @keyup="checkAt"></textarea>
                 <i class="icon-emotion" @click="showEmotion = !showEmotion;showExtraInput=false;"></i>
                 <i class="icon-add-more" @click="toggleWrapper" v-show="!msg"></i>
                 <span class="btn-send" v-if="msg" @click="sendTextMsg">发送</span>
@@ -334,6 +334,7 @@ export default {
             var msg = this.msg,
                 lastkey = msg&&msg[msg.length-1];
 
+           // console.log(e);
             if (this.group.groupType != 'G') return;
 
             if (e.key == '@' || (e.key != 'Backspace' && lastkey == '@')){//手机端是拿不到e.key的。
