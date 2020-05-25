@@ -72,7 +72,7 @@ export default{
                 click: false,
                 pullUpLoad: false,//上拉刷新
                 pullDownRefresh: false //下拉刷新
-            },
+            }
         }
     },
     watch: {

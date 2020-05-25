@@ -21,6 +21,8 @@ export default {
 
 <style lang="less" scoped>
 .text-msg-content{
+    word-break: break-all;
+    text-align: left;
     /deep/ .face{
         height: 20px;
     }
