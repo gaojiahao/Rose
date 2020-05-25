@@ -639,6 +639,7 @@ export default {
         display: inline-block;
         max-width: 70%;
         background-color: #ffffff;
+        word-break: break-all;
         &.rightarrow:after{
             content: " ";
             border-width: 7px;
