@@ -196,6 +196,7 @@ export default {
               this.isHeight = false;
             }
           })
+          this.isActive = true;
           this.getReadMembers();
           this.getNoreadMembers();
         }
