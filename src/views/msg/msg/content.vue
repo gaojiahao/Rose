@@ -72,10 +72,10 @@
                 </span>
             </div> 
             <div class="input-wrapper">
-                <textarea class="msg-input"  v-model="msg" type="text" ref="msgInput" @focus="showExtraInput=false;showEmotion = false" @keyup="checkAt"></textarea>
+                <textarea class="msg-input"  v-model="msg" type="text" ref="msgInput" @focus="showExtraInput=false;showEmotion = false;msgInputFocus=true;" @blur="msgInputFocus=false" @keyup="checkAt"></textarea>
                 <i class="icon-emotion" @click="showEmotion = !showEmotion;showExtraInput=false;"></i>
                 <i class="icon-add-more" @click="toggleWrapper" v-show="!msg.trim()"></i>
-                <span class="btn-send" v-if="msg.trim()" @click="sendTextMsg">发送</span>
+                <span class="btn-send" v-if="msg.trim()" @click="sendTextMsg" tabIndex="-1">发送</span>
             </div>
             <div class="extra-input-wrapper" v-show="showExtraInput">
                 <div>
@@ -149,6 +149,7 @@ export default {
             showExtraInput:false,//图片和文件输入框
             showContextMenu:false,//右键菜单
             showAtMemberList:false,//@群成员
+            msgInputFocus:false,
             fileDlgContext:null,//文件消息框,
             focusMsgId:null//得到焦点的消息id
         }
@@ -255,22 +256,28 @@ export default {
         },
         sendTextMsg(){
             var  groupId = this.group.groupId,
+                 input = this.$refs.msgInput,
                  params = {
                      groupId:groupId,
 			         content:this.msg,
 			         imType:1
                  };
 
+            input.focus();
             
-            if (this.msg.trim() != ''){
+            if (this.msg.trim() != '' && this.sending != true){
                 if(this.replayMsg){
                    params.replayId = this.replayMsg.id;
                    params.replayMsg = util.clone(this.replayMsg);//replayMsg内容只在ds 推送时有用，后端保存时不会用这个。
                    delete params.replayMsg.replayMsg;//不想发送那么多消息;
                 }
+                this.sending = true;
                 sendMsg(params).then(rs=>{
+                   this.sending = false;
                    this.msg = '';
                    this.replayMsg = null;
+                }).catch(e=>{
+                    this.sending = false;
                 })
             }
             
@@ -489,6 +496,15 @@ export default {
     },
     mounted:function(){
         this.initContextMenu();
+        this.getApp().$on('resize',()=>{
+            var scroller = this.scroller;
+            if(this.msgInputFocus== true){
+                scroller.refresh();//内部重新计算宽高
+                setTimeout(()=>{//refresh不会立马在dom中响应并计算。
+                    scroller.scrollTo(0,scroller.maxScrollY,0);
+                })
+            }  
+        });
     },
     beforeRouteEnter:function(to,form,next){
         next(vm=>{
