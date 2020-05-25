@@ -128,7 +128,7 @@ export default {
             })
         },
         handlerViewTask(task){
-            window.location.href = `/Hermes/detail/${task.listId}/0?name=${task.listName}&transCode=${task.transCode}`;
+            this.$router.push(`/detail/${task.listId}/0?name=${task.listName}&transCode=${task.transCode}`);
         },
         // 上拉加载
         onPullingUp() {
