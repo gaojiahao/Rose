@@ -75,7 +75,7 @@
                 <textarea class="msg-input"  v-model="msg" type="text" ref="msgInput" @focus="showExtraInput=false;showEmotion = false;msgInputFocus=true;" @blur="msgInputFocus=false" @keyup="checkAt"></textarea>
                 <i class="icon-emotion" @click="showEmotion = !showEmotion;showExtraInput=false;"></i>
                 <i class="icon-add-more" @click="toggleWrapper" v-show="!msg.trim()"></i>
-                <span class="btn-send" v-if="msg.trim()" @click="sendTextMsg">发送</span>
+                <span class="btn-send" v-if="msg.trim()" @click="sendTextMsg" tabIndex="-1">发送</span>
             </div>
             <div class="extra-input-wrapper" v-show="showExtraInput">
                 <div>
@@ -256,13 +256,14 @@ export default {
         },
         sendTextMsg(){
             var  groupId = this.group.groupId,
+                 input = this.$refs.msgInput,
                  params = {
                      groupId:groupId,
 			         content:this.msg,
 			         imType:1
                  };
 
-            
+            input.focus();
             if (this.msg.trim() != ''){
                 if(this.replayMsg){
                    params.replayId = this.replayMsg.id;
