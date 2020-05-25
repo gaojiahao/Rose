@@ -230,6 +230,7 @@ export default {
                    this.addNewGroup(msg);
                     break;
                 case '103':
+                    this.setMsgReadCount();
                     this.setAppNoticeBadge();
                 default:
                     break;
@@ -267,6 +268,13 @@ export default {
             });
         },
         /**
+         * 设置消息已读未读数
+         */
+        setMsgReadCount(msg){
+            var group;
+            
+        },
+        /**
          * 处理消息信息
          */
         addMsg(msg){
@@ -276,9 +284,6 @@ export default {
                 group;
 
             if (this.groups.length){
-                //snack.huang 如果这里试用groupIdToIndex，会造成混乱
-                // index = this.groupIdToIndex[groupId];
-                // group = this.groups[index];
                 this.groups.map(g=>{
                     if(g.groupId === msg.groupId){
                         group = g;

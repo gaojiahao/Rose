@@ -43,7 +43,7 @@
                                 v-else
                                 class="message-read" 
                                 @click="openMessageDetail(msg)"
-                                :style="{color:'#8bc8da',cursor:'pointer',borderColor: '#8bc8da'}">
+                                :style="{color:'#3296fa',cursor:'pointer',borderColor: '#3296fa'}">
                                 {{ msg.checked }}
                             </span>
                         </span>
