@@ -72,7 +72,7 @@
                 </span>
             </div> 
             <div class="input-wrapper">
-                <textarea class="msg-input"  v-model="msg" type="text" ref="msgInput" @focus="showExtraInput=false;showEmotion = false" @keyup="checkAt"></textarea>
+                <textarea class="msg-input"  v-model="msg" type="text" ref="msgInput" @focus="showExtraInput=false;showEmotion = false;msgInputFocus=true;" @blur="msgInputFocus=false" @keyup="checkAt"></textarea>
                 <i class="icon-emotion" @click="showEmotion = !showEmotion;showExtraInput=false;"></i>
                 <i class="icon-add-more" @click="toggleWrapper" v-show="!msg.trim()"></i>
                 <span class="btn-send" v-if="msg.trim()" @click="sendTextMsg">发送</span>
@@ -149,6 +149,7 @@ export default {
             showExtraInput:false,//图片和文件输入框
             showContextMenu:false,//右键菜单
             showAtMemberList:false,//@群成员
+            msgInputFocus:false,
             fileDlgContext:null,//文件消息框,
             focusMsgId:null//得到焦点的消息id
         }
@@ -489,6 +490,15 @@ export default {
     },
     mounted:function(){
         this.initContextMenu();
+        this.getApp().$on('resize',()=>{
+            var scroller = this.scroller;
+            if(this.msgInputFocus== true){
+                scroller.refresh();//内部重新计算宽高
+                setTimeout(()=>{//refresh不会立马在dom中响应并计算。
+                    scroller.scrollTo(0,scroller.maxScrollY,0);
+                })
+            }  
+        });
     },
     beforeRouteEnter:function(to,form,next){
         next(vm=>{
