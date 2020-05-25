@@ -12,11 +12,11 @@
     </div>
     <div class="header">
       <div class="title-form">{{`单位：${localCurrency}`}}</div>
-      <div class="swiper-container-header">
-        <div class="box">
-          <div class="div">{{headInfo.firstName}}</div>
-          <div class="div">{{headInfo.LastName}}</div>
-          <div v-if="headInfo.currentYearName" class="div">{{headInfo.currentYearName}}</div>
+      <div class="swiper-container swiper-container-header">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide" style="width:50%">{{headInfo.firstName}}</div>
+          <div class="swiper-slide" style="width:50%">{{headInfo.LastName}}</div>
+          <div v-if="headInfo.currentYearName" class="swiper-slide" style="width:100%">{{headInfo.currentYearName}}</div>
         </div>
       </div>
     </div>
@@ -32,9 +32,9 @@
           </div>
         </div>
       </div>
-      <div class="part-right">
-        <div class="box">
-          <div class="div">
+      <div class="swiper-container part-right">
+        <div class="swiper-wrapper box">
+          <div class="swiper-slide div" style="width:50%">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
                   :class="{'final-total': item.total || item.bigSubject}"
@@ -43,7 +43,7 @@
               </div>
             </div>
           </div>
-          <div class="div">
+          <div class="swiper-slide div" style="width:50%">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
                   :class="{'final-total': item.total || item.bigSubject}"
@@ -52,7 +52,7 @@
               </div>
             </div>
           </div>
-          <div v-if="headInfo.currentYearName" class="div">
+          <div v-if="headInfo.currentYearName" class="swiper-slide div" style="width:100%">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
                   :class="{'final-total': item.total || item.bigSubject}"
@@ -171,10 +171,17 @@
       // 初始化swiper
       initSwiper() {
         this.$nextTick(() => {
-          this.partRightSwiper = new this.Swiper('.part-right');
-          this.headerSwiper = new this.Swiper('.swiper-container-header');
+          this.partRightSwiper = new this.Swiper('.part-right',{slidesPerView : 'auto',
+          longSwipersRadio: 0.9,
+          freeMode: true,
+          });
+          this.headerSwiper = new this.Swiper('.swiper-container-header',{slidesPerView : 'auto',
+          longSwipersRadio: 0.9,
+          freeMode: true,
+          });
           this.partRightSwiper.controller.control = this.headerSwiper;
           this.headerSwiper.controller.control = this.partRightSwiper;
+          
         })
       },
       //获取企业货币
@@ -207,7 +214,7 @@
         this.endDate = dateFormat(new Date(), 'YYYY-MM-DD');
       }
       // 初始化数据
-      //this.initSwiper();
+      this.initSwiper();
       this.getData();
       this.getLocalCurrencyData();
     }
@@ -253,6 +260,7 @@
       box-sizing: border-box;
       .title-form{
         font-size: .14rem;
+        width: 50%;
         // text-decoration:underline
         // font-weight: bold;
       }
@@ -264,17 +272,6 @@
       height: 100%;
       text-align: right;
       font-size: .14rem;
-      .box{
-        width: 100%;
-        .div:nth-child(1){
-          width: 33.333333%;
-          float: left;
-        }
-        .div{
-          width: 33.333333%;
-          float: left;
-        }
-      }
     }
 
     .scroll-container {
@@ -287,6 +284,7 @@
     .part-left, .part-right {
       width: 50%;
       font-size: .14rem;
+
       .content-item {
         position: relative;
         padding: .05rem .15rem;
@@ -341,23 +339,27 @@
         }
       }
     }
-    .part-right {
-      text-align: right;
-      .box{
-        width: 100%;
-        .div:nth-child(1){
-          float: left;
-          width: 33.333333%;
+    .swiper-container {
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      list-style: none;
+      padding: 0;
+      z-index: 1;
+      .swiper-wrapper {
+        .swiper-slide:nth-child(1) {
+          width: 25%;
         }
-        .div:nth-child(2){
-          width: 33.333333%;
-          float: left;
+        .swiper-slide:nth-child(2) {
+          width: 25%;
         }
-        .div:nth-child(3){
-          width: 33.333333%;
-          float: right;
+        .swiper-slide:nth-child(3) {
+          width: 50%;
         }
       }
+    }
+    .part-right {
+      text-align: right;
       .bg-color{
         background-color: #eee;
       }
