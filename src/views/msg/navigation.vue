@@ -230,7 +230,7 @@ export default {
                    this.addNewGroup(msg);
                     break;
                 case '103':
-                    this.setMsgReadCount();
+                    this.setMsgReadCount(msg);
                     this.setAppNoticeBadge();
                 default:
                     break;
@@ -271,8 +271,23 @@ export default {
          * 设置消息已读未读数
          */
         setMsgReadCount(msg){
-            var group;
-            
+            var group,
+                vm = this;
+
+            if (this.group && this.group.groupId == msg.groupId){//如果是当前消息页面的消息
+
+                this.msgList.map(m=>{
+                    if(msg.messages.includes(m.id)){
+                        m.checked++;
+                    }
+                });
+                    
+                if(this.$refs.groupMsg != null){ //如果页面是打开的。
+                    setTimeout(function(){
+                        vm.$refs.groupMsg.scrollToButtom();
+                    });
+                }
+            }
         },
         /**
          * 处理消息信息
