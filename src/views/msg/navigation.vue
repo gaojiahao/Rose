@@ -25,7 +25,7 @@
                 >
                 <LoadMore :show-loading="showLoading" v-show="showLoading"></LoadMore>
                 <div class = 'group-cells'>
-                    <div class="group-cell" :class="{'isTop':group.focus}" v-for="group in groups" :key = "group.id" @click="toMsg(group)">
+                    <div class="group-cell" :class="{'isTop':group.focus}" v-for="group in sortedGroup" :key = "group.id" @click="toMsg(group)">
                         <img class="group-ava" :src="group.groupIcon" @error="getDefaultPhoto(group)">
                         <div class="group-body">
                             <div class="group-name">
@@ -87,6 +87,12 @@ export default {
         Bus.$on('updateGroups', () => {
             this.initGroup();
         });
+    },
+    computed:{
+        sortedGroup:function(){
+            var a =  this.sortKey(this.groups,'modTime');
+            return a;
+        }
     },
     activated:function(){
         if(this.refresh){//如果需要刷新
@@ -193,7 +199,7 @@ export default {
             console.log('订阅消息');
             ds.event.subscribe('roletaskIm/'+ token, data => {
                 console.log('msg',data);
-                this.distributeMsg(data);
+                this.distributeMsg(data); 
             });
         },
         /**
@@ -218,12 +224,28 @@ export default {
                 case '3':
                 case '4':
                     this.addMsg(msg);
+                    this.setAppNoticeBadge();
                     break;
                 case '100':
                    this.addNewGroup(msg);
                     break;
+                case '103':
+                    this.setAppNoticeBadge();
                 default:
                     break;
+            }
+        },
+        setAppNoticeBadge(){
+
+            if(!window.isApp) return;
+            var c = 0;
+            this.groups.map(g=>{
+                c = c+g.msgCount;
+            });
+            if(c){
+                cordova.plugins.notification.badge.set(c);
+            }else{
+                cordova.plugins.notification.badge.clear();
             }
         },
         addNewGroup(msg){
@@ -254,8 +276,14 @@ export default {
                 group;
 
             if (this.groups.length){
-                index = this.groupIdToIndex[groupId];
-                group = this.groups[index];
+                //snack.huang 如果这里试用groupIdToIndex，会造成混乱
+                // index = this.groupIdToIndex[groupId];
+                // group = this.groups[index];
+                this.groups.map(g=>{
+                    if(g.groupId === msg.groupId){
+                        group = g;
+                    }
+                });
                 if (group != null){ //如果存在群消息列表里。
                     group.modTime = msg.crtTime;//修改时间
                     if (msg.photo == null){
@@ -267,6 +295,11 @@ export default {
                     } else {
                         group.lastMsg = msg;
                     }
+
+                    if(!msg.isMySelf){
+                        group.msgCount++;
+                    }
+
                     if(window.isApp && !msg.isMySelf){ //添加app的消息提醒
                         this.addNotification(group,msg);
                     }
@@ -316,6 +349,7 @@ export default {
                 foreground: true,
                 icon:g.groupIcon || groupIcon
             });
+            navigator.vibrate(300);
         },
         
         /**
@@ -405,6 +439,13 @@ export default {
                 })
             }
         },
+        sortKey(array,key){
+            return array.sort(function(a,b){
+                var x = a[key];
+                var y = b[key];
+                return ((x<y)?1:(x>y)?-1:0)
+            })
+        }
     },
     filters:{
        timeChange:function(time){

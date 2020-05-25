@@ -74,8 +74,8 @@
             <div class="input-wrapper">
                 <textarea class="msg-input"  v-model="msg" type="text" ref="msgInput" @focus="showExtraInput=false;showEmotion = false" @keyup="checkAt"></textarea>
                 <i class="icon-emotion" @click="showEmotion = !showEmotion;showExtraInput=false;"></i>
-                <i class="icon-add-more" @click="toggleWrapper" v-show="!msg"></i>
-                <span class="btn-send" v-if="msg" @click="sendTextMsg">发送</span>
+                <i class="icon-add-more" @click="toggleWrapper" v-show="!msg.trim()"></i>
+                <span class="btn-send" v-if="msg.trim()" @click="sendTextMsg">发送</span>
             </div>
             <div class="extra-input-wrapper" v-show="showExtraInput">
                 <div>
@@ -262,7 +262,7 @@ export default {
                  };
 
             
-            if (this.msg != ''){
+            if (this.msg.trim() != ''){
                 if(this.replayMsg){
                    params.replayId = this.replayMsg.id;
                    params.replayMsg = util.clone(this.replayMsg);//replayMsg内容只在ds 推送时有用，后端保存时不会用这个。
@@ -685,9 +685,7 @@ export default {
         display: inline-block;
         max-width: 70%;
         background-color: #ffffff;
-        &.rightarrow{
-            vertical-align: middle;
-        }
+        word-break: break-all;
         &.rightarrow:after{
             content: " ";
             border-width: 7px;
