@@ -10,7 +10,7 @@
          </div>
          <div class="page-body-hasNav" ref="scrollerWrapper">
             <div v-if="msgList.length" class="img-container">
-                <div v-for="(msg,index) in msgList" :key="index" class="history-img-item" @click="showImg(msg.content.id)">
+                <div v-for="(msg,index) in msgList" :key="index" class="history-img-item"   @click="imgClick(msg.content)" >
                     <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ msg.content.id">
                 </div>
             </div>
@@ -47,8 +47,13 @@ export default {
             }
             return url;
         },
-        showImg(id){
-            this.perviewImg = this.baseURL+'/H_roleplay-si/ds/downloadById?id='+ id;
+        
+        imgClick(content){
+            this.$router.push({
+                name:'imgInfo',
+                params:{id:content.id},
+                query:{name:content.conent}
+            })
         },
         getMsg(){
             var key = this.searchKey;

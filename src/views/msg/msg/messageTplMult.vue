@@ -1,7 +1,11 @@
 <template>
     <div class="mult-msg-context">
         <template v-for="file in content" v-bind="key">
-            <img height="100" :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ file.content.id" v-if="file.imType==2"/>
+           
+            <!-- <br /> -->
+            <div v-if="file.imType==2" @click="imgClick(file.content)">
+                 <img height="100" :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ file.content.id" />
+            </div>
             <div v-html="formatToEmotion(file.content)" v-else-if="file.imType==1"></div>
         </template>
     </div>
@@ -14,6 +18,15 @@ export default {
             default(){
                 return {}
             }
+        }
+    },
+    methods:{
+        imgClick(content){
+            this.$router.push({
+                name:'imgInfo',
+                params:{id:content.id},
+                query:{name:content.conent}
+            })
         }
     },
    created(){

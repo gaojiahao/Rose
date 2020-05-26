@@ -741,15 +741,7 @@ export default {
         background-color: rgb(191, 221, 255);
     }
 }
-.focus-msg .message-content{
-    &.rightarrow:after{
-        border-left-color:#f9b24757;
-    }
-    &.leftarrow:after{
-        border-right-color:#f9b24757;
-    }
-    background: #f9b24757;
-}
+
 .file-dialog-sendTo{
    display: flex;
    img{

@@ -17,18 +17,18 @@
                   </div>
               </div>
               <div class="user-detail">
-                  <p>
-                      <span class="label">手机</span>
-                      <span>{{userItem.mobile || '未知'}}</span>
-                  </p>
-                  <p>
-                      <span class="label">邮箱</span>
-                      <span>{{userItem.email || '未知'}}</span>
-                  </p>
-                  <p>
-                      <span class="label">部门</span>
-                      <span>{{userItem.groupName || '未知'}}</span>
-                  </p>
+                  <div class="user-detail-item">
+                      <div class="user-detail-item-label ">手机</div>
+                      <div class="user-detail-item-value mobile">{{userItem.mobile || '未知'}}</div>
+                  </div>
+                  <div  class="user-detail-item">
+                      <div class="user-detail-item-label ">邮箱</div>
+                      <div  class="user-detail-item-value email">{{userItem.email || '未知'}}</div>
+                  </div>
+                  <div  class="user-detail-item">
+                      <div class="user-detail-item-label">部门</div>
+                      <div  class="user-detail-item-value">{{userItem.groupName || '未知'}}</div>
+                  </div>
               </div>
               <div class="user-btn" @click="sentMemberMessage">
                   <x-button :gradients="['#39f', '#39f']">发消息</x-button>
@@ -97,6 +97,7 @@ export default{
 </script>  
 <style lang="less" scoped>
   .user-detail{
+    
     .user-info{
       display: flex;
       padding: .1rem;
@@ -111,10 +112,11 @@ export default{
       &-right{
         margin-left: .1rem;
         p{
-          font-size: .2rem;
+          font-size: .16rem;
         }
         span{
           color: #999;
+          font-size: .14rem;
         }
       }
     }
@@ -123,16 +125,48 @@ export default{
       margin-top: .1rem;
       p{
         padding: .1rem;
+        position: relative;
+      }
+      &-item::before{
+        content: " ";
+        position: absolute;
+        left: 65px;
+        top: 0;
+        right: 0;
+        height: 1px;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        color: rgba(0, 0, 0, 0.1);
+        -webkit-transform-origin: 0 0;
+        -ms-transform-origin: 0 0;
+        transform-origin: 0 0;
+        -webkit-transform: scaleY(0.5);
+        -ms-transform: scaleY(0.5);
+        transform: scaleY(0.5);
+      }
+      &-item{
+        display: flex;
+        position: relative;
+        padding: .1rem .15rem;
+        &-label{
+          flex: 1;
+        }
+        &-value{
+          flex: 6;
+
+          .mobile .email{
+            color: #1063b7;
+          }
+        }
       }
     }
     .user-btn{
-        margin-top: .3rem;
+      padding: 0rem .1rem;
+      margin-top: .3rem;
     }
     .user-header{
       padding: .1rem;
       background: #39f;
       color: #fff;
-      font-weight: bold;
     }
   }
 </style>
