@@ -1,5 +1,6 @@
 <template> 
     <div class="img-msg-content " @click="imgClick">
+        {{msg}}
         <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ content.id" height="100" />
     </div>
 </template>

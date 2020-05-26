@@ -15,15 +15,15 @@
              </div>
             <div v-if="msgList.length" class="file-container">
                 <div v-for="(msg,index) in msgList" :key="index" class="history-file-item" @click="fileClick(msg.content)">
-                    {{msg.creatorName}}
+                    <span class="creatorName">{{msg.creatorName}}</span>
                     <div class="history-file-item-info">
                         <img class="file-img" :src="msg.content|filedTypeFilter" @error= "getFileImg()">
                         <div class="history-file-item-info-content">
                             <p>{{msg.content.content}}</p>
-                            <p>{{msg.content.size}}</p>
+                            <p>{{msg.content.size}}KB</p>
                         </div>
                     </div>
-                    <div class="crtTime">{{msg.crtTime}}</div>
+                    <div class="crtTime">{{msg.crtTime | timeChangeFilter}}</div>
                 </div>
             </div>
          </div>
@@ -39,7 +39,7 @@ export default {
             searchKey:'',
             pageParam:{
                 page:1,
-                limit:30
+                limit:100
             },
             showLoading:false,
             hasNext:false
@@ -80,7 +80,8 @@ export default {
                 ...this.pageParam,
                 content:key,
                 imType:4,
-                groupId:this.$route.params.groupId
+                groupId:this.$route.params.groupId,
+                sort:JSON.stringify([{"property":"crtTime","direction":"DESC"}])
             }).then(res=>{
                 this.showLoading = false;
                 if(res.length>=this.pageParam.limit){
@@ -117,24 +118,43 @@ export default {
 }
 .history-file-item{
     position: relative;
-    padding:0.1rem 0;
+    padding: 0.1rem 0;
+    font-size: 14px;
+    border-bottom: 0.5px solid #ddd;
+    .creatorName{
+        font-size: 12px;
+    }
     .crtTime{
         position:absolute;
         right:0;
         top:0.1rem;
+        font-size: 12px;
     }
-    border-bottom:1px solid #dedede;
+    
+}
+.history-file-item:last-child{
+    border-bottom: none;
 }
 .history-file-item-info{
   display: flex;
   position: relative;
   img{
-    height: 40px;
+    height: 50px;
     border-radius: .01rem;
   }
   &-content{
       flex: 1;
       margin-left: .15rem;
   }
+}
+.history-input::-webkit-input-placeholder{
+    color:white;
+}
+
+.history-input-wrapper{
+    width: 80%;
+    .history-input{
+        border-bottom: 0.5px solid;
+    }
 }
 </style>
