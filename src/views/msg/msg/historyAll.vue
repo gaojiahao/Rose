@@ -10,7 +10,7 @@
          </div>
          <div class="page-body-hasNav" ref="scrollerWrapper">
              <div v-if="searchKey == ''">
-                 <h2>快速查找聊天内容</h2>
+                 <P>快速查找聊天内容</P>
                  <div class="history-link flex">
                      <span @click="$parent.showHistoryImg=true">图片</span>
                      <span @click="$parent.showHistoryFile=true">文件</span>
@@ -111,22 +111,26 @@ export default {
 </script>
 <style lang='less'>
 .msg-history-all{
-   h2{
-      text-align: center;
-      font-size:16px;
-      line-height: 32px;
-      color:#dedede;
+   p{
+    text-align: center;
+    color: #ddd;
+    line-height: 50px;
    }
 }
 .history-link span{
    padding:0.2rem;
+   color: #1761aa;
 }
 .history-input-wrapper{
   flex:1;
-  border-bottom:1px solid #dedede;
 }
 .history-input{
-  width: 100%;
+    width: 100%;
+    height: 75%;
+    border-bottom: 0.5px solid white;
+}
+.history-input::-webkit-input-placeholder{
+    color:white;
 }
 .history-item{
   display: flex;

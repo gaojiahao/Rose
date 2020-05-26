@@ -59,6 +59,8 @@
 import { XInput,Icon,CheckIcon,XButton } from 'vux'
 import RScroll from 'plugins/scroll/RScroll'
 import { getEmployee } from '@/service/msgService'
+import WebContext from 'service/commonService'
+import { initWebContext } from 'service/commonService'
 export default {
     name:'MemberSelector',
     components: {
@@ -102,7 +104,10 @@ export default {
           this.searchValue = "";
           this.currentPage = 1
           this.selectMembers = []
-          this.getAllusers()
+          initWebContext().then(() => {
+                this.currentUser = WebContext.WebContext.currentUser
+                this.getAllusers()
+          })
         } 
       },
       searchValue: function(text) {
@@ -130,6 +135,7 @@ export default {
         },
         selectMember(list,index) {
           if(list.isOrigin) return
+          if(this.currentUser.userId == list.userId) return;
 
           if(!list.check){
             this.selectMembers.push({
@@ -175,7 +181,7 @@ export default {
         }
     },
     mounted() {
-        
+       
     }
 }
 </script>

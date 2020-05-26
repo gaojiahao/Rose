@@ -43,7 +43,7 @@
                             <sup class="badge-count">{{group.msgCount}}</sup>
                         </span>
                         <div class="modTime">
-                            {{group.modTime | timeChange}}
+                            {{group.modTime | timeChangeFilter}}
                         </div> 
                     </div>
                 </div>
@@ -230,6 +230,7 @@ export default {
                    this.addNewGroup(msg);
                     break;
                 case '103':
+                    this.setMsgReadCount(msg);
                     this.setAppNoticeBadge();
                 default:
                     break;
@@ -267,6 +268,28 @@ export default {
             });
         },
         /**
+         * 设置消息已读未读数
+         */
+        setMsgReadCount(msg){
+            var group,
+                vm = this;
+
+            if (this.group && this.group.groupId == msg.groupId){//如果是当前消息页面的消息
+
+                this.msgList.map(m=>{
+                    if(msg.messages.includes(m.id)){
+                        m.checked++;
+                    }
+                });
+                    
+                if(this.$refs.groupMsg != null){ //如果页面是打开的。
+                    setTimeout(function(){
+                        vm.$refs.groupMsg.scrollToButtom();
+                    });
+                }
+            }
+        },
+        /**
          * 处理消息信息
          */
         addMsg(msg){
@@ -276,9 +299,6 @@ export default {
                 group;
 
             if (this.groups.length){
-                //snack.huang 如果这里试用groupIdToIndex，会造成混乱
-                // index = this.groupIdToIndex[groupId];
-                // group = this.groups[index];
                 this.groups.map(g=>{
                     if(g.groupId === msg.groupId){
                         group = g;
@@ -401,7 +421,6 @@ export default {
                 requestUrl = getGroupByUserId;
             }else{
                 userNames.push(this.currentUser.name);
-                userIds.push(this.currentUser.userId);
                 params = {
                     groupId: null,
                     users: userIds.join(','),
@@ -446,30 +465,6 @@ export default {
                 return ((x<y)?1:(x>y)?-1:0)
             })
         }
-    },
-    filters:{
-       timeChange:function(time){
-           var diffTime = (new Date().getTime() - new Date(time))/1000,
-               str = '';
-           
-           if(diffTime < 60){
-               str = '刚刚'
-           } else if(diffTime < 60*60){
-               str = Math.floor(diffTime/60) + '分钟前';
-           }else if (diffTime < 60 * 60 * 24)
-            {
-                str = Math.floor(diffTime/(60*60))+'小时前 ';
-            }
-            else if (diffTime < 60 * 60 * 24 * 2)
-            {
-                str = Math.floor(diffTime/(60*60*24)) == 1 ? '昨天 ' : '前天 ';
-            }
-            else
-            {
-                str = util.formatDateTime(time);
-            }
-            return str;
-       }
     }
 }
 </script>
