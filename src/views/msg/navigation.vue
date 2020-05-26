@@ -421,7 +421,6 @@ export default {
                 requestUrl = getGroupByUserId;
             }else{
                 userNames.push(this.currentUser.name);
-                userIds.push(this.currentUser.userId);
                 params = {
                     groupId: null,
                     users: userIds.join(','),

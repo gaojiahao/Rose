@@ -214,7 +214,6 @@ export default {
                 requestUrl = createGroup;
                 userNames.push(this.currentUser.name);
                 userNames.push(this.allMembers[0].nickname);
-                userIds.push(this.currentUser.userId);
                 userIds.push(this.allMembers[0].userId);
                 params.users = userIds.join(',');
                 params.name = userNames.join(',');
