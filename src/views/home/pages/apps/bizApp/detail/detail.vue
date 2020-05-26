@@ -308,7 +308,7 @@ export default {
         transCode = this.$route.query.transCode;
 
     if(lastTransCode!= null && lastTransCode != transCode){
-        fillPage.reload && fillPage.reload();
+        fillPage && fillPage.reload && fillPage.reload();
     }
     if (reload) {
       this.initPage();

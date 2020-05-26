@@ -3,21 +3,21 @@
     <keep-alive>
       <!-- 页面 -->
       <router-view v-if="$route.meta.keepAlive">
-        <x-header
-          v-if="hasNav"
-          :title="$route.meta.title || ''"  
-          slot = 'nav'
-        >
-        </x-header>
+        <div class="page-navigation" 
+        v-if="hasNav"
+        slot = 'nav'>
+          <div class="goback" @click="$router.go(-1)"><i class="iconfont icon-back1"></i></div>
+          <div class="body">{{$route.meta.title || ''}}</div>
+        </div>
       </router-view>
     </keep-alive>
     <router-view v-if="!$route.meta.keepAlive">
-      <x-header
+      <div class="page-navigation" 
         v-if="hasNav"
-        :title="$route.meta.title || ''"  
-        slot = 'nav'
-      >
-      </x-header>
+        slot = 'nav'>
+          <div class="goback" @click="$router.go(-1)"><i class="iconfont icon-back1"></i></div>
+          <div class="body">{{$route.meta.title || ''}}</div>
+      </div>
     </router-view>
 
     <!-- 底部导航栏 -->
@@ -38,13 +38,13 @@
 import util from '@/common/util';
 import platform from './plugins/platform/index'
 import { getMsgList } from 'service/msgService'
-import { Badge,XHeader} from 'vux'
+import { Badge} from 'vux'
 var DS = require('deepstream.io-client-js');
 var cordova = window.cordova;
 export default {
   name: 'app',
   data() {
-    var hasNav = platform.isIPhone && window.isApp
+    var hasNav = true;//window.isApp;//platform.isIPhone && 
     return{
       tablist: [
         {title: '消息', path: '/msg', icon:'icon-message1'},
@@ -61,7 +61,7 @@ export default {
     }
   },
   components:{
-    Badge,XHeader
+    Badge
   },
   watch: {
     $route(to, from) {

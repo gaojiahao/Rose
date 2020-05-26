@@ -1,8 +1,9 @@
 <template>
   <div class="pages" :class="{'no-add': !action.add}">
-    <div class="content">
+    <div class="content">  
       <!-- 顶部区域 -->
       <div class="app_top">
+        <slot name="nav"></slot>
         <!-- 搜索栏 -->
         <search-icon @search='searchList' :placeHolder='placeHolder'></search-icon>
         <tab :line-width='2' default-color='#333' active-color='#3296FA'>
@@ -372,6 +373,8 @@
   .content {
     height: calc(100% - .78rem);
     overflow: auto;
+    display: flex;
+    flex-direction: column;
   }
 
   .app_top {
@@ -382,7 +385,7 @@
     overflow: hidden;
     position: relative;
     box-sizing: border-box;
-    height: calc(100% - .94rem);
+    flex:1
   }
 
   .basic-item-wrapper {

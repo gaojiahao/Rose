@@ -1,5 +1,8 @@
 <template>
-  <div class="inPage">
+  <div class="home">
+    <div class="page-navigation">
+            应用
+    </div>
     <div class="content" ref="home">
       <div class="wrapper">
         <div class="top-part-container">
@@ -470,12 +473,17 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+.home{
+   height: calc(100% - 0.49rem);
+   display:flex;
+   flex-direction: column;
+}
 .vux-1px-b:after {
   border-color: #e8e8e8;
 }
 .content {
   width: 100%;
-  height: calc(100% - 0.49rem);
+  flex:1;
   overflow: hidden;
   background-color: #fff;
   .wrapper {
