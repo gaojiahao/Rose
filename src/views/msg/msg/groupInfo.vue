@@ -6,7 +6,7 @@
                 <i class="iconfont icon-back1"></i>
             </div>
             <div class="body">
-                聊天信息<span v-if="group.groupType == 'G'">({{group.msgCount}})</span>
+                聊天信息<span v-if="group.groupType == 'G'">({{allMembers.length}})</span>
             </div>
          </div>                             
          <div class="page-body-hasNav" ref="scrollerWrapper">
@@ -23,7 +23,7 @@
                 </group>
                 <group>
                     <div @click="showMemberDetail">
-                        <cell title="群成员" is-link :value="allMembers.length" />
+                        <cell title="群成员" is-link :value="`共${allMembers.length}人`" />
                         <div class="members">
                             <div class="members-item" v-for="(member,index) of allMembers" :key="index">
                                 <img 
