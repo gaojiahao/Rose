@@ -22,7 +22,7 @@
                         @on-blur="onUserCodeBlur" 
                         text-align="left" 
                         :showClear="false"
-                        placeholder="请输入手机号"     
+                        placeholder="请输入手机号/账号"     
                         v-model="userCode">
                         <i slot="right" class="weui-icon weui-icon-clear" v-show="isLoginInpFoc && userCode!=''" @click="userCode=''"></i>
                     </x-input>
