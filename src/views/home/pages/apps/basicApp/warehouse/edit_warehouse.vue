@@ -1,5 +1,6 @@
 <template>
   <div class='pages warehouse-page'>
+    <r-nav/>
     <r-scroll class='content' :options="scrollOptions">
       <div class='mater_baseinfo1'>
         <div class="mater_pic1">

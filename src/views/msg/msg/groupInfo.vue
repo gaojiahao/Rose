@@ -23,7 +23,11 @@
                 </group>
                 <group>
                     <div @click="showMemberDetail">
+<<<<<<< HEAD
                         <cell title="群成员" is-link :value="`共${allMembers.length}人`" />
+=======
+                        <cell title="群成员" v-if="group.groupType=='G'" is-link :value="allMembers.length" />
+>>>>>>> 5982694a4d0f9b4c944d37dcbfe22ec1d39b2697
                         <div class="members">
                             <div class="members-item" v-for="(member,index) of allMembers" :key="index">
                                 <img 
@@ -42,7 +46,7 @@
                 <div class="weui-cells">
                     <div class="weui-cell weui-cell_access">
                         <div class="vux-cell-primary">
-                            查找群聊天记录
+                            查找聊天记录
                         </div>
                         <div class="weui-cell__ft" @click="showHistoryAll = true">
                             更多
