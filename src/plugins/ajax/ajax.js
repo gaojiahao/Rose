@@ -63,6 +63,8 @@ fly.interceptors.response.use(
     console.log('error:', error);
     // 响应拦截 报错标识
     if (error.status === 401) {
+      localStorage.clear();
+      sessionStorage.clear();
       this.lock();
       return tokenService.login()
       .then((token) => {

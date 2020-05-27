@@ -142,7 +142,7 @@ export default {
 
             this.$loading.show();
             tokenService.pcLogin(params).then(data=>{
-                this.$router.replace('/home');
+                this.$router.replace('/msg');
                 this.$loading.hide();
                 localStorage.setItem('userCode',this.userCode);
             }).catch(err=>{
