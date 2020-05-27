@@ -24,7 +24,7 @@
                 <group>
                     <div @click="showMemberDetail">
                         <cell title="群成员" v-if="group.groupType=='G'" is-link :value="`共${allMembers.length}人`" />
-                        <div class="members">
+                        <div class="members" v-if="group.groupType=='G'" >
                             <div class="members-item" v-for="(member,index) of allMembers" :key="index">
                                 <img 
                                     v-if="index<6"
@@ -33,11 +33,13 @@
                                 <i v-if="index===6" class="iconfont icon-more1"></i>
                             </div>
                         </div>
+                        <cell  :title="group.groupName" is-link  v-if="group.groupType=='P'">
+                            <img slot="icon" width="45" style="display: block;margin-right: 5px;border-radius: .02rem;" :src="group.groupIcon" >
+                        </cell>
                     </div>
-                    <div class="add-btn" @click="showMemberSelector">
-                        <span class="add-icon">+</span>
-                        <span class="add-text">添加成员</span>
-                    </div>
+                    <cell class="add-btn" @click.native="showMemberSelector" title="添加成员">
+                        <span class="add-icon" slot="icon">+</span>
+                    </cell>
                 </group>
                 <div class="weui-cells">
                     <div class="weui-cell weui-cell_access">
