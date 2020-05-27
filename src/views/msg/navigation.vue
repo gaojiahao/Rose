@@ -26,7 +26,10 @@
                 <LoadMore :show-loading="showLoading" v-show="showLoading"></LoadMore>
                 <div class = 'group-cells'>
                     <div class="group-cell" :class="{'isTop':group.focus}" v-for="group in sortedGroup" :key = "group.id">
-                        <touch @menuContext.stop="onNavContextMenu(group)" style="display: inherit;" @click="toMsg(group)">
+                        <touch 
+                            @menuContext.stop="onNavContextMenu(group)" 
+                            style="display: inherit;" 
+                            @click="toMsg(group)">
                             <img class="group-ava" :src="group.groupIcon" @error="getDefaultPhoto(group)">
                             <div class="group-body">
                                 <div class="group-name">
@@ -51,7 +54,8 @@
                 </div>
                 </RScroll>
         </div><!--page end-->
-        <nav-context-menu v-show="showNavContextMenu" :group="navGroup" ref="navContextMenu"></nav-context-menu>
+        <nav-context-menu v-show="showNavContextMenu" :group="navGroup">
+        </nav-context-menu>
         <router-view :group="group" :msgList="msgList" ref="groupMsg"></router-view>
         <member-selector 
             ref="memberSelector"

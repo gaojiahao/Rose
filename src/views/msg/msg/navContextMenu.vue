@@ -1,9 +1,16 @@
 <template>
     <div class="weui-skin_android">
-        <div class="weui-mask" @click="$parent.showNavContextMenu = false;$emit('off')"></div>
+        <div 
+          class="weui-mask" 
+          @click="$parent.showNavContextMenu = false;$emit('off')">
+        </div>
         <div class="weui-actionsheet">
             <div class="weui-actionsheet__menu">
-                <div class="weui-actionsheet__cell" @click="onFocusChange">{{ group.focus?'取消置顶':'置顶' }}</div>
+                <div 
+                  class="weui-actionsheet__cell" 
+                  @click="onFocusChange">
+                  {{ group.focus?'取消置顶':'置顶' }}
+                </div>
             </div>
         </div>
     </div>
