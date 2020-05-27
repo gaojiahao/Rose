@@ -48,7 +48,8 @@
                             </span>
                         </span>
                         <div class="message-content" :class="[msg.isMySelf==1?'rightarrow':'leftarrow']" >
-                            <div v-if="msg.replayMsg" style="border-left: 3px solid rgb(153, 153, 153); padding: 0px 8px; cursor: pointer;" @click="goTop(msg.replayMsg.id)">
+                            <div v-if="msg.replayMsg" style="border-left: 3px solid rgb(153, 153, 153);padding: 0px 8px;cursor: pointer;background-color: rgba(0, 0, 0, 0.1);text-align: left;color: rgba(0, 0, 0, 0.6);" @click="goTop(msg.replayMsg.id)">
+                               {{msg.replayMsg.creatorName}}:
                                 <MessageTplText :msg="msg.replayMsg" v-if="msg.replayMsg.imType == 1"></MessageTplText>
                                 <MessageTplImg :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 2"></MessageTplImg>
                                 <MessageTplMult :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 3"></MessageTplMult>
@@ -68,11 +69,11 @@
             <div class="replayMsg" v-if="replayMsg">
                 <span>{{replayMsg.creatorName}}:</span>
                 <div class="replayMsg-content">{{replayMsg|replayContent}}</div>
-                <span class="icon-close" @click="replayMsg = null">
+                <span class="iconfont icon-close" @click="replayMsg = null">
                 </span>
             </div> 
             <div class="input-wrapper">
-                <textarea class="msg-input"  v-model="msg" type="text" ref="msgInput" @focus="showExtraInput=false;showEmotion = false;msgInputFocus=true;" @blur="msgInputFocus=false" @keyup="checkAt"></textarea>
+                <textarea class="msg-input" v-model="msg" type="text" ref="msgInput" @focus="showExtraInput=false;showEmotion = false;msgInputFocus=true;" @blur="msgInputFocus=false;" @keyup="checkAt"></textarea>
                 <i class="icon-emotion" @click="showEmotion = !showEmotion;showExtraInput=false;"></i>
                 <i class="icon-add-more" @click="toggleWrapper" v-show="!msg.trim()"></i>
                 <span class="btn-send" v-if="msg.trim()" @click="sendTextMsg" tabIndex="-1">发送</span>
@@ -253,6 +254,9 @@ export default {
          // 选中表情
         emotionSelected(val) {
             this.msg += val;
+            setTimeout(() => { //处理高度增长
+               this.autoGrow(); 
+            });
         },
         sendTextMsg(){
             var  groupId = this.group.groupId,
@@ -275,6 +279,9 @@ export default {
                 sendMsg(params).then(rs=>{
                    this.sending = false;
                    this.msg = '';
+                   setTimeout(()=>{
+                       this.autoGrow();
+                   })
                    this.replayMsg = null;
                 }).catch(e=>{
                     this.sending = false;
@@ -363,6 +370,7 @@ export default {
                 lastkey = msg&&msg[msg.length-1];
 
            // console.log(e);
+            this.autoGrow();
             if (this.group.groupType != 'G') return;
 
             if (e.key == '@' || (e.key != 'Backspace' && lastkey == '@')){//手机端是拿不到e.key的。
@@ -371,6 +379,35 @@ export default {
 
             }
         },
+        autoGrow(){
+            var elem = this.$refs.msgInput,
+                extra = 10,
+                maxHeight = 150,
+                height = elem.offsetHeight,
+                newHeight,
+                style = elem.style,
+                minHeight = 36,
+                padding = parseInt(getStyle('paddingTop')) + parseInt(getStyle('paddingBottom'));
+            
+            if (elem._length === elem.value.length) return;
+                elem._length = elem.value.length;
+
+            style.height = minHeight + 'px';
+            if(elem.scrollHeight > minHeight){
+                if (maxHeight && elem.scrollHeight > maxHeight) {
+                    newHeight = maxHeight - padding;
+                    style.overflowY = 'auto';
+                } else {
+                    newHeight = elem.scrollHeight - padding;
+                    style.overflowY = 'hidden';
+                };
+                style.height = newHeight + extra + 'px';
+            }
+            function getStyle(name){
+                 return getComputedStyle(elem, null)[name];
+            }
+        },
+        
         selectAtMember(nickName){
              this.msg += nickName+' ';
              this.showAtMemberList = false;
@@ -568,6 +605,7 @@ export default {
     flex:1;
     position: relative;
     background-color: #9e9e9e1c;
+    font-size: 14px;
     .page-component-up{
         position:absolute;
         bottom:0.2rem;
@@ -579,23 +617,51 @@ export default {
 .msgList-footer {
     position: relative;
     .replayMsg{
-        display:flex;
-        padding:15px;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        padding: .10rem;
+        color: #999999;
+        border-top: 0.5px solid #ddd;
         .replayMsg-content{
             flex:1
         }
         .icon-close{
-            width:.25rem;
-            height:.25rem;
+            width:.16rem;
+            height:.16rem;
         }
     }
     .input-wrapper{
         padding: .08rem .1rem;
-        height: .5rem;
         background-color: #f3f1f2;
         font-size: 0;
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
+
+        pre{
+            width: calc(100% - 1rem);
+            min-height: 30px;
+            overflow: hidden;
+        }
+        textarea{
+            display: inline-block;
+            padding: .05rem .1rem;
+            width: calc(100% - 1rem);
+            outline: none;
+            vertical-align:baseline;
+            border-radius: 0.05rem;
+            border: none;
+            background-color: #fff;
+            color: #2d2d2d;
+            font-size: .16rem;
+            height: 36px;
+            resize: none;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        } 
         .icon-emotion{
             display: inline-block;
             margin-left: .1rem;
@@ -603,7 +669,6 @@ export default {
             height: .3rem;
             background: url(~@/assets/emotion.png) no-repeat;
             background-size: 100% 100%;
-            vertical-align: top;
         }
         .icon-add-more{
             display: inline-block;
@@ -612,26 +677,7 @@ export default {
             height: .3rem;
             background: url(~@/assets/iconfont/add.png) no-repeat;
             background-size: 100% 100%;
-            vertical-align: top;
         }
-        textarea{
-            display: inline-block;
-            padding: .05rem .1rem;
-            width: calc(100% - 1rem);
-            height: 100%;
-            outline: none;
-            border-radius: 0.05rem;
-            border: none;
-            background-color: #fff;
-            color: #2d2d2d;
-            font-size: .16rem;
-            resize: none;
-            -webkit-box-sizing: border-box;
-            box-sizing: border-box;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-        } 
         .btn-send{
             display: inline-block;
             margin-left: .1rem;
@@ -641,7 +687,7 @@ export default {
             background-color: #5077aa;
             color: #fff;
             text-align: center;
-            vertical-align: top;
+            vertical-align: bottom;
             font-size: .16rem;
         }
     }  
@@ -695,7 +741,7 @@ export default {
     }
     &-content{
         border-radius: 5px;
-        padding: .05rem;
+        padding: .08rem;
         position: relative;
         margin: .02rem .06rem;
         display: inline-block;

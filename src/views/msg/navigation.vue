@@ -288,10 +288,14 @@ export default {
                 vm = this;
 
             if (this.group && this.group.groupId == msg.groupId){//如果是当前消息页面的消息
-
                 this.msgList.map(m=>{
                     if(msg.messages.includes(m.id)){
-                        m.checked++;
+                        if(this.group.groupType ==='G'){
+                            m.checked++;
+                        }else{
+                            m.allRead = true;
+                        }
+                        
                     }
                 });
                     
@@ -472,10 +476,13 @@ export default {
             }
         },
         sortKey(array,key){
-            return array.sort(function(a,b){
+            array =  array.sort(function(a,b){
                 var x = a[key];
                 var y = b[key];
                 return ((x<y)?1:(x>y)?-1:0)
+            })
+            return array.sort(function(a,b){
+                return a.focus?-1:0;
             })
         }
     }
@@ -488,10 +495,8 @@ export default {
           justify-content: space-between;
           align-items: center;
           .navigation-add{
-            .icon-message-add{
-                  width: .25rem;
-                  height: .25rem;
-                  display: inline-block;
+            .icon-add{
+                  font-size: .20rem;
               }
           }
           .navigation-search{

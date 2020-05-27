@@ -127,10 +127,10 @@ export default {
 .history-input{
     width: 100%;
     height: 75%;
-    border-bottom: 0.5px solid white;
+    border-bottom: 0.5px solid rgb(117, 109, 109);
 }
 .history-input::-webkit-input-placeholder{
-    color:white;
+    color:rgb(117, 109, 109);
 }
 .history-item{
   display: flex;
