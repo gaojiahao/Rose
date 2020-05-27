@@ -92,8 +92,8 @@ export default{
     methods: {
         getDefaultPhoto(item) {
             let url = require("assets/ava01.png");
-            if (item.photo) {
-                url = item.photo;
+            if (item.groupIcon) {
+                url = item.groupIcon;
             }
             return url;
         },
@@ -190,6 +190,7 @@ export default{
             img{
               width: .45rem;
               height: .45rem;
+              border-radius: .02rem;
             }
           }
           &-desc{

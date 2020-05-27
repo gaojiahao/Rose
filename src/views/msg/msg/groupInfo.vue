@@ -23,7 +23,7 @@
                 </group>
                 <group>
                     <div @click="showMemberDetail">
-                        <cell title="群成员" v-if="group.groupType=='G'" is-link :value="allMembers.length" />
+                        <cell title="群成员" v-if="group.groupType=='G'" is-link :value="`共${allMembers.length}人`" />
                         <div class="members">
                             <div class="members-item" v-for="(member,index) of allMembers" :key="index">
                                 <img 

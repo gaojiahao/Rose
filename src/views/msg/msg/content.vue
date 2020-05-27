@@ -48,7 +48,8 @@
                             </span>
                         </span>
                         <div class="message-content" :class="[msg.isMySelf==1?'rightarrow':'leftarrow']" >
-                            <div v-if="msg.replayMsg" style="border-left: 3px solid rgb(153, 153, 153); padding: 0px 8px; cursor: pointer;" @click="goTop(msg.replayMsg.id)">
+                            <div v-if="msg.replayMsg" style="border-left: 3px solid rgb(153, 153, 153);padding: 0px 8px;cursor: pointer;background-color: rgba(0, 0, 0, 0.1);text-align: left;color: rgba(0, 0, 0, 0.6);" @click="goTop(msg.replayMsg.id)">
+                               {{msg.replayMsg.creatorName}}:
                                 <MessageTplText :msg="msg.replayMsg" v-if="msg.replayMsg.imType == 1"></MessageTplText>
                                 <MessageTplImg :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 2"></MessageTplImg>
                                 <MessageTplMult :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 3"></MessageTplMult>
@@ -68,7 +69,7 @@
             <div class="replayMsg" v-if="replayMsg">
                 <span>{{replayMsg.creatorName}}:</span>
                 <div class="replayMsg-content">{{replayMsg|replayContent}}</div>
-                <span class="icon-close" @click="replayMsg = null">
+                <span class="iconfont icon-close" @click="replayMsg = null">
                 </span>
             </div> 
             <div class="input-wrapper">
@@ -604,6 +605,7 @@ export default {
     flex:1;
     position: relative;
     background-color: #9e9e9e1c;
+    font-size: 14px;
     .page-component-up{
         position:absolute;
         bottom:0.2rem;
@@ -615,14 +617,18 @@ export default {
 .msgList-footer {
     position: relative;
     .replayMsg{
-        display:flex;
-        padding:15px;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        padding: .10rem;
+        color: #999999;
+        border-top: 0.5px solid #ddd;
         .replayMsg-content{
             flex:1
         }
         .icon-close{
-            width:.25rem;
-            height:.25rem;
+            width:.16rem;
+            height:.16rem;
         }
     }
     .input-wrapper{
@@ -735,7 +741,7 @@ export default {
     }
     &-content{
         border-radius: 5px;
-        padding: .05rem;
+        padding: .08rem;
         position: relative;
         margin: .02rem .06rem;
         display: inline-block;
