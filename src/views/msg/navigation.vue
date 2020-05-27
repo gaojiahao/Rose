@@ -25,30 +25,33 @@
                 >
                 <LoadMore :show-loading="showLoading" v-show="showLoading"></LoadMore>
                 <div class = 'group-cells'>
-                    <div class="group-cell" :class="{'isTop':group.focus}" v-for="group in sortedGroup" :key = "group.id" @click="toMsg(group)">
-                        <img class="group-ava" :src="group.groupIcon" @error="getDefaultPhoto(group)">
-                        <div class="group-body">
-                            <div class="group-name">
-                                {{group.groupName}}
+                    <div class="group-cell" :class="{'isTop':group.focus}" v-for="group in sortedGroup" :key = "group.id">
+                        <touch @menuContext.stop="onNavContextMenu(group)" style="display: inherit;" @click="toMsg(group)">
+                            <img class="group-ava" :src="group.groupIcon" @error="getDefaultPhoto(group)">
+                            <div class="group-body">
+                                <div class="group-name">
+                                    {{group.groupName}}
+                                </div>
+                                <div class="msg-lastMsg" v-if="group.lastMsg">
+                                    <span style="color: #b90c0c;" v-if="group.lastMsg.content.includes(`@${currentUser.name}`)">[有人@我]</span>
+                                    <span>{{group.lastMsg.creatorName}}:</span>
+                                    <span v-if="[1,104].includes(group.lastMsg.imType)" v-html="formatToEmotion(group.lastMsg.content)"></span>
+                                    <span v-else-if="group.lastMsg.imType==2">图片</span>
+                                    <span v-else-if="group.lastMsg.imType==4">文件</span>
+                                </div> 
                             </div>
-                            <div class="msg-lastMsg" v-if="group.lastMsg">
-                                <span style="color: #b90c0c;" v-if="group.lastMsg.content.includes(`@${currentUser.name}`)">[有人@我]</span>
-                                <span>{{group.lastMsg.creatorName}}:</span>
-                                <span v-if="[1,104].includes(group.lastMsg.imType)" v-html="formatToEmotion(group.lastMsg.content)"></span>
-                                <span v-else-if="group.lastMsg.imType==2">图片</span>
-                                <span v-else-if="group.lastMsg.imType==4">文件</span>
+                            <span class="msgCount" v-if="group.msgCount">
+                                <sup class="badge-count">{{group.msgCount}}</sup>
+                            </span>
+                            <div class="modTime">
+                                {{group.modTime | timeChangeFilter}}
                             </div> 
-                        </div>
-                        <span class="msgCount" v-if="group.msgCount">
-                            <sup class="badge-count">{{group.msgCount}}</sup>
-                        </span>
-                        <div class="modTime">
-                            {{group.modTime | timeChangeFilter}}
-                        </div> 
+                        </touch>
                     </div>
                 </div>
                 </RScroll>
         </div><!--page end-->
+        <nav-context-menu v-show="showNavContextMenu" :group="navGroup" ref="navContextMenu"></nav-context-menu>
         <router-view :group="group" :msgList="msgList" ref="groupMsg"></router-view>
         <member-selector 
             ref="memberSelector"
@@ -69,6 +72,8 @@ import { initWebContext } from 'service/commonService'
 import MemberSelector from './msg/memberSelector';
 import NavSearch from './msg/navSearch';
 import RScroll from "plugins/scroll/RScroll";
+import Touch from "plugins/touch";
+import NavContextMenu from "./msg/navContextMenu";
 var defaultPhoto = require("assets/ava01.png");
 export default {
     created:function(){       
@@ -111,7 +116,9 @@ export default {
                     pullDownRefresh: false //下拉刷新
             },
            hasNext:false,
+           showNavContextMenu: false,
            currentUser:{},
+           navGroup: {},
            groups:[],
            group:null,
            msgList:[],
@@ -124,9 +131,11 @@ export default {
         RScroll,
         LoadMore,
         MemberSelector,
+        NavContextMenu,
         NavSearch,
         XInput,
-        Icon
+        Icon,
+        Touch
     },
     methods:{
         getDefaultPhoto(group) {
@@ -135,6 +144,10 @@ export default {
                 group.groupIcon = url;
             }
             return url;
+        },
+        onNavContextMenu(group){
+            this.navGroup = group;
+            this.showNavContextMenu = true;
         },
         onSearchClick() {
             this.$refs["navSearch"].showSearchList = true;
