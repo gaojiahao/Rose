@@ -270,6 +270,7 @@ export default {
               display: inline-block;
                img{
                     height: .45rem;
+                    width: .45rem;
                     border-radius: .04rem;
                     margin: .04rem;
                   }

@@ -13,6 +13,8 @@ let tokenService = {
   // 清除token
   clean() {
     storage.removeItem(ROSE_TOKEN_KEY);
+    sessionStorage.clear();
+    localStorage.clear();
   },
   // 设置token
   setToken(data) {

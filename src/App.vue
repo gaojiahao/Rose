@@ -26,6 +26,7 @@
         <span class="tabicon iconfont" :class="tab.icon"></span>
         <span class="title">{{tab.title}}</span>
         <badge v-if='tab.title === "任务" && newsNumber != 0'></badge>
+        <badge v-if='tab.title === "消息" && messageCount>0' :text='messageCount' ></badge>
       </router-link>
     </nav>
     <div v-if="offline" class="offline-bar">
@@ -54,6 +55,7 @@ export default {
         {title: '我',path:'/user',icon:'icon-me2'}
       ],
       newsNumber:0,
+      messageCount:0,
       hasNav:hasNav,
       hasTab:true,
       theme:'',
@@ -110,8 +112,7 @@ export default {
           vm = this,
           status,
           dsClient;
-      
-      if (window.baseURL) dsUrl = "172.roletask.com:6021/deepstream";//app测试代码
+      if (window.baseURL) dsUrl = "175.roletask.com:6021/deepstream";//app测试代码
       return new Promise((resolve,reject)=>{
           if(vm.dsClient != null){
               console.log('ds is not null');
@@ -159,6 +160,10 @@ export default {
     this.getTheme();
     this.$event.$on('badgeNum', (val) => {
       this.newsNumber = val;
+    });
+
+    this.$event.$on('setMsgCount',val=>{
+      this.messageCount = val;
     });
     Vue.prototype.getApp= ()=> this;
     document.addEventListener("deviceready", this.onDeviceReady, false);
