@@ -6,23 +6,22 @@
                 @blur="onEditorBlur($event)"
                 @focus="onEditorFocus($event)"
                 @ready="onEditorReady($event)"
+                @change="onEditorChange($event)"
+                @click.native="onClick()"
                 >
     </quill-editor>
-    <!-- 从数据库读取展示 -->
-    <div v-html="str" class="ql-editor">
-        {{str}}
-    </div>
   </div>
 </template>
 
 <script>
 import Vue from 'vue'
-import fieldBase from 'mixins/fieldBase'
+import fieldBase from 'mixins/htmlEditor'
 import $flyio from 'plugins/ajax'
 import {Icon, Popup, LoadMore, AlertModule, numberComma} from 'vux'
 
 
   let cfg = {
+    mixins:[fieldBase],
     props:['cfg','values'],
     data() {
       return {
@@ -49,47 +48,41 @@ import {Icon, Popup, LoadMore, AlertModule, numberComma} from 'vux'
           //     ]
           // }  
         },
-        str:''
       }
     },
     watch: {
-
+      values: function(value){
+        this.content = value;
+      },
     },
     methods: {
       onEditorReady(editor) { // 准备编辑器
  
       },
       onEditorBlur(quill){
-        console.log('editor blur!')
+        this.setValue(this.content);
       } ,
       onEditorFocus(quill){
-        console.log('editor focus!')
       },
       onEditorReady(quill){
-        console.log('editor ready!')
       },
       onEditorChange({ quill, html, text }) {
-        console.log('editor change!')
         this.content = html
+        this.setValue(this.content);
       },
-      onEditorClick(){
-        this.$refs.myQuillEditor.focus();
+      onClick(){
+        this.$refs.myQuillEditor.quill.focus();
       },
-      // 转码
-      escapeStringHTML(str) {
-          str = str.replace(/&lt;/g,'<');
-          str = str.replace(/&gt;/g,'>');
-          return str;
-      }
     },
     computed: {
-        editor() {
-            return this.$refs.myQuillEditor.quill;
-        },
+      editor() {
+        return this.$refs.myQuillEditor.quill;
+      },
     },
     mounted() {
-        let content = '';  // 请求后台返回的内容字符串
-        this.str = this.escapeStringHTML(content);
+      if(this.cfg.readOnly){
+        this.$refs.myQuillEditor.quill.enable(false); //禁用
+      }
     },
     created() {
       
