@@ -24,18 +24,21 @@
             <div class="msg-container" ref="msg-container">
                 <LoadMore v-if="loading"></LoadMore>
                 <div v-for="(msg,index) in msgList" :key="index" class="singleMsg" :class="{ 'isMySelf': msg.isMySelf,'focus-msg': msg.id == focusMsgId }" :id="'msg-'+msg.id">
-                    <touch @menuContext="onAvaContextMenu(msg.creatorName)" @click="showCreator(msg.creator)">
+                    <touch 
+                        @menuContext="onAvaContextMenu(msg.creatorName)" 
+                        @click="showCreator(msg.creator)">
                     <img 
+                    v-if="[1,2,3,4].includes(msg.imType)"
                     :src="msg.photo" 
                     :style="{float: msg.isMySelf?'right':'left'}"  
                     class="message-ava" 
                     @error="getDefaultPhoto(msg)">
                     </touch>
                     <span class ="message-creator"
-                        v-if="!msg.isMySelf">{{msg.creatorName}}
+                        v-if="!msg.isMySelf && [1,2,3,4].includes(msg.imType)">{{msg.creatorName}}
                     </span>
                     
-                    <touch @menuContext="onMsgContextMenu(msg,$event)">
+                    <touch @menuContext="onMsgContextMenu(msg,$event)" v-if="[1,2,3,4].includes(msg.imType)">
                         <span class="read-message" v-if="msg.isMySelf==1">
                             <span v-if="msg.allRead" class="message-allread">✓</span>
                             <span v-else-if="msg.checked === 0" class="message-noread"></span>
@@ -61,6 +64,11 @@
                             <MessageTplFile :msg="msg" v-else-if="msg.imType == 4"></MessageTplFile>
                         </div>
                     </touch>
+
+                    <div class="otherMessage" v-if="[101,102,104].includes(msg.imType)">
+                        <div>{{msg.crtTime}}</div>
+                        <div><span>{{msg.content}}</span></div>
+                    </div>
                 </div>
             </div>
         </r-scroll>
@@ -806,5 +814,10 @@ export default {
             display: inline-block;
        } 
    }
+}
+
+.otherMessage{
+    text-align: center;
+    color: #999999;
 }
 </style>

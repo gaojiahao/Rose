@@ -27,28 +27,34 @@
                 <div class = 'group-cells'>
                     <div class="group-cell" :class="{'isTop':group.focus}" v-for="group in sortedGroup" :key = "group.id">
                         <touch 
+                            class="group-body"
                             @menuContext.stop="onNavContextMenu(group)" 
-                            style="display: inherit;" 
                             @click="toMsg(group)">
-                            <img class="group-ava" :src="group.groupIcon" @error="getDefaultPhoto(group)">
-                            <div class="group-body">
-                                <div class="group-name">
-                                    {{group.groupName}}
+                                <div class="group-body-icon">
+                                    <span>
+                                        <img class="group-body-icon-ava" 
+                                            :src="group.groupIcon" 
+                                            @error="getDefaultPhoto(group)">
+                                    </span>
+                                    <badge  
+                                        class="group-body-icon-msgCount"
+                                        :text='group.msgCount' 
+                                        v-if="group.msgCount">
+                                    </badge>
                                 </div>
-                                <div class="msg-lastMsg" v-if="group.lastMsg">
+                                <div  class="group-body-detail">
+                                    <div  class="group-body-detail-group">
+                                        <div class="group-body-detail-group-name" style="">{{group.groupName}}</div>
+                                        <div class="group-body-detail-group-modTime" style="">{{group.modTime | timeChangeFilter}}</div>
+                                    </div>
+                                    <div class="group-body-detail-lastMsg" v-if="group.lastMsg">
                                     <span style="color: #b90c0c;" v-if="group.lastMsg.content.includes(`@${currentUser.name}`)">[有人@我]</span>
                                     <span>{{group.lastMsg.creatorName}}:</span>
-                                    <span v-if="[1,104].includes(group.lastMsg.imType)" v-html="formatToEmotion(group.lastMsg.content)"></span>
-                                    <span v-else-if="group.lastMsg.imType==2">图片</span>
-                                    <span v-else-if="group.lastMsg.imType==4">文件</span>
+                                    <span v-if="[1,101,102,104].includes(parseInt(group.lastMsg.imType))" v-html="formatToEmotion(group.lastMsg.content)"></span>
+                                    <span v-else-if="group.lastMsg.imType==2">[图片]</span>
+                                    <span v-else-if="[2,3,4].includes(group.lastMsg.imType)">[文件]</span>
                                 </div> 
-                            </div>
-                            <span class="msgCount" v-if="group.msgCount">
-                                <sup class="badge-count">{{group.msgCount}}</sup>
-                            </span>
-                            <div class="modTime">
-                                {{group.modTime | timeChangeFilter}}
-                            </div> 
+                                </div>
                         </touch>
                     </div>
                 </div>
@@ -78,6 +84,7 @@ import NavSearch from './msg/navSearch';
 import RScroll from "plugins/scroll/RScroll";
 import Touch from "plugins/touch";
 import NavContextMenu from "./msg/navContextMenu";
+import { Badge} from 'vux'
 var defaultPhoto = require("assets/ava01.png");
 export default {
     created:function(){       
@@ -88,6 +95,13 @@ export default {
         });
         this.uIdToPhoto = {};
         this.listenOffline();
+    },
+    watch: {
+        $route(to, from) {
+            if(to.name==='MsgNavigation'){
+                this.group = null;
+            }
+        }
     },
     mounted:function(){
         Bus.$on('toMsg', group => {
@@ -139,7 +153,8 @@ export default {
         NavSearch,
         XInput,
         Icon,
-        Touch
+        Touch,
+        Badge
     },
     methods:{
         getDefaultPhoto(group) {
@@ -176,7 +191,8 @@ export default {
                 this.groupIdToIndex = groupIdToIndex;
                 this.groups = data;
                 this.scroller && this.scroller.refresh();
-                this.showLoading = false
+                this.showLoading = false;
+                 this.setAppNoticeBadge();
             }).catch(e=>{
                 if(e.message == 'nologin'){//没有登录
                     this.refresh = true;
@@ -234,12 +250,13 @@ export default {
          */
         distributeMsg(msg){
             var type = String(msg.imType);
-            
+             msg.imType = parseInt(type);
             switch(type){
                 case '1':
                 case '2':
                 case '3':
                 case '4':
+                case '101':
                     this.addMsg(msg);
                     this.setAppNoticeBadge();
                     break;
@@ -249,17 +266,38 @@ export default {
                 case '103':
                     this.setMsgReadCount(msg);
                     this.setAppNoticeBadge();
+                    break;
+                case '104':
+                    this.addMsg(msg);
+                    this.setGroupName(msg);
+                    break;
                 default:
                     break;
             }
         },
+        setGroupName(msg){
+            var groupName = msg.content.split('【').pop().split('】')[0];
+            this.groups.map(g=>{
+                if(g.groupId ===msg.groupId) g.groupName = groupName;
+            });
+
+            if(this.group){
+                if(this.group.groupId === msg.groupId){
+                    this.group.groupName = groupName;
+                }
+            }
+        },
         setAppNoticeBadge(){
 
-            if(!window.isApp) return;
             var c = 0;
             this.groups.map(g=>{
                 c = c+g.msgCount;
             });
+            
+            this.$event.$emit("setMsgCount", c);
+
+            if(!window.isApp) return;
+
             if(c){
                 cordova.plugins.notification.badge.set(c);
             }else{
@@ -337,12 +375,21 @@ export default {
                         group.lastMsg = msg;
                     }
 
-                    if(!msg.isMySelf){
-                        group.msgCount++;
+                    if(!msg.isMySelf ){
+                        if(this.group){
+                            if(this.group.groupId != msg.groupId)group.msgCount++;
+                        }else{
+                            group.msgCount++;
+                        }
                     }
 
-                    if(window.isApp && !msg.isMySelf){ //添加app的消息提醒
-                        this.addNotification(group,msg);
+                    if(window.isApp && !msg.isMySelf  ){ //添加app的消息提醒
+                         if(this.group){
+                            if(this.group.groupId != msg.groupId) this.addNotification(group,msg);
+                        }else{
+                            this.addNotification(group,msg);
+                        }
+                        
                     }
                     if (this.group && this.group.groupId == groupId){//如果是当前消息页面的消息
                         let l = this.msgList.length;
@@ -457,12 +504,13 @@ export default {
             })
         },
         checkLocalMessage(groupId){
-            var index = this.groupIdToIndex[groupId],
-                group = index != null && this.groups[index];
-            
-            if(group){
-                group.msgCount = 0;
-            }
+            this.groups.map(g=>{
+                if(g.groupId === groupId){
+                    g.msgCount = 0;
+                }
+            });
+
+            this.setAppNoticeBadge();
         },
         setMsgPhoto:function(msg){
             var uIdToPhoto = this.uIdToPhoto,
@@ -564,33 +612,70 @@ export default {
       padding:5px;
       position: relative;
       display: flex;
-      .msgCount{
-          position: absolute;
-          left:40px;
-          top:0;
-      }
+      
   }
   .group-body{
-      line-height: 28px;
-      width: calc(100% - 1.4rem);
-      margin-left: .15rem;
-      .group-name{
-          font-size: 14px;
-      }
+    width: 100%;
+    display: flex;
+    &-icon{
+        flex: 1;
+        &-ava{
+            width: .45rem;
+            height: .45rem;
+            border-radius: .02rem;
+        }
+        &-msgCount{
+            position: absolute;
+            left:45px;
+            top:0;
+        }
+    }
 
-      div{
-        width: 2rem;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
+    &-detail{
+        flex:6;
+        padding: .05rem .08rem;
+        &-group{
+            display:flex;
+
+            &-name{
+                flex:5;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                width: 100%;
+                max-width: 260px;
+                font-size: 14px;
+            }
+
+            &-modTime{
+                flex:1;
+                color: #898181;
+                font-size: 12px;
+                text-align: right;
+            }
+        }
+
+        &-lastMsg{
+            color: #898181;
+            font-size: 12px;
+            height:18px;
+            line-height: 18px;
+            width: 240px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+                
+            span{
+                /deep/.static-emotion-gif{
+                height: .16rem;
+                }
+                /deep/.face{
+                height: .16rem;
+                }
+            }
+        }
+    }
   }
-  .group-ava{
-    width: .5rem;
-    height: .5rem;
-    border-radius: .02rem;
-  }
-  
   .group-cell .modTime{
     position:absolute;
     right:15px;
@@ -599,22 +684,6 @@ export default {
     font-size: 12px;
   }
   .msg-lastMsg{
-    color: #898181;
-    font-size: 12px;
-    height:18px;
-    line-height: 18px;
-    width: 220px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    
-   span{
-        /deep/.static-emotion-gif{
-        height: .16rem;
-        }
-         /deep/.face{
-        height: .16rem;
-        }
-   }
+   
   }
 </style>
