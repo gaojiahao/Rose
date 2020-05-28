@@ -112,7 +112,6 @@ import MemberList from './memberList';
 import HistoryAll from './historyAll';
 import HistoryImg from './historyImg';
 import HistoryFile from './historyFile';
-import WebContext from 'service/commonService'
 import { initWebContext } from 'service/commonService'
 import { getMembers,addMember,createGroup,setFocus,deleteFocus } from '@/service/msgService'
 import Bus from '@/common/eventBus.js';
@@ -255,8 +254,8 @@ export default {
         })
     },
     created() {
-        initWebContext().then(() => {
-            this.currentUser = WebContext.WebContext.currentUser
+        initWebContext().then((WebContext) => {
+            this.currentUser = WebContext.currentUser
             this.getAllMembers()
         })
     }

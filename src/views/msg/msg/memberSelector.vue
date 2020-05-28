@@ -59,7 +59,6 @@
 import { XInput,Icon,CheckIcon,XButton } from 'vux'
 import RScroll from 'plugins/scroll/RScroll'
 import { getEmployee } from '@/service/msgService'
-import WebContext from 'service/commonService'
 import { initWebContext } from 'service/commonService'
 export default {
     name:'MemberSelector',
@@ -104,8 +103,8 @@ export default {
           this.searchValue = "";
           this.currentPage = 1
           this.selectMembers = []
-          initWebContext().then(() => {
-                this.currentUser = WebContext.WebContext.currentUser
+          initWebContext().then((WebContext) => {
+                this.currentUser = WebContext.currentUser
                 this.getAllusers()
           })
         } 

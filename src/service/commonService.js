@@ -31,6 +31,7 @@ export let convertDataType = function (editorType, value) {
   return value;
 }
 export let clearBaseInfo = ()=>{
+  sessionStorage.removeItem('basicInfo');
   baseInfo = null;
 }
 // 删除文件
@@ -284,7 +285,7 @@ export let getObjDealerByLabelName = (data = {}) => {
 export let initWebContext = ()=>{
   return new Promise((resolve, reject) => {
     if(WebContext.currentUser){
-      return resolve();
+      return resolve(WebContext);
     }
     getBasicInfo().then(baseInfo => {
         let user = baseInfo && baseInfo.currentUser;
@@ -338,12 +339,16 @@ export let initWebContext = ()=>{
              WebContext.enterpriseInfo = user.enterpriseInfo;
           }
       }
-      resolve();
+      resolve(WebContext);
     }).catch(e=>{
       
     }) 
   })
 };
+export let clearWebContext=()=>{
+  WebContext = {};
+  clearBaseInfo();
+}
 export let getValuesByExp = (expression) => {
   var fn = function () {
       var ns = expression.split('.'),
@@ -577,11 +582,11 @@ export default {
   upload,
   mediaUpload,
   initWebContext,
+  clearWebContext,
   WebContext,
   getProcess,
   getDictByType,
   getBasicInfo,
-  clearBaseInfo,
   submitAndCalc,
   getDictByValue,
   saveAndStartWf,

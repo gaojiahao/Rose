@@ -93,6 +93,7 @@
 <script>
 import {Group, XInput, XButton} from 'vux'
 import tokenService from 'service/tokenService'
+import commonService from 'service/commonService'
 // import $axios from '../plugins/ajax'
 // import axios from 'axios'
 export default {
@@ -142,6 +143,12 @@ export default {
 
             this.$loading.show();
             tokenService.pcLogin(params).then(data=>{
+                var app = this.getApp();
+                commonService.clearWebContext();//清空缓存
+                if(app.dsClient){//关闭之前的deepstream链接
+                    app.dsClient.close();
+                    app.dsClient = null;
+                }
                 this.$router.replace('/home');
                 this.$loading.hide();
                 localStorage.setItem('userCode',this.userCode);

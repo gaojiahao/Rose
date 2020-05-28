@@ -71,8 +71,6 @@ import commonService from 'service/commonService'
 import tokenService from 'service/tokenService'
 import util from '@/common/util';
 import Bus from '@/common/eventBus.js';
-import WebContext from 'service/commonService'
-import { initWebContext } from 'service/commonService'
 import MemberSelector from './msg/memberSelector';
 import NavSearch from './msg/navSearch';
 import RScroll from "plugins/scroll/RScroll";
@@ -83,9 +81,6 @@ export default {
     created:function(){       
         this.initDs();
         this.initGroup();
-        initWebContext().then(() => {
-            this.currentUser = WebContext.WebContext.currentUser;
-        });
         this.uIdToPhoto = {};
         this.listenOffline();
     },

@@ -32,7 +32,9 @@ export default {
     },
     methods:{
         loginOut(){
+            var ds = window.dsClient;
             tokenService.clean();
+            if(ds)ds.close();//关闭deepstream长连接
             this.$router.replace('/login');
         }
     }
