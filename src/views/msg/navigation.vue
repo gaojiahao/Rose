@@ -25,7 +25,7 @@
                 >
                 <LoadMore :show-loading="showLoading" v-show="showLoading"></LoadMore>
                 <div class = 'group-cells'>
-                    <div class="group-cell" :class="{'isTop':group.focus}" v-for="group in sortedGroup" :key = "group.id">
+                    <div class="group-cell" :class="{'isTop':group.focus}" v-for="group in groups" :key = "group.id">
                         <touch 
                             class="group-body"
                             @menuContext.stop="onNavContextMenu(group)" 
