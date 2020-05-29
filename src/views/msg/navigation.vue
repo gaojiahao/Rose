@@ -533,8 +533,9 @@ export default {
                 var y = b[key];
                 return ((x<y)?1:(x>y)?-1:0)
             })
+
             return array.sort(function(a,b){
-                return a.focus?-1:0;
+                return (a.focus && !b.focus)?-1:0;
             })
         }
     }
