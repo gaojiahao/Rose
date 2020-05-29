@@ -124,6 +124,7 @@ export default{
                   if(item.type === "群聊"){
                     this.data[1] && this.data[1].children.push(item)
                   }else{
+                    item.groupName  = item.nickname;
                     this.data[0] && this.data[0].children.push(item)
                   }
                 })

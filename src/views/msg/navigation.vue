@@ -25,7 +25,7 @@
                 >
                 <LoadMore :show-loading="showLoading" v-show="showLoading"></LoadMore>
                 <div class = 'group-cells'>
-                    <div class="group-cell" :class="{'isTop':group.focus}" v-for="group in groups" :key = "group.id">
+                    <div class="group-cell" :class="{'isTop':group.focus}" v-for="group in sortedGroup" :key = "group.id">
                         <touch 
                             class="group-body"
                             @menuContext.stop="onNavContextMenu(group)" 
@@ -305,17 +305,19 @@ export default {
             }
         },
         addNewGroup(msg){
-             var gii = {};
-            for(var i=0;i<this.groups.length;i++){
-                if(!this.groups[i].focus){
-                    this.groups.splice(i,0,msg);
-                    break;
-                }
-            }
-            this.groups.map((g,idx)=>{
-                gii[g.groupId] = idx;
-            });
-            this.groupIdToIndex = gii;
+            // var gii = {};
+            // for(var i=0;i<this.groups.length;i++){
+            //     if(!this.groups[i].focus){
+            //         this.groups.splice(i,0,msg);
+            //         break;
+            //     }
+            // }
+            // this.groups.map((g,idx)=>{
+            //     gii[g.groupId] = idx;
+            // });
+            // this.groupIdToIndex = gii;
+            // this.groups.push();
+            this.$set(this.groups, this.groups.length,msg);
             this.addMsg({
                 ...msg.lastMsg,
                 isMySelf:msg.isMySelf,
