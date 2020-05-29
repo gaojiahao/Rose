@@ -182,20 +182,27 @@ export default {
             tokenService.clean();
             if(ds)ds.close();//关闭deepstream长连接
             this.$router.replace('/login');
+        },
+        init(){
+           this.getDayPerformances()
+           this.getYearPerformances()
+            initWebContext().then((WebContext) => {
+                this.currentUser = WebContext.currentUser
+                this.currentUser.isSysRoleList.forEach(item => {
+                  this.roles.push(item.name)
+                })
+            })
         }
     },
     mounted(){
-        this.getMyLog()
+        this.getMyLog();//这个需要dom支持
     },
     created() {
-      this.getDayPerformances()
-      this.getYearPerformances()
-      initWebContext().then((WebContext) => {
-          this.currentUser = WebContext.currentUser
-          this.currentUser.isSysRoleList.forEach(item => {
-            this.roles.push(item.name)
-          })
-      })
+       this.init();
+       this.bus.$on('refresh',()=>{//登陆刷新
+          this.init();
+          this.getMyLog();
+       })
     }
 }
 </script>

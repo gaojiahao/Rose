@@ -37,6 +37,7 @@
 
 <script>
 import util from '@/common/util';
+import Bus from '@/common/eventBus.js';
 import platform from './plugins/platform/index'
 import { getMsgList } from 'service/msgService'
 import { Badge} from 'vux'
@@ -169,6 +170,7 @@ export default {
       this.messageCount = val;
     });
     Vue.prototype.getApp= ()=> this;
+    Vue.prototype.bus = Bus;
     document.addEventListener("deviceready", this.onDeviceReady, false);
     this.initOnlineStatus();
   },

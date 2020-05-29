@@ -111,6 +111,10 @@ export default {
         //     else if(Math.abs(y)<1000)
         //     this.toTopShow = false; 
         // });
+        this.bus.$on('refresh',()=>{ //登录后刷新
+            var item = this.routes.length && this.routes[0];
+            if(item)this.goto(item)//所有人的通讯录都一样，但是还是要刷新下。
+        })
     }
 }
 </script>

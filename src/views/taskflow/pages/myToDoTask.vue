@@ -321,6 +321,9 @@ export default {
     },
     mounted(){
         this.getTasks();
+        this.bus.$on('refresh',()=>{//登陆刷新
+          this.getTasks();
+       })
     }
 }
 </script>
