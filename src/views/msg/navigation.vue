@@ -72,7 +72,7 @@
 </template>
 <script>
 import { LoadMore,XInput,Icon } from 'vux'
-import { getGroupMsg,getMyGroups,createGroup,getGroupByUserId,getMembers} from 'service/msgService'
+import { getGroupMsg,getMyGroups,createGroup,getGroupByUserId,getMembers,getGroupById} from 'service/msgService'
 import commonService from 'service/commonService'
 import tokenService from 'service/tokenService'
 import util from '@/common/util';
