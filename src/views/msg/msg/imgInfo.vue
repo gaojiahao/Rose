@@ -1,11 +1,5 @@
 <template>
     <div class="page">
-        <!-- <div class="page-navigation flex">
-            <div class="goback" @click="$router.go(-1)">
-                <i class="iconfont icon-back1"></i>
-            </div>
-            <div style="margin-right:10px">{{name}}</div>
-        </div> -->
         <div class="page-body-hasNav" @click="$router.go(-1)">
             <div class="imgPerview">
                 <span>
@@ -34,7 +28,7 @@ export default {
 </script>
 <style lang="scss">
    .imgPerview{
-       text-align: center;
+        text-align: center;
         width: 100%;
         height: 100%;
         display: table;

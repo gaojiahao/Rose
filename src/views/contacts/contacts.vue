@@ -16,7 +16,7 @@
         <div v-for="item in address" class="address-item" :key="item.id" @click="goto(item)" v-show="item.id != 7">
             <div class="header">
                 <img :src="item.photo"  v-if="item.type=='P'"  @error="getDefaultPhoto(item)"/>
-                <i class="address-icon iconfont" v-if="item.type!='P'">&#xe62b;</i>
+                <i class="address-icon iconfont " v-if="item.type!='P'">&#xe62b;</i>
 
             </div>
             <div class="body">
