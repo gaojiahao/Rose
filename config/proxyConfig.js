@@ -37,7 +37,7 @@ module.exports = {
             changeOrigin: true,
           },
           '/gimgs': {
-            target
+            target,
             changeOrigin: true
           }
 
