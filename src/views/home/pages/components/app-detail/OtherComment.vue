@@ -29,7 +29,7 @@
                 <img class="comment-image-item" :src="img.attachment" v-for="(img, iIndex) in item.commentAttachments"
                     @click.stop="scaleImg(img)" :key="iIndex" v-show="img.isImg"/>
                 <div class="each_file" v-for="(file, index) in item.commentAttachments" :key="index" v-show="!file.isImg"
-                @click.stop="checkFile(file.attachment)">附件{{index + 1}}: {{file.name}}</div>
+                @click.stop="checkFile(file.attachment,file.name)">附件{{index + 1}}: {{file.name}}</div>
               </div> 
             </div>
           </div>
@@ -46,6 +46,7 @@
 import {getPCCommentList} from 'service/app-basic/appSettingService'
 import {savePraise} from 'service/commentService'
 import emotion from 'plugins/emoji/emotion'
+import util from '@/common/util';
   /* 引入微信相关 */
 import {register} from 'plugins/wx'
 export default {
@@ -191,10 +192,12 @@ export default {
       });
     },
     // 查看附件
-    checkFile(file) {
-      window.location.href = `${location.origin}${file}`
-    },
-
+    checkFile(filePath,fileName) {
+          var baseUrl = window.baseURL||location.origin,
+              source = `${baseUrl}${file}`;
+              
+          util.downFile(source,fileName);
+    }
   },
   created(){
     register();
