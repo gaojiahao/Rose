@@ -25,7 +25,7 @@
                 >
                 <LoadMore :show-loading="showLoading" v-show="showLoading"></LoadMore>
                 <div class = 'group-cells'>
-                    <div class="group-cell" :class="{'isTop':group.focus}" v-for="group in sortedGroup" :key = "group.id">
+                    <div class="group-cell" :class="{'isTop':group.focus}" v-for="group in groups" :key = "group.id">
                         <touch 
                             class="group-body"
                             @menuContext.stop="onNavContextMenu(group)" 
@@ -533,8 +533,9 @@ export default {
                 var y = b[key];
                 return ((x<y)?1:(x>y)?-1:0)
             })
+
             return array.sort(function(a,b){
-                return a.focus?-1:0;
+                return (a.focus && !b.focus)?-1:0;
             })
         }
     }

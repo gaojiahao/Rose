@@ -744,8 +744,9 @@ export default {
 }
 .message{
     &-ava{
-        height: 40px;
-        border-radius: .01rem;
+        width: .45rem;
+        height: .45rem;
+        border-radius: .02rem;
     }
 
     &-creator{

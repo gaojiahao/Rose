@@ -37,7 +37,7 @@ module.exports = {
             changeOrigin: true,
           },
           '/gimgs': {
-            target: 'http://172.roletask.com',
+            target,
             changeOrigin: true
           }
 
