@@ -27,11 +27,10 @@
                 :key="index">
                 <p style="padding-left:.1rem;color:#999;margin-bottom:.1rem">{{item.title}}</p>
                 <ul class="list-top-content">
-                  <touch>
-                    <li 
-                      v-for="(child,ci) of item.children"
+                  <touch v-for="(child,ci) of item.children"
                       :key="ci"
-                      @click="toMsg(child)"
+                      @click="toMsg(child)">
+                    <li 
                       class="list">
                       <div class="list-left">
                         <touch>

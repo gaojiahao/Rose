@@ -7,7 +7,7 @@
       <div class="wrapper">
         <div class="top-part-container">
           <div class="top-part">
-            <div class="user-info-container">
+            <!-- <div class="user-info-container">
               <div class="user_avatar" @click="avatarClick()">
                 <img :src="userInfo.avatar">
               </div>
@@ -43,7 +43,7 @@
                   </div>
                 </li>
               </ul>
-            </div>
+            </div> -->
           </div>
         </div>
         <div class="list_top">

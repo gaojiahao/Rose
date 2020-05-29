@@ -51,12 +51,26 @@
       </group>
       </div>
         <group>
-              <cell title="今日绩效"  :value="todayPerformance" :is-loading="todayPerformance==undefined" is-link @click.native="onDayPerformanceClick"  />
-              <cell title="今年累计绩效"  :value="yearPerformance" :is-loading="yearPerformance==undefined"  is-link @click.native="onYearPerformanceClick" />
+              <cell title="今日绩效"  
+                :value="todayPerformance" 
+                :is-loading="todayPerformance==undefined" 
+                is-link 
+                @click.native="onDayPerformanceClick"  >
+                  <i slot="icon"   class="iconfont icon-moneynew" style="font-size: .24rem;color: #f47b12;margin-right: .1rem;"></i>
+                </cell>
+              <cell title="今年累计绩效"  
+                :value="yearPerformance" 
+                :is-loading="yearPerformance==undefined"  
+                is-link 
+                @click.native="onYearPerformanceClick" >
+                <i slot="icon"   class="iconfont icon-moneynew" style="font-size: .24rem;color: #f47b12;margin-right: .1rem;"></i>
+                </cell>
           </group>
           <group>
               <!-- <cell title="主题设置" is-link link="/themesetting" /> -->
-              <cell title="退出登录"  @click.native="loginOut" />
+              <cell title="设置" is-link link="/user/setting" >
+                  <i slot="icon"   class="iconfont icon-zu3218" style="font-size: .2rem;rgba(0, 0, 0, 0.6);margin-right: .1rem;"></i>
+              </cell> 
           </group>
       </RScroll>
   </div>
@@ -202,9 +216,7 @@ export default {
 
 <style lang="less" scoped>
   .my-performance {
-    // height: 100%;
-    // width: 100%;
-    // position: relative;
+   
     .log-lours {
       
         height: 3rem;
