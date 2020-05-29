@@ -126,7 +126,7 @@ export default {
             })
         },
         handlerViewTask(task){
-            window.location.href = `/Hermes/detail/2750a13d-295d-4776-9673-290c51bfc568/0?name=日志任务&folder=project&fileName=RWRZ&transCode=${task.transCode}`;
+           this.$router.push(`/detail/2750a13d-295d-4776-9673-290c51bfc568/0?name=日志任务&folder=project&fileName=RWRZ&transCode=${task.transCode}`);
         },
         // 上拉加载
         onPullingUp() {

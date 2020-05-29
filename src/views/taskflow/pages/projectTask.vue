@@ -82,7 +82,7 @@ export default {
             })
         },
         handlerViewTask(task){
-            window.location.href = `/Hermes/detail/ee4ff0a1-c612-419d-afd7-471913d57a2a/0?name=项目任务&folder=project&fileName=XMRW&transCode=${task.transCode}`;
+            this.$router.push(`/detail/ee4ff0a1-c612-419d-afd7-471913d57a2a/0?name=项目任务&folder=project&fileName=XMRW&transCode=${task.transCode}`);
         },
         // 上拉加载
         onPullingUp() {
