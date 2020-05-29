@@ -306,11 +306,14 @@ export default {
         },
         addNewGroup(msg){
              var gii = {};
-            for(var i=0;i<this.groups.length;i++){
+
+            if(this.groups.length)for(var i=0;i<this.groups.length;i++){
                 if(!this.groups[i].focus){
                     this.groups.splice(i,0,msg);
                     break;
                 }
+            }else{
+                this.groups=[msg];
             }
             this.groups.map((g,idx)=>{
                 gii[g.groupId] = idx;
@@ -401,7 +404,10 @@ export default {
                         }
                     }
                 } else {//要添加新群了。
-                    
+                    getGroupById(groupId).then(group=>{
+                        group.lastMsg = msg;
+                        this.addNewGroup(group);
+                    })
                 }
             }
         },
