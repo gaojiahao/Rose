@@ -16,8 +16,8 @@
         <div v-for="item in address" class="address-item" :key="item.id" @click="goto(item)" v-show="item.id != 7">
             <div class="header">
                 <img :src="item.photo"  v-if="item.type=='P'"  @error="getDefaultPhoto(item)"/>
-                <i class="address-icon iconfont " v-if="item.type!='P'">&#xe62b;</i>
-
+                <i class="address-icon iconfont icon-wenjian " v-if="item.type!='P' && !item.leaf"></i>
+                <i class="address-icon iconfont icon-file-f" v-if="item.type!='P' && item.leaf"></i>
             </div>
             <div class="body">
                 <div class="address-name-g">
@@ -143,9 +143,10 @@ export default {
    }
 
    .address-item .header{
-        width: .50rem;
+        width: .45rem;
+        height: .45rem;
         text-align: center;
-        background-color: #07648f29;
+        background-color: #48acd929;
         border-radius: .02rem;
        .address-icon{
         font-size: .32rem;
@@ -153,9 +154,10 @@ export default {
         }
    }
    .address-item .header img{
-       width:0.5rem;
+       width:.45rem;
        vertical-align: top;
-       height:0.5rem;
+       height:.45rem;
+       border-radius: .02rem;
    }
    .address-item .body{
        flex: 1;

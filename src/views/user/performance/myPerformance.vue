@@ -16,7 +16,7 @@
       <div class="my-info" >
         <div class="my-info-entity" >
           <div>{{ currentUser.entityName}}</div>
-          <img  :src="getDefaultImg()" />
+          <img :src="currentUser.photo ||getDefaultImg() " @error="getDefaultImg()" />
         </div>
 
         <div class="my-info-job">
@@ -85,7 +85,7 @@ import { getMyJobLogCountInfo,
 from "@/service/myPerformanceService";
 import { initWebContext } from 'service/commonService'
 import { Group, Cell } from 'vux'
-import tokenService from "service/tokenService";
+
 import RScroll from "plugins/scroll/RScroll";
 const echarts = require('echarts');
 export default {
@@ -190,12 +190,6 @@ export default {
               this.yearPerformance= 0;
             }
           })
-        },
-         loginOut(){
-            var ds = window.dsClient;
-            tokenService.clean();
-            if(ds)ds.close();//关闭deepstream长连接
-            this.$router.replace('/login');
         }
     },
     mounted(){
