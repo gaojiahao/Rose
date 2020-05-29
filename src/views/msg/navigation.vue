@@ -25,7 +25,7 @@
                 >
                 <LoadMore :show-loading="showLoading" v-show="showLoading"></LoadMore>
                 <div class = 'group-cells'>
-                    <div class="group-cell" :class="{'isTop':group.focus}" v-for="group in groups" :key = "group.id">
+                    <div class="group-cell" :class="{'isTop':group.focus}" v-for="group in sortedGroup" :key = "group.id">
                         <touch 
                             class="group-body"
                             @menuContext.stop="onNavContextMenu(group)" 
@@ -52,7 +52,7 @@
                                     <span>{{group.lastMsg.creatorName}}:</span>
                                     <span v-if="[1,101,102,104].includes(parseInt(group.lastMsg.imType))" v-html="formatToEmotion(group.lastMsg.content)"></span>
                                     <span v-else-if="group.lastMsg.imType==2">[图片]</span>
-                                    <span v-else-if="[2,3,4].includes(group.lastMsg.imType)">[文件]</span>
+                                    <span v-else-if="[3,4].includes(group.lastMsg.imType)">[文件]</span>
                                 </div> 
                                 </div>
                         </touch>
@@ -374,6 +374,7 @@ export default {
                     if(group.lastMsg){
                         group.lastMsg.content = msg.content;
                         group.lastMsg.creatorName = msg.creatorName;
+                        group.lastMsg.imType = msg.imType;
                     } else {
                         group.lastMsg = msg;
                     }
