@@ -69,7 +69,6 @@ import { getMyJobLogCountInfo,
          getTodayPerformance,
          getYearPerformance } 
 from "@/service/myPerformanceService";
-import WebContext from 'service/commonService'
 import { initWebContext } from 'service/commonService'
 import { Group, Cell } from 'vux'
 import tokenService from "service/tokenService";
@@ -179,7 +178,9 @@ export default {
           })
         },
          loginOut(){
+            var ds = window.dsClient;
             tokenService.clean();
+            if(ds)ds.close();//关闭deepstream长连接
             this.$router.replace('/login');
         }
     },
@@ -189,8 +190,8 @@ export default {
     created() {
       this.getDayPerformances()
       this.getYearPerformances()
-      initWebContext().then(() => {
-          this.currentUser = WebContext.WebContext.currentUser
+      initWebContext().then((WebContext) => {
+          this.currentUser = WebContext.currentUser
           this.currentUser.isSysRoleList.forEach(item => {
             this.roles.push(item.name)
           })

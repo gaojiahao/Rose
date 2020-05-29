@@ -77,8 +77,6 @@ import commonService from 'service/commonService'
 import tokenService from 'service/tokenService'
 import util from '@/common/util';
 import Bus from '@/common/eventBus.js';
-import WebContext from 'service/commonService'
-import { initWebContext } from 'service/commonService'
 import MemberSelector from './msg/memberSelector';
 import NavSearch from './msg/navSearch';
 import RScroll from "plugins/scroll/RScroll";
@@ -90,11 +88,7 @@ export default {
     created:function(){       
         this.initDs();
         this.initGroup();
-        initWebContext().then(() => {
-            this.currentUser = WebContext.WebContext.currentUser;
-        });
         this.uIdToPhoto = {};
-        this.listenOffline();
     },
     watch: {
         $route(to, from) {
@@ -122,9 +116,8 @@ export default {
             this.refresh = false;
             this.initGroup();
         }
-        if (this.describeMsg == false){
-            this.initDs();
-        }
+        console.log('navigation active!');
+        this.checkDsConnect();//检查deepstream的连接有没有掉线。
     },
     data(){
         return {
@@ -199,10 +192,21 @@ export default {
                 }
             })
         },
+        checkDsConnect(){
+            var dsClient = window.dsClient,
+                status = dsClient && dsClient.getConnectionState();
+
+            if(status == 'CLOSED'){
+               this.describeMsg = false;//如果是关闭状态，则订阅失效了。
+               this.initDs();
+            }
+        },
         initDs:function(){
             var vm = this,
                 app = this.getApp();
-
+            
+            if(this.dsConnectStart == true)return;//防止建立多条连接。
+            this.dsConnectStart = true;
             return commonService.getBasicInfo().then(baseInfo => {
                 var data = baseInfo.currentUser,
                     deepStreamUrl = baseInfo.deepStreamUrl,
@@ -211,6 +215,7 @@ export default {
                 vm.currentUser = data;
                 if(deepStreamUrl && userId){
                     app.getDs(deepStreamUrl,userId).then(ds=>{
+                         this.dsConnectStart = false;
                          if (this.describeMsg != true){//防止断线重连时重复订阅
                              vm.describeDs(ds);
                              this.describeMsg = true;
@@ -218,14 +223,9 @@ export default {
                     });
                 }
             }).catch((e)=>{
+                this.dsConnectStart = false;
                 console.log(e);
             })
-        },
-        listenOffline(){
-            var app = this.getApp();
-            app.$on('offline',()=>{
-                this.describeMsg = false;
-            })     
         },
         describeDs(ds){
             var token = tokenService.getToken();

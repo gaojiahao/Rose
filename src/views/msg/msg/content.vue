@@ -81,7 +81,7 @@
                 </span>
             </div> 
             <div class="input-wrapper">
-                <textarea class="msg-input" v-model="msg" type="text" ref="msgInput" @focus="showExtraInput=false;showEmotion = false;msgInputFocus=true;" @blur="msgInputFocus=false;" @keyup="checkAt"></textarea>
+                <textarea class="msg-input" v-model="msg" type="text" ref="msgInput" @focus="onMsgInputFocus" @blur="msgInputFocus=false;" @keyup="checkAt"></textarea>
                 <i class="icon-emotion" @click="showEmotion = !showEmotion;showExtraInput=false;"></i>
                 <i class="icon-add-more" @click="toggleWrapper" v-show="!msg.trim()"></i>
                 <span class="btn-send" v-if="msg.trim()" @click="sendTextMsg" tabIndex="-1">发送</span>
@@ -372,6 +372,12 @@ export default {
             this.fileInput.value = null;
             this.fileDlgContext= null;
         },
+        onMsgInputFocus(){
+            this.showExtraInput=false;
+            this.showEmotion = false;
+            this.msgInputFocus=true;
+            this.$parent.checkDsConnect();//检查ds的连接情况
+        },
         //检查有没有@符号
         checkAt(e){
             var msg = this.msg,
@@ -538,6 +544,7 @@ export default {
     },
     created:function(){
          this.getApp().hasTab = false;
+         this.$parent.checkDsConnect();
     },
     mounted:function(){
         this.initContextMenu();
