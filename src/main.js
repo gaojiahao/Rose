@@ -7,6 +7,7 @@ import Swiper from './common/swiper-4.2.2.min.js'
 import Bscroll from "better-scroll";
 import VueTouch from 'vue-touch'
 import Nav from './components/public/Nav'
+import loading from './components/public/Loading'
 import RText from './components/public/RText'
 import RDateField from './components/public/DateField'
 import RDatetimeField from './components/public/DatetimeField'

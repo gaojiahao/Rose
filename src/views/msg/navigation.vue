@@ -104,6 +104,9 @@ export default {
         Bus.$on('updateGroups', () => {
             this.initGroup();
         });
+        Bus.$on('refresh',()=>{
+             this.refresh = true;//要刷新了。
+        })
     },
     computed:{
         sortedGroup:function(){
@@ -114,7 +117,9 @@ export default {
     activated:function(){
         if(this.refresh){//如果需要刷新
             this.refresh = false;
+            this.groups = [];
             this.initGroup();
+            this.group = null;
         }
         console.log('navigation active!');
         this.checkDsConnect();//检查deepstream的连接有没有掉线。

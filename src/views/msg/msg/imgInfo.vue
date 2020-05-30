@@ -37,7 +37,8 @@ export default {
             vertical-align: middle; 
             background: black;
             img{
-                width:100%
+                width:100%;
+                background-color: white;
             }
         }
       

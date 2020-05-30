@@ -148,6 +148,7 @@ export default {
                 if(app.dsClient){//关闭之前的deepstream链接
                     app.dsClient.close();
                 }
+                this.bus.$emit('refresh');
                 this.$router.replace('/');
                 this.$loading.hide();
                 localStorage.setItem('userCode',this.userCode);
