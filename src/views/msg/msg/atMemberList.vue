@@ -6,7 +6,7 @@
             </div>
             <div style="margin-right:10px">选择提醒人</div>
             <div class="body history-input-wrapper">
-                <input class="weui-input history-input" placeholder="搜索" @keydown="inputChange" v-model="searchKey"/>
+                <input class="weui-input history-input" placeholder="搜索" @keyup="inputChange" v-model="searchKey"/>
             </div>
          </div>
          <div class="page-body-hasNav" ref="scrollerWrapper">
@@ -75,7 +75,12 @@ export default {
             }
             return url;
         },
-        inputChange(){},
+        inputChange(){
+            var key = this.searchKey;
+            this.memberList = this.allMemers.filter((member)=>{
+                 return member.nickname.indexOf(key) != -1;
+            })
+        },
         getMembers(){
             var groupId = this.$parent.group.groupId,
                 index,
@@ -91,7 +96,7 @@ export default {
                         });
                         if (index != null)res.splice(index,1);
                     }
-                    this.memberList = res;
+                    this.memberList = this.allMemers = res;
                 })
             }
         },

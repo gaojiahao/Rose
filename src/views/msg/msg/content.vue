@@ -19,6 +19,7 @@
             :no-data="false"
             :hideToast="true"
             @on-pulling-down="onPullingDown"
+            @click.native="$refs.msgInput.blur();"
             ref="scroller"
         >
             <div class="msg-container" ref="msg-container">
@@ -70,7 +71,7 @@
                         <div><span>{{msg.content}}</span></div>
                     </div>
                 </div>
-            </div>
+            </div><!--msg-container-->
         </r-scroll>
         <ContextMenu v-show="showContextMenu" ref="contextMenu"/>
         <div class="msgList-footer">
@@ -247,11 +248,27 @@ export default {
         },
         scrollToTarget(target,msgId){
             var msgBody = target.querySelector('.message-content');
-            this.focusMsgId = msgId;
-            setTimeout(() => {
-                this.focusMsgId = null;
-            }, 2000);
+            this.sparkleMsg(msgId);//闪烁效果
             this.scroller.scrollToElement(target);
+        },
+        sparkleMsg(msgId){
+            var timer = 3,
+                time = 300,
+                vm = this;
+
+            this.focusMsgId = msgId;
+            loop();
+            function loop(){
+                setTimeout(()=>{
+                    vm.focusMsgId = vm.focusMsgId == msgId ? null : msgId;
+                    if(vm.focusMsgId != msgId){
+                        timer --;
+                    }
+                    if(timer){
+                        loop();
+                    }
+                },time)
+            }
         },
         scrollToTop:function(){
             var scroll = this.scroller;
@@ -314,8 +331,10 @@ export default {
             for(var i= 0,l= files.length;i < l; i++){
                 file = files[i];
                 size = (file.size/1024).toFixed(2);
-                if(size > 2048){
-                    alert('文件' + file.name + '大于2M');
+                if(size > 1024*this.maxSize){
+                    this.$vux.alert.show({
+                       content: '图片' + file.name + '大于' + this.maxSize + 'M',
+                    });
                     return;
                 }
                 name2Size[file.name] = size;
@@ -355,8 +374,10 @@ export default {
             for(var i= 0,l= files.length;i < l; i++){
                 file = files[i];
                 size = (file.size/1024).toFixed(2);
-                if(size > 2048){
-                    alert('文件' + file.name + '大于2M');
+                if(size > 1024*this.maxSize){
+                     this.$vux.alert.show({
+                       content: '文件' + file.name + '大于' + this.maxSize + 'M',
+                    });
                     return;
                 }
                 countSize += file.size;
@@ -545,6 +566,7 @@ export default {
     created:function(){
          this.getApp().hasTab = false;
          this.$parent.checkDsConnect();
+         this.maxSize = 20;
     },
     mounted:function(){
         this.initContextMenu();
@@ -800,10 +822,20 @@ export default {
 .isMySelf{
     text-align: right;
     .message-content{
-        background-color: rgb(191, 221, 255);
+        background-color:rgb(191, 221, 255);
     }
 }
-
+.focus-msg{
+    .message-content{
+        background-color:rgb(255, 206, 191);
+    }
+     .rightarrow:after{
+        border-left-color: rgb(255, 206, 191);
+     }
+     .leftarrow:after{
+        border-right-color: rgb(255, 206, 191);
+     }
+}
 .file-dialog-sendTo{
    display: flex;
    img{

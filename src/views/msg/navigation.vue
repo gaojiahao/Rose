@@ -201,7 +201,7 @@ export default {
             var dsClient = window.dsClient,
                 status = dsClient && dsClient.getConnectionState();
 
-            if(status == 'CLOSED'){
+            if(status == 'CLOSED' || dsClient == null){
                this.describeMsg = false;//如果是关闭状态，则订阅失效了。
                this.initDs();
             }
