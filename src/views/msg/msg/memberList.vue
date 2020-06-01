@@ -130,7 +130,8 @@ export default{
           this.$router.push({name:'userInfo',params:{uId:item.userId}})
         },
         touchStart(item) {
-            if(this.currentUser.userId!=this.groupOwner) return
+            if(this.currentUser.userId != this.groupOwner) return
+            if(!!item.isOwner) return
 
             let touchs = event.changedTouches[0];
             // 记录开始滑动的鼠标位置
@@ -138,7 +139,8 @@ export default{
             this.candelete = {};
         },
         touchEnd(item) {
-          if(this.currentUser.userId!=this.groupOwner) return
+          if(this.currentUser.userId != this.groupOwner) return
+          if(!!item.isOwner) return
 
             let touchs = event.changedTouches[0];
             // 记录结束滑动的鼠标位置

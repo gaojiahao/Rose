@@ -501,7 +501,7 @@ export default {
                 params = userIds.join(',')
                 requestUrl = getGroupByUserId;
             }else{
-                userNames.push(this.currentUser.name);
+                userNames.push(this.currentUser.nickname);
                 params = {
                     groupId: null,
                     users: userIds.join(','),
