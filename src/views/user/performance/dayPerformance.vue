@@ -108,8 +108,8 @@ export default {
                 path: "/user/myPerformance"
             })
         },
-        gotoForm(log) {
-            this.$router.push(`/detail/2750a13d-295d-4776-9673-290c51bfc568/0?name=日志任务&folder=project&fileName=RWRZ&transCode=${log.transCode}`)
+        gotoForm(item) {
+            this.$router.push(`/detail/${item.listId}/0?name=${item.title}&transCode=${item.transCode}`);
         },
         defaultImg(log) {
             let url = require('assets/contact_default02.png');
