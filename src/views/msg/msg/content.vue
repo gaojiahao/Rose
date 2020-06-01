@@ -248,11 +248,27 @@ export default {
         },
         scrollToTarget(target,msgId){
             var msgBody = target.querySelector('.message-content');
-            this.focusMsgId = msgId;
-            setTimeout(() => {
-                this.focusMsgId = null;
-            }, 2000);
+            this.sparkleMsg(msgId);//闪烁效果
             this.scroller.scrollToElement(target);
+        },
+        sparkleMsg(msgId){
+            var timer = 3,
+                time = 300,
+                vm = this;
+
+            this.focusMsgId = msgId;
+            loop();
+            function loop(){
+                setTimeout(()=>{
+                    vm.focusMsgId = vm.focusMsgId == msgId ? null : msgId;
+                    if(vm.focusMsgId != msgId){
+                        timer --;
+                    }
+                    if(timer){
+                        loop();
+                    }
+                },time)
+            }
         },
         scrollToTop:function(){
             var scroll = this.scroller;
@@ -801,10 +817,20 @@ export default {
 .isMySelf{
     text-align: right;
     .message-content{
-        background-color: rgb(191, 221, 255);
+        background-color:rgb(191, 221, 255);
     }
 }
-
+.focus-msg{
+    .message-content{
+        background-color:rgb(255, 206, 191);
+    }
+     .rightarrow:after{
+        border-left-color: rgb(255, 206, 191);
+     }
+     .leftarrow:after{
+        border-right-color: rgb(255, 206, 191);
+     }
+}
 .file-dialog-sendTo{
    display: flex;
    img{
