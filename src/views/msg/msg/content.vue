@@ -77,7 +77,12 @@
         <div class="msgList-footer">
             <div class="replayMsg" v-if="replayMsg">
                 <span>{{replayMsg.creatorName}}:</span>
-                <div class="replayMsg-content">{{replayMsg|replayContent}}</div>
+                <div class="replayMsg-content">
+                    <MessageTplText :msg="replayMsg" v-if="replayMsg.imType == 1"></MessageTplText>
+                    <MessageTplImg :msg="replayMsg" v-else-if="replayMsg.imType == 2"></MessageTplImg>
+                    <MessageTplMult :msg="replayMsg" v-else-if="replayMsg.imType == 3"></MessageTplMult>
+                    <MessageTplFile :msg="replayMsg" v-else-if="replayMsg.imType == 4"></MessageTplFile>
+                </div>
                 <span class="iconfont icon-close" @click="replayMsg = null">
                 </span>
             </div> 
