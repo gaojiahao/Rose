@@ -201,7 +201,7 @@ export default {
             var dsClient = window.dsClient,
                 status = dsClient && dsClient.getConnectionState();
 
-            if(status == 'CLOSED'){
+            if(status == 'CLOSED' || dsClient == null){
                this.describeMsg = false;//如果是关闭状态，则订阅失效了。
                this.initDs();
             }
@@ -221,6 +221,8 @@ export default {
                 if(deepStreamUrl && userId){
                     app.getDs(deepStreamUrl,userId).then(ds=>{
                          this.dsConnectStart = false;
+                         console.log('得到ds!')
+                         console.log('describemsg',this.describeMsg);
                          if (this.describeMsg != true){//防止断线重连时重复订阅
                              vm.describeDs(ds);
                              this.describeMsg = true;
