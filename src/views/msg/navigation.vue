@@ -72,7 +72,7 @@
 </template>
 <script>
 import { LoadMore,XInput,Icon } from 'vux'
-import { getGroupMsg,getMyGroups,createGroup,getGroupByUserId,getMembers,getGroupById} from 'service/msgService'
+import { getGroupMsg,getMyGroups,createGroup,getGroupByUserId,getMembers,getGroupById,checkMessage} from 'service/msgService'
 import commonService from 'service/commonService'
 import tokenService from 'service/tokenService'
 import util from '@/common/util';
@@ -240,6 +240,13 @@ export default {
                 this.distributeMsg(data); 
             });
         },
+         checkMessage:function(){
+            var groupId = this.group.groupId;
+            // to:签收消息
+            checkMessage(groupId).then(res=>{
+                console.log('签收成功');
+            });
+        },
         /**
          * 分发消息
          * 1	text
@@ -391,7 +398,6 @@ export default {
                             group.msgCount++;
                         }
                     }
-
                     if(window.isApp && !msg.isMySelf  ){ //添加app的消息提醒
                          if(this.group){
                             if(this.group.groupId != msg.groupId) this.addNotification(group,msg);
@@ -406,6 +412,7 @@ export default {
                         if(this.$refs.groupMsg != null){ //如果页面是打开的。
                             setTimeout(function(){
                                 vm.$refs.groupMsg.scrollToButtom();
+                                vm.checkMessage();
                             });
                         }
                     }
@@ -421,6 +428,8 @@ export default {
             var groupIcon = 'https://lab.roletask.com/resource/common-icon/male.png',
                 content = msg.imType == '1' ? msg.content : JSON.parse(msg.content),
                 text = '';
+            
+            msg.imType = String(msg.imType);
       
             switch(msg.imType){
                 case '1':
@@ -590,12 +599,14 @@ export default {
       }
       .navigation-add-list{
         position: absolute;
-        top: .42rem;
+        top: .6rem;
         z-index: 100;
-        background-color: #eee;
-        right: .01rem;
-        padding: .1rem;
+        background-color: #3296fa;
+        right: .05rem;
+        padding: .05rem;
         border-radius: .03rem;
+        color: white;
+        font-size: 14px;
       }
   }
   .scroller-wrapper{
