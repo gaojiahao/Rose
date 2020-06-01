@@ -19,6 +19,7 @@
             :no-data="false"
             :hideToast="true"
             @on-pulling-down="onPullingDown"
+            @click.native="$refs.msgInput.blur();"
             ref="scroller"
         >
             <div class="msg-container" ref="msg-container">
@@ -70,7 +71,7 @@
                         <div><span>{{msg.content}}</span></div>
                     </div>
                 </div>
-            </div>
+            </div><!--msg-container-->
         </r-scroll>
         <ContextMenu v-show="showContextMenu" ref="contextMenu"/>
         <div class="msgList-footer">
