@@ -283,7 +283,8 @@ export default {
         justify-content: space-between;
         color: #999999;
         img{
-          height: .65rem;
+          height: .45rem;
+          width: .45rem;
           border-radius: .05rem;
         }
       }

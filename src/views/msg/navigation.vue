@@ -391,7 +391,6 @@ export default {
                             group.msgCount++;
                         }
                     }
-
                     if(window.isApp && !msg.isMySelf  ){ //添加app的消息提醒
                          if(this.group){
                             if(this.group.groupId != msg.groupId) this.addNotification(group,msg);
@@ -421,6 +420,8 @@ export default {
             var groupIcon = 'https://lab.roletask.com/resource/common-icon/male.png',
                 content = msg.imType == '1' ? msg.content : JSON.parse(msg.content),
                 text = '';
+            
+            msg.imType = String(msg.imType);
       
             switch(msg.imType){
                 case '1':
