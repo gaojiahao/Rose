@@ -19,7 +19,7 @@
             :no-data="false"
             :hideToast="true"
             @on-pulling-down="onPullingDown"
-            @click.native="$refs.msgInput.blur();"
+            @click.native="onMsgContainerClick"
             ref="scroller"
         >
             <div class="msg-container" ref="msg-container">
@@ -398,6 +398,11 @@ export default {
             this.showEmotion = false;
             this.msgInputFocus=true;
             this.$parent.checkDsConnect();//检查ds的连接情况
+        },
+        onMsgContainerClick(){
+            this.$refs.msgInput.blur();
+            this.showExtraInput=false;
+            this.showEmotion = false;
         },
         //检查有没有@符号
         checkAt(e){
