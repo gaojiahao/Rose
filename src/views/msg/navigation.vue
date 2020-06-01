@@ -599,12 +599,14 @@ export default {
       }
       .navigation-add-list{
         position: absolute;
-        top: .42rem;
+        top: .6rem;
         z-index: 100;
-        background-color: #eee;
-        right: .01rem;
-        padding: .1rem;
+        background-color: #3296fa;
+        right: .05rem;
+        padding: .05rem;
         border-radius: .03rem;
+        color: white;
+        font-size: 14px;
       }
   }
   .scroller-wrapper{

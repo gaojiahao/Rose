@@ -109,7 +109,13 @@ export default {
             })
         },
         gotoForm(item) {
-            this.$router.push(`/detail/${item.listId}/0?name=${item.title}&transCode=${item.transCode}`);
+            let path = `/detail/${item.listId}/0`;
+            this.$router.push({
+                path,
+                query: { 
+                transCode:item.transCode
+                }
+            })
         },
         defaultImg(log) {
             let url = require('assets/contact_default02.png');
