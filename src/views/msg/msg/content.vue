@@ -331,8 +331,10 @@ export default {
             for(var i= 0,l= files.length;i < l; i++){
                 file = files[i];
                 size = (file.size/1024).toFixed(2);
-                if(size > 2048){
-                    alert('文件' + file.name + '大于2M');
+                if(size > 1024*this.maxSize){
+                    this.$vux.alert.show({
+                       content: '图片' + file.name + '大于' + this.maxSize + 'M',
+                    });
                     return;
                 }
                 name2Size[file.name] = size;
@@ -372,8 +374,10 @@ export default {
             for(var i= 0,l= files.length;i < l; i++){
                 file = files[i];
                 size = (file.size/1024).toFixed(2);
-                if(size > 2048){
-                    alert('文件' + file.name + '大于2M');
+                if(size > 1024*this.maxSize){
+                     this.$vux.alert.show({
+                       content: '文件' + file.name + '大于' + this.maxSize + 'M',
+                    });
                     return;
                 }
                 countSize += file.size;
@@ -562,6 +566,7 @@ export default {
     created:function(){
          this.getApp().hasTab = false;
          this.$parent.checkDsConnect();
+         this.maxSize = 20;
     },
     mounted:function(){
         this.initContextMenu();
