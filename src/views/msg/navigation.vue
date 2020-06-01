@@ -72,7 +72,7 @@
 </template>
 <script>
 import { LoadMore,XInput,Icon } from 'vux'
-import { getGroupMsg,getMyGroups,createGroup,getGroupByUserId,getMembers,getGroupById} from 'service/msgService'
+import { getGroupMsg,getMyGroups,createGroup,getGroupByUserId,getMembers,getGroupById,checkMessage} from 'service/msgService'
 import commonService from 'service/commonService'
 import tokenService from 'service/tokenService'
 import util from '@/common/util';
@@ -240,6 +240,13 @@ export default {
                 this.distributeMsg(data); 
             });
         },
+         checkMessage:function(){
+            var groupId = this.group.groupId;
+            // to:签收消息
+            checkMessage(groupId).then(res=>{
+                console.log('签收成功');
+            });
+        },
         /**
          * 分发消息
          * 1	text
@@ -405,6 +412,7 @@ export default {
                         if(this.$refs.groupMsg != null){ //如果页面是打开的。
                             setTimeout(function(){
                                 vm.$refs.groupMsg.scrollToButtom();
+                                vm.checkMessage();
                             });
                         }
                     }
