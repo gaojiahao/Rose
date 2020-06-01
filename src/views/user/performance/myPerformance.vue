@@ -190,6 +190,16 @@ export default {
               this.yearPerformance= 0;
             }
           })
+        },
+        init(){
+           this.getDayPerformances()
+           this.getYearPerformances()
+            initWebContext().then((WebContext) => {
+                this.currentUser = WebContext.currentUser
+                this.currentUser.isSysRoleList.forEach(item => {
+                  this.roles.push(item.name)
+                })
+            })
         }
     },
     mounted(){
