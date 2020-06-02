@@ -19,7 +19,7 @@
             :no-data="false"
             :hideToast="true"
             @on-pulling-down="onPullingDown"
-            @click.native="$refs.msgInput.blur();showExtraInput=false;"
+            @click.native="onMsgContainerClick"
             ref="scroller"
         >
             <div class="msg-container" ref="msg-container">
@@ -324,10 +324,7 @@ export default {
                 groupId = this.group.groupId,
                 size,
                 name2Size = {},
-                params = {
-                    groupId:groupId,
-                    imType:2
-                },file;
+                file;
             
             if (!files) {
                return;
@@ -341,6 +338,11 @@ export default {
                        content: '图片' + file.name + '大于' + this.maxSize + 'M',
                     });
                     return;
+                } else if(file.type.indexOf('image/') != 0){
+                    this.$vux.alert.show({
+                       content: '文件' + file.name + '不是图片！',
+                    });
+                    return;
                 }
                 name2Size[file.name] = size;
             }
@@ -351,12 +353,17 @@ export default {
                 if (rs.success){
                    e.target.value = null;
                    rs.data.forEach(file=>{
-                       var fileName = file.attr1;
-                       params.content=JSON.stringify({
-                            id:file.id,
-                            content:fileName,
-                            size:name2Size[fileName]
-                       });
+                       var fileName = file.attr1,
+                           params = {
+                              groupId:groupId,
+                              imType:2,
+                              content:JSON.stringify({
+                                        id:file.id,
+                                        content:fileName,
+                                        size:name2Size[fileName]
+                              })
+                           };
+
                        sendMsg(params);
                    });                   
                 }
@@ -403,6 +410,11 @@ export default {
             this.showEmotion = false;
             this.msgInputFocus=true;
             this.$parent.checkDsConnect();//检查ds的连接情况
+        },
+        onMsgContainerClick(){
+            this.$refs.msgInput.blur();
+            this.showExtraInput=false;
+            this.showEmotion = false;
         },
         //检查有没有@符号
         checkAt(e){
