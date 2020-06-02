@@ -33,7 +33,7 @@
                                 <div class="group-body-icon">
                                     <span>
                                         <img class="group-body-icon-ava" 
-                                            :src="group.groupIcon" 
+                                            :src="group.groupIcon|appIconFilter"
                                             @error="getDefaultPhoto(group)">
                                     </span>
                                     <badge  
@@ -309,32 +309,22 @@ export default {
             this.$event.$emit("setMsgCount", c);
 
             if(!window.isApp) return;
-
-            if(c){
-                cordova.plugins.notification.badge.set(c);
-            }else{
-                cordova.plugins.notification.badge.clear();
+            try {
+                if(c){
+                    cordova.plugins.notification.badge.set(c);
+                }else{
+                    cordova.plugins.notification.badge.clear();
+                }
+            } catch (error) {
+                
             }
+            
         },
         addNewGroup(msg){
-             var gii = {};
-
-            if(this.groups.length)for(var i=0;i<this.groups.length;i++){
-                if(!this.groups[i].focus){
-                    this.groups.splice(i,0,msg);
-                    break;
-                }
-            }else{
-                this.groups=[msg];
-            }
-            this.groups.map((g,idx)=>{
-                gii[g.groupId] = idx;
-            });
-            this.groupIdToIndex = gii;
+            this.groups.push(msg);
+            msg.lastMsg.isMySelf = msg.isMySelf;
             this.addMsg({
-                ...msg.lastMsg,
-                isMySelf:msg.isMySelf,
-                creator:msg.creator
+                ...msg.lastMsg
             });
         },
         /**
@@ -456,7 +446,7 @@ export default {
                 title: msg.creatorName,
                 text:text,
                 foreground: true,
-                icon:g.groupIcon || groupIcon
+                icon:this.$options.filters.appIconFilter(g.groupIcon) || groupIcon
             });
             navigator.vibrate(300);
         },

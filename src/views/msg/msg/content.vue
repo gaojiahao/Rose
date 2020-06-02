@@ -19,7 +19,7 @@
             :no-data="false"
             :hideToast="true"
             @on-pulling-down="onPullingDown"
-            @click.native="$refs.msgInput.blur();"
+            @click.native="$refs.msgInput.blur();showExtraInput=false;"
             ref="scroller"
         >
             <div class="msg-container" ref="msg-container">

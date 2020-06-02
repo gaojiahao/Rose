@@ -9,8 +9,10 @@
 <template>
     <div class="login-container">
         <div class="login-banner">
-            <img src='./../assets/default/login/logo.png' />
-            <div class="login-banner-roletask">Roletask</div>
+            <img class="login-banner-logoimg" src='./../assets/default/login/logo.png' />
+            <div class="login-banner-roletask">
+                <img src="https://lab.roletask.com/resource/logo-txt.png"  />
+            </div>
             <div class="login-banner-solgan">路塔柔性流程</div>
         </div>
         <div class="login-content">
@@ -294,7 +296,7 @@ export default {
         margin-bottom: .5rem;
         // @include login_banner();
 
-        img{
+        &-logoimg{
             height: 1rem;
             margin-top: 0.5rem;
             width: 1rem;
@@ -304,6 +306,10 @@ export default {
             color: #3296fa;
             font-family: fantasy;
             letter-spacing: 2px;
+            img{
+                height: .4rem;
+                width: 1.5rem;
+            }
         }
 
         &-solgan{
