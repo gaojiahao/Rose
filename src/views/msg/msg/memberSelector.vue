@@ -28,7 +28,7 @@
                 <check-icon :value="list.check"></check-icon>
               </div>
               <div class="list-photo">
-                <img :src="list.photo" @error="getDefaultPhoto(list)"/>
+                <img :src="list.photo | appIconFilter" @error="getDefaultPhoto(list)"/>
               </div>
               <div class="list-desc">
                 <p>{{list.nickname}}</p>
@@ -223,8 +223,9 @@ export default {
         &-photo{
           margin: 0px .1rem;
           img{
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
+            border-radius: .02rem;
           }
         }
         &-desc{

@@ -131,7 +131,7 @@
             >
               <div class="member">
                 <p class="list" v-for="(member,index) of members" :key="index">
-                  <img :src="member.photo" onerror="src='https://lab.roletask.com/resource/common-icon/male.png'">
+                  <img :src="member.photo | appIconFilter" onerror="src='https://lab.roletask.com/resource/common-icon/male.png'">
                   <span>{{ member.nickname }}</span>
                 </p>
               </div>
