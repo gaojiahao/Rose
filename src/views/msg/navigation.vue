@@ -321,7 +321,13 @@ export default {
             
         },
         addNewGroup(msg){
-            this.groups.push(msg);
+            let isExist = false;
+
+            this.groups.map(g=>{
+                if(g.groupId === msg.groupId) isExist = true;
+            });
+            if(!isExist)this.groups.push(msg);
+            
             msg.lastMsg.isMySelf = msg.isMySelf;
             this.addMsg({
                 ...msg.lastMsg
@@ -456,8 +462,17 @@ export default {
          */
         toMsg:function(group){
             var groupId = group.groupId,
-                path = '/msg/group/'+ groupId;
+                path = '/msg/group/'+ groupId,
+                isExist = false;
+            
+            this.groups.map(g=>{
+                if(g.groupId === group.groupId) isExist = true;
+            });
 
+            if(!isExist){
+                this.groups.push(group);
+            }
+            
             if(group != this.group){
                 this.group = group;
                 getGroupMsg(groupId).then(res=>{
