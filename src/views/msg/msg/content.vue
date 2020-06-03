@@ -18,6 +18,7 @@
             :has-next="false"
             :no-data="false"
             :hideToast="true"
+            :disableToTop="true"
             @on-pulling-down="onPullingDown"
             @click.native="onMsgContainerClick"
             ref="scroller"
@@ -154,7 +155,6 @@ export default {
             msg:'',
             detailMessage: {},
             scrollOptions:{
-                
             },
             showEmotion:false,
             page:1,

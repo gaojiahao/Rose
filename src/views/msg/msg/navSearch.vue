@@ -35,6 +35,7 @@
                       <div class="list-left">
                         <touch>
                           <div class="list-photo" @click.stop="openUserDetail(child)">
+                            
                             <img :src="child.groupIcon|appIconFilter"  @error="getDefaultPhoto(child)" />
                           </div>
                         </touch>

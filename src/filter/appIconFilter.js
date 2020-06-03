@@ -7,6 +7,8 @@ const appIconFilter  = (iconUrl) => {
     if(!iconUrl.includes('http') && window.baseURL){
         iconUrl = `${window.baseURL}${iconUrl}`
     }
+
+    if(!iconUrl)  iconUrl ='https://lab.roletask.com/resource/common-icon/male.png';
     return iconUrl;
 }
 

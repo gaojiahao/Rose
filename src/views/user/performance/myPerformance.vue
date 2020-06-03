@@ -16,7 +16,7 @@
       <div class="my-info" >
         <div class="my-info-entity" >
           <div>{{ currentUser.entityName}}</div>
-          <img :src="currentUser.photo|appIconFilter" @error="getDefaultImg()" />
+          <img :src="currentUser.photo" @error="getDefaultImg()" />
         </div>
 
         <div class="my-info-job">
