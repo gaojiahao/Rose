@@ -18,6 +18,7 @@
             :has-next="false"
             :no-data="false"
             :hideToast="true"
+            :disableToTop="true"
             @on-pulling-down="onPullingDown"
             @click.native="onMsgContainerClick"
             ref="scroller"
@@ -154,7 +155,6 @@ export default {
             msg:'',
             detailMessage: {},
             scrollOptions:{
-                
             },
             showEmotion:false,
             page:1,
@@ -324,10 +324,7 @@ export default {
                 groupId = this.group.groupId,
                 size,
                 name2Size = {},
-                params = {
-                    groupId:groupId,
-                    imType:2
-                },file;
+                file;
             
             if (!files) {
                return;
@@ -341,6 +338,11 @@ export default {
                        content: '图片' + file.name + '大于' + this.maxSize + 'M',
                     });
                     return;
+                } else if(file.type.indexOf('image/') != 0){
+                    this.$vux.alert.show({
+                       content: '文件' + file.name + '不是图片！',
+                    });
+                    return;
                 }
                 name2Size[file.name] = size;
             }
@@ -351,12 +353,17 @@ export default {
                 if (rs.success){
                    e.target.value = null;
                    rs.data.forEach(file=>{
-                       var fileName = file.attr1;
-                       params.content=JSON.stringify({
-                            id:file.id,
-                            content:fileName,
-                            size:name2Size[fileName]
-                       });
+                       var fileName = file.attr1,
+                           params = {
+                              groupId:groupId,
+                              imType:2,
+                              content:JSON.stringify({
+                                        id:file.id,
+                                        content:fileName,
+                                        size:name2Size[fileName]
+                              })
+                           };
+
                        sendMsg(params);
                    });                   
                 }

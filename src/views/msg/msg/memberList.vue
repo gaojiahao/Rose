@@ -11,38 +11,47 @@
           <div class="list-search">
             <x-input placeholder="搜索" v-model="searchValue"></x-input>
           </div>
-          <ul class="content">
-            <li 
-              v-for="(item,index) of memberData"
-              :key="item.userId"
-              @click="openUserDetail(item)"
-              :class="{move:candelete.userId==item.userId,list:true}"
-              @touchstart="touchStart(item)"
-              @touchend="touchEnd(item)">
-              <div class="list-left">
-                <div class="list-photo">
-                  <img :src="getDefaultPhoto(item)" />
+          <RScroll 
+              class="page-body-hasNav search-container" 
+              :options="scrollOptions"
+              :has-next="hasNext"
+              :no-data="false"
+          >
+            <ul class="content">
+              <li 
+                v-for="(item,index) of memberData"
+                :key="item.userId"
+                @click="openUserDetail(item)"
+                :class="{move:candelete.userId==item.userId,list:true}"
+                @touchstart="touchStart(item)"
+                @touchend="touchEnd(item)">
+                <div class="list-left">
+                  <div class="list-photo">
+                    <img :src="getDefaultPhoto(item)" />
+                  </div>
+                  <div class="list-desc">
+                      <p>{{item.nickname}}</p>
+                      <span>{{item.role}}</span>
+                  </div>
                 </div>
-                <div class="list-desc">
-                    <p>{{item.nickname}}</p>
-                    <span>{{item.role}}</span>
+                <div class="list-owner" v-if="item.isOwner">
+                  群主
                 </div>
-              </div>
-              <div class="list-owner" v-if="item.isOwner">
-                群主
-              </div>
-              <div class="delete" @click.stop="deleteMember(item,index)">移除</div>
-            </li>
-          </ul>
+                <div class="delete" @click.stop="deleteMember(item,index)">移除</div>
+              </li>
+            </ul>
+          </RScroll>
     </div> 
 </template>  
 <script>
 import {XInput } from 'vux'
 import { removeMember } from '@/service/msgService'
+import RScroll from "plugins/scroll/RScroll";
 export default{  
     name: "MemberList",
     components: {
-        XInput
+        XInput,
+        RScroll
     },
     props: {
       selectedMembers: {
@@ -62,7 +71,13 @@ export default{
             showMemberList:false,
             userId: "",
             searchValue: "",
-            memberData: []
+            memberData: [],
+            hasNext:false,
+            scrollOptions:{
+                click: false,
+                pullUpLoad: false,//上拉刷新
+                pullDownRefresh: false //下拉刷新
+            }
         }
     },
     watch: {
@@ -168,12 +183,17 @@ export default{
 .member-list{
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   .list-header{
     padding: .1rem;
     background-color: #39f;
     color: #fff;
     display: flex;
     justify-content: space-between;
+  }
+  .search-container{
+    height: calc(~"100% - 1rem");
+    margin-top: .1rem;
   }
   .list-search{
     background-color: #fff;

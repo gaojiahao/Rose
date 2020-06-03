@@ -30,6 +30,10 @@
       Spinner, LoadMore,
     },
     props: {
+      disableToTop:{
+        type:Boolean,
+        default:false
+      },
       // 是否有下一页
       hasNext: {
         type: Boolean,
@@ -72,7 +76,7 @@
     watch:{
       yScrollValue: {
         handler(val) {
-          if(Math.abs(val) > 1000)
+          if(Math.abs(val) > 1000 && this.disableToTop===false)
             this.toTopShow = true;
           else if (Math.abs(val) < 1000) 
             this.toTopShow = false;

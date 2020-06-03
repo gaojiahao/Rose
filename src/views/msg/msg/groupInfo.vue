@@ -28,13 +28,13 @@
                             <div class="members-item" v-for="(member,index) of allMembers" :key="index">
                                 <img 
                                     v-if="index<6"
-                                    :src="member.photo || getDefaultPhoto()" 
+                                    :src="member.photo|appIconFilter" 
                                     @error="getDefaultPhoto(member)"/>
                                 <i v-if="index===6" class="iconfont icon-more1"></i>
                             </div>
                         </div>
-                        <cell  :title="group.groupName" is-link  v-if="group.groupType=='P'">
-                            <img slot="icon" width="45" style="display: block;margin-right: 5px;border-radius: .02rem;" :src="group.groupIcon" >
+                        <cell  :title="group.groupName"   v-if="group.groupType=='P'">
+                            <img slot="icon" width="45" height="45" style="display: block;margin-right: 5px;border-radius: .02rem;" :src="group.groupIcon" >
                         </cell>
                     </div>
                     <cell class="add-btn" @click.native="showMemberSelector" title="添加成员">
