@@ -91,6 +91,9 @@ export default {
     $route: {
       handler: function(val, oldVal){
         this.intTab();
+        if(val.query.transCode!=oldVal.query.transCode){
+          oldVal.meta.keepAlive = false;  
+        }
         if(val.name == oldVal.name) {
           if(val.query.transCode != oldVal.query.transCode) {
             this.getAppFeature();
