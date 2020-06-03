@@ -4,6 +4,7 @@
 export const formatToEmotion=(value)=>{
   let reg = /\[(.+?)\]/g;
   let emotion = [...EMOTION];
+  value = value.replace(/\n/g,'<br/>');//处理换行
   value = value.replace(/src="resources/g, 'src="/dist/resources');
   value = value.replace(reg, (word) => {
       // 寻找表情索引
