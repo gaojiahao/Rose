@@ -18,16 +18,18 @@
               :no-data="false"
           >
             <ul class="content">
-              <li 
-                v-for="(item,index) of memberData"
+              <touch 
+               >
+              <li  v-for="(item,index) of memberData"
                 :key="item.userId"
                 @click="openUserDetail(item)"
+                class="vux-1px-b"
                 :class="{move:candelete.userId==item.userId,list:true}"
                 @touchstart="touchStart(item)"
-                @touchend="touchEnd(item)">
+                @touchend="touchEnd(item)" >
                 <div class="list-left">
                   <div class="list-photo">
-                    <img :src="getDefaultPhoto(item)" />
+                    <img :src="item.photo|appIconFilter" @error="getDefaultPhoto(item)" />
                   </div>
                   <div class="list-desc">
                       <p>{{item.nickname}}</p>
@@ -39,6 +41,7 @@
                 </div>
                 <div class="delete" @click.stop="deleteMember(item,index)">移除</div>
               </li>
+              </touch>
             </ul>
           </RScroll>
     </div> 
@@ -203,7 +206,6 @@ export default{
     overflow: hidden;
     .list{
       background: #fdfdfd;
-      border-bottom: 1px solid #e1e1e1;
       height: .5rem;
       position: relative;
       transform: translateX(0);
@@ -215,14 +217,17 @@ export default{
       &-left{
         display: flex;
         align-items: center;
+        flex: 6;
       }
       &-photo{
         img{
           width: .45rem;
           height: .45rem;
+          border-radius: .02rem;
         }
       }
       &-owner{
+        flex: 1;
         color: #999;
       }
       &-desc{

@@ -13,7 +13,13 @@
              <div v-if="msgList.length==0 && showLoading == false">
                  无搜索结果
              </div>
-            <div v-if="msgList.length" class="file-container">
+             <r-scroll
+                 :options="scrollOptions"
+                 :has-next="false"
+                 :no-data="false"
+                 :hideToast="true"
+                 v-if="msgList.length" class="file-container"
+                >
                 <div v-for="(msg,index) in msgList" :key="index" class="history-file-item" @click="fileClick(msg.content)">
                     <span class="creatorName">{{msg.creatorName}}</span>
                     <div class="history-file-item-info">
@@ -25,11 +31,12 @@
                     </div>
                     <div class="crtTime">{{msg.crtTime | timeChangeFilter}}</div>
                 </div>
-            </div>
+             </r-scroll>
          </div>
     </div>
 </template>
 <script>
+import RScroll from "plugins/scroll/RScroll";
 import util from '@/common/util';
 import {getMessagesByImType} from 'service/msgService';
 export default {
@@ -41,10 +48,12 @@ export default {
                 page:1,
                 limit:100
             },
+            scrollOptions:{},
             showLoading:false,
             hasNext:false
         }
     },
+    components:{RScroll},
     created(){
         this.getMsg();
     },
@@ -112,8 +121,13 @@ export default {
 }
 </script>
 <style lang='less'>
+.msg-history-file{
+   display: flex;
+   flex-direction: column;
+}
 .file-container{
     padding: 0 0.1rem;
+    height:100%;
     background: #fff;
 }
 .history-file-item{

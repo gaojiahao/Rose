@@ -9,11 +9,17 @@
             </div>
          </div>
          <div class="page-body-hasNav" ref="scrollerWrapper">
-            <div v-if="msgList.length" class="img-container">
+             <r-scroll
+                 :options="scrollOptions"
+                 :has-next="false"
+                 :no-data="false"
+                 :hideToast="true"
+                 v-if="msgList.length" class="img-container"
+                >
                 <div v-for="(msg,index) in msgList" :key="index" class="history-img-item"   @click="imgClick(msg.content)" >
                     <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ msg.content.id">
                 </div>
-            </div>
+             </r-scroll>
             <div class="imgPerview" v-show="perviewImg" @click="perviewImg = null">
                 <img :src="perviewImg"/>
             </div>
@@ -21,6 +27,7 @@
     </div>
 </template>
 <script>
+import RScroll from "plugins/scroll/RScroll";
 import {getMessagesByImType} from 'service/msgService'
 export default {
     data(){
@@ -31,11 +38,13 @@ export default {
                 page:1,
                 limit:30
             },
+            scrollOptions:{},
             perviewImg:null,
             showLoading:false,
             hasNext:false
         }
     },
+    components:{RScroll},
     created(){
         this.getMsg();
     },
@@ -101,6 +110,7 @@ export default {
     }
     .img-container{
         display: flex;
+        height:100%;
         flex-wrap: wrap;
         justify-content: flex-start;
     }
