@@ -31,7 +31,7 @@
                         @click="showCreator(msg.creator)">
                     <img 
                     v-if="[1,2,3,4].includes(msg.imType)"
-                    :src="msg.photo" 
+                    :src="msg.photo|appIconFilter" 
                     :style="{float: msg.isMySelf?'right':'left'}"  
                     class="message-ava" 
                     @error="getDefaultPhoto(msg)">
