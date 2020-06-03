@@ -1,6 +1,6 @@
 <template>
     <div class="page">
-        <div class="page-body-hasNav" @click="$router.go(-1)">
+        <div class="page-body" @click="$router.go(-1)">
             <div class="imgPerview">
                 <span>
                      <img :src="src"/>
@@ -42,10 +42,5 @@ export default {
             }
         }
       
-   }
-
-   .page-body-hasNav{
-       width: 100%;
-        height: 100%;
    }
 </style>
