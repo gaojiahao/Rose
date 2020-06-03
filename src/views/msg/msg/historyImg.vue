@@ -14,15 +14,15 @@
                  :has-next="false"
                  :no-data="false"
                  :hideToast="true"
-                 v-if="msgList.length" class="img-container"
+                 v-if="msgList.length" class="img-container-wrapper"
                 >
-                <div v-for="(msg,index) in msgList" :key="index" class="history-img-item"   @click="imgClick(msg.content)" >
-                    <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ msg.content.id">
+                <div class="img-container">
+                    <div v-for="(msg,index) in msgList" :key="index" class="history-img-item"   @click="imgClick(msg.content)" >
+                        <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ msg.content.id">
+                    </div>
+                    <div class="history-img-item-fill" v-for="count in (4-msgList.length%4)" :key="count"></div>
                 </div>
              </r-scroll>
-            <div class="imgPerview" v-show="perviewImg" @click="perviewImg = null">
-                <img :src="perviewImg"/>
-            </div>
          </div>
     </div>
 </template>
@@ -97,23 +97,15 @@ export default {
     .page-body-hasNav{
         position: relative;
         background-color: white;
-        .imgPerview{
-            position:absolute;
-            top:0;
-            height: 100%;
-            background: #dedede;
-            img{
-                width: 100%;
-                margin-top:20px;
-            }
-        }
     }
     .img-container{
         display: flex;
-        height:100%;
         flex-wrap: wrap;
-        justify-content: flex-start;
+        justify-content:space-around;
     }
+}
+.img-container-wrapper{
+    height:100%;
 }
 .history-img-item{
     width: 23%;
@@ -126,5 +118,8 @@ export default {
         height:65px;
         border-radius: .01rem;
     }
+}
+.history-img-item-fill{
+    width: 23%;
 }
 </style>
