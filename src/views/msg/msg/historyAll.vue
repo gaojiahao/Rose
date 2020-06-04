@@ -1,7 +1,7 @@
 <template>
     <div class="page msg-history-all">
         <div class="page-navigation flex">
-            <div class="goback" @click="$parent.showHistoryAll=false">
+            <div class="goback" @click="$router.go(-1)">
                 <i class="iconfont icon-back1"></i>
             </div>
             <div class="body history-input-wrapper">
@@ -12,8 +12,8 @@
              <div v-if="searchKey == ''">
                  <p class="notice">快速查找聊天内容</p>
                  <div class="history-link flex">
-                     <span @click="$parent.showHistoryImg=true">图片</span>
-                     <span @click="$parent.showHistoryFile=true">文件</span>
+                     <span @click="goto('historyImg')">图片</span>
+                     <span @click="goto('historyFile')">文件</span>
                  </div>
              </div>
              <div v-if="msgList.length==0 && showLoading == false && loaded == true">
@@ -91,6 +91,9 @@ export default {
             }
             return url;
         },
+        goto(name){
+           this.$router.push({name:name,params:{groupId:this.$route.params.groupId}});
+        },
         getMsg(){
             var key = this.searchKey;
             
@@ -117,6 +120,16 @@ export default {
                 }
             });
         }
+    },
+    beforeRouteEnter:function(to,form,next){
+        next(vm=>{
+            vm.getApp().hasTab = false;
+        });
+        
+    },
+    beforeRouteLeave:function(to,from,next){
+        this.getApp().hasTab = true;
+        next();
     }
 }
 </script>

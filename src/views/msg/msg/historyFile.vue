@@ -1,7 +1,7 @@
 <template>
     <div class="page msg-history-file">
         <div class="page-navigation flex">
-            <div class="goback" @click="$parent.showHistoryFile=false">
+            <div class="goback" @click="$router.go(-1)">
                 <i class="iconfont icon-back1"></i>
             </div>
             <div style="margin-right:10px">文件</div>
@@ -117,6 +117,16 @@ export default {
                 util.down(content);
             }
         }
+    },
+    beforeRouteEnter:function(to,form,next){
+        next(vm=>{
+             vm.getApp().hasTab = false;
+        });
+        
+    },
+    beforeRouteLeave:function(to,from,next){
+        this.getApp().hasTab = true;
+        next();
     }
 }
 </script>

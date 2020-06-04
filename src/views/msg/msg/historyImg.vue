@@ -1,7 +1,7 @@
 <template>
     <div class="page msg-history-img">
         <div class="page-navigation flex">
-            <div class="goback" @click="$parent.showHistoryImg=false">
+            <div class="goback" @click="$router.go(-1)">
                 <i class="iconfont icon-back1"></i>
             </div>
             <div class="body history-input-wrapper">
@@ -20,7 +20,7 @@
                     <div v-for="(msg,index) in msgList" :key="index" class="history-img-item"   @click="imgClick(msg.content)" >
                         <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ msg.content.id">
                     </div>
-                    <div class="history-img-item-fill" v-for="count in (4-msgList.length%4)" :key="count"></div>
+                    <div class="history-img-item-fill" v-for="count in (4-msgList.length%4)"></div>
                 </div>
              </r-scroll>
          </div>
@@ -87,6 +87,16 @@ export default {
                 }
             });
         }
+    },
+    beforeRouteEnter:function(to,form,next){
+        next(vm=>{
+                vm.getApp().hasTab = false;
+        });
+        
+    },
+    beforeRouteLeave:function(to,from,next){
+        this.getApp().hasTab = true;
+        next();
     }
 }
 </script>
