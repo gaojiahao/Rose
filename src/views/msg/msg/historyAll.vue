@@ -10,7 +10,7 @@
          </div>
          <div class="page-body-hasNav" ref="scrollerWrapper">
              <div v-if="searchKey == ''">
-                 <P>快速查找聊天内容</P>
+                 <p class="notice">快速查找聊天内容</p>
                  <div class="history-link flex">
                      <span @click="$parent.showHistoryImg=true">图片</span>
                      <span @click="$parent.showHistoryFile=true">文件</span>
@@ -19,16 +19,23 @@
              <div v-if="msgList.length==0 && showLoading == false && loaded == true">
                  无搜索结果
              </div>
-            <div v-if="msgList.length">
+             <r-scroll
+                 :options="scrollOptions"
+                 :has-next="false"
+                 :no-data="false"
+                 :hideToast="true"
+                 v-if="msgList.length" class="msg-history-container"
+                >
                 <div v-for="(msg,index) in msgList" :key="index" class="history-item">
                     <img :src="msg.photo"  @error="getDefaultPhoto(msg)">
                     <div class="history-item-info">
                         <p>{{msg.creatorName}}</p>
-                        <div v-html="msg.content"></div>
+                        <div v-html="msg.content" v-if="msg.imType == 1"></div>
+                        <historyFileItem v-else-if="msg.imType==4 || msg.imType == 2" :content="msg.content"></historyFileItem>
                     </div>
                     <div>{{msg.crtTime}}</div>
                 </div>
-            </div>
+             </r-scroll>
             <div class="weui-loadmore" v-show="showLoading">
                 <i class="weui-loading"></i>
                 <span class="weui-loadmore__tips">正在加载</span>
@@ -37,7 +44,9 @@
     </div>
 </template>
 <script>
+import RScroll from "plugins/scroll/RScroll";
 import {searchGroupMsg} from 'service/msgService'
+import historyFileItem from './historyFileItem'
 export default {
     data(){
         return {
@@ -47,11 +56,13 @@ export default {
                 page:1,
                 limit:30
             },
+            scrollOptions:{},
             showLoading:false,
             loaded:false,
             hasNext:false
         }
     },
+    components:{RScroll,historyFileItem},
     created(){
     },
     methods:{
@@ -111,7 +122,9 @@ export default {
 </script>
 <style lang='less'>
 .msg-history-all{
-   p{
+    display: flex;
+    flex-direction: column;
+   .notice{
     text-align: center;
     color: #ddd;
     line-height: 50px;
@@ -128,6 +141,10 @@ export default {
     width: 100%;
     height: 75%;
     border-bottom: 0.5px solid rgb(117, 109, 109);
+}
+.msg-history-container{
+    height: 100%;
+    background: #fff;
 }
 .history-input::-webkit-input-placeholder{
     color:rgb(117, 109, 109);
@@ -156,6 +173,9 @@ export default {
   &-info{
       flex: 1;
       margin-left: .15rem;
+      div{
+         color:#dedede;
+      }
   }
 }
 </style>
