@@ -228,9 +228,14 @@ export default {
             this.loginIn = false;
         }
     },
+    beforeRouteEnter:function(to,form,next){
+        next(vm=>{
+            vm.getApp().hasTab = false;
+        });
+    },
     beforeRouteLeave:function(to,from,next){
-        this.getApp().hasTab = true;
         if(this.loginIn == true){
+            this.getApp().hasTab = true;
             next();
         }else{
             this.$router.push({path:'/login'})
