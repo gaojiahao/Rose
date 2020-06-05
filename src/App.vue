@@ -49,7 +49,7 @@ export default {
     var hasNav = true;//window.isApp;//platform.isIPhone && 
     return{
       tablist: [
-        {title: '消息', path: '/msg', icon:'icon-message1'},
+        // {title: '消息', path: '/msg', icon:'icon-message1'},
         {title: '任务', path: '/taskflow',icon:'icon-task1'},
         {title: '应用', path: '/home',icon:'icon-apps'},
          {title: '通讯录',path: '/contacts/0',icon:'icon-org'},

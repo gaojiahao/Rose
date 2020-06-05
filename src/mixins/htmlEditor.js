@@ -204,7 +204,7 @@ export default {
         },
         getValue:function(){
             var cfg = this.cfg;
-            return this.values[cfg.fieldCode];
+            return this.values;
         },
         getRegParam:function(value,reg){
             return value.replace(reg, function (str) {
@@ -289,10 +289,9 @@ export default {
             if(cfg&&cfg.type == 'formData'){
                 var item = cfg.data,
                 cmpId = item.contrl,
-                valueCmp = form.fieldMap[cmpId],
                 valueField = item.valueField;
                 
-                if(valueCmp)this.blankText = valueCmp.blankText;
+                this.blankText = form.fieldMap[cmpId].blankText;
             }        
         }
     }

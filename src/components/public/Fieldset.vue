@@ -70,6 +70,12 @@
               v-if="['r2BomGridIPPIZ4'].indexOf(item.xtype)!=-1"
               :key="index"
             />
+            <RHtmlEditor
+              :cfg="item"
+              :values="values[cfg.name]"
+              v-if="['r2HtmlEditor'].indexOf(item.xtype)!=-1"
+              :key="index"  
+            />
         </template>
             </div>
 

@@ -44,12 +44,18 @@ import SlideBar from './components/public/SlideBar'
 import ListItem from './components/public/ListItem'
 import AutoSubject from './components/public/AutoSubject'
 import AppExample from './components/public/AppExample'
+import RHtmlEditor from './components/public/HtmlEditor'
 import { AlertPlugin, ConfirmPlugin, ToastPlugin, TransferDom, DatetimePlugin } from 'vux'
 import Loading from 'plugins/loading/pageLoad/loading'
 import HandleLoad from 'plugins/loading/handleLoad/handleLoading'
 import platfrom from './plugins/platform/index'
 import commonService from "service/commonService";
 import * as dd from 'dingtalk-jsapi'
+import VueQuillEditor from 'vue-quill-editor'
+
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 
 import {formatToEmotion} from 'plugins/emoji/emotion'
 
@@ -83,6 +89,11 @@ Vue.prototype.$event = new Vue();
 Vue.clone = function(a){
    return JSON.parse(JSON.stringify(a));
 };
+
+Vue.use(VueQuillEditor, {
+  placeholder: '请输入内容',
+});
+
 router.afterEach((to, from) => {
   if (dd.ios || dd.android){
     dd.ready(function() {

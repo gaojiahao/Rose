@@ -14,9 +14,9 @@
       <div class="title-form">{{`单位：${localCurrency}`}}</div>
       <div class="swiper-container swiper-container-header">
         <div class="swiper-wrapper">
-          <div class="swiper-slide">{{headInfo.firstName}}</div>
-          <div class="swiper-slide">{{headInfo.LastName}}</div>
-          <div v-if="headInfo.currentYearName" class="swiper-slide">{{headInfo.currentYearName}}</div>
+          <div class="swiper-slide" style="width:50%">{{headInfo.firstName}}</div>
+          <div class="swiper-slide" style="width:50%">{{headInfo.LastName}}</div>
+          <div v-if="headInfo.currentYearName" class="swiper-slide" style="width:100%">{{headInfo.currentYearName}}</div>
         </div>
       </div>
     </div>
@@ -33,8 +33,8 @@
         </div>
       </div>
       <div class="swiper-container part-right">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">
+        <div class="swiper-wrapper box">
+          <div class="swiper-slide div" style="width:50%">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
                   :class="{'final-total': item.total || item.bigSubject}"
@@ -43,7 +43,7 @@
               </div>
             </div>
           </div>
-          <div class="swiper-slide">
+          <div class="swiper-slide div" style="width:50%">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
                   :class="{'final-total': item.total || item.bigSubject}"
@@ -52,7 +52,7 @@
               </div>
             </div>
           </div>
-          <div v-if="headInfo.currentYearName" class="swiper-slide">
+          <div v-if="headInfo.currentYearName" class="swiper-slide div" style="width:100%">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
                   :class="{'final-total': item.total || item.bigSubject}"
@@ -171,10 +171,17 @@
       // 初始化swiper
       initSwiper() {
         this.$nextTick(() => {
-          this.partRightSwiper = new this.Swiper('.part-right');
-          this.headerSwiper = new this.Swiper('.swiper-container-header');
+          this.partRightSwiper = new this.Swiper('.part-right',{slidesPerView : 'auto',
+          longSwipersRadio: 0.9,
+          freeMode: true,
+          });
+          this.headerSwiper = new this.Swiper('.swiper-container-header',{slidesPerView : 'auto',
+          longSwipersRadio: 0.9,
+          freeMode: true,
+          });
           this.partRightSwiper.controller.control = this.headerSwiper;
           this.headerSwiper.controller.control = this.partRightSwiper;
+          
         })
       },
       //获取企业货币
@@ -253,6 +260,7 @@
       box-sizing: border-box;
       .title-form{
         font-size: .14rem;
+        width: 50%;
         // text-decoration:underline
         // font-weight: bold;
       }
@@ -276,6 +284,7 @@
     .part-left, .part-right {
       width: 50%;
       font-size: .14rem;
+
       .content-item {
         position: relative;
         padding: .05rem .15rem;
@@ -327,6 +336,25 @@
         }
         &.indent {
           padding-left: 3em;
+        }
+      }
+    }
+    .swiper-container {
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      list-style: none;
+      padding: 0;
+      z-index: 1;
+      .swiper-wrapper {
+        .swiper-slide:nth-child(1) {
+          width: 25%;
+        }
+        .swiper-slide:nth-child(2) {
+          width: 25%;
+        }
+        .swiper-slide:nth-child(3) {
+          width: 50%;
         }
       }
     }
