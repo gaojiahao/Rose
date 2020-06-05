@@ -18,6 +18,9 @@ import GroupMsg from './msg/content'
 import GroupInfo from './msg/groupInfo'
 import imgInfo from './msg/imgInfo'
 import UserDetail from './msg/userDetail'
+import HistoryAll from './msg/historyAll';
+import HistoryFile from './msg/historyFile';
+import HistoryImg from './msg/historyImg';
 
 export default [
   { 
@@ -54,6 +57,21 @@ export default [
     path:'/userInfo/:uId',
     name:'userInfo',
     component:UserDetail
+  },
+  {
+    path:'/msgHistoryAll/:groupId',
+    name:'historyAll',
+    component:HistoryAll
+  },
+  {
+    path:'/msgHistoryFile/:groupId',
+    name:'historyFile',
+    component:HistoryFile
+  },
+  {
+    path:'/msgHistoryImg/:groupId',
+    name:'historyImg',
+    component:HistoryImg
   },
   { 
     path: '/notice', 

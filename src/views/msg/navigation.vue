@@ -329,8 +329,10 @@ export default {
             if(!isExist)this.groups.push(msg);
             
             msg.lastMsg.isMySelf = msg.isMySelf;
+            msg.lastMsg.creator = msg.creator;
             this.addMsg({
-                ...msg.lastMsg
+                ...msg.lastMsg,
+                checked:0
             });
         },
         /**

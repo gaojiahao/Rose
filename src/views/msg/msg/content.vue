@@ -31,7 +31,7 @@
                         @click="showCreator(msg.creator)">
                     <img 
                     v-if="[1,2,3,4].includes(msg.imType)"
-                    :src="msg.photo" 
+                    :src="msg.photo|appIconFilter" 
                     :style="{float: msg.isMySelf?'right':'left'}"  
                     class="message-ava" 
                     @error="getDefaultPhoto(msg)">
@@ -116,7 +116,7 @@
             <r-emotion :show = "showEmotion" @on-select="emotionSelected" ref="emotion"></r-emotion>
             <FileDialog v-if="fileDlgContext" @cancel="cancleFile" @todo="sendFileMsg" :content="fileDlgContext">
                  <div class="file-dialog-sendTo">
-                    <img :src="group.groupIcon" @error="getDefaultPhoto(group)">
+                    <img :src="group.groupIcon|appIconFilter" @error="getDefaultPhoto(group)">
                     <div>
                         <span v-html="group.groupName"></span>
                     </div>

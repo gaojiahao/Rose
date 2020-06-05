@@ -8,16 +8,19 @@
  -->
 <template>
     <div class="login-container">
-        <div class="login-banner">
+        <!-- <div class="login-banner">
             <img class="login-banner-logoimg" src='./../assets/default/login/logo.png' />
             <div class="login-banner-roletask">
                 <img src="https://lab.roletask.com/resource/logo-txt.png"  />
             </div>
             <div class="login-banner-solgan">路塔柔性流程</div>
-        </div>
+        </div> -->
+        <div class="login-title">{{isMobileLogin?'验证码登录':"密码登录"}}</div>
         <div class="login-content">
+            <div style="flex: 1;">
             <div class="login-form" v-if="!isMobileLogin">
                 <group class="loginGroup">
+                    
                     <x-input 
                         :class="[isLoginInpFoc?'loginInpFoc':'loginInput']"  
                         @on-focus="isLoginInpFoc=true" 
@@ -86,6 +89,7 @@
             <x-button class="login-btn" @click.native="login">
                     登录
             </x-button>
+            </div>
         </div>
         
         <!-- <x-button v-if="isApp" class="host-btn" @click.native="goSetHost">切换服务器</x-button> -->
@@ -228,12 +232,21 @@ export default {
 </script>
 <style lang="scss" scoped>
     .login-container {
+        
         height: 100%;
         background-color: white;
     }
+    .login-title{
+        position: absolute;
+        top: .20rem;
+        left: .30rem;
+        font-size: 22px;
+    }
     .login-content{
-        
-        
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
     }
     .login-form,.mobile-form {
         background: #fff;
