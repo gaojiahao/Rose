@@ -62,8 +62,9 @@ export default {
                 tokenService.setToken(tokenInfo);
                 updateBasicInfo().then(data => {
                     //console.log('切换主体成功')
+                    location.reload();
                 });
-                location.reload();
+                //location.reload();
                 }
             });
         }
