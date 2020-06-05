@@ -332,7 +332,7 @@ export default {
             msg.lastMsg.creator = msg.creator;
             this.addMsg({
                 ...msg.lastMsg,
-                
+                checked:0
             });
         },
         /**
