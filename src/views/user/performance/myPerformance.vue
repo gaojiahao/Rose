@@ -117,23 +117,31 @@ export default {
     computed:{
       entityName(){
         var data = JSON.parse(sessionStorage.getItem('basicInfo'));
-        return data.currentUser.entityName;
+        if(data){
+          return data.currentUser.entityName;
+        }
       },
       photo(){
         var data = JSON.parse(sessionStorage.getItem('basicInfo'));
-        return data.currentUser.photo;
+        if(data){
+          return data.currentUser.photo;
+        }
       },
       name(){
         var data = JSON.parse(sessionStorage.getItem('basicInfo'));
-        return data.currentUser.nickname;
+        if(data){
+          return data.currentUser.nickname;
+        }
       },
       role(){
         this.roles = [];
         var data = JSON.parse(sessionStorage.getItem('basicInfo'));
-        data.currentUser.isSysRoleList.forEach(item => {
-          this.roles.push(item.name)
-        })
-        return this.roles.join(',');
+        if(data){
+          data.currentUser.isSysRoleList.forEach(item => {
+            this.roles.push(item.name)
+          })
+          return this.roles.join(',');
+        }
       }
     },
     methods:{
