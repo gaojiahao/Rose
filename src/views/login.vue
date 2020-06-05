@@ -155,7 +155,7 @@ export default {
                     app.dsClient.close();
                 }
                 this.bus.$emit('refresh');
-                this.login = true;
+                this.loginIn = true;
                 this.$router.replace('/');
                 this.$loading.hide();
                 localStorage.setItem('userCode',this.userCode);
@@ -225,13 +225,15 @@ export default {
         this.$loading.hide();
         this.getApp().hasTab = false;
         if(window.isApp){
-            this.login = false;
+            this.loginIn = false;
         }
     },
     beforeRouteLeave:function(to,from,next){
-        if(this.login == true){
-            this.getApp().hasTab = true;
+        this.getApp().hasTab = true;
+        if(this.loginIn == true){
             next();
+        }else{
+            this.$router.push({path:'/login'})
         }
     }
 }
