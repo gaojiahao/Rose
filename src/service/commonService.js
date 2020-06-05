@@ -181,6 +181,23 @@ export let getBasicInfo = (data ={})=> {
   })
   return 
 };
+export let updateBasicInfo = (data ={})=> {
+  return new Promise((resolve,reject)=>{
+    $flyio.ajax({
+      url: `/H_roleplay-si/app/getBasicInfo`,
+      data: {
+        _dc: Date.now(),
+      }
+    }).then(data=>{
+      baseInfo = data;
+      sessionStorage.setItem('basicInfo',JSON.stringify(baseInfo));
+      resolve(data);
+    }).catch(()=>{
+      reject();
+    })
+
+  })
+};
 // 获取视图列表
 export let getList = (viewId = 0, data = {}) => {
   return $flyio.ajax({

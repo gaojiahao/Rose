@@ -25,7 +25,7 @@
 import homeService from "service/homeservice";
 import { Group, Cell } from 'vux'
 import RScroll from "plugins/scroll/RScroll";
-import { initWebContext } from 'service/commonService'
+import { initWebContext,updateBasicInfo } from 'service/commonService'
 import tokenService from "service/tokenService";
 
 export default {
@@ -60,6 +60,9 @@ export default {
                 tokenInfo.entityId = data.entityId;
                 tokenInfo.token = data.token;
                 tokenService.setToken(tokenInfo);
+                updateBasicInfo().then(data => {
+                    //console.log('切换主体成功')
+                });
                 location.reload();
                 }
             });
