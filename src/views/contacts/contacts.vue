@@ -13,25 +13,18 @@
             :has-next="hasNext"
             :no-data="false"
         >
-        <!-- <div class="page-body-hasNav" ref="scrollerWrapper">
-            <div class="address-book"> -->
-                <div v-for="item in address" class="address-item" :key="item.id" @click="goto(item)" v-show="item.id != 7">
-                    <div class="header">
-                        <img :src="item.photo"  v-if="item.type!='G'"  @error="getDefaultPhoto(item)"/>
-                        <i class="address-icon iconfont" v-if="item.type=='G'">&#xe62b;</i>
-
-                    </div>
-                    <div class="body">
-                        <div class="address-name-g" v-if="item.type == 'P'">
-                            {{item.name}}
-                        </div>
-                        <div class="address-name-p" v-if="item.type == 'G'">
-                            {{item.name}}
-                        </div>
-                    </div>
+        <div v-for="item in address" class="address-item" :key="item.id" @click="goto(item)" v-show="item.id != 7">
+            <div class="header">
+                <img :src="item.photo"  v-if="item.type=='P'"  @error="getDefaultPhoto(item)"/>
+                <i class="address-icon iconfont icon-wenjian " v-if="item.type!='P' && !item.leaf"></i>
+                <i class="address-icon iconfont icon-file-f" v-if="item.type!='P' && item.leaf"></i>
+            </div>
+            <div class="body">
+                <div class="address-name-g">
+                    {{item.name}}
                 </div>
-            <!-- </div>
-        </div> -->
+            </div>
+        </div>
         </RScroll>
         <router-view></router-view>
     </div>
@@ -118,6 +111,10 @@ export default {
         //     else if(Math.abs(y)<1000)
         //     this.toTopShow = false; 
         // });
+        this.bus.$on('refresh',()=>{ //登录后刷新
+            var item = this.routes.length && this.routes[0];
+            if(item)this.goto(item)//所有人的通讯录都一样，但是还是要刷新下。
+        })
     }
 }
 </script>
@@ -150,9 +147,10 @@ export default {
    }
 
    .address-item .header{
-        width: .50rem;
+        width: .45rem;
+        height: .45rem;
         text-align: center;
-        background-color: #07648f29;
+        background-color: #48acd929;
         border-radius: .02rem;
        .address-icon{
         font-size: .32rem;
@@ -160,9 +158,10 @@ export default {
         }
    }
    .address-item .header img{
-       width:0.5rem;
+       width:.45rem;
        vertical-align: top;
-       height:0.5rem;
+       height:.45rem;
+       border-radius: .02rem;
    }
    .address-item .body{
        flex: 1;

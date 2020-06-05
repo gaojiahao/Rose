@@ -1,5 +1,5 @@
 <template>
-    <div class="task-container" >
+    <div class="task-container page-hasTab" >
           <div class="page-navigation">
                 <div class="groupName body">
                     工作流任务
@@ -110,8 +110,6 @@ input::-ms-input-placeholder {
     color: #fff;
 }
 .task-container{
-    overflow: hidden;
-    height: 100%;
     background:#f7f7f7;
     .wrapper {
         height: 100%;

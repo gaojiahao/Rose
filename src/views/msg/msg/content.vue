@@ -8,7 +8,7 @@
                 {{group.groupName}}
             </div>
             <div class="toGroupAdmin" @click="$router.push('/msg/group/'+ group.groupId +'/info')">
-                <i class="iconfont icon-users" ></i>
+                <i class="iconfont" :class="[group.groupType == 'G' ? 'icon-users':'icon-me']"></i>
             </div>
         </div>
         <r-scroll
@@ -18,25 +18,43 @@
             :has-next="false"
             :no-data="false"
             :hideToast="true"
+            :disableToTop="true"
             @on-pulling-down="onPullingDown"
+            @click.native="onMsgContainerClick"
             ref="scroller"
         >
             <div class="msg-container" ref="msg-container">
                 <LoadMore v-if="loading"></LoadMore>
                 <div v-for="(msg,index) in msgList" :key="index" class="singleMsg" :class="{ 'isMySelf': msg.isMySelf,'focus-msg': msg.id == focusMsgId }" :id="'msg-'+msg.id">
-                    <touch @menuContext="onAvaContextMenu(msg.creatorName)" @click="showCreator(msg.creator)">
+                    <touch 
+                        @menuContext="onAvaContextMenu(msg.creatorName)" 
+                        @click="showCreator(msg.creator)">
                     <img 
-                    :src="msg.photo" 
+                    v-if="[1,2,3,4].includes(msg.imType)"
+                    :src="msg.photo|appIconFilter" 
                     :style="{float: msg.isMySelf?'right':'left'}"  
                     class="message-ava" 
                     @error="getDefaultPhoto(msg)">
                     </touch>
                     <span class ="message-creator"
-                        v-if="!msg.isMySelf">{{msg.creatorName}}
+                        v-if="!msg.isMySelf && [1,2,3,4].includes(msg.imType)">{{msg.creatorName}}
                     </span>
-                    <touch @menuContext="onMsgContextMenu(msg,$event)">
+                    
+                    <touch @menuContext="onMsgContextMenu(msg,$event)" v-if="[1,2,3,4].includes(msg.imType)">
+                        <span class="read-message" v-if="msg.isMySelf==1">
+                            <span v-if="msg.allRead" class="message-allread">✓</span>
+                            <span v-else-if="msg.checked === 0" class="message-noread"></span>
+                            <span
+                                v-else
+                                class="message-read" 
+                                @click="openMessageDetail(msg)"
+                                :style="{color:'#3296fa',cursor:'pointer',borderColor: '#3296fa'}">
+                                {{ msg.checked }}
+                            </span>
+                        </span>
                         <div class="message-content" :class="[msg.isMySelf==1?'rightarrow':'leftarrow']" >
-                            <div v-if="msg.replayMsg" style="border-left: 3px solid rgb(153, 153, 153); padding: 0px 8px; cursor: pointer;" @click="goTop(msg.replayMsg.id)">
+                            <div v-if="msg.replayMsg" style="border-left: 3px solid rgb(153, 153, 153);padding: 0px 8px;cursor: pointer;background-color: rgba(0, 0, 0, 0.1);text-align: left;color: rgba(0, 0, 0, 0.6);" @click="goTop(msg.replayMsg.id)">
+                               {{msg.replayMsg.creatorName}}:
                                 <MessageTplText :msg="msg.replayMsg" v-if="msg.replayMsg.imType == 1"></MessageTplText>
                                 <MessageTplImg :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 2"></MessageTplImg>
                                 <MessageTplMult :msg="msg.replayMsg" v-else-if="msg.replayMsg.imType == 3"></MessageTplMult>
@@ -48,22 +66,32 @@
                             <MessageTplFile :msg="msg" v-else-if="msg.imType == 4"></MessageTplFile>
                         </div>
                     </touch>
+
+                    <div class="otherMessage" v-if="[101,102,104].includes(msg.imType)">
+                        <div>{{msg.crtTime}}</div>
+                        <div><span>{{msg.content}}</span></div>
+                    </div>
                 </div>
-            </div>
+            </div><!--msg-container-->
         </r-scroll>
         <ContextMenu v-show="showContextMenu" ref="contextMenu"/>
         <div class="msgList-footer">
             <div class="replayMsg" v-if="replayMsg">
                 <span>{{replayMsg.creatorName}}:</span>
-                <div class="replayMsg-content">{{replayMsg|replayContent}}</div>
-                <span class="icon-close" @click="replayMsg = null">
+                <div class="replayMsg-content">
+                    <MessageTplText :msg="replayMsg" v-if="replayMsg.imType == 1"></MessageTplText>
+                    <MessageTplImg :msg="replayMsg" v-else-if="replayMsg.imType == 2"></MessageTplImg>
+                    <MessageTplMult :msg="replayMsg" v-else-if="replayMsg.imType == 3"></MessageTplMult>
+                    <MessageTplFile :msg="replayMsg" v-else-if="replayMsg.imType == 4"></MessageTplFile>
+                </div>
+                <span class="iconfont icon-close" @click="replayMsg = null">
                 </span>
             </div> 
             <div class="input-wrapper">
-                <textarea class="msg-input"  v-model="msg" type="text" ref="msgInput" @focus="showExtraInput=false" @keyup="checkAt"></textarea>
+                <textarea class="msg-input" v-model="msg" type="text" ref="msgInput" @focus="onMsgInputFocus" @blur="msgInputFocus=false;" @keyup="checkAt"></textarea>
                 <i class="icon-emotion" @click="showEmotion = !showEmotion;showExtraInput=false;"></i>
-                <i class="icon-add-more" @click="toggleWrapper" v-show="!msg"></i>
-                <span class="btn-send" v-if="msg" @click="sendTextMsg">发送</span>
+                <i class="icon-add-more" @click="toggleWrapper" v-show="!msg.trim()"></i>
+                <span class="btn-send" v-if="msg.trim()" @click="sendTextMsg" tabIndex="-1">发送</span>
             </div>
             <div class="extra-input-wrapper" v-show="showExtraInput">
                 <div>
@@ -100,6 +128,8 @@
         <router-view :group="group" ref="groupInfo"></router-view>
         <!-- groupInfo end -->
         <at-member-list v-if="showAtMemberList" @select="selectAtMember"/>
+        <!-- 消息已读未读详情 -->
+        <message-read-detail ref="detailMessage" :detailMessage="detailMessage"></message-read-detail>
     </div> <!--page end-->
 </template>
 <script>
@@ -111,6 +141,7 @@ import MessageTplText from '@/views/msg/msg/messageTplText'
 import MessageTplImg from '@/views/msg/msg/messageTplImg'
 import MessageTplMult from '@/views/msg/msg/messageTplMult'
 import MessageTplFile from '@/views/msg/msg/messageTplFile'
+import MessageReadDetail from './messageReadDetail'
 import RScroll from "plugins/scroll/RScroll";
 import Touch from "plugins/touch";
 import FileDialog from  "./fileDialog"
@@ -122,8 +153,8 @@ export default {
     data(){
         return {
             msg:'',
+            detailMessage: {},
             scrollOptions:{
-                
             },
             showEmotion:false,
             page:1,
@@ -133,6 +164,7 @@ export default {
             showExtraInput:false,//图片和文件输入框
             showContextMenu:false,//右键菜单
             showAtMemberList:false,//@群成员
+            msgInputFocus:false,
             fileDlgContext:null,//文件消息框,
             focusMsgId:null//得到焦点的消息id
         }
@@ -148,7 +180,8 @@ export default {
         ContextMenu,
         REmotion,
         Touch,
-        AtMemberList
+        AtMemberList,
+        MessageReadDetail
     },
     filters:{
         replayContent(msg){
@@ -192,6 +225,10 @@ export default {
             }
             return url;
         },
+        openMessageDetail(msg) {
+            this.detailMessage = msg;
+            this.$refs["detailMessage"].showReadDetailModal = true;
+        },
         goBack(){
             this.$router.replace('/msg');
         },
@@ -216,11 +253,27 @@ export default {
         },
         scrollToTarget(target,msgId){
             var msgBody = target.querySelector('.message-content');
-            this.focusMsgId = msgId;
-            setTimeout(() => {
-                this.focusMsgId = null;
-            }, 2000);
+            this.sparkleMsg(msgId);//闪烁效果
             this.scroller.scrollToElement(target);
+        },
+        sparkleMsg(msgId){
+            var timer = 3,
+                time = 300,
+                vm = this;
+
+            this.focusMsgId = msgId;
+            loop();
+            function loop(){
+                setTimeout(()=>{
+                    vm.focusMsgId = vm.focusMsgId == msgId ? null : msgId;
+                    if(vm.focusMsgId != msgId){
+                        timer --;
+                    }
+                    if(timer){
+                        loop();
+                    }
+                },time)
+            }
         },
         scrollToTop:function(){
             var scroll = this.scroller;
@@ -231,25 +284,37 @@ export default {
          // 选中表情
         emotionSelected(val) {
             this.msg += val;
+            setTimeout(() => { //处理高度增长
+               this.autoGrow(); 
+            });
         },
         sendTextMsg(){
             var  groupId = this.group.groupId,
+                 input = this.$refs.msgInput,
                  params = {
                      groupId:groupId,
 			         content:this.msg,
 			         imType:1
                  };
 
+            input.focus();
             
-            if (this.msg != ''){
+            if (this.msg.trim() != '' && this.sending != true){
                 if(this.replayMsg){
                    params.replayId = this.replayMsg.id;
                    params.replayMsg = util.clone(this.replayMsg);//replayMsg内容只在ds 推送时有用，后端保存时不会用这个。
                    delete params.replayMsg.replayMsg;//不想发送那么多消息;
                 }
+                this.sending = true;
                 sendMsg(params).then(rs=>{
+                   this.sending = false;
                    this.msg = '';
+                   setTimeout(()=>{
+                       this.autoGrow();
+                   })
                    this.replayMsg = null;
+                }).catch(e=>{
+                    this.sending = false;
                 })
             }
             
@@ -259,10 +324,7 @@ export default {
                 groupId = this.group.groupId,
                 size,
                 name2Size = {},
-                params = {
-                    groupId:groupId,
-                    imType:2
-                },file;
+                file;
             
             if (!files) {
                return;
@@ -271,8 +333,15 @@ export default {
             for(var i= 0,l= files.length;i < l; i++){
                 file = files[i];
                 size = (file.size/1024).toFixed(2);
-                if(size > 2048){
-                    alert('文件' + file.name + '大于2M');
+                if(size > 1024*this.maxSize){
+                    this.$vux.alert.show({
+                       content: '图片' + file.name + '大于' + this.maxSize + 'M',
+                    });
+                    return;
+                } else if(file.type.indexOf('image/') != 0){
+                    this.$vux.alert.show({
+                       content: '文件' + file.name + '不是图片！',
+                    });
                     return;
                 }
                 name2Size[file.name] = size;
@@ -284,12 +353,17 @@ export default {
                 if (rs.success){
                    e.target.value = null;
                    rs.data.forEach(file=>{
-                       var fileName = file.attr1;
-                       params.content=JSON.stringify({
-                            id:file.id,
-                            content:fileName,
-                            size:name2Size[fileName]
-                       });
+                       var fileName = file.attr1,
+                           params = {
+                              groupId:groupId,
+                              imType:2,
+                              content:JSON.stringify({
+                                        id:file.id,
+                                        content:fileName,
+                                        size:name2Size[fileName]
+                              })
+                           };
+
                        sendMsg(params);
                    });                   
                 }
@@ -312,8 +386,10 @@ export default {
             for(var i= 0,l= files.length;i < l; i++){
                 file = files[i];
                 size = (file.size/1024).toFixed(2);
-                if(size > 2048){
-                    alert('文件' + file.name + '大于2M');
+                if(size > 1024*this.maxSize){
+                     this.$vux.alert.show({
+                       content: '文件' + file.name + '大于' + this.maxSize + 'M',
+                    });
                     return;
                 }
                 countSize += file.size;
@@ -329,11 +405,24 @@ export default {
             this.fileInput.value = null;
             this.fileDlgContext= null;
         },
+        onMsgInputFocus(){
+            this.showExtraInput=false;
+            this.showEmotion = false;
+            this.msgInputFocus=true;
+            this.$parent.checkDsConnect();//检查ds的连接情况
+        },
+        onMsgContainerClick(){
+            this.$refs.msgInput.blur();
+            this.showExtraInput=false;
+            this.showEmotion = false;
+        },
         //检查有没有@符号
         checkAt(e){
             var msg = this.msg,
                 lastkey = msg&&msg[msg.length-1];
 
+           // console.log(e);
+            this.autoGrow();
             if (this.group.groupType != 'G') return;
 
             if (e.key == '@' || (e.key != 'Backspace' && lastkey == '@')){//手机端是拿不到e.key的。
@@ -342,6 +431,35 @@ export default {
 
             }
         },
+        autoGrow(){
+            var elem = this.$refs.msgInput,
+                extra = 10,
+                maxHeight = 150,
+                height = elem.offsetHeight,
+                newHeight,
+                style = elem.style,
+                minHeight = 36,
+                padding = parseInt(getStyle('paddingTop')) + parseInt(getStyle('paddingBottom'));
+            
+            if (elem._length === elem.value.length) return;
+                elem._length = elem.value.length;
+
+            style.height = minHeight + 'px';
+            if(elem.scrollHeight > minHeight){
+                if (maxHeight && elem.scrollHeight > maxHeight) {
+                    newHeight = maxHeight - padding;
+                    style.overflowY = 'auto';
+                } else {
+                    newHeight = elem.scrollHeight - padding;
+                    style.overflowY = 'hidden';
+                };
+                style.height = newHeight + extra + 'px';
+            }
+            function getStyle(name){
+                 return getComputedStyle(elem, null)[name];
+            }
+        },
+        
         selectAtMember(nickName){
              this.msg += nickName+' ';
              this.showAtMemberList = false;
@@ -464,9 +582,20 @@ export default {
     },
     created:function(){
          this.getApp().hasTab = false;
+         this.$parent.checkDsConnect();
+         this.maxSize = 20;
     },
     mounted:function(){
         this.initContextMenu();
+        this.getApp().$on('resize',()=>{
+            var scroller = this.scroller;
+            if(this.msgInputFocus== true){
+                scroller.refresh();//内部重新计算宽高
+                setTimeout(()=>{//refresh不会立马在dom中响应并计算。
+                    scroller.scrollTo(0,scroller.maxScrollY,0);
+                })
+            }  
+        });
     },
     beforeRouteEnter:function(to,form,next){
         next(vm=>{
@@ -491,6 +620,31 @@ export default {
 .msg-header{
     display: flex;
 }
+.read-message{
+    .message-noread{
+      border:2px solid #d2cfcf;
+      width: .13rem;
+      height: .13rem;
+      display: inline-block;
+      border-radius: 50%;
+    }
+    .message-read, 
+    .message-allread
+    {
+      border:1px solid #d2cfcf;
+      width: .13rem;
+      height: .13rem;
+      display: inline-block;
+      border-radius: 50%;
+      font-size: 10px;
+      color: #d2cfcf;
+      text-align: center;
+      line-height: .13rem;
+    }
+    .add-select{
+      background-color: #39f !important;
+    }
+  }
 .msg-header .body{
     flex: 1;
     text-overflow: ellipsis;
@@ -505,6 +659,7 @@ export default {
     flex:1;
     position: relative;
     background-color: #9e9e9e1c;
+    font-size: 14px;
     .page-component-up{
         position:absolute;
         bottom:0.2rem;
@@ -516,23 +671,51 @@ export default {
 .msgList-footer {
     position: relative;
     .replayMsg{
-        display:flex;
-        padding:15px;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        padding: .10rem;
+        color: #999999;
+        border-top: 0.5px solid #ddd;
         .replayMsg-content{
             flex:1
         }
         .icon-close{
-            width:.25rem;
-            height:.25rem;
+            width:.16rem;
+            height:.16rem;
         }
     }
     .input-wrapper{
         padding: .08rem .1rem;
-        height: .5rem;
         background-color: #f3f1f2;
         font-size: 0;
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
+
+        pre{
+            width: calc(100% - 1rem);
+            min-height: 30px;
+            overflow: hidden;
+        }
+        textarea{
+            display: inline-block;
+            padding: .05rem .1rem;
+            width: calc(100% - 1rem);
+            outline: none;
+            vertical-align:baseline;
+            border-radius: 0.05rem;
+            border: none;
+            background-color: #fff;
+            color: #2d2d2d;
+            font-size: .16rem;
+            height: 36px;
+            resize: none;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        } 
         .icon-emotion{
             display: inline-block;
             margin-left: .1rem;
@@ -540,7 +723,6 @@ export default {
             height: .3rem;
             background: url(~@/assets/emotion.png) no-repeat;
             background-size: 100% 100%;
-            vertical-align: top;
         }
         .icon-add-more{
             display: inline-block;
@@ -549,26 +731,7 @@ export default {
             height: .3rem;
             background: url(~@/assets/iconfont/add.png) no-repeat;
             background-size: 100% 100%;
-            vertical-align: top;
         }
-        textarea{
-            display: inline-block;
-            padding: .05rem .1rem;
-            width: calc(100% - 1rem);
-            height: 100%;
-            outline: none;
-            border-radius: 0.05rem;
-            border: none;
-            background-color: #fff;
-            color: #2d2d2d;
-            font-size: .16rem;
-            resize: none;
-            -webkit-box-sizing: border-box;
-            box-sizing: border-box;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-        } 
         .btn-send{
             display: inline-block;
             margin-left: .1rem;
@@ -578,7 +741,7 @@ export default {
             background-color: #5077aa;
             color: #fff;
             text-align: center;
-            vertical-align: top;
+            vertical-align: bottom;
             font-size: .16rem;
         }
     }  
@@ -620,8 +783,9 @@ export default {
 }
 .message{
     &-ava{
-        height: 40px;
-        border-radius: .01rem;
+        width: .45rem;
+        height: .45rem;
+        border-radius: .02rem;
     }
 
     &-creator{
@@ -632,12 +796,13 @@ export default {
     }
     &-content{
         border-radius: 5px;
-        padding: .05rem;
+        padding: .08rem;
         position: relative;
         margin: .02rem .06rem;
         display: inline-block;
         max-width: 70%;
         background-color: #ffffff;
+        word-break: break-all;
         &.rightarrow:after{
             content: " ";
             border-width: 7px;
@@ -674,17 +839,19 @@ export default {
 .isMySelf{
     text-align: right;
     .message-content{
-        background-color: rgb(191, 221, 255);
+        background-color:rgb(191, 221, 255);
     }
 }
-.focus-msg .message-content{
-    &.rightarrow:after{
-        border-left-color:#f9b24757;
+.focus-msg{
+    .message-content{
+        background-color:rgb(255, 206, 191);
     }
-    &.leftarrow:after{
-        border-right-color:#f9b24757;
-    }
-    background: #f9b24757;
+     .rightarrow:after{
+        border-left-color: rgb(255, 206, 191);
+     }
+     .leftarrow:after{
+        border-right-color: rgb(255, 206, 191);
+     }
 }
 .file-dialog-sendTo{
    display: flex;
@@ -704,5 +871,10 @@ export default {
             display: inline-block;
        } 
    }
+}
+
+.otherMessage{
+    text-align: center;
+    color: #999999;
 }
 </style>

@@ -289,9 +289,10 @@ export default {
             if(cfg&&cfg.type == 'formData'){
                 var item = cfg.data,
                 cmpId = item.contrl,
+                valueCmp = form.fieldMap[cmpId],
                 valueField = item.valueField;
                 
-                this.blankText = form.fieldMap[cmpId].blankText;
+                if(valueCmp)this.blankText = valueCmp.blankText;
             }        
         }
     }

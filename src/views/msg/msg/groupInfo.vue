@@ -6,7 +6,7 @@
                 <i class="iconfont icon-back1"></i>
             </div>
             <div class="body">
-                聊天信息<span v-if="group.groupType == 'G'">({{group.msgCount}})</span>
+                聊天信息<span v-if="group.groupType == 'G'">({{allMembers.length}})</span>
             </div>
          </div>                             
          <div class="page-body-hasNav" ref="scrollerWrapper">
@@ -23,37 +23,39 @@
                 </group>
                 <group>
                     <div @click="showMemberDetail">
-                        <cell title="群成员" is-link :value="allMembers.length" />
-                        <div class="members">
+                        <cell title="群成员" v-if="group.groupType=='G'" is-link :value="`共${allMembers.length}人`" />
+                        <div class="members" v-if="group.groupType=='G'" >
                             <div class="members-item" v-for="(member,index) of allMembers" :key="index">
                                 <img 
                                     v-if="index<6"
-                                    :src="member.photo || getDefaultPhoto()" 
+                                    :src="member.photo|appIconFilter" 
                                     @error="getDefaultPhoto(member)"/>
                                 <i v-if="index===6" class="iconfont icon-more1"></i>
                             </div>
                         </div>
+                        <cell  :title="group.groupName"   v-if="group.groupType=='P'">
+                            <img slot="icon" width="45" height="45" style="display: block;margin-right: 5px;border-radius: .02rem;" :src="group.groupIcon" >
+                        </cell>
                     </div>
-                    <div class="add-btn" @click="showMemberSelector">
-                        <span class="add-icon">+</span>
-                        <span class="add-text">添加成员</span>
-                    </div>
+                    <cell class="add-btn" @click.native="showMemberSelector" title="添加成员">
+                        <span class="add-icon" slot="icon">+</span>
+                    </cell>
                 </group>
                 <div class="weui-cells">
                     <div class="weui-cell weui-cell_access">
                         <div class="vux-cell-primary">
-                            查找群聊天记录
+                            查找聊天记录
                         </div>
-                        <div class="weui-cell__ft" @click="showHistoryAll = true">
+                        <div class="weui-cell__ft" @click="goto('historyAll')">
                             更多
                         </div>
                     </div> 
                     <div class="weui-cell">
-                        <div class="msg-type-item" @click="showHistoryFile = true">
+                        <div class="msg-type-item" @click="goto('historyFile')">
                             <i class="iconfont icon-wenjian"/>
                             <div>文件</div>
                         </div>
-                        <div class="msg-type-item" @click="showHistoryImg = true">
+                        <div class="msg-type-item" @click="goto('historyImg')">
                             <i class="iconfont icon-i-img"/>
                             <div>图片</div>
                         </div>
@@ -97,20 +99,14 @@
             ref="updateGroupName"
             :group="group">
          </update-group-name>
-         <history-all v-if="showHistoryAll">
-         </history-all>
-         <history-file v-if="showHistoryFile" />
-         <history-img v-if="showHistoryImg" />
     </div>
 </template>
 <script>
 import { Group, Cell,InlineXSwitch} from 'vux'
 import MemberSelector from './memberSelector';
 import MemberList from './memberList';
-import HistoryAll from './historyAll';
 import HistoryImg from './historyImg';
 import HistoryFile from './historyFile';
-import WebContext from 'service/commonService'
 import { initWebContext } from 'service/commonService'
 import { getMembers,addMember,createGroup,setFocus,deleteFocus } from '@/service/msgService'
 import Bus from '@/common/eventBus.js';
@@ -123,18 +119,12 @@ export default {
         InlineXSwitch,
         MemberSelector,
         MemberList,
-        HistoryAll,
-        HistoryImg,
-        HistoryFile,
         UpdateGroupName
     },
     data(){
         return {
             allMembers: [],
-            currentUser: {},
-            showHistoryAll:false,
-            showHistoryFile:false,
-            showHistoryImg:false
+            currentUser: {}
         }
     },
     methods:{
@@ -177,6 +167,9 @@ export default {
             }
             return url;
         },
+        goto(name){
+           this.$router.push({name:name,params:{groupId:this.group.groupId}});
+        },
         getAllMembers() {
             if(this.group.groupId){
                 getMembers(this.group.groupId).then(res => {
@@ -214,7 +207,6 @@ export default {
                 requestUrl = createGroup;
                 userNames.push(this.currentUser.name);
                 userNames.push(this.allMembers[0].nickname);
-                userIds.push(this.currentUser.userId);
                 userIds.push(this.allMembers[0].userId);
                 params.users = userIds.join(',');
                 params.name = userNames.join(',');
@@ -254,8 +246,8 @@ export default {
         })
     },
     created() {
-        initWebContext().then(() => {
-            this.currentUser = WebContext.WebContext.currentUser
+        initWebContext().then((WebContext) => {
+            this.currentUser = WebContext.currentUser
             this.getAllMembers()
         })
     }
@@ -270,6 +262,7 @@ export default {
               display: inline-block;
                img{
                     height: .45rem;
+                    width: .45rem;
                     border-radius: .04rem;
                     margin: .04rem;
                   }

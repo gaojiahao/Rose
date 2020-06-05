@@ -8,30 +8,39 @@
  -->
 <template>
     <div class="login-container">
-        <div class="login-banner">
-            <img src='./../assets/default/login/logo.png' />
-            <div class="login-banner-roletask">Roletask</div>
+        <!-- <div class="login-banner">
+            <img class="login-banner-logoimg" src='./../assets/default/login/logo.png' />
+            <div class="login-banner-roletask">
+                <img src="https://lab.roletask.com/resource/logo-txt.png"  />
+            </div>
             <div class="login-banner-solgan">路塔柔性流程</div>
-        </div>
+        </div> -->
+        <div class="login-title">{{isMobileLogin?'验证码登录':"密码登录"}}</div>
         <div class="login-content">
+            <div style="flex: 1;">
             <div class="login-form" v-if="!isMobileLogin">
                 <group class="loginGroup">
+                    
                     <x-input 
                         :class="[isLoginInpFoc?'loginInpFoc':'loginInput']"  
                         @on-focus="isLoginInpFoc=true" 
-                        @on-blur="isLoginInpFoc=false" 
+                        @on-blur="onUserCodeBlur" 
                         text-align="left" 
-                        placeholder="请输入手机号" 
+                        :showClear="false"
+                        placeholder="请输入手机号/账号"     
                         v-model="userCode">
+                        <i slot="right" class="weui-icon weui-icon-clear" v-show="isLoginInpFoc && userCode!=''" @click="userCode=''"></i>
                     </x-input>
                     <x-input 
                         :class="[isLoginInpFocS?'loginInpFoc':'loginInput']"  
                         @on-focus="isLoginInpFocS=true"  
-                        @on-blur="isLoginInpFocS=false" 
+                        @on-blur="onPassWordBlur" 
                         text-align="left" 
+                        :showClear="false"
                         placeholder="请输入密码" 
                         v-model="passWord" 
                         type="password">
+                        <i slot="right" class="weui-icon weui-icon-clear" v-show="isLoginInpFocS && passWord!=''" @click="passWord=''"></i>
                     </x-input>
                 </group>
                 <div class="other-login">
@@ -46,26 +55,31 @@
                         keyboard="number" 
                         v-model="mobile"
                         is-type="china-mobile" 
+                        :showClear="false"
                         :class="[isLoginInpFoc?'loginInpFoc':'loginInput']"  
                         @on-focus="isLoginInpFoc=true" 
-                        @on-blur="isLoginInpFoc=false"
+                        @on-blur="onUserCodeBlur"
                         @keyup.native="onMobileChange">
+                    <i slot="right" class="weui-icon weui-icon-clear" v-show="isLoginInpFoc && mobile!=''" @click="mobile=''"></i>
                     </x-input>
                     <x-input 
                         class="weui-vcode" 
                         placeholder="请输入验证码"
                         v-model="testCode"
-                        :class="[isLoginInpFocS?'loginInpFoc':'loginInput']"  
+                        :class="[isLoginInpFocS?'loginInpFoc':'loginInput']"
+                        :showClear="false"  
                         @on-focus="isLoginInpFocS=true" 
-                        @on-blur="isLoginInpFocS=false">
-                        <span
-                            slot="right"
-                            v-if="showTestCode"
-                            :style="{color:isDisabled?'#ddd':'#39f'}" 
-                            @click="sendTestCodeClick">
-                            发送验证码
-                        </span>
-                        <span slot="right" v-else>{{ count }} s</span>
+                        @on-blur="onPassWordBlur">
+                        <div slot="right">
+                            <i class="weui-icon weui-icon-clear" v-show="isLoginInpFocS && testCode!=''" @click="testCode=''"></i>&nbsp;&nbsp;
+                            <span
+                                v-if="showTestCode"
+                                :style="{color:isDisabled?'#ddd':'#39f'}" 
+                                @click="sendTestCodeClick">
+                                发送验证码
+                            </span>
+                            <span v-else>{{ count }}</span>
+                        </div>
                     </x-input>
                 </group>
                 <div class="other-login">
@@ -75,6 +89,7 @@
             <x-button class="login-btn" @click.native="login">
                     登录
             </x-button>
+            </div>
         </div>
         
         <!-- <x-button v-if="isApp" class="host-btn" @click.native="goSetHost">切换服务器</x-button> -->
@@ -84,6 +99,7 @@
 <script>
 import {Group, XInput, XButton} from 'vux'
 import tokenService from 'service/tokenService'
+import commonService from 'service/commonService'
 // import $axios from '../plugins/ajax'
 // import axios from 'axios'
 export default {
@@ -133,7 +149,13 @@ export default {
 
             this.$loading.show();
             tokenService.pcLogin(params).then(data=>{
-                this.$router.replace('/home');
+                var app = this.getApp();
+                commonService.clearWebContext();//清空缓存
+                if(app.dsClient){//关闭之前的deepstream链接
+                    app.dsClient.close();
+                }
+                this.bus.$emit('refresh');
+                this.$router.replace('/');
                 this.$loading.hide();
                 localStorage.setItem('userCode',this.userCode);
             }).catch(err=>{
@@ -155,6 +177,21 @@ export default {
             }else{
                 this.isDisabled = true;
             }
+        },
+        onUserCodeBlur:function(){
+            var vm = this;
+            setTimeout(function(){
+               vm.isLoginInpFoc=false
+            });
+        },
+        onPassWordBlur:function(){
+            var vm = this;
+            setTimeout(function(){
+               vm.isLoginInpFocS=false
+            });
+        },
+        clearTestCode:function(){
+            this.testCode = '';
         },
         sendTestCodeClick() {
             if(this.isDisabled) return;
@@ -195,12 +232,21 @@ export default {
 </script>
 <style lang="scss" scoped>
     .login-container {
+        
         height: 100%;
         background-color: white;
     }
+    .login-title{
+        position: absolute;
+        top: .20rem;
+        left: .30rem;
+        font-size: 22px;
+    }
     .login-content{
-        
-        
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
     }
     .login-form,.mobile-form {
         background: #fff;
@@ -263,7 +309,7 @@ export default {
         margin-bottom: .5rem;
         // @include login_banner();
 
-        img{
+        &-logoimg{
             height: 1rem;
             margin-top: 0.5rem;
             width: 1rem;
@@ -273,6 +319,10 @@ export default {
             color: #3296fa;
             font-family: fantasy;
             letter-spacing: 2px;
+            img{
+                height: .4rem;
+                width: 1.5rem;
+            }
         }
 
         &-solgan{

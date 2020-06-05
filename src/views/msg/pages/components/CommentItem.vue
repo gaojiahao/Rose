@@ -15,7 +15,7 @@
         <img class="comment_image_item" :src="img.attachment" v-for="(img, iIndex) in item.attachment"
              @click.stop="scaleImg(img)" :key="iIndex" v-if="img.isImg"/>
         <div class="each_file" v-for="(file, index) in item.attachment" :key="index" v-if="!file.isImg"
-             @click.stop="checkFile(file.attachment)">附件{{index + 1}}: {{file.name}}
+             @click.stop="checkFile(file.attachment,file.name)">附件{{index + 1}}: {{file.name}}
         </div>
       </div>
       <!-- 实例创建者信息 -->
@@ -54,6 +54,7 @@
   import {EMOTION} from 'plugins/emoji/emotion'
   import {dateFormat} from 'vux'
   import RPopover from 'homePage/components/comment-related/RPopover'
+  import util from '@/common/util';
 
   export default {
     name: "CommentItem",
@@ -149,8 +150,11 @@
         }
       },
       // 查看附件
-      checkFile(file) {
-        window.location.href = `${location.origin}${file}`
+      checkFile(filePath,fileName) {
+          var baseUrl = window.baseURL||location.origin,
+              source = `${baseUrl}${file}`;
+              
+          util.downFile(source,fileName);
       },
       // 替换表情图片地址
       handleComment(commentType = 'comment') {

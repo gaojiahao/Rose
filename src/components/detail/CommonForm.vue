@@ -327,6 +327,10 @@ export default {
           },
           config = this.viewInfo.config,
           api = config.isBaseObject ? config.baseObjectKey : "formAPI";
+          //日志任务用的接口不一样
+          if(this.viewInfo.listId=='2750a13d-295d-4776-9673-290c51bfc568'){
+            api = 'jobLog';
+          }
 
       return getSOList(params, api).then(
         ({ formData = {}, attachment = [], biReferenceId }) => {

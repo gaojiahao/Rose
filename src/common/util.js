@@ -240,7 +240,7 @@ export default{
         var second = date.getSeconds();
         minute = minute < 10 ? ('0' + minute) : minute;
         second = second < 10 ? ('0' + second) : second;
-        return y + '/' + m + '/' + d;
+        return  m + '/' + d;
     },
     formatFileSize:function(b,length){
        var size = b/1024,
@@ -298,7 +298,7 @@ export default{
                 'm4v':'video/x-m4v',
                 'wmv':'video/x-ms-wmv',
                 'avi':'video/x-msvideo'
-            }
+            },
             mineType = '';
 
         switch(ext){
@@ -314,16 +314,14 @@ export default{
        
         return mineType;
     },
-    down(content){
-        var baseUrl = window.baseURL||'',
-            source = baseUrl+'/H_roleplay-si/ds/downloadById?id='+content.id,
-            fileTransfer,
+    downFile(source,fileName){
+        var fileTransfer,
             util = this,
             target;
 
         if(window.cordova){
             //externalDataDirectory;
-            target = cordova.file.externalDataDirectory  + content.content; //用到了cordova-plugin-file插件
+            target = cordova.file.externalDataDirectory  + fileName; //用到了cordova-plugin-file插件
             fileTransfer = new FileTransfer(); //用到了cordova-plugin-file-transfer插件
 
             fileTransfer.download(
@@ -360,6 +358,13 @@ export default{
         } else {
             window.location.href = source;
         }
+    },
+    down(content){
+        var baseUrl = window.baseURL||'',
+            source = baseUrl+'/H_roleplay-si/ds/downloadById?id='+content.id,
+            fileName = content.content;
+            
+        this.downFile(source, fileName);
     },
     addHandler:function (element,type,handler)
     {

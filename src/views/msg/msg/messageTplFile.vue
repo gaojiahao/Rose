@@ -2,10 +2,10 @@
     <div class="file-msg-container">
        <div class="singleFile">
             <div class="file-content-info">
-                <p @click="openFile(file)">
+                <p class="file-content-info-name" @click="openFile(file)">
                     {{file.content}}
                 </p>
-                <p>
+                <p class="file-content-info-size">
                     {{file.size}}KB
                 </p>
             </div>
@@ -67,10 +67,24 @@ export default {
         .file-content-info {
             flex:1;
             text-align: left;
+            &-name{
+                max-width: 130px;
+                text-overflow: ellipsis;
+                -ms-flex: 1;
+                -o-text-overflow: ellipsis;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+            }
+
+            &-size{
+                color: #999999;
+            }
         }
         .file-img{
             height:38px;
         }
+        
     }  
 }
 </style>

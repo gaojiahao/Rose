@@ -25,7 +25,7 @@
         <img class="comment_image_item" :src="img.ATTACHMENT" v-for="(img, iIndex) in item.commentAttachments"
              @click.stop="scaleImg(img)" :key="iIndex" v-if="img.isImg"/>
         <div class="each_file" v-for="(file, index) in item.commentAttachments" :key="index" v-if="!file.isImg"
-             @click.stop="checkFile(file.ATTACHMENT)">附件{{index + 1}}: {{file.name}}
+             @click.stop="checkFile(file.ATTACHMENT,file.name)">附件{{index + 1}}: {{file.name}}
         </div>
       </div>
       <div class="comment-reply" v-if="this.$slots.reply">
@@ -39,6 +39,7 @@
   import {savePraise} from 'service/commentService'
   import {EMOTION} from 'plugins/emoji/emotion'
   import {WechatEmotion as Emotion, dateFormat} from 'vux'
+  import util from '@/common/util';
 
   export default {
     name: "CommentItem",
@@ -155,8 +156,11 @@
         }
       },
       // 查看附件
-      checkFile(file) {
-        window.location.href = `${location.origin}${file}`
+     checkFile(filePath,fileName) {
+          var baseUrl = window.baseURL||location.origin,
+              source = `${baseUrl}${file}`;
+              
+          util.downFile(source,fileName);
       },
     },
     filters: {

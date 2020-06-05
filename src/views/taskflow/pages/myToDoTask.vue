@@ -80,6 +80,7 @@
 
 <script>
 import { getMsgList} from "service/msgService";
+import {getListById} from "service/detailService"
 import RScroll from "plugins/scroll/RScroll";
 import { XButton,Confirm, dateFormat } from 'vux'
 import { commitTask, transferTask} from 'service/commonService'
@@ -145,15 +146,18 @@ export default {
             })
         },
         handlerViewTask(task){
-            // window.location.href = `/Hermes/detail/${task.listId}/0?name=${task.listName}&transCode=${task.transCode}`;
-            // this.$router.push({ path: `/Hermes/detail/${task.listId}/0'transCode=${task.transCode}`});
+            
+            //todo:通过nav的status信息判断，移动端是否支持动态渲染，不支持则提示并不跳转
+            // getListById({uniqueId:task.listId}).then(res=>{
+                
+            // })
             let path = `/detail/${task.listId}/0`;
             this.$router.push({
-            path,
-            query: { 
-              transCode:task.transCode
-            }
-          })
+                path,
+                query: { 
+                transCode:task.transCode
+                }
+            })
             
         },
         // 上拉加载
@@ -321,6 +325,9 @@ export default {
     },
     mounted(){
         this.getTasks();
+        this.bus.$on('refresh',()=>{//登陆刷新
+          this.getTasks();
+       })
     }
 }
 </script>

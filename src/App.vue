@@ -3,21 +3,21 @@
     <keep-alive>
       <!-- 页面 -->
       <router-view v-if="$route.meta.keepAlive">
-        <x-header
-          v-if="hasNav"
-          :title="$route.meta.title || ''"  
-          slot = 'nav'
-        >
-        </x-header>
+        <div class="page-navigation" 
+        v-if="hasNav"
+        slot = 'nav'>
+          <div class="goback" @click="$router.go(-1)"><i class="iconfont icon-back1"></i></div>
+          <div class="body">{{$route.meta.title || ''}}</div>
+        </div>
       </router-view>
     </keep-alive>
     <router-view v-if="!$route.meta.keepAlive">
-      <x-header
+      <div class="page-navigation" 
         v-if="hasNav"
-        :title="$route.meta.title || ''"  
-        slot = 'nav'
-      >
-      </x-header>
+        slot = 'nav'>
+          <div class="goback" @click="$router.go(-1)"><i class="iconfont icon-back1"></i></div>
+          <div class="body">{{$route.meta.title || ''}}</div>
+      </div>
     </router-view>
 
     <!-- 底部导航栏 -->
@@ -26,6 +26,7 @@
         <span class="tabicon iconfont" :class="tab.icon"></span>
         <span class="title">{{tab.title}}</span>
         <badge v-if='tab.title === "任务" && newsNumber != 0'></badge>
+        <badge v-if='tab.title === "消息" && messageCount>0' :text='messageCount' ></badge>
       </router-link>
     </nav>
     <div v-if="offline" class="offline-bar">
@@ -36,15 +37,16 @@
 
 <script>
 import util from '@/common/util';
+import Bus from '@/common/eventBus.js';
 import platform from './plugins/platform/index'
 import { getMsgList } from 'service/msgService'
-import { Badge,XHeader} from 'vux'
+import { Badge} from 'vux'
 var DS = require('deepstream.io-client-js');
 var cordova = window.cordova;
 export default {
   name: 'app',
   data() {
-    var hasNav = platform.isIPhone && window.isApp
+    var hasNav = true;//window.isApp;//platform.isIPhone && 
     return{
       tablist: [
         // {title: '消息', path: '/msg', icon:'icon-message1'},
@@ -54,6 +56,7 @@ export default {
         {title: '我',path:'/user',icon:'icon-me2'}
       ],
       newsNumber:0,
+      messageCount:0,
       hasNav:hasNav,
       hasTab:true,
       theme:'',
@@ -61,7 +64,7 @@ export default {
     }
   },
   components:{
-    Badge,XHeader
+    Badge
   },
   watch: {
     $route(to, from) {
@@ -110,10 +113,9 @@ export default {
           vm = this,
           status,
           dsClient;
-      
-      if (window.baseURL) dsUrl = "172.roletask.com:6021/deepstream";//app测试代码
+      if (window.baseURL) dsUrl = "175.roletask.com:6021/deepstream";//app测试代码
       return new Promise((resolve,reject)=>{
-          if(vm.dsClient != null){
+          if(vm.dsClient != null && vm.dsClient.getConnectionState() != 'CLOSED'){
               console.log('ds is not null');
               resolve(vm.dsClient);
               return;
@@ -126,6 +128,9 @@ export default {
           } );
           dsClient.on('connectionStateChanged', connectionState => {
               console.log('connectionState:',connectionState)
+              if('CLOSED' == connectionState){
+                   
+              }
           });
           dsClient.login({
               username:uId
@@ -160,7 +165,12 @@ export default {
     this.$event.$on('badgeNum', (val) => {
       this.newsNumber = val;
     });
+
+    this.$event.$on('setMsgCount',val=>{
+      this.messageCount = val;
+    });
     Vue.prototype.getApp= ()=> this;
+    Vue.prototype.bus = Bus;
     document.addEventListener("deviceready", this.onDeviceReady, false);
     this.initOnlineStatus();
   },

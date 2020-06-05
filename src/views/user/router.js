@@ -5,6 +5,9 @@ import MonthPerformance from './performance/monthPerformance.vue'
 import YearPerformance from './performance/yearPerformance.vue'
 import PerformanceLayout from './performance/performanceLayout.vue'
 
+import SettingLayout from './setting/settingLayout'
+import UserEntites from './setting/userEntites'
+
 export default [
   {
     path: '/user',
@@ -47,8 +50,27 @@ export default [
           keepAlive: true
         },
         component: YearPerformance
+      },{
+        path:'setting',
+        name:'setting',
+        meta:{
+          title:'设置',
+          keepAlive: true
+        },
+        component:SettingLayout,
+        children:[
+          {
+            path:'entities',
+            name:'entities',
+            meta:{
+              title:'切换身份',
+              keepAlive: true
+            },
+            component:UserEntites,
+          }
+        ]
       }
-    ]
+    ],
   }
 ]
 

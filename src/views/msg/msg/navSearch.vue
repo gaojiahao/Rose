@@ -22,27 +22,31 @@
           >
             <div class="search-content">
               <div 
-              class="list-top" 
-              v-for="(item,index) of data" 
-              :key="index">
+                class="list-top" 
+                v-for="(item,index) of data" 
+                :key="index">
                 <p style="padding-left:.1rem;color:#999;margin-bottom:.1rem">{{item.title}}</p>
                 <ul class="list-top-content">
-                  <li 
-                    v-for="(child,ci) of item.children"
-                    :key="ci"
-                    @click="toMsg(child)"
-                    class="list">
-                    <div class="list-left">
-                      <div class="list-photo" @click.stop="openUserDetail(child)">
-                        <img :src="getDefaultPhoto(child)" />
+                  <touch v-for="(child,ci) of item.children"
+                      :key="ci"
+                      @click="toMsg(child)">
+                    <li 
+                      class="list">
+                      <div class="list-left">
+                        <touch>
+                          <div class="list-photo" @click.stop="openUserDetail(child)">
+                            
+                            <img :src="child.groupIcon|appIconFilter"  @error="getDefaultPhoto(child)" />
+                          </div>
+                        </touch>
+                        <div class="list-desc">
+                            <p>{{child.nickname || child.groupName}}</p>
+                            <span v-if="child.type==='群聊'">包括：{{child.users}}</span>
+                            <span v-else>{{child.role}}</span>
+                        </div>
                       </div>
-                      <div class="list-desc">
-                          <p>{{child.nickname || child.groupName}}</p>
-                          <span v-if="child.type==='群聊'">包括：{{child.users}}</span>
-                          <span v-else>{{child.role}}</span>
-                      </div>
-                    </div>
-                  </li>
+                    </li>
+                  </touch>
                 </ul>
               </div>
             </div>
@@ -54,12 +58,14 @@
 import { Popup,XInput } from 'vux'
 import { getGroupByUserId,getGroupsByName } from '@/service/msgService'
 import RScroll from "plugins/scroll/RScroll";
+import Touch from "plugins/touch";
 export default{  
     name: "NavSearch",
     components: {
         Popup,
         XInput,
-        RScroll
+        RScroll,
+        Touch
     },
     data() {
         return {
@@ -72,7 +78,7 @@ export default{
                 click: false,
                 pullUpLoad: false,//上拉刷新
                 pullDownRefresh: false //下拉刷新
-            },
+            }
         }
     },
     watch: {
@@ -92,8 +98,8 @@ export default{
     methods: {
         getDefaultPhoto(item) {
             let url = require("assets/ava01.png");
-            if (item.photo) {
-                url = item.photo;
+            if (item.groupIcon) {
+                url = item.groupIcon;
             }
             return url;
         },
@@ -118,6 +124,7 @@ export default{
                   if(item.type === "群聊"){
                     this.data[1] && this.data[1].children.push(item)
                   }else{
+                    item.groupName  = item.nickname;
                     this.data[0] && this.data[0].children.push(item)
                   }
                 })
@@ -190,6 +197,7 @@ export default{
             img{
               width: .45rem;
               height: .45rem;
+              border-radius: .02rem;
             }
           }
           &-desc{

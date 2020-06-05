@@ -1,10 +1,14 @@
 <template>
-  <div class="inPage">
-    <div class="content" ref="home">
+  <div class="home">
+    <div class="page-navigation">
+            应用
+    </div>
+    <loading v-if= "showLoading"/>
+    <div class="content" ref="home" v-show="showLoading != true">
       <div class="wrapper">
         <div class="top-part-container">
           <div class="top-part">
-            <div class="user-info-container">
+            <!-- <div class="user-info-container">
               <div class="user_avatar" @click="avatarClick()">
                 <img :src="userInfo.avatar">
               </div>
@@ -40,7 +44,7 @@
                   </div>
                 </li>
               </ul>
-            </div>
+            </div> -->
           </div>
         </div>
         <div class="list_top">
@@ -55,7 +59,7 @@
           </div>
         </div>
         <basic-app :BasicApps="BasicApps"></basic-app>
-        <bus-app :BusApps="BusApps"></bus-app>
+         <bus-app :BusApps="BusApps"></bus-app>
       </div>
       <div class="el-fade-in">
         <div class="page-component-up" @click="scrollToTop" v-show="toTopShow">
@@ -96,13 +100,14 @@ export default {
       searchValue: '',
       yScrollValue: 0,
       toTopShow:false,
+      showLoading:false,
       sessionApps: [],
     };
   },
   components: { busApp, basicApp },
   methods: {
     initData: async function() {
-      this.$loading.show();
+      this.showLoading = true;
       //获取当前用户
       await this.getCurrentUser();
       // 获取首页应用列表
@@ -124,7 +129,7 @@ export default {
         position
       };
       //await this.getNews();
-      this.$loading.hide();
+        this.showLoading = false;
     },
     //获取代办数量
     getNews() {
@@ -437,11 +442,11 @@ export default {
     }
   },
   activated() {
-    if(this.$route.query.refresh == true){
+    if(this.refresh == true){
        this.BusApps = [];
        this.entityList = [];//主体列表
-       commonService.clearBaseInfo();
        sessionStorage.removeItem(ROSE_MENU);
+       this.refresh = false;
     }
     if (this.BusApps.length == 0) {
       if(this.isSetHost())this.initData();
@@ -450,9 +455,6 @@ export default {
     }
   },
   beforeRouteEnter(to,from,next){
-    if(from.path == "/login"){
-       to.query.refresh = true;
-    }
     next()
   },
   mounted() {
@@ -465,17 +467,25 @@ export default {
     this.homeScroll.on('scroll', ({x, y}) => {
       this.yScrollValue = y;
     })
+    this.bus.$on('refresh',()=>{
+          this.refresh = true;//要刷新了。
+    })
   }
 };
 </script>
 
 <style lang='scss' scoped>
+.home{
+   height: calc(100% - 0.49rem);
+   display:flex;
+   flex-direction: column;
+}
 .vux-1px-b:after {
   border-color: #e8e8e8;
 }
 .content {
   width: 100%;
-  height: calc(100% - 0.49rem);
+  flex:1;
   overflow: hidden;
   background-color: #fff;
   .wrapper {

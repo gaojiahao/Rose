@@ -1,7 +1,7 @@
 <template>
     <div class="page msg-history-all">
         <div class="page-navigation flex">
-            <div class="goback" @click="$parent.showHistoryAll=false">
+            <div class="goback" @click="$router.go(-1)">
                 <i class="iconfont icon-back1"></i>
             </div>
             <div class="body history-input-wrapper">
@@ -10,25 +10,32 @@
          </div>
          <div class="page-body-hasNav" ref="scrollerWrapper">
              <div v-if="searchKey == ''">
-                 <h2>快速查找聊天内容</h2>
+                 <p class="notice">快速查找聊天内容</p>
                  <div class="history-link flex">
-                     <span @click="$parent.showHistoryImg=true">图片</span>
-                     <span @click="$parent.showHistoryFile=true">文件</span>
+                     <span @click="goto('historyImg')">图片</span>
+                     <span @click="goto('historyFile')">文件</span>
                  </div>
              </div>
              <div v-if="msgList.length==0 && showLoading == false && loaded == true">
                  无搜索结果
              </div>
-            <div v-if="msgList.length">
+             <r-scroll
+                 :options="scrollOptions"
+                 :has-next="false"
+                 :no-data="false"
+                 :hideToast="true"
+                 v-if="msgList.length" class="msg-history-container"
+                >
                 <div v-for="(msg,index) in msgList" :key="index" class="history-item">
                     <img :src="msg.photo"  @error="getDefaultPhoto(msg)">
                     <div class="history-item-info">
                         <p>{{msg.creatorName}}</p>
-                        <div v-html="msg.content"></div>
+                        <div v-html="msg.content" v-if="msg.imType == 1"></div>
+                        <historyFileItem v-else-if="msg.imType==4 || msg.imType == 2" :content="msg.content"></historyFileItem>
                     </div>
                     <div>{{msg.crtTime}}</div>
                 </div>
-            </div>
+             </r-scroll>
             <div class="weui-loadmore" v-show="showLoading">
                 <i class="weui-loading"></i>
                 <span class="weui-loadmore__tips">正在加载</span>
@@ -37,7 +44,9 @@
     </div>
 </template>
 <script>
+import RScroll from "plugins/scroll/RScroll";
 import {searchGroupMsg} from 'service/msgService'
+import historyFileItem from './historyFileItem'
 export default {
     data(){
         return {
@@ -47,11 +56,13 @@ export default {
                 page:1,
                 limit:30
             },
+            scrollOptions:{},
             showLoading:false,
             loaded:false,
             hasNext:false
         }
     },
+    components:{RScroll,historyFileItem},
     created(){
     },
     methods:{
@@ -80,6 +91,9 @@ export default {
             }
             return url;
         },
+        goto(name){
+           this.$router.push({name:name,params:{groupId:this.$route.params.groupId}});
+        },
         getMsg(){
             var key = this.searchKey;
             
@@ -106,27 +120,47 @@ export default {
                 }
             });
         }
+    },
+    beforeRouteEnter:function(to,form,next){
+        next(vm=>{
+            vm.getApp().hasTab = false;
+        });
+        
+    },
+    beforeRouteLeave:function(to,from,next){
+        this.getApp().hasTab = true;
+        next();
     }
 }
 </script>
 <style lang='less'>
 .msg-history-all{
-   h2{
-      text-align: center;
-      font-size:16px;
-      line-height: 32px;
-      color:#dedede;
+    display: flex;
+    flex-direction: column;
+   .notice{
+    text-align: center;
+    color: #ddd;
+    line-height: 50px;
    }
 }
 .history-link span{
    padding:0.2rem;
+   color: #1761aa;
 }
 .history-input-wrapper{
   flex:1;
-  border-bottom:1px solid #dedede;
 }
 .history-input{
-  width: 100%;
+    width: 100%;
+    height: 75%;
+    border-bottom: 0.5px solid rgb(117, 109, 109);
+}
+.msg-history-container{
+    height: 100%;
+    background: #fff;
+}
+.history-input::-webkit-input-placeholder{
+    color:rgb(117, 109, 109);
 }
 .history-item{
   display: flex;
@@ -152,6 +186,9 @@ export default {
   &-info{
       flex: 1;
       margin-left: .15rem;
+      div{
+         color:#dedede;
+      }
   }
 }
 </style>

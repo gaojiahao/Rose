@@ -16,7 +16,7 @@
       <div class="my-info" >
         <div class="my-info-entity" >
           <div>{{ currentUser.entityName}}</div>
-          <img  :src="getDefaultImg()" />
+          <img :src="currentUser.photo" @error="getDefaultImg()" />
         </div>
 
         <div class="my-info-job">
@@ -51,13 +51,27 @@
       </group>
       </div>
         <group>
-              <cell title="今日绩效"  :value="todayPerformance" :is-loading="todayPerformance==undefined" is-link @click.native="onDayPerformanceClick"  />
-              <cell title="今年累计绩效"  :value="yearPerformance" :is-loading="yearPerformance==undefined"  is-link @click.native="onYearPerformanceClick" />
+              <cell title="今日绩效"  
+                :value="todayPerformance" 
+                :is-loading="todayPerformance==undefined" 
+                is-link 
+                @click.native="onDayPerformanceClick"  >
+                  <i slot="icon"   class="iconfont icon-moneynew" style="font-size: .24rem;color: #f47b12;margin-right: .1rem;"></i>
+                </cell>
+              <cell title="今年累计绩效"  
+                :value="yearPerformance" 
+                :is-loading="yearPerformance==undefined"  
+                is-link 
+                @click.native="onYearPerformanceClick" >
+                <i slot="icon"   class="iconfont icon-moneynew" style="font-size: .24rem;color: #f47b12;margin-right: .1rem;"></i>
+                </cell>
           </group>
-          <!-- <group>
-              <cell title="主题设置" is-link link="/themesetting" />
-              <cell title="退出登录"  @click.native="loginOut" />
-          </group> -->
+          <group>
+              <!-- <cell title="主题设置" is-link link="/themesetting" /> -->
+              <cell title="设置" is-link link="/user/setting" >
+                  <i slot="icon"   class="iconfont icon-zu3218" style="font-size: .2rem;rgba(0, 0, 0, 0.6);margin-right: .1rem;"></i>
+              </cell> 
+          </group>
       </RScroll>
   </div>
     
@@ -69,10 +83,9 @@ import { getMyJobLogCountInfo,
          getTodayPerformance,
          getYearPerformance } 
 from "@/service/myPerformanceService";
-import WebContext from 'service/commonService'
 import { initWebContext } from 'service/commonService'
 import { Group, Cell } from 'vux'
-import tokenService from "service/tokenService";
+
 import RScroll from "plugins/scroll/RScroll";
 const echarts = require('echarts');
 export default {
@@ -178,32 +191,33 @@ export default {
             }
           })
         },
-         loginOut(){
-            tokenService.clean();
-            this.$router.replace('/login');
+        init(){
+           this.getDayPerformances()
+           this.getYearPerformances()
+            initWebContext().then((WebContext) => {
+                this.currentUser = WebContext.currentUser
+                this.currentUser.isSysRoleList.forEach(item => {
+                  this.roles.push(item.name)
+                })
+            })
         }
     },
     mounted(){
-        this.getMyLog()
+        this.getMyLog();//这个需要dom支持
     },
     created() {
-      this.getDayPerformances()
-      this.getYearPerformances()
-      initWebContext().then(() => {
-          this.currentUser = WebContext.WebContext.currentUser
-          this.currentUser.isSysRoleList.forEach(item => {
-            this.roles.push(item.name)
-          })
-      })
+       this.init();
+       this.bus.$on('refresh',()=>{//登陆刷新
+          this.init();
+          this.getMyLog();
+       })
     }
 }
 </script>
 
 <style lang="less" scoped>
   .my-performance {
-    // height: 100%;
-    // width: 100%;
-    // position: relative;
+   
     .log-lours {
       
         height: 3rem;
@@ -269,7 +283,8 @@ export default {
         justify-content: space-between;
         color: #999999;
         img{
-          height: .65rem;
+          height: .45rem;
+          width: .45rem;
           border-radius: .05rem;
         }
       }

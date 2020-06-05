@@ -28,7 +28,7 @@
                 <check-icon :value="list.check"></check-icon>
               </div>
               <div class="list-photo">
-                <img :src="list.photo" @error="getDefaultPhoto(list)"/>
+                <img :src="list.photo | appIconFilter" @error="getDefaultPhoto(list)"/>
               </div>
               <div class="list-desc">
                 <p>{{list.nickname}}</p>
@@ -59,6 +59,7 @@
 import { XInput,Icon,CheckIcon,XButton } from 'vux'
 import RScroll from 'plugins/scroll/RScroll'
 import { getEmployee } from '@/service/msgService'
+import { initWebContext } from 'service/commonService'
 export default {
     name:'MemberSelector',
     components: {
@@ -102,7 +103,10 @@ export default {
           this.searchValue = "";
           this.currentPage = 1
           this.selectMembers = []
-          this.getAllusers()
+          initWebContext().then((WebContext) => {
+                this.currentUser = WebContext.currentUser
+                this.getAllusers()
+          })
         } 
       },
       searchValue: function(text) {
@@ -130,6 +134,7 @@ export default {
         },
         selectMember(list,index) {
           if(list.isOrigin) return
+          if(this.currentUser.userId == list.userId) return;
 
           if(!list.check){
             this.selectMembers.push({
@@ -175,7 +180,7 @@ export default {
         }
     },
     mounted() {
-        
+       
     }
 }
 </script>
@@ -218,8 +223,9 @@ export default {
         &-photo{
           margin: 0px .1rem;
           img{
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
+            border-radius: .02rem;
           }
         }
         &-desc{

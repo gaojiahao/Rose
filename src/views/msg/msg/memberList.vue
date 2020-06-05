@@ -11,38 +11,51 @@
           <div class="list-search">
             <x-input placeholder="搜索" v-model="searchValue"></x-input>
           </div>
-          <ul class="content">
-            <li 
-              v-for="(item,index) of memberData"
-              :key="item.userId"
-              @click="openUserDetail(item)"
-              :class="{move:candelete.userId==item.userId,list:true}"
-              @touchstart="touchStart(item)"
-              @touchend="touchEnd(item)">
-              <div class="list-left">
-                <div class="list-photo">
-                  <img :src="getDefaultPhoto(item)" />
+          <RScroll 
+              class="page-body-hasNav search-container" 
+              :options="scrollOptions"
+              :has-next="hasNext"
+              :no-data="false"
+          >
+            <ul class="content">
+              <touch>
+              <li  v-for="(item,index) of memberData"
+                :key="item.userId"
+                @click="openUserDetail(item)"
+                class="vux-1px-b"
+                :class="{move:candelete.userId==item.userId,list:true}"
+                @touchstart="touchStart(item)"
+                @touchend="touchEnd(item)" >
+                <div class="list-left">
+                  <div class="list-photo">
+                    <img :src="item.photo|appIconFilter" @error="getDefaultPhoto(item)" />
+                  </div>
+                  <div class="list-desc">
+                      <p>{{item.nickname}}</p>
+                      <span>{{item.role}}</span>
+                  </div>
                 </div>
-                <div class="list-desc">
-                    <p>{{item.nickname}}</p>
-                    <span>{{item.role}}</span>
+                <div class="list-owner" v-if="item.isOwner">
+                  群主
                 </div>
-              </div>
-              <div class="list-owner" v-if="item.isOwner">
-                群主
-              </div>
-              <div class="delete" @click.stop="deleteMember(item,index)">移除</div>
-            </li>
-          </ul>
+                <div class="delete" @click.stop="deleteMember(item,index)">移除</div>
+              </li>
+              </touch>
+            </ul>
+          </RScroll>
     </div> 
 </template>  
 <script>
 import {XInput } from 'vux'
 import { removeMember } from '@/service/msgService'
+import RScroll from "plugins/scroll/RScroll";
+import Touch from "plugins/touch";
 export default{  
     name: "MemberList",
     components: {
-        XInput
+        XInput,
+        RScroll,
+        Touch
     },
     props: {
       selectedMembers: {
@@ -62,7 +75,13 @@ export default{
             showMemberList:false,
             userId: "",
             searchValue: "",
-            memberData: []
+            memberData: [],
+            hasNext:false,
+            scrollOptions:{
+                click: false,
+                pullUpLoad: false,//上拉刷新
+                pullDownRefresh: false //下拉刷新
+            }
         }
     },
     watch: {
@@ -130,7 +149,8 @@ export default{
           this.$router.push({name:'userInfo',params:{uId:item.userId}})
         },
         touchStart(item) {
-            if(this.currentUser.userId!=this.groupOwner) return
+            if(this.currentUser.userId != this.groupOwner) return
+            if(!!item.isOwner) return
 
             let touchs = event.changedTouches[0];
             // 记录开始滑动的鼠标位置
@@ -138,7 +158,8 @@ export default{
             this.candelete = {};
         },
         touchEnd(item) {
-          if(this.currentUser.userId!=this.groupOwner) return
+          if(this.currentUser.userId != this.groupOwner) return
+          if(!!item.isOwner) return
 
             let touchs = event.changedTouches[0];
             // 记录结束滑动的鼠标位置
@@ -166,12 +187,17 @@ export default{
 .member-list{
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   .list-header{
     padding: .1rem;
     background-color: #39f;
     color: #fff;
     display: flex;
     justify-content: space-between;
+  }
+  .search-container{
+    height: calc(~"100% - 1rem");
+    margin-top: .1rem;
   }
   .list-search{
     background-color: #fff;
@@ -181,7 +207,6 @@ export default{
     overflow: hidden;
     .list{
       background: #fdfdfd;
-      border-bottom: 1px solid #e1e1e1;
       height: .5rem;
       position: relative;
       transform: translateX(0);
@@ -193,14 +218,17 @@ export default{
       &-left{
         display: flex;
         align-items: center;
+        flex: 6;
       }
       &-photo{
         img{
           width: .45rem;
           height: .45rem;
+          border-radius: .02rem;
         }
       }
       &-owner{
+        flex: 1;
         color: #999;
       }
       &-desc{

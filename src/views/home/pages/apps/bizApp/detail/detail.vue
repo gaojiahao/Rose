@@ -91,6 +91,9 @@ export default {
     $route: {
       handler: function(val, oldVal){
         this.intTab();
+        if(val.query.transCode!=oldVal.query.transCode){
+          oldVal.meta.keepAlive = false;  
+        }
         if(val.name == oldVal.name) {
           if(val.query.transCode != oldVal.query.transCode) {
             this.getAppFeature();
@@ -302,20 +305,25 @@ export default {
     })
   },
   activated() {
-    let reload = this.$route.meta.reload;
+    let reload = this.$route.meta.reload,
+        fillPage = this.$refs.detailComponent,
+        lastTransCode = this.lastTransCode,
+        transCode = this.$route.query.transCode;
+
+    if(lastTransCode!= null && lastTransCode != transCode){
+        fillPage && fillPage.reload && fillPage.reload();
+    }
     if (reload) {
       this.initPage();
       this.$route.meta.reload = false;
     }
-    this.refresh();
+    this.lastTransCode = transCode;
+    this.refresh();//刷新滚动
   },
   beforeRouteEnter(to, from, next) {
     let { name = '' } = to.query;
-    if (name.includes('表')){
-      to.meta.title = name;
-      next();
-    }
-    to.meta.title = `${name}详情`;
+
+    to.meta.title = name.includes('表') ? name : `${name}详情`;
     next();
   },
   beforeRouteLeave(to, from, next) {

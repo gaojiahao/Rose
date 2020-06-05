@@ -1,5 +1,6 @@
 <template>
   <div class='childPage'>
+    <r-nav/>
     <r-scroll class='detail_content' ref="bScroll">
       <div class="warehouse_baseinfo has_margin">
         <div class="baseInfo_top">
@@ -372,6 +373,8 @@ export default {
 
   .childPage {
     position: fixed;
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: 100%;
     bottom: 0;
@@ -393,7 +396,7 @@ export default {
     }
   }
   .detail_content {
-    height: 100%;
+    flex:1;
     overflow: hidden;
     color: #696969;
     font-size: .14rem;
