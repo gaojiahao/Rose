@@ -15,13 +15,13 @@
       <div class="my-performance">
       <div class="my-info" >
         <div class="my-info-entity" >
-          <div>{{ entityName}}</div>
-          <img :src="photo" @error="getDefaultImg()" />
+          <div>{{ entityName||currentUser.entityName }}</div>
+          <img :src="photo||currentUser.photo" @error="getDefaultImg()" />
         </div>
 
         <div class="my-info-job">
-           <p class="my-info-job-nickname">{{ name }}</p>
-            <p class="my-info-job-jobs">{{ role }}</p>
+           <p class="my-info-job-nickname">{{ name||currentUser.name }}</p>
+            <p class="my-info-job-jobs">{{ role||roles.join(',') }}</p>
         </div>
       </div>
 
