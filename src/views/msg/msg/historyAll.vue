@@ -31,7 +31,7 @@
                     <div class="history-item-info">
                         <p>{{msg.creatorName}}</p>
                         <div v-html="msg.content" v-if="msg.imType == 1"></div>
-                        <historyFileItem v-else-if="msg.imType==4 || msg.imType == 2" :content="msg.content"></historyFileItem>
+                        <!-- <historyFileItem v-else-if="msg.imType==4 || msg.imType == 2" :content="msg.content"></historyFileItem> -->
                     </div>
                     <div>{{msg.crtTime}}</div>
                 </div>
@@ -103,11 +103,19 @@ export default {
                 this.msgList = [];
                 return;
             }
-            searchGroupMsg({
+            // searchGroupMsg({
+            //     ...this.pageParam,
+            //     content:key,
+            //     groupId:this.$route.params.groupId
+            // })
+            getMessagesByImType({
                 ...this.pageParam,
                 content:key,
-                groupId:this.$route.params.groupId
-            }).then(res=>{
+                imType:1,
+                groupId:this.$route.params.groupId,
+                sort:JSON.stringify([{"property":"crtTime","direction":"DESC"}])
+            })
+            .then(res=>{
                 this.showLoading = false;
                 this.loaded = true;
                 if(res.msgs.length>=this.pageParam.limit){
