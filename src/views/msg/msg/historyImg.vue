@@ -1,7 +1,7 @@
 <template>
     <div class="page msg-history-img">
         <div class="page-navigation flex">
-            <div class="goback" @click="$parent.showHistoryImg=false">
+            <div class="goback" @click="$router.go(-1)">
                 <i class="iconfont icon-back1"></i>
             </div>
             <div class="body history-input-wrapper">
@@ -9,18 +9,25 @@
             </div>
          </div>
          <div class="page-body-hasNav" ref="scrollerWrapper">
-            <div v-if="msgList.length" class="img-container">
-                <div v-for="(msg,index) in msgList" :key="index" class="history-img-item"   @click="imgClick(msg.content)" >
-                    <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ msg.content.id">
+             <r-scroll
+                 :options="scrollOptions"
+                 :has-next="false"
+                 :no-data="false"
+                 :hideToast="true"
+                 v-if="msgList.length" class="img-container-wrapper"
+                >
+                <div class="img-container">
+                    <div v-for="(msg,index) in msgList" :key="index" class="history-img-item"   @click="imgClick(msg.content)" >
+                        <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ msg.content.id">
+                    </div>
+                    <div class="history-img-item-fill" v-for="count in (4-msgList.length%4)"></div>
                 </div>
-            </div>
-            <div class="imgPerview" v-show="perviewImg" @click="perviewImg = null">
-                <img :src="perviewImg"/>
-            </div>
+             </r-scroll>
          </div>
     </div>
 </template>
 <script>
+import RScroll from "plugins/scroll/RScroll";
 import {getMessagesByImType} from 'service/msgService'
 export default {
     data(){
@@ -31,11 +38,13 @@ export default {
                 page:1,
                 limit:30
             },
+            scrollOptions:{},
             perviewImg:null,
             showLoading:false,
             hasNext:false
         }
     },
+    components:{RScroll},
     created(){
         this.getMsg();
     },
@@ -78,6 +87,16 @@ export default {
                 }
             });
         }
+    },
+    beforeRouteEnter:function(to,form,next){
+        next(vm=>{
+                vm.getApp().hasTab = false;
+        });
+        
+    },
+    beforeRouteLeave:function(to,from,next){
+        this.getApp().hasTab = true;
+        next();
     }
 }
 </script>
@@ -88,22 +107,15 @@ export default {
     .page-body-hasNav{
         position: relative;
         background-color: white;
-        .imgPerview{
-            position:absolute;
-            top:0;
-            height: 100%;
-            background: #dedede;
-            img{
-                width: 100%;
-                margin-top:20px;
-            }
-        }
     }
     .img-container{
         display: flex;
         flex-wrap: wrap;
-        justify-content: flex-start;
+        justify-content:space-around;
     }
+}
+.img-container-wrapper{
+    height:100%;
 }
 .history-img-item{
     width: 23%;
@@ -116,5 +128,8 @@ export default {
         height:65px;
         border-radius: .01rem;
     }
+}
+.history-img-item-fill{
+    width: 23%;
 }
 </style>

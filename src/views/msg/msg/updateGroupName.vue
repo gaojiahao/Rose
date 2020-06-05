@@ -12,7 +12,7 @@
             </span>
           </div>
           <div class="name-input">
-            <x-input ref="nameInput" v-model="groupName" show-clear></x-input>
+            <x-input ref="nameInput" v-model="groupName" @keyup.native="onKeyUp" show-clear></x-input>
           </div>
     </div> 
 </template>  
@@ -39,7 +39,7 @@ export default{
     },
     watch: {
       groupName: function(value) {
-          !value ? this.isDisabled = true : this.isDisabled = false;
+        !value ? this.isDisabled = true : this.isDisabled = false;
       },
       showUpdateName: function(value) {
         if(value) {
@@ -53,6 +53,12 @@ export default{
     methods: {
         goBack() {
           this.showUpdateName = false;
+        },
+        onKeyUp() {
+          const patrn = /[`~!@#$%^&*()_\-+=<>?:"{}|.\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘'。、]/ig; 
+          if (patrn.test(this.groupName)) {
+            this.groupName = this.groupName.replace(patrn,'');
+          }
         },
         editGroupName() {
           if(!this.groupName) return;

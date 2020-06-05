@@ -46,16 +46,16 @@
                         <div class="vux-cell-primary">
                             查找聊天记录
                         </div>
-                        <div class="weui-cell__ft" @click="showHistoryAll = true">
+                        <div class="weui-cell__ft" @click="goto('historyAll')">
                             更多
                         </div>
                     </div> 
                     <div class="weui-cell">
-                        <div class="msg-type-item" @click="showHistoryFile = true">
+                        <div class="msg-type-item" @click="goto('historyFile')">
                             <i class="iconfont icon-wenjian"/>
                             <div>文件</div>
                         </div>
-                        <div class="msg-type-item" @click="showHistoryImg = true">
+                        <div class="msg-type-item" @click="goto('historyImg')">
                             <i class="iconfont icon-i-img"/>
                             <div>图片</div>
                         </div>
@@ -99,17 +99,12 @@
             ref="updateGroupName"
             :group="group">
          </update-group-name>
-         <history-all v-if="showHistoryAll">
-         </history-all>
-         <history-file v-if="showHistoryFile" />
-         <history-img v-if="showHistoryImg" />
     </div>
 </template>
 <script>
 import { Group, Cell,InlineXSwitch} from 'vux'
 import MemberSelector from './memberSelector';
 import MemberList from './memberList';
-import HistoryAll from './historyAll';
 import HistoryImg from './historyImg';
 import HistoryFile from './historyFile';
 import { initWebContext } from 'service/commonService'
@@ -124,18 +119,12 @@ export default {
         InlineXSwitch,
         MemberSelector,
         MemberList,
-        HistoryAll,
-        HistoryImg,
-        HistoryFile,
         UpdateGroupName
     },
     data(){
         return {
             allMembers: [],
-            currentUser: {},
-            showHistoryAll:false,
-            showHistoryFile:false,
-            showHistoryImg:false
+            currentUser: {}
         }
     },
     methods:{
@@ -177,6 +166,9 @@ export default {
                 member.photo = url;
             }
             return url;
+        },
+        goto(name){
+           this.$router.push({name:name,params:{groupId:this.group.groupId}});
         },
         getAllMembers() {
             if(this.group.groupId){

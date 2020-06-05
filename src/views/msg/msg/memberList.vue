@@ -18,8 +18,7 @@
               :no-data="false"
           >
             <ul class="content">
-              <touch 
-               >
+              <touch>
               <li  v-for="(item,index) of memberData"
                 :key="item.userId"
                 @click="openUserDetail(item)"
@@ -50,11 +49,13 @@
 import {XInput } from 'vux'
 import { removeMember } from '@/service/msgService'
 import RScroll from "plugins/scroll/RScroll";
+import Touch from "plugins/touch";
 export default{  
     name: "MemberList",
     components: {
         XInput,
-        RScroll
+        RScroll,
+        Touch
     },
     props: {
       selectedMembers: {
