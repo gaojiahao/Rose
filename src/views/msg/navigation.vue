@@ -451,11 +451,13 @@ export default {
                     text = '[文件]' + content.content;
             }
             window.notification.schedule({
-                title: msg.creatorName,
-                text:text,
+                msg:msg,
+                title: msg.groupName,
+                text:`${msg.creatorName}:${text}`,
                 foreground: true,
                 icon:this.$options.filters.appIconFilter(g.groupIcon) || groupIcon
             });
+
             navigator.vibrate(300);
         },
         

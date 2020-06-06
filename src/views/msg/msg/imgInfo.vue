@@ -26,7 +26,11 @@ export default {
     }
 }
 </script>
-<style lang="scss">
+
+<style lang="scss" scoped>
+    .page-body{
+        height: 100%;
+    }
    .imgPerview{
         text-align: center;
         width: 100%;

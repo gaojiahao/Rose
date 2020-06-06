@@ -4,12 +4,6 @@
     <div class='content'>
       <slot name="nav"></slot>
       <div class="list_top">
-        <div class="header" v-if="!hasNav">
-          <div class="header-container">
-            <i class="icon icon-return" @click="goBack"></i>
-            <div class="center">财务会计报表</div>
-          </div>
-        </div>
         <div class="tab-container" ref="tabContainer">
           <div class="tab-item" :class="{active: index === activeIndex}" v-for="(item, index) in listData"
                @click="tabClick(item, index)" ref="tabs" :key="index">
