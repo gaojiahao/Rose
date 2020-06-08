@@ -83,6 +83,7 @@ import RScroll from "plugins/scroll/RScroll";
 import Touch from "plugins/touch";
 import NavContextMenu from "./msg/navContextMenu";
 import { Badge} from 'vux'
+import MD5 from 'md5.js'
 var defaultPhoto = require("assets/ava01.png");
 export default {
     created:function(){       
@@ -222,7 +223,7 @@ export default {
                     app.getDs(deepStreamUrl,userId).then(ds=>{
                          this.dsConnectStart = false;
                          if (this.describeMsg != true){//防止断线重连时重复订阅
-                             vm.describeDs(ds);
+                             vm.describeDs(ds,userId);
                              this.describeMsg = true;
                          }
                     });
@@ -232,8 +233,13 @@ export default {
                 console.log(e);
             })
         },
-        describeDs(ds){
-            var token = tokenService.getToken();
+        describeDs(ds,userId){
+            var md5stream = new MD5(),
+                token;
+
+            md5stream.end(''+userId);
+            token = md5stream.read().toString('hex');
+
             console.log('订阅消息');
             ds.event.subscribe('roletaskIm/'+ token, data => {
                 console.log('msg',data);
