@@ -648,7 +648,7 @@ export default {
     transform: scaleY(0.5);
   }
   .group-cell{
-      padding:5px;
+      padding:5px 10px;
       position: relative;
       display: flex;
       
@@ -677,12 +677,12 @@ export default {
             display:flex;
 
             &-name{
-                flex:5;
+                flex:4;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 width: 100%;
-                max-width: 260px;
+                max-width: 235px;
                 font-size: 14px;
             }
 

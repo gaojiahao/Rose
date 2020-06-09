@@ -16,7 +16,7 @@
       <div class="my-info" >
         <div class="my-info-entity" >
           <div>{{ entityName||currentUser.entityName }}</div>
-          <img :src="photo||currentUser.photo" @error="getDefaultImg()" />
+          <img :src="currentUser.photo|appIconFilter" @error="getDefaultImg()" />
         </div>
 
         <div class="my-info-job">
@@ -147,11 +147,7 @@ export default {
     methods:{
         // 获取默认图片
         getDefaultImg() {
-          let url = require('assets/contact_default02.png');
-          if(this.currentUser.photo){
-            url = this.currentUser.photo
-          }
-          return url;
+          return 'https://lab.roletask.com/resource/common-icon/male.png';
         },
         onTimeChange() {
           let currentId = event.target.id;
