@@ -17,6 +17,7 @@
           <div class="swiper-slide">{{headInfo.firstName}}</div>
           <div class="swiper-slide">{{headInfo.LastName}}</div>
           <div v-if="headInfo.currentYearName" class="swiper-slide">{{headInfo.currentYearName}}</div>
+          <div v-if="headInfo.lastYearAmount" class="swiper-slide">{{headInfo.lastYearAmount}}</div>
         </div>
       </div>
     </div>
@@ -61,6 +62,15 @@
               </div>
             </div>
           </div>
+          <div v-if="headInfo.lastYearAmount" class="swiper-slide">
+            <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
+              <div class="content-item"
+                  :class="{'final-total': item.total || item.bigSubject}"
+                  ref="partRightYear2">
+                  {{item.lastYearAmount | formatNum}}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </r-scroll>
@@ -97,6 +107,7 @@
             firstName: '本期',
             LastName: '上期',
             currentYearName: '本年累计',
+            lastYearAmount: '上年同期累计',
             request: getProfit
           },
         },
@@ -157,11 +168,20 @@
       // 设置高度
       setHeight(left,rightInit,rightFinal) {
         let right = [rightInit,rightFinal];
+        let right2 = [rightInit,rightFinal];
         if(this.$refs.partRightYear){
           right.push(this.$refs.partRightYear);
         }
+        if(this.$refs.partRightYear2){
+          right2.push(this.$refs.partRightYear2);
+        }
         left.forEach((item,index) => {
           right.forEach(rRight => {
+            if(item.clientHeight !== rRight[index].clientHeight){
+              rRight[index].style.height = `${item.clientHeight}px`;
+            }
+          })
+          right2.forEach(rRight => {
             if(item.clientHeight !== rRight[index].clientHeight){
               rRight[index].style.height = `${item.clientHeight}px`;
             }
