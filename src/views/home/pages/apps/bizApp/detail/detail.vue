@@ -17,28 +17,34 @@
       </v-touch>
     </div>
     <!-- <slideBar :showSlide="showSlide" @swiperleft="swiperleft" @goTab="goTab" :appExample="appExample" :autoSubjectCount="autoSubjectCount"></slideBar> -->
-    <div class="detail-comment-container vux-1px-t" v-if="hasComment">
-      <!-- tab 暂时关闭自动分录-->
+    <!-- <div class="detail-comment-container vux-1px-t" v-if="hasComment"> -->
       <!-- <div class="concern" @click="swiperright">
         <span class="icon icon-slide-bar"></span>
         <div class="heart-desc">更多</div>
       </div> -->
-      <!-- 关注 -->
-      <div class="concern" @click="goConcern">
+      <!-- <div class="concern" @click="goConcern">
         <span class="icon icon-heart" v-if="isConcern === 0"></span>
         <span class="icon icon-heart-fill" v-else></span>
         <div class="heart-desc">{{ isConcern === 0 ? '关注' : '取消关注' }}</div>
       </div>
-      <!-- 评论 -->
       <div class="operation" @click="goDiscuss" v-if="isDiscuss">
         <span class="icon icon-dialog"></span>
         <div class="dialog-desc">评论</div>
       </div>
-      <!-- 日志 -->
       <div class="task" @click="goTaskLogList" v-if="isTaskLog">
         <span class="icon icon-log"></span>
         <div class="task-desc">日志</div>
       </div>
+    </div> -->
+    <div class="detail-comment-container vux-1px-t" v-if="hasComment">
+      <div class="flow">
+        <span class="icon icon-dialog"></span>
+        <div class="dialog-desc">流程</div>    
+      </div>
+      <div class="operat">
+        <span class="icon icon-log"></span>
+        <div class="task-desc">操作</div> 
+      </div>    
     </div>
   </div>
 
@@ -418,6 +424,9 @@ export default {
           margin-top: -.06rem;
           margin-left: -.03rem;
         }
+      }
+      .flow{
+
       }
     }
   }
