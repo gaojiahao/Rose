@@ -15,7 +15,7 @@
         >
         <div v-for="item in address" class="address-item" :key="item.id" @click="goto(item)" v-show="item.id != 7">
             <div class="header">
-                <img :src="item.photo"  v-if="item.type=='P'"  @error="getDefaultPhoto(item)"/>
+                <img :src="item.photo|appIconFilter"  v-if="item.type=='P'"  @error="getDefaultPhoto(item)"/>
                 <i class="address-icon iconfont icon-wenjian " v-if="item.type!='P' && !item.leaf"></i>
                 <i class="address-icon iconfont icon-file-f" v-if="item.type!='P' && item.leaf"></i>
             </div>

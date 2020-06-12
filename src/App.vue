@@ -171,6 +171,7 @@ export default {
     });
     Vue.prototype.getApp= ()=> this;
     Vue.prototype.bus = Bus;
+    Vue.prototype.addBaseUrl = util.addBaseUrl;
     document.addEventListener("deviceready", this.onDeviceReady, false);
     this.initOnlineStatus();
   },

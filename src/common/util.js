@@ -374,5 +374,10 @@ export default{
         { element.attachEvent('on'+type,handler);}
         else 
         { element['on'+type]=handler;}
+    },
+    addBaseUrl:function(url){
+        if(window.isApp && url != null && url.indexOf('http') != 0){
+            return window.baseURL + url;
+        }
     }
 }
