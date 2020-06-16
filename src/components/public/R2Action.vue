@@ -22,6 +22,7 @@
     <div class="more" @click="goFlow"> 
       <span class="icon icon-d-flow-more"></span>
     </div>
+    <!-- <div class="icon icon-d-flow-more"></div> -->
     <div class="detail-comment-container vux-1px-t" v-if="hasComment">
       <div class="flow">
         <span class="icon icon-d-flow-agree"></span>
@@ -619,11 +620,12 @@ export default Vue.component('R2Action',component)
   .handle_wrapper {
     // margin: .1rem 0 .24rem;
     // overflow: hidden;
-    position: fixed;
+    // position: fixed;
+    position: absolute;
     bottom: 0;
     left: 0;
-    height: .9rem;
     width: 100%;
+    z-index: 999;
     // 审批操作
     .handle_btn {
       display: flex;
@@ -688,8 +690,13 @@ export default Vue.component('R2Action',component)
       }
     }
     .more{
-      width: 100%;
+      width: .4rem;
       height: .4rem;
+      display: inline-block;
+      position: absolute;
+      z-index: 999;
+      top: -46px;
+      right: 14px;
       .icon {
         width: .4rem;
         height: .4rem;

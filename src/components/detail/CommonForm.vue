@@ -2,7 +2,7 @@
   <!--通用form组件-->
   <div class="detail_wrapper" :class="{pages:scrollCt}" v-show="showTab">
     <slot name="nav"></slot>
-    <div class="form" :class="{scrollCt:scrollCt,'has-bbar':hasBbar}" ref="fill">
+    <div class="form has-bbar" :class="{scrollCt:scrollCt,}" ref="fill">
       <div class="fill_wrapper">
         <!-- 工作流组件 -->
         <w-flow :formData="formData" :full-work-flow="workflowLogs" v-if="transCode && loaded"/>
@@ -25,14 +25,6 @@
     </div>
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t" v-if="hasBbar" v-show="showKeyboard == false">
-      <span class="count_num" v-if="false">
-        <!-- <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}} -->
-      </span>
-      <!--span
-        class="count_btn stop"
-        @click="stopOrder"
-        v-if="taskInfo.isMyTask === 1 && taskInfo.actions.indexOf('stop')>=0"
-      >终止</span-->
       <span class="count_btn" @click="submit">提交</span>
     </div>
     <r2-action
@@ -117,6 +109,7 @@ export default {
   computed:{
     hasBbar:function(){
        return this.model!='view' && this.model!='flowNode'
+      // return true;
     }
   },
   watch:{

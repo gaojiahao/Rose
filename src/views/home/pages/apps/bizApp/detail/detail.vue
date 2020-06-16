@@ -2,7 +2,7 @@
   <div class="pages">
     <slot name="nav"></slot>
     <div class="detail-container" :class="{'has-comment': hasComment}" ref='detail'>
-      <v-touch @swipeleft="swiperleft" @swiperight="swiperright" class="wrapper">
+      <!-- <v-touch @swipeleft="swiperleft" @swiperight="swiperright" class="wrapper"> -->
         <component
           :is='currentComponent'
           @change='modifyRoute'
@@ -11,10 +11,11 @@
           :showTab="showTab['comm']"
           :defaultTitle="defaultTitle"
           ref="detailComponent">
+          <slot name="nav" slot="nav"></slot>
         </component>
-        <auto-subject :showTab="showTab['subject']"></auto-subject>
-        <app-example :showTab="showTab['example']" :tabData="tabData['example']"></app-example>
-      </v-touch>
+        <!-- <auto-subject :showTab="showTab['subject']"></auto-subject>
+        <app-example :showTab="showTab['example']" :tabData="tabData['example']"></app-example> -->
+      <!-- </v-touch> -->
     </div>
     <!-- <slideBar :showSlide="showSlide" @swiperleft="swiperleft" @goTab="goTab" :appExample="appExample" :autoSubjectCount="autoSubjectCount"></slideBar> -->
     <!-- <div class="detail-comment-container vux-1px-t" v-if="hasComment"> -->
