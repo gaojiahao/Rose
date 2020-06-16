@@ -289,3 +289,47 @@
   background: url('~assets/iconfont/g-down.png');
   background-size: cover;
 }
+.icon-d-operate{
+  background: url('~assets/iconfont/detail-flow.png');
+  background-size: cover;
+}
+.icon-d-flow{
+  background: url('~assets/iconfont/detail-operate.png');
+  background-size: cover;
+}
+.icon-d-flow-agree{
+  background: url('~assets/iconfont/detail-flow-agree.png');
+  background-size: cover;
+}
+.icon-d-flow-chehui{
+  background: url('~assets/iconfont/detail-flow-chehui.png');
+  background-size: cover;
+}
+.icon-d-flow-chehuicaogao{
+  background: url('~assets/iconfont/detail-flow-chehuicaogao.png');
+  background-size: cover;
+}
+.icon-d-flow-disagree{
+  background: url('~assets/iconfont/detail-flow-disagree.png');
+  background-size: cover;
+}
+.icon-d-flow-edit{
+  background: url('~assets/iconfont/detail-flow-edit.png');
+  background-size: cover;
+}
+.icon-d-flow-new{
+  background: url('~assets/iconfont/detail-flow-new.png');
+  background-size: cover;
+}
+.icon-d-flow-stop{
+  background: url('~assets/iconfont/detail-flow-stop.png');
+  background-size: cover;
+}
+.icon-d-flow-zhuanban{
+  background: url('~assets/iconfont/detail-flow-zhuanban.png');
+  background-size: cover;
+}
+.icon-d-flow-more{
+  background: url('~assets/iconfont/detail-flow-more.png');
+  background-size: cover;
+}

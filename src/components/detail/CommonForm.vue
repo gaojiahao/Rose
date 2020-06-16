@@ -16,11 +16,11 @@
         <!-- 附件组件 -->
         <!-- <fileupload :cfg="fieldSets" :values="attachment" :biReferenceId="biReferenceId" @on-upload='onUpload' v-if="loaded"/> -->
         <!-- 审批组件 -->
-        <r2-action
+        <!-- <r2-action
           v-if="showAction"
           :workFlowLogs="workflowLogs"
           :formStatus="formStatus"
-        />
+        /> -->
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -35,6 +35,11 @@
       >终止</span-->
       <span class="count_btn" @click="submit">提交</span>
     </div>
+    <r2-action
+      v-if="showAction"
+      :workFlowLogs="workflowLogs"
+      :formStatus="formStatus"
+    />
   </div>
 </template>
 <script>
