@@ -12,15 +12,19 @@
                         <span class="iconfont icon-add"></span>
                     </span>
                 </div>
-            </div>
             <div class="navigation-add-list-mask" v-show="showList" @click="showList = false"></div>
             <div class="navigation-add-list" v-if="showList">  
                 <p @click="showCreateGroupList">发起群聊</p>
             </div>
+            </div>
                 <RScroll 
+                    style="height:5rem"
                     class="page-body-hasNav" 
                     :options="scrollOptions"
                     :has-next="hasNext"
+                    ref="bScroll"
+                    :hideToast="true"
+                    @on-pulling-down="onPullingDown"
                     :no-data="false"
                 >
                 <LoadMore :show-loading="showLoading" v-show="showLoading"></LoadMore>
@@ -128,9 +132,9 @@ export default {
     data(){
         return {
             scrollOptions:{
-                    click: true,
-                    pullUpLoad: false,//上拉刷新
-                    pullDownRefresh: false //下拉刷新
+                click: true,
+                pullUpLoad: false,//上拉刷新
+                pullDownRefresh: false //下拉刷新
             },
            hasNext:false,
            showNavContextMenu: false,
@@ -156,6 +160,9 @@ export default {
         Badge
     },
     methods:{
+        onPullingDown(){
+            this.initGroup();
+        },
         getDefaultPhoto(group) {
             let url = defaultPhoto;
             if (group) {
@@ -189,9 +196,12 @@ export default {
                 });
                 this.groupIdToIndex = groupIdToIndex;
                 this.groups = data;
-                this.scroller && this.scroller.refresh();
+                // this.scroller && this.scroller.refresh();
                 this.showLoading = false;
-                 this.setAppNoticeBadge();
+                this.setAppNoticeBadge();
+                //  this.$nextTick(() => {
+                //     this.$refs.bScroll.finishPullDown();
+                // });
             }).catch(e=>{
                 if(e.message == 'nologin'){//没有登录
                     this.refresh = true;
@@ -622,6 +632,7 @@ export default {
         border-radius: .03rem;
         color: white;
         font-size: 14px;
+        line-height: 16px;
       }
   }
   .scroller-wrapper{
