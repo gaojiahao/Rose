@@ -5,8 +5,9 @@ import {
   listTaskLogByTransCode,
   getWorkFlowByListId,
   getFromStatus,
-  getAppExampleDetails
-} from "service/detailService";
+  getAppExampleDetails,
+  getAppFeaturesData,getConfig
+} from "service/detailService"
 import { 
   commitTask, 
   transferTask, 
@@ -17,6 +18,7 @@ import {
   getFormViews,
 } from 'service/commonService'
 import { TransferDom, Popup, Flexbox, FlexboxItem} from 'vux'
+import { isSubscribeByRelationKey, subscribeApp, unsubscribeApp, getUserList } from 'service/commentService'
 
 export default {
     data() {
@@ -483,23 +485,40 @@ export default {
           this.$HandleLoad.hide();
         });
       },
-      log(str){
-        console.log(str)
-      },
       goFlow(){
         this.showFlow = true;
       },
       goOperate(){
         this.showOperate = true;
       },
+      //打开任务日志列表
+      goTaskLogList() {
+        this.$router.push({
+          path: '/taskLog',
+          query: {
+            listId: this.$route.params.listId,
+            transCode: this.$parent.transCode,
+            tdDescribe: this.$parent.defaultTitleValue,
+          }
+        })
+      },
+      // 跳转到评论页面
+      goDiscuss() {
+        this.$router.push({
+          path: '/commentList',
+          query: {
+            transCode: this.$parent.transCode
+          }
+        })
+      },
       // 关注或取关
       goConcern() {
         let operation = subscribeApp,
             data = {
               type: 'instance',
-              relationKey: this.transCode
+              relationKey: this.$parent.transCode
             };
-        if (this.isConcern === 1) {
+        if (this.isConcern == '1') {
           operation = unsubscribeApp;
           delete data.type;
         }
@@ -516,21 +535,56 @@ export default {
           }
         })
       },
+      // 是否已经关注该订单
+      isSubscribeByRelationKey() {
+        isSubscribeByRelationKey(this.$parent.transCode).then(data => {
+          this.isConcern = data;
+        })
+      },
+      //获取应用特性管理数据
+      async getAppFeature() {
+        this.isDiscuss = false;
+        this.isTaskLog = false;
+        await getAppFeaturesData(this.$route.params.listId).then(res => {
+          if(res.success){
+            res.data.forEach(val => {
+              if(val.status === '1'){
+                if(val.title === '评论'){
+                    this.isDiscuss = true;
+                }
+                if(val.title === '工作日志'){
+                    //工作日志控件
+                    if (this.$route.params.listId !=='2750a13d-295d-4776-9673-290c51bfc568') {     
+                        this.isTaskLog = true;
+                    }
+                    this.featureId = val.id;
+                }
+              }
+            })
+          }else{
+            this.$vux.alert.show({
+              title: "错误",
+              content: res.message
+            });
+          }
+        })
+        if(this.featureId){
+          await this.getConfig();
+        }
+      },
+      getConfig(){
+        getConfig(this.$route.params.listId,this.featureId).then(res=>{
+          if(res.success)
+            this.defaultTitle = res.data;
+        }).catch(function(error) {
+            console.log(error);
+        });
+      },
     },
     created(){
-      // this.getWorkFlowLogs(); //工作流日志
-      // this.getFromStatus();
-    
-      // this.dealActionInfo();  
+      this.getAppFeature();
     },
     mounted(){
-      // var form = this.$refs.detailComponent.form;
-  
-      // this.form = form;
-      // this.code = form.transCode || '';
-      // this.taskInfo = form.taskInfo;
-      // this.userId = WebContext.currentUser.userId || '';
-      // this.model = form.viewInfo.viewType || '';
-      //我的流程，工作流为空（表单失效），执行一次
-    }
+      this.isSubscribeByRelationKey();
+    },
 }

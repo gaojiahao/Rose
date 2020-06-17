@@ -18,12 +18,12 @@
       <!-- </v-touch> -->
     </div>
     <!-- <slideBar :showSlide="showSlide" @swiperleft="swiperleft" @goTab="goTab" :appExample="appExample" :autoSubjectCount="autoSubjectCount"></slideBar> -->
-    <!-- <div class="detail-comment-container vux-1px-t" v-if="hasComment"> -->
+    <div class="detail-comment-container vux-1px-t" v-if="hasComment">
       <!-- <div class="concern" @click="swiperright">
         <span class="icon icon-slide-bar"></span>
         <div class="heart-desc">更多</div>
       </div> -->
-      <!-- <div class="concern" @click="goConcern">
+      <div class="concern" @click="goConcern">
         <span class="icon icon-heart" v-if="isConcern === 0"></span>
         <span class="icon icon-heart-fill" v-else></span>
         <div class="heart-desc">{{ isConcern === 0 ? '关注' : '取消关注' }}</div>
@@ -36,87 +36,7 @@
         <span class="icon icon-log"></span>
         <div class="task-desc">日志</div>
       </div>
-    </div> -->
-    <!-- <div class="more" @click="goFlow"> 
-      <span class="icon icon-d-flow-more"></span>
     </div>
-    <div class="detail-comment-container vux-1px-t" v-if="hasComment">
-      <div class="flow">
-        <span class="icon icon-d-flow-agree"></span>
-        <div class="desc">同意</div>    
-      </div>
-      <div class="operate">
-        <span class="icon icon-d-flow-disagree"></span>
-        <div class="desc">不同意</div> 
-      </div>    
-    </div>
-    <div v-transfer-dom>
-      <popup v-model="showFlow" @on-hide="log('hide')" @on-show="log('show')" height="22%">
-        <div class="popup">
-          <div class="flow-box">
-            <flexbox :gutter="0" wrap="wrap">
-              <flexbox-item :span="1/5">
-                <div class="flex-demo">
-                  <span class="icon icon-d-flow-agree"></span>
-                  <div class="desc">同意</div>
-                </div>
-              </flexbox-item><flexbox-item :span="1/5">
-                <div class="flex-demo">
-                  <span class="icon icon-d-flow-disagree"></span>
-                  <div class="desc">不同意</div>
-                </div>
-              </flexbox-item><flexbox-item :span="1/5">
-                <div class="flex-demo">
-                  <span class="icon icon-d-flow-chehui"></span>
-                  <div class="desc">撤回</div>
-                </div>
-              </flexbox-item><flexbox-item :span="1/5">
-                <div class="flex-demo">
-                  <span class="icon icon-d-flow-chehuicaogao"></span>
-                  <div class="desc">撤回为草稿</div>
-                </div>
-              </flexbox-item><flexbox-item :span="1/5">
-                <div class="flex-demo">
-                  <span class="icon icon-d-flow-edit"></span>
-                  <div class="desc">编辑</div>
-                </div>
-              </flexbox-item><flexbox-item :span="1/5">
-                <div class="flex-demo">
-                  <span class="icon icon-d-flow-new"></span>
-                  <div class="desc">新建</div>
-                </div>
-              </flexbox-item><flexbox-item :span="1/5">
-                <div class="flex-demo">
-                  <span class="icon icon-d-flow-stop"></span>
-                  <div class="desc">终止</div>
-                </div>
-              </flexbox-item><flexbox-item :span="1/5">
-                <div class="flex-demo">
-                  <span class="icon icon-d-flow-zhuanban"></span>
-                  <div class="desc">转办</div>
-                </div>
-              </flexbox-item><flexbox-item :span="1/5">
-                <div class="flex-demo" @click="goConcern">
-                  <span class="icon icon-heart" v-if="isConcern === 0"></span>
-                  <span class="icon icon-heart-fill" v-else></span>
-                  <div class="desc">{{ isConcern === 0 ? '关注' : '取消关注' }}</div>
-                </div>
-              </flexbox-item><flexbox-item :span="1/5">
-                <div class="flex-demo" @click="goDiscuss" v-if="isDiscuss">
-                  <span class="icon icon-dialog"></span>
-                  <div class="desc">评论</div>
-                </div>
-              </flexbox-item><flexbox-item :span="1/5">
-                <div class="flex-demo" @click="goTaskLogList" v-if="isTaskLog">
-                  <span class="icon icon-log"></span>
-                  <div class="desc">日志</div>
-                </div>
-              </flexbox-item>
-            </flexbox>
-          </div>
-        </div>
-      </popup>
-    </div> -->
   </div>
 </template>
 
@@ -129,12 +49,9 @@ import {
 // 请求 引入
 import { isSubscribeByRelationKey, subscribeApp, unsubscribeApp, getUserList } from 'service/commentService'
 import { getAppExampleDetails,getAutoSubjectCount,getAppFeaturesData,getConfig } from "service/detailService";
-//混入
-import actinoMinx from "mixins/action";
 /* 引入微信相关 */
 import {register} from 'plugins/wx'
 import { constants } from 'crypto';
-import { TransferDom, Popup, Flexbox, FlexboxItem} from 'vux'
 export default {
   data() {
     return {
@@ -147,7 +64,7 @@ export default {
       detailScroll: null,
       commentCount: 0,
       hasComment: true, // 是否展示底部评论栏
-      isConcernisConcern : 0, // 是否关注，0 未关注，1已关注
+      isConcern : 0, // 是否关注，0 未关注，1已关注
       concernCount : 0, //关注人数
       showSlide:false,
       isShow:false,
@@ -165,11 +82,6 @@ export default {
       defaultTitle:{},
     }
   },
-  components:{
-    TransferDom,Popup,Flexbox,
-    FlexboxItem,
-  },
-  mixins: [actinoMinx],
   watch: {
     //路由监听,解决返回后的tab不在详情页
     $route: {
