@@ -201,13 +201,13 @@ export default {
           }
         }
       }
-      // for(item in formData){
-      //   this.$set(this.formData,item,formData[item]);
-      // }
-      // this.$nextTick(function(){
-      //   this.formData= formData;
-      // });
-      this.formData = formData;
+      for(item in formData){
+        this.$set(this.formData,item,formData[item]);
+      }
+      this.$nextTick(function(){
+        this.formData= formData;
+      });
+      //this.formData = formData;
       this.defaultTitleValue = this.formData[this.titleFieldCode];
       //预估以下mapping在未来业务上是确定的所以可以通过以下代码进行固化
       //mapping 基本信息
