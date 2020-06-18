@@ -34,8 +34,8 @@ if (router == null) {
     mode:!!window.isApp?'hash':'history',
     base:'/Hermes',
     routes: [
-      { path: '/', redirect:'/msg' },
-      { path:'*', redirect:'/msg' },
+      { path: '/', redirect:'/home' },
+      { path:'*', redirect:'/home' },
       { 
         path: '/contacts/:id', 
         name: 'CONTACTS', 
