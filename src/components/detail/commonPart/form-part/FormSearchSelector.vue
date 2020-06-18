@@ -79,7 +79,7 @@ import { Popup, TransferDom, LoadMore, CheckIcon, XButton, Icon } from "vux";
 import DSearch from "components/search/search";
 import RScroll from "plugins/scroll/RScroll";
 // 请求 引入
-import { listSearchSelectorData } from 'service/commonService'
+import { listSearchSelectorData,getBasicInfo } from 'service/commonService'
 export default {
   props: {
     title: {
@@ -242,9 +242,10 @@ export default {
     }
   },
   created() {
-      var userInfo = localStorage.getItem('userInfo'),
+      getBasicInfo().then(basicInfo=>{
+          this.defaultNickname = basicInfo.currentUser.nickname;
+      });
       flag=true;
-      this.defaultNickname = JSON.parse(userInfo).nickname;
       this.getlistDatas(flag);
   }
 };

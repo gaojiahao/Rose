@@ -138,7 +138,8 @@
     methods: {
       // 上传图片成功触发
       onUpload(val) {
-        this.userData.photo = `/H_roleplay-si/ds/download?width=128&height=128&url=${val.src}`;
+        var baseUrl =  window.baseURL||'';
+        this.userData.photo = `${baseUrl}/H_roleplay-si/ds/download?width=128&height=128&url=${val.src}`;
       },
       // 类型切换
       userTypeChange(val) {

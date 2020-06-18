@@ -31,6 +31,7 @@ export let convertDataType = function (editorType, value) {
   return value;
 }
 export let clearBaseInfo = ()=>{
+  sessionStorage.removeItem('basicInfo');
   baseInfo = null;
 }
 // 删除文件
@@ -154,21 +155,26 @@ export let getBaseInfoDataBase = () => {
 //获取baseinfo信息,界面全局信息
 export let getBasicInfo = (data ={})=> {
   return new Promise((resolve,reject)=>{
+    var cache;
+
      if(baseInfo == null){
-        $flyio.ajax({
-          url: `/H_roleplay-si/app/getBasicInfo`,
-          data: {
-            _dc: Date.now(),
-          }
-        }).then(data=>{
-          baseInfo = data;
-          if(!localStorage.getItem('userInfo')){
-            localStorage.setItem('userInfo',JSON.stringify(baseInfo.currentUser));
-          }
-          resolve(data);
-        }).catch(()=>{
-          reject();
-        })
+        if((cache = sessionStorage.getItem('basicInfo')) != null){
+           baseInfo = JSON.parse(cache);
+           resolve(baseInfo);
+        } else {
+          $flyio.ajax({
+            url: `/H_roleplay-si/app/getBasicInfo`,
+            data: {
+              _dc: Date.now(),
+            }
+          }).then(data=>{
+            baseInfo = data;
+            sessionStorage.setItem('basicInfo',JSON.stringify(baseInfo));
+            resolve(data);
+          }).catch(()=>{
+            reject();
+          })
+        }
      } else {
        resolve(baseInfo);
      }
@@ -279,7 +285,7 @@ export let getObjDealerByLabelName = (data = {}) => {
 export let initWebContext = ()=>{
   return new Promise((resolve, reject) => {
     if(WebContext.currentUser){
-      return resolve();
+      return resolve(WebContext);
     }
     getBasicInfo().then(baseInfo => {
         let user = baseInfo && baseInfo.currentUser;
@@ -333,12 +339,16 @@ export let initWebContext = ()=>{
              WebContext.enterpriseInfo = user.enterpriseInfo;
           }
       }
-      resolve();
+      resolve(WebContext);
     }).catch(e=>{
       
     }) 
   })
 };
+export let clearWebContext=()=>{
+  WebContext = {};
+  clearBaseInfo();
+}
 export let getValuesByExp = (expression) => {
   var fn = function () {
       var ns = expression.split('.'),
@@ -572,11 +582,11 @@ export default {
   upload,
   mediaUpload,
   initWebContext,
+  clearWebContext,
   WebContext,
   getProcess,
   getDictByType,
   getBasicInfo,
-  clearBaseInfo,
   submitAndCalc,
   getDictByValue,
   saveAndStartWf,

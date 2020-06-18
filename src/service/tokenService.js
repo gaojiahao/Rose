@@ -13,6 +13,8 @@ let tokenService = {
   // 清除token
   clean() {
     storage.removeItem(ROSE_TOKEN_KEY);
+    sessionStorage.clear();
+    localStorage.clear();
   },
   // 设置token
   setToken(data) {
@@ -100,8 +102,7 @@ let tokenService = {
     }    
   },
   // PC端登录，默认返回token
-  pcLogin(userCode, password, key = 'token') {
-    //console.log('进入pc了')
+  pcLogin(userInfo, key = 'token') {
     return new Promise((resolve, reject) => {
       let params = {
         method: 'post',
@@ -110,10 +111,7 @@ let tokenService = {
         headers: {
           'Content-Type': 'application/json',
         },
-        data: {
-          password: password,
-          userCode: userCode
-        }
+        data: userInfo
       };
       fly.request(params, params.data).then(res => {
         let data = res.data;
@@ -127,6 +125,34 @@ let tokenService = {
           avatar: data.avatar || ''
         });
         resolve(data[key])
+      }).catch(function (error) {
+        let res = error.response;
+        let data = (res && res.data) || {};
+        let message = data.message || '请求异常';
+        reject({
+          success: false,
+          message: message
+        })
+      });
+    }
+    )
+  },
+  //发送验证码
+  sendTestCode(mobile){
+    return new Promise((resolve, reject) => {
+      let params = {
+        method: 'post',
+        baseURL: window.baseURL || '',
+        url: '/H_roleplay-si/sendVerification',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: {
+          userCode: mobile
+        }
+      };
+      fly.request(params, params.data).then(res => {
+        resolve(res.data);
       }).catch(function (error) {
         let res = error.response;
         let data = (res && res.data) || {};

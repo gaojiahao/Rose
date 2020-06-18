@@ -12,10 +12,10 @@
     </div>
     <div class="header">
       <div class="title-form">{{`单位：${localCurrency}`}}</div>
-      <div class="swiper-container swiper-container-header2">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">{{headInfo.firstName}}</div>
-          <div class="swiper-slide">{{headInfo.LastName}}</div>
+      <div class="swiper-container-header2">
+        <div class="box">
+          <div class="div">{{headInfo.firstName}}</div>
+          <div class="div">{{headInfo.LastName}}</div>
           <!-- <div v-if="headInfo.currentYearName" class="swiper-slide">{{headInfo.currentYearName}}</div> -->
         </div>
       </div>
@@ -34,9 +34,9 @@
           </div>
         </div>
       </div>
-      <div class="swiper-container part-right2">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">
+      <div class="part-right2">
+        <div class="box">
+          <div class="div">
             <div v-for="(item, index) in listData" :key="index">
               <div class="content-item"
                    :class="{'final-total': item.indent == 4.5,
@@ -46,7 +46,7 @@
               </div>
             </div>
           </div>
-          <div class="swiper-slide">
+          <div class="div">
             <div v-for="(item, index) in listData" :key="index">
               <div class="content-item"
                    :class="{'final-total': item.indent == 4.5,
@@ -204,7 +204,7 @@
         this.endDate = dateFormat(new Date(), 'YYYY-MM-DD');
       }
       // 初始化数据
-      this.initSwiper();
+      //this.initSwiper();
       this.getData();
       this.getLocalCurrencyData();
     }
@@ -261,6 +261,17 @@
       height: 100%;
       text-align: right;
       font-size: .14rem;
+      .box{
+        width: 100%;
+        .div:nth-child(1){
+          width: 50%;
+          float: left;
+        }
+        .div{
+          width: 50%;
+          float: left;
+        }
+      }
     }
 
     .scroll-container {
@@ -335,6 +346,17 @@
     }
     .part-right2 {
       text-align: right;
+      .box{
+        width: 100%;
+        .div:nth-child(1){
+          float: left;
+          width: 50%;
+        }
+        .div:nth-child(2){
+          width: 50%;
+          float: right;
+        }
+      }
       .bg-color{
         background-color: #eee;
       }

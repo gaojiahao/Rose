@@ -70,7 +70,8 @@ export default {
   methods: {
     // 上传图片
     onUpload(val){
-      this.newCompanyInfo.groupPic = `/H_roleplay-si/ds/download?width=128&height=128&specify=true&url=${val.src}`;
+      var baseUrl =  window.baseURL||'';
+      this.newCompanyInfo.groupPic = baseUrl + `/H_roleplay-si/ds/download?width=128&height=128&specify=true&url=${val.src}`;
     },    
     // 获取默认图片
     getDefaultImg(){

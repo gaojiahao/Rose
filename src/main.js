@@ -4,7 +4,10 @@ import router from './router'
 import FastClick from 'fastclick'
 import adapation from './common/adapation'
 import Swiper from './common/swiper-4.2.2.min.js'
+import Bscroll from "better-scroll";
 import VueTouch from 'vue-touch'
+import Nav from './components/public/Nav'
+import loading from './components/public/Loading'
 import RText from './components/public/RText'
 import RDateField from './components/public/DateField'
 import RDatetimeField from './components/public/DatetimeField'
@@ -41,28 +44,40 @@ import SlideBar from './components/public/SlideBar'
 import ListItem from './components/public/ListItem'
 import AutoSubject from './components/public/AutoSubject'
 import AppExample from './components/public/AppExample'
+import RHtmlEditor from './components/public/HtmlEditor'
 import { AlertPlugin, ConfirmPlugin, ToastPlugin, TransferDom, DatetimePlugin } from 'vux'
 import Loading from 'plugins/loading/pageLoad/loading'
 import HandleLoad from 'plugins/loading/handleLoad/handleLoading'
 import platfrom from './plugins/platform/index'
 import commonService from "service/commonService";
 import * as dd from 'dingtalk-jsapi'
+import VueQuillEditor from 'vue-quill-editor'
 
-require('@/directive')
-if(window.isApp){
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+
+import {formatToEmotion} from 'plugins/emoji/emotion'
+
+require('@/directive');
+require('@/filter');
+if(window.isApp){ //处理消息推送专用代码
   require('service/pushService');
 }
-
+/**plugin */
 Vue.use(Loading)
 Vue.use(HandleLoad)
 Vue.use(ToastPlugin)
 Vue.use(AlertPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(DatetimePlugin)
+
 Vue.use(VueTouch,{name:'v-touch'})
 Vue.directive('transfer-dom', TransferDom)
 
 Vue.prototype.Swiper = Swiper;
+Vue.prototype.Bscroll = Bscroll;
+Vue.prototype.formatToEmotion = formatToEmotion;
 FastClick.attach(document.body)
 
 const isDebug_mode = process.env.NODE_ENV !== 'production'
@@ -74,6 +89,11 @@ Vue.prototype.$event = new Vue();
 Vue.clone = function(a){
    return JSON.parse(JSON.stringify(a));
 };
+
+Vue.use(VueQuillEditor, {
+  placeholder: '请输入内容',
+});
+
 router.afterEach((to, from) => {
   if (dd.ios || dd.android){
     dd.ready(function() {

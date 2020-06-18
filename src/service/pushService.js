@@ -8,7 +8,7 @@ function initEvent(){
 }
 function clickFn(notification){
     var data = notification.data;
-    console.log(data);
+
     if(data.listId){
         window.router.push('/user');
     }

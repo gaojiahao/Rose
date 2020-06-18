@@ -6,6 +6,11 @@
  * @LastEditors: Gabriel.gaojiahao
  * @LastEditTime: 2019-11-29 09:59:41
  */
+ /*
+ * 在webpack里通过sass-resources-loader做了全局引入，
+ * 具体参考:-- build/vue-loader.conf.js
+ *         -- build/util.js
+ */
 @charset "utf-8";
 @import "./mixin";/*引入配置*/
 $version: "1.0.0";

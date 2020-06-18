@@ -12,11 +12,11 @@
     </div>
     <div class="header">
       <div class="title-form">{{`单位：${localCurrency}`}}</div>
-      <div class="swiper-container swiper-container-header1">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">{{headInfo.firstName}}</div>
-          <div class="swiper-slide">{{headInfo.LastName}}</div>
-          <div v-if="headInfo.currentYearName" class="swiper-slide">{{headInfo.currentYearName}}</div>
+      <div class="swiper-container-header1">
+        <div class="box">
+          <div class="left">{{headInfo.firstName}}</div>
+          <div class="right">{{headInfo.LastName}}</div>
+          <div v-if="headInfo.currentYearName" class="">{{headInfo.currentYearName}}</div>
         </div>
       </div>
     </div>
@@ -34,11 +34,11 @@
           </div>
         </div>
       </div>
-      <div class="swiper-container part-right1">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">
+      <div class="part-right1">
+        <div class="box">
+          <div class="div">
             <div v-for="(item, index) in listData" :key="index">
-              <div class="content-item"
+              <div class="content-item2"
                    :class="{'final-total': item.total || item.bigSubject,
                    'bg-color': item.indent==1}"
                    ref="partRightInit">
@@ -46,9 +46,9 @@
               </div>
             </div>
           </div>
-          <div class="swiper-slide">
+          <div class="div">
             <div v-for="(item, index) in listData" :key="index">
-              <div class="content-item"
+              <div class="content-item2"
                    :class="{'final-total': item.total || item.bigSubject,
                    'bg-color': item.indent==1}"
                    ref="partRightFinal">
@@ -56,9 +56,9 @@
               </div>
             </div>
           </div>
-          <div v-if="headInfo.currentYearName" class="swiper-slide">
+          <div v-if="headInfo.currentYearName" class="div">
             <div v-for="(item, index) in listData" :key="index">
-              <div class="content-item"
+              <div class="content-item2"
                    :class="{'final-total': item.total || item.bigSubject,
                    'bg-color': item.indent==1}"
                    ref="partRightYear">
@@ -203,7 +203,7 @@
         this.endDate = dateFormat(new Date(), 'YYYY-MM-DD');
       }
       // 初始化数据
-      this.initSwiper();
+      //this.initSwiper();
       this.getData();
       this.getLocalCurrencyData();
     }
@@ -256,10 +256,22 @@
     /* 顶部期初、期末 */
     .swiper-container-header1 {
       margin: 0;
-      width: 50%;
+      //width: 50%;
       height: 100%;
       text-align: right;
       font-size: .14rem;
+      width: 50%;
+      .box{
+        width: 100%;
+        .left{
+          float: left;
+          width: 50%;
+        }
+        .right{
+          float: right;
+          width: 50%;
+        } 
+      }
     }
 
     .scroll-container {
@@ -334,11 +346,25 @@
     }
     .part-right1 {
       text-align: right;
+      .box{
+        width: 100%;
+        .div:nth-child(1){
+          float: left;
+          width: 50%;
+        }
+        .div:nth-child(2){
+          width: 50%;
+          float: right;
+        }
+      }
       .bg-color{
         background-color: #eee;
       }
       .content-item {
         padding-left: 0;
+      }
+      .content-item2{
+        padding-right: .15rem;
       }
     }
     /* 1px边框 */
