@@ -1,50 +1,12 @@
 <template>
   <div class="home">
-    <div class="page-navigation">
-            应用
-    </div>
+    <slot name="nav" ></slot>
     <loading v-if= "showLoading"/>
     <div class="content" ref="home" v-show="showLoading != true">
       <div class="wrapper">
         <div class="top-part-container">
           <div class="top-part">
-            <!-- <div class="user-info-container">
-              <div class="user_avatar" @click="avatarClick()">
-                <img :src="userInfo.avatar">
-              </div>
-              <div class="user-info">
-                <p class="user_name">{{userInfo.nickname}}</p>
-                <p class="user_other">@{{userInfo.userCode}}</p>
-              </div>
-            </div>
-            <div class="entity-part" :class="{'active': showDrop}" @click="showDrop = !showDrop">
-              <span class="entity_name">{{userInfo.entityName}}</span>
-              <span
-                v-if="entityList.length > 1"
-                class="iconfont"
-                :class="{'icon-xia' : !showDrop, 'icon-shang' : showDrop}"
-              ></span>
-              <ul class="r-dropdown-list" v-show="showDrop">
-                <li
-                  class="r-dropdown-item"
-                  :class="{'vux-1px-b': index !== entityList.length - 1 }"
-                  :key="index"
-                  v-for="(item, index) in entityList"
-                  @click.stop="dropItemClick(item)"
-                >
-                  <div
-                    class="each_item"
-                    :class="{'active is-being-sel' : selItem.groupCode === item.groupCode}"
-                  >
-                    <p class="full_name">{{item.groupName}}</p>
-                    <p class="shor_name">简称: {{item.groupShortName}}</p>
-                  </div>
-                  <div class="tips_part" v-if="selItem.groupCode === item.groupCode">
-                    <span class="tips_word">当前选中</span>
-                  </div>
-                </li>
-              </ul>
-            </div> -->
+           
           </div>
         </div>
         <div class="list_top">
@@ -67,7 +29,6 @@
         </div>
       </div>
     </div>
-    <div class="close-part" v-show="showDrop" @click="showDrop = false"></div>
   </div>
 </template>
 
@@ -95,7 +56,6 @@ export default {
       BusApps: [], // 业务应用
       BasicApps: [], // 基础对象
       entityList: [], // 主体列表
-      showDrop: false, // 是否显示主体下拉选择
       homeScroll: null, // 滑动实例
       searchValue: '',
       yScrollValue: 0,
@@ -278,22 +238,6 @@ export default {
       if(!this.sessionApps) {
         sessionStorage.setItem(ROSE_MENU,JSON.stringify(res));
       }
-    },
-    // 选择单条记录
-    dropItemClick(item) {
-      if (this.selItem.groupCode === item.groupCode) return;
-      this.selItem = { ...item };
-      this.showDrop = false;
-      this.$loading.show();
-      homeService.changeEntity({ entityId: item.groupCode }).then(data => {
-        let tokenInfo = tokenService.getToken(true);
-        if (tokenInfo) {
-          tokenInfo.entityId = data.entityId;
-          tokenInfo.token = data.token;
-          tokenService.setToken(tokenInfo);
-          location.reload();
-        }
-      });
     },
     //获取搜索值
     getSearchValue(e) {

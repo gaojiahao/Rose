@@ -1,10 +1,6 @@
 <template>
     <div class="task-container page-hasTab" >
-          <div class="page-navigation">
-                <div class="groupName body">
-                    工作流任务
-                </div>
-            </div>
+        <slot name="nav" ></slot>
         <div class="header">
             <div class="swiper-tab">
                 <div class="tab-item" 

@@ -12,6 +12,10 @@ export default [
   {
     path: '/user',
     name: '/user', 
+    meta:{ 
+      tile:'我',
+      keepAlive: true
+    },
     redirect: { name: 'MyPerformance' },
     component: PerformanceLayout,
     children: [
