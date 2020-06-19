@@ -1,13 +1,6 @@
 <template>
     <div class="month-performance">
-        <div class="msg-header page-navigation">
-          <div class="goback" @click="goBack()">
-              <i class="iconfont icon-back1" ></i>
-          </div>
-          <div class="groupName body">
-              月累计绩效明细
-          </div>
-        </div>
+        <slot name="nav" ></slot>
         <div class="month-num">
             <span>累计绩效</span>
             <p>{{ total }}</p>

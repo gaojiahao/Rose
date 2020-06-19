@@ -1,15 +1,5 @@
 <template>
     <div class="day-performance">
-        
-            <div class="page-navigation">
-                <div class="goback" @click="goBack()">
-                    <i class="iconfont icon-back1" ></i>
-                </div>
-                <div class="groupName body">
-                    今日绩效明细
-                </div>
-            </div>
-
             <div class="day-num">
                 <span>当日绩效</span>
                 <p>{{ total }}</p>

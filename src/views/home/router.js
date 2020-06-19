@@ -29,7 +29,7 @@ import THEMESETTING from './pages/components/home-related/themeSetting'
 
 export default [
   { path: '/home', name: 'HOME', component: HOME,
-  meta:{ title:'首页' , keepAlive: true} },
+  meta:{ title:'首页' , keepAlive: true,disablebBack:true} },
   {
     path: '/commentList',
     name: 'COMMENTLIST',

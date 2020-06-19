@@ -1,7 +1,7 @@
 <template>
 
 <div class="page-hasTab me">
-     <slot name="nav" ></slot>
+      <slot name="nav" ></slot>
       <RScroll 
           class="page-body-hasNav" 
           :options="scrollOptions"
