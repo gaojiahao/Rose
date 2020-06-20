@@ -12,10 +12,7 @@ export default [
   {
     path: '/user',
     name: '/user', 
-    meta:{ 
-      tile:'我',
-      keepAlive: true
-    },
+    meta: { title: '我', keepAlive: true},
     redirect: { name: 'MyPerformance' },
     component: PerformanceLayout,
     children: [
@@ -25,14 +22,15 @@ export default [
         component: MyPerformance,
         meta:{ 
           title:'我' ,
-          keepAlive: true
+          keepAlive: true,
+          disablebBack:true
         }
       },
       {
         path: 'dayPerformance/:day',
         name: 'DayPerformance',
         meta:{ 
-          tile:'日绩效',
+          title:'日绩效',
           keepAlive: true
         },
         component: DayPerformance
@@ -41,7 +39,7 @@ export default [
         path: 'monthPerformance/:month',
         name: 'MonthPerformance',
         meta:{ 
-          tile:'月绩效',
+          title:'月累计绩效',
           keepAlive: true
         },
         component: MonthPerformance
@@ -50,7 +48,7 @@ export default [
         path: 'yearPerformance/:year',
         name: 'YearPerformance',
         meta:{ 
-          tile:'年绩效',
+          title:'年度累计绩效',
           keepAlive: true
         },
         component: YearPerformance
