@@ -244,6 +244,8 @@ function ensureUrl(url) {
       return url.replace(/^\/R_roleplay-si/i, '/H_roleplay-si');
   } else if (/^\/account-api/i.test(url)) {
       return url;
+  }  else if (/^\/analysis-api/i.test(url)) {
+    return url;
   } else if (/^\/corebiz-api/i.test(url)) {
       return url;
   } else {

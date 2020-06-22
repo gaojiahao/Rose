@@ -28,6 +28,10 @@ module.exports = {
             target,
             changeOrigin: true,
           },
+          '/analysis-api': {
+            target,
+            changeOrigin: true,
+          },
           '/dist': {
             target,
             changeOrigin: true,

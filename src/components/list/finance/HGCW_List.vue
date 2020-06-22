@@ -36,6 +36,10 @@
               <template v-else-if="key === '2'">
                 <XJLLForm :transcode="slide.transcode" :folder="slide.folder" :name="slide.name"></XJLLForm>
               </template>
+              <!-- 科目余额表 -->
+              <template v-else-if="key === '3'">
+                123
+              </template>
             <!-- </r-scroll> -->
           </div>
         </div>
@@ -66,12 +70,16 @@ export default {
         },{
           title: '现金流量表',
           code: 'XJLL',
-        },
+        },{
+          title: '科目余额表',
+          code: 'KMYE'
+        }
       ],
       listMap:{
         '0':{ transcode:'LR', folder:'finance', name:'利润表' },
         '1':{ transcode:'ZCFZ', folder:'finance', name:'资产负债表' },
         '2':{ transcode:'XJLL', folder:'finance', name:'现金流量表' },
+        '3':{ transcode:'KMYE', folder:'finance', name:'科目余额表' }
       },
       activeIndex: 0,
       scrollOptions: {

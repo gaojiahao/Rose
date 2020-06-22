@@ -42,6 +42,19 @@ export let getProfit = (endDate) => {
     }
   })
 };
+// 获取科目余额表数据
+export let getAccountBalance = (startDate,endDate) => {
+  let filter = JSON.stringify([
+    {property:"start",operator:"ge",value:startDate},
+    {property:"end",operator:"le",value:endDate}
+  ]);
+  return $flyio.ajax({
+    url: '/analysis-api/analysis/accountBalance/getAccountBalance',
+    data: {
+      filter: filter
+    }
+  })
+};
 // 获取企业货币
 export let getLocalCurrency = () => {
   return $flyio.ajax({
