@@ -126,13 +126,13 @@
                   <span class="icon icon-heart-fill" v-else></span>
                   <div class="desc">{{ isConcern != '1' ? '关注' : '取消关注' }}</div>
                 </div>
-              </flexbox-item><flexbox-item :span="1/5">
-                <div class="flex-demo" @click="goDiscuss" v-if="isDiscuss">
+              </flexbox-item><flexbox-item :span="1/5"  v-if="isDiscuss">
+                <div class="flex-demo" @click="goDiscuss">
                   <span class="icon icon-dialog"></span>
                   <div class="desc">评论</div>
                 </div>
-              </flexbox-item><flexbox-item :span="1/5">
-                <div class="flex-demo" @click="goTaskLogList" v-if="isTaskLog">
+              </flexbox-item><flexbox-item :span="1/5" v-if="isTaskLog">
+                <div class="flex-demo" @click="goTaskLogList">
                   <span class="icon icon-log"></span>
                   <div class="desc">日志</div>
                 </div>
