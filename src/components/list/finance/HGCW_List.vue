@@ -56,7 +56,7 @@ import platform from 'plugins/platform/index'
 import LRForm from 'components/list/finance/CWKJ/LRForm'
 import ZCFZForm from 'components/list/finance/CWKJ/ZCFZForm'
 import XJLLForm from 'components/list/finance/CWKJ/XJLLForm'
-import KMYEForm from 'components/list/finance/CWKJ/KMYEForm'
+import KMYEForm from 'components/list/finance/CWKJ/KMYEForm/KMYEForm'
 export default {
   name: "HGCW_List",
   data() {

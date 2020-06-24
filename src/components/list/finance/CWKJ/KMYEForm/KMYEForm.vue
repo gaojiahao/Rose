@@ -1,5 +1,4 @@
 <template>
-<div>
   <div class="detail_wrapper">
     <div class="date-range">
         <div class="date-period">会计期间</div>
@@ -59,7 +58,7 @@
     <r-scroll :options="scrollOptions" ref="bScroll">
       <div class="part-left">
         <div v-for="(item, index) in listData" :key="index">
-          <div class="content-item" ref="partLeft" @click="onItemClick(item)">
+          <div class="content-item" ref="partLeft" @click.stop="onItemClick(item)">
               {{item.treecolumn}}
           </div>
         </div>
@@ -101,8 +100,16 @@
         </div>
       </div>
     </r-scroll>
+    <KMYEpopup
+      v-if="isShow"
+      ref="KMYEpopup" 
+      :listData="popData" 
+      :dateList="dateList"
+      :transcode="transcode" 
+      :folder="folder" 
+      :name="name">
+    </KMYEpopup>
   </div>
-</div>
   
 </template>
 
@@ -111,11 +118,13 @@
   import RScroll from 'plugins/scroll/RScroll'
   import {toFixed} from '@/plugins/calc'
   import {numberComma,Datetime,dateFormat} from 'vux'
+  import KMYEpopup from './KMYEPopup'
 
   export default {
     name: "LRForm",
     data() {
       return {
+        isShow:false,
         endDate: '',
         startDate: '',
         headerSwiper: null,         // 顶部swiper
@@ -146,7 +155,8 @@
     },
     components: {
       RScroll,
-      Datetime
+      Datetime,
+      KMYEpopup
     },
     props: {
       transcode: {
@@ -164,13 +174,34 @@
     },
     methods: {
       endDateChange(value){
-        // this.getData();
+        if(new Date(value).getTime() <= new Date(this.startDate).getTime()){
+          this.$vux.toast.show({
+              type: 'warn',
+              text: '截止日期不可小于开始日期！'
+          });
+          return;
+        }
+        this.getData();
       },
       startDateChange(value){
-        // this.getData();
+        if(new Date(value).getTime() >= new Date(this.endDate).getTime()){
+          this.$vux.toast.show({
+              type: 'warn',
+              text: '开始日期不可大于截止日期！'
+          });
+          return;
+        }
+        this.getData();
       },
       onItemClick(item){
-        
+        if(item.children.length === 0) return;
+        this.isShow = true;
+        this.popData = item;
+        this.dateList["startDate"] = this.startDate;
+        this.dateList["endDate"] = this.endDate;
+        this.$nextTick(() => {
+          this.$refs["KMYEpopup"].showPop = true;
+        })
       },
       // 获取资产负债表数据
       getData() {
@@ -475,7 +506,7 @@
         display: flex;
         justify-content: space-between;
         span{
-          text-align: center;
+          text-align: right;
           width: 50%;
           display: inline-block;
         }
