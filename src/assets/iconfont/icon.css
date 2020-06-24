@@ -32,6 +32,10 @@
   background: url('~assets/iconfont/add.png');
   background-size: cover;
 } */
+.icon-add-iconfont {
+  background: url('~assets/iconfont/add.png');
+  background-size: cover;
+} 
 .icon-message-add {
   background: url('~assets/iconfont/add-message.png');
   background-size: cover;
