@@ -17,7 +17,7 @@
           <div class="task_list_content">
               <div class="list_container" v-for="(list,index) of logList" :key="index">
                   <div class="list_left">
-                      <img :src="list.photo" @error="getDefaultImg(list)">
+                      <img :="list.photo" @error="getDefaultImg(list)">
                   </div>
                   <div class="list_right">
                       <div class="list_right_title">

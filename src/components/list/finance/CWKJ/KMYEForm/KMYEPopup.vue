@@ -93,6 +93,14 @@
           </div>
         </r-scroll>
     </popup>
+    <KMYEWater
+      ref="KMYEWater" 
+      :waterData="waterData" 
+      :dateList="dateList"
+      :transcode="transcode" 
+      :folder="folder" 
+      :name="name">
+    </KMYEWater>
   </div>
 </template>
 
@@ -100,6 +108,7 @@
   import RScroll from 'plugins/scroll/RScroll'
   import {toFixed} from '@/plugins/calc'
   import {numberComma,Datetime,dateFormat,Popup} from 'vux'
+  import KMYEWater from './KMYEWater'
 
   export default {
     name: "LRForm",
@@ -126,7 +135,8 @@
     components: {
       RScroll,
       Datetime,
-      Popup
+      Popup,
+      KMYEWater
     },
     props: {
       transcode: {
@@ -172,6 +182,7 @@
         if(item.leaf){
           //跳到科目余额流水
           this.waterData = item;
+          this.$refs["KMYEWater"].showWater = true;
           return;
         }
         this.childrenData = item;
