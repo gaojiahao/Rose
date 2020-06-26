@@ -1,5 +1,8 @@
 <template>
   <div class="detail_wrapper">
+    <div class="form-search">
+      <x-input ref="formSearch" placeholder="搜索" v-model="searchValue"></x-input>
+    </div>
     <div class="date-range">
         <div class="date-period">会计期间</div>
         <div>
@@ -121,9 +124,8 @@
   import { getAccountBalance } from 'service/kmService'
   import RScroll from 'plugins/scroll/RScroll'
   import {toFixed} from '@/plugins/calc'
-  import {numberComma,Datetime,dateFormat} from 'vux'
+  import {numberComma,Datetime,dateFormat,XInput} from 'vux'
   import KMYEpopup from './KMYEPopup'
-
   export default {
     name: "LRForm",
     data() {
@@ -131,6 +133,7 @@
         isShow:false,
         endDate: '',
         startDate: '',
+        searchValue: '',
         headerSwiper: null,         // 顶部swiper
         partRightSwiper: null,      // 右侧金额swiper
         code: '',  
@@ -160,7 +163,8 @@
     components: {
       RScroll,
       Datetime,
-      KMYEpopup
+      KMYEpopup,
+      XInput
     },
     props: {
       transcode: {
@@ -174,6 +178,28 @@
       name: {
         type: String,
         default: ''
+      }
+    },
+    watch: {
+      searchValue: function(value) {
+        let searchData = [];
+        if(value !== ''){
+          JSON.parse(this.copyData).forEach(item => {
+            if(item.treecolumn.indexOf(value) > -1){
+              searchData.push(item);
+            }
+          })
+          this.listData = searchData;
+        }else{
+          this.listData = JSON.parse(this.copyData);
+        }
+        this.$nextTick(() => {
+            // 设置金额行高度，判断高度是否与title相同，不相同则设置为title的高度
+            this.setHeight(
+              this.$refs.partLeft, 
+              this.$refs.partRightInit, 
+              this.$refs.partRightFinal);
+          })
       }
     },
     methods: {
@@ -212,7 +238,7 @@
         this.listMap[this.code].request(this.startDate,this.endDate).then(res => {
           let {data = []} = res;
           this.listData = this.createData(data);
-          
+          this.copyData = JSON.stringify(this.listData);
           this.$nextTick(() => {
             // 设置金额行高度，判断高度是否与title相同，不相同则设置为title的高度
             this.setHeight(
@@ -325,18 +351,11 @@
       initSwiper() {
         this.$nextTick(() => {
           this.partRightSwiper = new this.Swiper('.part-right',{
-          // slidesPerView : 'auto',
+          slidesPerView : 'auto',
           longSwipersRadio: 0.9,
           freeMode: true,
           });
-          // this.headerSwiper = new this.Swiper('.swiper-container-header',{
-          // // slidesPerView : 'auto',
-          // longSwipersRadio: 0.9,
-          // freeMode: true,
-          // });
-          // this.partRightSwiper.controller && (this.partRightSwiper.controller.control = this.headerSwiper);
-          // this.headerSwiper.controller && (this.headerSwiper.controller.control = this.partRightSwiper);
-          
+          this.partRightSwiper.controller && (this.partRightSwiper.controller.control = this.headerSwiper);
         })
       }
     },
@@ -381,19 +400,23 @@
     height: 100%;
     overflow: hidden;
     background-color: #fff;
-  .date-range{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #eee;
-    padding-left: .1rem;
-    .start-date{
-      display: inline-block;
+    .form-search{
+      background-color: #fff;
+      border-bottom: 1px solid #ddd;
     }
-    .end-date{
-      display: inline-block;
+    .date-range{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+      padding-left: .1rem;
+      .start-date{
+        display: inline-block;
+      }
+      .end-date{
+        display: inline-block;
+      }
     }
-  }
 
     /* 顶部期初、期末 */
     .swiper-container-header {

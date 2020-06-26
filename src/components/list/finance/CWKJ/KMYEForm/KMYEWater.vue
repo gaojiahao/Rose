@@ -175,6 +175,7 @@
     filters: {
       // 格式化数字
       formatNum(num) {
+        if (!num) return '0.00';
         return `${numberComma(num.toFixed(2))}`;
       }
     }
@@ -226,6 +227,7 @@
         padding: .1rem;
         .water-list{
           margin-top: .02rem;
+          font-size: .14rem;
           &-detail{
             display: flex;
             justify-content: space-between;
