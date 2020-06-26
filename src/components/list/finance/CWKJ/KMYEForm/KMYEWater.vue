@@ -9,15 +9,15 @@
         </div>
         <div class="water-detail">
           <div>
-            <span>会计期间：{{`${dateList.startDate} - ${dateList.endDate}`}}</span>
+            <span>会计期间：{{`${dateList.startDate} ~ ${dateList.endDate}`}}</span>
           </div>
           <div>
             <span>{{waterData.treecolumn}}</span>
-            <span :style="{width:'30%',textAlign:'right',display:'inline-block'}">余额：1000</span>
+            <span :style="{width:'30%',textAlign:'right',display:'inline-block'}">余额：{{waterHeaderData.balance | formatNum}}</span>
           </div>
           <div>
-            <span>收入：30000</span>
-            <span>支出：20000</span>
+            <span>借方：{{waterHeaderData.dr | formatNum}}</span>
+            <span>贷方：{{waterHeaderData.cr | formatNum}}</span>
           </div>
         </div>
         <r-scroll :options="scrollOptions" class="water-scroll" ref="bScroll">
@@ -79,6 +79,7 @@
             {img:require('assets/wl_default03.png'),title:'付供应商预付款',transCode:'YUN5264832',debit:2000,balance:1000}
           ]}
         ],
+        waterHeaderData: {},
         scrollOptions: {
           click: true,
           bounce: {
@@ -145,6 +146,9 @@
           if(waterUnique.indexOf(item.date) < 0 && !!item.date){
             waterUnique.push(item.date);
           }
+          if(item.summary === '本期合计'){
+            this.waterHeaderData = item;
+          }
         })
         waterUnique.forEach((unique,index) => {
           waterData.push({
@@ -171,7 +175,6 @@
     filters: {
       // 格式化数字
       formatNum(num) {
-        if (!num) return '-';
         return `${numberComma(num.toFixed(2))}`;
       }
     }
@@ -230,8 +233,8 @@
             .detail-left{
               display: flex;
               img{
-                width: .6rem;
-                height: .6rem;
+                width: .45rem;
+                height: .45rem;
               }
             }
             .detail-right{

@@ -10,7 +10,7 @@
               @on-change="startDateChange">
             </datetime>
           </span>
-          <span>-</span>
+          <span>至</span>
           <span class="end-date">
             <datetime
               v-model="endDate"
@@ -20,80 +20,84 @@
           </span>
         </div>
     </div>
-    <div class="header">
-      <div class="title-form">科目</div>
-      <div class="swiper-container swiper-container-header">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">
-            <p class="parent-title">{{headInfo.firstPeriod}}</p>
-            <p class="children-title">
-              <span class="debit">借方</span>
-              <span class="credit">贷方</span>
-            </p>
-          </div>
-          <div class="swiper-slide">
-            <p class="parent-title">{{headInfo.currentPeriod}}</p>
-            <p class="children-title">
-              <span class="debit">借方</span>
-              <span class="credit">贷方</span>
-            </p>
-          </div>
-          <div class="swiper-slide">
-            <p class="parent-title">{{headInfo.currentYear}}</p>
-            <p class="children-title">
-              <span class="debit">借方</span>
-              <span class="credit">贷方</span>
-            </p>
-          </div>
-          <div class="swiper-slide">
-            <p class="parent-title">{{headInfo.lastPeriod}}</p>
-            <p class="children-title">
-              <span class="debit">借方</span>
-              <span class="credit">贷方</span>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <r-scroll :options="scrollOptions" ref="bScroll">
+    <r-scroll :options="scrollOptions" class="scroll-container" ref="bScroll">
       <div class="part-left">
-        <div v-for="(item, index) in listData" :key="index">
-          <div class="content-item" ref="partLeft" @click.stop="onItemClick(item)">
-              {{item.treecolumn}}
+        <div class="title-form">科目</div>
+        <div class="title-list">
+          <div v-for="(item, index) in listData" :key="index">
+            <div class="content-item" ref="partLeft" @click.stop="onItemClick(item)">
+                {{item.treecolumn}}
+            </div>
           </div>
         </div>
       </div>
       <div class="swiper-container part-right">
         <div class="swiper-wrapper box">
           <div class="swiper-slide">
-            <div v-for="(item, index) in listData" :key="index">
-              <div class="content-item" ref="partRightInit">
-                  <span>{{item.initDr | formatNum}}</span>
-                  <span>{{item.initCr | formatNum}}</span>
+            <div class="right-header">
+              <p class="parent-title">{{headInfo.firstPeriod}}</p>
+              <p class="children-title">
+                <span class="debit">借方</span>
+                <span class="credit">贷方</span>
+              </p>
+            </div>
+            <div class="right-list">
+              <div v-for="(item, index) in listData" :key="index">
+                <div class="content-item" ref="partRightInit">
+                    <span>{{item.initDr | formatNum}}</span>
+                    <span>{{item.initCr | formatNum}}</span>
+                </div>
               </div>
             </div>
           </div>
           <div class="swiper-slide">
-            <div v-for="(item, index) in listData" :key="index">
-              <div class="content-item" ref="partRightFinal">
-                  <span>{{item.dr | formatNum}}</span>
-                  <span>{{item.cr | formatNum}}</span>
+            <div class="right-header">
+              <p class="parent-title">{{headInfo.currentPeriod}}</p>
+              <p class="children-title">
+                <span class="debit">借方</span>
+                <span class="credit">贷方</span>
+              </p>
+            </div>
+            <div class="right-list">
+              <div v-for="(item, index) in listData" :key="index">
+                <div class="content-item" ref="partRightFinal">
+                    <span>{{item.dr | formatNum}}</span>
+                    <span>{{item.cr | formatNum}}</span>
+                </div>
               </div>
             </div>
           </div>
           <div class="swiper-slide">
-            <div v-for="(item, index) in listData" :key="index">
-              <div class="content-item" ref="partRightYear">
-                  <span>{{item.thisYearDr | formatNum}}</span>
-                  <span>{{item.thisYearCr | formatNum}}</span>
+            <div class="right-header">
+              <p class="parent-title">{{headInfo.currentYear}}</p>
+              <p class="children-title">
+                <span class="debit">借方</span>
+                <span class="credit">贷方</span>
+              </p>
+            </div>
+            <div class="right-list">
+              <div v-for="(item, index) in listData" :key="index">
+                <div class="content-item" ref="partRightYear">
+                    <span>{{item.thisYearDr | formatNum}}</span>
+                    <span>{{item.thisYearCr | formatNum}}</span>
+                </div>
               </div>
             </div>
           </div>
           <div class="swiper-slide">
-            <div v-for="(item, index) in listData" :key="index">
-              <div class="content-item" ref="partRightYear2">
-                  <span>{{item.finalDr | formatNum}}</span>
-                  <span>{{item.finalCr | formatNum}}</span>
+            <div class="right-header">
+              <p class="parent-title">{{headInfo.lastPeriod}}</p>
+              <p class="children-title">
+                <span class="debit">借方</span>
+                <span class="credit">贷方</span>
+              </p>
+            </div>
+            <div class="right-list">
+              <div v-for="(item, index) in listData" :key="index">
+                <div class="content-item" ref="partRightYear2">
+                    <span>{{item.finalDr | formatNum}}</span>
+                    <span>{{item.finalCr | formatNum}}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -320,16 +324,18 @@
       // 初始化swiper
       initSwiper() {
         this.$nextTick(() => {
-          this.partRightSwiper = new this.Swiper('.part-right',{slidesPerView : 'auto',
+          this.partRightSwiper = new this.Swiper('.part-right',{
+          // slidesPerView : 'auto',
           longSwipersRadio: 0.9,
           freeMode: true,
           });
-          this.headerSwiper = new this.Swiper('.swiper-container-header',{slidesPerView : 'auto',
-          longSwipersRadio: 0.9,
-          freeMode: true,
-          });
-          this.partRightSwiper.controller && (this.partRightSwiper.controller.control = this.headerSwiper);
-          this.headerSwiper.controller && (this.headerSwiper.controller.control = this.partRightSwiper);
+          // this.headerSwiper = new this.Swiper('.swiper-container-header',{
+          // // slidesPerView : 'auto',
+          // longSwipersRadio: 0.9,
+          // freeMode: true,
+          // });
+          // this.partRightSwiper.controller && (this.partRightSwiper.controller.control = this.headerSwiper);
+          // this.headerSwiper.controller && (this.headerSwiper.controller.control = this.partRightSwiper);
           
         })
       }
@@ -389,22 +395,6 @@
     }
   }
 
-    /* 头部 */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      line-height: .25rem;
-      box-sizing: border-box;
-      .title-form{
-        font-size: .14rem;
-        width: 50%;
-        background-color: #eee;
-        text-align: center;
-        line-height: .5rem;
-        border-right: 1px solid #fff;
-      }
-    }
     /* 顶部期初、期末 */
     .swiper-container-header {
       margin: 0;
@@ -443,6 +433,16 @@
       }
     }
     .part-left {
+      .title-form{
+        height: .5rem;
+        text-align: center;
+        line-height: .5rem;
+        background-color: #eee;
+        border-right: 1px solid #fff;
+      }
+      .title-list{
+        // padding-top: .46rem;
+      }
       .bg-color{
         background-color: #eee;
       }
@@ -472,6 +472,14 @@
       .swiper-wrapper {
         .swiper-slide {
           width: 100%;
+          .right-list{
+            // padding-top: .46rem;
+          }
+          .right-header{
+            height: .5rem;
+            text-align: center;
+            line-height: .25rem;
+          }
           .parent-title{
             text-align: center;
             background-color: #eee;

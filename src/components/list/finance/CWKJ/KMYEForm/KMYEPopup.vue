@@ -9,7 +9,7 @@
         <div class="date-range">
           <span>{{childrenData.treecolumn}}</span>
           <span :style="{marginLeft:'.1rem'}">
-            {{`${dateList.startDate} - ${dateList.endDate}`}}
+            {{`${dateList.startDate} ~ ${dateList.endDate}`}}
           </span>
         </div>
         <div class="header">
