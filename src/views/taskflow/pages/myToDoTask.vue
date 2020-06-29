@@ -214,9 +214,10 @@ export default {
                     }
                 });
             } else if(this.viewType == 'marking'){
-                this.$vux.alert.show({
-                    content: '抱歉，当前任务暂不支持快捷审批操作，请进入详情页后，再执行相关操作，谢谢！'
-                });          
+                // this.$vux.alert.show({
+                //     content: '抱歉，当前任务暂不支持快捷审批操作，请进入详情页后，再执行相关操作，谢谢！'
+                // });
+                this.handlerViewTask(task);          
             }
         },
         // 拒绝
