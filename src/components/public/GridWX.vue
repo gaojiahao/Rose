@@ -103,7 +103,7 @@
       v-if="!cfg.readOnly && (cfg.allowMutilRow ||cfg.allowAddorDel) && ((values &&values.length) ||!hasDs) && !isEdit"
     >
       <div class="add-more" @click="addGroup">
-        <span class="icon-add"></span>
+        <span class="icon-add-iconfont"></span>
         <span class="add_text">新增</span>
       </div>
     </div>
@@ -626,7 +626,7 @@ export default Vue.component("GridWX", component);
     padding: 0.06rem 0.08rem;
     border: 1px solid;
     @include boder_color();
-    .icon-add {
+    .icon-add-iconfont {
       width: 0.14rem;
       height: 0.14rem;
       margin-right: 0.05rem;

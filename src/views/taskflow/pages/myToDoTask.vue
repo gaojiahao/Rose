@@ -80,10 +80,10 @@
 
 <script>
 import { getMsgList} from "service/msgService";
-import {getListById} from "service/detailService"
+import {getListById, isMyflow} from "service/detailService"
 import RScroll from "plugins/scroll/RScroll";
 import { XButton,Confirm, dateFormat } from 'vux'
-import { commitTask, transferTask} from 'service/commonService'
+import { commitTask, transferTask, getFormViewByUniqueId} from 'service/commonService'
 import PopUserList from 'components/Popup/PopUserList'
 export default {
     name:"myToDoTask",
@@ -187,20 +187,46 @@ export default {
             }
             return url;
         },
-        // 同意
-        agreement(task) {
-            this.$vux.confirm.prompt('', {
-                title: '审批意见',
-                onConfirm: (value) => {
-                    this.commitTask({
-                    result: 1,
-                    successMsg: '同意成功',
-                    value,
-                    transCode: task.transCode,
-                    taskId: task.taskId
-                    });
-                }
+        isMyflow(task){
+            return isMyflow({ transCode: task.transCode }).then(rs => {
+                var l = rs.dataCount,
+                    task = l && rs.tableContent[0];
+                this.taskInfo = task;
+                this.viewId = this.taskInfo.viewId;
             });
+        },
+        getFormViewByUniqueId(){
+            return getFormViewByUniqueId(this.viewId).then(data => {
+                this.viewType = data.viewType;
+            });
+        },
+        async loadFlow(task){
+            await this.isMyflow(task);
+            await this.getFormViewByUniqueId();
+        },
+        // 同意
+        async agreement(task) {
+            //判断是否提交数据
+            await this.loadFlow(task);
+            if(this.viewType == 'view'){
+                this.$vux.confirm.prompt('', {
+                    title: '审批意见',
+                    onConfirm: (value) => {
+                        this.commitTask({
+                        result: 1,
+                        successMsg: '同意成功',
+                        value,
+                        transCode: task.transCode,
+                        taskId: task.taskId
+                        });
+                    }
+                });
+            } else if(this.viewType == 'marking'){
+                // this.$vux.alert.show({
+                //     content: '抱歉，当前任务暂不支持快捷审批操作，请进入详情页后，再执行相关操作，谢谢！'
+                // });
+                this.handlerViewTask(task);          
+            }
         },
         // 拒绝
         disagree(task) {

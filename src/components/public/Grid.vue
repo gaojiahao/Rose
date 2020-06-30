@@ -81,7 +81,7 @@
       v-if="!cfg.readOnly && (cfg.allowMutilRow ||cfg.allowAddorDel) && ((values &&values.length) ||!hasDs) && !isEdit"
     >
       <div class="add-more" @click="addRecord">
-        <span class="icon-add"></span>
+        <span class="icon-add-iconfont"></span>
         <span class="add_text">新增</span>
       </div>
     </div>
@@ -179,12 +179,10 @@ var component = {
     //选择默认图片
     getImgPic(d) {
        let url;
-       var baseUrl = window.baseURL||'';
       if(d){
         let pic = this.curObj ? this.curObj.picKey : '',
             defaultUrl = this.curObj ? this.curObj.defaultUrl : 'wl_default03.png';
         url =  d[pic] ? d[pic] : '/static/' + defaultUrl;
-        url = url.indexOf('http') == -1 ? baseUrl + url : url;
       }else{
         url = require('assets/wl_default03.png');
       }
@@ -489,7 +487,7 @@ export default Vue.component("RGrid", component);
     padding: 0.06rem 0.08rem;
     border: 1px solid;
     @include boder_color();
-    .icon-add {
+    .icon-add-iconfont {
       width: 0.14rem;
       height: 0.14rem;
       margin-right: 0.05rem;

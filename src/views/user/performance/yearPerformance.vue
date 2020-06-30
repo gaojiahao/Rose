@@ -1,14 +1,5 @@
 <template>
     <div class="year-performance">
-      
-        <div class="msg-header page-navigation">
-          <div class="goback" @click="goBack()">
-              <i class="iconfont icon-back1" ></i>
-          </div>
-          <div class="groupName body">
-              年度累计绩效明细
-          </div>
-        </div>
         <div class="year-num">
             <span>累计绩效</span>
             <p>{{ total }}</p>

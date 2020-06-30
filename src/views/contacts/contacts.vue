@@ -1,7 +1,7 @@
 <!--通讯录-->
 <template>
     <div class="address-book-wrapper page-hasTab">
-        <div class="page-navigation flex">
+        <div class="page-navigation flex" v-if="hasNav">
              <div class="goback" v-if="routes.length">
                 <i class="iconfont icon-back1" @click="goBack()" ></i>
             </div>
@@ -15,7 +15,7 @@
         >
         <div v-for="item in address" class="address-item" :key="item.id" @click="goto(item)" v-show="item.id != 7">
             <div class="header">
-                <img :src="item.photo|appIconFilter"  v-if="item.type=='P'"  @error="getDefaultPhoto(item)"/>
+                <img :src="item.photo"  v-if="item.type=='P'"  @error="getDefaultPhoto(item)"/>
                 <i class="address-icon iconfont icon-wenjian " v-if="item.type!='P' && !item.leaf"></i>
                 <i class="address-icon iconfont icon-file-f" v-if="item.type!='P' && item.leaf"></i>
             </div>
@@ -36,6 +36,7 @@ import WebContext from 'service/commonService'
 export default {
     data(){
         return {
+            hasNav:false,
             hasNext:true,
             scrollOptions:{
                 click: true,
@@ -115,6 +116,7 @@ export default {
             var item = this.routes.length && this.routes[0];
             if(item)this.goto(item)//所有人的通讯录都一样，但是还是要刷新下。
         })
+        this.hasNav = this.getApp().hasNav;
     }
 }
 </script>
