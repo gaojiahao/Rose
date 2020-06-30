@@ -199,8 +199,8 @@
           longSwipersRadio: 0.9,
           freeMode: true,
           });
-          this.partRightSwiper.controller.control = this.headerSwiper;
-          this.headerSwiper.controller.control = this.partRightSwiper;
+          this.partRightSwiper.controller && (this.partRightSwiper.controller.control = this.headerSwiper);
+          this.headerSwiper.controller && (this.headerSwiper.controller.control = this.partRightSwiper);
           
         })
       },
