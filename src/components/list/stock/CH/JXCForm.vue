@@ -1,73 +1,62 @@
 <template>
   <div class="detail_wrapper">
-    <div class="end-date">
-      <group>
-        <datetime
-          v-model="endDate"
-          :format="headInfo['currentYearName']?'YYYY-MM':'YYYY-MM-DD'"
-          @on-change="endDateChange">
-          <h5 slot="title" :style="{fontSize:'.15rem'}">{{headInfo['currentYearName']?'会计期间':'截至日期'}}</h5>
-        </datetime>
-      </group>
+    <div class="title">
+      <flexbox>
+        <flexbox-item><div class="flex-demo">周期</div></flexbox-item>
+        <flexbox-item><div class="flex-demo">本月</div></flexbox-item>
+        <flexbox-item><div class="flex-demo">按物料查看</div></flexbox-item>
+        <flexbox-item><div class="flex-demo">按仓库查看</div></flexbox-item>
+      </flexbox>
     </div>
-    <div class="header">
-      <div class="title-form">{{`单位：${localCurrency}`}}</div>
+    <div class="title2">
+      <div>
+        <div class="">物料编码</div>
+        <div class="">物料名称</div>
+      </div>
       <div class="swiper-container swiper-container-header">
         <div class="swiper-wrapper">
-          <div class="swiper-slide">{{headInfo.firstName}}</div>
-          <div class="swiper-slide">{{headInfo.LastName}}</div>
-          <div v-if="headInfo.currentYearName" class="swiper-slide">{{headInfo.currentYearName}}</div>
-          <div v-if="headInfo.lastYearAmount" class="swiper-slide">{{headInfo.lastYearAmount}}</div>
+          <div class="swiper-slide">{{headInfo.initQty}}</div>
+          <div class="swiper-slide">{{headInfo.drAmount}}</div>
+          <div class="swiper-slide">{{headInfo.crAmount}}</div>
+          <div class="swiper-slide">{{headInfo.blQty}}</div>
         </div>
       </div>
     </div>
     <r-scroll :options="scrollOptions" ref="bScroll">
       <div class="part-left">
         <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
-          <div class="content-item"
-              :class="{'final-total': item.total,
-              'title': item.total}" 
-              :style="{paddingLeft:`${item.indent*.65}em`}"
-              ref="partLeft">
-              {{item.financeName}}
+          <div class="content-item" :style="{paddingLeft:`${item.indent*.65}em`}" ref="partLeft">
+            {{item.outPutMatCode_inventoryName}}
           </div>
         </div>
       </div>
       <div class="swiper-container part-right">
         <div class="swiper-wrapper box">
           <div class="swiper-slide div" style="width:50%">
-            <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
-              <div class="content-item"
-                  :class="{'final-total': item.total || item.bigSubject}"
-                  ref="partRightInit">
-                  {{headInfo['currentYearName']?item.finalAmount:item.initAmount | formatNum}}
+            <div v-for="(item, index) in listData" :key="index">
+              <div class="content-item" ref="partRightInit">
+                {{item.initQty | formatNum}}
               </div>
             </div>
           </div>
           <div class="swiper-slide div" style="width:50%">
-            <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
-              <div class="content-item"
-                  :class="{'final-total': item.total || item.bigSubject}"
-                  ref="partRightFinal">
-                  {{headInfo['currentYearName']?item.initAmount:item.finalAmount | formatNum}}
+            <div v-for="(item, index) in listData" :key="index">
+              <div class="content-item" ref="partRightFinal">
+                {{item.blQty | formatNum}}
               </div>
             </div>
           </div>
-          <div v-if="headInfo.currentYearName" class="swiper-slide div" style="width:100%">
-            <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
-              <div class="content-item"
-                  :class="{'final-total': item.total || item.bigSubject}"
-                  ref="partRightYear">
-                  {{item.thisYearAmount | formatNum}}
+          <div class="swiper-slide div" style="width:100%">
+            <div v-for="(item, index) in listData" :key="index">
+              <div class="content-item" ref="partRightYear">
+                {{item.drAmount | formatNum}}
               </div>
             </div>
           </div>
-          <div v-if="headInfo.lastYearAmount" class="swiper-slide">
-            <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
-              <div class="content-item"
-                  :class="{'final-total': item.total || item.bigSubject}"
-                  ref="partRightYear2">
-                  {{item.lastYearAmount | formatNum}}
+          <div class="swiper-slide">
+            <div v-for="(item, index) in listData" :key="index">
+              <div class="content-item" ref="partRightYear2">
+                {{item.crAmount | formatNum}}
               </div>
             </div>
           </div>
@@ -78,11 +67,14 @@
 </template>
 
 <script>
-  import {getOffBalance, getProfit, getLocalCurrency} from 'service/kmService'
+  import {getPsiDataByViewId} from 'service/kmService'
   import RScroll from 'plugins/scroll/RScroll'
   import {toFixed} from '@/plugins/calc'
   import {accAdd} from "plugins/calc/decimalsAdd";
-  import {numberComma,Datetime,Group,dateFormat} from 'vux'
+  import {numberComma,Datetime,Group,dateFormat,Flexbox, FlexboxItem} from 'vux'
+  import {isPC,isQYWX,} from '@/plugins/platform/index'
+  const storage = window[isPC||window.isApp ? 'localStorage' : 'sessionStorage'];
+  const ROSE_TOKEN_KEY = 'ROSE_LOGIN_TOKEN';
 
   export default {
     name: "JXCForm",
@@ -98,11 +90,11 @@
         listMap: {
           JXC: {
             title: '利润表',
-            firstName: '本期',
-            LastName: '上期',
-            currentYearName: '本年累计',
-            lastYearAmount: '上年同期累计',
-            request: getProfit
+            initQty: '期初数量',
+            drAmount: '数量增加',
+            crAmount: '数量减少',
+            blQty: '期末数量',
+            request: getPsiDataByViewId
           },
         },
         scrollOptions: {
@@ -116,7 +108,9 @@
     components: {
       RScroll,
       Datetime,
-      Group
+      Group,
+      Flexbox, 
+      FlexboxItem
     },
     props: {
       transcode: {
@@ -145,7 +139,16 @@
       },
       // 获取资产负债表数据
       getData() {
-        return this.listMap[this.code].request(this.endDate).then(res => {
+        let entityId = JSON.parse(storage.getItem(ROSE_TOKEN_KEY)).entityId || {};
+        var data = {
+          _dc: Date.now(),
+          strViewId: '63882579-5f7d-4708-b62c-89ba0c63f4e9',
+          strEntityId: entityId,
+          aryFilters: '',
+          intStart: 0,
+          intLimit: 50,
+        };
+        return this.listMap[this.code].request(data).then(res => {
           let {data = []} = res;
 
           this.listData = data;
@@ -198,16 +201,6 @@
           
         })
       },
-      //获取企业货币
-      getLocalCurrencyData() {
-        getLocalCurrency().then(({list = []}) => {
-          list.forEach(item => {
-            if(item.localCurrency){
-              this.localCurrency = item.currencyValue === 'CNY' ? '元' : item.currency;
-            }
-          })
-        })
-      }
     },
     filters: {
       // 格式化数字
@@ -230,7 +223,6 @@
       // 初始化数据
       this.initSwiper();
       this.getData();
-      this.getLocalCurrencyData();
     }
   }
 </script>
@@ -262,7 +254,14 @@
       margin-top: 0;
       line-height: 1.2;
     }
-
+    .title{
+      font-size: .14rem;
+      padding: .05rem;
+    }
+    .title2{
+      font-size: .14rem;  
+      padding: .05rem;
+    }
     /* 头部 */
     .header {
       display: flex;
@@ -361,13 +360,7 @@
       padding: 0;
       z-index: 1;
       .swiper-wrapper {
-        .swiper-slide:nth-child(1) {
-          width: 25%;
-        }
-        .swiper-slide:nth-child(2) {
-          width: 25%;
-        }
-        .swiper-slide:nth-child(3) {
+        .swiper-slide {
           width: 50%;
         }
       }

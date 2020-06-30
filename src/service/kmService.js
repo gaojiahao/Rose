@@ -83,4 +83,10 @@ export let prolxyGetAutomaticEntry = (data = {}) => {
       data
   })
 };
+export let getPsiDataByViewId = (data = {}) => {
+  return  $flyio.ajax({
+      url: '/svc-nodejs/getPsiDataByViewId',
+      data
+  })
+};
 export default {}
