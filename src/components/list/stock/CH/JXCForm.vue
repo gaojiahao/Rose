@@ -8,7 +8,7 @@
         <flexbox-item><div class="flex-demo">按仓库查看</div></flexbox-item>
       </flexbox>
     </div>
-    <div class="title2">
+    <!-- <div class="title2">
       <div>
         <div class="">物料编码</div>
         <div class="">物料名称</div>
@@ -21,9 +21,10 @@
           <div class="swiper-slide">{{headInfo.blQty}}</div>
         </div>
       </div>
-    </div>
-    <r-scroll :options="scrollOptions" ref="bScroll">
+    </div> -->
+    <r-scroll :options="scrollOptions" class="scroll-container" ref="bScroll">
       <div class="part-left">
+        <div class="title-form">物料名称</div>
         <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
           <div class="content-item" :style="{paddingLeft:`${item.indent*.65}em`}" ref="partLeft">
             {{item.outPutMatCode_inventoryName}}
@@ -32,14 +33,82 @@
       </div>
       <div class="swiper-container part-right">
         <div class="swiper-wrapper box">
-          <div class="swiper-slide div" style="width:50%">
+          <div class="swiper-slide">
+            <div class="right-header">
+              <p class="parent-title">{{headInfo.firstPeriod}}</p>
+              <p class="children-title">
+                <span class="debit">{{headInfo.initNum}}</span>
+                <span class="credit">{{headInfo.drNum}}</span>
+              </p>
+            </div>
+            <div class="right-list">
+              <div v-for="(item, index) in listData" :key="index">
+                <div class="content-item" ref="partRightInit">
+                    <span>{{item.initQty | formatNum}}</span>
+                    <span>{{item.crQty | formatNum}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="right-header">
+              <p class="parent-title">{{headInfo.firstPeriod}}</p>
+              <p class="children-title">
+                <span class="debit">{{headInfo.crNum}}</span>
+                <span class="credit">{{headInfo.blNum}}</span>
+              </p>
+            </div>
+            <div class="right-list">
+              <div v-for="(item, index) in listData" :key="index">
+                <div class="content-item" ref="partRightFinal">
+                    <span>{{item.drQty | formatNum}}</span>
+                    <span>{{item.blQty | formatNum}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="right-header">
+              <p class="parent-title">{{headInfo.lastPeriod}}</p>
+              <p class="children-title">
+                <span class="debit">{{headInfo.initNum}}</span>
+                <span class="credit">{{headInfo.drNum}}</span>
+              </p>
+            </div>
+            <div class="right-list">
+              <div v-for="(item, index) in listData" :key="index">
+                <div class="content-item" ref="partRightInit">
+                    <span>{{item.initAmount | formatNum}}</span>
+                    <span>{{item.crAmount | formatNum}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="right-header">
+              <p class="parent-title">{{headInfo.lastPeriod}}</p>
+              <p class="children-title">
+                <span class="debit">{{headInfo.crNum}}</span>
+                <span class="credit">{{headInfo.blNum}}</span>
+              </p>
+            </div>
+            <div class="right-list">
+              <div v-for="(item, index) in listData" :key="index">
+                <div class="content-item" ref="partRightFinal">
+                    <span>{{item.drAmount | formatNum}}</span>
+                    <span>{{item.blAmount | formatNum}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="swiper-slide div" style="width:50%">
             <div v-for="(item, index) in listData" :key="index">
               <div class="content-item" ref="partRightInit">
                 {{item.initQty | formatNum}}
               </div>
             </div>
-          </div>
-          <div class="swiper-slide div" style="width:50%">
+          </div> -->
+          <!-- <div class="swiper-slide div" style="width:50%">
             <div v-for="(item, index) in listData" :key="index">
               <div class="content-item" ref="partRightFinal">
                 {{item.blQty | formatNum}}
@@ -59,7 +128,7 @@
                 {{item.crAmount | formatNum}}
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </r-scroll>
@@ -90,10 +159,12 @@
         listMap: {
           JXC: {
             title: '利润表',
-            initQty: '期初数量',
-            drAmount: '数量增加',
-            crAmount: '数量减少',
-            blQty: '期末数量',
+            firstPeriod:'数量',
+            lastPeriod:'金额',
+            initNum: '期初',
+            drNum: '新增',
+            crNum: '减少',
+            blNum: '期末',
             request: getPsiDataByViewId
           },
         },
@@ -192,12 +263,13 @@
           longSwipersRadio: 0.9,
           freeMode: true,
           });
-          this.headerSwiper = new this.Swiper('.swiper-container-header',{slidesPerView : 'auto',
-          longSwipersRadio: 0.9,
-          freeMode: true,
-          });
-          this.partRightSwiper.controller.control = this.headerSwiper;
-          this.headerSwiper.controller.control = this.partRightSwiper;
+          // this.headerSwiper = new this.Swiper('.swiper-container-header',{slidesPerView : 'auto',
+          // longSwipersRadio: 0.9,
+          // freeMode: true,
+          // });
+          this.partRightSwiper.controller && (this.partRightSwiper.controller.control = this.headerSwiper);
+          //this.partRightSwiper.controller.control = this.headerSwiper;
+          //this.headerSwiper.controller.control = this.partRightSwiper;
           
         })
       },
@@ -247,13 +319,6 @@
     overflow: hidden;
     background-color: #fff;
 
-    .end-date /deep/ .vux-no-group-title{
-      margin-top: 0;
-    }
-    .end-date /deep/ .weui-cells{
-      margin-top: 0;
-      line-height: 1.2;
-    }
     .title{
       font-size: .14rem;
       padding: .05rem;
@@ -288,11 +353,20 @@
     }
 
     .scroll-container {
-      height: calc(100% - .76rem);
+      height: 100%;
       font-size: 0;
     }
     /deep/ .scroll-wrapper {
       display: flex;
+    }
+    .part-left {
+      .title-form{
+        height: .5rem;
+        text-align: center;
+        line-height: .5rem;
+        background-color: #eee;
+        border-right: 1px solid #fff;
+      }
     }
     .part-left, .part-right {
       width: 50%;
@@ -361,7 +435,36 @@
       z-index: 1;
       .swiper-wrapper {
         .swiper-slide {
-          width: 50%;
+          width: 100%;
+          .right-list{
+            // padding-top: .46rem;
+          }
+          .right-header{
+            height: .5rem;
+            text-align: center;
+            line-height: .25rem;
+          }
+          .parent-title{
+            text-align: center;
+            background-color: #eee;
+          }
+          .children-title{
+            display: flex;
+            justify-content: space-between;
+            span{
+              text-align: center;
+              width: 50%;
+              display: inline-block;
+            }
+            .debit{
+              background-color:#cadbec;
+              color: #4b76a0;
+            }
+            .credit{
+              background-color: #f0e4ce;
+              color: #c15524;
+            }
+          }
         }
       }
     }
@@ -372,6 +475,13 @@
       }
       .content-item {
         padding-left: 0;
+        display: flex;
+        justify-content: space-between;
+        span{
+          text-align: right;
+          width: 50%;
+          display: inline-block;
+        }
       }
     }
     /* 1px边框 */
