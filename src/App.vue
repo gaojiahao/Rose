@@ -6,17 +6,16 @@
         <div class="page-navigation" 
         v-if="hasNav"
         slot = 'nav'>
-          <div class="goback" v-if="!$route.meta.disablebBack" @click="$router.go(-1)"><i class="iconfont icon-back1"></i></div>
+          <div class="goback" @click="$router.go(-1)"><i class="iconfont icon-back1"></i></div>
           <div class="body">{{$route.meta.title || ''}}</div>
         </div>
       </router-view>
     </keep-alive>
-   
     <router-view v-if="!$route.meta.keepAlive">
       <div class="page-navigation" 
         v-if="hasNav"
         slot = 'nav'>
-          <div class="goback" @click="$router.go(-1)" v-if="!$route.meta.disablebBack"><i class="iconfont icon-back1"></i></div>
+          <div class="goback" @click="$router.go(-1)"><i class="iconfont icon-back1"></i></div>
           <div class="body">{{$route.meta.title || ''}}</div>
       </div>
     </router-view>
@@ -172,6 +171,7 @@ export default {
     });
     Vue.prototype.getApp= ()=> this;
     Vue.prototype.bus = Bus;
+    Vue.prototype.addBaseUrl = util.addBaseUrl;
     document.addEventListener("deviceready", this.onDeviceReady, false);
     this.initOnlineStatus();
   },

@@ -9,7 +9,7 @@
           <div class="page-body-hasNav">
               <div class="user-info">
                   <div class="user-info-left">
-                      <img :src="getDefaultPhoto()" @error="imgErr" />
+                      <img :src="userItem.photo|appIconFilter" @error="getDefaultPhoto()" />
                   </div>
                   <div class="user-info-right">
                       <p>{{userItem.nickname || '未知'}}</p>
@@ -54,16 +54,12 @@ export default{
       this.getUserDetails();
     },
     methods: {
-        getDefaultPhoto() {
+        getDefaultPhoto(userItem) {
             let url = require("assets/ava01.png");
-            if (this.userItem.photo) {
-                url = this.userItem.photo
+            if (userItem) {
+                userItem.photo = url;
             }
             return url;
-        },
-        imgErr() {
-          let url = require("assets/ava01.png");
-          this.userItem.photo = url;
         },
         goBack() {
           this.$router.go(-1);
