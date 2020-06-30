@@ -43,6 +43,10 @@ module.exports = {
           '/gimgs': {
             target,
             changeOrigin: true
+          },
+          '/svc-nodejs': {
+            target,
+            changeOrigin: true
           }
 
     }
