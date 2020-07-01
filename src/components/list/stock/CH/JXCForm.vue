@@ -2,32 +2,31 @@
   <div class="detail_wrapper">
     <div class="title">
       <flexbox>
-        <flexbox-item><div class="flex-demo">周期</div></flexbox-item>
-        <flexbox-item><div class="flex-demo">本月</div></flexbox-item>
-        <flexbox-item><div class="flex-demo">按物料查看</div></flexbox-item>
-        <flexbox-item><div class="flex-demo">按仓库查看</div></flexbox-item>
+        <flexbox-item :psan="1/2">
+          <div class="flex-demo">
+            <r-picker :title="timeTitle" :data="timeList" :value="timeValue"
+                      v-model="timeValue" :required="true"
+                      ></r-picker>
+          </div>
+        </flexbox-item>
+        <flexbox-item :psan="1/2">
+          <div class="flex-demo">
+            <r-picker :data="typeList" :value="typeValue"
+                      v-model="typeValue" :required="true"
+                      ></r-picker>
+          </div>
+        </flexbox-item>
       </flexbox>
     </div>
-    <!-- <div class="title2">
-      <div>
-        <div class="">物料编码</div>
-        <div class="">物料名称</div>
-      </div>
-      <div class="swiper-container swiper-container-header">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">{{headInfo.initQty}}</div>
-          <div class="swiper-slide">{{headInfo.drAmount}}</div>
-          <div class="swiper-slide">{{headInfo.crAmount}}</div>
-          <div class="swiper-slide">{{headInfo.blQty}}</div>
-        </div>
-      </div>
-    </div> -->
     <r-scroll :options="scrollOptions" class="scroll-container" ref="bScroll">
       <div class="part-left">
-        <div class="title-form">物料名称</div>
+        <div class="left-header">
+          {{typeDatas[typeFlag]['title']}}
+        </div>
         <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
           <div class="content-item" :style="{paddingLeft:`${item.indent*.65}em`}" ref="partLeft">
-            {{item.outPutMatCode_inventoryName}}
+            <p>{{item[typeDatas[typeFlag]['name']]}}</P>
+            <p>{{item[typeDatas[typeFlag]['code']]}}</P>
           </div>
         </div>
       </div>
@@ -37,7 +36,7 @@
             <div class="right-header">
               <p class="parent-title">{{headInfo.firstPeriod}}</p>
               <p class="children-title">
-                <span class="debit">{{headInfo.initNum}}</span>
+                <span class="init">{{headInfo.initNum}}</span>
                 <span class="credit">{{headInfo.drNum}}</span>
               </p>
             </div>
@@ -55,7 +54,7 @@
               <p class="parent-title">{{headInfo.firstPeriod}}</p>
               <p class="children-title">
                 <span class="debit">{{headInfo.crNum}}</span>
-                <span class="credit">{{headInfo.blNum}}</span>
+                <span class="bl">{{headInfo.blNum}}</span>
               </p>
             </div>
             <div class="right-list">
@@ -71,13 +70,13 @@
             <div class="right-header">
               <p class="parent-title">{{headInfo.lastPeriod}}</p>
               <p class="children-title">
-                <span class="debit">{{headInfo.initNum}}</span>
+                <span class="init">{{headInfo.initNum}}</span>
                 <span class="credit">{{headInfo.drNum}}</span>
               </p>
             </div>
             <div class="right-list">
               <div v-for="(item, index) in listData" :key="index">
-                <div class="content-item" ref="partRightInit">
+                <div class="content-item" ref="partRightInit2">
                     <span>{{item.initAmount | formatNum}}</span>
                     <span>{{item.crAmount | formatNum}}</span>
                 </div>
@@ -89,46 +88,18 @@
               <p class="parent-title">{{headInfo.lastPeriod}}</p>
               <p class="children-title">
                 <span class="debit">{{headInfo.crNum}}</span>
-                <span class="credit">{{headInfo.blNum}}</span>
+                <span class="bl">{{headInfo.blNum}}</span>
               </p>
             </div>
             <div class="right-list">
               <div v-for="(item, index) in listData" :key="index">
-                <div class="content-item" ref="partRightFinal">
+                <div class="content-item" ref="partRightFinal2">
                     <span>{{item.drAmount | formatNum}}</span>
                     <span>{{item.blAmount | formatNum}}</span>
                 </div>
               </div>
             </div>
           </div>
-          <!-- <div class="swiper-slide div" style="width:50%">
-            <div v-for="(item, index) in listData" :key="index">
-              <div class="content-item" ref="partRightInit">
-                {{item.initQty | formatNum}}
-              </div>
-            </div>
-          </div> -->
-          <!-- <div class="swiper-slide div" style="width:50%">
-            <div v-for="(item, index) in listData" :key="index">
-              <div class="content-item" ref="partRightFinal">
-                {{item.blQty | formatNum}}
-              </div>
-            </div>
-          </div>
-          <div class="swiper-slide div" style="width:100%">
-            <div v-for="(item, index) in listData" :key="index">
-              <div class="content-item" ref="partRightYear">
-                {{item.drAmount | formatNum}}
-              </div>
-            </div>
-          </div>
-          <div class="swiper-slide">
-            <div v-for="(item, index) in listData" :key="index">
-              <div class="content-item" ref="partRightYear2">
-                {{item.crAmount | formatNum}}
-              </div>
-            </div>
-          </div> -->
         </div>
       </div>
     </r-scroll>
@@ -140,8 +111,9 @@
   import RScroll from 'plugins/scroll/RScroll'
   import {toFixed} from '@/plugins/calc'
   import {accAdd} from "plugins/calc/decimalsAdd";
-  import {numberComma,Datetime,Group,dateFormat,Flexbox, FlexboxItem} from 'vux'
+  import {numberComma,Datetime,Group,dateFormat,Flexbox,FlexboxItem,PopupPicker} from 'vux'
   import {isPC,isQYWX,} from '@/plugins/platform/index'
+  import RPicker from 'components/public/basicPicker'
   const storage = window[isPC||window.isApp ? 'localStorage' : 'sessionStorage'];
   const ROSE_TOKEN_KEY = 'ROSE_LOGIN_TOKEN';
 
@@ -173,7 +145,39 @@
           bounce: {
             top: false
           }
-        }
+        },
+        typeFlag: 'wl',
+        typeDatas:{
+          ck:{
+            title:'仓库',
+            code:'whCode',
+            name:'containerCodeOut_warehouseName',
+            codeText:'仓库编码',
+            nameText:'仓库名称'
+          },
+          wl:{
+            title:'物料',
+            code:'matCode',
+            name:'outPutMatCode_inventoryName',
+            codeText:'物料编码',
+            nameText:'物料名称'
+          }
+        },
+        timeTitle:'周期',
+        timeList:['过去7天','过去30天','过去90天','近两天','昨天',
+            '今日',
+            '本周',
+            '本月',
+            '本季度',
+            '本年',
+            '上周',
+            '上月',
+            '上季度',
+            '上年'],
+        timeValue:'本月',
+        typeList:['按物料查看','按仓库查看'],
+        typeValue:'按物料查看',
+        copyData:''
       }
     },
     components: {
@@ -181,7 +185,8 @@
       Datetime,
       Group,
       Flexbox, 
-      FlexboxItem
+      FlexboxItem,
+      RPicker
     },
     props: {
       transcode: {
@@ -202,6 +207,25 @@
         handler(val){
           console.log(val)
         }
+      },
+      typeValue:{
+        handler(val){
+          if(val=='按物料查看'){
+            this.typeFlag = 'wl';
+            var data = JSON.parse(this.copyData);
+            var sorted =this.groupByType(data, function (item) {
+              return [item.matCode];//按照name进行分组
+            });
+            this.listData = sorted;
+          } else if(val=='按仓库查看'){
+            this.typeFlag = 'ck';
+            var data = JSON.parse(this.copyData);
+            var sorted =this.groupByType(data, function (item) {
+              return [item.whCode];//按照name进行分组
+            });
+            this.listData = sorted;  
+          }
+        }
       }
     },
     methods: {
@@ -221,22 +245,63 @@
         };
         return this.listMap[this.code].request(data).then(res => {
           let {data = []} = res;
-
-          this.listData = data;
+          this.copyData = JSON.stringify(data);
+          var sorted =this.groupByType(data, function (item) {
+            return [item.matCode];//按照name进行分组
+          });
+          this.listData = sorted;
           this.$nextTick(() => {
             // 设置金额行高度，判断高度是否与title相同，不相同则设置为title的高度
             this.setHeight(
               this.$refs.partLeft, 
               this.$refs.partRightInit, 
-              this.$refs.partRightFinal);
+              this.$refs.partRightFinal,this.$refs.partRightInit2,this.$refs.partRightFinal2);
             this.$loading.hide();
           })
         })
       },
+      groupByType(data,type){
+        let groups = {};        
+        data.forEach(function (o) { //注意这里必须是forEach 大写
+            const group = type(o);
+            groups[group] = groups[group] || [];
+            groups[group].push(o);
+        });
+        return Object.keys(groups).map(function (group) {
+          var arr = [];
+          arr.drQty= 0;
+          arr.crQty=0;
+          arr.initQty=0;
+          arr.drAmount=0;
+          arr.crAmount=0;
+          arr.initAmount=0;
+          arr.blQty=0;
+          arr.blAmount=0;
+          for(var i = 0; i < groups[group].length; i++){
+            arr.drQty = arr.drQty + groups[group][i]['drQty']?groups[group][i]['drQty']:0;
+            arr.crQty = arr.crQty + groups[group][i]['crQty']?groups[group][i]['crQty']:0;
+            arr.initQty = accAdd(arr.initQty , groups[group][i]['initQty']?groups[group][i]['initQty']:0);
+            arr.drAmount = arr.drAmount + groups[group][i]['drAmount']?groups[group][i]['drAmount']:0;
+            arr.crAmount = arr.crAmount + groups[group][i]['crAmount']?groups[group][i]['crAmount']:0;
+            arr.initAmount = arr.initAmount + groups[group][i]['initAmount']?groups[group][i]['initAmount']:0;
+            arr.blQty = arr.blQty + groups[group][i]['blQty']?groups[group][i]['blQty']:0;
+            arr.blAmount = arr.blAmount + groups[group][i]['blAmount']?groups[group][i]['blAmount']:0;
+            arr.matCode = groups[group][i]['matCode'];
+            arr.outPutMatCode_inventoryName = groups[group][i]['outPutMatCode_inventoryName'];
+            arr.outPutMatCode_inventoryType = groups[group][i]['outPutMatCode_inventoryType'];
+            arr.outPutMatCode_inventorySubclass = groups[group][i]['outPutMatCode_inventorySubclass'];
+            arr.outPutMatCode_specification = groups[group][i]['outPutMatCode_specification'];
+            arr.containerCodeOut_warehouseName = groups[group][i]['containerCodeOut_warehouseName'];
+            arr.containerCodeOut_warehouseType = groups[group][i]['containerCodeOut_warehouseType'];
+            arr.whCode = groups[group][i]['whCode'];
+          }
+          return arr;
+        });
+      },
       // 设置高度
-      setHeight(left,rightInit,rightFinal) {
+      setHeight(left,rightInit,rightFinal,rightInit2,rightFinal2) {
         let right = [rightInit,rightFinal];
-        let right2 = [rightInit,rightFinal];
+        let right2 = [rightInit,rightFinal,rightInit2,rightFinal2];
         if(this.$refs.partRightYear){
           right.push(this.$refs.partRightYear);
         }
@@ -353,14 +418,14 @@
     }
 
     .scroll-container {
-      height: 100%;
+      height: calc(100% - .9rem);
       font-size: 0;
     }
     /deep/ .scroll-wrapper {
       display: flex;
     }
     .part-left {
-      .title-form{
+      .left-header{
         height: .5rem;
         text-align: center;
         line-height: .5rem;
@@ -456,13 +521,21 @@
               width: 50%;
               display: inline-block;
             }
+            .init{
+              background-color:#d9e1f2;
+              color: #305496;
+            }
             .debit{
-              background-color:#cadbec;
-              color: #4b76a0;
+              background-color:#bdd7ee;
+              color: #4a97c8;  
             }
             .credit{
-              background-color: #f0e4ce;
-              color: #c15524;
+              background-color: #fce4d6;
+              color: #ff0000;
+            }
+            .bl{
+              background-color:#e2efda;
+              color: #548235;  
             }
           }
         }

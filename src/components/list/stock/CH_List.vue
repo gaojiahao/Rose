@@ -7,17 +7,17 @@
         <div class="header" v-if="!hasNav">
           <div class="header-container">
             <i class="icon icon-return" @click="goBack"></i>
-            <div class="center">存货</div>
+            <div class="center">存货进销存</div>
           </div>
         </div>
-        <div class="tab-container" ref="tabContainer">
+        <!-- <div class="tab-container" ref="tabContainer">
           <div class="tab-item" :class="{active: index === activeIndex}" v-for="(item, index) in listData"
                @click="tabClick(item, index)" ref="tabs" :key="index">
             <div class="tab-item-title">{{item.title}}</div>
           </div>
-        </div>
+        </div> -->
       </div>
-      <div style="height:.1rem;width:100%;background-color:#eee"></div>
+      <!-- <div style="height:.1rem;width:100%;background-color:#eee"></div> -->
       <!-- tab -->
       <div class="swiper-container list-container" :class="{'list-container2':hasNav}">
         <div class="swiper-wrapper">
@@ -113,7 +113,8 @@ export default {
   overflow: auto;
 }
   .list-container {
-    height: calc(100% - .86rem);
+    //height: calc(100% - .86rem);
+    height: 100%;
     .list_wrapper {
       height: 100%;
       background-color: #fff;
