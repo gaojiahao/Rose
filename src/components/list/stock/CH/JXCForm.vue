@@ -46,7 +46,7 @@
               <div v-for="(item, index) in listData" :key="index">
                 <div class="content-item" ref="partRightInit">
                     <span>{{item.initQty | formatNum}}</span>
-                    <span>{{item.crQty | formatNum}}</span>
+                    <span>{{item.drQty | formatNum}}</span>
                 </div>
               </div>
             </div>
@@ -62,7 +62,7 @@
             <div class="right-list">
               <div v-for="(item, index) in listData" :key="index">
                 <div class="content-item" ref="partRightFinal">
-                    <span>{{item.drQty | formatNum}}</span>
+                    <span>{{item.crQty | formatNum}}</span>
                     <span>{{item.blQty | formatNum}}</span>
                 </div>
               </div>
@@ -80,7 +80,7 @@
               <div v-for="(item, index) in listData" :key="index">
                 <div class="content-item" ref="partRightInit2">
                     <span>{{item.initAmount | formatNum}}</span>
-                    <span>{{item.crAmount | formatNum}}</span>
+                    <span>{{item.drAmount | formatNum}}</span>
                 </div>
               </div>
             </div>
@@ -96,7 +96,7 @@
             <div class="right-list">
               <div v-for="(item, index) in listData" :key="index">
                 <div class="content-item" ref="partRightFinal2">
-                    <span>{{item.drAmount | formatNum}}</span>
+                    <span>{{item.crAmount | formatNum}}</span>
                     <span>{{item.blAmount | formatNum}}</span>
                 </div>
               </div>
@@ -166,16 +166,40 @@
           }
         },
         timeTitle:'周期',
-        timeList:['过去7天','过去30天','过去90天','近两天','昨天',
-            '今日',
-            '本周',
-            '本月',
-            '本季度',
-            '本年',
-            '上周',
-            '上月',
-            '上季度',
-            '上年'],
+        timeList:['过去7天',
+          '过去30天',
+          '过去90天',
+          '近两天',
+          '昨天',
+          '今日',
+          '本周',
+          '本月',
+          '本季度',
+          '本年',
+          '上周',
+          '上月',
+          '上季度',
+          '上年'],
+        searchTimeList: {
+          '过去7天':'$last7Days$',
+          '过去30天':'$last30Days$',
+          '过去90天':'$last90Days$',
+          '近两天':'$lastTowDay$',
+          '昨天':'$yesterday$',
+          '今日':'$today$',
+          '本周':'$thisWeek$',
+          '本月':'$thisMonth$',
+          '本季度':'$thisQuarter$',
+          '本年':'$thisYear$',
+          '上周':'$preWeek$',
+          '上月':'$preMonth$',
+          '上季度':'$preQuarter$',
+          '上年':'$preYear$',
+        },
+        searchTypeList:{
+          '按物料查看':'matCode',
+          '按仓库查看':'whCode',
+        },
         timeValue:'本月',
         typeList:['按物料查看','按仓库查看'],
         typeValue:'按物料查看',
@@ -214,19 +238,20 @@
         handler(val){
           if(val=='按物料查看'){
             this.typeFlag = 'wl';
-            var data = JSON.parse(this.copyData);
-            var sorted =this.groupByType(data, function (item) {
-              return [item.matCode];//按照name进行分组
-            });
-            this.listData = sorted;
           } else if(val=='按仓库查看'){
             this.typeFlag = 'ck';
-            var data = JSON.parse(this.copyData);
-            var sorted =this.groupByType(data, function (item) {
-              return [item.whCode];//按照name进行分组
-            });
-            this.listData = sorted;  
           }
+          var data = JSON.parse(this.copyData),
+              me = this;
+          var sorted =this.groupByType(data, function (item) {
+            return [item[me.searchTypeList[me.typeValue]]];//按照name进行分组
+          });
+          this.listData = sorted;  
+        }
+      },
+      timeValue:{
+        handler(val){
+          this.getData();      
         }
       }
     },
@@ -237,19 +262,28 @@
       // 获取资产负债表数据
       getData() {
         let entityId = JSON.parse(storage.getItem(ROSE_TOKEN_KEY)).entityId || {};
+        let filter = [];
+        filter = [
+          {
+            operator: 'btw',
+            value: this.searchTimeList[this.timeValue],
+            property: 'EFFECTIVE_TIME',
+          }
+        ];
         var data = {
           _dc: Date.now(),
           strViewId: '63882579-5f7d-4708-b62c-89ba0c63f4e9',
           strEntityId: entityId,
-          aryFilters: '',
+          aryFilters: JSON.stringify(filter),
           intStart: 0,
           intLimit: 50,
         };
         return this.listMap[this.code].request(data).then(res => {
           let {data = []} = res;
+          let me = this;
           this.copyData = JSON.stringify(data);
           var sorted =this.groupByType(data, function (item) {
-            return [item.matCode];//按照name进行分组
+            return [item[me.searchTypeList[me.typeValue]]];//按照name进行分组
           });
           this.listData = sorted;
           this.$nextTick(() => {
@@ -280,14 +314,14 @@
           arr.blQty=0;
           arr.blAmount=0;
           for(var i = 0; i < groups[group].length; i++){
-            arr.drQty = arr.drQty + groups[group][i]['drQty']?groups[group][i]['drQty']:0;
-            arr.crQty = arr.crQty + groups[group][i]['crQty']?groups[group][i]['crQty']:0;
+            arr.drQty = accAdd(arr.drQty , groups[group][i]['drQty']?groups[group][i]['drQty']:0);
+            arr.crQty = accAdd(arr.crQty , groups[group][i]['crQty']?groups[group][i]['crQty']:0);
             arr.initQty = accAdd(arr.initQty , groups[group][i]['initQty']?groups[group][i]['initQty']:0);
-            arr.drAmount = arr.drAmount + groups[group][i]['drAmount']?groups[group][i]['drAmount']:0;
-            arr.crAmount = arr.crAmount + groups[group][i]['crAmount']?groups[group][i]['crAmount']:0;
-            arr.initAmount = arr.initAmount + groups[group][i]['initAmount']?groups[group][i]['initAmount']:0;
-            arr.blQty = arr.blQty + groups[group][i]['blQty']?groups[group][i]['blQty']:0;
-            arr.blAmount = arr.blAmount + groups[group][i]['blAmount']?groups[group][i]['blAmount']:0;
+            arr.drAmount = accAdd(arr.drAmount , groups[group][i]['drAmount']?groups[group][i]['drAmount']:0);
+            arr.crAmount = accAdd(arr.crAmount , groups[group][i]['crAmount']?groups[group][i]['crAmount']:0);
+            arr.initAmount = accAdd(arr.initAmount , groups[group][i]['initAmount']?groups[group][i]['initAmount']:0);
+            arr.blQty = accAdd(arr.blQty , groups[group][i]['blQty']?groups[group][i]['blQty']:0);
+            arr.blAmount = accAdd(arr.blAmount , groups[group][i]['blAmount']?groups[group][i]['blAmount']:0);
             arr.matCode = groups[group][i]['matCode'];
             arr.outPutMatCode_inventoryName = groups[group][i]['outPutMatCode_inventoryName'];
             arr.outPutMatCode_inventoryType = groups[group][i]['outPutMatCode_inventoryType'];
@@ -333,14 +367,7 @@
           longSwipersRadio: 0.9,
           freeMode: true,
           });
-          // this.headerSwiper = new this.Swiper('.swiper-container-header',{slidesPerView : 'auto',
-          // longSwipersRadio: 0.9,
-          // freeMode: true,
-          // });
           this.partRightSwiper.controller && (this.partRightSwiper.controller.control = this.headerSwiper);
-          //this.partRightSwiper.controller.control = this.headerSwiper;
-          //this.headerSwiper.controller.control = this.partRightSwiper;
-          
         })
       },
     },
