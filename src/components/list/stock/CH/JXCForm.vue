@@ -1,5 +1,16 @@
 <template>
   <div class="detail_wrapper">
+    <div class="list_top">
+      <div class='search'>
+        <form class="search_part" :class="'has-filter'" action="" @submit.prevent= "searchMenu">
+          <i class="icon icon-search"></i>
+          <input ref="searchInp" class="srh_inp" type="search" autocomplete="off"
+                :placeholder="typeDatas[typeFlag]['nameText']" @input='getSearchValue($event)' :value='searchValue'>
+          <div class="pop_cfm" @click="getData">搜索</div>
+          <i class="icon-clear clear_icon" @click="clearSearch"></i>
+        </form>
+      </div>
+    </div>
     <div class="title">
       <div class="duration">
         <r-picker 
@@ -203,7 +214,8 @@
         timeValue:'本月',
         typeList:['按物料查看','按仓库查看'],
         typeValue:'按物料查看',
-        copyData:''
+        copyData:'',
+        searchValue:'',
       }
     },
     components: {
@@ -256,9 +268,6 @@
       }
     },
     methods: {
-      endDateChange(){
-        this.getData();
-      },
       // 获取资产负债表数据
       getData() {
         let entityId = JSON.parse(storage.getItem(ROSE_TOKEN_KEY)).entityId || {};
@@ -270,6 +279,16 @@
             property: 'EFFECTIVE_TIME',
           }
         ];
+        if(this.searchValue){
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.searchValue,
+              property: this.typeDatas[this.typeFlag]['name'],
+              }
+          ];
+        }
         var data = {
           _dc: Date.now(),
           strViewId: '63882579-5f7d-4708-b62c-89ba0c63f4e9',
@@ -360,6 +379,13 @@
       changeType(type){
         this.typeValue = type;
       },
+      getSearchValue(e) {
+        this.searchValue = e.target.value;
+      },
+      clearSearch(){
+        this.searchValue = '';
+        this.getData();
+      },
       // 初始化swiper
       initSwiper() {
         this.$nextTick(() => {
@@ -415,7 +441,88 @@
     height: 100%;
     overflow: hidden;
     background-color: #fff;
-
+    .list_top {
+      width: 100%;
+      background-color: #fff;
+    }
+    .search {
+      width: 100%;
+      padding: .08rem 0;
+      .search_part {
+        width: 100%;
+        display: flex;
+        height: .24rem;
+        position: relative;
+        line-height: .24rem;
+        box-sizing: border-box;
+        // 搜索输入框
+        .srh_inp {
+          flex: 1;
+          border: none;
+          outline: none;
+          color: #333;
+          appearance: none;
+          font-size: .14rem;
+          margin-left: .15rem;
+          padding-left: .35rem;
+          border-radius: .2rem;
+          background: #F6F6F6;
+          -webkit-appearance: none;
+          &::-webkit-search-cancel-button {
+            display: none;
+          }
+        }
+        // 搜索 按钮
+        .pop_cfm {
+          color: #999;
+          font-size: .14rem;
+          margin: 0 .15rem 0 .12rem;
+        }
+        // 返回 按钮
+        .pop_cancel {
+          color: #fc3c3c;
+        }
+        // 搜索icon
+        .icon {
+          top: 50%;
+          z-index: 1;
+          left: .25rem;
+          width: .14rem;
+          height: .16rem;
+          fill: #2d2d2d;
+          position: absolute;
+          transform: translate(0, -50%);
+        }
+        // 清除icon
+        .clear_icon {
+          top: 50%;
+          right: .64rem;
+          width: .18rem;
+          height: .18rem;
+          display: block;
+          font-size: .12rem;
+          line-height: .3rem;
+          text-align: center;
+          position: absolute;
+          transform: translate(0, -50%);
+        }
+      }
+      .search_filter {
+        left: 0;
+        bottom: 0;
+        top: .49rem;
+        width: 100%;
+        z-index: 100;
+        font-size: .14rem;
+        position: absolute;
+        overflow: hidden;
+        .layer {
+          opacity: .5;
+          height: 100%;
+          background: #000;
+        }
+      }
+    }
     .title{
       font-size: .14rem;
       padding: .1rem .05rem;
