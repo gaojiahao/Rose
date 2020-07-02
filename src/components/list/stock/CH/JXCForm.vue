@@ -19,7 +19,7 @@
           :value="timeValue"
           v-model="timeValue" 
           :required="false" 
-          :mode="'2'">
+          :mode="'1'">
         </r-picker>
       </div>
       <div class="group-container">
@@ -384,7 +384,7 @@
       },
       clearSearch(){
         this.searchValue = '';
-        this.getData();
+        this.getData();1
       },
       // 初始化swiper
       initSwiper() {
@@ -451,9 +451,9 @@
       .search_part {
         width: 100%;
         display: flex;
-        height: .24rem;
+        height: .28rem;
         position: relative;
-        line-height: .24rem;
+        line-height: .28rem;
         box-sizing: border-box;
         // 搜索输入框
         .srh_inp {
