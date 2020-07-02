@@ -8,16 +8,27 @@
           </div>
         </div>
         <div class="water-detail">
-          <div>
+           <div class="water-detail-item">
+            <span>{{waterData.treecolumn}}</span>
+            <span :style="{textAlign:'right',display:'inline-block'}"></span>
+          </div>
+          <div  class="water-detail-item">
             <span>会计期间：{{`${dateList.startDate} ~ ${dateList.endDate}`}}</span>
           </div>
-          <div>
-            <span>{{waterData.treecolumn}}</span>
-            <span :style="{width:'30%',textAlign:'right',display:'inline-block'}">余额：{{waterHeaderData.balance | formatNum}}</span>
-          </div>
-          <div>
-            <span>借方：{{waterHeaderData.dr | formatNum}}</span>
-            <span>贷方：{{waterHeaderData.cr | formatNum}}</span>
+         
+          <div  class="water-detail-item">
+            <div :style="{color:'#09bb07'}">
+              <div >借方</div>
+              <div >{{waterHeaderData.dr | formatNum}}</div>
+            </div>
+            <div :style="{color:'#e60000'}">
+              <div >贷方</div>
+              <div >{{waterHeaderData.cr | formatNum}}</div>
+            </div>
+             <div :style="{color:'#353535'}">
+              <div>余额</div>
+              <div>{{waterHeaderData.balance | formatNum}}</div>
+            </div>
           </div>
         </div>
         <r-scroll :options="scrollOptions" class="water-scroll" ref="bScroll">
@@ -29,17 +40,17 @@
                 v-for="(list,listdex) of item.list" 
                 :key="listdex"
                 @click="gotoForm">
-                <div class="detail-left">
+                <div class="detail-left" v-if="list.summary!='本日合计'">
                   <img :src="getDefaultImg()"/>
                   <div style="margin-left:.1rem;">
                     <p>{{list.summary}}</p>
-                    <span>{{list.transCode}}</span>
+                    <span class="detail-left-transCode">{{list.transCode}}</span>
                   </div>
                 </div>
-                <div class="detail-right">
-                  <p v-if="!!list.dr">+{{list.dr | formatNum}}</p>
-                  <p v-else>-{{list.cr | formatNum}}</p>
-                  <span>余额：{{list.balance | formatNum}}</span>
+                <div class="detail-right"  v-if="list.summary!='本日合计'">
+                  <p v-if="!!list.dr" class="detail-right-transNum">+{{list.dr | formatNum}}</p>
+                  <p v-else  class="detail-right-transNum">-{{list.cr | formatNum}}</p>
+                  <span class="detail-right-balance">余额：{{list.balance | formatNum}}</span>
                 </div>
               </div>
             </div>
@@ -212,10 +223,11 @@
     }
     .water-detail{
       border-bottom: 1px solid #ddd;
-      div{
+      &-item{
         padding: .02rem .1rem;
         display: flex;
         justify-content: space-between;
+        text-align: center;
       }
     }
     .water-scroll{
@@ -224,16 +236,24 @@
       height: calc(100% - 1rem);
       margin-bottom: .25rem;
       .water-content{
-        padding: .1rem;
         .water-list{
           margin-top: .02rem;
           font-size: .14rem;
+          &-date{
+            background-color: #d9d9d9;
+            padding: .5em .1rem;
+          }
           &-detail{
             display: flex;
             justify-content: space-between;
             margin-top: .05rem;
+            padding: 0em .1rem;
             .detail-left{
               display: flex;
+              &-transCode{
+                color: #999999;
+                font-size: .12em;
+              }
               img{
                 width: .45rem;
                 height: .45rem;
@@ -241,6 +261,14 @@
             }
             .detail-right{
               text-align: right;
+              &-balance{
+                color: #999999;
+                font-size: .12em;
+              }
+
+              &-transNum{
+                font-weight: bold;
+              }
             }
           }
         }
