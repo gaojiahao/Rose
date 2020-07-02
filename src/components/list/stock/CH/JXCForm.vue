@@ -1,34 +1,24 @@
 <template>
   <div class="detail_wrapper">
     <div class="title">
-      <flexbox>
-        <flexbox-item :span="2/5">
-          <div class="flex-demo">
-            <r-picker :title="timeTitle" :data="timeList" :value="timeValue"
-                      v-model="timeValue" :required="false" :mode="'2'"
-                      ></r-picker>
+      <div class="duration">
+        <r-picker 
+          :title="timeTitle" 
+          :data="timeList" 
+          :value="timeValue"
+          v-model="timeValue" 
+          :required="false" 
+          :mode="'2'">
+        </r-picker>
+      </div>
+      <div class="group-container">
+        <div class="group-button" :class="{activeGroup:typeFlag==='wl'}">
+            <div @click="changeType('按物料查看')">按物料查看</div>
+        </div>
+        <div class="group-button" :class="{activeGroup:typeFlag==='ck'}">
+            <div @click="changeType('按仓库查看')">按仓库查看</div>
           </div>
-        </flexbox-item>
-        <!-- <flexbox-item :psan="1/2">
-          <div class="flex-demo">
-            <r-picker :data="typeList" :value="typeValue"
-                      v-model="typeValue" :required="true"
-                      ></r-picker>
-          </div>
-        </flexbox-item> -->
-        <flexbox-item :span="1/6">
-        </flexbox-item>
-        <flexbox-item :span="1/5">
-          <div class="flex-demo">
-            <p @click="changeType('按物料查看')">按物料查看</p>
-          </div>
-        </flexbox-item>
-        <flexbox-item :span="1/5">
-          <div class="flex-demo">
-            <p @click="changeType('按仓库查看')">按仓库查看</p>
-          </div>
-        </flexbox-item>
-      </flexbox>
+      </div>
     </div>
     <r-scroll :options="scrollOptions" class="scroll-container" ref="bScroll">
       <div class="part-left">
@@ -37,8 +27,8 @@
         </div>
         <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
           <div class="content-item" :style="{paddingLeft:`${item.indent*.65}em`}" ref="partLeft">
-            <p>{{item[typeDatas[typeFlag]['name']]}}</P>
-            <p>{{item[typeDatas[typeFlag]['code']]}}</P>
+            <p class="groupName">{{item[typeDatas[typeFlag]['name']]}}</P>
+            <p class="groupCode">{{item[typeDatas[typeFlag]['code']]}}</P>
           </div>
         </div>
       </div>
@@ -401,8 +391,33 @@
 
     .title{
       font-size: .14rem;
-      padding: 0 .05rem;
+      padding: .1rem .05rem;
       color: #696969;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      .duration{
+        flex: 1;
+        padding-right: .5rem;
+        .r-picker{
+          padding: .10rem 0;
+        }
+      }
+      .group-container{
+        flex: 1;
+        display: flex;
+        .group-button{
+            padding: .03rem;
+            border: .05em solid #ddd;
+            flex: 1;
+          }
+
+        .activeGroup{
+          color: red;
+          border: .05em solid;
+        }
+      }
+
       .vux-flex-row{
           .vux-flexbox-item{
             .flex-demo{
@@ -413,6 +428,8 @@
             }
           }
         }
+
+       
     }
     .title2{
       font-size: .14rem;  
@@ -465,10 +482,21 @@
 
       .content-item {
         position: relative;
-        padding: .05rem .15rem;
+        padding: 0rem .1rem;
         width: 100%;
-        line-height: .25rem;
+        line-height: .20rem;
+        -webkit-box-sizing: border-box;
         box-sizing: border-box;
+
+        .groupName{
+
+        }
+
+        .groupCode{
+          font-size: 12px;
+          color: #999999;
+        }
+
         /* 标题 */
         .title {
           padding: .05rem .15rem;
