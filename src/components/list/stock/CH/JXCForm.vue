@@ -19,7 +19,7 @@
           :value="timeValue"
           v-model="timeValue" 
           :required="false" 
-          :mode="'1'">
+          :mode="'2'">
         </r-picker>
       </div>
       <div class="group-container">
@@ -740,8 +740,9 @@
         justify-content: space-between;
         span{
           text-align: right;
-          width: 50%;
+          flex: 1;
           display: inline-block;
+          line-height: .4rem;
         }
       }
     }
