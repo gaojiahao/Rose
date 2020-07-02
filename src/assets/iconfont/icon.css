@@ -24,6 +24,10 @@
   background: url('~assets/iconfont/down.png');
   background-size: cover;
 }
+.icon-down1 {
+  background: url('~assets/iconfont/down1.png');
+  background-size: cover;
+}
 .icon-down-fill {
   background: url('~assets/iconfont/down_fill.png');
   background-size: cover;

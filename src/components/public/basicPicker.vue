@@ -1,10 +1,17 @@
 <template>
   <div class='r-picker' @click='showStatus'>
-    <div class="picker">
+    <div class="picker" v-if="mode === '1'">
       <label :class="{'required' : required}">{{title}}</label>
       <div class='content'>
         <span class='mater_nature'>{{showValue || "请选择"}}</span>
         <span class="icon-right"></span>
+      </div>
+    </div>
+    <div class="picker" v-else-if="mode === '2'">
+      <label :class="{'required' : required}">{{title}}</label>
+      <div class='content'>
+        <span class='mater_nature'>{{showValue || "请选择"}}</span>
+        <span class="icon-down1"></span>
       </div>
     </div>
     <div v-transfer-dom>
@@ -56,7 +63,10 @@
         type: Boolean,
         default: false
       },
-      
+      mode: {
+        type: String,
+        default: '1'
+      },
     },
     data() {
       return {
@@ -132,7 +142,11 @@
           height: .14rem;
           margin-left: .1rem;
         }
-        
+        .icon-down1{
+          width: .15rem;
+          height: .1rem;
+          margin-left: .05rem;
+        }
       }
     }
     

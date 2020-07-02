@@ -2,18 +2,30 @@
   <div class="detail_wrapper">
     <div class="title">
       <flexbox>
-        <flexbox-item :psan="1/2">
+        <flexbox-item :span="2/5">
           <div class="flex-demo">
             <r-picker :title="timeTitle" :data="timeList" :value="timeValue"
-                      v-model="timeValue" :required="true"
+                      v-model="timeValue" :required="false" :mode="'2'"
                       ></r-picker>
           </div>
         </flexbox-item>
-        <flexbox-item :psan="1/2">
+        <!-- <flexbox-item :psan="1/2">
           <div class="flex-demo">
             <r-picker :data="typeList" :value="typeValue"
                       v-model="typeValue" :required="true"
                       ></r-picker>
+          </div>
+        </flexbox-item> -->
+        <flexbox-item :span="1/6">
+        </flexbox-item>
+        <flexbox-item :span="1/5">
+          <div class="flex-demo">
+            <p @click="changeType('按物料查看')">按物料查看</p>
+          </div>
+        </flexbox-item>
+        <flexbox-item :span="1/5">
+          <div class="flex-demo">
+            <p @click="changeType('按仓库查看')">按仓库查看</p>
           </div>
         </flexbox-item>
       </flexbox>
@@ -321,6 +333,9 @@
           })
         })
       },
+      changeType(type){
+        this.typeValue = type;
+      },
       // 初始化swiper
       initSwiper() {
         this.$nextTick(() => {
@@ -386,7 +401,18 @@
 
     .title{
       font-size: .14rem;
-      padding: .05rem;
+      padding: 0 .05rem;
+      color: #696969;
+      .vux-flex-row{
+          .vux-flexbox-item{
+            .flex-demo{
+              p{
+                font-size: .12rem;
+                //text-align: right;
+              }
+            }
+          }
+        }
     }
     .title2{
       font-size: .14rem;  
