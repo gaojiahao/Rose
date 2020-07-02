@@ -9,9 +9,9 @@
     </div>
     <div class="picker" v-else-if="mode === '2'">
       <label :class="{'required' : required}">{{title}}</label>
-      <div class='content'>
+      <div class='content font-color'>
         <span class='mater_nature'>{{showValue || "请选择"}}</span>
-        <span class="icon-down1"></span>
+        <span class="icon-right"></span>
       </div>
     </div>
     <div v-transfer-dom>
@@ -147,6 +147,9 @@
           height: .1rem;
           margin-left: .05rem;
         }
+      }
+      .font-color{
+        color: #696969;
       }
     }
     
