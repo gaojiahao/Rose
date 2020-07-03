@@ -43,7 +43,7 @@
           <div v-for="(item, index) in listData" :key="index">
             <div class="content-item" ref="partLeft" @click.stop="onItemClick(item)">
                 <!-- {{item.treecolumn}} -->
-                <p>{{item.manageAccount}}</p>
+                <p>{{item.financeAccountName}}</p>
                 <p class="groupCode">{{item.financeAccountCode}}</p>
             </div>
           </div>
