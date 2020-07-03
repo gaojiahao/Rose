@@ -700,6 +700,7 @@
           .parent-title{
             text-align: center;
             background-color: #eee;
+            font-weight: 700;
           }
           .children-title{
             display: flex;
@@ -738,6 +739,7 @@
         padding-left: 0;
         display: flex;
         justify-content: space-between;
+        font-weight: 700;
         span{
           text-align: right;
           flex: 1;

@@ -1,7 +1,16 @@
 <template>
   <div class="detail_wrapper">
     <div class="form-search">
-      <x-input ref="formSearch" placeholder="搜索" v-model="searchValue"></x-input>
+      <!-- <x-input ref="formSearch" placeholder="搜索" v-model="searchValue"></x-input> -->
+       <div class='search'>
+        <form class="search_part" :class="'has-filter'" action="">
+          <i class="icon icon-search"></i>
+          <input ref="searchInp" class="srh_inp" type="search" autocomplete="off"
+                placeholder="搜索"  v-model='searchValue'>
+          <div class="pop_cfm"></div>
+          <i class="icon-clear clear_icon" @click="clearSearch"></i>
+        </form>
+      </div>
     </div>
     <div class="date-range">
         <div class="date-period">会计期间</div>
@@ -13,7 +22,11 @@
               @on-change="startDateChange">
             </datetime>
           </span>
+        </div>
+        <div>
           <span>至</span>
+        </div>
+        <div>
           <span class="end-date">
             <datetime
               v-model="endDate"
@@ -29,7 +42,9 @@
         <div class="title-list">
           <div v-for="(item, index) in listData" :key="index">
             <div class="content-item" ref="partLeft" @click.stop="onItemClick(item)">
-                {{item.treecolumn}}
+                <!-- {{item.treecolumn}} -->
+                <p>{{item.manageAccount}}</p>
+                <p class="groupCode">{{item.financeAccountCode}}</p>
             </div>
           </div>
         </div>
@@ -281,6 +296,8 @@
                       ret[key].treecolumn = key + (groupTitleField ? (" - " + it[groupTitleField]) : '');
                   }
                   ret[key].initDr += it.initDr;
+                  ret[key].manageAccount = it.manageAccount;
+                  ret[key].financeAccountCode = it.financeAccountCode;
                   ret[key].initCr += it.initCr;
                   ret[key].cr += it.cr;
                   ret[key].dr += it.dr;
@@ -357,6 +374,9 @@
           });
           this.partRightSwiper.controller && (this.partRightSwiper.controller.control = this.headerSwiper);
         })
+      },
+      clearSearch(){
+        this.searchValue = '';
       }
     },
     filters: {
@@ -403,6 +423,84 @@
     .form-search{
       background-color: #fff;
       border-bottom: 1px solid #ddd;
+      .search {
+        width: 100%;
+        padding: .08rem 0;
+        .search_part {
+          width: 100%;
+          display: flex;
+          height: .28rem;
+          position: relative;
+          line-height: .28rem;
+          box-sizing: border-box;
+          // 搜索输入框
+          .srh_inp {
+            flex: 1;
+            border: none;
+            outline: none;
+            color: #333;
+            appearance: none;
+            font-size: .14rem;
+            margin-left: .15rem;
+            padding-left: .15rem;
+            border-radius: .2rem;
+            background: #F6F6F6;
+            -webkit-appearance: none;
+            &::-webkit-search-cancel-button {
+              display: none;
+            }
+          }
+          // 搜索 按钮
+          .pop_cfm {
+            color: #999;
+            font-size: .14rem;
+            margin: 0 .15rem 0 .12rem;
+          }
+          // 返回 按钮
+          .pop_cancel {
+            color: #fc3c3c;
+          }
+          // 搜索icon
+          .icon {
+            top: 50%;
+            z-index: 1;
+            left: .25rem;
+            width: .14rem;
+            height: .16rem;
+            fill: #2d2d2d;
+            position: absolute;
+            transform: translate(0, -50%);
+          }
+          // 清除icon
+          .clear_icon {
+            top: 50%;
+            right: .4rem;
+            width: .18rem;
+            height: .18rem;
+            display: block;
+            font-size: .12rem;
+            line-height: .3rem;
+            text-align: center;
+            position: absolute;
+            transform: translate(0, -50%);
+          }
+        }
+        .search_filter {
+          left: 0;
+          bottom: 0;
+          top: .49rem;
+          width: 100%;
+          z-index: 100;
+          font-size: .14rem;
+          position: absolute;
+          overflow: hidden;
+          .layer {
+            opacity: .5;
+            height: 100%;
+            background: #000;
+          }
+        }
+      }
     }
     .date-range{
       display: flex;
@@ -452,6 +550,10 @@
           font-size: .16rem;
           font-weight: bold;
           box-sizing: border-box;
+        }
+        .groupCode{
+          font-size: 12px;
+          color: #999999;
         }
       }
     }
@@ -506,6 +608,7 @@
           .parent-title{
             text-align: center;
             background-color: #eee;
+            font-weight: 700;
           }
           .children-title{
               display: flex;
@@ -540,6 +643,8 @@
           text-align: right;
           width: 50%;
           display: inline-block;
+          line-height: .6rem;
+          font-weight: 700;
         }
       }
     }
