@@ -28,6 +28,10 @@ module.exports = {
             target,
             changeOrigin: true,
           },
+          '/analysis-api': {
+            target,
+            changeOrigin: true,
+          },
           '/dist': {
             target,
             changeOrigin: true,
@@ -37,6 +41,10 @@ module.exports = {
             changeOrigin: true,
           },
           '/gimgs': {
+            target,
+            changeOrigin: true
+          },
+          '/svc-nodejs': {
             target,
             changeOrigin: true
           }
