@@ -3,9 +3,13 @@
        <div class="overdue-list">
          <div class="list-right">
           <div class="vux-1px-b title">
-              <img src="https://lab.roletask.com/resource/app-icon/project-task.png" />
-              <b>任务逾期提醒</b>
-              <p>重要事件，您今天有{{content.length}}个任务需要完成！！！</p>
+              <span class="title-left">
+                <img src="https://lab.roletask.com/resource/app-icon/project-task.png" />
+              </span>
+              <div class="title-right">
+                <b>任务逾期提醒</b>
+                <p>重要事件，您今天有{{content.length}}个任务需要完成！！！</p>
+              </div>
           </div>
           <div class="list-content">
             <div class="header">
@@ -58,7 +62,7 @@ export default {
 .overdue-container{
   .overdue-list{
     border: 1px solid #ddd;
-    padding: .2rem .1rem;
+    padding: 0rem .1rem;
     background-color: #fff;
     border-radius: .02rem;
     text-align: left;
@@ -66,18 +70,26 @@ export default {
       padding-right: .1rem;
       .title{
         padding: .05rem 0rem;
-      }
-      img{
-        width: .2rem;
-        height: .2rem;
-      }
-      p{
-        color: #333;
-        font-size: .12rem;
-      }
-      b{
-        color: #333;
-        vertical-align: top;
+        display: flex;
+        align-items: center;
+        .title-left{
+          img{
+            width: .4rem;
+            height: .4rem;
+            border-radius: .02rem;
+          }
+        }
+        .title-right{
+            margin-left: .05rem;
+           p{
+            color: #333;
+            font-size: .12rem;
+          }
+          b{
+            color: #333;
+            vertical-align: top;
+          }
+        }
       }
       ul{
         font-size: .12rem;
@@ -102,5 +114,9 @@ export default {
       }
     }
   }
+  .content:last-child{
+    border: none;
+  }
 }
+
 </style>

@@ -3,12 +3,16 @@
        <div class="week-list">
          <div class="list-right">
             <div class="title">
-              <img :src="getDefaultPhoto()" />
-              <span>一周小结 {{`${startDate}~${endDate}`}}</span>
-              <p>
-                您本周总工作<b>{{content.workingHoursSubtotal | numberComma}}</b>小时，
-                产生<b>{{content.benefitSubtotal | numberComma}}</b>绩效收入，具体明细如下：
-              </p>
+              <span class="title-left">
+                <img :src="getDefaultPhoto()" />
+              </span>
+              <div class="title-right">
+                <span>一周小结 {{`${startDate}~${endDate}`}}</span>
+                <p>
+                  您本周总工作<b>{{content.workingHoursSubtotal | numberComma}}</b>小时，
+                  产生<b>{{content.benefitSubtotal | numberComma}}</b>绩效收入
+                </p>
+              </div>
             </div>
             <div class="list-content">
               <div class="content">
@@ -90,24 +94,33 @@ export default {
 .week-container{
   .week-list{
     border: 1px solid #ddd;
-    padding: .2rem .1rem;
+    padding: 0rem .1rem;
     background-color: #fff;
     border-radius: .02rem;
     text-align: left;
-    display: flex;
     .list-right{
       padding-right: .1rem;
       .title{
         color: #333;
-        img{
-          width: .2rem;
-          height: .2rem;
+        padding: .05rem 0rem;
+        display: flex;
+        align-items: center;
+        &-left{
+          img{
+            width: .4rem;
+            height: .4rem;
+            border-radius: .02rem;
+          }
         }
-        span{
-          vertical-align: top;
-        }
-        p{
-          color: #333;
+        &-right{
+          margin-left: .05rem;
+          span{
+            vertical-align: top;
+          }
+          p{
+            color: #333;
+            font-size: .12rem;
+          }
         }
       }
       .list-content{
