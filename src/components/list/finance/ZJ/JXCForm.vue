@@ -536,9 +536,14 @@
         flex: 1;
         display: flex;
         .group-button{
-            padding: .03rem;
+            padding: .10rem 0;
             border: .05em solid #ddd;
             flex: 1;
+            line-height: .14em;
+            div{
+              line-height: .14rem;
+              text-align: center;
+            }
           }
 
         .activeGroup{
@@ -740,6 +745,7 @@
           flex: 1;
           display: inline-block;
           line-height: .4rem;
+          font-size: .12rem;
         }
       }
     }
