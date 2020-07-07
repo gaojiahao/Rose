@@ -92,7 +92,7 @@ export default {
     border: 1px solid #ddd;
     padding: .2rem .1rem;
     background-color: #fff;
-    border-radius: .05rem;
+    border-radius: .02rem;
     text-align: left;
     display: flex;
     h2{
@@ -111,11 +111,9 @@ export default {
       padding-right: .1rem;
       .title{
         color: #333;
-        font-size: .16rem;
       }
       p{
         color: #333;
-        font-size: .16rem;
       }
       .list-content{
         .content{
@@ -123,6 +121,7 @@ export default {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: .12rem;
         }
       }
     }
