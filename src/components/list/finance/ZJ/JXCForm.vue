@@ -170,7 +170,7 @@
           },
           type:{
             title:'类型',
-            code:'accountSub',
+            code:'accountSubCode',
             name:'accountSub',
             codeText:'账户类型',
             nameText:'账户类型'
@@ -301,8 +301,6 @@
         return this.listMap[this.code].request(data).then(res => {
           let {data = []} = res;
           let me = this;
-          console.log(data);
-          console.log(me.searchTypeList[me.typeValue])
           this.copyData = JSON.stringify(data);
           var sorted =this.groupByType(data, function (item) {
             return [item[me.searchTypeList[me.typeValue]]];//按照name进行分组
@@ -345,6 +343,7 @@
             arr.cashOutCode_account = groups[group][i]['cashOutCode_account'];
             arr.cashOutCode_fundCurrency = groups[group][i]['cashOutCode_fundCurrency'];
             arr.accountSub = groups[group][i]['accountSub'];
+            arr.accountSubCode = '-';
           }
           return arr;
         });
