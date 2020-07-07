@@ -60,6 +60,7 @@
                                     <span v-if="[1,101,102,104].includes(parseInt(group.lastMsg.imType))" v-html="formatToEmotion(group.lastMsg.content)"></span>
                                     <span v-else-if="group.lastMsg.imType==2">[图片]</span>
                                     <span v-else-if="[3,4].includes(group.lastMsg.imType)">[文件]</span>
+                                    <span v-else-if="group.groupType=='N'">[通知]</span>
                                 </div> 
                                 </div>
                         </touch>
