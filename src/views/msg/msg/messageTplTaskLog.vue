@@ -55,7 +55,8 @@ export default {
     .list-left{
       padding-right: .1rem;
       .icon-notice{
-        font-size: .2rem;
+        font-size: .28rem;
+        color: #f90;
       }
     }
     .list-right{
