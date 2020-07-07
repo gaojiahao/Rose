@@ -67,15 +67,14 @@ export default {
     border-radius: .02rem;
     text-align: left;
     .list-right{
-      padding-right: .1rem;
       .title{
         padding: .05rem 0rem;
         display: flex;
         align-items: center;
         .title-left{
           img{
-            width: .4rem;
-            height: .4rem;
+            width: .35rem;
+            height: .35rem;
             border-radius: .02rem;
           }
         }
@@ -110,6 +109,9 @@ export default {
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px dashed #eee;
+        }
+        .content:last-child{
+          border: none;
         }
       }
     }

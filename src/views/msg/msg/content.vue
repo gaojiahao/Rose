@@ -72,12 +72,15 @@
                         <div><span>{{msg.content}}</span></div>
                     </div>
                     <div class="otherMessage" v-if="[201].includes(msg.imType)">
+                         <div>{{msg.crtTime}}</div>
                         <MessageTplTaskLog :msg="msg"></MessageTplTaskLog>
                     </div>
                     <div class="otherMessage" v-if="[202,203,204].includes(msg.imType)">
+                         <div>{{msg.crtTime}}</div>
                         <MessageTplTaskOverdue :msg="msg"></MessageTplTaskOverdue>
                     </div>
                     <div class="otherMessage" v-if="[205].includes(msg.imType)">
+                         <div>{{msg.crtTime}}</div>
                         <MessageTplWeekSummary :msg="msg"></MessageTplWeekSummary>
                     </div>
                 </div>

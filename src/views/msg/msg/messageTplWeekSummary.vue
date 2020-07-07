@@ -1,13 +1,13 @@
 <template>
     <div class="week-container">
        <div class="week-list">
+         一周小结 {{`${startDate.replace('-','.')}~${endDate.replace('-','.')}`}}
          <div class="list-right">
             <div class="title">
               <span class="title-left">
                 <img :src="getDefaultPhoto()" />
               </span>
               <div class="title-right">
-                <span>一周小结 {{`${startDate}~${endDate}`}}</span>
                 <p>
                   您本周总工作<b>{{content.workingHoursSubtotal | numberComma}}</b>小时，
                   产生<b>{{content.benefitSubtotal | numberComma}}</b>绩效收入
@@ -119,7 +119,7 @@ export default {
           }
           p{
             color: #333;
-            font-size: .12rem;
+            font-size: .14rem;
           }
         }
       }
