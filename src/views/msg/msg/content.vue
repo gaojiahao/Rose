@@ -7,7 +7,7 @@
             <div class="groupName body">
                 {{group.groupName}}
             </div>
-            <div class="toGroupAdmin" @click="$router.push('/msg/group/'+ group.groupId +'/info')">
+            <div v-if="group.groupType !== 'N'" class="toGroupAdmin" @click="$router.push('/msg/group/'+ group.groupId +'/info')">
                 <i class="iconfont" :class="[group.groupType == 'G' ? 'icon-users':'icon-me']"></i>
             </div>
         </div>
@@ -71,11 +71,20 @@
                         <div>{{msg.crtTime}}</div>
                         <div><span>{{msg.content}}</span></div>
                     </div>
+                    <div class="otherMessage" v-if="[201].includes(msg.imType)">
+                        <MessageTplTaskLog :msg="msg"></MessageTplTaskLog>
+                    </div>
+                    <div class="otherMessage" v-if="[202,203,204].includes(msg.imType)">
+                        <MessageTplTaskOverdue :msg="msg"></MessageTplTaskOverdue>
+                    </div>
+                    <div class="otherMessage" v-if="[205].includes(msg.imType)">
+                        <MessageTplWeekSummary :msg="msg"></MessageTplWeekSummary>
+                    </div>
                 </div>
             </div><!--msg-container-->
         </r-scroll>
         <ContextMenu v-show="showContextMenu" ref="contextMenu"/>
-        <div class="msgList-footer">
+        <div v-if="group.groupType !== 'N'" class="msgList-footer">
             <div class="replayMsg" v-if="replayMsg">
                 <span>{{replayMsg.creatorName}}:</span>
                 <div class="replayMsg-content">
@@ -141,6 +150,9 @@ import MessageTplText from '@/views/msg/msg/messageTplText'
 import MessageTplImg from '@/views/msg/msg/messageTplImg'
 import MessageTplMult from '@/views/msg/msg/messageTplMult'
 import MessageTplFile from '@/views/msg/msg/messageTplFile'
+import MessageTplTaskLog from './messageTplTaskLog'
+import MessageTplTaskOverdue from './messageTplTaskOverdue'
+import MessageTplWeekSummary from './messageTplWeekSummary'
 import MessageReadDetail from './messageReadDetail'
 import RScroll from "plugins/scroll/RScroll";
 import Touch from "plugins/touch";
@@ -174,6 +186,9 @@ export default {
         MessageTplImg,
         MessageTplMult,
         MessageTplFile,
+        MessageTplTaskLog,
+        MessageTplTaskOverdue,
+        MessageTplWeekSummary,
         RScroll,
         LoadMore,
         FileDialog,
