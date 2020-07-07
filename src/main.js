@@ -47,6 +47,7 @@ import AppExample from './components/public/AppExample'
 import RHtmlEditor from './components/public/HtmlEditor'
 import { AlertPlugin, ConfirmPlugin, ToastPlugin, TransferDom, DatetimePlugin } from 'vux'
 import Loading from 'plugins/loading/pageLoad/loading'
+import Loading2 from 'plugins/loading/pageLoad/loading2'
 import HandleLoad from 'plugins/loading/handleLoad/handleLoading'
 import platfrom from './plugins/platform/index'
 import commonService from "service/commonService";
@@ -66,6 +67,7 @@ if(window.isApp){ //处理消息推送专用代码
 }
 /**plugin */
 Vue.use(Loading)
+Vue.use(Loading2)
 Vue.use(HandleLoad)
 Vue.use(ToastPlugin)
 Vue.use(AlertPlugin)

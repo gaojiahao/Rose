@@ -57,6 +57,10 @@ export default{
         onKeyUp() {
           const patrn = /[`~!@#$%^&*()_\-+=<>?:"{}|.\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘'。、]/ig; 
           if (patrn.test(this.groupName)) {
+            this.$vux.toast.show({
+              text: '不可输入特殊字符！',
+              type: 'warn'
+            });
             this.groupName = this.groupName.replace(patrn,'');
           }
         },

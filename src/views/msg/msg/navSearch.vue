@@ -73,7 +73,7 @@ export default{
             searchValue: "",
             data: [],
             userId: "",
-            hasNext:false,
+            hasNext:true,
             scrollOptions:{
                 click: false,
                 pullUpLoad: false,//上拉刷新

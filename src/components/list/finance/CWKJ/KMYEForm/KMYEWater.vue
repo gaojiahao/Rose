@@ -252,7 +252,7 @@
               display: flex;
               &-transCode{
                 color: #999999;
-                font-size: .12em;
+                font-size: .12rem;
               }
               img{
                 width: .45rem;
@@ -263,7 +263,7 @@
               text-align: right;
               &-balance{
                 color: #999999;
-                font-size: .12em;
+                font-size: .12rem;
               }
 
               &-transNum{

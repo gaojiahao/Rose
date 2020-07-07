@@ -11,13 +11,13 @@
       <div class="my-performance">
       <div class="my-info" >
         <div class="my-info-entity" >
-          <div>{{ currentUser.entityName}}</div>
-          <img :src="currentUser.photo" @error="getDefaultImg()" />
+          <div>{{ entityName||currentUser.entityName }}</div>
+          <img :src="currentUser.photo|appIconFilter" @error="getDefaultImg()" />
         </div>
 
         <div class="my-info-job">
-           <p class="my-info-job-nickname">{{ currentUser.name }}</p>
-            <p class="my-info-job-jobs">{{ roles.join(',') }}</p>
+           <p class="my-info-job-nickname">{{ name||currentUser.name }}</p>
+            <p class="my-info-job-jobs">{{ role||roles.join(',') }}</p>
         </div>
       </div>
 
@@ -110,14 +110,40 @@ export default {
            roles: []
         }
     },
+    computed:{
+      entityName(){
+        var data = JSON.parse(sessionStorage.getItem('basicInfo'));
+        if(data){
+          return data.currentUser.entityName;
+        }
+      },
+      photo(){
+        var data = JSON.parse(sessionStorage.getItem('basicInfo'));
+        if(data){
+          return data.currentUser.photo;
+        }
+      },
+      name(){
+        var data = JSON.parse(sessionStorage.getItem('basicInfo'));
+        if(data){
+          return data.currentUser.nickname;
+        }
+      },
+      role(){
+        this.roles = [];
+        var data = JSON.parse(sessionStorage.getItem('basicInfo'));
+        if(data){
+          data.currentUser.isSysRoleList.forEach(item => {
+            this.roles.push(item.name)
+          })
+          return this.roles.join(',');
+        }
+      }
+    },
     methods:{
         // 获取默认图片
         getDefaultImg() {
-          let url = require('assets/contact_default02.png');
-          if(this.currentUser.photo){
-            url = this.currentUser.photo
-          }
-          return url;
+          return 'https://lab.roletask.com/resource/common-icon/male.png';
         },
         onTimeChange() {
           let currentId = event.target.id;
@@ -192,9 +218,9 @@ export default {
            this.getYearPerformances()
             initWebContext().then((WebContext) => {
                 this.currentUser = WebContext.currentUser
-                this.currentUser.isSysRoleList.forEach(item => {
-                  this.roles.push(item.name)
-                })
+                // this.currentUser.isSysRoleList.forEach(item => {
+                //   this.roles.push(item.name)
+                // })
             })
         }
     },

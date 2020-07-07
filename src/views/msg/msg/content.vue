@@ -116,7 +116,7 @@
             <r-emotion :show = "showEmotion" @on-select="emotionSelected" ref="emotion"></r-emotion>
             <FileDialog v-if="fileDlgContext" @cancel="cancleFile" @todo="sendFileMsg" :content="fileDlgContext">
                  <div class="file-dialog-sendTo">
-                    <img :src="group.groupIcon" @error="getDefaultPhoto(group)">
+                    <img :src="group.groupIcon|appIconFilter" @error="getDefaultPhoto(group)">
                     <div>
                         <span v-html="group.groupName"></span>
                     </div>

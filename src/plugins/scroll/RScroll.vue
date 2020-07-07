@@ -140,7 +140,7 @@
                 setTimeout(()=>{
                     this.$emit('on-pulling-down');
                     this.$emit('search-box-show',true);
-                },2000)
+                },100)
             } 
           });
           this.$parent.scroller = this.bScroll;

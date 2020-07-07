@@ -135,6 +135,7 @@ let cfg = {
                 }else{
                   this.displaysValue = this.values[this.cfg.fieldCode];
                 }
+                this.$loading2.hide();
               })
             }
           }else{
@@ -468,6 +469,7 @@ let cfg = {
     selItem(item,status){
       this.selection = item;
       this.showPop = false;
+      this.$loading2.show();
       this.value = item && item[this.cfg.valueField];
       //重复项与单一项的默认展示数据需求不一样
       if(this.$parent.cfg.xtype != "r2GridColumn") {
