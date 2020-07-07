@@ -35,11 +35,14 @@
                             @menuContext.stop="onNavContextMenu(group)" 
                             @click="toMsg(group)">
                                 <div class="group-body-icon">
-                                    <span>
+                                    <span v-if="group.groupType!='N'">
                                         <img class="group-body-icon-ava" 
                                             :src="group.groupIcon|appIconFilter"
                                             @error="getDefaultPhoto(group)">
                                     </span>
+                                    <div v-if="group.groupType=='N'" class="notice-group">
+                                        <i class="iconfont icon-notice" ></i>
+                                    </div>
                                     <badge  
                                         class="group-body-icon-msgCount"
                                         :text='group.msgCount' 
@@ -669,6 +672,19 @@ export default {
     display: flex;
     &-icon{
         flex: 1;
+
+        .notice-group{
+            text-align: center;
+            background-color: #f90;
+            border-radius: .02rem;
+            width: 45px;
+            height: 45px;
+
+            .icon-notice{
+                font-size: .28rem;
+                color: #fff;
+            }
+        }
         &-ava{
             width: .45rem;
             height: .45rem;
