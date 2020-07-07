@@ -5,7 +5,7 @@
            <img src="https://lab.roletask.com/resource/app-icon/project-task.png" />
          </div>
          <div class="list-right">
-            <h2>任务逾期提醒</h2>
+            <b>任务逾期提醒</b>
             <p>重要事件，您今天有{{content.length}}个任务需要完成！！！</p>
             <div class="list-content">
               <div class="header">
@@ -60,7 +60,7 @@ export default {
     border: 1px solid #ddd;
     padding: .2rem .1rem;
     background-color: #fff;
-    border-radius: .05rem;
+    border-radius: .02rem;
     text-align: left;
     display: flex;
     h2{
@@ -68,8 +68,8 @@ export default {
     }
     .list-left{
       flex: .5;
-      padding-top: .09rem;
-      margin-right: .1rem;
+      padding-top: .04rem;
+      text-align: center;
       img{
         width: .2rem;
         height: .2rem;
@@ -79,16 +79,20 @@ export default {
       padding-right: .1rem;
       p{
         color: #333;
-        font-size: .16rem;
+        font-size: .12rem;
+      }
+      b{
+        color: #333;
       }
       ul{
-        font-size: .16rem;
+        font-size: .12rem;
         color: #333;
       }
       .list-content{
         color: #333;
         .header{
           display: flex;
+          font-size: .12rem;
           justify-content: space-between;
           border-bottom: 1px solid #ddd;
           padding: .1rem 0rem .05rem 0rem;

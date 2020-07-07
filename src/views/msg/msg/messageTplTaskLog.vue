@@ -6,7 +6,7 @@
            <i class="iconfont icon-notice" ></i>
          </span>
          <div class="list-right">
-           <h2>日志提交提醒</h2>
+           <b>日志提交提醒</b>
           <p>工作一天辛苦啦，记得提交日志哦！</p>
          </div>
        </div>
@@ -48,7 +48,7 @@ export default {
     border: 1px solid #ddd;
     padding: .1rem;
     background-color: #fff;
-    border-radius: .05rem;
+    border-radius: .02rem;
     text-align: left;
     display: flex;
     align-items: center;
@@ -59,12 +59,11 @@ export default {
       }
     }
     .list-right{
-
-      h2{
+      b{
         color: #333;
       }
       p{
-        font-size: .16rem;
+        font-size: .12rem;
         color: #333;
       }
     }
