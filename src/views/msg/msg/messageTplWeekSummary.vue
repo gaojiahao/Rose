@@ -1,15 +1,15 @@
 <template>
     <div class="week-container">
        <div class="week-list">
-         <div class="list-left">
-           <img :src="getDefaultPhoto()" />
-         </div>
          <div class="list-right">
-            <div class="title">一周小结 {{`${startDate}~${endDate}`}}</div>
-            <p>
-              您本周总工作<b>{{content.workingHoursSubtotal | numberComma}}</b>小时，
-              产生<b>{{content.benefitSubtotal | numberComma}}</b>绩效收入，具体明细如下：
-            </p>
+            <div class="title">
+              <img :src="getDefaultPhoto()" />
+              <span>一周小结 {{`${startDate}~${endDate}`}}</span>
+              <p>
+                您本周总工作<b>{{content.workingHoursSubtotal | numberComma}}</b>小时，
+                产生<b>{{content.benefitSubtotal | numberComma}}</b>绩效收入，具体明细如下：
+              </p>
+            </div>
             <div class="list-content">
               <div class="content">
                 <span>计件绩效</span>
@@ -95,25 +95,20 @@ export default {
     border-radius: .02rem;
     text-align: left;
     display: flex;
-    h2{
-      color: #333;
-    }
-    .list-left{
-      flex: .5;
-      padding-top: .09rem;
-      margin-right: .1rem;
-      img{
-        width: .2rem;
-        height: .2rem;
-      }
-    }
     .list-right{
       padding-right: .1rem;
       .title{
         color: #333;
-      }
-      p{
-        color: #333;
+        img{
+          width: .2rem;
+          height: .2rem;
+        }
+        span{
+          vertical-align: top;
+        }
+        p{
+          color: #333;
+        }
       }
       .list-content{
         .content{
