@@ -46,7 +46,7 @@ var cordova = window.cordova;
 export default {
   name: 'app',
   data() {
-    var hasNav = true;//window.isApp;//platform.isIPhone && 
+    var hasNav = false;//window.isApp;//platform.isIPhone && 
     return{
       tablist: [
         {title: '消息', path: '/msg', icon:'icon-message1'},

@@ -4,12 +4,7 @@
     <div class='content'>
       <slot name="nav"></slot>
       <div class="list_top">
-        <div class="header" v-if="!hasNav">
-          <div class="header-container">
-            <i class="icon icon-return" @click="goBack"></i>
-            <div class="center">资金进销存</div>
-          </div>
-        </div>
+        
       </div>
       <div class="swiper-container list-container" :class="{'list-container2':hasNav}">
         <div class="swiper-wrapper">
