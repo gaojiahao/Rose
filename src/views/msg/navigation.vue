@@ -503,7 +503,7 @@ export default {
                     this.$nextTick(()=>{
                         this.$refs.groupMsg.scrollToButtom(0);
                     })
-                });       
+                });
             } else {
                 this.$router.push(path);
                 this.$nextTick(()=>{
