@@ -35,11 +35,14 @@
                             @menuContext.stop="onNavContextMenu(group)" 
                             @click="toMsg(group)">
                                 <div class="group-body-icon">
-                                    <span>
+                                    <span v-if="group.groupType!='N'">
                                         <img class="group-body-icon-ava" 
                                             :src="group.groupIcon|appIconFilter"
                                             @error="getDefaultPhoto(group)">
                                     </span>
+                                    <div v-if="group.groupType=='N'" class="notice-group">
+                                        <i class="iconfont icon-notice" ></i>
+                                    </div>
                                     <badge  
                                         class="group-body-icon-msgCount"
                                         :text='group.msgCount' 
@@ -57,6 +60,7 @@
                                     <span v-if="[1,101,102,104].includes(parseInt(group.lastMsg.imType))" v-html="formatToEmotion(group.lastMsg.content)"></span>
                                     <span v-else-if="group.lastMsg.imType==2">[图片]</span>
                                     <span v-else-if="[3,4].includes(group.lastMsg.imType)">[文件]</span>
+                                    <span v-else-if="group.groupType=='N'">[通知]</span>
                                 </div> 
                                 </div>
                         </touch>
@@ -503,7 +507,7 @@ export default {
                     this.$nextTick(()=>{
                         this.$refs.groupMsg.scrollToButtom(0);
                     })
-                });       
+                });
             } else {
                 this.$router.push(path);
                 this.$nextTick(()=>{
@@ -669,6 +673,19 @@ export default {
     display: flex;
     &-icon{
         flex: 1;
+
+        .notice-group{
+            text-align: center;
+            background-color: #f90;
+            border-radius: .02rem;
+            width: 45px;
+            height: 45px;
+
+            .icon-notice{
+                font-size: .28rem;
+                color: #fff;
+            }
+        }
         &-ava{
             width: .45rem;
             height: .45rem;
