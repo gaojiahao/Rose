@@ -315,7 +315,7 @@ export default {
       await this.getFormViews();// 所有的视图列表
       await this.getAction();// 获取列表权限
       await this.getCommentList();// 请求评论列表
-      await this.getAppExampleDetails();// 获取相关实例
+      //await this.getAppExampleDetails();// 获取相关实例
       await this.isSubscribeByRelationKey(); //是否订阅
 
       this.$loading.hide();
