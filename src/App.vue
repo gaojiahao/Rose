@@ -46,7 +46,7 @@ var cordova = window.cordova;
 export default {
   name: 'app',
   data() {
-    var hasNav = false;//window.isApp;//platform.isIPhone && 
+    var hasNav = true;//window.isApp;//platform.isIPhone && 
     return{
       tablist: [
         {title: '消息', path: '/msg', icon:'icon-message1'},
@@ -113,7 +113,7 @@ export default {
           vm = this,
           status,
           dsClient;
-      if (window.baseURL) dsUrl = "175.roletask.com:6021/deepstream";//app测试代码
+      if (window.baseURL) dsUrl = "172.roletask.com:6021/deepstream";//app测试代码
       return new Promise((resolve,reject)=>{
           if(vm.dsClient != null && vm.dsClient.getConnectionState() != 'CLOSED'){
               console.log('ds is not null');

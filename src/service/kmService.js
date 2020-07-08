@@ -42,6 +42,24 @@ export let getProfit = (endDate) => {
     }
   })
 };
+// 获取科目余额表数据
+export let getAccountBalance = (startDate,endDate,financeAccountCode,objectType,objectCode) => {
+  let waterFilter = [
+    {property:"subject",operator:"eq",value:financeAccountCode},
+    {property:"accountSub",operator:"eq",value:objectType},
+    {property:"objectCode",operator:"eq",value:objectCode}
+  ],filter = [
+    {property:"start",operator:"ge",value:startDate},
+    {property:"end",operator:"le",value:endDate}
+  ];
+  if(financeAccountCode) filter = filter.concat(waterFilter);
+  return $flyio.ajax({
+    url: '/analysis-api/analysis/accountBalance/getAccountBalance',
+    data: {
+      filter: JSON.stringify(filter)
+    }
+  })
+};
 // 获取企业货币
 export let getLocalCurrency = () => {
   return $flyio.ajax({
@@ -67,6 +85,12 @@ export let prolxyGetAutomaticEntry = (data = {}) => {
       view_scope: 'modelAndData',
       op: 'queryAll',
       //view_type: view_type
+      data
+  })
+};
+export let getPsiDataByViewId = (data = {}) => {
+  return  $flyio.ajax({
+      url: '/svc-nodejs/getPsiDataByViewId',
       data
   })
 };
