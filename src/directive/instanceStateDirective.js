@@ -39,21 +39,27 @@ function render (el, bind) {
                 break;
         }
     }else{
+        console.log(bind);
         switch (bind.value.status) {
             case "已生效":
                 el.style.backgroundColor = bind.value.color ? bind.value.color : '#4CAF50';
+                el.innerText = '已生效';
                 break;
             case "草稿":
                 el.style.backgroundColor = '#FFC107';
+                el.innerText = '草稿';
                 break;
             case "进行中":
                 el.style.backgroundColor = '#35baf6';
+                el.innerText = '进行中';
                 break;
             case "已失效":
                 el.style.backgroundColor = '#E91E63';
+                el.innerText = '已失效';
                 break;
             case "已归档":
                 el.style.backgroundColor = '#1f5ec5';
+                el.innerText = '已归档';
                 break;
             default:
                 el.innerText = bind.value.status;
