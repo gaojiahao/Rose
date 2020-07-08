@@ -6,6 +6,12 @@ import * as dd from 'dingtalk-jsapi'
 import router from '../router';
 
 const fly = new Fly();
+// fly请求 设置拦截器
+fly.interceptors.request.use((request) => {
+  if(window.isApp){
+    request.headers.os = window.device.platform;
+  }
+});
 const storage = window[isPC||window.isApp ? 'localStorage' : 'sessionStorage'];
 const ROSE_TOKEN_KEY = 'ROSE_LOGIN_TOKEN';
 

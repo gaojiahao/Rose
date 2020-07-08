@@ -17,18 +17,18 @@ export default [
     path: '/taskflow', 
     name: 'taskflow', 
     component: taskflow,
-    meta: { title: '任务列表', keepAlive: true},
+    meta: { title: '任务列表', keepAlive: true,disablebBack:true},
     redirect: { name: 'myToDoTask' },
     children:[{
       path:'dailyTask',
       name:'dailyTask',
       component:dailyTask,
-      meta: { title: '日志任务', keepAlive: true},
+      meta: { title: '日志任务', keepAlive: true,disablebBack:true},
     },{
       path:'myToDoTask',
       name:'myToDoTask',
       component:myToDoTask,
-      meta: { title: '我的待办', keepAlive: true},
+      meta: { title: '我的待办', keepAlive: true,disablebBack:true},
     },{
       path:'myCompleted',
       name:'myCompleted',

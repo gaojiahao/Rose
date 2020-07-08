@@ -12,15 +12,19 @@
                         <span class="iconfont icon-add"></span>
                     </span>
                 </div>
-            </div>
             <div class="navigation-add-list-mask" v-show="showList" @click="showList = false"></div>
             <div class="navigation-add-list" v-if="showList">  
                 <p @click="showCreateGroupList">发起群聊</p>
             </div>
+            </div>
                 <RScroll 
+                    style="height:5rem"
                     class="page-body-hasNav" 
                     :options="scrollOptions"
                     :has-next="hasNext"
+                    ref="bScroll"
+                    :hideToast="true"
+                    @on-pulling-down="onPullingDown"
                     :no-data="false"
                 >
                 <LoadMore :show-loading="showLoading" v-show="showLoading"></LoadMore>
@@ -31,11 +35,14 @@
                             @menuContext.stop="onNavContextMenu(group)" 
                             @click="toMsg(group)">
                                 <div class="group-body-icon">
-                                    <span>
+                                    <span v-if="group.groupType!='N'">
                                         <img class="group-body-icon-ava" 
                                             :src="group.groupIcon|appIconFilter"
                                             @error="getDefaultPhoto(group)">
                                     </span>
+                                    <div v-if="group.groupType=='N'" class="notice-group">
+                                        <i class="iconfont icon-notice" ></i>
+                                    </div>
                                     <badge  
                                         class="group-body-icon-msgCount"
                                         :text='group.msgCount' 
@@ -53,6 +60,7 @@
                                     <span v-if="[1,101,102,104].includes(parseInt(group.lastMsg.imType))" v-html="formatToEmotion(group.lastMsg.content)"></span>
                                     <span v-else-if="group.lastMsg.imType==2">[图片]</span>
                                     <span v-else-if="[3,4].includes(group.lastMsg.imType)">[文件]</span>
+                                    <span v-else-if="group.groupType=='N'">[通知]</span>
                                 </div> 
                                 </div>
                         </touch>
@@ -83,6 +91,7 @@ import RScroll from "plugins/scroll/RScroll";
 import Touch from "plugins/touch";
 import NavContextMenu from "./msg/navContextMenu";
 import { Badge} from 'vux'
+import MD5 from 'md5.js'
 var defaultPhoto = require("assets/ava01.png");
 export default {
     created:function(){       
@@ -127,9 +136,9 @@ export default {
     data(){
         return {
             scrollOptions:{
-                    click: true,
-                    pullUpLoad: false,//上拉刷新
-                    pullDownRefresh: false //下拉刷新
+                click: true,
+                pullUpLoad: false,//上拉刷新
+                pullDownRefresh: false //下拉刷新
             },
            hasNext:false,
            showNavContextMenu: false,
@@ -155,6 +164,9 @@ export default {
         Badge
     },
     methods:{
+        onPullingDown(){
+            this.initGroup();
+        },
         getDefaultPhoto(group) {
             let url = defaultPhoto;
             if (group) {
@@ -188,9 +200,12 @@ export default {
                 });
                 this.groupIdToIndex = groupIdToIndex;
                 this.groups = data;
-                this.scroller && this.scroller.refresh();
+                // this.scroller && this.scroller.refresh();
                 this.showLoading = false;
-                 this.setAppNoticeBadge();
+                this.setAppNoticeBadge();
+                //  this.$nextTick(() => {
+                //     this.$refs.bScroll.finishPullDown();
+                // });
             }).catch(e=>{
                 if(e.message == 'nologin'){//没有登录
                     this.refresh = true;
@@ -222,7 +237,7 @@ export default {
                     app.getDs(deepStreamUrl,userId).then(ds=>{
                          this.dsConnectStart = false;
                          if (this.describeMsg != true){//防止断线重连时重复订阅
-                             vm.describeDs(ds);
+                             vm.describeDs(ds,userId);
                              this.describeMsg = true;
                          }
                     });
@@ -232,8 +247,13 @@ export default {
                 console.log(e);
             })
         },
-        describeDs(ds){
-            var token = tokenService.getToken();
+        describeDs(ds,userId){
+            var md5stream = new MD5(),
+                token;
+
+            md5stream.end(''+userId);
+            token = md5stream.read().toString('hex');
+
             console.log('订阅消息');
             ds.event.subscribe('roletaskIm/'+ token, data => {
                 console.log('msg',data);
@@ -451,11 +471,13 @@ export default {
                     text = '[文件]' + content.content;
             }
             window.notification.schedule({
-                title: msg.creatorName,
-                text:text,
+                msg:msg,
+                title: msg.groupName,
+                text:`${msg.creatorName}:${text}`,
                 foreground: true,
                 icon:this.$options.filters.appIconFilter(g.groupIcon) || groupIcon
             });
+
             navigator.vibrate(300);
         },
         
@@ -485,7 +507,7 @@ export default {
                     this.$nextTick(()=>{
                         this.$refs.groupMsg.scrollToButtom(0);
                     })
-                });       
+                });
             } else {
                 this.$router.push(path);
                 this.$nextTick(()=>{
@@ -614,6 +636,7 @@ export default {
         border-radius: .03rem;
         color: white;
         font-size: 14px;
+        line-height: 16px;
       }
   }
   .scroller-wrapper{
@@ -640,7 +663,7 @@ export default {
     transform: scaleY(0.5);
   }
   .group-cell{
-      padding:5px;
+      padding:5px 10px;
       position: relative;
       display: flex;
       
@@ -650,6 +673,19 @@ export default {
     display: flex;
     &-icon{
         flex: 1;
+
+        .notice-group{
+            text-align: center;
+            background-color: #f90;
+            border-radius: .02rem;
+            width: 45px;
+            height: 45px;
+
+            .icon-notice{
+                font-size: .28rem;
+                color: #fff;
+            }
+        }
         &-ava{
             width: .45rem;
             height: .45rem;
@@ -669,12 +705,12 @@ export default {
             display:flex;
 
             &-name{
-                flex:5;
+                flex:4;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 width: 100%;
-                max-width: 260px;
+                max-width: 235px;
                 font-size: 14px;
             }
 

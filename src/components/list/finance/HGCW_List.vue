@@ -4,12 +4,6 @@
     <div class='content'>
       <slot name="nav"></slot>
       <div class="list_top">
-        <div class="header" v-if="!hasNav">
-          <div class="header-container">
-            <i class="icon icon-return" @click="goBack"></i>
-            <div class="center">财务会计报表</div>
-          </div>
-        </div>
         <div class="tab-container" ref="tabContainer">
           <div class="tab-item" :class="{active: index === activeIndex}" v-for="(item, index) in listData"
                @click="tabClick(item, index)" ref="tabs" :key="index">
@@ -36,6 +30,10 @@
               <template v-else-if="key === '2'">
                 <XJLLForm :transcode="slide.transcode" :folder="slide.folder" :name="slide.name"></XJLLForm>
               </template>
+              <!-- 科目余额表 -->
+              <template v-else-if="key === '3'">
+                <KMYEForm :transcode="slide.transcode" :folder="slide.folder" :name="slide.name"></KMYEForm>
+              </template>
             <!-- </r-scroll> -->
           </div>
         </div>
@@ -52,6 +50,7 @@ import platform from 'plugins/platform/index'
 import LRForm from 'components/list/finance/CWKJ/LRForm'
 import ZCFZForm from 'components/list/finance/CWKJ/ZCFZForm'
 import XJLLForm from 'components/list/finance/CWKJ/XJLLForm'
+import KMYEForm from 'components/list/finance/CWKJ/KMYEForm/KMYEForm'
 export default {
   name: "HGCW_List",
   data() {
@@ -63,15 +62,21 @@ export default {
         }, {
           title: '资产负债表',
           code: 'ZCFZ',
-        },{
-          title: '现金流量表',
-          code: 'XJLL',
         },
+        // {
+        //   title: '现金流量表',
+        //   code: 'XJLL',
+        // },
+        {
+          title: '科目余额表',
+          code: 'KMYE'
+        }
       ],
       listMap:{
         '0':{ transcode:'LR', folder:'finance', name:'利润表' },
         '1':{ transcode:'ZCFZ', folder:'finance', name:'资产负债表' },
-        '2':{ transcode:'XJLL', folder:'finance', name:'现金流量表' },
+        // '2':{ transcode:'XJLL', folder:'finance', name:'现金流量表' },
+        '3':{ transcode:'KMYE', folder:'finance', name:'科目余额表' }
       },
       activeIndex: 0,
       scrollOptions: {
@@ -81,7 +86,7 @@ export default {
     }
   },
   components: {
-    Cell, Group , LRForm , ZCFZForm , XJLLForm ,RScroll
+    Cell, Group , LRForm , ZCFZForm , XJLLForm ,KMYEForm,RScroll
   },
   methods: {
     goBack(){

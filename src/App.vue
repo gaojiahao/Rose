@@ -49,7 +49,7 @@ export default {
     var hasNav = true;//window.isApp;//platform.isIPhone && 
     return{
       tablist: [
-        // {title: '消息', path: '/msg', icon:'icon-message1'},
+        {title: '消息', path: '/msg', icon:'icon-message1'},
         {title: '任务', path: '/taskflow',icon:'icon-task1'},
         {title: '应用', path: '/home',icon:'icon-apps'},
          {title: '通讯录',path: '/contacts/0',icon:'icon-org'},
@@ -113,7 +113,7 @@ export default {
           vm = this,
           status,
           dsClient;
-      if (window.baseURL) dsUrl = "175.roletask.com:6021/deepstream";//app测试代码
+      if (window.baseURL) dsUrl = "172.roletask.com:6021/deepstream";//app测试代码
       return new Promise((resolve,reject)=>{
           if(vm.dsClient != null && vm.dsClient.getConnectionState() != 'CLOSED'){
               console.log('ds is not null');
@@ -171,6 +171,7 @@ export default {
     });
     Vue.prototype.getApp= ()=> this;
     Vue.prototype.bus = Bus;
+    Vue.prototype.addBaseUrl = util.addBaseUrl;
     document.addEventListener("deviceready", this.onDeviceReady, false);
     this.initOnlineStatus();
   },

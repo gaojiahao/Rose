@@ -19,6 +19,9 @@ let rejectError = (reject, message) => {
 fly.interceptors.request.use((request) => {
   // 检验 token是否存在
   let token = tokenService.getToken();
+  if(window.isApp){
+    request.headers.os = window.device.platform;
+  }
   // token 存在则赋值在header当中
   if (token) {
     request.headers.Authorization = token;
@@ -191,6 +194,9 @@ let Rxports = {
     }
     if (token) {
        xmlhttp.open("GET",ensureUrl(url),false);
+       if(window.isApp){
+          xmlhttp.setRequestHeader('os', window.device.platform);
+       }
        xmlhttp.setRequestHeader('Authorization', token);
        xmlhttp.setRequestHeader("Content-Type","application/json;charset=utf-8");
        xmlhttp.send();
@@ -244,8 +250,12 @@ function ensureUrl(url) {
       return url.replace(/^\/R_roleplay-si/i, '/H_roleplay-si');
   } else if (/^\/account-api/i.test(url)) {
       return url;
+  }  else if (/^\/analysis-api/i.test(url)) {
+    return url;
   } else if (/^\/corebiz-api/i.test(url)) {
       return url;
+  } else if (/^\/svc-nodejs/i.test(url)) {
+    return url;
   } else {
       return '/H_roleplay-si' + url;
   }

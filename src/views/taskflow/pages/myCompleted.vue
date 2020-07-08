@@ -85,6 +85,7 @@
 
 <script>
 import { getMsgList} from "service/msgService";
+import {getListById} from "service/detailService"
 import RScroll from "plugins/scroll/RScroll";
 import { XButton,dateFormat } from 'vux'
 export default {
@@ -128,7 +129,23 @@ export default {
             })
         },
         handlerViewTask(task){
-            this.$router.push(`/detail/${task.listId}/0?name=${task.listName}&transCode=${task.transCode}`);
+             let list,path;
+            getListById({uniqueId:task.listId}).then(res=>{
+                list = res[0];
+                if(list.navStatus===2){
+                    path = `/detail/${task.listId}/0`;
+                    this.$router.push({
+                        path,
+                        query: { 
+                        transCode:task.transCode
+                        }
+                    })
+                }else{
+                    this.$vux.confirm.show({
+                    content: '抱歉，当前任务实例暂不支持查看详情,您可直接在列表处理任务，或在PC端查看实例详细信息'
+                 })
+                }
+            })
         },
         // 上拉加载
         onPullingUp() {
