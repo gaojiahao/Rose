@@ -118,7 +118,7 @@
     left: .1rem;
   }
   .r-picker {
-    padding: .18rem 0;
+    // padding: .18rem 0;
     font-size: .14rem;
     background: #fff;
     line-height: .14em;

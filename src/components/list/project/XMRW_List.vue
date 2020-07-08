@@ -28,7 +28,7 @@
             </div>
             <div class="instance-task-container">
               <div class="instance_task_item" >
-                <i class="icon" :class="[getTaskIcon(0)]"></i>
+                <img src="https://lab.roletask.com/resource/app-icon/project-task.png" style="height: .45rem;width: .45rem;border-radius: .02rem;">
                 <div class="task-detail vux-1px-b">
                   <div class="task_name">{{item.projectName_projectApprovalId}}</div>
                   <div class="task_info">
@@ -45,10 +45,6 @@
                     <div class="task_info_item">
                       <span class="task_info_title">计划结束日期: </span>
                       <span class="task_info_day">{{item.deadline_projectPlanTask || '无'}}</span>
-                    </div>
-                    <div class="task_info_item">
-                      <span class="task_info_title">实际完成日期: </span>
-                      <span class="task_info_day">{{item.completeTime_projectPlanTask || '无'}}</span>
                     </div>
                   </div>
                 </div>
@@ -235,6 +231,14 @@ export default {
     .task_info_day {
       color: #696969;
     }
+  }
+  .instance_status{
+    font-size: .12rem;
+    line-height: .12rem;
+    color: white;
+    padding: 0.02rem 0.04rem;
+    border-radius: 0.10rem;
+    background-color: rgb(53, 186, 246);
   }
 }
 </style>
