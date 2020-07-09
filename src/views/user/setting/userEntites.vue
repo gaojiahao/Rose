@@ -1,14 +1,7 @@
 <template>
-  <div class="app-root">
-       <div class="page-hasTab">
-     <div class="page-navigation flex">
-            <div class="goback" >
-            <i class="iconfont icon-back1" @click="$router.push('/user/setting')" ></i>
-        </div>
-            切换身份
-    </div>
+  <div class="page-body-hasNav">
      <RScroll 
-        class="page-body-hasNav" 
+        style="height:100%"
         :options="scrollOptions"
         :has-next="hasNext"
         :no-data="false">
@@ -18,7 +11,6 @@
             </cell>
         </group>
         </RScroll>
-       </div>
   </div>
 </template>
 <script>
@@ -81,9 +73,3 @@ export default {
     }
 }
 </script>
-<style lang='less' scoped>
-.app-root{
-    height: 100%;
-    background-color: #dedede;
-}
-</style>

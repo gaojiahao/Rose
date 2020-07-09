@@ -160,7 +160,7 @@ export default {
                 commonService.getBasicInfo().then(baseInfo=>{  
                       this.$loading.hide(); 
                       this.$router.replace('/');
-                      this.nativeLogin( baseInfo.currentUser.userId);//原生android进行连接
+                      this.nativeLogin( baseInfo.deepStreamUrl,baseInfo.currentUser.userId);//原生android进行连接
                 })
             }).catch(err=>{
                 this.$loading.hide();
@@ -172,8 +172,8 @@ export default {
         goSetHost:function () {
             this.$router.push('/setHost');
         },
-        nativeLogin:function(userId){
-            if(window.isApp)window.DsService.login(userId,function(){
+        nativeLogin:function(dsUrl,userId){
+            if(window.isApp)window.DsService.login(dsUrl,userId,function(){
                 console.log('ds success',arguments);
                 window.DsService.getDsMsg(function(msg){
                   console.log('dsMsg:',msg);
