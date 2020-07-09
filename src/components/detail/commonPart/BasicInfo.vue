@@ -202,6 +202,7 @@
         line-height: .14rem;
         background-color: #f7f7f7;
         justify-content: space-between;
+        margin-top: .1rem;
       }
       .basic_code_title {
         color: #999;

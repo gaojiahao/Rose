@@ -1,7 +1,7 @@
 <template>
   <div class="upload-file-container" :class="{'no-upload': noUpload, 'vux-1px-t': noUpload}" :style="containStyle"
        v-if="(noUpload && defaultValue.length) || !noUpload">
-    <p class="title" :style="titleStyle">附件</p>
+    <!-- <p class="title" :style="titleStyle">附件</p> -->
     <div class="upload-file-list">
       <div class="upload-file-item" v-for="(item, index) in files" :key="index">
         <template v-if="item.iconType === 'image'">
