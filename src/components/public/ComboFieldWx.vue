@@ -200,17 +200,24 @@ let cfg = {
       setParams(ds.data.params);
 
       this.store = store;
-
       if(me.cfg.xtype == 'r2Selector'){
-          for(i =0,l= dataSourceCols.length;i<l;i++){
-            col = dataSourceCols[i];
-            col['name'] = dataSourceCols[i].v;
-            col['value'] = dataSourceCols[i].k;
-            if(hFieldKeys.indexOf(col.k) ==-1){
-                fields.push(col);
-            }
+        for(i =0,l= dataSourceCols.length;i<l;i++){
+          col = dataSourceCols[i];
+          col['name'] = dataSourceCols[i].v;
+          col['value'] = dataSourceCols[i].k;
+          if(col['value']=='facilityName'){
+            col['sort'] = 0;
+          } else if (col['value']=='whCode'){
+            col['sort'] = 1;   
+          } else {
+            col['sort'] = 2;  
           }
-          this.fields = fields;
+          if(hFieldKeys.indexOf(col.k) ==-1){
+              fields.push(col);
+          }
+        }
+        fields.sort(function(a, b){return a['sort'] - b['sort']}); 
+        this.fields = fields;
       }
 
       if(autoLoad)this.load();
