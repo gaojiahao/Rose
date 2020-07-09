@@ -1,5 +1,6 @@
 <template>
   <div class="pages">
+    <!-- <v-touch class="wrapper"> -->
     <component
       :is='currentComponent'
       @sel-data='selData'
@@ -7,6 +8,7 @@
       ref="fillPage">
       <slot name="nav" slot="nav"></slot>
     </component>
+    <!-- </v-touch> -->
   </div>
 
 </template>

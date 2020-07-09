@@ -2,7 +2,7 @@
   <div class="pages">
     <slot name="nav"></slot>
     <div class="detail-container" :class="{'has-comment': hasComment}" ref='detail'>
-      <v-touch @swipeleft="swiperleft" @swiperight="swiperright" class="wrapper">
+      <!-- <v-touch @swipeleft="swiperleft" @swiperight="swiperright" class="wrapper"> -->
         <component
           :is='currentComponent'
           @change='modifyRoute'
@@ -11,37 +11,33 @@
           :showTab="showTab['comm']"
           :defaultTitle="defaultTitle"
           ref="detailComponent">
+          <slot name="nav" slot="nav"></slot>
         </component>
-        <auto-subject :showTab="showTab['subject']"></auto-subject>
-        <app-example :showTab="showTab['example']" :tabData="tabData['example']"></app-example>
-      </v-touch>
+        <!-- <auto-subject :showTab="showTab['subject']"></auto-subject>
+        <app-example :showTab="showTab['example']" :tabData="tabData['example']"></app-example> -->
+      <!-- </v-touch> -->
     </div>
     <!-- <slideBar :showSlide="showSlide" @swiperleft="swiperleft" @goTab="goTab" :appExample="appExample" :autoSubjectCount="autoSubjectCount"></slideBar> -->
     <div class="detail-comment-container vux-1px-t" v-if="hasComment">
-      <!-- tab 暂时关闭自动分录-->
       <!-- <div class="concern" @click="swiperright">
         <span class="icon icon-slide-bar"></span>
         <div class="heart-desc">更多</div>
       </div> -->
-      <!-- 关注 -->
       <div class="concern" @click="goConcern">
         <span class="icon icon-heart" v-if="isConcern === 0"></span>
         <span class="icon icon-heart-fill" v-else></span>
         <div class="heart-desc">{{ isConcern === 0 ? '关注' : '取消关注' }}</div>
       </div>
-      <!-- 评论 -->
       <div class="operation" @click="goDiscuss" v-if="isDiscuss">
         <span class="icon icon-dialog"></span>
         <div class="dialog-desc">评论</div>
       </div>
-      <!-- 日志 -->
       <div class="task" @click="goTaskLogList" v-if="isTaskLog">
         <span class="icon icon-log"></span>
         <div class="task-desc">日志</div>
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -366,8 +362,19 @@ export default {
       overflow: hidden;
       // background: #FFF;
       &.has-comment {
-        height: calc(100% - .5rem);
+        //height: calc(100% - .5rem);
+        height: 100%;
       }
+    }
+    .more{
+      .icon {
+        display: inline-block;
+        width: .4rem;
+        height: .4rem;
+        position: fixed;
+        bottom: .5rem;
+        right: .2rem;
+      }  
     }
     .detail-comment-container {
       display: flex;
@@ -419,12 +426,99 @@ export default {
           margin-left: -.03rem;
         }
       }
+      .flow{
+        .desc{
+          font-size: .1rem;
+          margin-top: -.06rem;
+          margin-left: -.015rem;   
+        }
+      }
+      .operate{
+        .desc{
+          font-size: .1rem;
+          margin-top: -.06rem;
+          margin-left: -.02rem;   
+        }
+      }
     }
   }
   .hasNav .detail-container{
-      height: calc(100% - 46px);
+      //height: calc(100% - 46px);
+      height: 100%;
       &.has-comment{
-        height: calc(100% - .5rem - 46px);
+        //height: calc(100% - .5rem - 46px);
+        height: 100%;
       }
+  }
+  .popup{
+    .flow-box{
+      .flex-demo{
+        width: 100%;
+        padding-top: .1rem;
+        .icon{
+          display: inline-block;
+          width: 50%;
+          height: .4rem;
+          margin-left: 25%;
+        } 
+        .desc{
+          font-size: .1rem;
+          text-align: center;
+        } 
+      }  
+    }  
+  }
+  .popup2{
+    .detail-comment-container {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        height: .5rem;
+        background-color: #fafafa;
+        color: #999;
+        &:before {
+          border-color: #d9d9d9
+        }
+      .icon {
+        display: inline-block;
+        width: .2rem;
+        height: .19rem;
+      }
+      .icon-heart {
+        width: .22rem;
+        height: .2rem;
+      }
+      .icon-heart-fill {
+        width: .2rem;
+        height: .18rem;
+      }
+      /** 关注 */
+      .concern{
+        text-align: center;
+        .icon-xihuan{
+          color: #c93d1b;
+        }
+        .heart-desc{
+          font-size: .1rem;
+          margin-top: -.05rem;
+        }
+      }
+      .operation {
+        .dialog-desc{
+          font-size: .1rem;
+          margin-top: -.06rem;
+        }
+      }
+      .count{
+        font-size: .12rem;
+      }
+      .task{
+        .task-desc{
+          font-size: .1rem;
+          margin-top: -.06rem;
+          margin-left: -.03rem;
+        }
+      }
+    }
   }
 </style>

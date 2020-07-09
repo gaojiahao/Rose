@@ -373,9 +373,9 @@ export default {
         dataCount > (this.page - 1) * this.limit + tableContent.length;
       this.data =
         this.page === 1 ? tableContent : [...this.matterList, ...tableContent];
-      this.$nextTick(() => {
-        this.$refs.bScroll.finishPullUp();
-      });
+      // this.$nextTick(() => {
+      //   this.$refs.bScroll.finishPullUp();
+      // });
 
       if(this.$parent.cfg.xtype === 'r2AutoLoadGrid'){
         this.$parent.addRecords(tableContent);
