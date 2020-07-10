@@ -139,7 +139,6 @@ export default {
             this.formViewUniqueId = data[0].uniqueId;
             this.viewId = data[0].uniqueId;
             this.listId = data[0].listId;
-            this.showAction = true;
             //this.model = "view"; //查看视图
             resolve();
           } else {
@@ -176,6 +175,7 @@ export default {
       return getFromStatus({transCode: this.transCode}).then(({tableContent = []}) => {
         this.formStatus = tableContent[0].status;
         this.formStatusArr = tableContent;
+        this.showAction = true;
       })
     },
     // 判断是否为我的任务
