@@ -11,61 +11,7 @@
           <!-- 备注 -->
           <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
           <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
-          <!-- 审批操作 -->
-          <!-- <r-action :code="transCode" :task-id="taskId" :actions="actions"
-                    :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action> -->
         </div>
-        <!-- <div class="swiper-slide">
-          <div class="form_content">
-            <div class="main_content task_log">
-              <span class="log_title vux-1px-b">任务日志</span>
-              <div class="each_info vux-1px-b">
-                <label class="required">标题</label>
-                <input type='text' v-model="taskLog.logTitle" placeholder="请输入" class='field_value' @focus="getFocus($event)"/>
-              </div>
-              <div class="each_info vux-1px-b" @click="getDate">
-                <label class="required">日期</label>
-                <div class='picker'>
-                  <span class='mater_nature'>{{taskLog.taskDate || "请选择"}}</span>
-                  <span class='icon-right'></span>
-                </div>
-              </div>
-              <div class="each_info vux-1px-b">
-                <label class="required">申报工时</label>
-                <input type='number' v-model.number="taskLog.logDeclarationHours" placeholder="请输入" class='field_value' @focus="getFocus($event)" 
-                      @blur="checkHour(taskLog.logDeclarationHours)"/>
-              </div>
-              <x-textarea class="vux-1px-b" title="备注" v-model="taskLog.biComment" placeholder="请输入"></x-textarea>
-            </div>
-            <div class="handle">
-              <span class="btn_item" @click="save">日志提交</span>
-            </div>
-            
-          </div>
-          <div class="log-list" v-if="logList.length">
-            <p class="log_title">提交记录</p>
-            <div class="each_log vux-1px-t" v-for="(item, index) in logList" :key="index">
-               <div class="log_man_avater">
-                 <img :src=item.photo>
-               </div>
-              <div class="log_main">
-                <div class="basic_info">
-                  <div>
-                    <p class="user_name">{{item.handlerName}}</p>
-                    <p class="submit_time">{{item.taskDate}}</p>
-                  </div>
-                  <div>
-                    <p class="man_hour">工时: {{item.logDeclarationHours}}小时</p>
-                  </div>
-                </div>
-                <div class="main_info">
-                  <p class="each_log_title">{{item.logTitle}}</p>
-                  <p class="each_log_comment">备注: {{item.comment || '无'}}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> -->
       </div>
     </div>
     <r2-action v-if="showAction" :workFlowLogs="workflowLogs" :formStatus="formStatusArr"/>
@@ -246,24 +192,15 @@ export default {
         this.logList = tableContent;
       })
     },
-    // 初始化swiper
-    initSwiper() {
-      // this.$nextTick(() => {
-      //   this.pageSwiper = new this.Swiper('.task-form', {
-      //     touchAngle: 30,
-      //     iOSEdgeSwipeDetection: true
-      //   });
-      // })
-    }
   },
   created() {
     this.$nextTick(() => {
+      this.$parent.detailScroll.destroy();
           this.fillBscroll = new Bscroll(this.$refs.fill, {
             click: true
           });
         });
-    // this.initSwiper();
-    // this.findAllJobLog();  
+     
   }
 }
 </script>
