@@ -30,7 +30,7 @@
               <div class="instance_task_item" >
                 <img src="https://lab.roletask.com/resource/app-icon/project-task.png" style="height: .45rem;width: .45rem;border-radius: .02rem;">
                 <div class="task-detail vux-1px-b">
-                  <div class="task_name">{{item.projectName_projectApprovalId}}</div>
+                  <div class="task_name">{{item.taskName_projectPlanTask}}</div>
                   <div class="task_info">
                     <div class="task_info_item">
                       <span class="task_info_title">执行者: </span>

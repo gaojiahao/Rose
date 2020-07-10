@@ -1,9 +1,7 @@
 <template>
 
-<div class="page-hasTab me">
-      <slot name="nav" ></slot>
+<div  class="page-body-hasNav" >
       <RScroll 
-          class="page-body-hasNav" 
           :options="scrollOptions"
           :has-next="hasNext"
           :no-data="false"

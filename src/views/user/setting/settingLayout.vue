@@ -1,12 +1,6 @@
 <template>
-  <div class="app-root">
-     <div class="page-navigation flex" v-if="$route.name==='setting'">
-            <div class="goback" >
-            <i class="iconfont icon-back1" @click="$router.push('/user')" ></i>
-        </div>
-            设置
-    </div>
-    <div class="page-body-hasNav"  v-if="$route.name==='setting'">
+  <div class="page-body-hasNav">
+    <div   v-if="$route.name==='setting'">
         <group >
             <cell title="用户编码"  :value='currentUser.userCode'></cell>
             <cell title="手机号"  :value='currentUser.mobile'></cell>

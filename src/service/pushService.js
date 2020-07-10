@@ -5,6 +5,10 @@ function initEvent(){
     window.badge = cordova.plugins.notification.badge;
     window.badge.clear();
     window.notification.on('click', clickFn);
+    window.DsService.onNotificationClick(function(groupId){
+        console.log('router push group');
+        window.router.push('/msg/group/'+ groupId);
+    })
 }
 function clickFn(notification){
     var data = notification.data;

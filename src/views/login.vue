@@ -155,10 +155,13 @@ export default {
                     app.dsClient.close();
                 }
                 this.bus.$emit('refresh');
-                this.loginIn = true;
-                this.$router.replace('/');
-                this.$loading.hide();
+                this.loginIn = true;     
                 localStorage.setItem('userCode',this.userCode);
+                commonService.getBasicInfo().then(baseInfo=>{  
+                      this.$loading.hide(); 
+                      this.$router.replace('/');
+                      this.nativeLogin( baseInfo.deepStreamUrl,baseInfo.currentUser.userId);//原生android进行连接
+                })
             }).catch(err=>{
                 this.$loading.hide();
                 this.$vux.alert.show({
@@ -168,6 +171,18 @@ export default {
         },
         goSetHost:function () {
             this.$router.push('/setHost');
+        },
+        nativeLogin:function(dsUrl,userId){
+            if(window.isApp)window.DsService.login(dsUrl,userId,function(){
+                console.log('ds success',arguments);
+                window.DsService.getDsMsg(function(msg){
+                  console.log('dsMsg:',msg);
+                },()=>{
+
+                })
+            },function(){
+                console.log('ds failer',arguments);
+            });
         },
         onMobileLoginClick() {
             this.isMobileLogin = !this.isMobileLogin;
