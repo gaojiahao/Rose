@@ -36,10 +36,11 @@
         </div>
       </div> -->
       <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
-      <r-action :code="transCode" :task-id="taskId" :actions="actions"
-                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
+      <!-- <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action> -->
 
     </div>
+    <r2-action v-if="showAction" :workFlowLogs="workflowLogs" :formStatus="formStatusArr"/>
   </div>
 </template>
 
@@ -58,6 +59,8 @@
       return {
         jobLog: {},
         comment: {},
+        showAction: false,
+        workflowLogs:[],
       }
     },
     filters: {

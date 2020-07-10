@@ -9,9 +9,10 @@
       <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
       <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       <!-- 操作栏 -->
-      <r-action :code="transCode" :task-id="taskId" :actions="actions"
-                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
+      <!-- <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action> -->
     </div>
+    <r2-action v-if="showAction" :workFlowLogs="workflowLogs" :formStatus="formStatusArr"/>
   </div>
 </template>
 
@@ -33,7 +34,9 @@ export default {
     return {
       approval: {},
       comment: {},
-      biReferenceId:''
+      biReferenceId:'',
+      showAction: false,
+      workflowLogs:[],
     }
   },
   filters: {

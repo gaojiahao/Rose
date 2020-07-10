@@ -12,8 +12,8 @@
           <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
           <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
           <!-- 审批操作 -->
-          <r-action :code="transCode" :task-id="taskId" :actions="actions"
-                    :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
+          <!-- <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                    :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action> -->
         </div>
         <div class="swiper-slide">
           <!-- 任务日志 -->
@@ -69,9 +69,9 @@
           </div>
         </div>
       </div>
-
-    </div>
   </div>
+  <r2-action v-if="showAction" :workFlowLogs="workflowLogs" :formStatus="formStatusArr"/>
+    </div>
 </template>
 
 <script>
@@ -99,7 +99,9 @@ export default {
       defaultUserInfo: {},//默认用户信息
       logList: [],
       pageSwiper: null,
-      biReferenceId:''
+      biReferenceId:'',
+      showAction: false,
+      workflowLogs:[],
     }
   },
   watch:{
@@ -264,7 +266,6 @@ export default {
 
 <style lang='scss' scoped>
   @import '~scss/biz-app/bizDetail';
-
   .xmrw-detail-container {
     .main_content { 
       font-size: .14rem;
