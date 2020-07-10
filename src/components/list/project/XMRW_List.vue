@@ -28,24 +28,28 @@
             </div>
             <div class="instance-task-container">
               <div class="instance_task_item" >
-                <img src="https://lab.roletask.com/resource/app-icon/project-task.png" style="height: .45rem;width: .45rem;border-radius: .02rem;">
+                <!-- <img src="https://lab.roletask.com/resource/app-icon/project-task.png" style="height: .45rem;width: .45rem;border-radius: .02rem;"> -->
                 <div class="task-detail vux-1px-b">
-                  <div class="task_name">{{item.taskName_projectPlanTask}}</div>
+                  <div class="task_name">
+                   {{item.taskName_projectPlanTask}}
+                    </div>
                   <div class="task_info">
                     <div class="task_info_item">
                       <span class="task_info_title">执行者: </span>
                       <span class="task_info_amt">{{item.dealerName_dealerDebit || '暂无'}}</span>
                     </div>
-                    <div class="task_info_item">
-                      <span class="task_info_title">计划开始日期: </span>
-                      <span class="task_info_day">{{item.startDate_projectPlanTask || '无'}}</span>
-                    </div>
                   </div>
                   <div class="task_info" :class="{'when-is-fill': item.deadline_projectPlanTask && item.completeTime_projectPlanTask}">
                     <div class="task_info_item">
-                      <span class="task_info_title">计划结束日期: </span>
-                      <span class="task_info_day">{{item.deadline_projectPlanTask || '无'}}</span>
+                      <span class="task_info_title">计划开始日期: </span>
+                      <span class="task_info_day">{{item.startDate_projectPlanTask | dateFormatFilter('YYYY-mm-dd') }}</span>
                     </div>
+                  </div>
+                   <div class="task_info">
+                      <div class="task_info_item">
+                        <span class="task_info_title">计划结束日期: </span>
+                        <span class="task_info_day">{{item.deadline_projectPlanTask | dateFormatFilter('YYYY-mm-dd')}}</span>
+                      </div>
                   </div>
                 </div>
               </div>
@@ -198,6 +202,7 @@ export default {
     .task_name {
       font-size: .14rem;
       line-height: .18rem;
+      font-weight: 600;
     }
     .task_info {
       display: flex;
@@ -236,7 +241,7 @@ export default {
     font-size: .12rem;
     line-height: .12rem;
     color: white;
-    padding: 0.02rem 0.04rem;
+    padding: .05rem .04rem;
     border-radius: 0.10rem;
     background-color: rgb(53, 186, 246);
   }

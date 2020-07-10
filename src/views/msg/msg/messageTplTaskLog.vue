@@ -3,7 +3,7 @@
        <div class="log-time">{{ content.crtTime }}</div>
        <div class="log-list">
          <span class="list-left">
-           <i class="iconfont icon-notice" ></i>
+           <i class="iconfont icon-icyhbynotice" ></i>
          </span>
          <div class="list-right">
            <b>日志提交提醒</b>
@@ -54,7 +54,7 @@ export default {
     align-items: center;
     .list-left{
       padding-right: .1rem;
-      .icon-notice{
+      .icon-icyhbynotice{
         font-size: .28rem;
         color: #f90;
       }
