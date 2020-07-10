@@ -154,6 +154,7 @@
                 },
                 comment: this.jsonData.comment,
                 projectPlanTask: this.projectTask,
+                projectApproval:this.projectApproval
               },
               wfParam: null
             };
@@ -235,6 +236,7 @@
         return findProjectTask(this.transCode).then(({formData = {}}) => {
           let projectApproval = formData.projectApproval;
           let projectPlanTask = formData.projectPlanTask;
+          this.projectApproval = projectApproval;
           this.jsonData.comment = formData.comment;
           this.formData.id = formData.baseinfo.id;
           this.biReferenceId = formData.biReferenceId;

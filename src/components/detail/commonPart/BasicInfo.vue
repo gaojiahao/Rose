@@ -66,6 +66,50 @@
           </div>
         </div>
       </div>
+      <div class="basic_detail">
+        <div class="basic_detail_wrapper vux-1px-b">
+          <div class="basic_detail_item">
+            <span class="basic_detail_title">经办主体</span>
+            <span class="basic_detail_value">{{orderInfo.handlerEntityName}}</span>
+          </div>
+        </div>
+        <div class="basic_detail_wrapper vux-1px-b">
+          <div class="basic_detail_item">
+            <span class="basic_detail_title">经办人</span>
+            <span class="basic_detail_value">{{orderInfo.handlerName}}</span>
+          </div>
+        </div>
+        <div class="basic_detail_wrapper vux-1px-b">
+          <div class="basic_detail_item">
+            <span class="basic_detail_title">经办组织</span>
+            <span class="basic_detail_value">{{orderInfo.handlerUnitName}}</span>
+          </div>
+        </div>
+        <div class="basic_detail_wrapper vux-1px-b">
+          <div class="basic_detail_item">
+            <span class="basic_detail_title">创建者</span>
+            <span class="basic_detail_value">{{orderInfo.creatorName}}</span>
+          </div>
+        </div>
+         <div class="basic_detail_wrapper vux-1px-b">
+          <div class="basic_detail_item">
+            <span class="basic_detail_title">经办职位</span>
+            <span class="basic_detail_value">{{orderInfo.handlerRoleName}}</span>
+          </div>
+        </div>
+        <div class="basic_detail_wrapper vux-1px-b">
+          <div class="basic_detail_item">
+            <span class="basic_detail_title">修改者</span>
+            <span class="basic_detail_value">{{orderInfo.modiferName}}</span>
+          </div>
+        </div>
+        <div class="basic_detail_wrapper">
+          <div class="basic_detail_item">
+            <span class="basic_detail_title">修改时间</span>
+            <span class="basic_detail_value">{{orderInfo.modTime | dateFormat }}</span>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="project-container vux-1px-t" v-if="projectInfo.projectName">
       <div class="project_title">项目信息</div>

@@ -1,9 +1,9 @@
 <template>
 <!--项目任务-->
-  <div class="detail_wrapper xmrw-detail-container">
-    <div class="basicPart swiper-container task-form">
-      <div class="swiper-wrapper">
-        <div class="swiper-slide">
+  <div class="detail_wrapper xmrw-detail-container" style="height:100%;">
+    <div class="basicPart swiper-container task-form" ref="fill">
+      <div class="wrapper">
+        <div class="slide">
           <!-- 经办信息 （订单、主体等） -->
           <basic-info :work-flow-info="orderInfo" :order-info="orderInfo"></basic-info>
           <!-- 项目任务信息 -->
@@ -15,8 +15,7 @@
           <!-- <r-action :code="transCode" :task-id="taskId" :actions="actions"
                     :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action> -->
         </div>
-        <div class="swiper-slide">
-          <!-- 任务日志 -->
+        <!-- <div class="swiper-slide">
           <div class="form_content">
             <div class="main_content task_log">
               <span class="log_title vux-1px-b">任务日志</span>
@@ -43,7 +42,6 @@
             </div>
             
           </div>
-          <!-- 日志历史提交记录 -->
           <div class="log-list" v-if="logList.length">
             <p class="log_title">提交记录</p>
             <div class="each_log vux-1px-t" v-for="(item, index) in logList" :key="index">
@@ -67,10 +65,10 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
-  </div>
-  <r2-action v-if="showAction" :workFlowLogs="workflowLogs" :formStatus="formStatusArr"/>
+    </div>
+    <r2-action v-if="showAction" :workFlowLogs="workflowLogs" :formStatus="formStatusArr"/>
     </div>
 </template>
 
@@ -87,7 +85,8 @@ import detailCommon from 'mixins/detailCommon'
 import RPicker from 'components/public/RPicker'
 import RAction from 'components/public/RAction'
 import onlyWord from 'components/detail/commonPart/form-part/onlyWord'
-
+// 插件 引入
+import Bscroll from "better-scroll";
 export default {
   data() {
     return {
@@ -249,17 +248,22 @@ export default {
     },
     // 初始化swiper
     initSwiper() {
-      this.$nextTick(() => {
-        this.pageSwiper = new this.Swiper('.task-form', {
-          touchAngle: 30,
-          iOSEdgeSwipeDetection: true
-        });
-      })
+      // this.$nextTick(() => {
+      //   this.pageSwiper = new this.Swiper('.task-form', {
+      //     touchAngle: 30,
+      //     iOSEdgeSwipeDetection: true
+      //   });
+      // })
     }
   },
   created() {
-    this.initSwiper();
-    this.findAllJobLog();  
+    this.$nextTick(() => {
+          this.fillBscroll = new Bscroll(this.$refs.fill, {
+            click: true
+          });
+        });
+    // this.initSwiper();
+    // this.findAllJobLog();  
   }
 }
 </script>
@@ -395,5 +399,8 @@ export default {
         }
       }
     }
+  }
+  .task-form{
+    height:calc(100% - 1.02rem)
   }
 </style>
