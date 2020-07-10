@@ -178,7 +178,8 @@ export default {
             }
       }
       .year-table{
-        height: calc(100% - 2rem);
+        height: calc(100% - 1rem);
+        background-color: white;
         .table-header{
           display: flex;
           height: .5rem;

@@ -144,6 +144,7 @@
             }
             let submitData = {
               listId: 'ee4ff0a1-c612-419d-afd7-471913d57a2a',
+              biReferenceId:this.biReferenceId,
               formData: {
                 baseinfo: {
                   ...this.formData,
@@ -236,6 +237,7 @@
           let projectPlanTask = formData.projectPlanTask;
           this.jsonData.comment = formData.comment;
           this.formData.id = formData.baseinfo.id;
+          this.biReferenceId = formData.biReferenceId;
           this.projectTask = {
             projectName: projectApproval.projectName,
             projectManager: projectApproval.projectManager,
@@ -346,7 +348,7 @@
     }
   }
   .each_property {
-    padding: .18rem 0;
+    padding: .12rem 0;
     display: flex;
     justify-content: space-between;
     line-height: .14rem;

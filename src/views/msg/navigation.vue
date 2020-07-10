@@ -41,7 +41,7 @@
                                             @error="getDefaultPhoto(group)">
                                     </span>
                                     <div v-if="group.groupType=='N'" class="notice-group">
-                                        <i class="iconfont icon-notice" ></i>
+                                        <i class="iconfont icon-icyhbynotice" ></i>
                                     </div>
                                     <badge  
                                         class="group-body-icon-msgCount"
@@ -681,7 +681,7 @@ export default {
             width: 45px;
             height: 45px;
 
-            .icon-notice{
+            .icon-icyhbynotice{
                 font-size: .28rem;
                 color: #fff;
             }
