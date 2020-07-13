@@ -53,4 +53,8 @@ export default {
     }
   }
 }
+
+.each-cell:last-child{
+  border: none;
+}
 </style>

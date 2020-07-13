@@ -2,21 +2,21 @@
   <!--任务日志-->
   <div class="task_container">
     <div class="task_log">
-      <div class="task_log_status">
+      <div class="task_log_status vux-1px-b">
         <check-icon
           type="plain" 
           :value.sync="taskLog.logStatus">
           {{ !taskLog.logStatus?'待办':'已办' }}
         </check-icon>
       </div>
-      <div class="task_log_user">
+      <div class="task_log_user vux-1px-b">
         <search-selector 
           :title="'员工'" 
           @getSelectData="getSelectData" 
           :isRequired="isUserRequired">
         </search-selector>
       </div>
-      <div class="task_log_title" :style="{borderColor:istitleRequired?'#e4393c':'#e8e8e8'}">
+      <div class="task_log_title vux-1px-b" :style="{borderColor:istitleRequired?'#e4393c':'#e8e8e8'}">
         <x-input ref="taskLogTitle" text-align="right" :max="100" v-model="logTitle" placeholder="请输入">
           <span 
             slot="label" 
@@ -25,7 +25,7 @@
           </span>
         </x-input>
       </div>
-      <div class="task_log_type">
+      <div class="task_log_type vux-1px-b">
         <popup-picker 
           v-if="taskLog.logType.length>0" 
           :data="logTypelist" 
@@ -34,10 +34,10 @@
           <span slot="title" :style="{color:'#4e9cec',fontSize:'.14rem',fontWeight:'bold'}">类型</span>
         </popup-picker>
       </div>
-      <div class="task_log_date">
+      <div class="task_log_date vux-1px-b">
         <datetime title="日期" v-model="taskLog.taskDate"></datetime>
       </div>
-      <div class="task_log_hour">
+      <div class="task_log_hour vux-1px-b">
       
           <span>申报工时</span>
           <div>
@@ -84,6 +84,9 @@ export default {
         comments: "",
         logDeclarationHours: 1,
         logType: []
+      },
+      taskContentStyle:{
+        height:''
       }
     }
   },
@@ -215,6 +218,9 @@ export default {
         this.taskLog.taskDate = this.formatDate(new Date());
         this.getLogType()
     })
+    if(this.getApp().hasNav){
+      this.taskContentStyle.height = 'calc(100% - 1rem)';
+    }
     this.logTitle = this.$route.params.tdDescribe;
     
   }
@@ -230,7 +236,6 @@ export default {
       font-size: .17rem;
     }
     &_status{
-      border-bottom: 1px solid #e8e8e8;
       padding: .1rem .03rem;
       color: #4e9cec;
       font-weight: bold;
@@ -239,7 +244,6 @@ export default {
       color: #4CA3FB;
     }
     &_title{
-      border-bottom: 1px solid #e8e8e8;
       font-weight: bold;
       padding: .03rem 0rem;
       /deep/ .weui-cell{
@@ -247,7 +251,6 @@ export default {
       }
     }
     &_type{
-      border-bottom: 1px solid #e8e8e8;
       padding: .03rem 0rem;
       font-size: .14rem;
       /deep/ .weui-cell{
@@ -258,7 +261,6 @@ export default {
       }
     }
     &_date{
-      border-bottom: 1px solid #e8e8e8;
       color: #4e9cec;
       font-weight: bold;
       padding: .03rem 0rem;
@@ -268,7 +270,6 @@ export default {
       }
     }
     &_hour{
-      border-bottom: 1px solid #e8e8e8;
       color: #4e9cec;
       font-weight: bold;
       padding: .12rem 0rem;
