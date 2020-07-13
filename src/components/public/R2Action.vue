@@ -7,59 +7,85 @@
     <div class="detail-comment-container vux-1px-t">
       <template v-for="(item, index) in actions">
         <div class="flow" :key="index" v-if="hasComment&&index<2">
-          <div v-if="item=='resubmit'" @click="resubmit">
-            <span class="icon icon-d-flow-submit"></span>
-            <div class="desc-4">重新提交</div>   
+          <div class="action" v-if="item=='resubmit'" @click="resubmit">
+            <div class="left">
+              <span class="icon icon-d-flow-submit"></span>
+            </div>
+            <div class="desc-4 right">重新提交</div>   
           </div>
-          <div v-if="item=='agreement'" @click="agreement">
-            <span class="icon icon-d-flow-agree"></span>
-            <div class="desc">同意</div>   
+          <div class="action" v-if="item=='agreement'" @click="agreement">
+            <div class="left">
+              <span class="icon icon-d-flow-agree"></span>
+            </div>
+            <div class="desc right">同意</div>   
           </div>
-          <div v-if="item=='disagree'" @click="disagree">
-            <span class="icon icon-d-flow-disagree"></span>
-            <div class="desc-3">不同意</div> 
+          <div class="action" v-if="item=='disagree'" @click="disagree">
+            <div class="left">
+              <span class="icon icon-d-flow-disagree"></span>
+            </div>
+            <div class="desc-3 right">不同意</div> 
           </div>
-          <div v-if="item=='revoke'" @click="revoke">
-            <span class="icon icon-d-flow-chehui"></span>
-            <div class="desc">撤回</div>
+          <div class="action" v-if="item=='revoke'" @click="revoke">
+            <div class="left">
+              <span class="icon icon-d-flow-chehui"></span>
+            </div>
+            <div class="desc right">撤回</div>
           </div>
-          <div v-if="item=='revokeDraft'" @click="revokeDraft">
-            <span class="icon icon-d-flow-chehuicaogao"></span>
-            <div class="desc-5">撤销为草稿</div>
+          <div class="action" v-if="item=='revokeDraft'" @click="revokeDraft">
+            <div class="left">
+              <span class="icon icon-d-flow-chehuicaogao"></span>
+            </div>
+            <div class="desc-5 right">撤销为草稿</div>
           </div>
-          <div v-if="item=='edit'" @click="showViewModel('edit')">
-            <span class="icon icon-d-flow-edit"></span>
-            <div class="desc">编辑</div>
+          <div class="action" v-if="item=='edit'" @click="showViewModel('edit')">
+            <div class="left">
+              <span class="icon icon-d-flow-edit"></span>
+            </div>
+            <div class="desc right">编辑</div>
           </div>
-          <div v-if="item=='revise'" @click="showViewModel('revise')">
-            <span class="icon icon-d-flow-xiugai"></span>
-            <div class="desc">修改</div>
+          <div class="action" v-if="item=='revise'" @click="showViewModel('revise')">
+            <div class="left">
+              <span class="icon icon-d-flow-xiugai"></span>
+            </div>
+            <div class="desc right">修改</div>
           </div>
-          <div v-if="item=='newFile'" @click="showViewModel('new')">
-            <span class="icon icon-d-flow-new"></span>
-            <div class="desc">新建</div>
+          <div class="action" v-if="item=='newFile'" @click="showViewModel('new')">
+            <div class="left">
+              <span class="icon icon-d-flow-new"></span>
+            </div>
+            <span class="desc right">新建</span>
           </div>
-          <div v-if="item=='stop'" @click="stop">
-            <span class="icon icon-d-flow-stop"></span>
-            <div class="desc">终止</div>
+          <div class="action" v-if="item=='stop'" @click="stop">
+            <div class="left">
+              <span class="icon icon-d-flow-stop"></span>
+            </div>
+            <div class="desc right">终止</div>
           </div>
-          <div v-if="item=='transfer'" @click="transfer">
-            <span class="icon icon-d-flow-zhuanban"></span>
-            <div class="desc">转办</div>
+          <div class="action" v-if="item=='transfer'" @click="transfer">
+            <div class="left">
+              <span class="icon icon-d-flow-zhuanban"></span>
+            </div>
+            <div class="desc right">转办</div>
           </div>
-          <div v-if="item=='goConcern'" @click="goConcern">
-            <span class="icon icon-heart" v-if="isConcern != '1'"></span>
-            <span class="icon icon-heart-fill" v-else></span>
-            <div class="desc" v-if="isConcern != '1'">关注</div>
-            <div class="desc-4" v-else>取消关注</div>
+          <div class="action" v-if="item=='goConcern'" @click="goConcern">
+            <div class="left">
+              <span class="icon icon-heart" v-if="isConcern != '1'"></span>
+              <span class="icon icon-heart-fill" v-else></span>
+            </div>
+            <div class="desc right" v-if="isConcern != '1'">关注</div>
+            <div class="desc-4 right" v-else>取消关注</div>
           </div>
-          <div v-if="item=='goDiscuss'" @click="goDiscuss">
-            <span class="icon icon-dialog"></span>
-            <div class="desc">评论</div>
+          <div class="action" v-if="item=='goDiscuss'" @click="goDiscuss">
+            <div class="left">
+              <span class="icon icon-dialog"></span>
+            </div>
+            <div class="desc right">评论</div>
           </div>
-          <div v-if="item=='goTaskLogList'" @click="goTaskLogList">
-            <span class="icon icon-log"></span>
-            <div class="desc">日志</div>
+          <div class="action" v-if="item=='goTaskLogList'" @click="goTaskLogList">
+            <div class="left">
+              <span class="icon icon-log"></span>
+            </div>
+            <div class="desc right">日志</div>
           </div>
         </div>
       </template>
@@ -761,7 +787,7 @@ export default Vue.component('R2Action',component)
         display: inline-block;
         width: .2rem;
         height: .2rem;
-        float: left;
+        float: right;
       }
       .icon-heart {
         width: .22rem;
@@ -799,27 +825,35 @@ export default Vue.component('R2Action',component)
         }
       }
       .flow{
-        .desc{
-          font-size: .1rem;
-          /* margin-top: -.06rem; */
-          margin-left: 0.05rem;
-          float: right;
-          display: inline-block;
-        }
-        .desc-3{
-          font-size: .1rem;
-          margin-top: -.06rem;
-          margin-left: -.08rem;      
-        }
-        .desc-4{
-          font-size: .1rem;
-          margin-top: -.06rem;
-          margin-left: -.14rem;      
-        }
-        .desc-5{
-          font-size: .1rem;
-          margin-top: -.06rem;
-          margin-left: -.21rem;      
+        flex: 1;
+        font-size: .14rem;
+        .action{
+          display: flex;
+          .left{
+            flex: auto;
+          }
+          .right {
+            flex: auto;
+          }
+          .desc{
+            /* margin-top: -.06rem; */
+            margin-left: 0.05rem;
+            display: inline-block;
+          }
+          .desc-3{
+            font-size: .1rem;
+            margin-top: -.06rem;
+            margin-left: -.08rem;      
+          }
+          .desc-4{
+            font-size: .1rem;
+            margin-top: -.06rem;
+            margin-left: -.14rem;      
+          }
+          .desc-5{
+            margin-left: 0.05rem;
+            display: inline-block;
+          }
         }
       }
       .operate{
@@ -841,6 +875,7 @@ export default Vue.component('R2Action',component)
           width: 50%;
           height: .4rem;
           margin-left: 25%;
+          
         } 
         .desc{
           font-size: .1rem;
