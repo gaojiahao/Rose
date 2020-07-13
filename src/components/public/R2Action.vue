@@ -838,21 +838,15 @@ export default Vue.component('R2Action',component)
           .desc{
             /* margin-top: -.06rem; */
             margin-left: 0.05rem;
-            display: inline-block;
           }
           .desc-3{
-            font-size: .1rem;
-            margin-top: -.06rem;
-            margin-left: -.08rem;      
+            margin-left: 0.05rem;
           }
           .desc-4{
-            font-size: .1rem;
-            margin-top: -.06rem;
-            margin-left: -.14rem;      
+           margin-left: 0.05rem;
           }
           .desc-5{
             margin-left: 0.05rem;
-            display: inline-block;
           }
         }
       }
