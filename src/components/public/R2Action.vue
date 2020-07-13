@@ -785,8 +785,8 @@ export default Vue.component('R2Action',component)
       }
       .icon {
         display: inline-block;
-        width: .2rem;
-        height: .2rem;
+        width: .28rem;
+        height: .28rem;
         float: right;
       }
       .icon-heart {
@@ -826,7 +826,7 @@ export default Vue.component('R2Action',component)
       }
       .flow{
         flex: 1;
-        font-size: .14rem;
+        font-size: .16rem;
         .action{
           display: flex;
           .left{
