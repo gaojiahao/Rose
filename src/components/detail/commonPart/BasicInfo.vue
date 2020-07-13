@@ -19,7 +19,7 @@
           <span class="basic_code_title">交易号：</span>{{orderInfo.transCode}}
         </div>
         <!-- <div class="basic_status" >{{orderInfo.biStatus}}</div> -->
-        <span class="biStatus" v-instanceStateDirective="{status:orderInfo.biStatus}" >{{orderInfo.biStatus}}</span>
+        <span class="biStatus" v-instanceStateDirective="{status:orderInfo.biStatus}" >{{status}}</span>
       </div>
       <div class="basic_detail">
         <div class="basic_detail_wrapper">
@@ -48,7 +48,7 @@
             <span class="basic_detail_value">{{orderInfo.handlerRoleName}}</span>
           </div>
         </div>
-        <div class="basic_detail_wrapper spec_part">
+        <div class="basic_detail_wrapper">
           <div class="basic_detail_item">
             <span class="basic_detail_title">修改者:</span>
             <span class="basic_detail_value">{{orderInfo.modiferName}}</span>
@@ -105,6 +105,7 @@
       orderInfo:{
         handler(val) {
           this.nowStatus = val.biProcessStatus;
+          this.status = val.biStatus;
         }
       }
     },
@@ -124,7 +125,8 @@
       return {
         showMore: false,
         statusList:[],
-        nowStatus:''
+        nowStatus:'',
+        status:'',
       }
     },
     methods:{
@@ -150,6 +152,7 @@
     },
     created(){
       this.nowStatus = this.orderInfo.biProcessStatus;
+      this.status = this.orderInfo.biStatus;
       this.getProcessStatusByListId();
     }
   }
@@ -165,7 +168,7 @@
     width: calc(100% - .2rem);
     .basic-info-main {
       width: 100%;
-      padding: .15rem .15rem;
+      padding: 0 .15rem .15rem;
       box-sizing: border-box;
       .basic_header {
         display: flex;
@@ -193,11 +196,10 @@
 
       .basic_top {
         display: flex;
-        padding: .05rem;
+        //padding: .05rem;
         font-size: .12rem;
-        margin-top: .1rem;
         align-items: center;
-        line-height: .12rem;
+        line-height: .14rem;
         background-color: #f7f7f7;
         justify-content: space-between;
       }
@@ -205,7 +207,7 @@
         color: #999;
       }
       .basic_detail {
-        margin-top: .2rem;
+        //margin-top: .2rem;
         font-size: .14rem;
         line-height: .14rem;
       }

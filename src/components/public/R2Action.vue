@@ -1,23 +1,146 @@
 <template>
   <!-- 审批操作 -->
   <div class='handle_wrapper' v-if="!!actions.length">
-    <div class="handle_btn">
-      <span class="btn_item resubmit" @click="resubmit" v-if="actions.includes('resubmit')">提交</span>
-      <span class="btn_item submitNew" @click="submitNew" v-if="actions.includes('submitNew')">提交并新建</span>
-      <span class="btn_item draft" @click="draft" v-if="actions.includes('draft')">保存草稿</span>
-      <span class="btn_item newFile" @click="showViewModel('new')" v-if="actions.includes('newFile')">新建</span>
-      <!-- <span class="btn_item copyNew" @click="copyNew" v-if="actions.includes('copyNew')">复制并新建</span> -->
-      <span class="btn_item edit" @click="showViewModel('edit')" v-if="actions.includes('edit')">编辑</span>
-      <span class="btn_item update" @click="showViewModel('revise')" v-if="actions.includes('revise')">修改</span>
-      <span class="btn_item revokeDraft" @click="revokeDraft" v-if="actions.includes('revokeDraft')">撤销为草稿</span>
-      <span class="btn_item file" @click="file" v-if="actions.includes('file')">归档</span>
-      <span class="btn_item reduction" @click="reduction" v-if="actions.includes('reduction')">还原</span>
-      <!-- <span class="btn_item storage" @click="storage" v-if="actions.includes('storage')">暂存</span> -->
-      <span class="btn_item agreement" @click="agreement" v-if="actions.includes('agreement')">同意</span>
-      <span class="btn_item disagree" @click="disagree" v-if="actions.includes('disagree')">不同意</span>
-      <span class="btn_item transfer" @click="transfer" v-if="actions.includes('transfer')">转办</span>
-      <span class="btn_item revoke" @click="revoke" v-if="actions.includes('revoke')">撤回</span>
-      <span class="btn_item stop" @click="stop" v-if="actions.includes('stop')">终止</span>
+    <div class="more" @click="goFlow"> 
+      <span class="icon icon-d-flow-more"></span>
+    </div>
+    <div class="detail-comment-container vux-1px-t">
+      <template v-for="(item, index) in actions">
+        <div class="flow" :key="index" v-if="hasComment&&index<2">
+          <div v-if="item=='resubmit'" @click="resubmit">
+            <span class="icon icon-d-flow-submit"></span>
+            <div class="desc-4">重新提交</div>   
+          </div>
+          <div v-if="item=='agreement'" @click="agreement">
+            <span class="icon icon-d-flow-agree"></span>
+            <div class="desc">同意</div>   
+          </div>
+          <div v-if="item=='disagree'" @click="disagree">
+            <span class="icon icon-d-flow-disagree"></span>
+            <div class="desc-3">不同意</div> 
+          </div>
+          <div v-if="item=='revoke'" @click="revoke">
+            <span class="icon icon-d-flow-chehui"></span>
+            <div class="desc">撤回</div>
+          </div>
+          <div v-if="item=='revokeDraft'" @click="revokeDraft">
+            <span class="icon icon-d-flow-chehuicaogao"></span>
+            <div class="desc-5">撤销为草稿</div>
+          </div>
+          <div v-if="item=='edit'" @click="showViewModel('edit')">
+            <span class="icon icon-d-flow-edit"></span>
+            <div class="desc">编辑</div>
+          </div>
+          <div v-if="item=='revise'" @click="showViewModel('revise')">
+            <span class="icon icon-d-flow-xiugai"></span>
+            <div class="desc">修改</div>
+          </div>
+          <div v-if="item=='newFile'" @click="showViewModel('new')">
+            <span class="icon icon-d-flow-new"></span>
+            <div class="desc">新建</div>
+          </div>
+          <div v-if="item=='stop'" @click="stop">
+            <span class="icon icon-d-flow-stop"></span>
+            <div class="desc">终止</div>
+          </div>
+          <div v-if="item=='transfer'" @click="transfer">
+            <span class="icon icon-d-flow-zhuanban"></span>
+            <div class="desc">转办</div>
+          </div>
+          <div v-if="item=='goConcern'" @click="goConcern">
+            <span class="icon icon-heart" v-if="isConcern != '1'"></span>
+            <span class="icon icon-heart-fill" v-else></span>
+            <div class="desc" v-if="isConcern != '1'">关注</div>
+            <div class="desc-4" v-else>取消关注</div>
+          </div>
+          <div v-if="item=='goDiscuss'" @click="goDiscuss">
+            <span class="icon icon-dialog"></span>
+            <div class="desc">评论</div>
+          </div>
+          <div v-if="item=='goTaskLogList'" @click="goTaskLogList">
+            <span class="icon icon-log"></span>
+            <div class="desc">日志</div>
+          </div>
+        </div>
+      </template>
+    </div>
+    <div v-transfer-dom>
+      <popup v-model="showFlow" height="24%">
+        <div class="popup">
+          <div class="flow-box">
+            <flexbox :gutter="0" wrap="wrap">
+              <flexbox-item :span="1/5" v-if="actions.includes('resubmit')">
+                <div class="flex-demo" @click="resubmit" >
+                  <span class="icon icon-d-flow-submit"></span>
+                  <div class="desc">重新提交</div>
+                </div>
+              </flexbox-item>
+              <flexbox-item :span="1/5" v-if="actions.includes('agreement')">
+                <div class="flex-demo" @click="agreement">
+                  <span class="icon icon-d-flow-agree"></span>
+                  <div class="desc">同意</div>
+                </div>
+              </flexbox-item><flexbox-item :span="1/5" v-if="actions.includes('disagree')">
+                <div class="flex-demo" @click="disagree" >
+                  <span class="icon icon-d-flow-disagree"></span>
+                  <div class="desc">不同意</div>
+                </div>
+              </flexbox-item><flexbox-item :span="1/5" v-if="actions.includes('revoke')">
+                <div class="flex-demo" @click="revoke">
+                  <span class="icon icon-d-flow-chehui"></span>
+                  <div class="desc">撤回</div>
+                </div>
+              </flexbox-item><flexbox-item :span="1/5" v-if="actions.includes('revokeDraft')">
+                <div class="flex-demo"  @click="revokeDraft">
+                  <span class="icon icon-d-flow-chehuicaogao"></span>
+                  <div class="desc">撤销为草稿</div>
+                </div>
+              </flexbox-item><flexbox-item :span="1/5" v-if="actions.includes('edit')">
+                <div class="flex-demo"  @click="showViewModel('edit')">
+                  <span class="icon icon-d-flow-edit"></span>
+                  <div class="desc">编辑</div>
+                </div>
+              </flexbox-item><flexbox-item :span="1/5" v-if="actions.includes('revise')">
+                <div class="flex-demo" @click="showViewModel('revise')">
+                  <span class="icon icon-d-flow-xiugai"></span>
+                  <div class="desc">修改</div>
+                </div>
+              </flexbox-item><flexbox-item :span="1/5" v-if="actions.includes('new')">
+                <div class="flex-demo" @click="showViewModel('new')">
+                  <span class="icon icon-d-flow-new"></span>
+                  <div class="desc">新建</div>
+                </div>
+              </flexbox-item><flexbox-item :span="1/5" v-if="actions.includes('stop')">
+                <div class="flex-demo" @click="stop">
+                  <span class="icon icon-d-flow-stop"></span>
+                  <div class="desc">终止</div>
+                </div>
+              </flexbox-item><flexbox-item :span="1/5" v-if="actions.includes('transfer')">
+                <div class="flex-demo" @click="transfer">
+                  <span class="icon icon-d-flow-zhuanban"></span>
+                  <div class="desc">转办</div>
+                </div>
+              </flexbox-item><flexbox-item :span="1/5">
+                <div class="flex-demo" @click="goConcern">
+                  <span class="icon icon-heart" v-if="isConcern != '1'"></span>
+                  <span class="icon icon-heart-fill" v-else></span>
+                  <div class="desc">{{ isConcern != '1' ? '关注' : '取消关注' }}</div>
+                </div>
+              </flexbox-item><flexbox-item :span="1/5"  v-if="isDiscuss">
+                <div class="flex-demo" @click="goDiscuss">
+                  <span class="icon icon-dialog"></span>
+                  <div class="desc">评论</div>
+                </div>
+              </flexbox-item><flexbox-item :span="1/5" v-if="isTaskLog">
+                <div class="flex-demo" @click="goTaskLogList">
+                  <span class="icon icon-log"></span>
+                  <div class="desc">日志</div>
+                </div>
+              </flexbox-item>
+            </flexbox>
+          </div>
+        </div>
+      </popup>
     </div>
     <pop-user-list :show="showUserList" :default-value="selectedUser" @sel-item="selUser"
                    v-model="showUserList" v-if="actions.includes('transfer')"></pop-user-list>
@@ -28,7 +151,6 @@
           <span class="title required">转办给: </span>
           <span>{{selectedUser.nickname}}</span>
         </div>
-     
         <div class="confirm-item">
           <span class="title required">备注: </span>
           <input type="text" class="value" v-model="transferInfo.comment">
@@ -53,6 +175,7 @@ import {
 import { isMyflow, getListById } from 'service/detailService'
 import { Confirm } from 'vux'
 import PopUserList from 'components/Popup/PopUserList'
+import actinoMinx from "mixins/action";
 
 var component = {
   props: {
@@ -79,6 +202,7 @@ var component = {
     Confirm,
     PopUserList,
   },
+  mixins: [actinoMinx],
   data() {
     return {
       showUserList: false, // 是否展示用户列表
@@ -136,7 +260,7 @@ var component = {
 
       if ((action.add && model != 'marking' && statusText =='已生效') || (model == 'view'&&  statusText =='已生效') || !this.isMyTask) {
         me.pushActions('newFile');
-        me.pushActions('copyNew');
+        //me.pushActions('copyNew');
       }
       if(model === 'revise') {
         me.deleteActions('newFile');
@@ -163,10 +287,10 @@ var component = {
       if (actions.includes('resubmit')) {
         me.pushActions('resubmit');
         me.form.taskType = 3;
-        me.pushActions('storage');
+        //me.pushActions('storage');
       }
       if(actions.includes('temporary') && !((me.actions).includes('storage'))) {
-        me.pushActions('storage');
+        //me.pushActions('storage');
       }
       if (actions.includes('agreement')) {
         me.pushActions('agreement');
@@ -187,6 +311,9 @@ var component = {
       if(taskInfo.actions && taskInfo.actions.indexOf('recall') > -1 && taskInfo.allowRecall){
         me.pushActions('revoke'); 
       }
+      me.pushActions('goConcern');
+      me.pushActions('goDiscuss');
+      me.pushActions('goTaskLogList');
     }, 
     resubmit() {
       this.$HandleLoad.show();
@@ -535,8 +662,14 @@ export default Vue.component('R2Action',component)
   @import '~@/scss/color.scss';
 
   .handle_wrapper {
-    margin: .1rem 0 .24rem;
-    overflow: hidden;
+    // margin: .1rem 0 .24rem;
+    // overflow: hidden;
+    // position: fixed;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 999;
     // 审批操作
     .handle_btn {
       display: flex;
@@ -600,8 +733,122 @@ export default Vue.component('R2Action',component)
         color: #fff;
       }
     }
+    .more{
+      width: .4rem;
+      height: .4rem;
+      display: inline-block;
+      position: absolute;
+      z-index: 999;
+      top: -46px;
+      right: 14px;
+      .icon {
+        width: .4rem;
+        height: .4rem;
+        float: right;
+      }  
+    }
+    .detail-comment-container {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      height: .5rem;
+      background-color: #fafafa;
+      color: #999;
+      &:before {
+        border-color: #d9d9d9
+      }
+      .icon {
+        display: inline-block;
+        width: .2rem;
+        height: .2rem;
+        float: left;
+      }
+      .icon-heart {
+        width: .22rem;
+        height: .2rem;
+      }
+      .icon-heart-fill {
+        width: .2rem;
+        height: .18rem;
+      }
+      /** 关注 */
+      .concern{
+        text-align: center;
+        .icon-xihuan{
+          color: #c93d1b;
+        }
+        .heart-desc{
+          font-size: .1rem;
+          margin-top: -.05rem;
+        }
+      }
+      .operation {
+        .dialog-desc{
+          font-size: .1rem;
+          margin-top: -.06rem;
+        }
+      }
+      .count{
+        font-size: .12rem;
+      }
+      .task{
+        .task-desc{
+          font-size: .1rem;
+          margin-top: -.06rem;
+          margin-left: -.03rem;
+        }
+      }
+      .flow{
+        .desc{
+          font-size: .1rem;
+          /* margin-top: -.06rem; */
+          margin-left: 0.05rem;
+          float: right;
+          display: inline-block;
+        }
+        .desc-3{
+          font-size: .1rem;
+          margin-top: -.06rem;
+          margin-left: -.08rem;      
+        }
+        .desc-4{
+          font-size: .1rem;
+          margin-top: -.06rem;
+          margin-left: -.14rem;      
+        }
+        .desc-5{
+          font-size: .1rem;
+          margin-top: -.06rem;
+          margin-left: -.21rem;      
+        }
+      }
+      .operate{
+        .desc{
+          font-size: .1rem;
+          margin-top: -.06rem;
+          margin-left: -.02rem;   
+        }
+      }
+    }
   }
-
+  .popup{
+    .flow-box{
+      .flex-demo{
+        width: 100%;
+        padding-top: .1rem;
+        .icon{
+          display: inline-block;
+          width: 50%;
+          height: .4rem;
+          margin-left: 25%;
+        } 
+        .desc{
+          font-size: .1rem;
+          text-align: center;
+        } 
+      }  
+    }  
+  }
   .action-confirm {
     .confirm-item {
       display: flex;

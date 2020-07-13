@@ -47,5 +47,10 @@ export default {
       border-left: .08rem solid #3296FA;
     }
   }
+  .word-main{
+    .each-cell{
+      padding: .1rem 0;
+    }
+  }
 }
 </style>

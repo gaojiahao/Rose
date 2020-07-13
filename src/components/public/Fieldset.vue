@@ -7,8 +7,7 @@
         <!-- <r-read-only-part :fields="readOnlyParts" :values="values" v-if="cfg.name!='baseinfo'"></r-read-only-part> -->
       </div>
       <div  v-if="(cfg.name ==='baseinfo' && viewType!='view' || cfg.name !='baseinfo')" >
-        <template v-for="(item, index) in editParts">
-          
+        <template v-for="(item, index) in editParts" >
             <r2Textfield :cfg="item" :values="values" v-if="item.xtype == 'r2Textfield' && item.fieldCode != 'biComment'" :key="index"/>
             <r2TextArea :cfg="item" :values="values" v-if="item.xtype == 'r2TextArea'" :key="index"/>
             <r2TextArea :cfg="item" :values="values" v-if="item.xtype == 'r2Textfield' && item.fieldCode == 'biComment'" :key="index"/>
@@ -134,6 +133,9 @@ var component = {
           return !it.hiddenInRun;
         });
         this.editParts = displayItems.concat(hiddenItems); // 可编辑部分 
+
+        this.editParts = displayItems;
+        this.editParts.unshift(...hiddenItems);
         this.dealBomGrid();
         // this.editParts = items;
     },
