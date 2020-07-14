@@ -17,7 +17,7 @@
           <div class="instance-main">
             <div class="instance-header">
               <span class="instance_code vux-1px-l">{{item.transCode}}</span>
-              <span class="instance_status" :class="item.statusClass">{{dealStatus(item.biStatus)}}</span>
+              <span  class="instance_status" v-instanceStateDirective="{status:item.biProcessStatus?item.biProcessStatus:item.biStatus}">{{item.biStatus}}</span>
             </div>
             <div class="instance-project-container">
               <div class="project_name" :class="{'time-to-wrap': item.projectName_projectApprovalId.length > 12}">项目名称: {{item.projectName_projectApprovalId}}</div>
