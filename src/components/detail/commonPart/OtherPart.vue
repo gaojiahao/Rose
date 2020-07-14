@@ -10,7 +10,7 @@
       <span class="comment_value">{{otherInfo.biComment || '无'}}</span>
     </div>
     <!-- 附件 -->
-    <upload-file :default-value="attachment" no-upload></upload-file>
+    <!-- <upload-file :default-value="attachment" no-upload></upload-file> -->
   </div>
 </template>
 
