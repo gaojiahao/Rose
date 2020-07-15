@@ -163,6 +163,7 @@ export default {
         });
       }
     },
+    //判读是否需要跳转到选择服务器页面。
     isSetHost:function(){
       if(window.isApp && window.baseURL == null){
         this.$router.push('/setHost');

@@ -6,7 +6,6 @@ function initEvent(){
     window.badge.clear();
     window.notification.on('click', clickFn);
     window.DsService.onNotificationClick(function(groupId){
-        console.log('router push group');
         window.router.push('/msg/group/'+ groupId);
     })
 }
