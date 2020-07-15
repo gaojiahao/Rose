@@ -113,7 +113,6 @@ export default {
           vm = this,
           status,
           dsClient;
-      if (window.baseURL) dsUrl = "172.roletask.com:6021/deepstream";//app测试代码
       return new Promise((resolve,reject)=>{
           if(vm.dsClient != null && vm.dsClient.getConnectionState() != 'CLOSED'){
               console.log('ds is not null');
