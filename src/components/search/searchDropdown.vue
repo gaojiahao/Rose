@@ -1,6 +1,6 @@
 <template>
-  <div class="r-dropdown">
-    <ul class="r-dropdown-list">
+  <div class="r-dropdown" :class="{'type':showMore}">
+    <ul class="r-dropdown-list" :class="{'height':showMore}" ref="fill">
       <template v-for="(item, index) in list">
         <li class="r-dropdown-item" :class="{'selected': selItem[item.value]&&(selItem[item.value]['value']==item.value)}"
             @click.stop="dropItemClick(item)" :key="index" v-show="index < 5">
@@ -24,6 +24,7 @@
 
 <script>
   import {Icon} from 'vux'
+  import Bscroll from "better-scroll";
 
   export default {
     name: "search-dropdown",
@@ -41,7 +42,7 @@
     data() {
       return {
         selItem: {},
-        showMore: 0,
+        showMore: false,
       }
     },
     watch: {
@@ -67,9 +68,19 @@
         this.$emit('on-selected', this.selItem);
       },
       clickMore(){
-        this.showMore = this.showMore ? 0:1;
+        this.$nextTick(() => {
+          debugger
+          this.showMore = this.showMore ? false:true;
+        });  
       }
     },
+    created() {
+      this.$nextTick(() => {
+        this.fillBscroll = new Bscroll(this.$refs.fill, {
+          click: true
+        });
+      });  
+    }
   }
 </script>
 
@@ -84,6 +95,9 @@
     box-sizing: border-box;
     opacity: 1;
     overflow-y: scroll;
+    .height{
+      height:calc(100% - 1.02rem)
+    }
     /* 选中值 */
     .r-dropdown-value {
       width: 100%;
@@ -129,5 +143,8 @@
         font-size: .12rem;
       }
     }
+  }
+  .type{
+    height: 100%;
   }
 </style>

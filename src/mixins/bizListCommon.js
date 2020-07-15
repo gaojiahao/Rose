@@ -503,7 +503,12 @@ export default {
               fieldCode:key,
               isSummary:it.isSummary
             });
-
+            if(!it.isSummary){
+              me.filterList.push({
+                name:it.alias ? it.alias : it.fieldName,
+                value:key,
+              });
+            }
           });
           // this.getViewFields();
         }

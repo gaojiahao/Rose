@@ -12,7 +12,7 @@
       <div class="pop_cfm" v-else @click="searchMat(srhInpTx)">搜索</div>
       <i class="icon-clear clear_icon" v-if="srhInpTx" @click="clear"></i>
     </form>
-    <div class="search_filter" v-show="isShowDrop" v-if="filterList.length" :class="{'margin-rem':showPop}">
+    <div class="search_filter" v-show="isShowDrop" v-if="filterList.length" :class="{'margin-rem':showPop,'top1':classType==1,'top2':classType==2}">
       <r-dropdown :list="filterList" @on-selected="popSelected"></r-dropdown>
       <div class="layer" @click="isShowDrop = false"></div>
     </div>
@@ -48,11 +48,16 @@
       placeHolder: {
         type: String,
         default: '多字段搜索以英文逗号隔开,如：编码,名称'
+      },
+      classType:{
+        type:Number,
+        default:1
       }
     },
     watch: {
       isShowDrop: {
         handler(status) {
+          debugger
           this.$event.$on('shut-down-filter', (val) => {
             this.isShowDrop = val;
             this.$event.$off('shut-down-filter');
@@ -123,7 +128,7 @@
       // 选择过滤条件
       popSelected(item) {
         this.property = item;
-        this.$refs.searchInp.focus();
+        //this.$refs.searchInp.focus();
       },
       // 过滤时清除搜索
       clearVal() {
@@ -202,7 +207,7 @@
     .search_filter {
       left: 0;
       bottom: 0;
-      top: .45rem;
+      //top: .45rem;
       width: 100%;
       z-index: 100;
       font-size: .14rem;
@@ -213,6 +218,12 @@
         height: 100%;
         background: #000;
       }
+    }
+    .top1{
+      top: .45rem;
+    }
+    .top2{
+      top:.95rem;
     }
     .margin-rem{
       top: .85rem;  
