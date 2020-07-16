@@ -36,6 +36,9 @@ export default {
             var ds = window.dsClient;
             tokenService.clean();
             if(ds)ds.close();//关闭deepstream长连接
+            if(window.isApp){
+                window.DsService.close();//关闭native()连接
+            }
             this.$router.replace('/login');
         }
     },

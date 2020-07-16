@@ -174,14 +174,14 @@ export default {
         },
         nativeLogin:function(dsUrl,userId){
             if(window.isApp)window.DsService.login(dsUrl,userId,function(){
-                console.log('ds success',arguments);
+                console.log('native ds success',arguments);
                 window.DsService.getDsMsg(function(msg){
                   console.log('dsMsg:',msg);
                 },()=>{
 
                 })
             },function(){
-                console.log('ds failer',arguments);
+                console.log('native ds failer',arguments);
             });
         },
         onMobileLoginClick() {
