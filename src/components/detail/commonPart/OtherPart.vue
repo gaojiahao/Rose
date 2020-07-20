@@ -10,7 +10,7 @@
       <span class="comment_value">{{otherInfo.biComment || '无'}}</span>
     </div>
     <!-- 附件 -->
-    <upload-file :default-value="attachment" no-upload></upload-file>
+    <!-- <upload-file :default-value="attachment" no-upload></upload-file> -->
   </div>
 </template>
 
@@ -68,10 +68,10 @@
   .other-part-container {
     color: #333;
     overflow: hidden;
-    margin: .1rem .1rem;
+    margin-top: .1rem;
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     background-color: #fff;
-    width: calc(100% - .2rem);
     .comment-container {
       color: #999;
       display: flex;

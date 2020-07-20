@@ -1,6 +1,6 @@
 <template>
-  <div class="detail_wrapper xmlw-detail-container">
-    <div class="basicPart">
+  <div class="detail_wrapper xmlw-detail-container" style="height:100%;">
+    <div class="basicPart swiper-container task-form" ref="fill">
 
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="orderInfo" :order-info="orderInfo"></basic-info>
@@ -36,10 +36,11 @@
         </div>
       </div> -->
       <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
-      <r-action :code="transCode" :task-id="taskId" :actions="actions"
-                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
+      <!-- <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action> -->
 
     </div>
+    <r2-action v-if="showAction" :workFlowLogs="workflowLogs" :formStatus="formStatusArr"/>
   </div>
 </template>
 
@@ -52,12 +53,16 @@
   import detailCommon from 'mixins/detailCommon'
   import {accMul} from 'plugins/calc/decimalsAdd'
   import RAction from 'components/public/RAction'
+  // 插件 引入
+  import Bscroll from "better-scroll";
 
   export default {
     data() {
       return {
         jobLog: {},
         comment: {},
+        showAction: false,
+        workflowLogs:[],
       }
     },
     filters: {
@@ -103,10 +108,19 @@
       },
     },
     created() {
+      this.$nextTick(() => {
+      this.$parent.detailScroll.destroy();
+        this.fillBscroll = new Bscroll(this.$refs.fill, {
+          click: true
+        });
+      });  
     }
   }
 </script>
 
 <style lang='scss' scoped>
   @import '~scss/biz-app/bizDetail';
+  .task-form{
+    height:calc(100% - 1.02rem)
+  }
 </style>

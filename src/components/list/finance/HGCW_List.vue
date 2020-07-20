@@ -63,10 +63,10 @@ export default {
           title: '资产负债表',
           code: 'ZCFZ',
         },
-        // {
-        //   title: '现金流量表',
-        //   code: 'XJLL',
-        // },
+        {
+          title: '现金流量表',
+          code: 'XJLL',
+        },
         {
           title: '科目余额表',
           code: 'KMYE'
@@ -75,7 +75,7 @@ export default {
       listMap:{
         '0':{ transcode:'LR', folder:'finance', name:'利润表' },
         '1':{ transcode:'ZCFZ', folder:'finance', name:'资产负债表' },
-        // '2':{ transcode:'XJLL', folder:'finance', name:'现金流量表' },
+        '2':{ transcode:'XJLL', folder:'finance', name:'现金流量表' },
         '3':{ transcode:'KMYE', folder:'finance', name:'科目余额表' }
       },
       activeIndex: 0,

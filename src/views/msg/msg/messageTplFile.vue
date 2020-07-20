@@ -1,6 +1,6 @@
 <template>
     <div class="file-msg-container">
-       <div class="singleFile">
+       <touch class="singleFile">
             <div class="file-content-info">
                 <p class="file-content-info-name" @click="openFile(file)">
                     {{file.content}}
@@ -10,7 +10,7 @@
                 </p>
             </div>
             <img class="file-img" :src="file.content|filedTypeFilter" @error= "getFileImg()">
-        </div>
+        </touch>
     </div>
 </template>
 
@@ -68,6 +68,7 @@ export default {
             flex:1;
             text-align: left;
             &-name{
+                color: #06c;
                 max-width: 130px;
                 text-overflow: ellipsis;
                 -ms-flex: 1;

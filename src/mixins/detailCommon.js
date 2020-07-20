@@ -9,7 +9,7 @@ import {
 } from 'service/detailService'
 import { isSubscribeByRelationKey } from 'service/commentService'
 import { getAppDetail, getPCCommentList } from 'service/app-basic/appSettingService'
-import { getFormViews, getFormConfig, saveAndCommitTask, getBasicInfo, findConfigInfo} from 'service/commonService'
+import { getFormViews, getFormConfig, saveAndCommitTask, getBasicInfo, findConfigInfo,getFormViewByUniqueId} from 'service/commonService'
 // vux 引入
 import { numberComma } from 'vux'
 // 组件 引入
@@ -48,7 +48,7 @@ export default {
         fontWeight: 'bold',
       },
       taskId: '',
-      listId: '',
+      listId: null,
       userId: '',
       comment: '',                        // 审批意见
       userName: '',
@@ -82,6 +82,8 @@ export default {
       showMatterDetail: false,            // 是否展示物料详情弹窗
       config: [],
       baseinfoConfig: {},                 //baseinfo配置
+      viewInfo:[],
+      formStatusArr:[],
     }
   },
   computed: {
@@ -127,9 +129,24 @@ export default {
     },
     // 获取listid
     getListId() {
-      return getListId(this.transCode).then(data => {
-        this.formViewUniqueId = data[0].uniqueId;
-        this.listId = data[0].listId;
+      // return getListId(this.transCode).then(data => {
+      //   this.formViewUniqueId = data[0].uniqueId;
+      //   this.listId = data[0].listId;
+      // });
+      return new Promise((resolve, reject) => {
+        getListId(this.transCode).then(data => {
+          if (data.length) {
+            this.formViewUniqueId = data[0].uniqueId;
+            this.viewId = data[0].uniqueId;
+            this.listId = data[0].listId;
+            //this.model = "view"; //查看视图
+            resolve();
+          } else {
+            this.$vux.alert.show({
+              content: "抱歉，交易号有误，没有数据可以查看"
+            });
+          }
+        });
       });
     },
     // 获取当前应用是否有修改按钮
@@ -157,6 +174,8 @@ export default {
     getFromStatus() {
       return getFromStatus({transCode: this.transCode}).then(({tableContent = []}) => {
         this.formStatus = tableContent[0].status;
+        this.formStatusArr = tableContent;
+        this.showAction = true;
       })
     },
     // 判断是否为我的任务
@@ -312,6 +331,7 @@ export default {
       await this.getOrderList(transCode);// 获取表单表单详情
       await this.getFromStatus();// 表单状态
       await this.getFormConfig();// 表单配置
+      await this.loadFormCfg();
       await this.getFormViews();// 所有的视图列表
       await this.getAction();// 获取列表权限
       await this.getCommentList();// 请求评论列表
@@ -426,13 +446,25 @@ export default {
       }
 
     },
+    loadFormCfg() {
+      return getFormViewByUniqueId(this.viewId).then(data => {
+        let { appName, config, dataSource, listInfo, formKey } = data;
+
+        try {
+          config = JSON.parse(config);
+        } catch (e) {
+          config = null;
+        }
+        this.viewInfo = config;
+      });
+    },
     // 请求配置
     getFormConfig() {
       return getFormConfig(this.formViewUniqueId).then(data => {
         // 获取当前表单状态
         this.currenrForm = data.viewType;
         
-        let {config = [], dataSource = '[]', reconfig = {}} = data;
+        let {config = [], dataSource = '[]', reconfig = {},id=''} = data;
         this.config = config;
         console.log('config:', config);
         console.log('二次配置-reconfig:', reconfig);

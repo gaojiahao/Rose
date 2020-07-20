@@ -821,6 +821,10 @@ export default {
         max-width: 70%;
         background-color: #ffffff;
         word-break: break-all;
+        /deep/ img{
+            max-width: 100%;
+            max-height: 1rem;
+        }
         &.rightarrow:after{
             content: " ";
             border-width: 7px;

@@ -179,6 +179,7 @@ export default {
             // this.getAutoSubjectCount();
         } else {
             this.currentComponent = require(`components/detail/${folder}/${fileName}Form.vue`).default;
+            // this.detailScroll = true;s
         }
         // 监听详情页传回来的 ‘评论’
         this.$event.$on('commentCount', (val) => {

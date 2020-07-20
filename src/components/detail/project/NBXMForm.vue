@@ -1,17 +1,22 @@
 <template>
-  <div class="detail_wrapper xmlw-detail-container">
-    <div class="basicPart">
-      <!-- 经办信息 （订单、主体等） -->
-      <basic-info :work-flow-info="orderInfo" :order-info="orderInfo"></basic-info>
-      <!-- 项目信息 -->
-      <only-word :config="otherConfig" :info="approval"></only-word>
-      <!-- 备注 -->
-      <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
-      <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
-      <!-- 操作栏 -->
-      <r-action :code="transCode" :task-id="taskId" :actions="actions"
-                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
+  <div class="detail_wrapper xmlw-detail-container" style="height:100%;">
+    <div class="basicPart swiper-container task-form" ref="fill">
+      <div class="wrapper">
+        <div class="slide">
+          <!-- 经办信息 （订单、主体等） -->
+          <basic-info :work-flow-info="orderInfo" :order-info="orderInfo"></basic-info>
+          <!-- 项目信息 -->
+          <only-word :config="otherConfig" :info="approval"></only-word>
+          <!-- 备注 -->
+          <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
+          <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
+          <!-- 操作栏 -->
+          <!-- <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                    :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action> -->
+        </div>
+      </div>
     </div>
+    <r2-action v-if="showAction" :workFlowLogs="workflowLogs" :formStatus="formStatusArr"/>
   </div>
 </template>
 
@@ -27,13 +32,17 @@ import onlyWord from 'components/detail/commonPart/form-part/onlyWord'
 import detailCommon from 'mixins/detailCommon'
 // 插件引入
 import {accMul} from 'plugins/calc/decimalsAdd'
+// 插件 引入
+import Bscroll from "better-scroll";
 
 export default {
   data() {
     return {
       approval: {},
       comment: {},
-      biReferenceId:''
+      biReferenceId:'',
+      showAction: false,
+      workflowLogs:[],
     }
   },
   filters: {
@@ -76,10 +85,19 @@ export default {
     },
   },
   created() {
+    this.$nextTick(() => {
+    this.$parent.detailScroll.destroy();
+      this.fillBscroll = new Bscroll(this.$refs.fill, {
+        click: true
+      });
+    });  
   }
 }
 </script>
 
 <style lang='scss' scoped>
   @import '~scss/biz-app/bizDetail';
+  .task-form{
+    height:calc(100% - 1.02rem)
+  }
 </style>

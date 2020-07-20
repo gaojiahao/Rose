@@ -206,10 +206,18 @@ let cfg = {
             col = dataSourceCols[i];
             col['name'] = dataSourceCols[i].v;
             col['value'] = dataSourceCols[i].k;
+            if(col['value']=='facilityName'){
+              col['sort'] = 0;
+            } else if (col['value']=='whCode'){
+              col['sort'] = 1;   
+            } else {
+              col['sort'] = 2;  
+            }
             if(hFieldKeys.indexOf(col.k) ==-1){
                 fields.push(col);
             }
           }
+          fields.sort(function(a, b){return a['sort'] - b['sort']}); 
           this.fields = fields;
       }
 

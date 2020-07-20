@@ -144,6 +144,7 @@
             }
             let submitData = {
               listId: 'ee4ff0a1-c612-419d-afd7-471913d57a2a',
+              biReferenceId:this.biReferenceId,
               formData: {
                 baseinfo: {
                   ...this.formData,
@@ -153,6 +154,7 @@
                 },
                 comment: this.jsonData.comment,
                 projectPlanTask: this.projectTask,
+                projectApproval:this.projectApproval
               },
               wfParam: null
             };
@@ -234,8 +236,10 @@
         return findProjectTask(this.transCode).then(({formData = {}}) => {
           let projectApproval = formData.projectApproval;
           let projectPlanTask = formData.projectPlanTask;
+          this.projectApproval = projectApproval;
           this.jsonData.comment = formData.comment;
           this.formData.id = formData.baseinfo.id;
+          this.biReferenceId = formData.biReferenceId;
           this.projectTask = {
             projectName: projectApproval.projectName,
             projectManager: projectApproval.projectManager,
@@ -346,7 +350,7 @@
     }
   }
   .each_property {
-    padding: .18rem 0;
+    padding: .12rem 0;
     display: flex;
     justify-content: space-between;
     line-height: .14rem;

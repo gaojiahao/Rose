@@ -26,5 +26,9 @@ export default {
     /deep/ .face{
         height: 20px;
     }
+
+    /deep/ table{
+        max-width: 100%;
+    }
 }
 </style>

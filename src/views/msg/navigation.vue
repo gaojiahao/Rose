@@ -41,7 +41,7 @@
                                             @error="getDefaultPhoto(group)">
                                     </span>
                                     <div v-if="group.groupType=='N'" class="notice-group">
-                                        <i class="iconfont icon-notice" ></i>
+                                        <i class="iconfont icon-icyhbynotice" ></i>
                                     </div>
                                     <badge  
                                         class="group-body-icon-msgCount"
@@ -487,13 +487,13 @@ export default {
                 case '4':
                     text = '[文件]' + content.content;
             }
-            // window.notification.schedule({
-            //     msg:msg,
-            //     title: msg.groupName,
-            //     text:`${msg.creatorName}:${text}`,
-            //     foreground: true,
-            //     icon:this.$options.filters.appIconFilter(g.groupIcon) || groupIcon
-            // });
+            window.notification.schedule({
+                msg:msg,
+                title: msg.groupName,
+                text:`${msg.creatorName}:${text}`,
+                foreground: true,
+                icon:this.$options.filters.appIconFilter(g.groupIcon) || groupIcon
+            });
 
             navigator.vibrate(300);
         },
@@ -698,7 +698,7 @@ export default {
             width: 45px;
             height: 45px;
 
-            .icon-notice{
+            .icon-icyhbynotice{
                 font-size: .28rem;
                 color: #fff;
             }

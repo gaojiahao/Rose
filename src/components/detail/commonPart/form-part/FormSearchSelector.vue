@@ -1,6 +1,6 @@
 <template>
   <!--搜索选择器-->
-  <div class="search_selector" :style="{borderBottom:borderBottom}">
+  <div class="search_selector" >
     <div class="each_info vux-1px-b" @click="showPop = true">
       <div v-if="!isRequired" class="title">{{ title }}</div>
       <div v-else style="color:#e4393c" class="title">{{ title }}</div>
@@ -133,9 +133,9 @@ export default {
   computed: {
     borderBottom() {
       if(this.isRequired){
-        return `1px solid #e4393c`;
+        return `.05em solid #e4393c`;
       }else{
-        return `1px solid #e8e8e8`;
+        return `.05em solid #e8e8e8`;
       }
       
     }

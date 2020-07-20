@@ -7,12 +7,12 @@
  * @LastEditTime : 2020-01-10 11:32:35
  -->
 <template>
-  <div class="pages" :class="{'no-add': false}" ref="list">
+  <div class="pages" :class="{'no-add': !action.add}" ref="list">
     <div class="content">
       <slot name="nav"></slot>
       <div class="list_top">
         <!-- 搜索栏 -->
-        <searchIcon :filterList="filterList" @search="searchList" ref="search"></searchIcon>
+        <searchIcon :filterList="filterList" @search="searchList" ref="search" :classType=2></searchIcon>
         <div class="filter_part">
           <r-sort @on-sort="onSortList" @on-filter="onFilter" :list-id="listId" ref="sort" :filterFieldSettings="filterFieldSettings"></r-sort>
         </div>
@@ -52,18 +52,18 @@ export default {
       ],
       filterList: [
         // 过滤列表
-        {
-          name: "交易号",
-          value: "transCode"
-        },
-        {
-          name: "经办人",
-          value: "handlerName"
-        },
-        {
-          name: "客户名称",
-          value: "dealerName_dealerCodeCredit"
-        }
+        // {
+        //   name: "交易号",
+        //   value: "transCode"
+        // },
+        // {
+        //   name: "经办人",
+        //   value: "handlerName"
+        // },
+        // {
+        //   name: "客户名称",
+        //   value: "dealerName_dealerCodeCredit"
+        // }
       ]
     };
   },
