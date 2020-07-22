@@ -16,7 +16,7 @@
               <span>项目</span>
               <span>计划/申报工时</span>
             </div>
-            <div class="content" v-for="(list,index) of content" :key="index">
+            <div class="content" v-for="(list,index) of content" :key="index"  @click="goDetail(list)">
               <ul>
                 <li>{{list.projectName}}</li>
                 <li>{{list.projectManager}}</li>
@@ -55,6 +55,18 @@ export default {
         }
     },
      methods:{
+       goDetail(list){
+         let path = `/detail/ee4ff0a1-c612-419d-afd7-471913d57a2a/0`;
+          this.$router.push({
+              path,
+              query: {
+                name: '项目任务', 
+                folder: 'project',
+                fileName: 'XMRW',
+                transCode:list.transCode
+              }
+          })
+       }
      }
 }
 </script>
@@ -109,6 +121,10 @@ export default {
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px dashed #eee;
+        }
+        .content:hover{
+          background-color: #eee;
+          cursor: pointer;
         }
         .content:last-child{
           border: none;
