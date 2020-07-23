@@ -81,6 +81,18 @@
           this.$parent.showToast(e.message);
         })
       },
+      reqData2(listKey, param = {}) {
+        return createService.getAccounting(Object.assign({}, param)).then(data => {
+          var arr = data.tableContent;
+          arr.map((item, index) => {
+            item['dep'] = item['unitName'];
+            return item
+          })
+          this[listKey] = this.assembleList(arr);
+        }).catch(e => {
+          this.$parent.showToast(e.message);
+        })
+      },
       // TODO 获取费用所属事业部列表
       getBuDept() {
         return this.reqData('buDeptList');
@@ -95,10 +107,18 @@
         if (!name) {
           return
         }
-        this.reqData('deptList', {
-          key: '2',
-          name,
-        });
+        let jsonData = {
+          _dc: Date.parse(new Date()),
+          key: 'N2',
+          parentId: "60d2cb55-8066-4c85-b8ea-60bde9be641d",
+          name1: this.buSelected[0],
+          name2: '111',
+          name3: '111',
+          page: 1,
+          start: 0,
+          limit: 10000
+        };
+        this.reqData2('deptList', jsonData);
       },
       // TODO 获取核算归属省份列表
       getProv() {

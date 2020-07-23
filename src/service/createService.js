@@ -133,6 +133,14 @@ let createService = {
       }, data)
     });
   },
+  getAccounting(data){
+    return $axios.ajax({
+        url:'/H_roleplay-si/ds/getAccountingUnitByid',
+        data:data,
+    }).catch(e => {
+        return errorHandler(e);
+    });
+  },
   // TODO 获取省长、常委
   getChangWei(data = {}) {
     return $axios.ajax({
