@@ -11,6 +11,7 @@ import Router from 'vue-router'
 
 import SetHost from '@/views/setHost'
 import Login from '@/views/login'
+import TokenExpiry from '@/views/tokenExpiry'
 import MsgRouter from '@/views/msg/router'
 import Contacts from '@/views/contacts/contacts'
 import HomeRouter from '@/views/home/router'
@@ -64,6 +65,12 @@ if (router == null) {
         // redirect: '/Login',
         meta: {
           title: '登录'
+        }
+      },{
+        path: '/tokenExpiry',
+        component: TokenExpiry,
+        meta:{
+          title: 'token过期了'
         }
       }
     ]

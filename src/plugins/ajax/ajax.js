@@ -72,6 +72,8 @@ fly.interceptors.response.use(
       localStorage.setItem('userCode',userCode);
       if(window.isApp){
         window.DsService.close();
+        window.router.push('/tokenExpiry');
+        return;
       }
       this.lock();
       return tokenService.login()
