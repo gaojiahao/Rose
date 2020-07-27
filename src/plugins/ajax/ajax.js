@@ -63,11 +63,16 @@ fly.interceptors.response.use(
     }
   },
   function (error) {
+    var userCode = localStorage.getItem("userCode");
     console.log('error:', error);
     // 响应拦截 报错标识
     if (error.status === 401) {
       localStorage.clear();
       sessionStorage.clear();
+      localStorage.setItem('userCode',userCode);
+      if(window.isApp){
+        window.DsService.close();
+      }
       this.lock();
       return tokenService.login()
       .then((token) => {

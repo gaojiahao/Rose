@@ -117,6 +117,9 @@ export default {
              this.refresh = true;//要刷新了。
         })
     },
+    beforeUpdate:function(){
+        this.checkGroupUpdate();
+    },
     computed:{
         sortedGroup:function(){
             var a =  this.sortKey(this.groups,'modTime');
@@ -211,6 +214,20 @@ export default {
                     this.refresh = true;
                 }
             })
+        },
+        //处理通过路由切换 groupId,聊天页面无相应的情况。
+        checkGroupUpdate(){
+            var groupId = this.$route.params.groupId,
+                i,l;
+
+            if(this.groups.length && groupId != null && (this.group == null || this.group.groupId != groupId)){
+                 for(i=0, l = this.groups.length; i<l; i++){
+                    if(this.groups[i].groupId == groupId){
+                        this.toMsg(this.groups[i]);
+                        break;
+                    }
+                 }
+            }
         },
         checkDsConnect(){
             var dsClient = window.dsClient,

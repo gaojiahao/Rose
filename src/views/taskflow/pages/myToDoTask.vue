@@ -211,8 +211,10 @@ export default {
         },
         // 同意
         async agreement(task) {
+            this.$HandleLoad.show();
             //判断是否提交数据
             await this.loadFlow(task);
+            this.$HandleLoad.hide();
             if(this.viewType == 'view'){
                 this.$vux.confirm.prompt('', {
                     title: '审批意见',

@@ -604,7 +604,7 @@ export default {
          this.maxSize = 20;
     },
     mounted:function(){
-        this.initContextMenu();
+        this.initContextMenu();//初始化右键菜单
         this.getApp().$on('resize',()=>{
             var scroller = this.scroller;
             if(this.msgInputFocus== true){
