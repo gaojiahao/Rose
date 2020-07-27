@@ -104,6 +104,7 @@ export default {
       formStatus: [],//表单状态,是否草稿
       defaultTitleValue:'',
       titleFieldCode:'',
+      dataSources:[],
     };
   },
   computed:{
@@ -418,6 +419,7 @@ export default {
               this.getNewFormConfig(config,res.data);
               this.viewInfo = config;
               this.fieldSets = fieldSets;
+              this.dataSources = config.dataSource;
               // for(var i = 0;i<fieldSets.length;i++){
               //   this.$set(this.fieldSets,i,fieldSets[i]);
               // }
@@ -433,9 +435,9 @@ export default {
     },
     setAccountDataSource: function(config, dataSource) {
       var dsMap = {};
-      dataSource.forEach(function(item) {
-        dsMap[item.dataSet] = item.dataSource.source;
-      });
+      for(var i=0; i<dataSource.length; i++){
+          dsMap[dataSource[i]['dataSet']] = dataSource[i].dataSource[0].source;
+      }
       config.items.map(function(fieldSet) {
         var grid;
         if (fieldSet.isMultiple && fieldSet.xtype == "r2FieldSet") {
