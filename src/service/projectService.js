@@ -73,7 +73,7 @@ export let saveProjectTask = (data = {}) => {
 // 修改项目任务
 export let updateProjectTask = (data = {}) => {
   return $flyio.post({
-    url: '/H_roleplay-si/projectTask/update',
+    url: '/H_roleplay-si/projectTask/updateAndEffective',
     data
   })
 };

@@ -179,13 +179,16 @@ var component = {
     //选择默认图片
     getImgPic(d) {
        let url;
+      var baseUrl = window.baseURL||'';
       if(d){
         let pic = this.curObj ? this.curObj.picKey : '',
             defaultUrl = this.curObj ? this.curObj.defaultUrl : 'wl_default03.png';
         url =  d[pic] ? d[pic] : '/static/' + defaultUrl;
+        url = url.indexOf('http') == -1 ? baseUrl + url : url;
       }else{
         url = require('assets/wl_default03.png');
       }
+     
      return url;
     },
     checkAmt() {},

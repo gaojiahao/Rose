@@ -39,7 +39,6 @@ function render (el, bind) {
                 break;
         }
     }else{
-        console.log(bind);
         switch (bind.value.status) {
             case "已生效":
                 el.style.backgroundColor = bind.value.color ? bind.value.color : '#4CAF50';

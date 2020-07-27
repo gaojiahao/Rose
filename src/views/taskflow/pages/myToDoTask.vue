@@ -145,6 +145,11 @@ export default {
 
             })
         },
+        reloadGetTasks(){
+            this.$nextTick(() => {
+                this.getTasks();
+            });
+        },
         handlerViewTask(task){
             
             //todo:通过nav的status信息判断，移动端是否支持动态渲染，不支持则提示并不跳转
@@ -240,7 +245,7 @@ export default {
                     transCode: task.transCode,
                     taskId: task.taskId,
                     callback: () => {
-
+                        this.reloadGetTasks();
                     }
                 });
                 }
@@ -258,7 +263,7 @@ export default {
                         transCode: task.transCode,
                         taskId: task.taskId,
                         callback: () => {
-                        
+                            this.reloadGetTasks();
                         }
                     });
                 }
@@ -341,11 +346,12 @@ export default {
                 content: message,
                 onHide: () => {
                     if (success) {
-                        if (callback) {
-                            callback();
-                        } else {
-                            this.$router.go(0);
-                        }
+                        // if (callback) {
+                        //     callback();
+                        // } else {
+                        //     this.$router.go(0);
+                        // }
+                        this.reloadGetTasks();
                     }
                 }
                 });

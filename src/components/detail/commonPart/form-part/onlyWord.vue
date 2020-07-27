@@ -35,7 +35,7 @@ export default {
 .only-word {
   padding: 0 .15rem;
   background: #FFF;
-  margin: .1rem .1rem 0;
+  margin-top: .1rem;
   border-radius: .04rem;
   .word-header {
     font-size: 16px;
@@ -52,5 +52,9 @@ export default {
       padding: .1rem 0;
     }
   }
+}
+
+.each-cell:last-child{
+  border: none;
 }
 </style>

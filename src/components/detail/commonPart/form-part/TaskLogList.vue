@@ -1,12 +1,14 @@
 <template>
   <!--任务日志列表-->
   <div class="task_container">
-      <div class="task_list" v-if="$route.name !== 'TASKLOG'">
+    <slot name="nav" ></slot>
+      <div :style="tListStyle" class="task_list" v-if="$route.name !== 'TASKLOG'">
         <div class="task_list_sum">
             <span>总工时：<b>{{ logHours }}</b></span>
             <span :style="{marginLeft:'15px'}">总成本：<b>{{ logCosts }}</b></span>
         </div>
         <r-scroll
+            :style="tListContainerStype"
             class="pop-list-container"
             :options="scrollOptions"
             :has-next="hasNext"
@@ -15,9 +17,10 @@
             @on-pulling-down="onPullingDown"
             ref="bScroll">
           <div class="task_list_content">
+            
               <div class="list_container" v-for="(list,index) of logList" :key="index">
                   <div class="list_left">
-                      <img :="list.photo" @error="getDefaultImg(list)">
+                      <img :src="list.photo|appIconFilter" @error="getDefaultImg(list)" height="40">
                   </div>
                   <div class="list_right">
                       <div class="list_right_title">
@@ -26,13 +29,13 @@
                               @click.native="handlerChangeLogStatus(list)" 
                               :value.sync="list.logStatus==='已办'?true:false">
                           </check-icon>
-                          <b style="word-break:break-all;">{{ list.logTitle }}</b>
+                          <div style="word-break: break-all;display: inline-block;">{{ list.logTitle }}</div>
                       </div>
                       <div class="list_right_detail">
-                          <b class="detail_name">{{ list.handlerName?list.handlerName:'未知' }}</b>
-                          <span class="detail_date">{{ list.taskDate }}</span>
-                          <span class="detail_hour">{{ list.logDeclarationHours }}小时</span>
-                          <span class="detail_type">{{ list.logType }}</span>
+                          <span class="list_right_detail_name">{{ list.handlerName?list.handlerName:'未知' }}</span>
+                          <span class="list_right_detail_item">{{ list.taskDate }}</span>
+                          <span class="list_right_detail_item">{{ list.logDeclarationHours }}小时</span>
+                          <span class="list_right_detail_item">{{ list.logType }}</span>
                       </div>
                       <div class="list_right_comment">
                           {{ list.comment }}
@@ -48,7 +51,6 @@
       <div class="task_footer" v-if="$route.name !== 'TASKLOG'">
         <x-button plain  @click.native="addTaskLog">
           <span slot="default">
-            <span class="icon icon-add"></span>
             新增
           </span>
         </x-button>
@@ -67,6 +69,12 @@ import { getTaskLogList, updateLogStatus } from 'service/projectService'
 export default {
   data() {
     return {
+      tListStyle:{
+        height:''
+      },
+      tListContainerStype:{
+        height:''
+      },
       logHours: 0,
       logCosts: 0,
       logStatus: true,
@@ -91,14 +99,12 @@ export default {
   },
   methods: {
     getLogList(isDown) {
-        this.$loading.show();
         getTaskLogList(this.$route.query.transCode,this.currentPage,this.pageSize).then(res => {
             this.total = res.dataCount;
             this.hasNext = res.dataCount > (this.currentPage - 1) * this.pageSize + res.tableContent.length;
             this.logList = this.currentPage === 1 ? res.tableContent : [...this.logList,...res.tableContent];
             this.logCosts = res.logCosts && numberComma(res.logCosts);
             this.logHours = res.logHours;
-            this.$loading.hide();
             if(isDown){
               let text = "";
               if (this.total) {
@@ -177,7 +183,7 @@ export default {
     // 获取 默认图片
     getDefaultImg(item) {
       if(item){
-        let url = item.gender === '男' ? require("assets/ava01.png") : require("assets/ava02.png");
+        let url = item.gender === '男' ? 'https://lab.roletask.com/resource/common-icon/male.png' : 'https://lab.roletask.com/resource/common-icon/female.png';
         item.photo = url;
         return url;
       }
@@ -199,6 +205,11 @@ export default {
     }
   },
   created() {
+    
+    if(this.getApp().hasNav){
+      this.tListStyle.height = 'calc(100% - 1.1rem)';
+      this.tListContainerStype.height = 'calc(100% - .4rem)';
+    }
       this.getLogList();
       this.tdDescribe = this.$route.query.tdDescribe;
   }
@@ -207,11 +218,10 @@ export default {
 
 <style lang='scss' scoped>
   .task_list{
-      padding: .1rem .1rem;
       background-color: #fff;
       height: 100%;
       .pop-list-container{
-        height: calc(100% - 100px);
+        height: calc(100% - 1rem);
         box-sizing: border-box;
         position: relative;
       }
@@ -237,12 +247,11 @@ export default {
           .list_container{
               font-size: 14px;
               display: flex;
-              padding-bottom: .1rem;
+              padding: 0 .1rem;
               .list_left{
                   flex: 1;
                   width: 0.5rem;
                   height: 0.5rem;
-                  margin-right: 0.12rem;
                   margin-top: .05rem;
                   display: inline-block;
                   img {
@@ -259,13 +268,13 @@ export default {
                     color: #4CA3FB;
                   }
                   &_detail{
-                      padding: .08rem 0rem;
-                      .detail_name{
+                    display: flex;
+                      span{
+                        flex: 1;
                         color: #999;
                       }
-                      span{
-                        margin-left: .05rem;
-                        color: #999;
+                      &_item{
+                        text-align: right;
                       }
                   }
                   &_comment{
@@ -279,12 +288,12 @@ export default {
       }
   }
   .task_footer{
-    background-color: #fff;
+   background-color: #fff;
     position: fixed;
     bottom: 0;
-    width: 90%;
+    width: 100%;
+    border-top: .05em solid #dedede;
     padding: .1rem;
-    margin: .1rem .1rem 0rem .1rem;
     .icon-add{
       width: .2rem;
       height: .2rem;
@@ -293,8 +302,10 @@ export default {
       margin-right: .05rem;
     }
     .weui-btn_plain-default{
-      color: #4CA3FB;
+      color: white;
       border: 1px solid #4CA3FB;
+      width: 90%;
+      background-color: #4CA3FB;
     }
   }
   .task_container{

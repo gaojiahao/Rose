@@ -43,7 +43,7 @@
                     <div class="list-content-container-detail">
                         <div>{{ log.effectiveDate|time}}</div>
                          <div>{{ log.performanceType }}</div>
-                         <div>{{log.total}}</div>
+                         <div class="list-content-container-detail-total">{{log.total}}</div>
                     </div>
                 </div>
           </div>
@@ -253,7 +253,8 @@ export default {
     }
     .day-list{
         padding: .08rem;
-        height: calc(100% - 2.49rem);
+        height: calc(100% - 1.49rem);
+        background-color: white;
         overflow: hidden;
         .list-content{
         padding: .05rem;
@@ -276,6 +277,12 @@ export default {
                 width: 100%;
                 justify-content: space-between;
                 color: #999999;
+
+                &-total{
+                    color: black;
+                    font-size: 14px;
+                    font-weight: 600;
+                }
             }
         }
         
