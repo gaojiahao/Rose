@@ -14,6 +14,7 @@ fly.interceptors.request.use((request) => {
 });
 const storage = window[isPC||window.isApp ? 'localStorage' : 'sessionStorage'];
 const ROSE_TOKEN_KEY = 'ROSE_LOGIN_TOKEN';
+let globalToken;
 
 let tokenService = {
   // 清除token
@@ -24,7 +25,7 @@ let tokenService = {
   },
   // 设置token
   setToken(data) {
-    storage.setItem(ROSE_TOKEN_KEY, JSON.stringify({
+    globalToken = {
       entityId: data.entityId,
       token: data.token,
       name: data.name,
@@ -34,11 +35,12 @@ let tokenService = {
       key1: data.key1,
       active: data.active,
       timestamp: +new Date()
-    }));
+    };
+    storage.setItem(ROSE_TOKEN_KEY, JSON.stringify(globalToken));
   },
   // 获取token
   getToken(all) {
-    let token = JSON.parse(storage.getItem(ROSE_TOKEN_KEY)) || {};
+    let token = globalToken != null ? globalToken : JSON.parse(storage.getItem(ROSE_TOKEN_KEY)) || {};
     if(all)return token;
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
     if (token['token']) {
@@ -88,6 +90,8 @@ let tokenService = {
     // 根据环境不同 调用不同的登录接口
     if (isDebug){
       return this.toLoginPage();
+    }else if(window.isApp){
+      return this.appLogin();
     }else if (isQYWX) {
       if(code != null){
         return this.QYWXLogin();
@@ -200,6 +204,26 @@ let tokenService = {
         })
       });
     })
+  },
+  appLogin(){
+    var that = this;
+    return new Promise((resolve,reject)=>{
+        window.DsService.getToken(function(tokenString){
+          if(tokenString){
+            let token = JSON.parse(tokenString) || {};
+            if(token['token']){
+              that.setToken(token);
+            } else if (router.history.current.path != '/login'){
+              console.log('app token 格式不 正确')
+              router.push('/login');
+            }  
+            resolve(token['token']);
+          } else if (router.history.current.path != '/login'){
+            reject({message:'没有拿到app token:'} + tokenString);
+            router.push('/login');
+          }    
+        });
+    });
   },
   toLoginPage(){
     if(router.history.current.path != '/login'){

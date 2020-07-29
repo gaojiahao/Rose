@@ -158,9 +158,11 @@ export default {
                 this.loginIn = true;     
                 localStorage.setItem('userCode',this.userCode);
                 commonService.getBasicInfo().then(baseInfo=>{  
+                      var token = tokenService.getToken(true);
+                      token = JSON.stringify(token);
                       this.$loading.hide(); 
                       this.$router.replace('/');
-                      this.nativeLogin( baseInfo.deepStreamUrl,baseInfo.currentUser.userId);//原生android进行连接
+                      this.nativeLogin( baseInfo.deepStreamUrl,baseInfo.currentUser.userId,token);//原生android进行连接
                 })
             }).catch(err=>{
                 this.$loading.hide();
@@ -172,8 +174,8 @@ export default {
         goSetHost:function () {
             this.$router.push('/setHost');
         },
-        nativeLogin:function(dsUrl,userId){
-            if(window.isApp)window.DsService.login(dsUrl,userId,function(){
+        nativeLogin:function(dsUrl,userId,token){
+            if(window.isApp)window.DsService.login(dsUrl,userId,token,function(){
                 console.log('native ds success',arguments);
                 window.DsService.getDsMsg(function(msg){
                   console.log('dsMsg:',msg);

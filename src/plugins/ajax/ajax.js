@@ -96,7 +96,6 @@ fly.interceptors.response.use(
     rejectError('reject', error.response && error.response.data.message) 
   }
 )
-
 // 请求选项列表
 let Rxports = {
   /**
