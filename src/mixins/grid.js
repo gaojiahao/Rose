@@ -981,6 +981,21 @@ export default {
                 await this.initDicts();
                 await this.initFieldSetting();
             }
+        },
+        getData(a,b){
+            var value=0;
+            if(this.values&&this.values.length){
+                if(b=='items'){
+                    return values;
+                }
+                for(var i=0;i<this.values.length;i++){
+                    if(b=='sum'){
+                        value = value + this.values[i][a];
+                    }
+                }
+                return value;
+            }
+            return value;
         }
     }
 }
