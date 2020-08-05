@@ -488,7 +488,7 @@ export default {
                     text = '[文件]' + content.content;
             }
             window.notification.schedule({
-                msg:msg,
+                data:msg,
                 title: msg.groupName,
                 text:`${msg.creatorName}:${text}`,
                 foreground: true,

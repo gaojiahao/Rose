@@ -12,7 +12,9 @@ function initEvent(){
 function clickFn(notification){
     var data = notification.data;
 
-    if(data.listId){
+    if(data && data.listId){
         window.router.push('/user');
+    } else if(data && data.groupId){
+        window.router.push('/msg/group/'+ data.groupId);
     }
 }
