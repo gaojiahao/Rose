@@ -179,6 +179,7 @@ let Rxports = {
   request:function (url,data){
     var xmlhttp = new XMLHttpRequest(),
         params = parseParam(data),
+        baseUrl = window.baseURL||'',
         token = tokenService.getToken(),
         rs;
 
@@ -199,7 +200,7 @@ let Rxports = {
       }
     }
     if (token) {
-       xmlhttp.open("GET",ensureUrl(url),false);
+       xmlhttp.open("GET",baseUrl + url,false);
        if(window.isApp){
           xmlhttp.setRequestHeader('os', window.device.platform);
        }
