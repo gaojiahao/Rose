@@ -108,6 +108,7 @@ let cfg = {
     },
     methods:{
       displayRealValue() {
+        debugger
         if(this.form.model !== 'new' && (this.cfg.dataSource && this.cfg.dataSource.type !== 'staticData')){
           if(this.cfg.dataSource){
             let filter,
@@ -124,6 +125,8 @@ let cfg = {
 
             if(store.url){
               if(this.cfg.xtype=='r2Combo'&&this.cfg.readOnly!=true){
+                delete data.filter;
+              } else if(!this.values[this.cfg.fieldCode]){
                 delete data.filter;
               }
               this.getDisplay(data).then(res => {
