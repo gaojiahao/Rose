@@ -108,7 +108,6 @@ let cfg = {
     },
     methods:{
       displayRealValue() {
-        debugger
         if(this.form.model !== 'new' && (this.cfg.dataSource && this.cfg.dataSource.type !== 'staticData')){
           if(this.cfg.dataSource){
             let filter,
@@ -133,7 +132,7 @@ let cfg = {
                 if(res){
                   this.displaysValue = res[this.cfg.displayField];
                   this.selection = res;
-                  if(!this.cfg.readOnly){
+                  if(!this.cfg.readOnly&&!this.values[this.cfg.fieldCode]){
                     this.form.$emit(this.valueChangeKey,this);
                   }
                 }else{
