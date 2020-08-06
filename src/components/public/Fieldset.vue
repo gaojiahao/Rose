@@ -75,6 +75,12 @@
               v-if="['r2HtmlEditor'].indexOf(item.xtype)!=-1"
               :key="index"  
             />
+            <TreePlanTask
+              :cfg="item"
+              :values="values[cfg.name]"
+              v-if="['r2TreePlanTask'].indexOf(item.xtype)!=-1"
+              :key="index"
+            />
         </template>
             </div>
 
