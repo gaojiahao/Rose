@@ -263,6 +263,8 @@ function ensureUrl(url) {
       return url;
   } else if (/^\/svc-nodejs/i.test(url)) {
     return url;
+  } else if (/^\/mrp-api/i.test(url)) {
+    return url;
   } else {
       return '/H_roleplay-si' + url;
   }

@@ -301,7 +301,7 @@ let cfg = {
           return item[valueField] === value;
       });
       if(selection == null){
-          this.reSet();
+          //this.reSet();
       }else{
           this.selItem(selection);
       }

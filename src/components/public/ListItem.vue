@@ -158,7 +158,7 @@ export default Vue.component("ListItem", {
       return this.mainField.filter(it=>{
         fKey = it.fieldCode&&it.fieldCode.indexOf('_') > -1 ? it.fieldCode.split('_')[0] : it.fieldCode;
         if(fieldSettingData[fKey]){
-              if(fieldSettingData[fKey]['kField']===1){
+              if(fieldSettingData[fKey]['kField']){
                   it.kField = 1;
               }
           }

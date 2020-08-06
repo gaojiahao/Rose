@@ -47,6 +47,10 @@ module.exports = {
           '/svc-nodejs': {
             target,
             changeOrigin: true
+          },
+          '/mrp-api': {
+            target,
+            changeOrigin: true
           }
 
     }

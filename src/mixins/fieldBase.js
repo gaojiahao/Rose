@@ -194,7 +194,7 @@ export default {
                 errors = [];
             //判断下控件类型数字类型的0可以不用校验
             var type = me.cfg.xtype;
-            if(('r2Permilfield,r2Numberfield').indexOf(type)==-1&&!me.allowBlank && (value == null||value=='') && me.submitValue){
+            if(('r2Permilfield,r2Numberfield,r2Checkbox').indexOf(type)==-1&&!me.allowBlank && (value == null||value=='') && me.submitValue){
                 errors.push(me.blankText);
                 this.$vux.alert.show({
                     content: me.blankText

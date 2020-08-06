@@ -57,7 +57,6 @@
     watch: {
       isShowDrop: {
         handler(status) {
-          debugger
           this.$event.$on('shut-down-filter', (val) => {
             this.isShowDrop = val;
             this.$event.$off('shut-down-filter');

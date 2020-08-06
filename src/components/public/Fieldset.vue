@@ -100,7 +100,6 @@ var component = {
       viewType:null
     };
   },
-
   created: function() {
      var cfg = this.cfg;
   

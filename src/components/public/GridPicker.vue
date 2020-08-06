@@ -294,12 +294,16 @@ export default {
           }
         }
       let data = {
+        _dc: Date.now(),
         limit: this.limit,
         page: this.page,
         start: (this.page - 1) * this.limit,
-        filter: JSON.stringify(filter),
+        //filter: JSON.stringify(filter),
         ...this.store.params
       };
+      if(filter.length){
+        data['filter'] = JSON.stringify(filter);
+      }
       return requestData({
         url: this.store.url,
         data

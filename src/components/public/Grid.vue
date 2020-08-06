@@ -175,6 +175,13 @@ var component = {
       keyFiled:{}
     };
   },
+  watch:{
+    values:{
+      handler(val){
+        this.$event.$emit(`item-event-${this.name}`,val);
+      }
+    }
+  },
   methods: {
     //选择默认图片
     getImgPic(d) {
