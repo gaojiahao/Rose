@@ -134,8 +134,8 @@ export default {
       this.$nextTick(() => {
         if (this.$refs.bScroll) {
           this.$refs.bScroll.refresh();
-          let containerHeight = this.$refs.bScroll.$refs.bScroll.offsetHeight,
-              contentHeight = this.$refs.bScroll.$refs.scrollWrapper.offsetHeight,
+          let containerHeight = this.$refs.bScroll.$refs.scrollWrapper.offsetHeight,
+              contentHeight = this.$refs.bScroll.$refs.scrollContent.offsetHeight,
               scrollHeight = contentHeight - containerHeight;
           // 当滑动内容大于容器高度,可滑动
           if (contentHeight > containerHeight) {
