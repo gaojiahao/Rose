@@ -18,7 +18,6 @@
             </div>
             </div>
                 <RScroll 
-                    style="height:5rem"
                     class="page-body-hasNav" 
                     :options="scrollOptions"
                     :has-next="hasNext"
