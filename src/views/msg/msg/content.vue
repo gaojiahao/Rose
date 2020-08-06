@@ -432,7 +432,7 @@ export default {
             this.$parent.checkDsConnect();//检查ds的连接情况
         },
         onMsgContainerClick(){
-            this.$refs.msgInput.blur();
+            this.$refs.msgInput && this.$refs.msgInput.blur();
             this.showExtraInput=false;
             this.showEmotion = false;
         },
