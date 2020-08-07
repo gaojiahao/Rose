@@ -47,6 +47,7 @@
   import {chooseImage, uploadImage} from 'plugins/wx/api'
   import {isIOS,isIPhone,isIPad,isAndroid,isPC,isQYWX} from '@/plugins/platform/index'
   import { debug } from 'util';
+  import util from '@/common/util';
   import { LoadMore } from 'vux'
 
   var component = {
@@ -211,7 +212,15 @@
       },
       //下载文件
       downLoadFile(item){
-        window.open('/H_roleplay-si/ds/download?url=' + item.attacthment);
+        if(item.iconType === 'image'){
+          this.$router.push({name:'imgInfo',params:{id:item.id},query:{name:item.attr1}});
+        }else{
+           util.down({
+             id:item.id,
+             content:item.attr1
+           });
+        }
+        // window.open('/H_roleplay-si/ds/download?url=' + item.attacthment);
       },
       // 删除文件
       deleteFile(item) {
