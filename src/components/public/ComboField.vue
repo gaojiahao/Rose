@@ -125,12 +125,14 @@ let cfg = {
             if(store.url){
               if(this.cfg.xtype=='r2Combo'&&this.cfg.readOnly!=true){
                 delete data.filter;
+              } else if(!this.values[this.cfg.fieldCode]){
+                delete data.filter;
               }
               this.getDisplay(data).then(res => {
                 if(res){
                   this.displaysValue = res[this.cfg.displayField];
                   this.selection = res;
-                  if(!this.cfg.readOnly){
+                  if(!this.cfg.readOnly&&!this.values[this.cfg.fieldCode]){
                     this.form.$emit(this.valueChangeKey,this);
                   }
                 }else{
