@@ -110,9 +110,16 @@ export default {
     },
     data() {
         var  isApp = window.isApp,
+             vm = this,
              userCode = localStorage.getItem('userCode');
+
+        if(userCode == null && window.isApp){
+            window.DsService.getCache('userCode',function(value){
+                if(value != null )vm.userCode = value;
+            });
+        }
         return {
-            userCode: userCode,
+            userCode: userCode || '',
             isApp:isApp,
             passWord: '',
             mobile: '',
@@ -162,7 +169,9 @@ export default {
                       token = JSON.stringify(token);
                       this.$loading.hide(); 
                       this.$router.replace('/');
-                      this.nativeLogin( baseInfo.deepStreamUrl,baseInfo.currentUser.userId,token);//原生android进行连接
+                      if(window.isApp){
+                          this.nativeLogin( baseInfo.deepStreamUrl,baseInfo.currentUser.userId,token);//原生android进行连接
+                      }
                 })
             }).catch(err=>{
                 this.$loading.hide();
@@ -175,7 +184,10 @@ export default {
             this.$router.push('/setHost');
         },
         nativeLogin:function(dsUrl,userId,token){
-            if(window.isApp)window.DsService.login(dsUrl,userId,token,function(){
+            window.DsService.setCache("userCode",this.userCode,function(){
+                console.log('设置缓存成功！');
+            });
+            window.DsService.login(dsUrl,userId,token,function(){
                 console.log('native ds success',arguments);
                 window.DsService.getDsMsg(function(msg){
                   console.log('dsMsg:',msg);

@@ -63,9 +63,9 @@ module.exports = {
      * Source Maps
      */
     extract:true,//是不是要导出css
-    productionSourceMap: false,//是否要输出soucemap
+    productionSourceMap: true,//是否要输出soucemap
     // https://webpack.js.org/configuration/devtool/#production
-    devtool: '#source-map',
+    devtool: 'eval',
 
     // Run the build command with an extra argument to
     // View the bundle analyzer report after build finishes:
