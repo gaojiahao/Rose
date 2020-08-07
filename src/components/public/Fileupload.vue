@@ -18,7 +18,7 @@
       <div class="upload-file-item" v-for="(item, index) in imgFiles" :key="item.attr1+index">
         <template v-if="item.iconType === 'image'">
           <img @click="downLoadFile(item)" @click.stop="preview(item)" class="img"
-               :src="`/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`">
+               :src="formatImgUrl(item)">
         </template>
         <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="cfg.readOnly == false"></i>
       </div>
@@ -112,6 +112,11 @@
       }
     },
     methods: {
+      formatImgUrl(item){
+         var baseUrl = window.baseURL||'',
+            url =`${baseUrl}/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`;
+          return url;
+      },
       dealUploadDev() {
         if(isQYWX) {
           //this.chooseFile();
