@@ -130,6 +130,7 @@ export default {
             }
         },
         executeExpression(record, editorFieldCode) {
+            debugger
             var me = this,
                 expressionCfg = me.expressionCfg,
                 i, l,
@@ -183,7 +184,9 @@ export default {
                     try{
                         var exp = (record.get(cfg.v1)||0) + cfg.symbol + (record.get(cfg.v2||0));
                         num = util.round(util.correctFloat(eval(exp)), cfg.col.decimalPrecision);
-                        num = (Number.isNaN(num) || (num === Infinity)) ? 0 : num;
+                        //num = (Number.isNaN(num) || (num === Infinity)) ? 0 : num;
+                        if(Number.isNaN(num)) continue;
+                        num = (num === Infinity) ? 0 : num;
                         record.set(dataIndex, convertDataType(cfg.col.editorType, num));
                     } catch (ex) {
                         console.warn(ex);
