@@ -63,7 +63,7 @@ module.exports = {
      * Source Maps
      */
     extract:true,//是不是要导出css
-    productionSourceMap: false,
+    productionSourceMap: false,//是否要输出soucemap
     // https://webpack.js.org/configuration/devtool/#production
     devtool: '#source-map',
 

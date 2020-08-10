@@ -72,6 +72,8 @@ fly.interceptors.response.use(
       localStorage.setItem('userCode',userCode);
       if(window.isApp){
         window.DsService.close();
+        window.router.push('/tokenExpiry');
+        return;
       }
       this.lock();
       return tokenService.login()
@@ -94,7 +96,6 @@ fly.interceptors.response.use(
     rejectError('reject', error.response && error.response.data.message) 
   }
 )
-
 // 请求选项列表
 let Rxports = {
   /**
@@ -178,6 +179,7 @@ let Rxports = {
   request:function (url,data){
     var xmlhttp = new XMLHttpRequest(),
         params = parseParam(data),
+        baseUrl = window.baseURL||'',
         token = tokenService.getToken(),
         rs;
 
@@ -198,7 +200,7 @@ let Rxports = {
       }
     }
     if (token) {
-       xmlhttp.open("GET",ensureUrl(url),false);
+       xmlhttp.open("GET",baseUrl + url,false);
        if(window.isApp){
           xmlhttp.setRequestHeader('os', window.device.platform);
        }

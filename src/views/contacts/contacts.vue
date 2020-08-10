@@ -99,19 +99,6 @@ export default {
         this.initAddress(to,next);
     },
     mounted(){
-        // var scrollWrapper = this.$refs.scrollerWrapper;
-        // if(!scrollWrapper)return;
-        // this.scroller = new this.Bscroll(scrollWrapper, {
-        //     click: true,
-        //     pullUpLoad: true,
-        //     pullDownRefresh: true,
-        // });
-        // this.scroller.on('scroll', ({x, y}) => {
-        //     if(Math.abs(y)>1000)
-        //     this.toTopShow = true;
-        //     else if(Math.abs(y)<1000)
-        //     this.toTopShow = false; 
-        // });
         this.bus.$on('refresh',()=>{ //登录后刷新
             var item = this.routes.length && this.routes[0];
             if(item)this.goto(item)//所有人的通讯录都一样，但是还是要刷新下。

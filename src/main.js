@@ -66,6 +66,13 @@ require('@/filter');
 if(window.isApp){ //处理消息推送专用代码
   require('service/pushService');
 }
+
+import preview from "vue-photo-preview";
+import "vue-photo-preview/dist/skin.css";
+Vue.use(preview,{
+  fullscreenEl:false
+});
+
 /**plugin */
 Vue.use(Loading)
 Vue.use(Loading2)

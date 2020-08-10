@@ -1,6 +1,6 @@
 <template>
-  <div class="scroll-container" ref="bScroll">
-    <div class="scroll-wrapper" :class="{hasRefresh: hasRefresh}" ref="scrollWrapper">
+  <div class="scroll-wrapper" ref="scrollWrapper">
+    <div class="scroll-content" :class="{hasRefresh: hasRefresh}" ref="scrollContent">
       <slot></slot>
       <slot name="loadmore">
         <load-more :show-loading="hasNext" :tip="tip" v-show="hasNext || noData"></load-more>
@@ -107,8 +107,8 @@
           }
         }
         this.$nextTick(() => {
-          if(this.$refs.bScroll == null)return;
-          this.bScroll = new BScroll(this.$refs.bScroll, options);
+          if(this.$refs.scrollWrapper == null)return;
+          this.bScroll = new BScroll(this.$refs.scrollWrapper, options);
           // 绑定滚动加载事件
           this.bScroll.on('pullingUp', () => {
             if (!this.hasNext) return;
@@ -212,9 +212,9 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  .scroll-container { 
+  .scroll-wrapper { 
      overflow: hidden;
-    .scroll-wrapper {
+    .scroll-content {
        touch-action: none;
       &.hasRefresh {
         min-height: calc(100% + 1px);

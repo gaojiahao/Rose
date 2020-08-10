@@ -16,7 +16,11 @@
 
 <script>
 import util from '@/common/util';
+import Touch from "plugins/touch";
 export default {
+    components:{
+        Touch
+    },
     props:{
         msg:{
             type:Object,

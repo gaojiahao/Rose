@@ -12,7 +12,6 @@
             </div>
         </div>
         <r-scroll
-            class="msg-container-wrapper"
             id="msg-container-wrapper"
             :options="scrollOptions"
             :has-next="false"
@@ -255,7 +254,8 @@ export default {
                 target = container.querySelector('#msg-'+msgId);
 
             if(target){
-               this.scrollToTarget(target,msgId);
+               this.sparkleMsg(msgId);//闪烁效果
+               this.scroller.scrollToElement(target);
             }else{
                 getGroupMsgById(this.$route.params.groupId,msgId).then(res=>{
                     var  msgList = this.$parent.msgList;
@@ -264,14 +264,16 @@ export default {
 
                     this.$nextTick(() => {
                         target = container.querySelector('#msg-'+msgId);
-                        this.scrollToTarget(target,msgId);
+                        this.sparkleMsg(msgId);//闪烁效果
+                        this.scroller.scrollToElement(target);
                     });
                 });
             }
         },
-        scrollToTarget(target,msgId){
-            var msgBody = target.querySelector('.message-content');
-            this.sparkleMsg(msgId);//闪烁效果
+        scrollToTarget(msgId){
+             var container = this.$refs['msg-container'],
+                 target = container.querySelector('#msg-'+msgId);
+
             this.scroller.scrollToElement(target);
         },
         sparkleMsg(msgId){
@@ -430,7 +432,7 @@ export default {
             this.$parent.checkDsConnect();//检查ds的连接情况
         },
         onMsgContainerClick(){
-            this.$refs.msgInput.blur();
+            this.$refs.msgInput && this.$refs.msgInput.blur();
             this.showExtraInput=false;
             this.showEmotion = false;
         },
@@ -577,14 +579,23 @@ export default {
             if(this.hasNext == false || this.loading == true)return;
             this.loading = true;
             getGroupMsg(this.group.groupId,this.page + 1).then(rs=>{
-                var  msgList = this.$parent.msgList;
+                var  msgList = this.$parent.msgList,
+                     msgId,
+                     msgLength = rs.msgs.length;
+
                 this.loading = false;
-                if(rs.msgs.length == rs.pageSize){
+                if(msgLength == rs.pageSize){
                     this.page ++;
-                    msgList.unshift(...rs.msgs);
-                    this.$parent.msgList = msgList;
                 } else {
                     this.hasNext = false;
+                }
+                if (msgLength){
+                    msgList.unshift(...rs.msgs);
+                    this.$parent.msgList = msgList;
+                    msgId = rs.msgs[msgLength - 1].id;
+                    this.$nextTick(()=>{
+                        this.scrollToTarget(msgId);
+                    })
                 }
             })
         },

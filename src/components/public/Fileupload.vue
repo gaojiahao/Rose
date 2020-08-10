@@ -17,8 +17,8 @@
       </div>
       <div class="upload-file-item" v-for="(item, index) in imgFiles" :key="item.attr1+index">
         <template v-if="item.iconType === 'image'">
-          <img @click="downLoadFile(item)" @click.stop="preview(item)" class="img"
-               :src="`/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`">
+          <img preview="1"  @click="downLoadFile(item)" @click.stop="preview(item,index)" class="img"
+               :src="formatImgUrl(item)">
         </template>
         <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="cfg.readOnly == false"></i>
       </div>
@@ -38,6 +38,7 @@
         <load-more :tip="`上传中`"></load-more>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -82,6 +83,21 @@
         }
       },
     },
+    computed: {
+      // 计算属性的 getter
+      imgList: function () {
+        var a = [];
+        this.imgFiles.map(i=>{
+          var baseUrl = window.baseURL||'',
+            url =`${baseUrl}/H_roleplay-si/ds/download?url=${i.attacthment}&width=800&height=400`;
+          a.push({
+            src:url,
+            title:i.attacthment
+          });
+        });
+        return a;
+      }
+    },
     components: { LoadMore },
     data() {
       return {
@@ -112,6 +128,11 @@
       }
     },
     methods: {
+      formatImgUrl(item){
+         var baseUrl = window.baseURL||'',
+            url =`${baseUrl}/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`;
+          return url;
+      },
       dealUploadDev() {
         if(isQYWX) {
           //this.chooseFile();
@@ -195,32 +216,30 @@
         return `${location.origin}/H_roleplay-si/ds/download?url=${item.attacthment}`
       },
       // 放大图片预览
-      preview(item) {
+      preview(item,index) {
         if (item.iconType === 'image') {
-          let images = this.files.reduce((arr, image) => {
-            if (image.iconType === 'image') {
-              arr.push(this.getImgUrl(image));
-            }
-            return arr
-          }, []);
-          let imgUrl = this.getImgUrl(item);
-          wx.previewImage({
-            current: imgUrl, // 当前显示图片的http链接
-            urls: images // 需要预览的图片http链接列表
-          });
+          // this.$refs.previewer.show(index)
+          // let images = this.files.reduce((arr, image) => {
+          //   if (image.iconType === 'image') {
+          //     arr.push(this.getImgUrl(image));
+          //   }
+          //   return arr
+          // }, []);
+          // let imgUrl = this.getImgUrl(item);
+          // wx.previewImage({
+          //   current: imgUrl, // 当前显示图片的http链接
+          //   urls: images // 需要预览的图片http链接列表
+          // });
         }
       },
       //下载文件
       downLoadFile(item){
-        if(item.iconType === 'image'){
-          this.$router.push({name:'imgInfo',params:{id:item.id},query:{name:item.attr1}});
-        }else{
-           util.down({
+        if(item.iconType != 'image'){
+          util.down({
              id:item.id,
              content:item.attr1
            });
         }
-        // window.open('/H_roleplay-si/ds/download?url=' + item.attacthment);
       },
       // 删除文件
       deleteFile(item) {
@@ -390,6 +409,26 @@
       this.form = this.$parent.form;
       this.biReferenceId = this.form.biReferenceId;
       this.setDefault();
+    },
+    mounted() {
+      //图片游览按返回键退出游览
+      this.$preview.on('imageLoadComplete', (e, item) =>{
+          let _preview = this.$preview.self;
+          let lookUrl = window.location.href + '&look';
+          window.history.pushState(null, null, lookUrl);
+          _preview.listen('close',
+          function() {
+              if (window.location.href.indexOf('&look') !== -1) {
+                  window.history.back();
+              }
+          });
+          window.onhashchange = function() {
+              if (_preview !== null && _preview !== undefined) {
+                  _preview.close();
+                  _preview = null;
+              }
+          };
+      });
     }
   }
   export default Vue.component('Fileupload',component)

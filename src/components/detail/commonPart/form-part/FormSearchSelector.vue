@@ -242,10 +242,10 @@ export default {
     }
   },
   created() {
+      var flag=true;
       getBasicInfo().then(basicInfo=>{
           this.defaultNickname = basicInfo.currentUser.nickname;
       });
-      flag=true;
       this.getlistDatas(flag);
   }
 };

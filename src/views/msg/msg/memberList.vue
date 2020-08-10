@@ -78,7 +78,7 @@ export default{
             memberData: [],
             hasNext:false,
             scrollOptions:{
-                click: false,
+                click: true,//点击被阻止了。
                 pullUpLoad: false,//上拉刷新
                 pullDownRefresh: false //下拉刷新
             }

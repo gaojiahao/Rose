@@ -18,7 +18,6 @@
             </div>
             </div>
                 <RScroll 
-                    style="height:5rem"
                     class="page-body-hasNav" 
                     :options="scrollOptions"
                     :has-next="hasNext"
@@ -488,7 +487,7 @@ export default {
                     text = '[文件]' + content.content;
             }
             window.notification.schedule({
-                msg:msg,
+                data:msg,
                 title: msg.groupName,
                 text:`${msg.creatorName}:${text}`,
                 foreground: true,
