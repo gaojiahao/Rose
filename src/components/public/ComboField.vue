@@ -398,6 +398,10 @@ let cfg = {
             this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
             this.listDataAll = tableContent;
             this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
+            debugger
+            if(this.cfg.defaultValue==''&&valueBind&&this.cfg.xtype=='r2Combo'&&valueBind.value){
+              this.selItem(this.listData[0]);
+            }
             this.$nextTick(() => {
                 if (this.$refs.bScroll) {
                   this.$refs.bScroll.finishPullUp();
