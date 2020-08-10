@@ -1,11 +1,12 @@
 <template>
 
 <div  class="page-body-hasNav" >
-      <RScroll 
-          :options="scrollOptions"
-          :has-next="hasNext"
-          :no-data="false"
-      >
+    <RScroll 
+        :options="scrollOptions"
+        :has-next="hasNext"
+        :no-data="false"
+        style="height:100%"
+    >
       <div class="my-performance">
       <div class="my-info" >
         <div class="my-info-entity" >
@@ -67,7 +68,7 @@
               </cell> 
           </group>
       </RScroll>
-  </div>
+</div>
     
 </template>
 

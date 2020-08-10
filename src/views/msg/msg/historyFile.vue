@@ -114,7 +114,9 @@ export default {
             if(isImg){
                 this.$router.push({name:'imgInfo',params:{id:content.id},query:{name:fileName}});
             } else {
-                util.down(content);
+                util.down(content,()=>{
+                    
+                });
             }
         }
     },

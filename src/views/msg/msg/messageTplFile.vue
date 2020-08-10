@@ -57,7 +57,7 @@ export default {
             if(isImg){
                 this.$router.push({name:'imgInfo',params:{id:file.id},query:{name:fileName}});
             } else {
-                util.down(file);
+                util.down(file,()=>{});
             }
         }
      }

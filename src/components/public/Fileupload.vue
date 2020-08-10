@@ -238,6 +238,8 @@
           util.down({
              id:item.id,
              content:item.attr1
+           },()=>{
+             
            });
         }
       },
