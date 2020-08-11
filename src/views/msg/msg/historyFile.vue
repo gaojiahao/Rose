@@ -105,6 +105,8 @@ export default {
                 }
                 res.forEach(msg => {
                     msg.content = JSON.parse(msg.content);
+                    msg.loading = false;
+                    msg.percent = 0;
                 });
                 if(this.pageParam.page == 1){
                     this.msgList= res;
@@ -118,6 +120,7 @@ export default {
             var content = msg.content,
                 fileName = content.content,
                 img,
+                vm = this,
                 isImg = /.jpg|.png/.test(fileName.toLowerCase());
             
             // if(isImg){
@@ -127,18 +130,21 @@ export default {
             //     }
             //    // this.$router.push({name:'imgInfo',params:{id:content.id},query:{name:fileName}});
             // } else {
-                if(event.target.nodeName.toLowerCase()!='img' || isImg){
+                if(event.target.nodeName.toLowerCase()!='img' || !isImg){
                  if(msg.loading != true){
                     msg.loading = true;
                     msg.percent = 0;
-                    util.down(content,(isLoaded,percent)=>{
-                        if(isLoaded == true){
-                            msg.loading = false;
-                            msg.percent = 100;
-                        } else {
-                            msg.percent = percent;
-                        }
-                    });
+                    (function(localMsg,content){
+                        util.down(content,(isLoaded,percent)=>{
+                            if(isLoaded == true){
+                                localMsg.loading = false;
+                                localMsg.percent = 100;
+                            } else {
+                                localMsg.percent = percent;
+                            }
+                        });
+                    })(msg,content);
+                   
                  }
                 }
             // }
