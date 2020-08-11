@@ -314,7 +314,14 @@ export default{
        
         return mineType;
     },
-    downFile(source,fileName){
+    checkIfFileExists(path,fileExists,fileDoesNotExist){
+        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem){
+            fileSystem.root.getFile(path, { create: false }, fileExists, fileDoesNotExist);
+        }, (evt)=>{
+            console.log(evt.target.error.code);
+        }); //of requestFileSystem
+    },
+    downFile(source,fileName,cb){
         var fileTransfer,
             util = this,
             target;
@@ -322,29 +329,31 @@ export default{
         if(window.cordova){
             //externalDataDirectory;
             target = cordova.file.externalDataDirectory  + fileName; //用到了cordova-plugin-file插件
-            fileTransfer = new FileTransfer(); //用到了cordova-plugin-file-transfer插件
 
+            window.resolveLocalFileSystemURI(target,()=>{
+                //open(fileName,target);
+                down(target);
+            },()=>{
+                down(target);
+            })
+            
+        } else {
+            window.location.href = source;
+        }
+
+        function down(target){
+            fileTransfer = new FileTransfer(); //用到了cordova-plugin-file-transfer插件
+            fileTransfer.onprogress=function(progressEvent){
+                console.log(progressEvent)
+            };
             fileTransfer.download(
                 source,
                 target,
                 function(entry) {
                     var fileName = entry.name,
-                        filePath = entry.toURL(),
-                        fileMIMEType = util.getMineType(fileName);
+                        filePath = entry.toURL();
 
-                    cordova.plugins.fileOpener2.open(
-                        filePath,
-                        fileMIMEType,
-                        {
-                            error : function(e){ 
-                                console.log('open error');
-                                console.log(e);
-                            },
-                            success : function(){ 
-                                console.log('open sucess');
-                            }
-                        }
-                    );
+                    open(fileName,filePath);
                 },
                 function(error) {
                     console.log("download error source " + error.source);
@@ -355,16 +364,32 @@ export default{
                 {//http头
                 }
             );
-        } else {
-            window.location.href = source;
+        }
+        function open(fileName,filePath){
+            var fileMIMEType = util.getMineType(fileName);
+
+            cb && cb();
+            cordova.plugins.fileOpener2.open(
+                filePath,
+                fileMIMEType,
+                {
+                    error : function(e){ 
+                        console.log('open error');
+                        console.log(e);
+                    },
+                    success : function(){ 
+                        console.log('open sucess');
+                    }
+                }
+            );
         }
     },
-    down(content){
+    down(content,cb){
         var baseUrl = window.baseURL||'',
             source = baseUrl+'/H_roleplay-si/ds/downloadById?id='+content.id,
             fileName = content.content;
             
-        this.downFile(source, fileName);
+        this.downFile(source, fileName,cb);
     },
     addHandler:function (element,type,handler)
     {

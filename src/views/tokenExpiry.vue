@@ -14,7 +14,7 @@ export default {
     },
     methods:{
         tologin(){
-            this.$router.push('/login');
+            this.$router.replace('/login');
         }
     },
     beforeRouteEnter:function(to,form,next){

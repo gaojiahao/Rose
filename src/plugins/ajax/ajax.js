@@ -69,7 +69,7 @@ fly.interceptors.response.use(
     if (error.status === 401) {
       localStorage.clear();
       sessionStorage.clear();
-      localStorage.setItem('userCode',userCode);
+      if (userCode != null)localStorage.setItem('userCode',userCode);
       if(window.isApp){
         window.DsService.close();
         window.router.push('/tokenExpiry');
