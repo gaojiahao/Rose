@@ -130,7 +130,6 @@ export default {
             }
         },
         executeExpression(record, editorFieldCode) {
-            debugger
             var me = this,
                 expressionCfg = me.expressionCfg,
                 i, l,
