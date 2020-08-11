@@ -38,7 +38,7 @@ export default {
                 param.wfPara = JSON.stringify(wfPara);
             } 
             // this.$HandleLoad.hide();
-            // return ;
+            return ;
             //3.提交表单数据
             submitHandler(param).then((res)=>{
                 me.handlerResopnse(res);
@@ -165,6 +165,9 @@ export default {
                         }
                         node = groupBoxNode.dataSet[0];
                     } 
+                    if(groupBox=='inPut'&&fieldCode=='tdId'){
+                        return ;    
+                    }
                     setNode(node, fieldCode, value);
                 }
                 
