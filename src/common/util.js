@@ -321,30 +321,27 @@ export default{
             console.log(evt.target.error.code);
         }); //of requestFileSystem
     },
-    downFile(source,fileName,cb){
+    downFile(source,file,cb){
         var fileTransfer,
             util = this,
-            target;
+            fileName = file.content,
+            id = file.id,
+            size = file.size,
+            target = cordova.file.externalDataDirectory  + id + '_' + fileName; //用到了cordova-plugin-file插件
 
-        if(window.cordova){
-            //externalDataDirectory;
-            target = cordova.file.externalDataDirectory  + fileName; //用到了cordova-plugin-file插件
-
-            window.resolveLocalFileSystemURI(target,()=>{
-                //open(fileName,target);
-                down(target);
-            },()=>{
-                down(target);
-            })
+        window.resolveLocalFileSystemURL(target,()=>{
+            open(fileName,target);
+        },()=>{
+            down(target);
+        })
             
-        } else {
-            window.location.href = source;
-        }
+        
 
         function down(target){
             fileTransfer = new FileTransfer(); //用到了cordova-plugin-file-transfer插件
             fileTransfer.onprogress=function(progressEvent){
-                console.log(progressEvent)
+                var percent = size == null ? 0 : (progressEvent.loaded/(size*102400)*10000).toFixed(); 
+                cb && cb(false,percent);
             };
             fileTransfer.download(
                 source,
@@ -368,7 +365,7 @@ export default{
         function open(fileName,filePath){
             var fileMIMEType = util.getMineType(fileName);
 
-            cb && cb();
+            cb && cb(true);
             cordova.plugins.fileOpener2.open(
                 filePath,
                 fileMIMEType,
@@ -386,10 +383,14 @@ export default{
     },
     down(content,cb){
         var baseUrl = window.baseURL||'',
-            source = baseUrl+'/H_roleplay-si/ds/downloadById?id='+content.id,
-            fileName = content.content;
+            source = baseUrl+'/H_roleplay-si/ds/downloadById?id='+content.id;
             
-        this.downFile(source, fileName,cb);
+        if(window.cordova){
+            this.downFile(source,content,cb);
+        } else {
+            window.location.href = source;
+        }
+        
     },
     addHandler:function (element,type,handler)
     {

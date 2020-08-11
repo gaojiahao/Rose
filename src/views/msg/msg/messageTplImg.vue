@@ -31,24 +31,7 @@ export default {
     methods:{
     },
      mounted() {
-      //图片游览按返回键退出游览
-      this.$preview.on('imageLoadComplete', (e, item) =>{
-          let _preview = this.$preview.self;
-          let lookUrl = window.location.href + '&look';
-          window.history.pushState(null, null, lookUrl);
-          _preview.listen('close',
-          function() {
-              if (window.location.href.indexOf('&look') !== -1) {
-                  window.history.back();
-              }
-          });
-          window.onhashchange = function() {
-              if (_preview !== null && _preview !== undefined) {
-                  _preview.close();
-                  _preview = null;
-              }
-          };
-      });
+      
     }
 }
 </script>

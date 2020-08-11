@@ -1,9 +1,9 @@
 <template>
     <div class="page">
-        <div class="page-body" @click="$router.go(-1)">
+        <div class="page-body">
             <div class="imgPerview">
                 <span>
-                     <img :src="src"/>
+                     <img  :src="src" preview="1" ref="img"/>
                 </span>
                
             </div>
@@ -18,11 +18,23 @@ export default {
             src:''
         }
     },
+    methods:{
+        onPerviewClose(){
+           this.$router.go(-1);
+        }
+    },
+    mounted(){
+        this.$refs.img.click();
+    },
     created(){
         var  baseURL = window.baseURL||'';
         this.getApp().hasTab = false;
         this.name = this.$route.query.name;
         this.src = baseURL + '/H_roleplay-si/ds/downloadById?id='+ this.$route.params.id;
+        this.$event.$on('previewClose',this.onPerviewClose);
+    },
+    destroyed(){
+        this.$event.$off('previewClose',this.onPerviewClose);
     }
 }
 </script>

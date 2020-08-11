@@ -20,16 +20,19 @@
                  :hideToast="true"
                  v-if="msgList.length" class="file-container"
                 >
-                <div v-for="(msg,index) in msgList" :key="index" class="history-file-item" @click="fileClick(msg.content)">
+                <div v-for="(msg,index) in msgList" :key="index" class="history-file-item" @click="fileClick(msg,$event)">
                     <span class="creatorName">{{msg.creatorName}}</span>
                     <div class="history-file-item-info">
-                        <img class="file-img" :src="msg.content|filedTypeFilter" @error= "getFileImg()">
+                        <img class="file-img" v-if="isImg(msg.content.content)" :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ msg.content.id" @error= "getFileImg()" preview="1">
+                        <img class="file-img" v-else :src="msg.content|filedTypeFilter" @error= "getFileImg()">
                         <div class="history-file-item-info-content">
                             <p>{{msg.content.content}}</p>
                             <p>{{msg.content.size}}KB</p>
                         </div>
                     </div>
                     <div class="crtTime">{{msg.crtTime | timeChangeFilter}}</div>
+                    <div class="loading" v-if="msg.loading" :style="{width:(msg.percent||0) + '%'}">
+                    </div>
                 </div>
              </r-scroll>
          </div>
@@ -42,6 +45,7 @@ import {getMessagesByImType} from 'service/msgService';
 export default {
     data(){
         return {
+            baseURL:window.baseURL||'',
             msgList:[],
             searchKey:'',
             pageParam:{
@@ -69,6 +73,9 @@ export default {
                 this.getMsg();
             },500);
           
+        },
+        isImg(fileName){
+            return  /.jpg|.png/.test(fileName.toLowerCase());
         },
         getDefaultPhoto(msg) {
             let url = require("assets/ava01.png");
@@ -107,17 +114,34 @@ export default {
             });
         },
         
-        fileClick(content){
-            var fileName = content.content,
+        fileClick(msg,event){
+            var content = msg.content,
+                fileName = content.content,
+                img,
                 isImg = /.jpg|.png/.test(fileName.toLowerCase());
             
-            if(isImg){
-                this.$router.push({name:'imgInfo',params:{id:content.id},query:{name:fileName}});
-            } else {
-                util.down(content,()=>{
-                    
-                });
-            }
+            // if(isImg){
+            //     
+            //         img = event.currentTarget.querySelector('img')
+            //         img.click();
+            //     }
+            //    // this.$router.push({name:'imgInfo',params:{id:content.id},query:{name:fileName}});
+            // } else {
+                if(event.target.nodeName.toLowerCase()!='img' || isImg){
+                 if(msg.loading != true){
+                    msg.loading = true;
+                    msg.percent = 0;
+                    util.down(content,(isLoaded,percent)=>{
+                        if(isLoaded == true){
+                            msg.loading = false;
+                            msg.percent = 100;
+                        } else {
+                            msg.percent = percent;
+                        }
+                    });
+                 }
+                }
+            // }
         }
     },
     beforeRouteEnter:function(to,form,next){
@@ -156,7 +180,13 @@ export default {
         top:0.1rem;
         font-size: 12px;
     }
-    
+    .loading{
+        position:absolute;
+        bottom: 0;
+        left: 0;
+        background-color: #2d8cf0;
+        height:2px;
+    }
 }
 .history-file-item:last-child{
     border-bottom: none;
