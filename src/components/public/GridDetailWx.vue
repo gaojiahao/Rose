@@ -207,6 +207,8 @@ export default Vue.component("GridDetailWx", component);
   z-index: 501;
   box-sizing: border-box;
   background-color: #f6f6f6;
+  display:flex;
+  flex-direction: column;
   &.has-edit {
     .scroll-container {
       // padding-bottom: 0.44rem;
@@ -245,8 +247,7 @@ export default Vue.component("GridDetailWx", component);
   }
 
   .scroll-container {
-    // padding-bottom: 0.44rem;
-    height: calc(100% - 0.8rem);
+    flex:1;
   }
 
   .readOnlyPart {
