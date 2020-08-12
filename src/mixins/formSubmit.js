@@ -38,7 +38,7 @@ export default {
                 param.wfPara = JSON.stringify(wfPara);
             } 
             // this.$HandleLoad.hide();
-            return ;
+            //return ;
             //3.提交表单数据
             submitHandler(param).then((res)=>{
                 me.handlerResopnse(res);
