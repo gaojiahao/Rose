@@ -359,10 +359,6 @@ export default Vue.component("GridDetailWx", component);
 
   //确认按钮
   .confirm_btn {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
     box-sizing: border-box;
     background: #fff;
     .confirm {
