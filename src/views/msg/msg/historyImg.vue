@@ -17,8 +17,8 @@
                  v-if="msgList.length" class="img-container-wrapper"
                 >
                 <div class="img-container">
-                    <div v-for="(msg,index) in msgList" :key="index" class="history-img-item"   @click="imgClick(msg.content)" >
-                        <img :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ msg.content.id">
+                    <div v-for="(msg,index) in msgList" :key="index" class="history-img-item">
+                        <img preview="1" :src="baseURL+'/H_roleplay-si/ds/downloadById?id='+ msg.content.id">
                     </div>
                     <div class="history-img-item-fill" v-for="count in (4-msgList.length%4)"></div>
                 </div>
@@ -55,14 +55,6 @@ export default {
                 msg.photo = url;
             }
             return url;
-        },
-        
-        imgClick(content){
-            this.$router.push({
-                name:'imgInfo',
-                params:{id:content.id},
-                query:{name:content.conent}
-            })
         },
         getMsg(){
             var key = this.searchKey;

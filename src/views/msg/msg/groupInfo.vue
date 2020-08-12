@@ -34,7 +34,7 @@
                             </div>
                         </div>
                         <cell  :title="group.groupName"   v-if="group.groupType=='P'">
-                            <img slot="icon" width="45" height="45" style="display: block;margin-right: 5px;border-radius: .02rem;" :src="group.groupIcon" >
+                            <img slot="icon" width="45" height="45" style="display: block;margin-right: 5px;border-radius: .02rem;" :src="group.groupIcon | appIconFilter" >
                         </cell>
                     </div>
                     <cell class="add-btn" @click.native="showMemberSelector" title="添加成员">
