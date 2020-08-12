@@ -413,6 +413,9 @@ let cfg = {
     },
     // 弹窗展示时调用
     onShow() {
+      if(this.listData.length<1){
+        this.load();
+      }
       this.$nextTick(() => {
           if (this.$refs.bScroll) {
             // 弹窗展示时刷新滚动，防止无法拖动问题
