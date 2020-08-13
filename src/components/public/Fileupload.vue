@@ -235,12 +235,17 @@
       //下载文件
       downLoadFile(item){
         if(item.iconType != 'image'){
-          util.down({
+           util.down({
              id:item.id,
              content:item.attr1
-           },()=>{
-             
-           });
+           },(isLoaded,percent)=>{
+              if(isLoaded == true){
+                  this.loading = false;
+                  this.percent = 100;
+              } else {
+                  this.percent = percent;
+              }
+          });
         }
       },
       // 删除文件

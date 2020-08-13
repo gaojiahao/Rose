@@ -6,7 +6,7 @@
         <div class="page-navigation" 
         v-if="hasNav"
         slot = 'nav'>
-          <div class="goback" @click="$router.go(-1)"><i class="iconfont icon-back1"></i></div>
+          <div class="goback" v-show="$route.meta == null || !$route.meta.disablebBack" @click="$router.go(-1)"><i class="iconfont icon-back1"></i></div>
           <div class="body">{{$route.meta.title || ''}}</div>
         </div>
       </router-view>
@@ -156,7 +156,29 @@ export default {
              vm.offline = true;
              vm.$emit('offline');
          });
-     }
+     },
+     bindPreviewHandler(){
+       var $event = this.$event;
+       //图片游览按返回键退出游览
+      this.$preview.on('imageLoadComplete', (e, item) =>{
+        let _preview = this.$preview.self;
+        let lookUrl = window.location.href + '&look';
+        window.history.pushState(null, null, lookUrl);
+        _preview.listen('close',
+        function() {
+            if (window.location.href.indexOf('&look') !== -1) {
+                window.history.back();
+                $event.$emit('previewClose');
+            }
+        });
+        window.onhashchange = function() {
+            if (_preview !== null && _preview !== undefined) {
+                _preview.close();
+                _preview = null;
+            }
+        };
+      });
+    }
   },
   created() {
     var Vue = this.$parent.constructor;
@@ -173,6 +195,7 @@ export default {
     Vue.prototype.addBaseUrl = util.addBaseUrl;
     document.addEventListener("deviceready", this.onDeviceReady, false);
     this.initOnlineStatus();
+    this.bindPreviewHandler();
   },
   updated() {
     var app = this;

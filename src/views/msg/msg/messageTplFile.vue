@@ -11,6 +11,8 @@
             </div>
             <img class="file-img" :src="file.content|filedTypeFilter" @error= "getFileImg()">
         </touch>
+        <div class="loading" v-if="loading" :style="{width:percent + '%'}">
+        </div>
     </div>
 </template>
 
@@ -32,6 +34,8 @@ export default {
     data(){
         return {
             baseURL:window.baseURL||'',
+            loading:false,
+            percent:0,
             file:null
         }
     },
@@ -57,7 +61,19 @@ export default {
             if(isImg){
                 this.$router.push({name:'imgInfo',params:{id:file.id},query:{name:fileName}});
             } else {
-                util.down(file,()=>{});
+                if(this.loading == false){
+                    this.loading = true;
+                    this.percent = 0;
+                    util.down(file,(isLoaded,percent)=>{
+                        if(isLoaded == true){
+                            this.loading = false;
+                            this.percent = 100;
+                        } else {
+                            this.percent = percent;
+                        }
+                    });
+                }
+                
             }
         }
      }
@@ -91,5 +107,9 @@ export default {
         }
         
     }  
+    .loading{
+        background-color: #2d8cf0;
+        height:2px;
+    }
 }
 </style>

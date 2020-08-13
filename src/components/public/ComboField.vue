@@ -593,13 +593,15 @@ export default Vue.component('R2Combofield',cfg);
   background: #fff !important;
   .trade_pop{
       height:100%;
+      display:flex;
+      flex-direction: column;
   }
    // 列表容器
   .pop-list-container {
       width: 100%;
       overflow: hidden;
       box-sizing: border-box;
-      height: calc(100% - .46rem);
+      flex:1;
       /deep/ .scroll-wrapper {
          padding: .05rem .15rem 0;
       }
