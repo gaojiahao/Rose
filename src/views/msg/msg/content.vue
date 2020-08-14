@@ -25,6 +25,7 @@
             <div class="msg-container" ref="msg-container">
                 <LoadMore v-if="loading"></LoadMore>
                 <div v-for="(msg,index) in msgList" :key="index" class="singleMsg" :class="{ 'isMySelf': msg.isMySelf,'focus-msg': msg.id == focusMsgId }" :id="'msg-'+msg.id">
+                    <div class="otherMessage" v-if="msg.showTime">{{msg.crtTime}}</div>
                     <touch 
                         @menuContext="onAvaContextMenu(msg.creatorName)" 
                         @click="showCreator(msg.creator)">
@@ -67,9 +68,10 @@
                     </touch>
 
                     <div class="otherMessage" v-if="[101,102,104].includes(msg.imType)">
-                        <div>{{msg.crtTime}}</div>
+                        <div v-if="!msg.showTime">{{msg.crtTime}}</div>
                         <div><span>{{msg.content}}</span></div>
                     </div>
+
                     <div class="otherMessage" v-if="[201].includes(msg.imType)">
                          <div>{{msg.crtTime}}</div>
                         <MessageTplTaskLog :msg="msg"></MessageTplTaskLog>
@@ -590,12 +592,16 @@ export default {
                     this.hasNext = false;
                 }
                 if (msgLength){
+                    this.$parent.handlerTime(rs.msgs,true);
                     msgList.unshift(...rs.msgs);
                     this.$parent.msgList = msgList;
+                    if(this.hasNext == false)msgList[0].showTime = true;
                     msgId = rs.msgs[msgLength - 1].id;
                     this.$nextTick(()=>{
                         this.scrollToTarget(msgId);
                     })
+                } else {
+                    msgList[0].showTime = true;
                 }
             })
         },
