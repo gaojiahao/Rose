@@ -25,7 +25,7 @@
             <div class="msg-container" ref="msg-container">
                 <LoadMore v-if="loading"></LoadMore>
                 <div v-for="(msg,index) in msgList" :key="index" class="singleMsg" :class="{ 'isMySelf': msg.isMySelf,'focus-msg': msg.id == focusMsgId }" :id="'msg-'+msg.id">
-                    <div class="otherMessage" v-if="msg.showTime">{{msg.crtTime}}</div>
+                    <div class="otherMessage" v-if="msg.showTime & [1,2,3,4].includes(msg.imType)">{{msg.crtTime}}</div>
                     <touch 
                         @menuContext="onAvaContextMenu(msg.creatorName)" 
                         @click="showCreator(msg.creator)">
@@ -68,7 +68,7 @@
                     </touch>
 
                     <div class="otherMessage" v-if="[101,102,104].includes(msg.imType)">
-                        <div v-if="!msg.showTime">{{msg.crtTime}}</div>
+                        <div>{{msg.crtTime}}</div>
                         <div><span>{{msg.content}}</span></div>
                     </div>
 
