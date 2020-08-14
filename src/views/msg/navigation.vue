@@ -555,7 +555,11 @@ export default {
                        showTime = startTime;
                    }
                } else {//超过5分钟计为下一组对话
-                   msgs[i+1].showTime = true;
+                   if(msgs[i+1]){
+                       msgs[i+1].showTime = true;
+                   } else {
+                       this.msgList[0].showTime = true;
+                   }
                    showTime = startTime = crtTime;
                }
             }

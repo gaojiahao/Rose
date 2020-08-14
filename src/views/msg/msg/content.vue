@@ -601,7 +601,7 @@ export default {
                         this.scrollToTarget(msgId);
                     })
                 } else {
-                    msgList[0].showTime = true;
+                    this.$parent.msgList[0].showTime = true;
                 }
             })
         },
