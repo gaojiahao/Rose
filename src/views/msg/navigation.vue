@@ -516,7 +516,7 @@ export default {
             if(group != this.group){
                 this.group = group;
                 getGroupMsg(groupId).then(res=>{
-                    this.msgList = res.msgs;
+                    this.msgList = this.handlerTime(res.msgs);
                     if (this.$route.params.groupId != groupId){
                         this.$router.push(path);
                     }
@@ -530,6 +530,42 @@ export default {
                     this.$refs.groupMsg.scrollToButtom(0);
                 })
             }
+        },
+        handlerTime(msgs,append){
+            var startTime = append == true ? this.lastMsgTime : null,
+                showTime = append = true ? this.lastShowTime : null,
+                fillTime,
+                crtTime,
+                msg;
+
+            for(var i = msgs.length-1;i>=0;i--){
+               
+               msg = msgs[i];
+               crtTime = new Date(msg.crtTime).getTime();
+               if(startTime == null) {
+                   showTime  = startTime = crtTime; 
+                   continue;
+               }
+               if([101,102,104].includes(msg.imType))continue;
+               fillTime = startTime - crtTime;
+               if(fillTime <= 300000){//5*60*1000 小于5分钟的计为一组有联系的对话。
+                   startTime = crtTime;
+                   if(crtTime - showTime >= 1800000){//同一组对话，半小时显示一次时间。
+                       msgs[i].showTime = true;
+                       showTime = startTime;
+                   }
+               } else {//超过5分钟计为下一组对话
+                   if(msgs[i+1]){
+                       msgs[i+1].showTime = true;
+                   } else {
+                       this.msgList[0].showTime = true;
+                   }
+                   showTime = startTime = crtTime;
+               }
+            }
+            this.lastShowTime = showTime;
+            this.lastMsgTime = startTime;
+            return msgs;
         },
         showNavList() {
             this.showList = !this.showList;
