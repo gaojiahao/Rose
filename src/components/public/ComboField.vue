@@ -75,6 +75,9 @@ let cfg = {
     },
     watch: {
       values: function(value){
+        if(this.cfg.fieldLabel == "物流条款"){
+          debugger
+        }
         if(value){
           value[this.cfg.fieldCode] && this.displayRealValue();
         }
@@ -398,7 +401,7 @@ let cfg = {
             this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
             this.listDataAll = tableContent;
             this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
-            if(this.cfg.defaultValue==''&&valueBind&&this.cfg.xtype=='r2Combo'&&valueBind.value){
+            if(this.cfg.defaultValue==''&&valueBind&&this.cfg.xtype=='r2Combo'&&valueBind.value&&!this.value){
               this.selItem(this.listData[0]);
             }
             this.$nextTick(() => {
