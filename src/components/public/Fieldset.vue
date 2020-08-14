@@ -130,17 +130,17 @@ var component = {
 
         let hiddenItems,displayItems;
 
-        hiddenItems = items.filter(it=>{
-          return it.hiddenInRun;
-        });
+        // hiddenItems = items.filter(it=>{
+        //   return it.hiddenInRun;
+        // });
 
-        displayItems = items.filter(it=>{
-          return !it.hiddenInRun;
-        });
-        this.editParts = displayItems.concat(hiddenItems); // 可编辑部分 
-
-        this.editParts = displayItems;
-        this.editParts.unshift(...hiddenItems);
+        // displayItems = items.filter(it=>{
+        //   return !it.hiddenInRun;
+        // });
+        // this.editParts = displayItems.concat(hiddenItems); 
+        // this.editParts = displayItems;
+        // this.editParts.unshift(...hiddenItems);
+        this.editParts = items;
         this.dealBomGrid();
         // this.editParts = items;
     },
