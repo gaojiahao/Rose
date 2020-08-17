@@ -75,9 +75,6 @@ let cfg = {
     },
     watch: {
       values: function(value){
-        if(this.cfg.fieldLabel == "物流条款"){
-          debugger
-        }
         if(value){
           value[this.cfg.fieldCode] && this.displayRealValue();
         }
