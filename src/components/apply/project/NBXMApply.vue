@@ -212,7 +212,7 @@
               },
               wfParam: null
             };
-            if (this.isModify){
+            if (this.biReferenceId){
               submitData.biReferenceId = this.biReferenceId;
             }
             this.saveData(operation, submitData);

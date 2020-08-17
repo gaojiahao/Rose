@@ -171,6 +171,7 @@ import { debug } from 'util';
       }, 
       // 提交
       save() {
+        debugger
         /**
          * @warn 提示文字
          * 
@@ -209,7 +210,7 @@ import { debug } from 'util';
               },
               wfParam: null
             };
-            if (this.isModify){
+            if (this.biReferenceId){
               submitData.biReferenceId = this.biReferenceId;
             }
             this.saveData(operation, submitData);
