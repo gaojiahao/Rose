@@ -96,6 +96,7 @@
       confirm() {
         let [val = ''] = this.currentValue;
         this.show = false;
+        this.value = val;
         this.$emit('input', val);
       },
       //picker显示

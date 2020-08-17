@@ -210,6 +210,10 @@ export default {
         if (this.searchContent) {
             filter = [{ operator: 'like',value: this.searchContent,property: this.listName}];
         }
+        if(flag){
+          var data = JSON.parse(sessionStorage.getItem('basicInfo'));
+          filter = [{ operator: 'like',value: data.currentUser.nickname,property:  this.listName}];
+        }
 
         return listSearchSelectorData(this.API, {
             limit: this.limit,

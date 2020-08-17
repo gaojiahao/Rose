@@ -284,8 +284,9 @@ var component = {
         me.pushActions('draft');
       }
 
-      if ((action.add && model != 'marking' && statusText =='已生效') || (model == 'view'&&  statusText =='已生效') || !this.isMyTask) {
-        me.pushActions('newFile');
+      if (action.add) {
+        if((model != 'marking' && statusText =='已生效') || (model == 'view'&&  statusText =='已生效') || !this.isMyTask)
+          me.pushActions('newFile');
         //me.pushActions('copyNew');
       }
       if(model === 'revise') {
@@ -297,7 +298,7 @@ var component = {
       if (statusText === '已生效' && model != 'revise' && action.update) {
         me.pushActions('revise')
       }
-      if (statusText === '已生效') {
+      if (statusText === '已生效'&&action.undo) {
         me.pushActions('revokeDraft');
         if(action.archive && listInfo.whetherArchive == 1) {
           me.pushActions('file');  
