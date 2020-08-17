@@ -516,7 +516,10 @@ export default {
             if(group != this.group){
                 this.group = group;
                 getGroupMsg(groupId).then(res=>{
-                    this.msgList = this.handlerTime(res.msgs);
+                    if(group.groupType !== 'N'){
+                        this.handlerTime(res.msgs);
+                    }
+                    this.msgList = res.msgs;
                     if (this.$route.params.groupId != groupId){
                         this.$router.push(path);
                     }
