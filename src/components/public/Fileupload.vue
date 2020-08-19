@@ -22,7 +22,7 @@
         </template>
         <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="cfg.readOnly == false"></i>
       </div>
-      <input @change="commUploadFile()" type="file" ref="uFile" v-show="false" multiple/>
+      <input @change="commUploadFile()" type="file" ref="uFile" accept="*/*" v-show="false" multiple/>
       <div class="upload-file-item" @click="dealUploadDev" v-show="cfg.readOnly == false">
         <div class="icon_container">
           <span class="icon-upload-add"></span>
