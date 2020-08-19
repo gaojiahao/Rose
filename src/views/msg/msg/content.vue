@@ -118,7 +118,7 @@
                 </div>
                 <div>
                     <i class="iconfont icon-file-f uploader">
-                        <input id="uploaderInput" class="weui-uploader__input" type="file" accept="*" multiple="" @change="showFileConfirm">
+                        <input id="uploaderInputfile" class="weui-uploader__input" type="file" accept="*/*" multiple="" @change="showFileConfirm">
                     </i>  
                      <div class="extra-input-item-text">
                          文件
