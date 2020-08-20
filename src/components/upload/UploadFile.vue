@@ -13,7 +13,7 @@
         </template>
         <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="!noUpload"></i>
       </div>
-      <input @change="commUploadFile()" type="file" ref="uFile" v-show="false" multiple/>
+      <input @change="commUploadFile()" type="file" ref="uFile" v-show="false" accept="*/*" multiple/>
       <div class="upload-file-item" v-if="!noUpload" @click="dealUploadDev">
         <div class="icon_container">
           <span class="icon-upload-add"></span>

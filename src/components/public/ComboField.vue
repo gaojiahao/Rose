@@ -1,7 +1,7 @@
 <template>
 <div v-show="!hidden" class="cell each_property vux-1px-b combo" >
   <label :class="{'required':!cfg.allowBlank,'readonly':cfg.readOnly}">{{cfg.fieldLabel}}</label>
-  <div v-if="cfg.readOnly == false" class="content" @click="clickShowPop">
+  <div v-if="cfg.readOnly == false" class="content" @click="clickShowPop" tabindex="0" ref="inputField">
     <span class='mater_nature' :class="{placeholder:!values[cfg.fieldCode]}">{{displaysValue || displaysEmptyDatasourceValue || "请选择"}}</span>
     <span v-if="cfg.dataSource" class="icon-right"></span>
   </div>
@@ -167,6 +167,7 @@ let cfg = {
         return displayValue;
       },
       clickShowPop() {
+        this.$refs.inputField.focus();
         this.cfg.dataSource && (this.showPop = true);
       },
       buildStore:function(){
@@ -574,6 +575,7 @@ export default Vue.component('R2Combofield',cfg);
   .content{
     display: flex;
     align-items: center;
+    outline: none;
   .mater_nature{
       max-width:2.5rem;
       text-overflow:ellipsis;
