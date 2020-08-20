@@ -6,7 +6,7 @@
       <div class="upload-file-item" v-for="(item, index) in files" :key="index">
         <template v-if="item.iconType === 'image'">
           <img @click.stop="downLoadFile(item)" class="img"
-               :src="`/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`">
+               :src="formatImgUrl(item)">
         </template>
         <template v-else>
           <div @click="downLoadFile(item)" class="text">{{item.attr1}}</div>
@@ -82,6 +82,11 @@
       },
     },
     methods: {
+      formatImgUrl(item){
+         var baseUrl = window.baseURL||'',
+            url =`${baseUrl}/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`;
+          return url;
+      },
       dealUploadDev() {
         if(isQYWX) {
           this.chooseFile();
