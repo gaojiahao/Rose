@@ -20,7 +20,8 @@
         </div>
       </div>
     </div>
-    <r-scroll :options="scrollOptions" ref="bScroll">
+    <load-more :tip="'加载中'" v-if="noData"></load-more>
+    <r-scroll :options="scrollOptions" ref="bScroll" v-else>
       <div class="part-left">
         <div v-for="(item, index) in listData" :key="index">
           <div class="content-item"
@@ -77,7 +78,7 @@
   import RScroll from 'plugins/scroll/RScroll'
   import {toFixed} from '@/plugins/calc'
   import {accAdd} from "plugins/calc/decimalsAdd";
-  import {numberComma,Datetime,Group,dateFormat} from 'vux'
+  import {numberComma,Datetime,Group,dateFormat,LoadMore} from 'vux'
 
   export default {
     name: "XJLLForm",
@@ -103,13 +104,15 @@
           bounce: {
             top: false
           }
-        }
+        },
+        noData:true,
       }
     },
     components: {
       RScroll,
       Datetime,
-      Group
+      Group,
+      LoadMore
     },
     props: {
       transcode: {
@@ -142,13 +145,13 @@
           let {data = []} = res;
 
           this.listData = data;
+          this.noData = false;
           this.$nextTick(() => {
             // 设置金额行高度，判断高度是否与title相同，不相同则设置为title的高度
             this.setHeight(
               this.$refs.partLeft, 
               this.$refs.partRightInit, 
               this.$refs.partRightFinal);
-            this.$loading.hide();
           })
         })
       },
@@ -194,7 +197,6 @@
       }
     },
     created() {
-      this.$loading.show();
       let {trancode = ''} = this.$route.query;
       this.code = this.transcode;
       //获取表格的表头信息
