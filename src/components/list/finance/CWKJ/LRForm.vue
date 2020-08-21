@@ -226,7 +226,6 @@
       }
     },
     created() {
-      //this.$loading.show();
       let {trancode = ''} = this.$route.query;
       this.code = this.transcode;
       //获取表格的表头信息
