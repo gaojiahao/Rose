@@ -5,7 +5,7 @@
     <div class="upload-file-list">
       <div class="upload-file-item" v-for="(item, index) in files" :key="index">
         <template v-if="item.iconType === 'image'">
-          <img @click.stop="downLoadFile(item)" class="img"
+          <img preview="1" @click="downLoadFile(item)" @click.stop="preview(item,index)" class="img"
                :src="formatImgUrl(item)">
         </template>
         <template v-else>
@@ -28,6 +28,7 @@
   import {deleteFile,upload} from 'service/commonService';
   import {chooseImage, uploadImage} from 'plugins/wx/api'
   import {isIOS,isIPhone,isIPad,isAndroid,isPC,isQYWX} from '@/plugins/platform/index'
+  import util from '@/common/util';
 
   export default {
     name: "UploadFile",
@@ -94,9 +95,38 @@
           this.clickUpload();
         } else this.clickUpload();
       },
+      // 放大图片预览
+      preview(item,index) {
+        if (item.iconType === 'image') {
+          // this.$refs.previewer.show(index)
+          // let images = this.files.reduce((arr, image) => {
+          //   if (image.iconType === 'image') {
+          //     arr.push(this.getImgUrl(image));
+          //   }
+          //   return arr
+          // }, []);
+          // let imgUrl = this.getImgUrl(item);
+          // wx.previewImage({
+          //   current: imgUrl, // 当前显示图片的http链接
+          //   urls: images // 需要预览的图片http链接列表
+          // });
+        }
+      },
       //下载文件
       downLoadFile(item){
-        window.open('/H_roleplay-si/ds/download?url=' + item.attacthment);
+         if(item.iconType != 'image'){
+           util.down({
+             id:item.id,
+             content:item.attr1
+           },(isLoaded,percent)=>{
+              if(isLoaded == true){
+                  this.loading = false;
+                  this.percent = 100;
+              } else {
+                  this.percent = percent;
+              }
+          });
+        }
       },
       // 选择图片
       chooseFile() {
@@ -269,6 +299,26 @@
       }
     },
     created() {
+    },
+    mounted() {
+      //图片游览按返回键退出游览
+      this.$preview.on('imageLoadComplete', (e, item) =>{
+          let _preview = this.$preview.self;
+          let lookUrl = window.location.href + '&look';
+          window.history.pushState(null, null, lookUrl);
+          _preview.listen('close',
+          function() {
+              if (window.location.href.indexOf('&look') !== -1) {
+                  window.history.back();
+              }
+          });
+          window.onhashchange = function() {
+              if (_preview !== null && _preview !== undefined) {
+                  _preview.close();
+                  _preview = null;
+              }
+          };
+      });
     }
   }
 </script>
