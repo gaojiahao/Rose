@@ -37,7 +37,7 @@
         </div>
     </div>
     <load-more :tip="'加载中'" v-if="noData"></load-more>
-    <r-scroll :options="scrollOptions" class="scroll-container" ref="bScroll" v-else>
+    <r-scroll :options="scrollOptions" ref="bScroll">
       <div class="part-left">
         <div class="title-form">科目</div>
         <div class="title-list">
@@ -517,7 +517,15 @@
         display: inline-block;
       }
     }
-
+    .weui-loadmore {
+      width: 65%;
+      margin: 1.5em auto;
+      line-height: 1.6em;
+      font-size: 14px;
+      text-align: center;
+      z-index: 999;
+      height: calc(100% - .76rem);
+    }
     /* 顶部期初、期末 */
     .swiper-container-header {
       margin: 0;

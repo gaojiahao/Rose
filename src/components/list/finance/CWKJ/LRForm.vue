@@ -22,7 +22,7 @@
       </div>
     </div>
     <load-more :tip="'加载中'" v-if="noData"></load-more>
-    <r-scroll :options="scrollOptions" ref="bScroll" v-else>
+    <r-scroll :options="scrollOptions" ref="bScroll">
       <div class="part-left">
         <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
           <div class="content-item"
@@ -36,7 +36,7 @@
       </div>
       <div class="swiper-container part-right">
         <div class="swiper-wrapper box">
-          <div class="swiper-slide div" style="width:50%">
+          <div class="swiper-slide div" style="width:33.33333%">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
                   :class="{'final-total': item.total || item.bigSubject}"
@@ -45,7 +45,7 @@
               </div>
             </div>
           </div>
-          <div class="swiper-slide div" style="width:50%">
+          <div class="swiper-slide div" style="width:33.33333%">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
                   :class="{'final-total': item.total || item.bigSubject}"
@@ -54,7 +54,7 @@
               </div>
             </div>
           </div>
-          <div v-if="headInfo.currentYearName" class="swiper-slide div" style="width:100%">
+          <div v-if="headInfo.currentYearName" class="swiper-slide div" style="width:33.33333%">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
                   :class="{'final-total': item.total || item.bigSubject}"
@@ -63,7 +63,7 @@
               </div>
             </div>
           </div>
-          <div v-if="headInfo.lastYearAmount" class="swiper-slide">
+          <div v-if="headInfo.lastYearAmount" class="swiper-slide" style="width:100%">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
                   :class="{'final-total': item.total || item.bigSubject}"
@@ -287,6 +287,15 @@
         // font-weight: bold;
       }
     }
+    .weui-loadmore {
+      width: 65%;
+      margin: 1.5em auto;
+      line-height: 1.6em;
+      font-size: 14px;
+      text-align: center;
+      z-index: 999;
+      height: calc(100% - .76rem);
+    }
     /* 顶部期初、期末 */
     .swiper-container-header {
       margin: 0;
@@ -370,13 +379,16 @@
       z-index: 1;
       .swiper-wrapper {
         .swiper-slide:nth-child(1) {
-          width: 25%;
+          width: 33.33333%;
         }
         .swiper-slide:nth-child(2) {
-          width: 25%;
+          width: 33.33333%;
         }
         .swiper-slide:nth-child(3) {
-          width: 50%;
+          width: 33.33333%;
+        }
+        .swiper-slide:nth-child(4) {
+          width: 100%;
         }
       }
     }

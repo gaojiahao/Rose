@@ -21,7 +21,7 @@
       </div>
     </div>
     <load-more :tip="'加载中'" v-if="noData"></load-more>
-    <r-scroll :options="scrollOptions" ref="bScroll" v-else>
+    <r-scroll :options="scrollOptions" ref="bScroll">
       <div class="part-left">
         <div v-for="(item, index) in listData" :key="index">
           <div class="content-item"
@@ -256,6 +256,15 @@
         // text-decoration:underline
         // font-weight: bold;
       }
+    }
+    .weui-loadmore {
+      width: 65%;
+      margin: 1.5em auto;
+      line-height: 1.6em;
+      font-size: 14px;
+      text-align: center;
+      z-index: 999;
+      height: calc(100% - .76rem);
     }
     /* 顶部期初、期末 */
     .swiper-container-header2 {
