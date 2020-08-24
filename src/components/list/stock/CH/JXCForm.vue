@@ -594,11 +594,11 @@
       font-size: .14rem;
     }
 
-    .scroll-container {
+    .scroll-wrapper {
       height: calc(100% - .9rem);
       font-size: 0;
     }
-    /deep/ .scroll-wrapper {
+    /deep/ .scroll-content {
       display: flex;
     }
     .part-left {

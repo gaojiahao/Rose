@@ -14,29 +14,22 @@
       <div style="height:.1rem;width:100%;background-color:#eee"></div>
       <!-- tab -->
       <div class="swiper-container list-container" :class="{'list-container2':hasNav}">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide" v-for="(slide, key) in listMap" :key="key">
-            <!-- <r-scroll class="list_wrapper"  :options="scrollOptions" :has-next="true"
-                      :no-data="true" ref="bScroll"> -->
-              <!-- 利润表 -->
-              <template v-if="key === '0'">
-                <LRForm :transcode="slide.transcode" :folder="slide.folder" :name="slide.name"></LRForm>
-              </template>
-              <!-- 资产负债表 -->
-              <template v-else-if="key === '1'">
-                <ZCFZForm :transcode="slide.transcode" :folder="slide.folder" :name="slide.name"></ZCFZForm>
-              </template>
-              <!-- 现金流量表 -->
-              <template v-else-if="key === '2'">
-                <XJLLForm :transcode="slide.transcode" :folder="slide.folder" :name="slide.name"></XJLLForm>
-              </template>
-              <!-- 科目余额表 -->
-              <template v-else-if="key === '3'">
-                <KMYEForm :transcode="slide.transcode" :folder="slide.folder" :name="slide.name"></KMYEForm>
-              </template>
-            <!-- </r-scroll> -->
-          </div>
-        </div>
+        <!-- 利润表 -->
+        <template v-if="activeIndex==0">
+          <LRForm :transcode="listMap[activeIndex].transcode" :folder="listMap[activeIndex].folder" :name="listMap[activeIndex].name"></LRForm>
+        </template>
+        <!-- 资产负债表 -->
+        <template v-else-if="activeIndex==1">
+          <ZCFZForm :transcode="listMap[activeIndex].transcode" :folder="listMap[activeIndex].folder" :name="listMap[activeIndex].name"></ZCFZForm>
+        </template>
+        <!-- 现金流量表 -->
+        <template v-else-if="activeIndex==2">
+          <XJLLForm :transcode="listMap[activeIndex].transcode" :folder="listMap[activeIndex].folder" :name="listMap[activeIndex].name"></XJLLForm>
+        </template>
+        <!-- 科目余额表 -->
+        <template v-else-if="activeIndex==3">
+          <KMYEForm :transcode="listMap[activeIndex].transcode" :folder="listMap[activeIndex].folder" :name="listMap[activeIndex].name"></KMYEForm>
+        </template>
       </div>
     </div>
   </div>
@@ -109,7 +102,7 @@ export default {
     // tab切换
     tabClick(val, index) {
       this.activeIndex = index;
-      this.listSwiper.slideTo(index);
+      //this.listSwiper.slideTo(index);
     },
     onPullingUp(){
 
@@ -121,7 +114,7 @@ export default {
   created() {
     this.$loading.hide();
     this.hasNav = platform.isQYWX || platform.isDD
-    this.initSwiper();
+    //this.initSwiper();
     // this.$nextTick(() => {
     //   this.listSwiper.update();
     // })

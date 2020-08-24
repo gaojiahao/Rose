@@ -36,7 +36,8 @@
           </span>
         </div>
     </div>
-    <r-scroll :options="scrollOptions" class="scroll-container" ref="bScroll">
+    <load-more :tip="'加载中'" v-if="noData"></load-more>
+    <r-scroll :options="scrollOptions" ref="bScroll">
       <div class="part-left">
         <div class="title-form">科目</div>
         <div class="title-list">
@@ -139,7 +140,7 @@
   import { getAccountBalance } from 'service/kmService'
   import RScroll from 'plugins/scroll/RScroll'
   import {toFixed} from '@/plugins/calc'
-  import {numberComma,Datetime,dateFormat,XInput} from 'vux'
+  import {numberComma,Datetime,dateFormat,XInput,LoadMore} from 'vux'
   import KMYEpopup from './KMYEPopup'
   export default {
     name: "LRForm",
@@ -172,14 +173,16 @@
           bounce: {
             top: false
           }
-        }
+        },
+        noData:true,
       }
     },
     components: {
       RScroll,
       Datetime,
       KMYEpopup,
-      XInput
+      XInput,
+      LoadMore
     },
     props: {
       transcode: {
@@ -254,13 +257,13 @@
           let {data = []} = res;
           this.listData = this.createData(data);
           this.copyData = JSON.stringify(this.listData);
+          this.noData = false;
           this.$nextTick(() => {
             // 设置金额行高度，判断高度是否与title相同，不相同则设置为title的高度
             this.setHeight(
               this.$refs.partLeft, 
               this.$refs.partRightInit, 
               this.$refs.partRightFinal);
-            this.$loading.hide();
           })
         })
       },
@@ -387,7 +390,6 @@
       }
     },
     created() {
-      this.$loading.show();
       let {trancode = ''} = this.$route.query;
       this.code = this.transcode;
       //获取表格的表头信息
@@ -515,7 +517,15 @@
         display: inline-block;
       }
     }
-
+    .weui-loadmore {
+      width: 65%;
+      margin: 1.5em auto;
+      line-height: 1.6em;
+      font-size: 14px;
+      text-align: center;
+      z-index: 999;
+      height: calc(100% - .76rem);
+    }
     /* 顶部期初、期末 */
     .swiper-container-header {
       margin: 0;

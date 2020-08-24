@@ -21,6 +21,7 @@
         </div>
       </div>
     </div>
+    <load-more :tip="'加载中'" v-if="noData"></load-more>
     <r-scroll :options="scrollOptions" ref="bScroll">
       <div class="part-left">
         <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
@@ -35,7 +36,7 @@
       </div>
       <div class="swiper-container part-right">
         <div class="swiper-wrapper box">
-          <div class="swiper-slide div" style="width:50%">
+          <div class="swiper-slide div" style="width:33.33333%">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
                   :class="{'final-total': item.total || item.bigSubject}"
@@ -44,7 +45,7 @@
               </div>
             </div>
           </div>
-          <div class="swiper-slide div" style="width:50%">
+          <div class="swiper-slide div" style="width:33.33333%">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
                   :class="{'final-total': item.total || item.bigSubject}"
@@ -53,7 +54,7 @@
               </div>
             </div>
           </div>
-          <div v-if="headInfo.currentYearName" class="swiper-slide div" style="width:100%">
+          <div v-if="headInfo.currentYearName" class="swiper-slide div" style="width:33.33333%">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
                   :class="{'final-total': item.total || item.bigSubject}"
@@ -62,7 +63,7 @@
               </div>
             </div>
           </div>
-          <div v-if="headInfo.lastYearAmount" class="swiper-slide">
+          <div v-if="headInfo.lastYearAmount" class="swiper-slide" style="width:100%">
             <div v-for="(item, index) in listData" :key="index" :class="{'bg-color':item.total}">
               <div class="content-item"
                   :class="{'final-total': item.total || item.bigSubject}"
@@ -82,7 +83,7 @@
   import RScroll from 'plugins/scroll/RScroll'
   import {toFixed} from '@/plugins/calc'
   import {accAdd} from "plugins/calc/decimalsAdd";
-  import {numberComma,Datetime,Group,dateFormat} from 'vux'
+  import {numberComma,Datetime,Group,dateFormat,LoadMore} from 'vux'
 
   export default {
     name: "LRForm",
@@ -116,13 +117,15 @@
           bounce: {
             top: false
           }
-        }
+        },
+        noData:true,
       }
     },
     components: {
       RScroll,
       Datetime,
-      Group
+      Group,
+      LoadMore,
     },
     props: {
       transcode: {
@@ -155,13 +158,13 @@
           let {data = []} = res;
 
           this.listData = data;
+          this.noData = false;
           this.$nextTick(() => {
             // 设置金额行高度，判断高度是否与title相同，不相同则设置为title的高度
             this.setHeight(
               this.$refs.partLeft, 
               this.$refs.partRightInit, 
               this.$refs.partRightFinal);
-            this.$loading.hide();
           })
         })
       },
@@ -209,7 +212,7 @@
         getLocalCurrency().then(({list = []}) => {
           list.forEach(item => {
             if(item.localCurrency){
-              this.localCurrency = item.currencyValue === 'CNY' ? '元' : item.currency;
+              this.localCurrency = item.currencyValue === 'CNY' ? '万' : item.currency;
             }
           })
         })
@@ -219,11 +222,10 @@
       // 格式化数字
       formatNum(num) {
         if (!num) return '-';
-        return `${numberComma(num.toFixed(2))}`;
+        return `${numberComma((num/10000).toFixed(2))}`;
       }
     },
     created() {
-      this.$loading.show();
       let {trancode = ''} = this.$route.query;
       this.code = this.transcode;
       //获取表格的表头信息
@@ -284,6 +286,15 @@
         // text-decoration:underline
         // font-weight: bold;
       }
+    }
+    .weui-loadmore {
+      width: 65%;
+      margin: 1.5em auto;
+      line-height: 1.6em;
+      font-size: 14px;
+      text-align: center;
+      z-index: 999;
+      height: calc(100% - .76rem);
     }
     /* 顶部期初、期末 */
     .swiper-container-header {
@@ -368,13 +379,16 @@
       z-index: 1;
       .swiper-wrapper {
         .swiper-slide:nth-child(1) {
-          width: 25%;
+          width: 33.33333%;
         }
         .swiper-slide:nth-child(2) {
-          width: 25%;
+          width: 33.33333%;
         }
         .swiper-slide:nth-child(3) {
-          width: 50%;
+          width: 33.33333%;
+        }
+        .swiper-slide:nth-child(4) {
+          width: 100%;
         }
       }
     }
