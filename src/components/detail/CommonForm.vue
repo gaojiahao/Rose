@@ -284,8 +284,9 @@ export default {
             //加载查看视图
             await this.getViewIdByTransCode(transCode);
           }
-          await this.getFromStatus();
+          //await this.getFromStatus();
         }
+        await this.getFromStatus();
         await this.getWorkFlowLogs(); //工作流日志
         
       } else if (listId) {
