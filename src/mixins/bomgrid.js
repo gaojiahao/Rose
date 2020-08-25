@@ -319,7 +319,18 @@ export default {
             return data;
         },
         getOutput(){
-            return this.outPut;
+            this.delBom();
+            var outPutData = {};
+                outPutData['project'] = this.$parent.values['project'];
+                outPutData['tdProjectId_project'] = this.$parent.values['tdProjectId_project'];
+                outPutData['expectStartDate_project'] = this.$parent.values['expectStartDate_project'];
+                outPutData['expectEndDate_project'] = this.$parent.values['expectEndDate_project'];
+                outPutData['projectAddress_project'] = this.$parent.values['projectAddress_project'];
+                outPutData['budgetIncome_project'] = this.$parent.values['budgetIncome_project'];
+                outPutData['dataSet']= this.$parent.values['outPut']['dataSet'];
+            
+            
+            return outPutData;
         },
         getComponentByCfg: function (cfg) {
             if (cfg.contrl) {
