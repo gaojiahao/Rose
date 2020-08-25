@@ -208,7 +208,7 @@ var component = {
               inventoryCode:  data[i].outPutMatCode,
               inventoryName:  data[i].inventoryName_outPutMatCode,
               measureUnit: data[i].measureUnit_outPutMatCode,
-              processing: data[i].tdProcessing,
+              tdProcessing: data[i].tdProcessing,
               productSource:  data[i].productSource,
               demandQty:  data[i].demandQty,
               thenTotalQtyStock:  data[i].thenTotalQtyStock,
@@ -223,7 +223,7 @@ var component = {
     },
     boms:{
       handler(val){
-        console.log('bonsm',val)
+        //console.log('bonsm',val)
       }
     }
   },
