@@ -592,7 +592,7 @@ export default {
                     this.hasNext = false;
                 }
                 if (msgLength){
-                    if(group.groupType !== 'N')this.$parent.handlerTime(rs.msgs,true);
+                    if(this.group.groupType !== 'N')this.$parent.handlerTime(rs.msgs,true);
                     msgList.unshift(...rs.msgs);
                     this.$parent.msgList = msgList;
                     if(this.hasNext == false)msgList[0].showTime = true;

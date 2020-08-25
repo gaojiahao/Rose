@@ -183,7 +183,7 @@
         getLocalCurrency().then(({list = []}) => {
           list.forEach(item => {
             if(item.localCurrency){
-              this.localCurrency = item.currencyValue === 'CNY' ? '元' : item.currency;
+              this.localCurrency = item.currencyValue === 'CNY' ? '万' : item.currency;
             }
           })
         })
@@ -193,7 +193,7 @@
       // 格式化数字
       formatNum(num) {
         if (!num) return '-';
-        return `${numberComma(num.toFixed(2))}`;
+        return `${numberComma((num/10000).toFixed(2))}`;
       }
     },
     created() {
