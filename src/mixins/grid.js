@@ -164,18 +164,9 @@ export default {
                     }
                 } else if (cfg.type == 'fn') {
                     try{
-                        var arr = [],
-                            flag;
-                        arr.push(record.data);
-                        flag = me.valiGridData(arr, me.cfg.columns);
-                        if(!flag) {
-                            continue;
-                        } else {
-                            num = cfg.fn.call(me, record, editorFieldCode);
-                            if (num != null && !isNaN(num) && cfg.col.decimalPrecision != null) num = util.round(num, cfg.col.decimalPrecision);
-                            if (num != null) record.set(dataIndex, convertDataType(cfg.col.editorType, num));
-                            
-                        }
+                        num = cfg.fn.call(me, record, editorFieldCode);
+                        if (num != null && !isNaN(num) && cfg.col.decimalPrecision != null) num = util.round(num, cfg.col.decimalPrecision);
+                        if (num != null) record.set(dataIndex, convertDataType(cfg.col.editorType, num));
                     } catch (ex) {
                         console.warn(ex);
                     }
@@ -192,6 +183,10 @@ export default {
                     }
                 }
             }
+            var arr = [],
+                flag;
+            arr.push(record.data);
+            flag = me.valiGridData(arr, me.cfg.columns);
 
             function CalcToCmd(cfg) {
                 var changeItems = record.getChanges(),
