@@ -54,6 +54,7 @@ import platfrom from './plugins/platform/index'
 import commonService from "service/commonService";
 import * as dd from 'dingtalk-jsapi'
 import VueQuillEditor from 'vue-quill-editor'
+import R2BomGridWWJGDD from './components/public/R2BomGridWWJGDD'
 
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'

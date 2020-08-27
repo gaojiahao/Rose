@@ -593,6 +593,15 @@ export let getInProcessingStorageSumSource = (data) => {
     }
   })
 }
+export let getProcessDispatchPickingBom = (data) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getProcessDispatchPickingBom',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+}
 export default {
   convertDataType,
   getList,
