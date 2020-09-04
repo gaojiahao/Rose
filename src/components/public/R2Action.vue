@@ -493,7 +493,13 @@ var component = {
       });
     },
     // 同意
-    agreement() {
+    async agreement() {
+      var text ='';
+      text = await this.form.judeCheckList();
+      if(text){
+        this.$vux.toast.text(text, 'bottom');
+        return ;
+      }
       if(this.model == 'marking') {
         this.form.taskType = 1;
         this.$vux.confirm.prompt('', {
@@ -504,6 +510,12 @@ var component = {
           }
         });
       } else {
+        var text ='';
+        text = await this.form.judeCheckList();
+        if(text){
+          this.$vux.toast.text(text, 'bottom');
+          return ;
+        }
         this.$vux.confirm.prompt('', {
           title: '审批意见',
           onConfirm: (value) => {

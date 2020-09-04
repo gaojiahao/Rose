@@ -516,6 +516,12 @@ export default {
             }).catch(e => {
                 me.$HandleLoad.hide();
             });
+        },
+        async judeCheckList(){
+            var flag= await this.$refs.flow.getCheckItemInfoByTaskId();
+            if(!flag){
+                return '请确认点检表信息，只有全部勾选才能前往下一步哦!';
+            }
         }
    }
 }

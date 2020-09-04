@@ -2,7 +2,7 @@
   <div class="work-flow-full-container">
     <slot name="nav"></slot>
     <r-scroll>
-        <header class="work-flow-header">点检表</header>
+        <header class="work-flow-header">&nbsp;&nbsp;	&nbsp;</header>
         <div class="work-flow-wrapper">
             <div class="work_flow_item vux-1px-l" v-for="(item, index) in checkList" :class="[item.statusClass, {is_my_node: item.isMyNode}]" :key="index">
                 <div>{{index+1}}</div>
@@ -149,8 +149,8 @@ export default {
   color: #333;
   overflow: hidden;
   box-sizing: border-box;
-  .scroll-container {
-    width: 100%;
+  .scroll-wrapper {
+    //width: 100%;
     height: 100%;
     /deep/ .scroll-wrapper {
       padding: 0 0.15rem 0 0.23rem;
@@ -158,6 +158,9 @@ export default {
       box-sizing: border-box;
     }
   }
+  /deep/ .scroll-content {
+      display: flex;
+    }
   .work-flow-header {
     margin-top: 0.15rem;
     line-height: 0.14rem;

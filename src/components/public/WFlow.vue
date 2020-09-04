@@ -38,7 +38,7 @@ import Vue from 'vue';
 import {Popup, Group, Icon, XButton, dateFormat, Picker, Toast} from 'vux'
 import RScroll from 'plugins/scroll/RScroll'
 import RPicker from 'components/public/basicPicker'
-import { isMyflow,getProcessStatusByListId,getStatusProcessByTransCode,updateProcessStatus} from "service/detailService";
+import { isMyflow,getProcessStatusByListId,getStatusProcessByTransCode,updateProcessStatus,getCheckItemInfoByTaskId} from "service/detailService";
 import { getBasicInfo } from "service/commonService";
 var component = {
   props: {
@@ -152,7 +152,24 @@ var component = {
       return updateProcessStatus(data).then(data => {
         this.$vux.toast.text(data.message, 'top')  
       });    
-    }
+    },
+    getCheckItemInfoByTaskId(){
+      var flag=false;
+      let {transCode = '',checkTableId='',taskId='',biStatus=''} = this.workFlowInfo;
+        let data = {
+            checkTableId: checkTableId,
+            taskId: taskId,
+        };
+        return getCheckItemInfoByTaskId(data).then(({ tableContent = [] }) => {
+          for(var i=0; i<tableContent.length; i++){
+            if(tableContent[i]['assess']==1){
+              flag = true;
+              break;
+            }
+          }
+          return flag;
+      });
+    },
   },
   filters: {
     dateFormat,

@@ -5,7 +5,7 @@
     <div class="form has-bbar" :class="{scrollCt:scrollCt,}" ref="fill">
       <div class="fill_wrapper">
         <!-- 工作流组件 -->
-        <w-flow :formData="formData" :full-work-flow="workflowLogs" v-if="transCode && loaded"/>
+        <w-flow :formData="formData" :full-work-flow="workflowLogs" v-if="transCode && loaded" ref="flow"/>
         <!-- 表单渲染 -->
         <r-fieldset-ct
           :cfg="fieldSets"
