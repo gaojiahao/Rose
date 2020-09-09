@@ -55,6 +55,7 @@ import commonService from "service/commonService";
 import * as dd from 'dingtalk-jsapi'
 import VueQuillEditor from 'vue-quill-editor'
 import R2BomGridWWJGDD from './components/public/R2BomGridWWJGDD'
+import VueClipboard from 'vue-clipboard2'
 
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
@@ -82,6 +83,7 @@ Vue.use(ToastPlugin)
 Vue.use(AlertPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(DatetimePlugin)
+Vue.use(VueClipboard)
 
 Vue.use(VueTouch,{name:'v-touch'})
 Vue.directive('transfer-dom', TransferDom)
