@@ -93,7 +93,7 @@ import {
     getProcess,
     updateData} from 'service/commonService'
 import {  getWhbyStoragelocation,getLocationOfinventory,getInventoryInfoByBoxCode} from 'service/wmsService'
-import WebContext from 'service/commonService'
+import { WebContext } from 'service/commonService'
 import { getSOList } from 'service/detailService'
 // mixins 引入
 import wmsCommon from 'mixins/wmsCommon'
@@ -512,7 +512,7 @@ export default {
                 content: '确认提交?',
                 // 确定回调
                 onConfirm: () => {
-                    const currentUser = WebContext.WebContext.currentUser;
+                    const currentUser = WebContext.currentUser;
                     let formData={
                         handlerName: currentUser.name,
                         handlerUnitName: currentUser.sysDeptList && currentUser.sysDeptList[0] ? currentUser.sysDeptList[0].groupName : '',

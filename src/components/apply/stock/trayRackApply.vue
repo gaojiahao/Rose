@@ -103,7 +103,7 @@ import {
     submitAndCalc, 
     getPriceFromSalesContractAndPrice, 
     updateData} from 'service/commonService'
-import WebContext from 'service/commonService'
+import { WebContext } from 'service/commonService'
 import {getLocationByPallet,getLocationInfo} from 'service/wmsService'
  
 import { getSOList } from 'service/detailService'
@@ -377,7 +377,7 @@ export default {
                 // 确定回调
                 onConfirm: () => {
                     this.$HandleLoad.show();
-                    const currentUser = WebContext.WebContext.currentUser;
+                    const currentUser = WebContext.currentUser;
                     let data={};
                     let formData={
                         handlerName: currentUser.name,
