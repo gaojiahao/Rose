@@ -87,7 +87,9 @@
                 </div>
             </div><!--msg-container-->
         </r-scroll>
+        <!-- 回复按钮控件 -->
         <ContextMenu v-show="showContextMenu" ref="contextMenu"/>
+        <div id='demo' style="display:block;" ref="foo" ></div>
         <div v-if="group.groupType !== 'N'" class="msgList-footer">
             <div class="replayMsg" v-if="replayMsg">
                 <span>{{replayMsg.creatorName}}:</span>
@@ -164,6 +166,7 @@ import FileDialog from  "./fileDialog"
 import ContextMenu from './contextMenu'
 import AtMemberList from './atMemberList'
 import REmotion from 'homePage/components/comment-related/REmotion'
+import Vue from "vue";
 export default {
     props:['group','msgList'],
     data(){
@@ -544,10 +547,55 @@ export default {
                     this.contextMenuMsg = null;
                 }
             });
+
+            if(contextMenu)contextMenu.$on('copy',()=>{
+                this.showContextMenu = false;
+                if(this.contextMenuMsg){
+                    this.copy(this.contextMenuMsg);
+                }
+            });
         },
         replay(msg){
             this.replayMsg = msg;
             if(this.group.groupType != 'P')this.msg += '@'+msg.creatorName+' ';
+        },
+        copy(msg){
+            if(msg.imType==1){
+                this.$copyText(msg.content).then(e=>{
+                    this.$vux.toast.text('复制成功');
+                    }, e=> {
+                    this.$vux.toast.text('复制失败');
+                })
+            } else if(msg.imType==2){
+                this.uploadImageByBase64(msg);
+            }
+        },
+        uploadImageByBase64(msg){
+            let tepFile = JSON.parse(msg.content);
+            var src ='/H_roleplay-si/ds/downloadById?id=' +  tepFile.id;
+            const MyComponent = Vue.extend({
+                template: '<div ref="aaa"><img  paste=1 class="paste-img" src="${src}" ></div>',
+                data () {
+                    return {
+                    message: 'Hello, Aresn'
+                    };
+                },
+            });
+            // var component = new MyComponent().$mount();
+            // var dom = document.querySelector("#demo");
+            // dom.appendChild(component.$el);
+            const component = new MyComponent().$mount();
+            document.body.appendChild(component.$el);
+            this.insertHtmlAtCaret();
+        },
+        // 往光标位置插入HTML片段
+        insertHtmlAtCaret () {
+            const selection = window.getSelection()
+            const range = document.createRange()
+            range.selectNode(this.$refs.aaa)//传入dom
+            selection.addRange(range)
+            document.execCommand('copy')//copy是复制
+            selection.removeAllRanges()//清除缓存
         },
         /**
          * 显示或隐藏图片和文件发送面板
