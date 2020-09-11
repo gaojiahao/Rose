@@ -84,6 +84,14 @@
                          <div>{{msg.crtTime}}</div>
                         <MessageTplWeekSummary :msg="msg"></MessageTplWeekSummary>
                     </div>
+                    <div class="otherMessage" v-if="[207].includes(msg.imType)">
+                         <div>{{msg.crtTime}}</div>
+                        <MessageTplProject :msg="msg"></MessageTplProject>
+                    </div>
+                    <div class="otherMessage" v-if="[208].includes(msg.imType)">
+                         <div>{{msg.crtTime}}</div>
+                        <MessageTplDayReport :msg="msg"></MessageTplDayReport>
+                    </div>
                 </div>
             </div><!--msg-container-->
         </r-scroll>
@@ -157,6 +165,8 @@ import MessageTplFile from '@/views/msg/msg/messageTplFile'
 import MessageTplTaskLog from './messageTplTaskLog'
 import MessageTplTaskOverdue from './messageTplTaskOverdue'
 import MessageTplWeekSummary from './messageTplWeekSummary'
+import MessageTplProject from './messageTplProject'
+import MessageTplDayReport from './messageTplDayReport'
 import MessageReadDetail from './messageReadDetail'
 import RScroll from "plugins/scroll/RScroll";
 import Touch from "plugins/touch";
@@ -193,6 +203,8 @@ export default {
         MessageTplTaskLog,
         MessageTplTaskOverdue,
         MessageTplWeekSummary,
+        MessageTplProject,
+        MessageTplDayReport,
         RScroll,
         LoadMore,
         FileDialog,
@@ -691,9 +703,9 @@ export default {
 }
 
 #msg-container-wrapper{
-    flex:1;
-    position: relative;
-    background-color: #9e9e9e1c;
+    // flex:1;
+    // position: relative;
+    background-color: #ededed;
     font-size: 14px;
     .page-component-up{
         position:absolute;
@@ -702,6 +714,13 @@ export default {
             background-color:$weui-BG-1;
         }
     }
+}
+.scroll-wrapper {
+    height: calc(100% - .76rem);
+    font-size: 0;
+}
+/deep/ .scroll-content {
+    display: flex;
 }
 .msgList-footer {
     position: relative;
