@@ -92,6 +92,10 @@
                          <div>{{msg.crtTime}}</div>
                         <MessageTplDayReport :msg="msg"></MessageTplDayReport>
                     </div>
+                    <div class="otherMessage" v-if="[209].includes(msg.imType)">
+                         <div>{{msg.crtTime}}</div>
+                        <MessageTplTaskDayReport :msg="msg"></MessageTplTaskDayReport>
+                    </div>
                 </div>
             </div><!--msg-container-->
         </r-scroll>
@@ -167,6 +171,7 @@ import MessageTplTaskOverdue from './messageTplTaskOverdue'
 import MessageTplWeekSummary from './messageTplWeekSummary'
 import MessageTplProject from './messageTplProject'
 import MessageTplDayReport from './messageTplDayReport'
+import MessageTplTaskDayReport from './messageTplTaskDayReport'
 import MessageReadDetail from './messageReadDetail'
 import RScroll from "plugins/scroll/RScroll";
 import Touch from "plugins/touch";
@@ -205,6 +210,7 @@ export default {
         MessageTplWeekSummary,
         MessageTplProject,
         MessageTplDayReport,
+        MessageTplTaskDayReport,
         RScroll,
         LoadMore,
         FileDialog,

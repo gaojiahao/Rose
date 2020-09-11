@@ -4,23 +4,19 @@
          <div class="list-right">
           <div class="vux-1px-b title">
               <span class="list-left">
-                <i class="iconfont icon-icyhbynotice" ></i>
+                <img src="https://lab.roletask.com/resource/app-icon/project-task.png" />
               </span>
               <div class="title-right">
-                <b>个人日结报告</b>
-              </div>
-              <div class="total-right">
-                <p>总计：{{this.content.workingHoursTotal}}小时</p>
+                <b>项目日结报告</b>
               </div>
           </div>
-          <div class="list-content">
-            <div class="header" v-for="(list,index) of project" :key="index">
+          <div class="list-content" v-for="(list,index) of content" :key="index">
+            <div class="header">
               <div class="header-box">
-                <span class="header-box-left">{{list.projectName}}</span>
-                <span class="header-box-right">{{list.workingHoursSubtotal}}小时</span>
+                <span>{{list.content.taskName}}|{{list.content.executor}}|{{list.content.standardWorkingHours}}</span>
               </div>
-              <div v-for="(item,k) of list.task" :key="k" class="header-list">
-                <div><span>{{item.taskName}}/{{item.jobLogTitle}}/{{item.workingHours}}</span></div>
+              <div v-for="(item,k) of list.content.log" :key="k" class="header-list">
+                <div><span>{{item.jobLogTitle}}/{{item.handlerName}}/{{item.workingHours}}</span></div>
                 <div>成果：{{item.result}}</div>
               </div>
             </div>
@@ -49,9 +45,9 @@ export default {
     },
     created:function(){
         try{
-            let json = JSON.parse(this.msg.content);
+            let json = this.msg.content;
             this.content = json;
-            this.project = this.content.project;
+            this.project = this.content.content;
         }catch(e){
             console.log('msg content parse error',this.msg.content);
         }
@@ -85,6 +81,11 @@ export default {
       .icon-icyhbynotice{
         font-size: .28rem;
         color: #f90;
+      }
+      img{
+        width: .35rem;
+        height: .35rem;
+        border-radius: .02rem;
       }
     }
     .list-right{
