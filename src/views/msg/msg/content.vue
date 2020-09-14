@@ -86,7 +86,7 @@
                     </div>
                     <div class="otherMessage" v-if="[207].includes(msg.imType)">
                          <div>{{msg.crtTime}}</div>
-                        <MessageTplProject :msg="msg"></MessageTplProject>
+                        <MessageTplProjectNewTask :msg="msg"></MessageTplProjectNewTask>
                     </div>
                     <div class="otherMessage" v-if="[208].includes(msg.imType)">
                          <div>{{msg.crtTime}}</div>
@@ -95,6 +95,10 @@
                     <div class="otherMessage" v-if="[209].includes(msg.imType)">
                          <div>{{msg.crtTime}}</div>
                         <MessageTplTaskDayReport :msg="msg"></MessageTplTaskDayReport>
+                    </div>
+                    <div class="otherMessage" v-if="[210].includes(msg.imType)">
+                         <div>{{msg.crtTime}}</div>
+                        <MessageTplProjectTaskOverdue :msg="msg"></MessageTplProjectTaskOverdue>
                     </div>
                 </div>
             </div><!--msg-container-->
@@ -169,7 +173,8 @@ import MessageTplFile from '@/views/msg/msg/messageTplFile'
 import MessageTplTaskLog from './messageTplTaskLog'
 import MessageTplTaskOverdue from './messageTplTaskOverdue'
 import MessageTplWeekSummary from './messageTplWeekSummary'
-import MessageTplProject from './messageTplProject'
+import MessageTplProjectNewTask from './messageTplProjectNewTask'
+import MessageTplProjectTaskOverdue from './messageTplProjectTaskOverdue'
 import MessageTplDayReport from './messageTplDayReport'
 import MessageTplTaskDayReport from './messageTplTaskDayReport'
 import MessageReadDetail from './messageReadDetail'
@@ -208,7 +213,8 @@ export default {
         MessageTplTaskLog,
         MessageTplTaskOverdue,
         MessageTplWeekSummary,
-        MessageTplProject,
+        MessageTplProjectNewTask,
+        MessageTplProjectTaskOverdue,
         MessageTplDayReport,
         MessageTplTaskDayReport,
         RScroll,

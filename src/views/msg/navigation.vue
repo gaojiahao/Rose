@@ -551,8 +551,24 @@ export default {
                     //     replayMsg: null,
                     //     isMySelf: 0,
                     // };
+                    // var data3 = {
+                    //     creator: "1",
+                    //     groupId: "b171c44c1e2cffea7f20da05666e1094",
+                    //     creatorName: "管理员",
+                    //     photo: "/H_roleplay-si/ds/download?width=128&height=128&specify=true&url=/20820e55-6f5c-467c-ac85-da211ab030bb/9535e8c8-904a-49d0-a235-c84efa4b05ac.jpeg",
+                    //     crtTime: "2020-09-04 09:00:00",
+                    //     imType: 210,
+                    //     content: [{"groupId":"b171c44c1e2cffea7f20da05666e1094","imType":210,"content":[{"taskName":"任务名称","executor":"执行者","endTime":"计划结束日期","overdueDays":"逾期天数"}]}],
+                    //     allRead: true,
+                    //     checked: 0,
+                    //     id: "6844e826-fef9-4e4a-8dfa-b41ec87a3dd5",
+                    //     replayId: null,
+                    //     replayMsg: null,
+                    //     isMySelf: 0,
+                    // };
                     // this.msgList.push(data);
                     // this.msgList.push(data2);
+                    // this.msgList.push(data3);
                     if (this.$route.params.groupId != groupId){
                         this.$router.push(path);
                     }
