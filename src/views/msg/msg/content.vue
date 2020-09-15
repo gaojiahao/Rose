@@ -100,6 +100,14 @@
                          <div>{{msg.crtTime}}</div>
                         <MessageTplProjectTaskOverdue :msg="msg"></MessageTplProjectTaskOverdue>
                     </div>
+                    <div class="otherMessage" v-if="[211].includes(msg.imType)">
+                         <div>{{msg.crtTime}}</div>
+                        <MessageTplProjectDiscuss :msg="msg"></MessageTplProjectDiscuss>
+                    </div>
+                    <div class="otherMessage" v-if="[212].includes(msg.imType)">
+                         <div>{{msg.crtTime}}</div>
+                        <MessageTplProjectNewTaskMes :msg="msg"></MessageTplProjectNewTaskMes>
+                    </div>
                 </div>
             </div><!--msg-container-->
         </r-scroll>
@@ -177,6 +185,8 @@ import MessageTplProjectNewTask from './messageTplProjectNewTask'
 import MessageTplProjectTaskOverdue from './messageTplProjectTaskOverdue'
 import MessageTplDayReport from './messageTplDayReport'
 import MessageTplTaskDayReport from './messageTplTaskDayReport'
+import MessageTplProjectDiscuss from './messageTplProjectDiscuss'
+import MessageTplProjectNewTaskMes from './messageTplProjectNewTaskMes'
 import MessageReadDetail from './messageReadDetail'
 import RScroll from "plugins/scroll/RScroll";
 import Touch from "plugins/touch";
@@ -217,6 +227,8 @@ export default {
         MessageTplProjectTaskOverdue,
         MessageTplDayReport,
         MessageTplTaskDayReport,
+        MessageTplProjectDiscuss,
+        MessageTplProjectNewTaskMes,
         RScroll,
         LoadMore,
         FileDialog,
