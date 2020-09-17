@@ -13,9 +13,9 @@
           <div class="list-content" v-for="(list,index) of content" :key="index">
             <div class="header">
               <div class="header-box">
-                <span>{{list.content.taskName}}|{{list.content.executor}}|{{list.content.standardWorkingHours}}</span>
+                <span>{{list.taskName}}|{{list.executor}}|{{list.standardWorkingHours}}</span>
               </div>
-              <div v-for="(item,k) of list.content.log" :key="k" class="header-list">
+              <div v-for="(item,k) of list.log" :key="k" class="header-list">
                 <div><span>{{item.jobLogTitle}}/{{item.handlerName}}/{{item.workingHours}}</span></div>
                 <div>成果：{{item.result}}</div>
               </div>
@@ -46,7 +46,7 @@ export default {
     created:function(){
         try{
             let json = this.msg.content;
-            this.content = json;
+            this.content = JSON.parse(json);
             this.project = this.content.content;
         }catch(e){
             console.log('msg content parse error',this.msg.content);

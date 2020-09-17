@@ -8,13 +8,13 @@
               </span>
               <div class="title-right">
                 <b>你有新的任务：</b>
-                <p>{{this.content.projectName}}/{{this.content.taskName}}</p>
+                <p>{{content.projectName}}/{{content.taskName}}</p>
               </div>
           </div>
           <div class="list-content">
             <div class="header">
               <span></span>
-              <span>{{this.content.startTime}}至{{this.content.endTime}}</span>
+              <span>{{content.startTime}}至{{content.endTime}}</span>
             </div>
           </div>
          </div>
@@ -33,14 +33,6 @@ export default {
             }
         }
     },
-    wathc:{
-      msg:{
-        handler(val){
-          this.info = val.content.content[0]
-          console.log(this.info)
-        }
-      }
-    },
     data(){
         return {
             content: []
@@ -49,7 +41,7 @@ export default {
     created:function(){
         try{
             let json = this.msg.content;
-            this.content = json.content;
+            this.content = JSON.parse(json);
         }catch(e){
             console.log('msg content parse error',this.msg.content);
         }
