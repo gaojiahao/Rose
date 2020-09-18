@@ -84,6 +84,30 @@
                          <div>{{msg.crtTime}}</div>
                         <MessageTplWeekSummary :msg="msg"></MessageTplWeekSummary>
                     </div>
+                    <div class="otherMessage" v-if="[207].includes(msg.imType)">
+                         <div>{{msg.crtTime}}</div>
+                        <MessageTplProjectNewTask :msg="msg"></MessageTplProjectNewTask>
+                    </div>
+                    <div class="otherMessage" v-if="[208].includes(msg.imType)">
+                         <div>{{msg.crtTime}}</div>
+                        <MessageTplDayReport :msg="msg"></MessageTplDayReport>
+                    </div>
+                    <div class="otherMessage" v-if="[209].includes(msg.imType)">
+                         <div>{{msg.crtTime}}</div>
+                        <MessageTplTaskDayReport :msg="msg"></MessageTplTaskDayReport>
+                    </div>
+                    <div class="otherMessage" v-if="[210].includes(msg.imType)">
+                         <div>{{msg.crtTime}}</div>
+                        <MessageTplProjectTaskOverdue :msg="msg"></MessageTplProjectTaskOverdue>
+                    </div>
+                    <div class="otherMessage" v-if="[211].includes(msg.imType)">
+                         <div>{{msg.crtTime}}</div>
+                        <MessageTplProjectDiscuss :msg="msg"></MessageTplProjectDiscuss>
+                    </div>
+                    <div class="otherMessage" v-if="[212].includes(msg.imType)">
+                         <div>{{msg.crtTime}}</div>
+                        <MessageTplProjectNewTaskMes :msg="msg"></MessageTplProjectNewTaskMes>
+                    </div>
                 </div>
             </div><!--msg-container-->
         </r-scroll>
@@ -157,6 +181,12 @@ import MessageTplFile from '@/views/msg/msg/messageTplFile'
 import MessageTplTaskLog from './messageTplTaskLog'
 import MessageTplTaskOverdue from './messageTplTaskOverdue'
 import MessageTplWeekSummary from './messageTplWeekSummary'
+import MessageTplProjectNewTask from './messageTplProjectNewTask'
+import MessageTplProjectTaskOverdue from './messageTplProjectTaskOverdue'
+import MessageTplDayReport from './messageTplDayReport'
+import MessageTplTaskDayReport from './messageTplTaskDayReport'
+import MessageTplProjectDiscuss from './messageTplProjectDiscuss'
+import MessageTplProjectNewTaskMes from './messageTplProjectNewTaskMes'
 import MessageReadDetail from './messageReadDetail'
 import RScroll from "plugins/scroll/RScroll";
 import Touch from "plugins/touch";
@@ -193,6 +223,12 @@ export default {
         MessageTplTaskLog,
         MessageTplTaskOverdue,
         MessageTplWeekSummary,
+        MessageTplProjectNewTask,
+        MessageTplProjectTaskOverdue,
+        MessageTplDayReport,
+        MessageTplTaskDayReport,
+        MessageTplProjectDiscuss,
+        MessageTplProjectNewTaskMes,
         RScroll,
         LoadMore,
         FileDialog,
@@ -691,9 +727,9 @@ export default {
 }
 
 #msg-container-wrapper{
-    flex:1;
-    position: relative;
-    background-color: #9e9e9e1c;
+    // flex:1;
+    // position: relative;
+    background-color: #ededed;
     font-size: 14px;
     .page-component-up{
         position:absolute;
@@ -702,6 +738,13 @@ export default {
             background-color:$weui-BG-1;
         }
     }
+}
+.scroll-wrapper {
+    height: calc(100% - .76rem);
+    font-size: 0;
+}
+/deep/ .scroll-content {
+    display: flex;
 }
 .msgList-footer {
     position: relative;

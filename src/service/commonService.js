@@ -602,6 +602,13 @@ export let getProcessDispatchPickingBom = (data) => {
     }
   })
 }
+export let scheduled = () => {
+  return $flyio.ajax({
+    type: 'POST',
+    contentType: 'application/x-www-form-urlencoded',
+    url: '/H_roleplay-si/scheduled/runTest',
+  })
+};
 export default {
   convertDataType,
   getList,
@@ -624,5 +631,6 @@ export default {
   getFormConfig,
   undoDataByTransCodes,
   getBomByPInvCode,
-  getInProcessingStorageSumSource
+  getInProcessingStorageSumSource,
+  scheduled
 }
