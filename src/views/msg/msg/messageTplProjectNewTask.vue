@@ -7,15 +7,12 @@
                 <img src="https://lab.roletask.com/resource/app-icon/project-task.png" />
               </span>
               <div class="title-right">
-                <b>你有新的任务：</b>
-                <p>{{content.projectName}}/{{content.taskName}}</p>
+                  <b>你有新的任务：</b>
+                  <div class="title-right-content">
+                    <div class="title-right-content-left">{{content.projectName}}/{{content.taskName}}</div>
+                    <div class="title-right-content-right">{{content.startTime}}至{{content.endTime}}</div>
+                  </div>
               </div>
-          </div>
-          <div class="list-content">
-            <div class="header">
-              <span></span>
-              <span>{{content.startTime}}至{{content.endTime}}</span>
-            </div>
           </div>
          </div>
        </div>
@@ -84,9 +81,21 @@ export default {
         }
         .title-right{
             margin-left: .05rem;
-           p{
+            width: 100%;
+           .title-right-content{
             color: #333;
             font-size: .12rem;
+            width: 100%;
+            position: relative;
+            .title-right-content-left{
+              width: 50%;
+              float: left;
+            }
+            .title-right-content-right{
+                width: 50%;
+                float: right;
+                text-align: right;
+            }
           }
           b{
             color: #333;
