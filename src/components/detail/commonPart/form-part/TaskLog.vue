@@ -66,7 +66,7 @@ import RNumber from 'components/public/RNumber'
 
 import { getTaskLogType, saveTaskLog } from 'service/projectService'
 import { initWebContext } from 'service/commonService'
-import WebContext from 'service/commonService'
+import { WebContext } from 'service/commonService'
 
 import SearchSelector from './FormSearchSelector'
 export default {
@@ -118,7 +118,7 @@ export default {
       })
     },
     submitLog() {
-      const currentUser = WebContext.WebContext.currentUser;
+      const currentUser = WebContext.currentUser;
       let formdata;
       if(this.taskLog.taskDate < this.formatDate(new Date())){
         this.$vux.toast.text('日期小于今日，请重新选择日期！');

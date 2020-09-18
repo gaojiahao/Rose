@@ -61,6 +61,7 @@
                                     <span v-else-if="[3,4].includes(group.lastMsg.imType)">[文件]</span>
                                     <span v-else-if="group.groupType=='N'">[通知]</span>
                                     <span v-else-if="group.groupType=='P'">[项目任务通知]</span>
+                                    <span v-else-if="group.groupType=='G'">[通知]</span>
                                 </div> 
                                 </div>
                         </touch>

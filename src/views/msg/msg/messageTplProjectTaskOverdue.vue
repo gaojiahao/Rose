@@ -22,12 +22,12 @@
               </div>
             </div>
             <div class="header" v-for="(list,index) of content" :key="index">
-              <div v-for="(item,k) of list.content" :key="k" class="header-list">
+              <div class="header-list">
                 <div class="flexbox">
-                  <div class="flexitem">{{item.taskName}}</div>
-                  <div class="flexitem">{{item.executor}}</div>
-                  <div class="flexitem">{{item.endTime}}</div>
-                  <div class="flexitem red">{{item.overdueDays}}</div>
+                  <div class="flexitem">{{list.taskName}}</div>
+                  <div class="flexitem">{{list.executor}}</div>
+                  <div class="flexitem">{{list.endTime}}</div>
+                  <div class="flexitem red">{{list.overdueDays}}</div>
                 </div>
               </div>
             </div>
@@ -38,6 +38,8 @@
 </template>
 
 <script>
+import { dateFormat } from 'vux'
+
 export default {
     name: "messageTplProjectTaskOverdue",
     props:{
@@ -57,7 +59,10 @@ export default {
     created:function(){
         try{
             let json = this.msg.content;
-            this.content = json;
+            this.content = JSON.parse(json);
+            for(var i=0;i<this.content.length;i++){
+              this.content[i]['endTime'] = dateFormat(this.content[i]['endTime'],'YYYY-MM-DD');
+            }
         }catch(e){
             console.log('msg content parse error',this.msg.content);
         }
