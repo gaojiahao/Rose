@@ -687,6 +687,10 @@ export default {
 .msg-detail{
    display: flex;
    flex-direction: column;
+   .scroll-wrapper {
+        height: calc(100% - .76rem);
+        font-size: 0;
+    }
 }
 .msg-header{
     display: flex;
@@ -739,10 +743,7 @@ export default {
         }
     }
 }
-.scroll-wrapper {
-    height: calc(100% - .76rem);
-    font-size: 0;
-}
+
 /deep/ .scroll-content {
     display: flex;
 }
