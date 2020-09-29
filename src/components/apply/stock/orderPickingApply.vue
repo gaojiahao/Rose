@@ -90,7 +90,7 @@ import {
     getPriceFromSalesContractAndPrice, 
     updateData} from 'service/commonService'
 import { getSortingOrderByBoxCode, autoConfirmStockPick, releaseSortingOrder, getOrderPickingData ,getBoxInfoByPallet} from 'service/wmsService'
-import WebContext from 'service/commonService'
+import { WebContext } from 'service/commonService'
 import { getSOList } from 'service/detailService'
 // mixins 引入
 import wmsCommon from 'mixins/wmsCommon'
@@ -472,7 +472,7 @@ export default {
                 // 确定回调
                 onConfirm: () => {
                     this.$HandleLoad.show();
-                    const currentUser = WebContext.WebContext.currentUser;
+                    const currentUser = WebContext.currentUser;
                     let data={};
                     let formData={
                         handlerName: currentUser.name,

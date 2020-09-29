@@ -84,7 +84,7 @@ import {
     getPriceFromSalesContractAndPrice, 
     updateData} from 'service/commonService'
 import { getStorageShelf, getWhbyStoragelocation,getInventoryInfoByBoxCode,getLocationByPallet,getTallyBoxInfoByPallet} from 'service/wmsService'
-import WebContext from 'service/commonService'
+import { WebContext } from 'service/commonService'
 import { getSOList } from 'service/detailService'
 import scanVoice from '@/plugins/scanVoice'
 // mixins 引入
@@ -523,7 +523,7 @@ export default {
                 // 确定回调
                 onConfirm: () => {
 
-                    const currentUser = WebContext.WebContext.currentUser;
+                    const currentUser = WebContext.currentUser;
                     let data={};
                     let formData={
                         handlerName: currentUser.name,
